@@ -403,6 +403,11 @@
       "packageName": "@anticrm/model",
       "projectFolder": "packages/model",
       "shouldPublish": false
+    },
+    {
+      "packageName": "@anticrm/model-core",
+      "projectFolder": "models/core",
+      "shouldPublish": false
     }
     // {
     //   /**
