@@ -13,19 +13,20 @@
 // limitations under the License.
 //
 
-import type { Ref, Doc, EmbType } from './classes'
+import type { Ref, Doc, Class, Emb, Data } from './classes'
 
 export interface Tx extends Doc {
   domain: string
   objectId: Ref<Doc>
 }
 
-export interface TxCreateObject extends Tx {
-  attributes: Record<string, EmbType>
+export interface TxCreateObject<T extends Doc> extends Tx {
+  objectClass: Ref<Class<Doc>>
+  attributes: Data<T>
 }
 
-export interface TxAddCollection extends Tx {
+export interface TxAddCollection<T extends Emb> extends Tx {
   collection: string
   localId?: string
-  attributes: Record<string, EmbType>
+  attributes: T
 }

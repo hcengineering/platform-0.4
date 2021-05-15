@@ -13,15 +13,23 @@
 // limitations under the License.
 //
 
-import type { Component } from '@anticrm/status'
+import type { Component, StatusCode } from '@anticrm/status'
 import { identify } from '@anticrm/status'
 
-import type { Ref, Class, Doc } from './classes'
-import type { TxAddCollection, TxCreateObject } from './tx'
+import type { Ref, Class, Doc, Emb, Obj } from './classes'
+import type { Tx, TxCreateObject, TxAddCollection } from './tx'
 
 export const ComponentCore = 'core' as Component
 
 export default identify(ComponentCore, {
   class: {
+    Class: '' as Ref<Class<Class<Obj>>>,
+    Tx: '' as Ref<Class<Tx>>,
+    TxCreateObject: '' as Ref<Class<TxCreateObject<Doc>>>,
+    TxAddCollection: '' as Ref<Class<TxAddCollection<Emb>>>
+  },
+  status: {
+    CannotHandleTx: '' as StatusCode<{_class: Ref<Class<Tx>>}>,
+    ObjectNotFound: '' as StatusCode<{_id: Ref<Doc>}>
   }
 })

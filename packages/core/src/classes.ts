@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import type { KeysByType } from 'simplytyped'
 import type { IntlString, Asset } from '@anticrm/status'
 
 export type PrimitiveType = number | string | boolean | undefined
@@ -24,15 +25,16 @@ export interface Obj {
 }
 
 export interface Emb extends Obj {
+  __embedded: this
 }
 
 export interface Doc extends Obj {
   _id: Ref<Doc>
-  mixins?: Array<Ref<Mixin<Doc>>>
+  _mixins?: Array<Ref<Mixin<Doc>>>
 }
 
 export type EmbType = PrimitiveType | Emb | Ref<Doc>
-export type PropertyType = EmbType | Collection<Emb>
+export type PropertyType = EmbType | Collection<Emb> | Record<string, EmbType>
 
 export interface UXObject extends Obj {
   label?: IntlString
@@ -44,9 +46,12 @@ export interface Type<T extends PropertyType> extends Emb, UXObject {
 
 // C O L L E C T I O N
 
+
 export interface Collection<T extends Emb> {
-  
+  __collection: T
 }
+
+export type WithoutCollections<T extends Doc> = Omit<T, KeysByType<T, Collection<Emb>>>
 
 export interface CollectionOf<T extends Emb> extends Type<Collection<T>> {
 
@@ -72,6 +77,10 @@ export interface Class<T extends Obj> extends Classifier {
 }
 
 export type Mixin<T extends Doc> = Class<T>
+
+// D A T A
+
+export type Data<T extends Doc> = Omit<WithoutCollections<T>, keyof Doc>
 
 // T Y P E S
 

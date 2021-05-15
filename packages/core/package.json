@@ -24,6 +24,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@anticrm/status": "~0.4.2"
+    "@anticrm/status": "~0.4.2",
+    "simplytyped": "~3.3.0"
   }
 }

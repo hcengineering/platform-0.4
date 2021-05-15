@@ -18,20 +18,23 @@ import type {
   Doc,
   Type,
   PropertyType,
+  Attribute,
   Tx,
   Class,
   Obj,
   TxAddCollection,
   TxCreateObject
 } from '@anticrm/core'
-import { generateId } from '@anticrm/core'
+import { ClassifierKind, generateId, makeEmb } from '@anticrm/core'
 
 import core from './component'
+
+type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
 
 interface ClassTxes {
   _id: Ref<Doc>
   extends: Ref<Class<Obj>>
-  txes: Tx[]
+  txes: NoIDs<Tx>[]
 }
 
 const transactions = new Map<any, ClassTxes>()
@@ -49,15 +52,13 @@ function getTxes (target: any): ClassTxes {
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
-    const tx = {
+    const tx: NoIDs<TxAddCollection<Attribute<PropertyType>>> = {
       _class: core.class.TxAddCollection,
-      domain: 'model',
+      domain: 'tx',
       collection: 'attributes',
       localId: propertyKey,
-      attributes: {
-        type
-      }
-    } as unknown as TxAddCollection
+      attributes: makeEmb(core.class.Attribute, { type })
+    }
     txes.txes.push(tx)
   }
 }
@@ -73,12 +74,12 @@ export function Model<T extends Obj> (
   }
 }
 
-function generateIds (objectId: Ref<Doc>, txes: Tx[]): Tx[] {
-  txes.forEach((tx) => {
-    tx._id = generateId()
-    tx.objectId = objectId
-  })
-  return txes
+function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
+  return txes.map((tx) => ({
+    _id: generateId(),
+    objectId,
+    ...tx
+  }))
 }
 
 function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
@@ -91,12 +92,15 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
     }
   }
   const objectId = candidate._id
-  const createTx: TxCreateObject = {
+  const createTx: TxCreateObject<Class<Obj>> = {
     _id: generateId(),
     _class: core.class.TxCreateObject,
-    domain: 'model',
+    domain: 'tx',
     objectId,
+    objectClass: core.class.Class,
     attributes: {
+      domain: 'model',
+      kind: ClassifierKind.CLASS,
       extends: candidate.extends
     }
   }
@@ -116,7 +120,5 @@ export function generateTx (...classes: Array<new () => Obj>): Tx[] {
 // T Y P E S
 
 export function TypeString (): Type<string> {
-  return {
-    _class: core.class.TypeString
-  }
+  return makeEmb(core.class.TypeString, {})
 }

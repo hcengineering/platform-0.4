@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class } from './classes'
+import type { Doc, Ref, Class, Emb } from './classes'
 
 function toHex (value: number, chars: number): string {
   const result = value.toString(16)
@@ -38,4 +38,8 @@ function count (): string {
 
 export function generateId (): Ref<Doc> {
   return timestamp() + random + count() as Ref<Doc>
+}
+
+export function makeEmb<T extends Emb>(_class: Ref<Class<T>>, data: Omit<T, '__embedded' | '_class'>): T {
+  return { _class, ...data } as T
 }
