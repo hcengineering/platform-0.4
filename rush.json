@@ -393,6 +393,16 @@
       "packageName": "@anticrm/status",
       "projectFolder": "packages/status",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/core",
+      "projectFolder": "packages/core",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model",
+      "projectFolder": "packages/model",
+      "shouldPublish": false
     }
     // {
     //   /**

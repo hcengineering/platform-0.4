@@ -72,16 +72,26 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 type Value = string | Record<string, string>
 export type Namespace = Record<string, Value>
 
-function transform (prefix: string, namespace: Namespace): Namespace {
-  const result: Namespace = {}
+function transform (
+  result: Namespace,
+  prefix: string,
+  namespace: Namespace
+): Namespace {
   for (const key in namespace) {
     const value = namespace[key]
+    if (typeof result[key] === 'string') {
+      throw new Error(`'mergeIds' overwrites '${key}'.`)
+    }
     result[key] =
       typeof value === 'string'
         ? value === ''
           ? prefix + '.' + key
           : value
-        : (transform(key + ':' + prefix, value as Namespace) as Value)
+        : (transform(
+          result[key] === undefined ? {} : (result[key] as {}),
+          key + ':' + prefix,
+          value as Namespace
+        ) as Value)
   }
   return result
 }
@@ -90,7 +100,15 @@ export function identify<N extends Namespace> (
   component: Component,
   namespace: N
 ): N {
-  return transform(component, namespace) as N
+  return transform({}, component, namespace) as N
+}
+
+export function mergeIds<N extends Namespace, M extends Namespace> (
+  component: Component,
+  namespace: N,
+  merge: M
+): N & M {
+  return transform(Object.assign({}, namespace), component, merge) as N & M
 }
 
 // S T A T U S  C O D E S

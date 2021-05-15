@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Component, identify, StatusCode } from '..'
+import { Component, identify, mergeIds, StatusCode } from '..'
 
 describe('status', () => {
   it('should identify resources', () => {
@@ -27,5 +27,43 @@ describe('status', () => {
     expect(ids.resource.MyString).toBe('resource:test.MyString')
     expect(ids.resource.FixedId).toBe('my-id')
     expect(ids.simple).toBe('test.simple')
+  })
+
+  it('should merge ids', () => {
+    const ids = identify('test' as Component, {
+      resource: {
+        MyString: '' as StatusCode<{}>,
+        FixedId: 'my-id' as StatusCode<{}>
+      },
+      simple: '' as StatusCode<{}>
+    })
+    const merged = mergeIds('test' as Component, ids, {
+      resource: {
+        OneMore: '' as StatusCode<{}>
+      },
+      more: '' as StatusCode<{}>
+    })
+    expect(merged.resource.MyString).toBe('resource:test.MyString')
+    expect(merged.resource.FixedId).toBe('my-id')
+    expect(merged.simple).toBe('test.simple')
+    expect(merged.resource.OneMore).toBe('resource:test.OneMore')
+    expect(merged.more).toBe('test.more')
+  })
+
+  it('should fail overwriting ids', () => {
+    const ids = identify('test' as Component, {
+      resource: {
+        MyString: '' as StatusCode<{}>,
+        FixedId: 'my-id' as StatusCode<{}>
+      },
+      simple: '' as StatusCode<{}>
+    })
+    const f = (): any =>
+      mergeIds('test' as Component, ids, {
+        resource: {
+          MyString: 'xxx' as StatusCode<{}>
+        }
+      })
+    expect(f).toThrowError("'mergeIds' overwrites")
   })
 })
