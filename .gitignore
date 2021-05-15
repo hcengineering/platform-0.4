@@ -1,3 +1,6 @@
+lib
+_api-extractor-temp
+
 # Logs
 *.log
 npm-debug.log*
