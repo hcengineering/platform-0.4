@@ -1,19 +1,29 @@
 //
 // Copyright © 2020, 2021 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
-import type { Ref, Doc, Type, PropertyType, Tx, Class, Obj, TxAddCollection, TxCreateObject } from '@anticrm/core'
+import type {
+  Ref,
+  Doc,
+  Type,
+  PropertyType,
+  Tx,
+  Class,
+  Obj,
+  TxAddCollection,
+  TxCreateObject
+} from '@anticrm/core'
 import { generateId } from '@anticrm/core'
 
 import core from './component'
@@ -52,7 +62,10 @@ export function Prop (type: Type<PropertyType>) {
   }
 }
 
-export function Model<T extends Obj> (_class: Ref<Class<T>>, _extends: Ref<Class<Obj>>) {
+export function Model<T extends Obj> (
+  _class: Ref<Class<T>>,
+  _extends: Ref<Class<Obj>>
+) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
     txes._id = _class
@@ -60,12 +73,15 @@ export function Model<T extends Obj> (_class: Ref<Class<T>>, _extends: Ref<Class
   }
 }
 
-function generateIds(objectId: Ref<Doc>, txes: Tx[]) {
-  txes.forEach(tx => { tx._id = generateId(); tx.objectId = objectId })
+function generateIds (objectId: Ref<Doc>, txes: Tx[]) {
+  txes.forEach((tx) => {
+    tx._id = generateId()
+    tx.objectId = objectId
+  })
   return txes
 }
 
-function _generateTx(candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
+function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
   let prepend: Tx[] = []
   for (let i = 0; i < txes.length; i++) {
     if (txes[i]._id === candidate.extends) {
@@ -81,24 +97,26 @@ function _generateTx(candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
     domain: 'model',
     objectId,
     attributes: {
-      extends: candidate.extends,
+      extends: candidate.extends
     }
   }
   const all = [...prepend, createTx, ...generateIds(objectId, candidate.txes)]
   const newCandiate = txes.pop()
-  return newCandiate ? [...all, ..._generateTx(newCandiate, txes)] : all
+  return newCandiate != null
+    ? [...all, ..._generateTx(newCandiate, txes)]
+    : all
 }
 
-export function generateTx(...classes: Array<new () => Obj>): Tx[] {
+export function generateTx (...classes: Array<new () => Obj>): Tx[] {
   const txes = classes.map((ctor) => getTxes(ctor.prototype))
   const candidate = txes.pop()
-  return candidate ? _generateTx(candidate, txes) : []
+  return candidate != null ? _generateTx(candidate, txes) : []
 }
 
 // T Y P E S
 
-export function TypeString(): Type<string> {
-  return { 
-    _class: core.class.TypeString,
+export function TypeString (): Type<string> {
+  return {
+    _class: core.class.TypeString
   }
 }
