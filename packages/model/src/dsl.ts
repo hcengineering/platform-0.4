@@ -73,7 +73,7 @@ export function Model<T extends Obj> (
   }
 }
 
-function generateIds (objectId: Ref<Doc>, txes: Tx[]) {
+function generateIds (objectId: Ref<Doc>, txes: Tx[]): Tx[] {
   txes.forEach((tx) => {
     tx._id = generateId()
     tx.objectId = objectId
@@ -110,7 +110,7 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
 export function generateTx (...classes: Array<new () => Obj>): Tx[] {
   const txes = classes.map((ctor) => getTxes(ctor.prototype))
   const candidate = txes.pop()
-  return candidate != null ? _generateTx(candidate, txes) : []
+  return candidate !== undefined ? _generateTx(candidate, txes) : []
 }
 
 // T Y P E S

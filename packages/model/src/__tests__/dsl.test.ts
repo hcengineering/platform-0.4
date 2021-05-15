@@ -17,7 +17,7 @@ import type { Class, Ref, Obj, Doc } from '@anticrm/core'
 import { Model, Prop, TypeString, generateTx } from '../dsl'
 import core from '../component'
 
-function removeIds (txes: Doc[]) {
+function removeIds (txes: Doc[]): void {
   txes.forEach((i) => {
     delete (i as Partial<Doc>)._id
   })
