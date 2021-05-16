@@ -1,5 +1,5 @@
 //
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,19 +13,15 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Tx } from '@anticrm/core'
-import { Model, generateTx } from '@anticrm/model'
+import type { Ref, Class, Obj } from '@anticrm/core'
+import type { Application } from '@anticrm/workbench'
+import { PluginWorkbench } from '@anticrm/workbench'
+import { mergeIds } from '@anticrm/status'
 
-import core from './component'
+import workbench from '@anticrm/workbench'
 
-@Model(core.class.Doc, core.class.Obj)
-export class TDoc implements Doc {
-  _id!: Ref<this>
-  _class!: Ref<Class<this>>
-}
-
-export function createModel(): Tx[] {
-  return generateTx(TDoc)
-}
-
-export { core as default }
+export default mergeIds(PluginWorkbench, workbench, {
+  class: {
+    Application: '' as Ref<Class<Application>>
+  }
+})

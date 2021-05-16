@@ -13,19 +13,22 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Tx } from '@anticrm/core'
-import { Model, generateTx } from '@anticrm/model'
+import type { IntlString, Asset, Component } from '@anticrm/status'
+import { identify } from '@anticrm/status'
+import type { Service } from '@anticrm/platform'
+import type { Doc } from '@anticrm/core'
 
-import core from './component'
-
-@Model(core.class.Doc, core.class.Obj)
-export class TDoc implements Doc {
-  _id!: Ref<this>
-  _class!: Ref<Class<this>>
+export interface Application extends Doc {
+  label: IntlString
+  icon: Asset
 }
 
-export function createModel(): Tx[] {
-  return generateTx(TDoc)
+export interface WorkbenchService extends Service {
+
 }
 
-export { core as default }
+export const PluginWorkbench = 'workbench' as Component
+
+export default identify(PluginWorkbench, {
+
+})

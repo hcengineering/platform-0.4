@@ -408,6 +408,16 @@
       "packageName": "@anticrm/model-core",
       "projectFolder": "models/core",
       "shouldPublish": false
+    },
+    {
+      "packageName": "@anticrm/model-workbench",
+      "projectFolder": "models/workbench",
+      "shouldPublish": false
+    },
+    {
+      "packageName": "@anticrm/workbench",
+      "projectFolder": "plugins/workbench",
+      "shouldPublish": true
     }
     // {
     //   /**

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,19 +13,22 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Tx } from '@anticrm/core'
+import type { IntlString, Asset } from '@anticrm/status'
+import type { Doc, Tx } from '@anticrm/core'
 import { Model, generateTx } from '@anticrm/model'
 
-import core from './component'
+import core, { TDoc } from '@anticrm/model-core'
+import workbench from './component'
 
-@Model(core.class.Doc, core.class.Obj)
-export class TDoc implements Doc {
-  _id!: Ref<this>
-  _class!: Ref<Class<this>>
+@Model(workbench.class.Application, core.class.Doc)
+export class TApplication extends TDoc implements Doc {
+  label!: IntlString
+  icon!: Asset
 }
 
 export function createModel(): Tx[] {
-  return generateTx(TDoc)
+  return generateTx(TApplication)
 }
 
-export { core as default }
+export { workbench as default }
+
