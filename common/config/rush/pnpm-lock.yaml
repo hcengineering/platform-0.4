@@ -10,6 +10,7 @@ specifiers:
   '@rush-temp/model': file:./projects/model.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
+  '@rush-temp/query': file:./projects/query.tgz
   '@rush-temp/status': file:./projects/status.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
   '@types/jest': ^26.0.23
@@ -30,6 +31,7 @@ dependencies:
   '@rush-temp/model': file:projects/model.tgz
   '@rush-temp/model-core': file:projects/model-core.tgz
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz
+  '@rush-temp/query': file:projects/query.tgz
   '@rush-temp/status': file:projects/status.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz
   '@types/jest': 26.0.23
@@ -6216,7 +6218,7 @@ packages:
     dev: false
 
   file:projects/model-workbench.tgz:
-    resolution: {integrity: sha512-pFGOMfnvcak9NNXIDKSUcJdcDmG+8cFMwDT++2JwZ1mOELakLSGElzFOaW6o/Lw9EPy+NfdkpYC4RMg2z7KQ7Q==, tarball: file:projects/model-workbench.tgz}
+    resolution: {integrity: sha512-8Iw9V1cv2h33ml9s1UV7BUNHgxlwzMr4zWHVATyIEqPdwCQJMk5WGxvTqiKEkWVVJylqWIiyJeDBJDJvWsyy3w==, tarball: file:projects/model-workbench.tgz}
     name: '@rush-temp/model-workbench'
     version: 0.0.0
     dependencies:
@@ -6245,6 +6247,27 @@ packages:
       '@babel/plugin-proposal-decorators': 7.14.2_@babel+core@7.14.2
       '@babel/preset-env': 7.14.2_@babel+core@7.14.2
       '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/query.tgz:
+    resolution: {integrity: sha512-FUFR1moimQe8KKYcTic/IExrqVQkW5/zYj4WrIi981arxztYgKX2LG9D9cr99ensL5gOMwBe9CivlCSck2rbEA==, tarball: file:projects/query.tgz}
+    name: '@rush-temp/query'
+    version: 0.0.0
+    dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       jest: 26.6.3

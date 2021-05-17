@@ -29,7 +29,6 @@ export default identify(ComponentCore, {
     TxAddCollection: '' as Ref<Class<TxAddCollection<Emb>>>
   },
   status: {
-    CannotHandleTx: '' as StatusCode<{_class: Ref<Class<Tx>>}>,
     ObjectNotFound: '' as StatusCode<{_id: Ref<Doc>}>
   }
 })

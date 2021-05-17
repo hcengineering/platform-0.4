@@ -15,11 +15,13 @@
 
 import { Status, Severity, PlatformError } from '@anticrm/status'
 
-import type { Storage } from './storage'
+import type { Storage, TxProcessor } from './storage'
 import type { Emb, Doc, Ref, Class, Collection, Data, PrimitiveType } from './classes'
 import type { Tx, TxAddCollection, TxCreateObject } from './tx'
 import type { Hierarchy } from './hierarchy'
+
 import { generateId } from './utils'
+import { createTxProcessor } from './storage'
 
 import core from './component'
 
@@ -51,17 +53,6 @@ export function createMemDb(hierarchy: Hierarchy): Storage {
     return result
   }
 
-  const txProcessor = { 
-    [core.class.TxCreateObject]: async (tx: TxCreateObject<Doc>): Promise<void> => {
-      const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
-      hierarchy.getAncestors(doc._class).forEach(_class => { getObjectsByClass(_class).push(doc) })
-      objectById.set(doc._id, doc)
-    },
-    [core.class.TxAddCollection]: async (tx: TxAddCollection<Emb>): Promise<void> => {
-      (getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes
-    }
-  }
-
   function findProperty(objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
     const result: Doc[] = []
     for (const object of objects) {
@@ -86,13 +77,16 @@ export function createMemDb(hierarchy: Hierarchy): Storage {
     return result as T[]
   }
 
-  function tx(tx: Tx): Promise<void> {
-    const f = txProcessor[tx._class] as (tx: Tx) => Promise<void>
-    if (f === undefined) {
-      throw new PlatformError(new Status(Severity.ERROR, core.status.CannotHandleTx, {_class: tx._class}))
+  const tx = createTxProcessor({ 
+    async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
+      const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
+      hierarchy.getAncestors(doc._class).forEach(_class => { getObjectsByClass(_class).push(doc) })
+      objectById.set(doc._id, doc)
+    },
+    async txAddCollection(tx: TxAddCollection<Emb>): Promise<void> {
+      (getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes
     }
-    return f(tx)
-  }
+  })
 
   return { findAll, tx }
 }

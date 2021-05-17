@@ -15,5 +15,6 @@
 
 export * from './classes'
 export * from './tx'
+export * from './storage'
 export * from './utils'
 export { default as default, ComponentCore } from './component'

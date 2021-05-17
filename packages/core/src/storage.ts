@@ -13,10 +13,31 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class } from './classes'
-import type { Tx } from './tx'
+import type { Emb, Doc, Ref, Class, Data } from './classes'
+import type { Tx, TxCreateObject, TxAddCollection } from './tx'
+
+import core from './component'
+
+export type DocumentQuery<T extends Doc> = Partial<Data<T>>
 
 export interface Storage {
-  findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]>
+  findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]>
   tx(tx: Tx): Promise<void>
+}
+
+export interface TxProcessor {
+  txCreateObject?: (tx: TxCreateObject<Doc>) => Promise<void>
+  txAddCollection?: (tx: TxAddCollection<Emb>) => Promise<void>
+}
+
+export function createTxProcessor(processor: TxProcessor): (tx: Tx) => Promise<void> {
+  return (tx: Tx): Promise<void> => {
+    switch(tx._class) {
+      case core.class.TxCreateObject:
+        if (processor.txCreateObject !== undefined) return processor.txCreateObject(tx as TxCreateObject<Doc>)
+      case core.class.TxAddCollection:
+        if (processor.txAddCollection !== undefined) return processor.txAddCollection(tx as TxAddCollection<Emb>)
+    }
+    return Promise.resolve()
+  }
 }
