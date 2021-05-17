@@ -6,6 +6,7 @@ specifiers:
   '@babel/preset-env': ^7.14.1
   '@babel/preset-typescript': ^7.13.0
   '@microsoft/api-extractor': ^7.13.4
+  '@rush-temp/chunter': file:./projects/chunter.tgz
   '@rush-temp/core': file:./projects/core.tgz
   '@rush-temp/model': file:./projects/model.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
@@ -27,6 +28,7 @@ dependencies:
   '@babel/preset-env': 7.14.2_@babel+core@7.14.2
   '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
   '@microsoft/api-extractor': 7.15.1
+  '@rush-temp/chunter': file:projects/chunter.tgz
   '@rush-temp/core': file:projects/core.tgz
   '@rush-temp/model': file:projects/model.tgz
   '@rush-temp/model-core': file:projects/model-core.tgz
@@ -6170,6 +6172,28 @@ packages:
       validator: 8.2.0
     optionalDependencies:
       commander: 2.20.3
+    dev: false
+
+  file:projects/chunter.tgz:
+    resolution: {integrity: sha512-t2xAvAIodkQE6YS100QqSNQxLxLWceGOou90Uuq/JQpLyfdYgh7xXraw8LqW+4ZQw17vUYBTn770x/XoRh4+LQ==, tarball: file:projects/chunter.tgz}
+    name: '@rush-temp/chunter'
+    version: 0.0.0
+    dependencies:
+      '@anticrm/platform': 0.4.2
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
     dev: false
 
   file:projects/core.tgz:

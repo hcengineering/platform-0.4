@@ -423,7 +423,13 @@
       "packageName": "@anticrm/workbench",
       "projectFolder": "plugins/workbench",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/chunter",
+      "projectFolder": "plugins/chunter",
+      "shouldPublish": true
     }
+
     // {
     //   /**
     //    * The NPM package name of the project (must match package.json)
