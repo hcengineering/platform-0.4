@@ -405,6 +405,21 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/platform",
+      "projectFolder": "packages/platform",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/theme",
+      "projectFolder": "packages/theme",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/ui",
+      "projectFolder": "packages/ui",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/model",
       "projectFolder": "packages/model",
       "shouldPublish": false
