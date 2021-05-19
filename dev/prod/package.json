@@ -1,0 +1,44 @@
+{
+  "name": "prod",
+  "version": "1.0.0",
+  "license": "EPL-2.0",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack",
+    "analyze": "cross-env NODE_ENV=production webpack --json > stats.json",
+    "show": "webpack-bundle-analyzer stats.json dist",
+    "dev": "webpack serve --content-base public",
+    "start": "cross-env NODE_ENV=production webpack serve --content-base public",
+    "test": "echo 'no tests'",
+    "preformat-svelte": "prettier -w src/**/*.svelte",
+    "lint": "eslint --max-warnings=0 src",
+    "lint:fix": "yarn preformat-svelte && eslint --fix src",
+    "upload": "cp -p public/* dist && aws s3 sync dist s3://anticrm-platform --delete --acl public-read"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "webpack-cli": "^4.6.0",
+    "webpack": "^5.32.0",
+    "mini-css-extract-plugin": "^1.4.1",
+    "dotenv-webpack": "^7.0.2",
+    "ts-loader": "^8.1.0",
+    "svelte-loader": "^3.1.0",
+    "css-loader": "^5.2.1",
+    "webpack-dev-server": "^3.11.2",
+    "style-loader": "^2.0.0",
+    "file-loader": "^6.2.0",
+    "sass-loader": "^11.0.1",
+    "@types/node": "^14.14.40",
+    "webpack-bundle-analyzer": "^4.4.1",
+    "svgo-loader": "^3.0.0"
+  },
+  "dependencies": {
+    "@anticrm/platform": "~0.4.2",
+    "@anticrm/ui": "~0.4.1",
+    "svelte": "^3.37.0",
+    "@anticrm/login": "~0.4.0",
+    "@anticrm/login-impl": "~0.4.0",
+    "@anticrm/workbench": "~0.4.0",
+    "@anticrm/workbench-impl": "~0.4.0",
+    "@anticrm/theme": "~0.4.0"
+  }
+}

@@ -425,6 +425,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "prod",
+      "projectFolder": "dev/prod",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/model-core",
       "projectFolder": "models/core",
       "shouldPublish": false
@@ -440,8 +445,23 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/login",
+      "projectFolder": "plugins/login",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/login-impl",
+      "projectFolder": "plugins/login-impl",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/workbench",
       "projectFolder": "plugins/workbench",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "projectFolder": "plugins/workbench-impl",
       "shouldPublish": true
     },
     {

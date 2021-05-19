@@ -1,5 +1,5 @@
 {
-  "name": "@anticrm/login-impl",
+  "name": "@anticrm/workbench-impl",
   "version": "0.4.0",
   "main": "src/index.ts",
   "author": "Anticrm Platform Contributors",
@@ -26,7 +26,6 @@
     "svelte": "^3.37.0",
     "@anticrm/status": "~0.4.2",
     "@anticrm/ui": "~0.4.1",
-    "@anticrm/login": "~0.4.0",
-    "@anticrm/rpc": "~0.4.0"
+    "@anticrm/workbench": "~0.4.0"
   }
 }

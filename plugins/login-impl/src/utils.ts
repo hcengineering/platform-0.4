@@ -17,7 +17,7 @@ import { Status, StatusCode, identify, OK, unknownError } from '@anticrm/status'
 import { getMetadata, IntlString } from '@anticrm/platform'
 import { Request, Response, serialize } from '@anticrm/rpc'
 
-import login, { PluginLogin } from '@anticrm/plugin-login'
+import login, { PluginLogin } from '@anticrm/login'
 
 export const Code = identify(PluginLogin, {
   RequiredField: '' as StatusCode<{field: string}>,
