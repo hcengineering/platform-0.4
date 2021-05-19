@@ -420,6 +420,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/model-chunter",
+      "projectFolder": "models/chunter",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/workbench",
       "projectFolder": "plugins/workbench",
       "shouldPublish": true

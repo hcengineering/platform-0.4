@@ -13,22 +13,12 @@
 // limitations under the License.
 //
 
-import type { IntlString, Asset } from '@anticrm/status'
-import type { Doc, Tx } from '@anticrm/core'
-import { Model, Builder } from '@anticrm/model'
+import chunter, { PluginChunter } from '@anticrm/chunter'
+import type { IntlString } from '@anticrm/status'
+import { mergeIds } from '@anticrm/status' 
 
-import core, { TDoc } from '@anticrm/model-core'
-import workbench from './component'
-
-@Model(workbench.class.Application, core.class.Doc)
-export class TApplication extends TDoc implements Doc {
-  label!: IntlString
-  icon!: Asset
-}
-
-export function createModel(builder: Builder) {
-  builder.createModel(TApplication)
-}
-
-export { workbench as default }
-
+export default mergeIds(PluginChunter, chunter, {
+  string: { 
+    ApplicationLabelChunter: '' as IntlString
+  }
+})

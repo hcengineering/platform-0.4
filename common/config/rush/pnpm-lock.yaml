@@ -9,6 +9,7 @@ specifiers:
   '@rush-temp/chunter': file:./projects/chunter.tgz
   '@rush-temp/core': file:./projects/core.tgz
   '@rush-temp/model': file:./projects/model.tgz
+  '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/query': file:./projects/query.tgz
@@ -31,6 +32,7 @@ dependencies:
   '@rush-temp/chunter': file:projects/chunter.tgz
   '@rush-temp/core': file:projects/core.tgz
   '@rush-temp/model': file:projects/model.tgz
+  '@rush-temp/model-chunter': file:projects/model-chunter.tgz
   '@rush-temp/model-core': file:projects/model-core.tgz
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz
   '@rush-temp/query': file:projects/query.tgz
@@ -6209,6 +6211,27 @@ packages:
       jest: 26.6.3
       prettier: 2.3.0
       simplytyped: 3.3.0_typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/model-chunter.tgz:
+    resolution: {integrity: sha512-dsUDZP3UjJKkN1onnEYh2DaP3n4cmmvk+eYmpW8RDFsDwIsJEZP9GbI4dPWhThf6rrJB0YVU81A1HznPW+cFvA==, tarball: file:projects/model-chunter.tgz}
+    name: '@rush-temp/model-chunter'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:

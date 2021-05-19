@@ -13,22 +13,9 @@
 // limitations under the License.
 //
 
-import type { IntlString, Asset } from '@anticrm/status'
-import type { Doc, Tx } from '@anticrm/core'
-import { Model, Builder } from '@anticrm/model'
-
-import core, { TDoc } from '@anticrm/model-core'
-import workbench from './component'
-
-@Model(workbench.class.Application, core.class.Doc)
-export class TApplication extends TDoc implements Doc {
-  label!: IntlString
-  icon!: Asset
-}
+import type { Application } from '@anticrm/workbench'
+import { Builder } from '@anticrm/model'
 
 export function createModel(builder: Builder) {
-  builder.createModel(TApplication)
+
 }
-
-export { workbench as default }
-

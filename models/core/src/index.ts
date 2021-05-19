@@ -14,7 +14,7 @@
 //
 
 import type { Doc, Ref, Class, Tx } from '@anticrm/core'
-import { Model, generateTx } from '@anticrm/model'
+import { Model, Builder } from '@anticrm/model'
 
 import core from './component'
 
@@ -24,8 +24,8 @@ export class TDoc implements Doc {
   _class!: Ref<Class<this>>
 }
 
-export function createModel(): Tx[] {
-  return generateTx(TDoc)
+export function createModel(builder: Builder) {
+  builder.createModel(TDoc)
 }
 
 export { core as default }

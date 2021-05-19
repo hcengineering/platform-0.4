@@ -22,6 +22,7 @@ import type {
   Tx,
   Class,
   Obj,
+  Data,
   TxAddCollection,
   TxCreateObject
 } from '@anticrm/core'
@@ -82,6 +83,17 @@ function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
   }))
 }
 
+function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): TxCreateObject<T> {
+  return {
+    _id: generateId(),
+    _class: core.class.TxCreateObject,
+    domain: 'tx',
+    objectId: objectId ?? generateId(),
+    objectClass: _class,
+    attributes
+  }
+}
+
 function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
   let prepend: Tx[] = []
   for (let i = 0; i < txes.length; i++) {
@@ -92,18 +104,11 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
     }
   }
   const objectId = candidate._id
-  const createTx: TxCreateObject<Class<Obj>> = {
-    _id: generateId(),
-    _class: core.class.TxCreateObject,
-    domain: 'tx',
-    objectId,
-    objectClass: core.class.Class,
-    attributes: {
-      domain: 'model',
-      kind: ClassifierKind.CLASS,
-      extends: candidate.extends
-    }
-  }
+  const createTx = txCreateObject(core.class.Class, {
+    domain: 'model',
+    kind: ClassifierKind.CLASS,
+    extends: candidate.extends
+  }, objectId)
   const all = [...prepend, createTx, ...generateIds(objectId, candidate.txes)]
   const newCandiate = txes.pop()
   return newCandiate != null
@@ -111,11 +116,24 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
     : all
 }
 
-export function generateTx (...classes: Array<new () => Obj>): Tx[] {
-  const txes = classes.map((ctor) => getTxes(ctor.prototype))
-  const candidate = txes.pop()
-  return candidate !== undefined ? _generateTx(candidate, txes) : []
+export class Builder {
+  private readonly txes: Tx[] = []
+
+  createModel (...classes: (new () => Obj)[]): void {
+    const txes = classes.map((ctor) => getTxes(ctor.prototype))
+    const candidate = txes.pop()
+    const sorted = candidate !== undefined ? _generateTx(candidate, txes) : []
+    this.txes.push(...sorted)
+  }
+
+  createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
+    this.txes.push(txCreateObject(_class, attributes, objectId))
+  }
+
+  getTxes(): Tx[] { return this.txes }
+  
 }
+
 
 // T Y P E S
 

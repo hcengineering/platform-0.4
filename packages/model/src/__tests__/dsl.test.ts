@@ -14,7 +14,7 @@
 //
 
 import type { Class, Ref, Obj, Doc } from '@anticrm/core'
-import { Model, Prop, TypeString, generateTx } from '../dsl'
+import { Model, Prop, TypeString, Builder } from '../dsl'
 import core from '../component'
 
 function removeIds (txes: Doc[]): void {
@@ -25,7 +25,9 @@ function removeIds (txes: Doc[]): void {
 
 describe('dsl', () => {
   it('should not fail empty generateTx', () => {
-    expect(generateTx()).toEqual([])
+    const builder = new Builder()
+    builder.createModel()
+    expect(builder.getTxes()).toEqual([])
   })
 
   it('should generate txes', () => {
@@ -34,7 +36,9 @@ describe('dsl', () => {
       _class!: Ref<Class<MyClass>>
       @Prop(TypeString()) name!: string
     }
-    const txes = generateTx(MyClass)
+    const builder = new Builder()
+    builder.createModel(MyClass)
+    const txes = builder.getTxes()
     removeIds(txes)
     expect(txes).toEqual([
       {
@@ -117,11 +121,15 @@ describe('dsl', () => {
       }
     ]
 
-    const txes = generateTx(MyClass, MyClass2)
+    const builder = new Builder()
+    builder.createModel(MyClass, MyClass2)
+    const txes = builder.getTxes()
     removeIds(txes)
     expect(txes).toEqual(valid)
 
-    const txes2 = generateTx(MyClass2, MyClass)
+    const builder2 = new Builder()
+    builder2.createModel(MyClass2, MyClass)
+    const txes2 = builder2.getTxes()
     removeIds(txes2)
     expect(txes).toEqual(valid)
   })
