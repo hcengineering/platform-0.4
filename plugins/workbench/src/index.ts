@@ -14,8 +14,8 @@
 //
 
 import type { IntlString, Asset, Component } from '@anticrm/status'
-import { identify } from '@anticrm/status'
-import type { Service } from '@anticrm/platform'
+import { plugin } from '@anticrm/platform'
+import type { Service, Plugin } from '@anticrm/platform'
 import type { Doc } from '@anticrm/core'
 
 export interface Application extends Doc {
@@ -27,8 +27,8 @@ export interface WorkbenchService extends Service {
 
 }
 
-export const PluginWorkbench = 'workbench' as Component
+const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 
-export default identify(PluginWorkbench, {
+export default plugin(PluginWorkbench, {}, {
 
 })

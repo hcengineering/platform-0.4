@@ -69,8 +69,7 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 
 // I D E N T I T Y
 
-type Value = string | Record<string, string>
-export type Namespace = Record<string, Value>
+export type Namespace = Record<string, any>
 
 function transform (
   result: Namespace,
@@ -87,11 +86,11 @@ function transform (
         ? value === ''
           ? prefix + '.' + key
           : value
-        : (transform(
+        : transform(
           result[key] === undefined ? {} : (result[key] as {}),
           key + ':' + prefix,
           value as Namespace
-        ) as Value)
+        )
   }
   return result
 }

@@ -23,7 +23,7 @@ const prod = mode === 'production'
 module.exports = {
   entry: {
     bundle: [
-      '@anticrm/sparkling-theme/styles/global.scss',
+      '@anticrm/theme/styles/global.scss',
       './src/main.ts'
     ]
   },

@@ -15,12 +15,11 @@
 
 import type { Ref, Class, Obj } from '@anticrm/core'
 import type { Application } from '@anticrm/workbench'
-import { PluginWorkbench } from '@anticrm/workbench'
 import { mergeIds } from '@anticrm/status'
 
 import workbench from '@anticrm/workbench'
 
-export default mergeIds(PluginWorkbench, workbench, {
+export default mergeIds(workbench.id, workbench, {
   class: {
     Application: '' as Ref<Class<Application>>
   }

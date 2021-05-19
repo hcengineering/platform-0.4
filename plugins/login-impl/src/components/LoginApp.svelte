@@ -44,7 +44,7 @@
 </div>
 
 <style lang="scss">
-  @import "@anticrm/sparkling-theme/styles/mixins.scss";
+  @import "@anticrm/theme/styles/mixins.scss";
 
   .bg-noise {
     @include bg-fullsize;

@@ -139,10 +139,10 @@ export function plugin<P extends Service, D extends PluginDependencies, N extend
   }
 }
 
-export function mergeIds<P extends Service, X extends PluginDependencies, D extends PluginDescriptor<P, X>, N extends Namespace> (a: D, b: N): D & N {
-  return mergeWith({}, a, identify(a.id, b), (value) => {
-    if (typeof value === 'string') {
-      throw new Error('attempting to overwrite ' + value)
-    }
-  })
-}
+// export function mergeIds<P extends Service, X extends PluginDependencies, D extends PluginDescriptor<P, X>, N extends Namespace> (a: D, b: N): D & N {
+//   return mergeWith({}, a, identify(a.id, b), (value) => {
+//     if (typeof value === 'string') {
+//       throw new Error('attempting to overwrite ' + value)
+//     }
+//   })
+// }

@@ -5,7 +5,7 @@
   import { applicationShortcutKey } from '../../utils'
   import { newRouter } from '../../utils'
 
-  import { Theme } from '@anticrm/sparkling-theme'
+  import { Theme } from '@anticrm/theme'
   import Component from '../Component.svelte'
 
   import StatusComponent from './Status.svelte'

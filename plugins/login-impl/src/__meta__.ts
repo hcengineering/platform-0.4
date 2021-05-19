@@ -14,7 +14,7 @@
 //
 
 import { setMetadata, addStringsLoader } from '@anticrm/platform'
-import login, { PluginLogin } from '@anticrm/plugin-login'
+import login, { PluginLogin } from '@anticrm/login'
 import { applicationShortcutKey } from '@anticrm/ui'
 
 setMetadata(applicationShortcutKey('login'), login.component.LoginForm)

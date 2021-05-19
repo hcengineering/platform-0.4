@@ -15,7 +15,7 @@
 
 import { setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
-import login from '@anticrm/plugin-login'
+import login from '@anticrm/login'
 
 import { configurePlatform } from './platform'
 

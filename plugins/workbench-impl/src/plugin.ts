@@ -13,9 +13,13 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/platform'
+import { mergeIds } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/ui'
 
 import workbench from '@anticrm/workbench'
 
-export default mergeIds(workbench, {
+export default mergeIds(workbench.id, workbench, {
+  component: {
+    WorkbenchApp: '' as AnyComponent
+  }
 })
