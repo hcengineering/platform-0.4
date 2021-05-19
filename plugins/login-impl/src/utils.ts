@@ -19,17 +19,6 @@ import { Request, Response, serialize } from '@anticrm/rpc'
 
 import login, { PluginLogin } from '@anticrm/login'
 
-export const Code = identify(PluginLogin, {
-  RequiredField: '' as StatusCode<{field: string}>,
-  Email: '' as IntlString,
-  Password: '' as IntlString,
-  Workspace: '' as IntlString,
-  ConnectingToServer: '' as IntlString,
-  LogIn: '' as IntlString,
-  SignUp: '' as IntlString,
-  DoNotHaveAnAccount: '' as IntlString
-})
-
 /**
  * Perform a login operation to required workspace with user credentials.
  */

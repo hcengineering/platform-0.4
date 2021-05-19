@@ -18,18 +18,20 @@
   import { OK, Status, Severity } from '@anticrm/status'
 
   import Form from './Form.svelte'
-  import { Code, doLogin } from '../utils'
+  import { doLogin } from '../utils'
+
+  import login from '../plugin'
 
   const dispatch = createEventDispatcher()
 
   const fields = [
-    { name: 'username', i18n: Code.Email },
+    { name: 'username', i18n: login.string.Email },
     {
       name: 'password',
-      i18n: Code.Password,
+      i18n: login.string.Password,
       password: true
     },
-    { name: 'workspace', i18n: Code.Workspace }
+    { name: 'workspace', i18n: login.string.Workspace }
   ]
 
   const object = {
@@ -41,9 +43,9 @@
   let status = OK
 
   const action = { 
-    i18n: Code.LogIn,
+    i18n: login.string.LogIn,
     func: async () => { 
-      status = new Status(Severity.INFO, Code.ConnectingToServer, {})
+      status = new Status(Severity.INFO, login.status.ConnectingToServer, {})
 
       const [loginStatus, result] = await doLogin(object.username, object.password, object.workspace)
 
@@ -59,8 +61,8 @@
 
 </script>
 
-<Form caption={Code.LogIn} {status} {fields} {object} {action}
-  bottomCaption={Code.DoNotHaveAnAccount}
-  bottomActionLabel={Code.SignUp}
+<Form caption={login.string.LogIn} {status} {fields} {object} {action}
+  bottomCaption={login.string.DoNotHaveAnAccount}
+  bottomActionLabel={login.string.SignUp}
   bottomActionFunc={() => { dispatch('switch', 'signup') }}
 />

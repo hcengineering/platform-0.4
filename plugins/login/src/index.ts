@@ -16,8 +16,10 @@
 // P L U G I N
 
 import type { Status } from '@anticrm/status'
-import { Metadata, plugin, Plugin, Service } from '@anticrm/platform'
+import type { Metadata, Plugin, Service } from '@anticrm/platform'
+import { plugin, setMetadata, addStringsLoader } from '@anticrm/platform'
 import type { AnyComponent } from '@anticrm/ui'
+import { applicationShortcutKey } from '@anticrm/ui'
 
 export interface LoginInfo {
   email: string
@@ -66,7 +68,7 @@ export interface LoginService extends Service {
 
 export const PluginLogin = 'login' as Plugin<LoginService>
 
-export default plugin(PluginLogin, {}, {
+const login = plugin(PluginLogin, {}, {
   component: {
     LoginForm: '' as AnyComponent,
     SettingForm: '' as AnyComponent,
@@ -77,3 +79,12 @@ export default plugin(PluginLogin, {}, {
     AccountsUrl: '' as Metadata<string>
   }
 })
+
+export function metadata() {
+  setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
+  addStringsLoader(PluginLogin, (lang: string) => {
+    return import('../lang/en.json')        
+  })  
+}
+
+export default login

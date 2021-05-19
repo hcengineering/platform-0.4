@@ -22,7 +22,7 @@ import { IntlMessageFormat } from 'intl-messageformat'
 
 export type { IntlString }
 
-type Loader = (locale: string) => Promise<Record<string, IntlString>>
+type Loader = (locale: string) => Promise<Record<string, string>>
 
 const locale = 'en'
 
@@ -42,7 +42,7 @@ async function loadTranslationsForComponent (component: Component): Promise<Reco
     return status
   }
   try {
-    return await loader(locale)
+    return await loader(locale) as Record<string, IntlString> | Status
   } catch (err) {
     const status = unknownError(err)
     setPlatformStatus(status)

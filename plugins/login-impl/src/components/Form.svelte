@@ -19,7 +19,7 @@
   import type { IntlString } from '@anticrm/platform'
   import { translate } from '@anticrm/platform'
 
-  import { Code } from '../utils'
+  import login from '../plugin'
 
   interface Field {
     name: string
@@ -48,7 +48,7 @@
       const v = object[field.name]
       const f = field
       if (!f.optional && (!v || v === '')) {
-        status = new Status(Severity.INFO, Code.RequiredField, {field: await translate(field.i18n, {})})
+        status = new Status(Severity.INFO, login.status.RequiredField, {field: await translate(field.i18n, {})})
         return
       }
     }
