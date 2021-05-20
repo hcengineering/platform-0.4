@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj } from '@anticrm/core'
+import type {} from '@anticrm/platform' // need this for type inference
+import type { Ref, Class } from '@anticrm/core'
 import type { Application } from '@anticrm/workbench'
 import { mergeIds } from '@anticrm/status'
 

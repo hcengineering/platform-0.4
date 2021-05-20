@@ -30,5 +30,6 @@ export function createModel(builder: Builder) {
   builder.createModel(TApplication)
 }
 
-export { workbench as default }
+export default workbench
+
 

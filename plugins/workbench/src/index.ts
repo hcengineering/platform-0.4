@@ -29,6 +29,4 @@ export interface WorkbenchService extends Service {
 
 const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 
-export default plugin(PluginWorkbench, {}, {
-
-})
+export default plugin(PluginWorkbench, {}, {})

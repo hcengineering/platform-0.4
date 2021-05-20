@@ -13,9 +13,14 @@
 // limitations under the License.
 //
 
-import type { Application } from '@anticrm/workbench'
 import { Builder } from '@anticrm/model'
 
-export function createModel(builder: Builder) {
+import workbench from '@anticrm/model-workbench'
+import chunter from './plugin'
 
+export function createModel(builder: Builder) {
+  builder.createDoc(workbench.class.Application, {
+    label: chunter.string.ApplicationLabelChunter,
+    icon: ''
+  })
 }
