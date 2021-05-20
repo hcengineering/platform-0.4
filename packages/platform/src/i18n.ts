@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Component, Status, Severity, unknownError } from '@anticrm/status'
+import { Component, Status, Severity, unknownError, parseId } from '@anticrm/status'
 import type { IntlString } from '@anticrm/status'
 import { setPlatformStatus } from './event'
 import { IntlMessageFormat } from 'intl-messageformat'
@@ -22,19 +22,20 @@ import platform from './component'
 
 export type { IntlString }
 
-type Loader = (locale: string) => Promise<Record<string, string>>
+type Loader = (locale: string) => Promise<Record<string, string | Record<string, string>>>
+type Messages = Record<string, IntlString | Record<string, IntlString>>
 
 const locale = 'en'
 
 const loaders = new Map<Component, Loader>()
-const translations = new Map<Component, Record<string, IntlString> | Status>()
+const translations = new Map<Component, Messages | Status>()
 const cache = new Map<IntlString, IntlMessageFormat | Status>()
 
 export function addStringsLoader (component: Component, loader: Loader): void {
   loaders.set(component, loader)
 }
 
-async function loadTranslationsForComponent (component: Component): Promise<Record<string, IntlString> | Status> {
+async function loadTranslationsForComponent (component: Component): Promise<Messages | Status> {
   const loader = loaders.get(component)
   if (loader === undefined) {
     const status = new Status(Severity.ERROR, platform.status.NoLoaderForStrings, { component })
@@ -51,17 +52,16 @@ async function loadTranslationsForComponent (component: Component): Promise<Reco
 }
 
 async function getTranslation (message: IntlString): Promise<IntlString | Status> {
-  const [comp, id] = message.split('.')
-  const component = comp as Component
-  let messages = translations.get(component)
+  const id = parseId(message)
+  let messages = translations.get(id.component)
   if (messages === undefined) {
-    messages = await loadTranslationsForComponent(component)
-    translations.set(component, messages)
+    messages = await loadTranslationsForComponent(id.component)
+    translations.set(id.component, messages)
   }
   if (messages instanceof Status) {
     return messages
   }
-  return messages[id] ?? message
+  return (id.kind ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
 }
 
 export async function translate<P extends Record<string, any>> (message: IntlString<P>, params: P): Promise<string> {
