@@ -80,11 +80,9 @@ const login = plugin(PluginLogin, {}, {
   }
 })
 
-export function metadata() {
-  setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
-  addStringsLoader(PluginLogin, (lang: string) => {
-    return import('./lang/en.json')        
-  })  
-}
+setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
+addStringsLoader(PluginLogin, (lang: string) => {
+  return import('./lang/en.json')        
+})  
 
 export default login
