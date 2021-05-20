@@ -13,36 +13,12 @@
 // limitations under the License.
 //
 
-import { Plugin, Service, getPlugin } from './plugin'
+import type { Plugin, Service } from './plugin'
+import { getPlugin } from './plugin'
 import type { Resource } from '@anticrm/status'
+import { parseId } from '@anticrm/status'
 
 export type { Resource }
-
-// R E S O U R C E  I N F O
-
-export type ResourceKind = string & { __resourceKind: true }
-
-export interface ResourceInfo {
-  kind: ResourceKind
-  plugin: Plugin<Service>
-  id: string
-}
-
-export function getResourceInfo (resource: Resource<any>): ResourceInfo {
-  const index = resource.indexOf(':')
-  if (index === -1) {
-    throw new Error('invalid resource id format')
-  }
-  const kind = resource.substring(0, index) as ResourceKind
-  const dot = resource.indexOf('.', index)
-  const plugin = resource.substring(index + 1, dot) as Plugin<Service>
-  const id = resource.substring(dot)
-  return {
-    kind,
-    plugin,
-    id
-  }
-}
 
 const resources = new Map<Resource<any>, any>()
 const resolvingResources = new Map<Resource<any>, Promise<any>>()
@@ -62,8 +38,8 @@ export async function getResource<T> (resource: Resource<T>): Promise<T> {
       return await resolving
     }
 
-    const info = getResourceInfo(resource)
-    resolving = getPlugin(info.plugin)
+    const info = parseId(resource)
+    resolving = getPlugin(info.component as Plugin<Service>)
       .then(() => {
         const value = resources.get(resource)
         if (value === undefined) {

@@ -14,14 +14,14 @@
 //
 
 import type { Component, StatusCode } from '@anticrm/status'
-import { identify } from '@anticrm/status'
+import { component } from '@anticrm/status'
 
 import type { Ref, Class, Doc, Emb, Obj } from './classes'
 import type { Tx, TxCreateObject, TxAddCollection } from './tx'
 
-export const ComponentCore = 'core' as Component
+const ComponentCore = 'core' as Component
 
-export default identify(ComponentCore, {
+export default component(ComponentCore, {
   class: {
     Class: '' as Ref<Class<Class<Obj>>>,
     Tx: '' as Ref<Class<Tx>>,

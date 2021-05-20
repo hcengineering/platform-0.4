@@ -15,11 +15,11 @@
 
 /* eslint-env jest */
 
-import { Status, Severity, identify, OK, unknownError } from '@anticrm/status'
+import { Status, Severity, OK, unknownError, component, Component } from '@anticrm/status'
 
 import { Metadata, getMetadata, loadMetadata, setMetadata } from '../metadata'
 import { Plugin, Service, getPlugin, addLocation } from '../plugin'
-import { Resource, getResource, getResourceInfo, peekResource, setResource } from '../resource'
+import { Resource, getResource, peekResource, setResource } from '../resource'
 import {
   addEventListener,
   removeEventListener,
@@ -112,12 +112,6 @@ describe('platform', () => {
     expect(deps.plugin2.id).toBe('plugin2')
   })
 
-  it('should fail to get resource info', () => {
-    expect(() => getResourceInfo('bad resource definition' as Resource<string>)).toThrowError(
-      'invalid resource id format'
-    )
-  })
-
   it('should peek resource', () => {
     const resource = 'resource' as Resource<string>
     expect(peekResource(resource)).toBeUndefined()
@@ -132,7 +126,7 @@ describe('platform', () => {
   })
 
   it('should load metadata', () => {
-    const ids = identify('test' as AnyPlugin, {
+    const ids = component('test' as Component, {
       meta: {
         M1: '' as Metadata<string>,
         M2: 'my-id' as Metadata<string>
@@ -149,7 +143,7 @@ describe('platform', () => {
   })
 
   it('should fail to load metadata', () => {
-    const ids = identify('test' as AnyPlugin, {
+    const ids = component('test' as Component, {
       meta: {
         M1: 'flag' as Metadata<boolean>
       }

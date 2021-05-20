@@ -13,15 +13,16 @@
 // limitations under the License.
 //
 
-import { Code as StatusCode, Component, identify, Severity, Status } from '@anticrm/status'
-import { Code as PlatformCode } from '../status'
+import status, { Component, component, Severity, Status } from '@anticrm/status'
 
 import { addStringsLoader, IntlString, translate } from '../i18n'
 import { addEventListener, PlatformEvent, removeEventListener } from '../event'
 
+import platform from '../component'
+
 const TestComponent = 'test-strings' as Component
 
-const strings =  identify(TestComponent, {
+const strings =  component(TestComponent, {
   loadingPlugin: '' as IntlString<{ plugin: string }>,
 })
 
@@ -47,7 +48,7 @@ describe('i18n', () => {
     const component = 'component-for-no-loader'
     const message = `${component}.id`
 
-    const checkStatus = new Status(Severity.ERROR, PlatformCode.NoLoaderForStrings, { component })
+    const checkStatus = new Status(Severity.ERROR, platform.status.NoLoaderForStrings, { component })
     const eventListener = async (event: string, data: any): Promise<void> => {
       await expect(data).toEqual(checkStatus)
       done()
@@ -66,7 +67,7 @@ describe('i18n', () => {
       throw new Error(errorMessage)
     })
 
-    const checkStatus = new Status(Severity.ERROR, StatusCode.UnknownError, { message: errorMessage })
+    const checkStatus = new Status(Severity.ERROR, status.status.UnknownError, { message: errorMessage })
     const eventListener = async (event: string, data: any): Promise<void> => {
       await expect(data).toEqual(checkStatus)
       done()

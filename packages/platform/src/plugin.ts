@@ -13,11 +13,10 @@
 // limitations under the License.
 //
 
-import { Component, Status, Severity, identify, Namespace } from '@anticrm/status'
+import { Component, Status, Severity, component, Namespace } from '@anticrm/status'
 import { monitor } from './event'
-import { Code } from './status'
 
-import mergeWith from 'lodash/mergeWith'
+import platform from './component'
 
 /** Base interface for a plugin or platform service. */
 export interface Service {} // eslint-disable-line @typescript-eslint/no-empty-interface
@@ -119,7 +118,7 @@ async function loadPlugin<T extends Service> (id: Plugin<T>): Promise<Service> {
   // loaderPromise = location[1]()
   // }
 
-  const status = new Status(Severity.INFO, Code.LoadingPlugin, { plugin: id })
+  const status = new Status(Severity.INFO, platform.status.LoadingPlugin, { plugin: id })
   const loadedPlugin = await monitor(status, loaderPromise)
   const f = loadedPlugin.default
   const service = await f(deps)
@@ -132,17 +131,5 @@ export function plugin<P extends Service, D extends PluginDependencies, N extend
   deps: D,
   namespace: N
 ): PluginDescriptor<P, D> & N {
-  return {
-    id,
-    deps,
-    ...identify(id, namespace)
-  }
+  return { deps, ...component(id, namespace) }
 }
-
-// export function mergeIds<P extends Service, X extends PluginDependencies, D extends PluginDescriptor<P, X>, N extends Namespace> (a: D, b: N): D & N {
-//   return mergeWith({}, a, identify(a.id, b), (value) => {
-//     if (typeof value === 'string') {
-//       throw new Error('attempting to overwrite ' + value)
-//     }
-//   })
-// }

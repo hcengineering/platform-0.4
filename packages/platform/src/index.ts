@@ -14,18 +14,20 @@
 //
 
 export * from './metadata'
-export * from './status'
+export * from './component'
 export * from './event'
 export * from './plugin'
 export * from './resource'
 export * from './i18n'
 
 import { addStringsLoader } from './i18n'
-import { Platform } from './status'
+import platform from './component'
 
-addStringsLoader(Platform, async (lang: string) => {
+addStringsLoader(platform.id, async (lang: string) => {
   switch (lang) {
-    case 'en': return await import(`./lang/en.json`) as any
+    case 'en': return await import('./lang/en.json') as any
   }
   throw new Error('unsupported language')
 })
+
+export { platform as default }

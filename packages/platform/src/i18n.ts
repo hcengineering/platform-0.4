@@ -15,10 +15,10 @@
 
 import { Component, Status, Severity, unknownError } from '@anticrm/status'
 import type { IntlString } from '@anticrm/status'
-import { Code } from './status'
 import { setPlatformStatus } from './event'
-
 import { IntlMessageFormat } from 'intl-messageformat'
+
+import platform from './component'
 
 export type { IntlString }
 
@@ -37,7 +37,7 @@ export function addStringsLoader (component: Component, loader: Loader): void {
 async function loadTranslationsForComponent (component: Component): Promise<Record<string, IntlString> | Status> {
   const loader = loaders.get(component)
   if (loader === undefined) {
-    const status = new Status(Severity.ERROR, Code.NoLoaderForStrings, { component })
+    const status = new Status(Severity.ERROR, platform.status.NoLoaderForStrings, { component })
     setPlatformStatus(status)
     return status
   }

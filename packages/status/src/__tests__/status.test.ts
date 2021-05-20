@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import { Component, identify, mergeIds, StatusCode } from '..'
+import { Component, component, mergeIds, parseId, StatusCode, Id } from '..'
 
 describe('status', () => {
   it('should identify resources', () => {
-    const ids = identify('test' as Component, {
+    const ids = component('test' as Component, {
       resource: {
         MyString: '' as StatusCode<{}>,
         FixedId: 'my-id' as StatusCode<{}>
@@ -30,14 +30,14 @@ describe('status', () => {
   })
 
   it('should merge ids', () => {
-    const ids = identify('test' as Component, {
+    const ids = component('test' as Component, {
       resource: {
         MyString: '' as StatusCode<{}>,
         FixedId: 'my-id' as StatusCode<{}>
       },
       simple: '' as StatusCode<{}>
     })
-    const merged = mergeIds('test' as Component, ids, {
+    const merged = mergeIds(ids, {
       resource: {
         OneMore: '' as StatusCode<{}>
       },
@@ -51,7 +51,7 @@ describe('status', () => {
   })
 
   it('should fail overwriting ids', () => {
-    const ids = identify('test' as Component, {
+    const ids = component('test' as Component, {
       resource: {
         MyString: '' as StatusCode<{}>,
         FixedId: 'my-id' as StatusCode<{}>
@@ -59,11 +59,26 @@ describe('status', () => {
       simple: '' as StatusCode<{}>
     })
     const f = (): any =>
-      mergeIds('test' as Component, ids, {
+      mergeIds(ids, {
         resource: {
           MyString: 'xxx' as StatusCode<{}>
         }
       })
     expect(f).toThrowError("'mergeIds' overwrites")
   })
+
+  it('should fail to parse id', () => {
+    expect(() => parseId('bad id' as Id)).toThrowError(
+      'ERROR: status:status.InvalidId'
+    )
+  })
+
+  it('should parse id', () => {
+    expect(parseId('res:comp.X' as Id)).toEqual({kind: 'res', component: 'comp', name: 'X'})
+  })
+
+  it('should parse id without kind', () => {
+    expect(parseId('comp.X' as Id)).toEqual({component: 'comp', name: 'X'})
+  })
+
 })

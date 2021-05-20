@@ -19,7 +19,7 @@ import { mergeIds } from '@anticrm/status'
 
 import workbench from '@anticrm/workbench'
 
-export default mergeIds(workbench.id, workbench, {
+export default mergeIds(workbench, {
   class: {
     Application: '' as Ref<Class<Application>>
   }

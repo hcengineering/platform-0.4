@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import chunter, { PluginChunter } from '@anticrm/chunter'
+import chunter from '@anticrm/chunter'
 import type { IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status' 
 
-export default mergeIds(PluginChunter, chunter, {
+export default mergeIds(chunter, {
   string: { 
     ApplicationLabelChunter: '' as IntlString
   }

@@ -14,7 +14,7 @@
 //
 
 import { Severity, Status } from '@anticrm/status'
-import { WHO_AM_I, TOKEN, getMetadata, setResource, setMetadata } from '@anticrm/platform'
+import platform, { getMetadata, setResource, setMetadata } from '@anticrm/platform'
 import { Request, Response, serialize } from '@anticrm/rpc'
 
 import login, { ACCOUNT_KEY, LoginInfo, LoginService } from '@anticrm/login'

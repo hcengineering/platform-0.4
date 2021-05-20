@@ -13,16 +13,15 @@
 // limitations under the License.
 //
 
-import type { Component } from '@anticrm/status'
-import { identify } from '@anticrm/status'
-import type { Service } from '@anticrm/platform'
+import { plugin } from '@anticrm/platform'
+import type { Plugin, Service } from '@anticrm/platform'
 
 export interface ChunterService extends Service {
 
 }
 
-export const PluginChunter = 'chunter' as Component
+const PluginChunter = 'chunter' as Plugin<ChunterService>
 
-export default identify(PluginChunter, {
+export default plugin(PluginChunter, {}, {
 
 })

@@ -14,20 +14,18 @@
 //
 
 import type { Component, StatusCode } from '@anticrm/status'
-import { identify } from '@anticrm/status'
-
+import { component } from '@anticrm/status'
 import type { Metadata } from './metadata'
 
-/**
- * Platform component Id
- * @public
- */
-export const Platform = 'platform' as Component
+const Platform = 'platform' as Component
 
-export const Code = identify(Platform, {
-  LoadingPlugin: '' as StatusCode<{ plugin: string }>,
-  NoLoaderForStrings: '' as StatusCode<{ component: Component }>
+export default component(Platform, {
+  status: {
+    LoadingPlugin: '' as StatusCode<{ plugin: string }>,
+    NoLoaderForStrings: '' as StatusCode<{ component: Component }>  
+  },
+  metadata: {
+    WhoAmI: '' as Metadata<string>,
+    Token: '' as Metadata<string>
+  }
 })
-
-export const WHO_AM_I: Metadata<string> = 'platform.WhoAmI' as Metadata<string>
-export const TOKEN: Metadata<string> = 'platform.Token' as Metadata<string>

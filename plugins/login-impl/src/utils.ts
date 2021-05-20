@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import { Status, StatusCode, identify, OK, unknownError } from '@anticrm/status'
-import { getMetadata, IntlString } from '@anticrm/platform'
+import { Status, OK, unknownError } from '@anticrm/status'
+import { getMetadata } from '@anticrm/platform'
 import { Request, Response, serialize } from '@anticrm/rpc'
 
-import login, { PluginLogin } from '@anticrm/login'
+import login from '@anticrm/login'
 
 /**
  * Perform a login operation to required workspace with user credentials.

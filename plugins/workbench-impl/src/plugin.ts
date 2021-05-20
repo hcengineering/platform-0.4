@@ -18,7 +18,7 @@ import type { AnyComponent } from '@anticrm/ui'
 
 import workbench from '@anticrm/workbench'
 
-export default mergeIds(workbench.id, workbench, {
+export default mergeIds(workbench, {
   component: {
     WorkbenchApp: '' as AnyComponent
   }

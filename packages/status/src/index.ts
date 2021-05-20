@@ -29,12 +29,14 @@ export enum Severity {
   ERROR = 'ERROR',
 }
 
+export type Id = string & { __id: true }
+
 /**
  * Component that created status object
  * @public
  */
 export type Component = string & { __component: true }
-export type StatusCode<P extends Record<string, any> = {}> = string & {
+export type StatusCode<P extends Record<string, any> = {}> = Id & {
   __status_code: P
 }
 
@@ -69,12 +71,13 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 
 // I D E N T I T Y
 
-export type Namespace = Record<string, any>
+export type Namespace = Record<string, string | Record<string, string>>
+type ComponentDescriptor<C extends Component> = { id: C }
 
 function transform (
-  result: Namespace,
+  result: Record<string, any>,
   prefix: string,
-  namespace: Namespace
+  namespace: Record<string, any>
 ): Namespace {
   for (const key in namespace) {
     const value = namespace[key]
@@ -87,41 +90,68 @@ function transform (
           ? prefix + '.' + key
           : value
         : transform(
-          result[key] === undefined ? {} : (result[key] as {}),
+          result[key] === undefined ? {} : result[key],
           key + ':' + prefix,
-          value as Namespace
+          value
         )
   }
   return result
 }
 
-export function identify<N extends Namespace> (
-  component: Component,
+export function component<C extends Component, N extends Namespace> (
+  component: C,
   namespace: N
-): N {
-  return transform({}, component, namespace) as N
+): ComponentDescriptor<C> & N {
+  return { id: component, ...transform({}, component, namespace) as N }
 }
 
-export function mergeIds<N extends Namespace, M extends Namespace> (
-  component: Component,
-  namespace: N,
+export function mergeIds<C extends ComponentDescriptor<Component>, M extends Namespace> (
+  component: C,
   merge: M
-): N & M {
-  return transform(Object.assign({}, namespace), component, merge) as N & M
+): C & M {
+  return transform(Object.assign({}, component), component.id, merge) as C & M
 }
+
+export interface IdInfo {
+  kind?: string
+  component: Component
+  name: string
+}
+
+export function parseId (id: Id): IdInfo {
+  const [prefix, name] = id.split('.')
+  if (name === undefined) {
+    throw new PlatformError(new Status(Severity.ERROR, status.status.InvalidId, { id }))
+  }
+  const kindAndComponent = prefix.split(':')
+  if (kindAndComponent.length === 1) 
+    return {
+      component: kindAndComponent[0] as Component,
+      name
+    }
+  return { 
+    kind: kindAndComponent[0],
+    component: kindAndComponent[1] as Component,
+    name
+  }
+}
+
 
 // S T A T U S  C O D E S
 
-export const Code = identify('status' as Component, {
-  OK: '' as StatusCode,
-  UnknownError: '' as StatusCode<{ message: string }>
+const status = component('status' as Component, {
+  status: {
+    OK: '' as StatusCode,
+    UnknownError: '' as StatusCode<{ message: string }>,
+    InvalidId: '' as StatusCode<{ id: Id }>
+  }
 })
 
 /**
  * OK Status
  * @public
  */
-export const OK = new Status(Severity.OK, Code.OK, {})
+export const OK = new Status(Severity.OK, status.status.OK, {})
 
 /**
  * Creates unknown error status
@@ -130,12 +160,12 @@ export const OK = new Status(Severity.OK, Code.OK, {})
 export function unknownError (err: Error): Status {
   return err instanceof PlatformError
     ? err.status
-    : new Status(Severity.ERROR, Code.UnknownError, { message: err.message })
+    : new Status(Severity.ERROR, status.status.UnknownError, { message: err.message })
 }
 
 // R E S O U R C E S
 
-export type IntlString<T extends Record<string, any> = {}> = string & {
+export type IntlString<T extends Record<string, any> = {}> = Id & {
   __intl_string: T
 }
 
@@ -146,7 +176,7 @@ export type IntlString<T extends Record<string, any> = {}> = string & {
  * Another example of metadata is an asset URL. The logic behind providing asset URLs as metadata is
  * we know URL at compile time only and URLs vary depending on deployment options.
  */
-export type Metadata<T> = string & { __metadata: T }
+export type Metadata<T> = Id & { __metadata: T }
 
 /**
  * Platform Resource Identifier (PRI)
@@ -175,9 +205,11 @@ export type Metadata<T> = string & { __metadata: T }
  *
  * @public
  */
-export type Resource<T> = string & { __resource: T }
+export type Resource<T> = Id & { __resource: T }
 
 // U I
 
 type URL = string
 export type Asset = Metadata<URL>
+
+export { status as default }

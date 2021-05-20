@@ -18,7 +18,7 @@ import { mergeIds } from '@anticrm/status'
 
 import login from '@anticrm/login'
 
-export default mergeIds(login.id, login, {
+export default mergeIds(login, {
   status: {
     RequiredField: '' as StatusCode<{field: string}>,
     ConnectingToServer: '' as StatusCode,

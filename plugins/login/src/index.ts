@@ -66,7 +66,7 @@ export interface LoginService extends Service {
   // doLogout (): Promise<void>
 }
 
-export const PluginLogin = 'login' as Plugin<LoginService>
+const PluginLogin = 'login' as Plugin<LoginService>
 
 const login = plugin(PluginLogin, {}, {
   component: {

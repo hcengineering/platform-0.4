@@ -23,11 +23,11 @@ import type {
   TxAddCollection,
   Attribute
 } from '@anticrm/core'
-import core, { ComponentCore } from '@anticrm/core'
 
+import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
-export default mergeIds(ComponentCore, core, {
+export default mergeIds(core, {
   class: {
     Doc: '' as Ref<Class<Doc>>,
     Attribute: '' as Ref<Class<Attribute<PropertyType>>>,

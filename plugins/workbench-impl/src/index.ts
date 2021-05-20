@@ -20,7 +20,7 @@ import Workbench from './components/Workbench.svelte'
 import workbench from './plugin'
 
 /*!
- * Anticrm Platform™ Login Plugin
+ * Anticrm Platform™ Workbench Plugin
  * © 2020 Anticrm Platform Contributors. All Rights Reserved.
  * Licensed under the Eclipse Public License, Version 2.0
  */
