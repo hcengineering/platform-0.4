@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import type { Asset } from '@anticrm/status'
 import { Builder } from '@anticrm/model'
 
 import workbench from '@anticrm/model-workbench'
@@ -21,6 +22,6 @@ import chunter from './plugin'
 export function createModel(builder: Builder) {
   builder.createDoc(workbench.class.Application, {
     label: chunter.string.ApplicationLabelChunter,
-    icon: ''
+    icon: '' as Asset
   })
 }
