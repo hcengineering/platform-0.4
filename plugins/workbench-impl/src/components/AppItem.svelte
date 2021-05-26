@@ -17,18 +17,21 @@
   import { fly } from 'svelte/transition'
 
   export let wide: boolean
+  export let list: boolean
   export let selected: boolean
   export let notify: boolean
-  export let status: boolean
-  export let color: string = 'var(--highlight-red)'
+  // status: 'active', 'dnd', 'busy', 'away'
+  export let status: string
 </script>
 
 <div class="container" class:wide={wide} on:click>
-  {#if notify || status}
-    <div style="background-color: {color}" class="marker" class:noty={notify} class:stat={status}/>
+  {#if (notify || status) && !list}
+    <div class="marker {status}" class:noty={notify} class:stat={status}/>
   {/if}
   <div class="icon" class:selected={selected} class:noty={notify} class:stat={status}>
-    <slot name="icon"/>
+    {#if !list}
+      <slot name="icon"/>
+    {/if}
   </div>
   {#if wide}
     <div class="caption" in:fly="{{ x: 0, duration: 300 }}" out:fly="{{ x: 0, duration: 300 }}">
@@ -67,6 +70,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
+      background-color: var(--highlight-red);
       &.noty {
         top: 12px;
         left: 26px;
@@ -74,6 +78,19 @@
       &.stat {
         top: 7px;
         left: 35px;
+      }
+
+      &.active {
+        background-color: var(--activity-status-active);
+      }
+      &.dnd {
+        background-color: var(--activity-status-dnd);
+      }
+      &.busy {
+        background-color: var(--activity-status-busy);
+      }
+      &.away {
+        background-color: var(--activity-status-away);
       }
     }
 
@@ -98,7 +115,7 @@
     }
 
     .caption {
-      margin-left: 0;
+      margin-left: 16px;
       width: 0;
       transition: all .3s ease;
       user-select: none;
@@ -114,7 +131,6 @@
       width: 248px;
       .caption {
         width: 184px;
-        margin-left: 16px;
       }
     }
   }

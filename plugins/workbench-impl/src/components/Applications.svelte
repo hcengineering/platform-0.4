@@ -14,7 +14,10 @@
 -->
 
 <script lang="ts">
+  import { slide } from 'svelte/transition'
   import AppItem from './AppItem.svelte'
+  import Expanded from './icons/Expanded.svelte'
+  import StarPin from './icons/StarPin.svelte'
 
   import Apps from './icons/Apps.svelte'
   import Chat from './icons/Chat.svelte'
@@ -28,40 +31,126 @@
   export let active: string = 'home'
   export let wide: boolean
 
-  const applications = [
-    { name: 'home', caption: 'Home', component: Home, notify: true },
-    { name: 'chat', caption: 'Chat', component: Chat, notify: true },
-    { name: 'task', caption: 'Task', component: Task, notify: false },
-    { name: 'profile', caption: 'Recruitment', component: Profile, notify: true },
-    { name: 'notify', caption: 'Notifications', component: Notify, notify: false },
-    { name: 'contact', caption: 'Contacts', component: Contact, notify: false },
-    { name: 'calendar', caption: 'Calendar', component: Calendar, notify: false },
-    { name: 'apps', caption: 'Apps', component: Apps, notify: false }
+  let state: string = 'collapsed'
+  let applications = [
+    { name: 'home', caption: 'Home', component: Home, pinned: true, notify: true },
+    { name: 'chat', caption: 'Chat', component: Chat, pinned: true, notify: true },
+    { name: 'task', caption: 'Task', component: Task, pinned: true, notify: false },
+    { name: 'profile', caption: 'Recruitment', component: Profile, pinned: true, notify: true },
+    { name: 'notify', caption: 'Notifications', component: Notify, pinned: false, notify: false },
+    { name: 'contact', caption: 'Contacts', component: Contact, pinned: false, notify: false },
+    { name: 'calendar', caption: 'Calendar', component: Calendar, pinned: false, notify: false }
   ]
 </script>
 
 <div class="app-icons">
-  {#each applications as app}
-    <div class="app">
-      <AppItem wide={wide} selected={active === app.name} notify={app.notify} on:click={() => { active = app.name }}>
+  {#each applications.filter(app => app.pinned) as app}
+    <div class="app" transition:slide="{{ duration: 500 }}">
+      <AppItem {wide}
+              selected={active === app.name} notify={app.notify}
+              on:click={() => { active = app.name }}>
         <svelte:component this={app.component} size="32" slot="icon"/>
         <svelte:fragment slot="caption">{app.caption}</svelte:fragment>
       </AppItem>
     </div>
   {/each}
+
+  <div class="app app-group" transition:slide="{{ duration: 500 }}"
+       on:click={() => { state === 'collapsed' ? state = 'expanded' : state = 'collapsed' }}>
+    <AppItem {wide}>
+      <svelte:component this={Apps} size="32" slot="icon"/>
+      <svelte:fragment slot="caption">
+        <div class="title-group">
+          Apps
+          <div class="arrow" class:expanded={state === 'expanded'}>
+            <svelte:component this={Expanded}/>
+          </div>
+        </div>
+      </svelte:fragment>
+    </AppItem>
+  </div>
+
+  {#if state === "expanded" && wide}
+    {#each applications as app}
+      <div class="list" transition:slide="{{ duration: 500 }}">
+        <AppItem {wide} list
+                 on:click={() => { app.pinned = !app.pinned }}>
+          <svelte:fragment slot="caption">
+            <div class="title-group">
+              {app.caption}
+              <div class="star-container">
+                <div class="star"><svelte:component this={StarPin} selected={app.pinned}/></div>
+                <div class="border"><svelte:component this={StarPin}/></div>
+              </div>
+            </div>
+          </svelte:fragment>
+        </AppItem>
+      </div>
+    {/each}
+  {/if}
 </div>
 
 <style lang="scss">
   .app-icons {
     display: flex;
     flex-direction: column;
+    transition: all .5s ease;
 
     .app {
       height: 48px;
-    }
 
+      &-group {
+        margin-top: 4px;
+        margin-bottom: 6px;
+        .title-group {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 12px;
+          .arrow {
+            width: 16px;
+            height: 16px;
+            opacity: .4;
+            transition: transform .3s ease;
+            transform: rotate(180deg);
+            &.expanded {
+              transform: rotate(0deg);
+            }
+          }
+        }
+      }
+    }
     .app + .app {
       margin-top: 4px;
+    }
+
+    .list {
+      height: 48px;
+
+      .title-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 12px;
+        .star-container {
+          position: relative;
+          width: 16px;
+          height: 16px;
+          .star {
+            position: absolute;
+            opacity: .3;
+          }
+          .border {
+            opacity: 0;
+          }
+        }
+      }
+      &:hover .title-group .star-container .border {
+        opacity: .5;
+      }
+    }
+    .list + .list {
+      margin-top: 0;
     }
   }
 </style>

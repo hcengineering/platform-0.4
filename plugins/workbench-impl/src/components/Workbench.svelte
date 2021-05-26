@@ -15,9 +15,9 @@
 
 <script lang="ts">
   import Status from './icons/Status.svelte'
+  import MoreH from './icons/MoreH.svelte'
   import Search from './icons/Search.svelte'
   import Add from './icons/Add.svelte'
-  import ActivityStatus from './ActivityStatus.svelte'
   import AppItem from './AppItem.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
@@ -27,35 +27,42 @@
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
 
-  let appWide: boolean = false
+  let wide: boolean = false
 </script>
 
 <div class="container">
-  <div class="applications" class:wide={appWide}>
-    <div class="content">
-      <div class="statusButton">
-        <AppItem wide={appWide} on:click={() => { appWide = !appWide }}>
-          <svelte:component this={Status} size="32" slot="icon"/>
-          <svelte:fragment slot="caption"><span style="font-size: 16px; color: var(--theme-caption-color);">Voltron</span></svelte:fragment>
-        </AppItem>
-      </div>
-      <Applications active="home" wide={appWide}/>
+  <div class="applications" class:wide={wide}>
+    <div class="statusButton">
+      <AppItem {wide} on:click={() => { wide = !wide }}>
+        <svelte:component this={Status} size="32" slot="icon"/>
+        <svelte:fragment slot="caption">
+          <div class="title-group">
+            Voltron
+            <div class="icon">
+              <svelte:component this={MoreH} size="16"/>
+            </div>
+          </div>
+        </svelte:fragment>
+      </AppItem>
+    </div>
+    <div class="app-group">
+      <Applications active="home" {wide}/>
     </div>
     <div class="footer">
       <div class="profile">
-        <AppItem wide={appWide} color="#4EBC53" selected status>
+        <AppItem {wide} status="active" selected>
           <img slot="icon" class="avatar" src={avatar} alt="Profile"/>
           <svelte:fragment slot="caption">Tim Ferris</svelte:fragment>
         </AppItem>
       </div>
       <div class="tool">
-        <AppItem wide={appWide}>
+        <AppItem {wide}>
           <svelte:component this={Add} size="32" slot="icon"/>
           <svelte:fragment slot="caption">Create</svelte:fragment>
         </AppItem>
       </div>
       <div class="tool">
-        <AppItem wide={appWide}>
+        <AppItem {wide}>
           <svelte:component this={Search} size="32" slot="icon"/>
           <svelte:fragment slot="caption">Search</svelte:fragment>
         </AppItem>
@@ -126,13 +133,33 @@
       min-width: 80px;
       transition: all .3s ease;
 
-      .content {
-        display: flex;
-        flex-direction: column;
-        .statusButton {
-          margin-top: 24px;
-          margin-bottom: 8px;
+      .statusButton {
+        margin-top: 24px;
+        margin-bottom: 8px;
+        .title-group {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 12px;
+          font-size: 16px;
+          color: var(--theme-caption-color);
+          .icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0;
+          }
         }
+        &:hover .title-group .icon {
+          opacity: .4;
+          &:hover {
+            opacity: .8;
+          }
+        }
+      }
+      .app-group {
+        margin-right: 4px;
+        flex-grow: 1;
+        overflow: hidden;
       }
       .footer {
         display: flex;
@@ -159,6 +186,9 @@
     .wide {
       width: 280px;
       min-width: 280px;
+      .app-group {
+        overflow: auto;
+      }
     }
 
     .navigator {
