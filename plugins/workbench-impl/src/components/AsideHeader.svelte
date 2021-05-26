@@ -15,6 +15,7 @@
 
 <script lang="ts">
   import Close from './icons/Close.svelte'
+  import Add from './icons/Add.svelte'
 
   export let title: string = 'Unknown'
 </script>
@@ -24,6 +25,7 @@
   <div class="separator"/>
   <div class="buttons">
     <div class="button"><Close/></div>
+    <div class="button"><Add/></div>
   </div>
 </div>
 

@@ -14,50 +14,54 @@
 -->
 
 <script lang="ts">
-  import Search from './icons/Search.svelte'
-  import Add from './icons/Add.svelte'
+  import AppItem from './AppItem.svelte'
+
+  import Apps from './icons/Apps.svelte'
   import Chat from './icons/Chat.svelte'
   import Home from './icons/Home.svelte'
   import Task from './icons/Task.svelte'
+  import Profile from './icons/Profile.svelte'
+  import Notify from './icons/Notify.svelte'
+  import Contact from './icons/Contact.svelte'
+  import Calendar from './icons/Calendar.svelte'
 
-  export let active: string = 'add'
+  export let active: string = 'home'
+  export let wide: boolean
 
   const applications = [
-    { name: 'add', component: Add },
-    { name: 'home', component: Home },
-    { name: 'chat',  component: Chat },
-    { name: 'task',  component: Task },
-    { name: 'search',  component: Search },
+    { name: 'home', caption: 'Home', component: Home, notify: true },
+    { name: 'chat', caption: 'Chat', component: Chat, notify: true },
+    { name: 'task', caption: 'Task', component: Task, notify: false },
+    { name: 'profile', caption: 'Recruitment', component: Profile, notify: true },
+    { name: 'notify', caption: 'Notifications', component: Notify, notify: false },
+    { name: 'contact', caption: 'Contacts', component: Contact, notify: false },
+    { name: 'calendar', caption: 'Calendar', component: Calendar, notify: false },
+    { name: 'apps', caption: 'Apps', component: Apps, notify: false }
   ]
 </script>
 
 <div class="app-icons">
   {#each applications as app}
-    <div class="app" class:selected={app.name === active.toLowerCase()}
-         on:click={() => {active = app.name}}>
-      <svelte:component this={app.component} size="32"/>
+    <div class="app">
+      <AppItem wide={wide} selected={active === app.name} notify={app.notify} on:click={() => { active = app.name }}>
+        <svelte:component this={app.component} size="32" slot="icon"/>
+        <svelte:fragment slot="caption">{app.caption}</svelte:fragment>
+      </AppItem>
     </div>
   {/each}
 </div>
 
 <style lang="scss">
   .app-icons {
+    display: flex;
+    flex-direction: column;
+
     .app {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 8px;
-      cursor: pointer;
-      opacity: .3;
-      &.selected {
-        opacity: 1;
-        background-color: var(--theme-menu-selection);
-      }
+      height: 48px;
     }
+
     .app + .app {
-      margin-top: 8px;
+      margin-top: 4px;
     }
   }
 </style>

@@ -14,7 +14,11 @@
 -->
 
 <script lang="ts">
+  import Status from './icons/Status.svelte'
+  import Search from './icons/Search.svelte'
+  import Add from './icons/Add.svelte'
   import ActivityStatus from './ActivityStatus.svelte'
+  import AppItem from './AppItem.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
   import NavItem from './NavItem.svelte'
@@ -22,16 +26,44 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
+
+  let appWide: boolean = false
 </script>
 
 <div class="container">
-  <div class="applications">
-    <ActivityStatus status="active"/>
-    <Applications active="home"/>
-    <div class="profile">
-      <img class="avatar" src={avatar} alt="Profile"/>
+  <div class="applications" class:wide={appWide}>
+    <div class="content">
+      <div class="statusButton">
+        <AppItem wide={appWide} on:click={() => { appWide = !appWide }}>
+          <svelte:component this={Status} size="32" slot="icon"/>
+          <svelte:fragment slot="caption"><span style="font-size: 16px; color: var(--theme-caption-color);">Voltron</span></svelte:fragment>
+        </AppItem>
+      </div>
+      <Applications active="home" wide={appWide}/>
+    </div>
+    <div class="footer">
+      <div class="profile">
+        <AppItem wide={appWide} color="#4EBC53" selected status>
+          <img slot="icon" class="avatar" src={avatar} alt="Profile"/>
+          <svelte:fragment slot="caption">Tim Ferris</svelte:fragment>
+        </AppItem>
+      </div>
+      <div class="tool">
+        <AppItem wide={appWide}>
+          <svelte:component this={Add} size="32" slot="icon"/>
+          <svelte:fragment slot="caption">Create</svelte:fragment>
+        </AppItem>
+      </div>
+      <div class="tool">
+        <AppItem wide={appWide}>
+          <svelte:component this={Search} size="32" slot="icon"/>
+          <svelte:fragment slot="caption">Search</svelte:fragment>
+        </AppItem>
+      </div>
+      <div class="separator"/>
     </div>
   </div>
+
   <div class="navigator">
     <NavHeader/>
     <NavItem icon="thread" title="Threads"/>
@@ -73,6 +105,13 @@
     background-color: $bg-color;
   }
 
+  @mixin divider($margin) {
+    height: 1px;
+    min-height: 1px;
+    margin: $margin;
+    background-color: var(--theme-menu-divider);
+  }
+
   .container {
     display: flex;
     flex-direction: row;
@@ -82,19 +121,44 @@
     .applications {
       @include panel('transparent');
       justify-content: space-between;
-      align-items: center;
-      min-width: 96px;
+      padding-left: 16px;
+      width: 80px;
+      min-width: 80px;
+      transition: all .3s ease;
 
-      .profile {
+      .content {
         display: flex;
-        align-items: center;
-        height: 100px;
-        min-height: 100px;
-        .avatar {
-          width: 36px;
-          height: 36px;
+        flex-direction: column;
+        .statusButton {
+          margin-top: 24px;
+          margin-bottom: 8px;
         }
       }
+      .footer {
+        display: flex;
+        flex-direction: column-reverse;
+        .profile {
+          margin-top: 10px;
+          margin-bottom: 24px;
+          .avatar {
+            width: 36px;
+            height: 36px;
+          }
+        }
+        .tool {
+          height: 48px;
+        }
+        .tool + .tool {
+          margin-bottom: 4px;
+        }
+        .separator {
+          @include divider(8px 16px 8px 0px);
+        }
+      }
+    }
+    .wide {
+      width: 280px;
+      min-width: 280px;
     }
 
     .navigator {
@@ -104,11 +168,7 @@
       margin-right: 20px;
 
       .separator {
-        width: 100%;
-        height: 1px;
-        min-height: 1px;
-        margin: 24px 0;
-        background-color: var(--theme-menu-divider);
+        @include divider(24px 0);
       }
     }
 
