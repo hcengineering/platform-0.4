@@ -77,7 +77,7 @@ export function Model<T extends Obj> (
 
 function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
   return txes.map((tx) => ({
-    _id: generateId(),
+    _id: generateId<Tx>(),
     objectId,
     ...tx
   }))
@@ -85,7 +85,7 @@ function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
 
 function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): TxCreateObject<T> {
   return {
-    _id: generateId(),
+    _id: generateId<TxCreateObject<T>>(),
     _class: core.class.TxCreateObject,
     domain: 'tx',
     objectId: objectId ?? generateId(),

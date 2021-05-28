@@ -36,8 +36,8 @@ function count (): string {
   return toHex(val, 6)
 }
 
-export function generateId (): Ref<Doc> {
-  return timestamp() + random + count() as Ref<Doc>
+export function generateId<T extends Doc> (): Ref<T> {
+  return timestamp() + random + count() as Ref<T>
 }
 
 export function makeEmb<T extends Emb>(_class: Ref<Class<T>>, data: Omit<T, '__embedded' | '_class'>): T {

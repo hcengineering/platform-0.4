@@ -20,6 +20,7 @@ import core from './component'
 
 export interface Hierarchy {
   getAncestors(_class: Ref<Class<Obj>>): Ref<Class<Obj>>[]
+  getClass(_class: Ref<Class<Obj>>): Data<Class<Obj>>
   tx(tx: Tx): void
 }
 
@@ -38,6 +39,13 @@ export function createHierarchy(): Hierarchy {
     return result
   }
 
+  function getClass(_class: Ref<Class<Obj>>): Data<Class<Obj>> {
+    const data = classes.get(_class)
+    if (data === undefined)
+      throw new Error('class not found: ' + _class)
+    return data
+  }
+
   function tx(tx: Tx): void {
     if (tx._class !== core.class.TxCreateObject) return
     const createTx = tx as TxCreateObject<Class<Obj>>
@@ -46,5 +54,5 @@ export function createHierarchy(): Hierarchy {
     classes.set(_id as Ref<Class<Obj>>, createTx.attributes)
   }
 
-  return { getAncestors, tx }
+  return { getAncestors, getClass, tx }
 }

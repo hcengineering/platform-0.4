@@ -30,3 +30,5 @@ export interface TxAddCollection<T extends Emb> extends Tx {
   localId?: string
   attributes: T
 }
+
+export const DOMAIN_TX = 'tx'

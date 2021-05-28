@@ -29,7 +29,7 @@ export interface Emb extends Obj {
 }
 
 export interface Doc extends Obj {
-  _id: Ref<Doc>
+  _id: Ref<this>
   _mixins?: Array<Ref<Mixin<Doc>>>
 }
 
@@ -92,3 +92,4 @@ export interface BagOf extends Type<Record<string, EmbType>> {
   of: Type<EmbType>
 }
 
+export const DOMAIN_MODEL = 'model'

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,10 +13,17 @@
 // limitations under the License.
 //
 
-export * from './classes'
-export * from './tx'
-export * from './storage'
-export * from './utils'
-export * from './hierarchy'
-export * from './memdb'
-export { default as default } from './component'
+import { plugin } from '@anticrm/platform'
+import type { Service, Plugin } from '@anticrm/platform'
+import type { Storage, Tx } from '@anticrm/core'
+
+type TxHander = (tx: Tx) => void
+
+export interface CoreService extends Service {
+
+  connect(hander: TxHander): Storage 
+}
+
+const PluginCore = 'plugin-core' as Plugin<CoreService>
+
+export default plugin(PluginCore, {}, {})

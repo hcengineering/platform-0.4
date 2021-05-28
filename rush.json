@@ -405,6 +405,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/client",
+      "projectFolder": "packages/client",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/platform",
       "projectFolder": "packages/platform",
       "shouldPublish": true
@@ -467,6 +472,11 @@
     {
       "packageName": "@anticrm/chunter",
       "projectFolder": "plugins/chunter",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/plugin-core",
+      "projectFolder": "plugins/plugin-core",
       "shouldPublish": true
     }
 
