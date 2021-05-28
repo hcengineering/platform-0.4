@@ -1,5 +1,5 @@
 //
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,22 +13,18 @@
 // limitations under the License.
 //
 
-import type { Ref, Doc, Class, Emb, Data, Domain } from './classes'
+import type { CoreService } from '@anticrm/plugin-core'
 
-export interface Tx extends Doc {
-  domain: string
-  objectId: Ref<Doc>
+import { connect } from './conn'
+
+/*!
+ * Anticrm Platform™ Workbench Plugin
+ * © 2020 Anticrm Platform Contributors. All Rights Reserved.
+ * Licensed under the Eclipse Public License, Version 2.0
+ */
+export default async (): Promise<CoreService> => {
+
+  return {
+    connect
+  }
 }
-
-export interface TxCreateObject<T extends Doc> extends Tx {
-  objectClass: Ref<Class<Doc>>
-  attributes: Data<T>
-}
-
-export interface TxAddCollection<T extends Emb> extends Tx {
-  collection: string
-  localId?: string
-  attributes: T
-}
-
-export const DOMAIN_TX = 'tx' as Domain

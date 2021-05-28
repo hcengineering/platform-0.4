@@ -478,6 +478,16 @@
       "packageName": "@anticrm/plugin-core",
       "projectFolder": "plugins/plugin-core",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "projectFolder": "plugins/plugin-core-dev",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/test-client",
+      "projectFolder": "tests/client",
+      "shouldPublish": false
     }
 
     // {

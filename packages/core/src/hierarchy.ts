@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Data } from './classes'
+import type { Ref, Class, Obj, Data, Domain } from './classes'
 import type { Tx, TxCreateObject } from './tx'
 
 import core from './component'
@@ -21,6 +21,7 @@ import core from './component'
 export interface Hierarchy {
   getAncestors(_class: Ref<Class<Obj>>): Ref<Class<Obj>>[]
   getClass(_class: Ref<Class<Obj>>): Data<Class<Obj>>
+  getDomain(_class: Ref<Class<Obj>>): Domain
   tx(tx: Tx): void
 }
 
@@ -46,6 +47,18 @@ export function createHierarchy(): Hierarchy {
     return data
   }
 
+  function getDomain(_class: Ref<Class<Obj>>): Domain {
+    const klazz = getClass(_class)
+    if (klazz.domain !== undefined)
+      return klazz.domain
+    if (klazz.extends !== undefined) {
+      const domain = getDomain(klazz.extends)
+      klazz.domain = domain
+      return domain
+    }
+    throw new Error('domain not found: ' + _class)
+  }
+
   function tx(tx: Tx): void {
     if (tx._class !== core.class.TxCreateObject) return
     const createTx = tx as TxCreateObject<Class<Obj>>
@@ -54,5 +67,5 @@ export function createHierarchy(): Hierarchy {
     classes.set(_id as Ref<Class<Obj>>, createTx.attributes)
   }
 
-  return { getAncestors, getClass, tx }
+  return { getAncestors, getClass, getDomain, tx }
 }

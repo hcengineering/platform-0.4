@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Tx } from '@anticrm/core'
+import type { Doc, Ref, Class, Tx, TxCreateObject, Data } from '@anticrm/core'
+import { DOMAIN_TX } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
 import core from './component'
@@ -24,8 +25,20 @@ export class TDoc implements Doc {
   _class!: Ref<Class<this>>
 }
 
+@Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
+export class TTx extends TDoc implements Tx {
+  domain!: string
+  objectId!: Ref<Doc>
+}
+
+@Model(core.class.TxCreateObject, core.class.Tx)
+export class TTxCreateObject<T extends Doc> extends TTx implements TxCreateObject<T> {
+  objectClass!: Ref<Class<T>>
+  attributes!: Data<T>
+}
+
 export function createModel(builder: Builder) {
-  builder.createModel(TDoc)
+  builder.createModel(TDoc, TTx, TTxCreateObject)
 }
 
 export { core as default }

@@ -70,10 +70,12 @@ export interface Classifier extends Doc, UXObject {
   kind: ClassifierKind
 }
 
+export type Domain = string & { __domain: true }
+
 export interface Class<T extends Obj> extends Classifier {
-  domain: string
   attributes: Collection<Attribute<PropertyType>>
   extends?: Ref<Class<Obj>>
+  domain?: Domain
 }
 
 export type Mixin<T extends Doc> = Class<T>
@@ -92,4 +94,4 @@ export interface BagOf extends Type<Record<string, EmbType>> {
   of: Type<EmbType>
 }
 
-export const DOMAIN_MODEL = 'model'
+export const DOMAIN_MODEL = 'model' as Domain

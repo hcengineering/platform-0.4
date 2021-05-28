@@ -25,7 +25,7 @@ import { createTxProcessor } from './storage'
 
 import core from './component'
 
-export function createMemDb(hierarchy: Hierarchy): Storage {
+export function createMemDb(hierarchy: Hierarchy, storeTx: boolean = false): Storage {
 
   const objectsByClass = new Map<Ref<Class<Doc>>, Doc[]>()
   const objectById = new Map<Ref<Doc>, Doc>()
@@ -77,11 +77,14 @@ export function createMemDb(hierarchy: Hierarchy): Storage {
     return result as T[]
   }
 
-  const tx = createTxProcessor({ 
+  function addDoc(doc: Doc): void {
+    hierarchy.getAncestors(doc._class).forEach(_class => { getObjectsByClass(_class).push(doc) })
+    objectById.set(doc._id, doc)
+  }
+
+  const tx = storeTx ? async (tx: Tx): Promise<void> => { addDoc(tx) } : createTxProcessor({ 
     async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
-      const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
-      hierarchy.getAncestors(doc._class).forEach(_class => { getObjectsByClass(_class).push(doc) })
-      objectById.set(doc._id, doc)
+      addDoc({ _id: tx.objectId, _class: tx.objectClass, ...tx.attributes})
     },
     async txAddCollection(tx: TxAddCollection<Emb>): Promise<void> {
       (getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes

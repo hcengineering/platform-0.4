@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Emb } from './classes'
+import type { Doc, Ref, Class, Emb, Obj } from './classes'
 
 function toHex (value: number, chars: number): string {
   const result = value.toString(16)

@@ -24,9 +24,10 @@ import type {
   Obj,
   Data,
   TxAddCollection,
-  TxCreateObject
+  TxCreateObject,
+  Domain
 } from '@anticrm/core'
-import { ClassifierKind, generateId, makeEmb } from '@anticrm/core'
+import { ClassifierKind, generateId, makeEmb, createHierarchy, DOMAIN_MODEL } from '@anticrm/core'
 
 import core from './component'
 
@@ -35,6 +36,7 @@ type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
 interface ClassTxes {
   _id: Ref<Doc>
   extends: Ref<Class<Obj>>
+  domain?: string
   txes: NoIDs<Tx>[]
 }
 
@@ -66,12 +68,14 @@ export function Prop (type: Type<PropertyType>) {
 
 export function Model<T extends Obj> (
   _class: Ref<Class<T>>,
-  _extends: Ref<Class<Obj>>
+  _extends: Ref<Class<Obj>>, 
+  domain?: string
 ) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
     txes._id = _class
     txes.extends = _extends
+    txes.domain = domain
   }
 }
 
@@ -83,11 +87,11 @@ function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
   }))
 }
 
-function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): TxCreateObject<T> {
+function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attributes: Data<T>, objectId?: Ref<T>): TxCreateObject<T> {
   return {
     _id: generateId<TxCreateObject<T>>(),
     _class: core.class.TxCreateObject,
-    domain: 'tx',
+    domain,
     objectId: objectId ?? generateId(),
     objectClass: _class,
     attributes
@@ -104,8 +108,8 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
     }
   }
   const objectId = candidate._id
-  const createTx = txCreateObject(core.class.Class, {
-    domain: 'model',
+  const createTx = txCreateObject(core.class.Class, DOMAIN_MODEL, {
+    domain: candidate.domain,
     kind: ClassifierKind.CLASS,
     extends: candidate.extends
   }, objectId)
@@ -118,16 +122,20 @@ function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
 
 export class Builder {
   private readonly txes: Tx[] = []
+  private readonly hierarchy = createHierarchy()
 
   createModel (...classes: (new () => Obj)[]): void {
     const txes = classes.map((ctor) => getTxes(ctor.prototype))
     const candidate = txes.pop()
-    const sorted = candidate !== undefined ? _generateTx(candidate, txes) : []
-    this.txes.push(...sorted)
+    const sorted = candidate !== undefined ? _generateTx(candidate, txes) : []    
+    for(const tx of sorted) {
+      this.txes.push(tx)
+      this.hierarchy.tx(tx)
+    }
   }
 
   createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
-    this.txes.push(txCreateObject(_class, attributes, objectId))
+    this.txes.push(txCreateObject(_class, this.hierarchy.getDomain(_class), attributes, objectId))
   }
 
   getTxes(): Tx[] { return this.txes }
