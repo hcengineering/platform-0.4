@@ -13,19 +13,13 @@
 // limitations under the License.
 //
 
-import { addLocation, getPlugin } from '@anticrm/platform'
-import { getClient } from '@anticrm/client'
-
-import pluginCore from '@anticrm/plugin-core'
+import { connect } from '../connection'
 import core from '@anticrm/core'
 
 describe('client', () => {
 
-  addLocation(pluginCore, () => import('@anticrm/plugin-core-dev'))
-
   it('should create connection', async () => {
-    const coreService = await getPlugin(pluginCore.id)
-    const conn = await coreService.connect(() => {})
+    const conn = await connect(() => {})
     const txes = await conn.findAll(core.class.Tx, {})
     console.log(txes)
     expect(true).toBeTruthy()

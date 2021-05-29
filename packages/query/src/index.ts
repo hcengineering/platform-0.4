@@ -16,9 +16,8 @@
 import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Data } from '@anticrm/core'
 import { createTxProcessor } from '@anticrm/core'
 
-export interface LiveQuery {
+export interface LiveQuery extends Storage {
   query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void
-  tx(tx: Tx): Promise<void>
 }
 
 type Query = {
@@ -51,7 +50,7 @@ export function createLiveQuery(storage: Storage): LiveQuery {
     return true
   }
 
-  const tx = createTxProcessor({
+  const txProcessor = createTxProcessor({
     async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
       for (const q of queries) {
         if (match(q.query, tx.attributes)) {
@@ -61,5 +60,10 @@ export function createLiveQuery(storage: Storage): LiveQuery {
     }
   })
 
-  return { query, tx }
+  async function tx(tx: Tx): Promise<void> {
+    await storage.tx(tx)
+    await txProcessor(tx)
+  }
+
+  return { query, tx, findAll: storage.findAll }
 }

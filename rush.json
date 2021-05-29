@@ -488,13 +488,8 @@
       "packageName": "@anticrm/plugin-core-dev",
       "projectFolder": "plugins/plugin-core-dev",
       "shouldPublish": true
-    },
-    {
-      "packageName": "@anticrm/test-client",
-      "projectFolder": "tests/client",
-      "shouldPublish": false
     }
-
+    
     // {
     //   /**
     //    * The NPM package name of the project (must match package.json)

@@ -13,9 +13,11 @@
 // limitations under the License.
 //
 
-import type { CoreService } from '@anticrm/plugin-core'
+import { createClient } from '@anticrm/core'
+import { createLiveQuery } from '@anticrm/query'
+import type { CoreService, Client } from '@anticrm/plugin-core'
 
-import { connect } from './conn'
+import { connect } from './connection'
 
 /*!
  * Anticrm Platform™ Workbench Plugin
@@ -24,7 +26,17 @@ import { connect } from './conn'
  */
 export default async (): Promise<CoreService> => {
 
+  let client: Client | undefined
+
+  async function getClient(): Promise<Client> {
+    if (client === undefined) {
+      const storage = await createClient(connect)
+      client = createLiveQuery(storage)  
+    }
+    return client
+  }
+
   return {
-    connect
+    getClient
   }
 }

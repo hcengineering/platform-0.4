@@ -15,13 +15,13 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Service, Plugin } from '@anticrm/platform'
-import type { Storage, Tx } from '@anticrm/core'
+import type { Storage } from '@anticrm/core'
+import type { LiveQuery } from '@anticrm/query'
 
-type TxHander = (tx: Tx) => void
+export interface Client extends Storage, LiveQuery {}
 
 export interface CoreService extends Service {
-
-  connect(hander: TxHander): Promise<Storage>
+  getClient(): Promise<Client>
 }
 
 const PluginCore = 'plugin-core' as Plugin<CoreService>
