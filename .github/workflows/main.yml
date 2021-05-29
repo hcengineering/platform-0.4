@@ -42,3 +42,4 @@ jobs:
           coverageCommand: common/scripts/coverage.sh
           coverageLocations: |
             ${{github.workspace}}/packages/status/coverage/lcov.info:lcov
+            ${{github.workspace}}/packages/platform/coverage/lcov.info:lcov
