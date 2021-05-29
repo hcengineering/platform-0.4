@@ -13,13 +13,9 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj } from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
 import core from '@anticrm/model'
 
 export default mergeIds(core, {
-  class: {
-    Obj: '' as Ref<Class<Obj>>
-  }
 })

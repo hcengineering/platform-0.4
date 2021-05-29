@@ -450,6 +450,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/model-all",
+      "projectFolder": "models/all",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/login",
       "projectFolder": "plugins/login",
       "shouldPublish": true

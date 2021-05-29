@@ -13,24 +13,18 @@
 // limitations under the License.
 //
 
-import type { IntlString, Asset } from '@anticrm/status'
-import type { Doc } from '@anticrm/core'
-import { DOMAIN_MODEL } from '@anticrm/core' 
-import { Model, Builder } from '@anticrm/model'
+import type { Tx } from '@anticrm/core'
+import { Builder } from '@anticrm/model'
 
-import core, { TDoc } from '@anticrm/model-core'
-import workbench from './plugin'
+import { createModel as coreModel } from '@anticrm/model-core'
+import { createModel as workbenchModel } from '@anticrm/model-workbench'
+import { createModel as chunterModel } from '@anticrm/model-chunter'
 
-@Model(workbench.class.Application, core.class.Doc, DOMAIN_MODEL)
-export class TApplication extends TDoc implements Doc {
-  label!: IntlString
-  icon!: Asset
-}
+const builder = new Builder()
 
-export function createModel(builder: Builder) {
-  builder.createModel(TApplication)
-}
+coreModel(builder)
+workbenchModel(builder)
+chunterModel(builder)
 
-export default workbench
-
+console.log(JSON.stringify(builder.getTxes()))
 

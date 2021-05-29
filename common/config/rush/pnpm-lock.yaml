@@ -13,6 +13,7 @@ specifiers:
   '@rush-temp/login': file:./projects/login.tgz
   '@rush-temp/login-impl': file:./projects/login-impl.tgz
   '@rush-temp/model': file:./projects/model.tgz
+  '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
@@ -51,6 +52,7 @@ specifiers:
   svgo-loader: ^3.0.0
   ts-jest: ^26.5.6
   ts-loader: ^8.1.0
+  ts-node: ^10.0.0
   ts-standard: ^10.0.0
   typescript: ^4.2.4
   webpack: ^5.32.0
@@ -65,25 +67,26 @@ dependencies:
   '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
   '@babel/runtime': 7.14.0
   '@microsoft/api-extractor': 7.15.1
-  '@rush-temp/chunter': file:projects/chunter.tgz
-  '@rush-temp/client': file:projects/client.tgz
-  '@rush-temp/core': file:projects/core.tgz
+  '@rush-temp/chunter': file:projects/chunter.tgz_ts-node@10.0.0
+  '@rush-temp/client': file:projects/client.tgz_ts-node@10.0.0
+  '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz
   '@rush-temp/login-impl': file:projects/login-impl.tgz_@babel+core@7.14.2
-  '@rush-temp/model': file:projects/model.tgz
-  '@rush-temp/model-chunter': file:projects/model-chunter.tgz
+  '@rush-temp/model': file:projects/model.tgz_ts-node@10.0.0
+  '@rush-temp/model-all': file:projects/model-all.tgz_@types+node@14.17.0
+  '@rush-temp/model-chunter': file:projects/model-chunter.tgz_ts-node@10.0.0
   '@rush-temp/model-core': file:projects/model-core.tgz_@types+node@14.17.0
-  '@rush-temp/model-workbench': file:projects/model-workbench.tgz
-  '@rush-temp/platform': file:projects/platform.tgz
-  '@rush-temp/plugin-core': file:projects/plugin-core.tgz
-  '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz
+  '@rush-temp/model-workbench': file:projects/model-workbench.tgz_ts-node@10.0.0
+  '@rush-temp/platform': file:projects/platform.tgz_ts-node@10.0.0
+  '@rush-temp/plugin-core': file:projects/plugin-core.tgz_ts-node@10.0.0
+  '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz_ts-node@10.0.0
   '@rush-temp/prod': file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4
-  '@rush-temp/query': file:projects/query.tgz
-  '@rush-temp/status': file:projects/status.tgz
-  '@rush-temp/test-client': file:projects/test-client.tgz
+  '@rush-temp/query': file:projects/query.tgz_ts-node@10.0.0
+  '@rush-temp/status': file:projects/status.tgz_ts-node@10.0.0
+  '@rush-temp/test-client': file:projects/test-client.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_d7ad990e9c9539c277b06697183ec198
-  '@rush-temp/ui': file:projects/ui.tgz_@babel+core@7.14.2
-  '@rush-temp/workbench': file:projects/workbench.tgz
+  '@rush-temp/ui': file:projects/ui.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55
+  '@rush-temp/workbench': file:projects/workbench.tgz_ts-node@10.0.0
   '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_@babel+core@7.14.2
   '@types/jest': 26.0.23
   '@types/lodash': 4.14.169
@@ -95,7 +98,7 @@ dependencies:
   fast-equals: 2.0.3
   file-loader: 6.2.0_webpack@5.37.1
   intl-messageformat: 9.6.13
-  jest: 26.6.3
+  jest: 26.6.3_ts-node@10.0.0
   lodash: 4.17.21
   mini-css-extract-plugin: 1.6.0_webpack@5.37.1
   prettier: 2.3.0
@@ -109,6 +112,7 @@ dependencies:
   svgo-loader: 3.0.0
   ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
   ts-loader: 8.3.0_typescript@4.2.4+webpack@5.37.1
+  ts-node: 10.0.0_575201a9f3f6cd7d9b93b7e4d3175932
   ts-standard: 10.0.0_typescript@4.2.4
   typescript: 4.2.4
   webpack: 5.37.1_webpack-cli@4.7.0
@@ -117,14 +121,6 @@ dependencies:
   webpack-dev-server: 3.11.2_webpack-cli@4.7.0+webpack@5.37.1
 
 packages:
-
-  /@anticrm/platform/0.4.2:
-    resolution: {integrity: sha512-eCIJXIHDIL5r+5p+KyTEIsOVO/yh/XhnxfeKu6RbgF34jw5pqsjmWhsGgj36JclAIDGsyFrebDTuAn0yN2Q4LQ==}
-    dependencies:
-      '@anticrm/status': 0.4.2
-      intl-messageformat: 9.6.13
-      lodash: 4.17.21
-    dev: false
 
   /@anticrm/rpc/0.4.4:
     resolution: {integrity: sha512-1/N5RTQ+3qSVtzMh5kkuitxrvD+xRaJod/uxKXE3HJtGzV0MDkpDZ9N/XO8QJGrmam7dymKHNhjAl/uqd7dygw==}
@@ -446,19 +442,6 @@ packages:
       '@babel/plugin-syntax-class-static-block': 7.12.13_@babel+core@7.14.2
     dev: false
 
-  /@babel/plugin-proposal-decorators/7.14.2_@babel+core@7.14.2:
-    resolution: {integrity: sha512-LauAqDd/VjQDtae58QgBcEOE42NNP+jB2OE+XeC3KBI/E+BhhRjtr5viCIrj1hmu1YvrguLipIPRJZmS5yUcFw==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.14.2
-      '@babel/helper-create-class-features-plugin': 7.14.2_@babel+core@7.14.2
-      '@babel/helper-plugin-utils': 7.13.0
-      '@babel/plugin-syntax-decorators': 7.12.13_@babel+core@7.14.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@babel/plugin-proposal-dynamic-import/7.14.2_@babel+core@7.14.2:
     resolution: {integrity: sha512-oxVQZIWFh91vuNEMKltqNsKLFWkOIyJc95k2Gv9lWVyDfPUQGSSlbDEgWuJUU1afGE9WwlzpucMZ3yDRHIItkA==}
     peerDependencies:
@@ -619,15 +602,6 @@ packages:
 
   /@babel/plugin-syntax-class-static-block/7.12.13_@babel+core@7.14.2:
     resolution: {integrity: sha512-ZmKQ0ZXR0nYpHZIIuj9zE7oIqCx2hw9TKi+lIo73NNrMPAZGHfS92/VRV0ZmPj6H2ffBgyFHXvJ5NYsNeEaP2A==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.14.2
-      '@babel/helper-plugin-utils': 7.13.0
-    dev: false
-
-  /@babel/plugin-syntax-decorators/7.12.13_@babel+core@7.14.2:
-    resolution: {integrity: sha512-Rw6aIXGuqDLr6/LoBBYE57nKOzQpz/aDkKlMqEwH+Vp0MXbG6H/TfRjaY343LKxzAKAMXIHsQ8JzaZKuDZ9MwA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
@@ -1324,46 +1298,6 @@ packages:
       slash: 3.0.0
     dev: false
 
-  /@jest/core/26.6.3:
-    resolution: {integrity: sha512-xvV1kKbhfUqFVuZ8Cyo+JPpipAHHAV3kcDBftiduK8EICXmTFddryy3P7NfZt8Pv37rA9nEJBKCCkglCPt/Xjw==}
-    engines: {node: '>= 10.14.2'}
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/reporters': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/transform': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/node': 15.3.0
-      ansi-escapes: 4.3.2
-      chalk: 4.1.1
-      exit: 0.1.2
-      graceful-fs: 4.2.6
-      jest-changed-files: 26.6.2
-      jest-config: 26.6.3
-      jest-haste-map: 26.6.2
-      jest-message-util: 26.6.2
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-resolve-dependencies: 26.6.3
-      jest-runner: 26.6.3
-      jest-runtime: 26.6.3
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      jest-watcher: 26.6.2
-      micromatch: 4.0.4
-      p-each-series: 2.2.0
-      rimraf: 3.0.2
-      slash: 3.0.0
-      strip-ansi: 6.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   /@jest/core/26.6.3_ts-node@10.0.0:
     resolution: {integrity: sha512-xvV1kKbhfUqFVuZ8Cyo+JPpipAHHAV3kcDBftiduK8EICXmTFddryy3P7NfZt8Pv37rA9nEJBKCCkglCPt/Xjw==}
     engines: {node: '>= 10.14.2'}
@@ -1486,23 +1420,6 @@ packages:
       '@jest/types': 26.6.2
       '@types/istanbul-lib-coverage': 2.0.3
       collect-v8-coverage: 1.0.1
-    dev: false
-
-  /@jest/test-sequencer/26.6.3:
-    resolution: {integrity: sha512-YHlVIjP5nfEyjlrSr8t/YdNfU/1XEt7c5b4OxcXCjyRhjzLYu/rO69/WHPuYcbCWkz8kAeZVZp2N2+IOLLEPGw==}
-    engines: {node: '>= 10.14.2'}
-    dependencies:
-      '@jest/test-result': 26.6.2
-      graceful-fs: 4.2.6
-      jest-haste-map: 26.6.2
-      jest-runner: 26.6.3
-      jest-runtime: 26.6.3
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
     dev: false
 
   /@jest/test-sequencer/26.6.3_ts-node@10.0.0:
@@ -4962,32 +4879,6 @@ packages:
       throat: 5.0.0
     dev: false
 
-  /jest-cli/26.6.3:
-    resolution: {integrity: sha512-GF9noBSa9t08pSyl3CY4frMrqp+aQXFGFkf5hEPbh/pIUFYWMK6ZLTfbmadxJVcJrdRoChlWQsA2VkJcDFK8hg==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/core': 26.6.3
-      '@jest/test-result': 26.6.2
-      '@jest/types': 26.6.2
-      chalk: 4.1.1
-      exit: 0.1.2
-      graceful-fs: 4.2.6
-      import-local: 3.0.2
-      is-ci: 2.0.0
-      jest-config: 26.6.3
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      prompts: 2.4.1
-      yargs: 15.4.1
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   /jest-cli/26.6.3_ts-node@10.0.0:
     resolution: {integrity: sha512-GF9noBSa9t08pSyl3CY4frMrqp+aQXFGFkf5hEPbh/pIUFYWMK6ZLTfbmadxJVcJrdRoChlWQsA2VkJcDFK8hg==}
     engines: {node: '>= 10.14.2'}
@@ -5011,40 +4902,6 @@ packages:
       - canvas
       - supports-color
       - ts-node
-      - utf-8-validate
-    dev: false
-
-  /jest-config/26.6.3:
-    resolution: {integrity: sha512-t5qdIj/bCj2j7NFVHb2nFB4aUdfucDn3JRKgrZnplb8nieAirAzRSHP8uDEd+qV6ygzg9Pz4YG7UTJf94LPSyg==}
-    engines: {node: '>= 10.14.2'}
-    peerDependencies:
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.14.2
-      '@jest/test-sequencer': 26.6.3
-      '@jest/types': 26.6.2
-      babel-jest: 26.6.3_@babel+core@7.14.2
-      chalk: 4.1.1
-      deepmerge: 4.2.2
-      glob: 7.1.7
-      graceful-fs: 4.2.6
-      jest-environment-jsdom: 26.6.2
-      jest-environment-node: 26.6.2
-      jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      micromatch: 4.0.4
-      pretty-format: 26.6.2
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
       - utf-8-validate
     dev: false
 
@@ -5166,36 +5023,6 @@ packages:
       fsevents: 2.3.2
     dev: false
 
-  /jest-jasmine2/26.6.3:
-    resolution: {integrity: sha512-kPKUrQtc8aYwBV7CqBg5pu+tmYXlvFlSFYn18ev4gPFtrRzB15N2gW/Roew3187q2w2eHuu0MU9TJz6w0/nPEg==}
-    engines: {node: '>= 10.14.2'}
-    dependencies:
-      '@babel/traverse': 7.14.2
-      '@jest/environment': 26.6.2
-      '@jest/source-map': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/node': 15.3.0
-      chalk: 4.1.1
-      co: 4.6.0
-      expect: 26.6.2
-      is-generator-fn: 2.1.0
-      jest-each: 26.6.2
-      jest-matcher-utils: 26.6.2
-      jest-message-util: 26.6.2
-      jest-runtime: 26.6.3
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      pretty-format: 26.6.2
-      throat: 5.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   /jest-jasmine2/26.6.3_ts-node@10.0.0:
     resolution: {integrity: sha512-kPKUrQtc8aYwBV7CqBg5pu+tmYXlvFlSFYn18ev4gPFtrRzB15N2gW/Roew3187q2w2eHuu0MU9TJz6w0/nPEg==}
     engines: {node: '>= 10.14.2'}
@@ -5307,38 +5134,6 @@ packages:
       slash: 3.0.0
     dev: false
 
-  /jest-runner/26.6.3:
-    resolution: {integrity: sha512-atgKpRHnaA2OvByG/HpGA4g6CSPS/1LK0jK3gATJAoptC1ojltpmVlYC3TYgdmGp+GLuhzpH30Gvs36szSL2JQ==}
-    engines: {node: '>= 10.14.2'}
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/environment': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/node': 15.3.0
-      chalk: 4.1.1
-      emittery: 0.7.2
-      exit: 0.1.2
-      graceful-fs: 4.2.6
-      jest-config: 26.6.3
-      jest-docblock: 26.0.0
-      jest-haste-map: 26.6.2
-      jest-leak-detector: 26.6.2
-      jest-message-util: 26.6.2
-      jest-resolve: 26.6.2
-      jest-runtime: 26.6.3
-      jest-util: 26.6.2
-      jest-worker: 26.6.2
-      source-map-support: 0.5.19
-      throat: 5.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   /jest-runner/26.6.3_ts-node@10.0.0:
     resolution: {integrity: sha512-atgKpRHnaA2OvByG/HpGA4g6CSPS/1LK0jK3gATJAoptC1ojltpmVlYC3TYgdmGp+GLuhzpH30Gvs36szSL2JQ==}
     engines: {node: '>= 10.14.2'}
@@ -5363,46 +5158,6 @@ packages:
       jest-worker: 26.6.2
       source-map-support: 0.5.19
       throat: 5.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
-  /jest-runtime/26.6.3:
-    resolution: {integrity: sha512-lrzyR3N8sacTAMeonbqpnSka1dHNux2uk0qqDXVkMv2c/A3wYnvQ4EXuI013Y6+gSKSCxdaczvf4HF0mVXHRdw==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/environment': 26.6.2
-      '@jest/fake-timers': 26.6.2
-      '@jest/globals': 26.6.2
-      '@jest/source-map': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/transform': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/yargs': 15.0.13
-      chalk: 4.1.1
-      cjs-module-lexer: 0.6.0
-      collect-v8-coverage: 1.0.1
-      exit: 0.1.2
-      glob: 7.1.7
-      graceful-fs: 4.2.6
-      jest-config: 26.6.3
-      jest-haste-map: 26.6.2
-      jest-message-util: 26.6.2
-      jest-mock: 26.6.2
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      slash: 3.0.0
-      strip-bom: 4.0.0
-      yargs: 15.4.1
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -5525,22 +5280,6 @@ packages:
       '@types/node': 15.3.0
       merge-stream: 2.0.0
       supports-color: 7.2.0
-    dev: false
-
-  /jest/26.6.3:
-    resolution: {integrity: sha512-lGS5PXGAzR4RF7V5+XObhqz2KZIDUA1yD0DG6pBVmy10eh0ZIXQImRuzocsI/N2XZ1GrLFwTS27In2i2jlpq1Q==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/core': 26.6.3
-      import-local: 3.0.2
-      jest-cli: 26.6.3
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
     dev: false
 
   /jest/26.6.3_ts-node@10.0.0:
@@ -8062,7 +7801,7 @@ packages:
       bs-logger: 0.2.6
       buffer-from: 1.1.1
       fast-json-stable-stringify: 2.1.0
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       jest-util: 26.6.2
       json5: 2.2.0
       lodash: 4.17.21
@@ -8844,15 +8583,15 @@ packages:
       commander: 2.20.3
     dev: false
 
-  file:projects/chunter.tgz:
+  file:projects/chunter.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-6DZygaU/0y8R/OPOLjM/NIQZ4QmA6QthP+Xqk+W1qEZy0k8a4mBn0tf8Je6Oc+8CjxL2t5LTvRYs4ptwslq6sg==, tarball: file:projects/chunter.tgz}
+    id: file:projects/chunter.tgz
     name: '@rush-temp/chunter'
     version: 0.0.0
     dependencies:
-      '@anticrm/platform': 0.4.2
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -8866,14 +8605,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/client.tgz:
+  file:projects/client.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-a2hyQQtbHAOkmcUsCdsy7E8CC1VqPxbi0b29KjUndFRKVyobiE8F90rzPP9zKqMu3BCzs+8Cf1Rd2jQM6RNR3g==, tarball: file:projects/client.tgz}
+    id: file:projects/client.tgz
     name: '@rush-temp/client'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -8887,8 +8627,9 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/core.tgz:
+  file:projects/core.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-17xOV2YDaEmzIhy4ZKZiq0SGxFHNoDgVy+mp1tuzEV9NuPI6rQkjr2AKVDOJHzTamcp65cxL8FiG0Kn8MVTKNA==, tarball: file:projects/core.tgz}
+    id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
     dependencies:
@@ -8897,7 +8638,7 @@ packages:
       '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       simplytyped: 3.3.0_typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -8954,14 +8695,40 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/model-chunter.tgz:
+  file:projects/model-all.tgz_@types+node@14.17.0:
+    resolution: {integrity: sha512-NXTuTyWlFsY8kxMg/ZZMevvsVwg5RjSjoYeR9hYCUPLadjnejSPgNex2cDoSIGWGJAQxAO16oU8YRYkMgmjDBQ==, tarball: file:projects/model-all.tgz}
+    id: file:projects/model-all.tgz
+    name: '@rush-temp/model-all'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-node: 10.0.0_575201a9f3f6cd7d9b93b7e4d3175932
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/model-chunter.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-fwmjuSxd0JmavP9r7bYmxohxLkLcMfwoOg0q9Zg7E9NgYpoV3UkQ3I6gmaBYRFxfnWm/+qCXiDPnUQodiyyqkw==, tarball: file:projects/model-chunter.tgz}
+    id: file:projects/model-chunter.tgz
     name: '@rush-temp/model-chunter'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -8976,7 +8743,7 @@ packages:
     dev: false
 
   file:projects/model-core.tgz_@types+node@14.17.0:
-    resolution: {integrity: sha512-96/SF/DvVsUHRZTk97/zma3cl2+A5lamxiv/Sjiy0MQgausMs8XrbLZB0G+zQIN0/Eo14QRDrcdEsituV9IoEQ==, tarball: file:projects/model-core.tgz}
+    resolution: {integrity: sha512-HgfcYUb9U8WmnEzFAKDsq+LuRBmzR1Kk/Uwa7BFxRIaiIJqXRM4i/1hyoz0T/WcJcuEvWPmOmBcnXN0xpcMUyQ==, tarball: file:projects/model-core.tgz}
     id: file:projects/model-core.tgz
     name: '@rush-temp/model-core'
     version: 0.0.0
@@ -9000,14 +8767,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/model-workbench.tgz:
+  file:projects/model-workbench.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-T8tRaMifDnBfV92poyzbcEGtkuNYRghN+4NV/lX0Ln4i/b8LdqsveEiOOTCraqOyCTmCcDMw/PWlIGqXbCt1Wg==, tarball: file:projects/model-workbench.tgz}
+    id: file:projects/model-workbench.tgz
     name: '@rush-temp/model-workbench'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9021,18 +8789,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/model.tgz:
+  file:projects/model.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-l3iMsHHqlm9XUExQP5OnKmPUHSnYJlizVsyJqib0SHVi8esEa0irOWnFhTE3H5wolY68/KaWf+1J3QBclgz2rg==, tarball: file:projects/model.tgz}
+    id: file:projects/model.tgz
     name: '@rush-temp/model'
     version: 0.0.0
     dependencies:
-      '@babel/core': 7.14.2
-      '@babel/plugin-proposal-decorators': 7.14.2_@babel+core@7.14.2
-      '@babel/preset-env': 7.14.2_@babel+core@7.14.2
-      '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9046,8 +8811,9 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/platform.tgz:
+  file:projects/platform.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-Bv2ix3bmQcb1iZwTjdKLoZJ2lYipMaeXnc84Sk8syolsd5LCZoCmWd77ZSV+3qBGezkUeTCECSIXBsvRonWXrA==, tarball: file:projects/platform.tgz}
+    id: file:projects/platform.tgz
     name: '@rush-temp/platform'
     version: 0.0.0
     dependencies:
@@ -9055,7 +8821,7 @@ packages:
       '@types/jest': 26.0.23
       '@types/lodash': 4.14.169
       intl-messageformat: 9.6.13
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       lodash: 4.17.21
       prettier: 2.3.0
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9069,14 +8835,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/plugin-core-dev.tgz:
+  file:projects/plugin-core-dev.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-8efzYqXtQtdmBPAUchvi/nIfmqx9MSC7ae5/j+cXtG0CoiTRuz3HJfZY0rexXF4ziFG2QZqUiEqIRYf5rtxp2Q==, tarball: file:projects/plugin-core-dev.tgz}
+    id: file:projects/plugin-core-dev.tgz
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9090,14 +8857,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/plugin-core.tgz:
+  file:projects/plugin-core.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-P/ky93Ek0yQyYAZjnI7cTLPdxyk4Ybfzg8/WHxzdSSc/OUIg8Z65pCwphFOvhorkLoZ+xWpNBxiiWS4sACuf9g==, tarball: file:projects/plugin-core.tgz}
+    id: file:projects/plugin-core.tgz
     name: '@rush-temp/plugin-core'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9144,14 +8912,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/query.tgz:
+  file:projects/query.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-FUFR1moimQe8KKYcTic/IExrqVQkW5/zYj4WrIi981arxztYgKX2LG9D9cr99ensL5gOMwBe9CivlCSck2rbEA==, tarball: file:projects/query.tgz}
+    id: file:projects/query.tgz
     name: '@rush-temp/query'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9165,17 +8934,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/status.tgz:
+  file:projects/status.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-JpgCoXZHZtugN+51/B49Y7NHS5cS9yhcFkmAZXffPwP/HiXkmjT8IyAq2mwSHCUCY6Yyc6hAVJBhEsOTNsEDTw==, tarball: file:projects/status.tgz}
+    id: file:projects/status.tgz
     name: '@rush-temp/status'
     version: 0.0.0
     dependencies:
-      '@babel/core': 7.14.2
-      '@babel/preset-env': 7.14.2_@babel+core@7.14.2
-      '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
@@ -9188,14 +8955,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/test-client.tgz:
+  file:projects/test-client.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-nbMf321qeO7loV4oO37MzWKqyttEFukFZzh0M6PaDDEQFPWBX0RI4E+jY69E5z90FuDhyZmYoRIzpaIUuB/ZnQ==, tarball: file:projects/test-client.tgz}
+    id: file:projects/test-client.tgz
     name: '@rush-temp/test-client'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
@@ -9241,7 +9009,7 @@ packages:
       - webpack
     dev: false
 
-  file:projects/ui.tgz_@babel+core@7.14.2:
+  file:projects/ui.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55:
     resolution: {integrity: sha512-0R5Mxn3D4V7V38Vy54BYSvkD3Ykkon0u+Q2Qz/HTDA/clCOiYtYqXVBaf5QYuYVqTLyh4wm7KRZSesnFCvGJWg==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
@@ -9249,10 +9017,9 @@ packages:
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      '@types/node': 14.17.0
       core-js: 3.12.1
       fast-equals: 2.0.3
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       sass: 1.32.13
       svelte: 3.38.2
@@ -9306,15 +9073,15 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/workbench.tgz:
+  file:projects/workbench.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-jxymIK10setjST4ieN4042uSARJfL4/CMN9swYd4pjAjoaL/zx3PdNhxkab19IpLQH+kLgLxpY/40Cwil0uw1A==, tarball: file:projects/workbench.tgz}
+    id: file:projects/workbench.tgz
     name: '@rush-temp/workbench'
     version: 0.0.0
     dependencies:
-      '@anticrm/platform': 0.4.2
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
-      jest: 26.6.3
+      jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4

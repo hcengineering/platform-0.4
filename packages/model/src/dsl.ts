@@ -35,7 +35,7 @@ type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
 
 interface ClassTxes {
   _id: Ref<Doc>
-  extends: Ref<Class<Obj>>
+  extends?: Ref<Class<Obj>>
   domain?: string
   txes: NoIDs<Tx>[]
 }
@@ -74,7 +74,7 @@ export function Model<T extends Obj> (
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
     txes._id = _class
-    txes.extends = _extends
+    txes.extends = _class !== core.class.Obj ? _extends : undefined
     txes.domain = domain
   }
 }
