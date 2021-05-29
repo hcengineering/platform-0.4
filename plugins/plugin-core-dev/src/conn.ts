@@ -13,24 +13,17 @@
 // limitations under the License.
 //
 
-import { Tx, Storage, Ref, Doc, Class, DocumentQuery, DOMAIN_MODEL, DOMAIN_TX } from '@anticrm/core'
+import { Tx, Storage, Ref, Doc, Class, DocumentQuery, DOMAIN_TX } from '@anticrm/core'
 import { createMemDb, createHierarchy } from '@anticrm/core'
 
-import { Builder } from '@anticrm/model'
-
-import { createModel as coreModel } from '@anticrm/model-core'
-
-function getModel(): Tx[] { 
-  const builder = new Builder()
-  
-  coreModel(builder)
-
-  return builder.getTxes()
+async function getModel(): Promise<Tx[]> { 
+  return import('./model.tx.json') as unknown as Tx[]
 }
 
-export function connect(handler: (tx: Tx) => void): Storage {
+export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
 
-  const txes = getModel()
+  const txes = await getModel()
+  console.log(txes)
 
   const hierarchy = createHierarchy()
   for (const tx of txes) hierarchy.tx(tx)
@@ -44,7 +37,6 @@ export function connect(handler: (tx: Tx) => void): Storage {
 
   function findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const domain = hierarchy.getClass(_class).domain
-    console.log('domain: ', domain)
     if (domain === DOMAIN_TX)
       return transactions.findAll(_class, query)
     return model.findAll(_class, query)  

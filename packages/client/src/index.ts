@@ -38,7 +38,7 @@ async function createClient(): Promise<Storage> {
     }
   }
 
-  const conn = plugin.connect(txHander)
+  const conn = await plugin.connect(txHander)
   const txes = await conn.findAll(core.class.Tx, { domain: DOMAIN_MODEL })
 
   function findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {

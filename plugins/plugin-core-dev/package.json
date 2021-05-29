@@ -25,8 +25,6 @@
     "@anticrm/core":"~0.4.0",
     "@anticrm/status":"~0.4.2",
     "@anticrm/platform":"~0.4.2",
-    "@anticrm/plugin-core":"~0.4.0",
-    "@anticrm/model":"~0.4.0",
-    "@anticrm/model-core":"~0.4.0"
+    "@anticrm/plugin-core":"~0.4.0"
   }
 }

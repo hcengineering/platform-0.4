@@ -25,7 +25,7 @@ describe('client', () => {
 
   it('should create connection', async () => {
     const coreService = await getPlugin(pluginCore.id)
-    const conn = coreService.connect(() => {})
+    const conn = await coreService.connect(() => {})
     const txes = await conn.findAll(core.class.Tx, {})
     console.log(txes)
     expect(true).toBeTruthy()

@@ -21,7 +21,7 @@ type TxHander = (tx: Tx) => void
 
 export interface CoreService extends Service {
 
-  connect(hander: TxHander): Storage 
+  connect(hander: TxHander): Promise<Storage>
 }
 
 const PluginCore = 'plugin-core' as Plugin<CoreService>

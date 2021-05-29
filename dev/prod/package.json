@@ -39,6 +39,8 @@
     "@anticrm/login-impl": "~0.4.0",
     "@anticrm/workbench": "~0.4.0",
     "@anticrm/workbench-impl": "~0.4.0",
-    "@anticrm/theme": "~0.4.0"
+    "@anticrm/theme": "~0.4.0",
+    "@anticrm/plugin-core": "~0.4.0",
+    "@anticrm/plugin-core-dev": "~0.4.0"
   }
 }
