@@ -23,7 +23,6 @@ specifiers:
   '@rush-temp/prod': file:./projects/prod.tgz
   '@rush-temp/query': file:./projects/query.tgz
   '@rush-temp/status': file:./projects/status.tgz
-  '@rush-temp/test-client': file:./projects/test-client.tgz
   '@rush-temp/theme': file:./projects/theme.tgz
   '@rush-temp/ui': file:./projects/ui.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
@@ -83,7 +82,6 @@ dependencies:
   '@rush-temp/prod': file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4
   '@rush-temp/query': file:projects/query.tgz_ts-node@10.0.0
   '@rush-temp/status': file:projects/status.tgz_ts-node@10.0.0
-  '@rush-temp/test-client': file:projects/test-client.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_d7ad990e9c9539c277b06697183ec198
   '@rush-temp/ui': file:projects/ui.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55
   '@rush-temp/workbench': file:projects/workbench.tgz_ts-node@10.0.0
@@ -8836,7 +8834,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-8efzYqXtQtdmBPAUchvi/nIfmqx9MSC7ae5/j+cXtG0CoiTRuz3HJfZY0rexXF4ziFG2QZqUiEqIRYf5rtxp2Q==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-VIP7HnBZ764RWCcBmNaWTzYpi8wihmih/5UxQ7tLfj0ii4BYJsDjqnULEFrVelVpPsu924l8IRkTKQf/On+YXg==, tarball: file:projects/plugin-core-dev.tgz}
     id: file:projects/plugin-core-dev.tgz
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
@@ -8858,7 +8856,7 @@ packages:
     dev: false
 
   file:projects/plugin-core.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-P/ky93Ek0yQyYAZjnI7cTLPdxyk4Ybfzg8/WHxzdSSc/OUIg8Z65pCwphFOvhorkLoZ+xWpNBxiiWS4sACuf9g==, tarball: file:projects/plugin-core.tgz}
+    resolution: {integrity: sha512-4Qnk9pzEoyYDF8GSruiHVFooUrlfv5MDNHCW2/j+NKrm4y9F+KoAsGZW203ZLg4Hl/BvKsfvy6KmZGkT6G/8Ow==, tarball: file:projects/plugin-core.tgz}
     id: file:projects/plugin-core.tgz
     name: '@rush-temp/plugin-core'
     version: 0.0.0
@@ -8880,7 +8878,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4:
-    resolution: {integrity: sha512-FnxpJwjSrhBhReSe4kBCIhzk4cueNHtJuGzTb2Uf7Yq49OI4gkvZXaaJLCpDvEdja1I8yYunVRXxgp+9E6cxRg==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-B6R3/TLkzo8LsrOgP7/40AZ3bT7l7w/WeqjugOmztbwZK6Noes6ZYJ66NidJ1ByphyicrCDD6afFahL8sXjSIQ==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -8944,28 +8942,6 @@ packages:
       '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
-      ts-standard: 10.0.0_typescript@4.2.4
-      typescript: 4.2.4
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
-  file:projects/test-client.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-nbMf321qeO7loV4oO37MzWKqyttEFukFZzh0M6PaDDEQFPWBX0RI4E+jY69E5z90FuDhyZmYoRIzpaIUuB/ZnQ==, tarball: file:projects/test-client.tgz}
-    id: file:projects/test-client.tgz
-    name: '@rush-temp/test-client'
-    version: 0.0.0
-    dependencies:
-      '@microsoft/api-extractor': 7.15.1
-      '@types/jest': 26.0.23
-      jest: 26.6.3_ts-node@10.0.0
-      prettier: 2.3.0
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:
@@ -9046,7 +9022,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_@babel+core@7.14.2:
-    resolution: {integrity: sha512-OtGtmJ9bCjcRS/Lo3TsfAVUDdKXTgunZSGOoVZF/PUMNCB3YCJdwclWCrGUavC324AYR8wLXMXQBENPtDXHOSQ==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-5FWTqttotfF5zm+YcsJA7EqDO2waSpn7tih7uEI+fIofBzYPmbiE9PS1O3je3C1BjkCA3ChXw0k3whOPvVFn5A==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
