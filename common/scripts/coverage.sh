@@ -15,6 +15,6 @@
 #
 
 pushd packages/status
-node ../../common/scripts/install-run-rushx test --coverage
+node ../../common/scripts/install-run-rushx.js test --coverage
 popd
 
