@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #  Copyright © 2020 Anticrm Platform Contributors.
 #  
@@ -15,6 +15,6 @@
 #
 
 pushd packages/status
-rushx test --coverage
+node install-run-rushx test --coverage
 popd
 
