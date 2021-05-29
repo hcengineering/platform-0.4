@@ -40,4 +40,5 @@ jobs:
           CC_TEST_REPORTER_ID: 146fae79fffee30a166379a8e5e97beb4582e67af958ae0315dcb538af56cbac
         with:
           coverageCommand: common/scripts/coverage.sh
-          debug: true
+          coverageLocations: |
+            ${{github.workspace}}/packages/status/coverage/lcov.info:lcov
