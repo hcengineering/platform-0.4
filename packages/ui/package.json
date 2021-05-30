@@ -28,7 +28,7 @@
     "@anticrm/platform": "~0.4.2",
     "fast-equals": "^2.0.1",
     "@anticrm/status": "~0.4.2",
-    "@anticrm/theme": "~0.4.0",
+    "@anticrm/theme": "~0.4.1",
     "svelte": "^3.37.0"
   }
 }

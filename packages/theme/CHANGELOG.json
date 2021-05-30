@@ -1,0 +1,17 @@
+{
+  "name": "@anticrm/theme",
+  "entries": [
+    {
+      "version": "0.4.1",
+      "tag": "@anticrm/theme_v0.4.1",
+      "date": "Sun, 30 May 2021 18:43:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add more theme colors, update scroll bars."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@anticrm/workbench-impl",
+  "entries": [
+    {
+      "version": "0.4.1",
+      "tag": "@anticrm/workbench-impl_v0.4.1",
+      "date": "Sun, 30 May 2021 18:43:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add `AppItem` control."
+          }
+        ]
+      }
+    }
+  ]
+}
