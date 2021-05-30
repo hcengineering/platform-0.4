@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Add more theme colors, update scroll bars.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme",
+  "email": "sas_lord@mail.ru"
+}
