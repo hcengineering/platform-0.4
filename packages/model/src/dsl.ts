@@ -28,6 +28,7 @@ import type {
   Domain
 } from '@anticrm/core'
 import { ClassifierKind, generateId, makeEmb, createHierarchy, DOMAIN_MODEL } from '@anticrm/core'
+import toposort from 'toposort'
 
 import core from './component'
 
@@ -98,26 +99,14 @@ function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, a
   }
 }
 
-function _generateTx (candidate: ClassTxes, txes: ClassTxes[]): Tx[] {
-  let prepend: Tx[] = []
-  for (let i = 0; i < txes.length; i++) {
-    if (txes[i]._id === candidate.extends) {
-      const newCandiate = txes.splice(i)
-      prepend = _generateTx(newCandiate[0], txes)
-      break
-    }
-  }
-  const objectId = candidate._id
+function _generateTx (tx: ClassTxes): Tx[] {
+  const objectId = tx._id
   const createTx = txCreateObject(core.class.Class, DOMAIN_MODEL, {
-    domain: candidate.domain,
+    domain: tx.domain,
     kind: ClassifierKind.CLASS,
-    extends: candidate.extends
+    extends: tx.extends
   }, objectId)
-  const all = [...prepend, createTx, ...generateIds(objectId, candidate.txes)]
-  const newCandiate = txes.pop()
-  return newCandiate != null
-    ? [...all, ..._generateTx(newCandiate, txes)]
-    : all
+  return [createTx, ...generateIds(objectId, tx.txes)]
 }
 
 export class Builder {
@@ -126,11 +115,16 @@ export class Builder {
 
   createModel (...classes: (new () => Obj)[]): void {
     const txes = classes.map((ctor) => getTxes(ctor.prototype))
-    const candidate = txes.pop()
-    const sorted = candidate !== undefined ? _generateTx(candidate, txes) : []    
-    for(const tx of sorted) {
+    const byId = new Map<string, ClassTxes>()
+    txes.forEach((tx) => {byId.set(tx._id, tx)})
+    const graph = txes.map(tx => [tx._id, tx.extends] as [string, string | undefined])
+    const sortedGraph = toposort(graph).reverse()
+    const sorted = sortedGraph.map(edge => byId.get(edge))
+    const generated = sorted.flatMap(tx => tx ? _generateTx(tx): [])
+
+    for(const tx of generated) {
       this.txes.push(tx)
-      this.hierarchy.tx(tx)
+      this.hierarchy.tx(tx)  
     }
   }
 
