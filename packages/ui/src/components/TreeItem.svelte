@@ -14,39 +14,24 @@
 -->
 
 <script lang="ts">
-  import Hashtag from './icons/Hashtag.svelte'
-  import Lock from './icons/Lock.svelte'
+  import type { Asset } from '@anticrm/status'
 
-  import Tim from '../../img/tim.png'
-  import Chen from '../../img/chen.png'
-  import Elon from '../../img/elon.png'
+  import Icon from './Icon.svelte'
 
-  // type: 'channel', 'user'
-  export let type: string = 'channel'
-  export let img: string
-  export let title: string = 'Unnamed'
-  export let locked: boolean
-  export let counter: number = 0
+  export let icon: Asset
+  export let title: string
+  export let notifications: number = 0
 
-  const photos = [
-    { name: 'tim', image: Tim },
-    { name: 'chen', image: Chen },
-    { name: 'elon', image: Elon },
-  ]
 </script>
 
 <div class="container">
   <div class="title">
-    {#if type === "channel"}
-      <div class="icon">
-        <svelte:component this={locked ? Lock : Hashtag}/>
-      </div>
-    {:else}
-      <img class="avatar" src={photos.find(item => item.name === img.toLowerCase()).image} alt="Avatar"/>
-    {/if}
+    <div class="icon">
+      <Icon {icon} size="16px"/>
+    </div>
     <span>{title}</span>
-    {#if counter > 0}
-      <div class="counter">{counter}</div>
+    {#if notifications > 0}
+      <div class="counter">{notifications}</div>
     {/if}
   </div>
 </div>

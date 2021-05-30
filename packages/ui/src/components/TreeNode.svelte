@@ -14,44 +14,26 @@
 -->
 
 <script lang="ts">
-  import Collapsed from './icons/Collapsed.svelte'
-  import Expanded from './icons/Expanded.svelte'
+  import Collapsed from './internal/icons/Collapsed.svelte'
+  import Expanded from './internal/icons/Expanded.svelte'
 
-  import Mention from './icons/Mention.svelte'
-  import Thread from './icons/Thread.svelte'
-
-  export let icon: string = 'arrow'
-  export let title: string = 'Unnamed'
-  export let group: boolean
-  export let counter: number = 0
-  export let state: string = 'collapsed'
-
-  const applications = [
-    { name: 'mention', component: Mention },
-    { name: 'thread', component: Thread },
-  ]
+  export let title: string
+  export let notifications = 0
+  export let collapsed = false
 </script>
 
-<div class="container" class:collapsed={state === 'collapsed' && group}>
-  <div class="title" on:click={() => {state === 'collapsed' ? state = 'expanded' : state = 'collapsed'}}>
+<div class="container" class:collapsed={collapsed}>
+  <div class="title" on:click={() => {collapsed = !collapsed}}>
     <div class="icon">
-      {#if icon === "arrow"}
-        <div class="arrow">
-          <svelte:component this={state === 'collapsed' ? Collapsed : Expanded}/>
-        </div>
-      {:else}
-        <div class="arrow">
-          <svelte:component this={applications.find(app => app.name === icon.toLowerCase()).component}/>
-        </div>
-      {/if}
+      {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
     </div>
     <span>{title}</span>
-    {#if counter > 0}
-      <div class="counter">{counter}</div>
+    {#if notifications > 0}
+      <div class="counter">{notifications}</div>
     {/if}
   </div>
 </div>
-{#if state === "expanded" && group}
+{#if !collapsed}
   <div class="dropdown">
     <slot/>
   </div>

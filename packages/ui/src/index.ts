@@ -26,6 +26,8 @@ export { default as Button } from './components/Button.svelte'
 export { default as StatusControl } from './components/StatusControl.svelte'
 export { default as Component } from './components/Component.svelte'
 export { default as Icon } from './components/Icon.svelte'
+export { default as TreeNode } from './components/TreeNode.svelte'
+export { default as TreeItem } from './components/TreeItem.svelte'
 
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })

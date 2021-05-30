@@ -17,8 +17,8 @@
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
-  import NavItem from './NavItem.svelte'
-  import NavSubitem from './NavSubitem.svelte'
+  // import NavItem from './NavItem.svelte'
+  // import NavSubitem from './NavSubitem.svelte'
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
@@ -51,8 +51,9 @@
   </div>
   {#if navigator}
   <div class="navigator">
+    <NavHeader/>
     <Component is={navigator}/>
-    <!-- <NavHeader/>
+    <!-- 
     <NavItem icon="thread" title="Threads"/>
     <NavItem icon="mention" title="Mentions" counter="8"/>
     <div class="separator"></div>

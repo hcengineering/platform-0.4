@@ -13,4 +13,11 @@
 // limitations under the License.
 -->
 
-<div>CHUNTER!</div>
+<script lang="ts">
+  import { TreeNode } from '@anticrm/ui'
+
+</script>
+
+<div>
+  <TreeNode title="Channels"/>
+</div>
