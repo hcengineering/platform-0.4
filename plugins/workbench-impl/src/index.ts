@@ -16,7 +16,7 @@
 import { setResource } from '@anticrm/platform'
 import type { WorkbenchService } from '@anticrm/workbench'
 
-import Workbench from './components/Workbench.svelte'
+import WorkbenchApp from './components/WorkbenchApp.svelte'
 import workbench from './plugin'
 
 /*!
@@ -26,7 +26,7 @@ import workbench from './plugin'
  */
 export default async (): Promise<WorkbenchService> => {
 
-  setResource(workbench.component.WorkbenchApp, Workbench)
+  setResource(workbench.component.WorkbenchApp, WorkbenchApp)
 
   return {}
 }

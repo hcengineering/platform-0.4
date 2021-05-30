@@ -120,6 +120,16 @@ dependencies:
 
 packages:
 
+  /@anticrm/platform-core/0.1.3:
+    resolution: {integrity: sha512-N5RU8iEZVD8uRAPFbtaa9tfx13Rn+s1IFpKKv7/GCoS2yNX50xsyx9S7vANPX+pBW2CbKD1w5jZ1zvGQQ6JABw==}
+    dependencies:
+      '@anticrm/platform': 0.1.8
+    dev: false
+
+  /@anticrm/platform/0.1.8:
+    resolution: {integrity: sha512-sHjuxYRBr3MqjOMiec63uKd4EppMInhnOHAVQ0azMsILaFmxg72dfRMpciz1DfthMg+ZBNCWcni5oP/MsAMtOw==}
+    dev: false
+
   /@anticrm/rpc/0.4.4:
     resolution: {integrity: sha512-1/N5RTQ+3qSVtzMh5kkuitxrvD+xRaJod/uxKXE3HJtGzV0MDkpDZ9N/XO8QJGrmam7dymKHNhjAl/uqd7dygw==}
     dependencies:
@@ -9022,11 +9032,12 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_@babel+core@7.14.2:
-    resolution: {integrity: sha512-5FWTqttotfF5zm+YcsJA7EqDO2waSpn7tih7uEI+fIofBzYPmbiE9PS1O3je3C1BjkCA3ChXw0k3whOPvVFn5A==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-76bLKADj5STnVzF6ZMIav85k+9OKoPg0KhG34YQO9C4Z9xXXogqw5adglHy4LPmMcAyhbeRNKpNIDE86ULmgFQ==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
     dependencies:
+      '@anticrm/platform-core': 0.1.3
       '@microsoft/api-extractor': 7.15.1
       prettier: 2.3.0
       sass: 1.32.13
@@ -9050,7 +9061,7 @@ packages:
     dev: false
 
   file:projects/workbench.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-jxymIK10setjST4ieN4042uSARJfL4/CMN9swYd4pjAjoaL/zx3PdNhxkab19IpLQH+kLgLxpY/40Cwil0uw1A==, tarball: file:projects/workbench.tgz}
+    resolution: {integrity: sha512-T4247FFckNd7R8F5z7Clqtgc/YFob9baPh+8B9XS9Du3GtN/mPfiGGVjYzYdyvmNIvZZ4pkGw8CPMs1+54tNhA==, tarball: file:projects/workbench.tgz}
     id: file:projects/workbench.tgz
     name: '@rush-temp/workbench'
     version: 0.0.0
@@ -9059,6 +9070,7 @@ packages:
       '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
+      svelte: 3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4

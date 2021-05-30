@@ -24,6 +24,8 @@
   "dependencies": {
     "@anticrm/core":"~0.4.0",
     "@anticrm/status":"~0.4.2",
-    "@anticrm/platform":"~0.4.2"
+    "@anticrm/platform":"~0.4.2",
+    "@anticrm/plugin-core":"~0.4.0",
+    "svelte":"^3.38.2"
   }
 }

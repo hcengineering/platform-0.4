@@ -13,10 +13,13 @@
 // limitations under the License.
 //
 
-import type { IntlString, Asset, Component } from '@anticrm/status'
+import { getContext } from 'svelte'
+
+import type { IntlString, Asset } from '@anticrm/status'
 import { plugin } from '@anticrm/platform'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Doc } from '@anticrm/core'
+import type { Client } from '@anticrm/plugin-core'
 
 export interface Application extends Doc {
   label: IntlString
@@ -29,4 +32,14 @@ export interface WorkbenchService extends Service {
 
 const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 
-export default plugin(PluginWorkbench, {}, {})
+const workbench = plugin(PluginWorkbench, {}, {
+  context: {
+    Client: ''
+  }
+})
+
+export function getClient(): Client {
+  return getContext<Client>(workbench.context.Client)
+}
+
+export default workbench

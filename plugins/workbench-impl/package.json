@@ -27,6 +27,7 @@
     "@anticrm/status": "~0.4.2",
     "@anticrm/ui": "~0.4.1",
     "@anticrm/workbench": "~0.4.0",
-    "@anticrm/client": "~0.4.0"
+    "@anticrm/client": "~0.4.0",
+    "@anticrm/plugin-core": "~0.4.0"
   }
 }

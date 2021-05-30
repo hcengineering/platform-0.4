@@ -22,6 +22,14 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
+
+  import { setContext } from 'svelte'
+  import type { Client } from '@anticrm/plugin-core'
+  import workbench from '@anticrm/workbench'
+
+  export let client: Client
+
+  setContext(workbench.context.Client, client)
 </script>
 
 <div class="container">
