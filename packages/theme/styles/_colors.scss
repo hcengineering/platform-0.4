@@ -27,6 +27,8 @@
   --primary-color-orange-02: #F47758;
   --primary-color-skyblue: #93CAF3;
   --primary-color-pink: #FA8DA1;
+
+  --highlight-red: #F96E50;
 }
 
 /* Dark Theme */
@@ -36,6 +38,7 @@
   --theme-menu-color: #111117;
   --theme-menu-selection: #1D1D23;
   --theme-menu-divider: rgba(255, 255, 255, .05);
+  --theme-scroll-bar: #2C2C34;
 
   --theme-bg-accent-color: rgba(255, 255, 255, .03);
   --theme-bg-accent-hover: rgba(255, 255, 255, .1);
@@ -89,6 +92,7 @@
   --theme-menu-color: #2C2B35;
   --theme-menu-selection: #37363F;
   --theme-menu-divider: rgba(255, 255, 255, .05);
+  --theme-scroll-bar: #494852;
 
   --theme-bg-accent-color: rgba(255, 255, 255, 0.05);
   --theme-bg-accent-hover: rgba(255, 255, 255, 0.05);
@@ -115,6 +119,7 @@
   --theme-menu-color: #E7E7E7;
   --theme-menu-selection: #DBDBDB;
   --theme-menu-divider: rgba(0, 0, 0, .08);
+  --theme-scroll-bar: #CBCBCB;
 
   --theme-bg-accent-color: rgba(0, 0, 0, 0.05);
   --theme-bg-accent-hover: rgba(0, 0, 0, 0.05);
