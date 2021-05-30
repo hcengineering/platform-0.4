@@ -13,13 +13,18 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { Ref, Class, Space } from '@anticrm/core'
+import type { Emb, Doc, Ref, Collection } from './classes'
 
-import core from '@anticrm/model'
+export interface Space extends Doc {
+  name: string
+  description: string
+  private: boolean
+  members: Collection<Member>
+}
 
-export default mergeIds(core, {
-  class: {
-    Space: '' as Ref<Class<Space>>
-  }
-})
+export interface Member extends Emb {
+  account: Ref<Account>
+}
+
+export interface Account extends Doc {
+}

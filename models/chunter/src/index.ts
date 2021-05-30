@@ -13,12 +13,20 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { Builder, Model } from '@anticrm/model'
+
+import { TSpace } from '@anticrm/model-core'
+import type { Channel } from '@anticrm/chunter'
 
 import workbench from '@anticrm/model-workbench'
+import core from '@anticrm/model-core'
 import chunter from './plugin'
 
+@Model(chunter.class.Channel, core.class.Space)
+export class TChannel extends TSpace implements Channel {}
+
 export function createModel(builder: Builder) {
+  builder.createModel(TChannel)
   builder.createDoc(workbench.class.Application, {
     label: chunter.string.ApplicationLabelChunter,
     icon: chunter.icon.Chunter,

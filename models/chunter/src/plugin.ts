@@ -15,10 +15,15 @@
 
 import chunter from '@anticrm/chunter-impl/src/plugin'
 import type { IntlString } from '@anticrm/status'
+import type { Ref, Class } from '@anticrm/core'
+import type { Channel } from '@anticrm/chunter'
 import { mergeIds } from '@anticrm/status' 
 
 export default mergeIds(chunter, {
   string: { 
     ApplicationLabelChunter: '' as IntlString
+  },
+  class: { 
+    Channel: '' as Ref<Class<Channel>>
   }
 })

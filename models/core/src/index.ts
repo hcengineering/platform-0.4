@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data } from '@anticrm/core'
+import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member } from '@anticrm/core'
 import { DOMAIN_TX } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
@@ -29,6 +29,8 @@ export class TDoc extends TObj implements Doc {
   _id!: Ref<this>
 }
 
+// T R A N S A C T I O N S
+
 @Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
 export class TTx extends TDoc implements Tx {
   domain!: string
@@ -41,8 +43,18 @@ export class TTxCreateObject<T extends Doc> extends TTx implements TxCreateObjec
   attributes!: Data<T>
 }
 
+// S E C U R I T Y
+
+@Model(core.class.Space, core.class.Doc)
+export class TSpace extends TDoc implements Space {
+  name!: string
+  description!: string
+  private!: boolean
+  members!: Collection<Member>
+}
+
 export function createModel(builder: Builder) {
-  builder.createModel(TObj, TDoc, TTx, TTxCreateObject)
+  builder.createModel(TObj, TDoc, TTx, TTxCreateObject, TSpace)
 }
 
 export { core as default }

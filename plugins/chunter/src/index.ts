@@ -16,6 +16,9 @@
 import { plugin } from '@anticrm/platform'
 import type { Asset } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
+import type { Space } from '@anticrm/core'
+
+export interface Channel extends Space {}
 
 export interface ChunterService extends Service {}
 
