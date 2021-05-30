@@ -13,10 +13,13 @@
 // limitations under the License.
 //
 
-import type { ChunterService } from '@anticrm/chunter'
+import { mergeIds } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/ui'
 
-export default async (): Promise<ChunterService> => {
-  return {}
-}
+import chunter from '@anticrm/chunter'
 
-export { default as ids } from './plugin'
+export default mergeIds(chunter, {
+  component: {
+    Navigator: '' as AnyComponent
+  }
+})

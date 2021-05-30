@@ -485,6 +485,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/chunter-impl",
+      "projectFolder": "plugins/chunter-impl",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/plugin-core",
       "projectFolder": "plugins/plugin-core",
       "shouldPublish": true

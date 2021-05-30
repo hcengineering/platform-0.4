@@ -9,6 +9,7 @@ specifiers:
   '@microsoft/api-extractor': ^7.13.4
   '@rush-temp/chunter': file:./projects/chunter.tgz
   '@rush-temp/chunter-assets': file:./projects/chunter-assets.tgz
+  '@rush-temp/chunter-impl': file:./projects/chunter-impl.tgz
   '@rush-temp/client': file:./projects/client.tgz
   '@rush-temp/core': file:./projects/core.tgz
   '@rush-temp/login': file:./projects/login.tgz
@@ -67,6 +68,7 @@ dependencies:
   '@microsoft/api-extractor': 7.15.1
   '@rush-temp/chunter': file:projects/chunter.tgz_ts-node@10.0.0
   '@rush-temp/chunter-assets': file:projects/chunter-assets.tgz_ts-node@10.0.0
+  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_ts-node@10.0.0
   '@rush-temp/client': file:projects/client.tgz_ts-node@10.0.0
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz
@@ -8659,7 +8661,7 @@ packages:
     dev: false
 
   file:projects/chunter-assets.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-N9ys7bM+VXfa8SKP/CbH7esnK96W5f3Yh70wyE2pPEIfUYiYrgrR4VWqzV3nDzrp1dSJ5wBQnBzXz1CBIBFJyQ==, tarball: file:projects/chunter-assets.tgz}
+    resolution: {integrity: sha512-n3plN8xiqfHCm0MqQmUHzyvA7hZUVjQm/oKau9wCGqA5DbmaPvYm0hDajIo8Djs6NdXgtWK8G1t/6HtoNgujog==, tarball: file:projects/chunter-assets.tgz}
     id: file:projects/chunter-assets.tgz
     name: '@rush-temp/chunter-assets'
     version: 0.0.0
@@ -8667,6 +8669,28 @@ packages:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/node': 15.6.1
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/chunter-impl.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-MSxWt4ooEtrzZEo+odBH+9Q/kx8INgFoJlI0jTGInxrwlQzc1NEXb3qBTc0QSWtJfB018yKUyLtpiYgdZSdFiw==, tarball: file:projects/chunter-impl.tgz}
+    id: file:projects/chunter-impl.tgz
+    name: '@rush-temp/chunter-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
@@ -8977,7 +9001,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4:
-    resolution: {integrity: sha512-B6R3/TLkzo8LsrOgP7/40AZ3bT7l7w/WeqjugOmztbwZK6Noes6ZYJ66NidJ1ByphyicrCDD6afFahL8sXjSIQ==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-eJf7TWiwzYq5PWlcsgYNmsByMUTLfvbt4IvdZhnzG6D+3r4inntPLpeW6i9jt1dUa1kCjsIibG/4NVtgg1kK+w==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -9121,7 +9145,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_@babel+core@7.14.2:
-    resolution: {integrity: sha512-76bLKADj5STnVzF6ZMIav85k+9OKoPg0KhG34YQO9C4Z9xXXogqw5adglHy4LPmMcAyhbeRNKpNIDE86ULmgFQ==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-Xlbxd08yfCdQH2bHdTzrkgwA7bg3v8v4+x8919zWv7jk5Zhy7M/QjlmEgmmI04P4uSgKLrqhLjE5Z4yWXNjzSA==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
@@ -9150,7 +9174,7 @@ packages:
     dev: false
 
   file:projects/workbench.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-iyIZ6v/ZBdt6y15RQkghkpnn+Nfe7B00DRJ/KRS9HKBQxAaCXSpE0oCDpBvVINxwu/hXSt1487h/8N2AJRvdeg==, tarball: file:projects/workbench.tgz}
+    resolution: {integrity: sha512-PrBBFY52NHz4cvz23nyNzA6o6KC1/XODzdZ3yCCyZ6+qkztFQCy0ksCSrpcB6PQQMU3nhblLfnG9oMuJNWxwjw==, tarball: file:projects/workbench.tgz}
     id: file:projects/workbench.tgz
     name: '@rush-temp/workbench'
     version: 0.0.0
