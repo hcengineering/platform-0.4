@@ -37,4 +37,9 @@ export function createModel(builder: Builder) {
     description: 'General Channel',
     private: false
   })
+  builder.createDoc(chunter.class.Channel, {
+    name: 'random',
+    description: 'Random Talks',
+    private: false
+  })
 }
