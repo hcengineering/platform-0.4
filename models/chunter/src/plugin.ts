@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import chunter from '@anticrm/chunter'
+import chunter from '@anticrm/chunter-impl/src/plugin'
 import type { IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status' 
 

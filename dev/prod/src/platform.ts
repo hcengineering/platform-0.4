@@ -47,11 +47,11 @@ export function configurePlatform() {
 // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
   addLocation(login, () => import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
-  addLocation(workbench, () => import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
   addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-dev'))
+  addLocation(workbench, () => import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
+  addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
 // platform.addLocation(i18n, () => import(/* webpackChunkName: "platform-i18n" */ '@anticrm/platform-i18n/src/plugin'))
 // platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
-// platform.addLocation(task, () => import(/* webpackChunkName: "task" */ '@anticrm/task/src/plugin'))
 // platform.addLocation(task, () => import(/* webpackChunkName: "task" */ '@anticrm/task/src/plugin'))
 // platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
 // platform.addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter/src/plugin'))

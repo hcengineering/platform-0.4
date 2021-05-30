@@ -43,6 +43,7 @@
     "@anticrm/plugin-core": "~0.4.0",
     "@anticrm/plugin-core-dev": "~0.4.0",
     "@anticrm/chunter": "~0.4.0",
-    "@anticrm/chunter-assets": "~0.4.0"
+    "@anticrm/chunter-assets": "~0.4.0",
+    "@anticrm/chunter-impl": "~0.4.0"
   }
 }

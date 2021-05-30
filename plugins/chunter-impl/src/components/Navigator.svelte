@@ -1,4 +1,4 @@
-//
+<!--
 // Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -11,17 +11,6 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+-->
 
-import { Builder } from '@anticrm/model'
-
-import workbench from '@anticrm/model-workbench'
-import chunter from './plugin'
-
-export function createModel(builder: Builder) {
-  builder.createDoc(workbench.class.Application, {
-    label: chunter.string.ApplicationLabelChunter,
-    icon: chunter.icon.Chunter,
-    navigator: chunter.component.Navigator
-  })
-}
+<div>CHUNTER!</div>

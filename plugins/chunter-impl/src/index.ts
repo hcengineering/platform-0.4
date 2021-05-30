@@ -13,3 +13,16 @@
 // limitations under the License.
 //
 
+import { setResource } from '@anticrm/platform'
+import type { ChunterService } from '@anticrm/chunter'
+
+import chunter from './plugin'
+
+import Navigator from './components/Navigator.svelte'
+
+export default async (): Promise<ChunterService> => {
+
+  setResource(chunter.component.Navigator, Navigator)
+
+  return {}
+}

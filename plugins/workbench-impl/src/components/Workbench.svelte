@@ -25,23 +25,34 @@
 
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
+  import type { AnyComponent } from '@anticrm/ui'
+  import { Component } from '@anticrm/ui'
+
   import workbench from '@anticrm/workbench'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
+
+  let navigator: AnyComponent | undefined
+
+  function onAppChange(event: any) {
+    navigator = event.detail.navigator
+  }
 </script>
 
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active"/>
-    <Applications active="home"/>
+    <Applications on:app-change={onAppChange}/>
     <div class="profile">
       <img class="avatar" src={avatar} alt="Profile"/>
     </div>
   </div>
+  {#if navigator}
   <div class="navigator">
-    <NavHeader/>
+    <Component is={navigator}/>
+    <!-- <NavHeader/>
     <NavItem icon="thread" title="Threads"/>
     <NavItem icon="mention" title="Mentions" counter="8"/>
     <div class="separator"></div>
@@ -62,8 +73,9 @@
       <NavSubitem type="user" img="tim" title="Tim Ferris" counter="8"/>
       <NavSubitem type="user" img="chen" title="Rosamund Chen"/>
       <NavSubitem type="user" img="elon" title="Elon Musk"/>
-    </NavItem>
+    </NavItem> -->
   </div>
+  {/if}
   <div class="component">
     <AppHeader title="boring project" subtitle="27 members"/>
   </div>

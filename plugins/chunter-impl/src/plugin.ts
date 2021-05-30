@@ -13,15 +13,13 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { mergeIds } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/ui'
 
-import workbench from '@anticrm/model-workbench'
-import chunter from './plugin'
+import chunter from '@anticrm/chunter'
 
-export function createModel(builder: Builder) {
-  builder.createDoc(workbench.class.Application, {
-    label: chunter.string.ApplicationLabelChunter,
-    icon: chunter.icon.Chunter,
-    navigator: chunter.component.Navigator
-  })
-}
+export default mergeIds(chunter, {
+  component: {
+    Navigator: '' as AnyComponent
+  }
+})

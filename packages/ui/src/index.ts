@@ -24,6 +24,7 @@ export { default as EditBox } from './components/EditBox.svelte'
 export { default as Label } from './components/Label.svelte'
 export { default as Button } from './components/Button.svelte'
 export { default as StatusControl } from './components/StatusControl.svelte'
+export { default as Component } from './components/Component.svelte'
 export { default as Icon } from './components/Icon.svelte'
 
 export function createApp (target: HTMLElement): SvelteComponent {

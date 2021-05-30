@@ -5,7 +5,7 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'source code'",
     "build:docs": "api-extractor run --local",
     "test": "jest",
     "lint": "ts-standard src",
@@ -24,6 +24,8 @@
   "dependencies": {
     "@anticrm/core":"~0.4.0",
     "@anticrm/status":"~0.4.2",
-    "@anticrm/platform":"~0.4.2"
+    "@anticrm/platform":"~0.4.2",
+    "@anticrm/ui":"~0.4.1",
+    "@anticrm/chunter":"~0.4.0"
   }
 }
