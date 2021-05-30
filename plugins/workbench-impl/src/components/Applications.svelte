@@ -15,7 +15,7 @@
 
 <script lang="ts">
 
-  import { onDestroy } from 'svelte'
+  import { onDestroy, createEventDispatcher } from 'svelte'
   import type { Ref } from '@anticrm/core'
   import type { Application } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
@@ -23,17 +23,21 @@
   import { Icon } from '@anticrm/ui'
 
   let apps: Application[] = []
-
   onDestroy(getClient().query(workbench.class.Application, {}, result => { apps = result }))
 
-  export let active: Ref<Application> | undefined
+  const dispatch = createEventDispatcher()
+  let active: Ref<Application> | undefined
+  
+  function onAppChange(app: Application) {
+    active = app._id
+    dispatch('app-change', app)
+  }
 
 </script>
 
 <div class="app-icons">
   {#each apps as app}
-    <div class="app" class:selected={app._id === active}
-         on:click={() => {active = app._id}}>
+    <div class="app" class:selected={app._id === active} on:click={() => onAppChange(app)}>
       <Icon icon={app.icon} size="32px" fill="var(--theme-caption-color)"/>
     </div>
   {/each}
