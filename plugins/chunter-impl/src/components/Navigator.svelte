@@ -29,7 +29,7 @@
 <div>
   <TreeNode title="Channels">
     {#each channels as channel}
-      <TreeItem title={channel.name}/>
+      <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
     {/each}
   </TreeNode>
 </div>

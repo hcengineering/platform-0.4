@@ -19,5 +19,6 @@ import chunter from '@anticrm/chunter'
 const icons = require('../assets/icons.svg')
 console.log(icons)
 loadMetadata(chunter.icon, {
-  Chunter: `${icons}#chunter`
+  Chunter: `${icons}#chunter`,
+  Hashtag: `${icons}#hashtag`
 })

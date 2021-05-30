@@ -26,6 +26,7 @@ const PluginChunter = 'chunter' as Plugin<ChunterService>
 
 export default plugin(PluginChunter, {}, {
   icon: {
-    Chunter: '' as Asset
+    Chunter: '' as Asset,
+    Hashtag: '' as Asset
   }
 })
