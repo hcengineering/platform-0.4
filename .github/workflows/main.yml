@@ -25,6 +25,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Fetch `main`...
+        run: git fetch origin main:refs/remotes/origin/main -a
+
       - name: Checking for missing change logs...
         run: node common/scripts/install-run-rush.js change -v
 
