@@ -59,28 +59,25 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar:horizontal {
-  height: 8px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background-color: va(--theme-bg-color);
+  // background-color: var(--theme-scroll-bar);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--theme-bg-accent-color);
-  border: 1px solid var(--theme-menu-color);
-  border-radius: 2px;
+  background-color: var(--theme-scroll-bar);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-menu-color);
-  border: 1px solid var(--theme-menu-color);
-  border-radius: 2px;
+  background-color: var(--theme-scroll-bar);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-corner {
-  background: var(--theme-bg-accent-color);
-  border: 1px solid var(--theme-menu-color);
-  border-radius: 2px;
+  background-color: var(--theme-scroll-bar);
+  border-radius: 4px;
 }
 
 body {

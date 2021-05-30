@@ -20,7 +20,7 @@
   import type { Application } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
 
-  import { Icon } from '@anticrm/ui'
+  import { Icon, AppItem } from '@anticrm/ui'
 
   let apps: Application[] = []
 
@@ -32,9 +32,11 @@
 
 <div class="app-icons">
   {#each apps as app}
-    <div class="app" class:selected={app._id === active}
-         on:click={() => {active = app._id}}>
-      <Icon icon={app.icon} size="32px" fill="var(--theme-caption-color)"/>
+    <div class="app">
+      <AppItem selected={app._id === active} notify
+              on:click={() => {active = app._id}}>
+        <Icon icon={app.icon} size="32px" fill="var(--theme-caption-color)"/>
+      </AppItem>
     </div>
   {/each}
 </div>
@@ -45,18 +47,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 8px;
-      cursor: pointer;
-      opacity: .3;
-      &.selected {
-        opacity: 1;
-        background-color: var(--theme-menu-selection);
-      }
+      width: 48px;
+      height: 48px;
     }
     .app + .app {
-      margin-top: 8px;
+      margin-top: 4px;
     }
   }
 </style>
