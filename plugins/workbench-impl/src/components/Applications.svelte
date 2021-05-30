@@ -20,7 +20,8 @@
   import type { Application } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
 
-  import { Icon, AppItem } from '@anticrm/ui'
+  import { Icon } from '@anticrm/ui'
+  import AppItem from './AppItem.svelte'
 
   let apps: Application[] = []
 
@@ -35,7 +36,7 @@
     <div class="app">
       <AppItem selected={app._id === active} notify
               on:click={() => {active = app._id}}>
-        <Icon icon={app.icon} size="32px" fill="var(--theme-caption-color)"/>
+        <Icon icon={app.icon} size="28px" fill="var(--theme-caption-color)"/>
       </AppItem>
     </div>
   {/each}
