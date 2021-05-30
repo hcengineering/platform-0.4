@@ -20,12 +20,14 @@ import type { Ref, Class } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Doc } from '@anticrm/core'
 import type { Client } from '@anticrm/plugin-core'
+import type { AnyComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
 
 export interface Application extends Doc {
   label: IntlString
   icon: Asset
+  navigator?: AnyComponent
 }
 
 export interface WorkbenchService extends Service {

@@ -6,6 +6,7 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "lib": ["es2018", "dom"]
   }
 }
