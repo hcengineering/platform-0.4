@@ -20,6 +20,14 @@
   import Home from './icons/Home.svelte'
   import Task from './icons/Task.svelte'
 
+  import { onDestroy } from 'svelte'
+  import type { Application } from '@anticrm/workbench'
+  import workbench, { getClient } from '@anticrm/workbench'
+
+  let apps: Application[] = []
+
+  onDestroy(getClient().query(workbench.class.Application, {}, result => { apps = result }))
+
   export let active: string = 'add'
 
   const applications = [

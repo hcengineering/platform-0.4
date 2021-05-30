@@ -16,10 +16,12 @@
 import { getContext } from 'svelte'
 
 import type { IntlString, Asset } from '@anticrm/status'
-import { plugin } from '@anticrm/platform'
+import type { Ref, Class } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Doc } from '@anticrm/core'
 import type { Client } from '@anticrm/plugin-core'
+
+import { plugin } from '@anticrm/platform'
 
 export interface Application extends Doc {
   label: IntlString
@@ -35,6 +37,9 @@ const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 const workbench = plugin(PluginWorkbench, {}, {
   context: {
     Client: ''
+  },
+  class: {
+    Application: '' as Ref<Class<Application>>
   }
 })
 
