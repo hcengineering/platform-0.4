@@ -14,36 +14,27 @@
 -->
 
 <script lang="ts">
-  import Search from './icons/Search.svelte'
-  import Add from './icons/Add.svelte'
-  import Chat from './icons/Chat.svelte'
-  import Home from './icons/Home.svelte'
-  import Task from './icons/Task.svelte'
 
   import { onDestroy } from 'svelte'
+  import type { Ref } from '@anticrm/core'
   import type { Application } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
+
+  import { Icon } from '@anticrm/ui'
 
   let apps: Application[] = []
 
   onDestroy(getClient().query(workbench.class.Application, {}, result => { apps = result }))
 
-  export let active: string = 'add'
+  export let active: Ref<Application> | undefined
 
-  const applications = [
-    { name: 'add', component: Add },
-    { name: 'home', component: Home },
-    { name: 'chat',  component: Chat },
-    { name: 'task',  component: Task },
-    { name: 'search',  component: Search },
-  ]
 </script>
 
 <div class="app-icons">
-  {#each applications as app}
-    <div class="app" class:selected={app.name === active.toLowerCase()}
-         on:click={() => {active = app.name}}>
-      <svelte:component this={app.component} size="32"/>
+  {#each apps as app}
+    <div class="app" class:selected={app._id === active}
+         on:click={() => {active = app._id}}>
+      <Icon icon={app.icon} size="32px" fill="var(--theme-caption-color)"/>
     </div>
   {/each}
 </div>

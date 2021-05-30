@@ -480,6 +480,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/chunter-assets",
+      "projectFolder": "plugins/chunter-assets",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/plugin-core",
       "projectFolder": "plugins/plugin-core",
       "shouldPublish": true

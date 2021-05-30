@@ -13,14 +13,11 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { loadMetadata } from '@anticrm/platform'
+import chunter from '@anticrm/chunter'
 
-import workbench from '@anticrm/model-workbench'
-import chunter from './plugin'
-
-export function createModel(builder: Builder) {
-  builder.createDoc(workbench.class.Application, {
-    label: chunter.string.ApplicationLabelChunter,
-    icon: chunter.icon.Chunter
-  })
-}
+const icons = require('../assets/icons.svg')
+console.log(icons)
+loadMetadata(chunter.icon, {
+  Chunter: `${icons}#chunter`
+})

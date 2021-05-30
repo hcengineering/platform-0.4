@@ -1,5 +1,5 @@
-//
-// Copyright © 2020 Anticrm Platform Contributors.
+<!--
+// Copyright © 2020, 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -11,16 +11,21 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+-->
 
-import { Builder } from '@anticrm/model'
+<script lang="ts">
+  import type { Asset } from '@anticrm/status'
+  import { getMetadata } from '@anticrm/platform'
 
-import workbench from '@anticrm/model-workbench'
-import chunter from './plugin'
+  export let icon: Asset
+  export let size: string
+  export let fill: string
 
-export function createModel(builder: Builder) {
-  builder.createDoc(workbench.class.Application, {
-    label: chunter.string.ApplicationLabelChunter,
-    icon: chunter.icon.Chunter
-  })
-}
+  let url: string
+  $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'
+</script>
+
+<svg width={size} height={size} {fill}>
+  <use href={url} />
+</svg>
+

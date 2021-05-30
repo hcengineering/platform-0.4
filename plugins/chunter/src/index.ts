@@ -14,14 +14,15 @@
 //
 
 import { plugin } from '@anticrm/platform'
+import type { Asset } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
 
-export interface ChunterService extends Service {
-
-}
+export interface ChunterService extends Service {}
 
 const PluginChunter = 'chunter' as Plugin<ChunterService>
 
 export default plugin(PluginChunter, {}, {
-
+  icon: {
+    Chunter: '' as Asset
+  }
 })
