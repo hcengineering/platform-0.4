@@ -32,4 +32,9 @@ export function createModel(builder: Builder) {
     icon: chunter.icon.Chunter,
     navigator: chunter.component.Navigator
   })
+  builder.createDoc(chunter.class.Channel, {
+    name: 'general',
+    description: 'General Channel',
+    private: false
+  })
 }
