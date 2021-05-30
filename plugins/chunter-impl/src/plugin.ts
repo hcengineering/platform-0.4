@@ -15,11 +15,16 @@
 
 import { mergeIds } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
+import type { Ref, Class } from '@anticrm/core'
+import type { Channel } from '@anticrm/chunter'
 
 import chunter from '@anticrm/chunter'
 
 export default mergeIds(chunter, {
   component: {
     Navigator: '' as AnyComponent
+  },
+  class: { 
+    Channel: '' as Ref<Class<Channel>>
   }
 })

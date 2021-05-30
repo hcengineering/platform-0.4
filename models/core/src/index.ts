@@ -14,7 +14,7 @@
 //
 
 import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member } from '@anticrm/core'
-import { DOMAIN_TX } from '@anticrm/core'
+import { DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
 import core from './component'
@@ -45,7 +45,7 @@ export class TTxCreateObject<T extends Doc> extends TTx implements TxCreateObjec
 
 // S E C U R I T Y
 
-@Model(core.class.Space, core.class.Doc)
+@Model(core.class.Space, core.class.Doc, DOMAIN_MODEL)
 export class TSpace extends TDoc implements Space {
   name!: string
   description!: string

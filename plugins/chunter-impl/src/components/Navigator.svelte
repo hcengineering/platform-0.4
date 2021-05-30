@@ -14,10 +14,22 @@
 -->
 
 <script lang="ts">
-  import { TreeNode } from '@anticrm/ui'
+  import { onDestroy } from 'svelte'
+  import type { Channel } from '@anticrm/chunter'
+  import { getClient } from '@anticrm/workbench'
+  import { TreeNode, TreeItem } from '@anticrm/ui'
+
+  import chunter from '../plugin'
+
+  let channels: Channel[] = []
+  onDestroy(getClient().query(chunter.class.Channel, {}, result => { channels = result }))
 
 </script>
 
 <div>
-  <TreeNode title="Channels"/>
+  <TreeNode title="Channels">
+    {#each channels as channel}
+      <TreeItem title={channel.name}/>
+    {/each}
+  </TreeNode>
 </div>

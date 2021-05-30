@@ -26,6 +26,8 @@
     "@anticrm/status":"~0.4.2",
     "@anticrm/platform":"~0.4.2",
     "@anticrm/ui":"~0.4.1",
-    "@anticrm/chunter":"~0.4.0"
+    "@anticrm/chunter":"~0.4.0",
+    "@anticrm/workbench":"~0.4.0",
+    "svelte":"^3.38.2"
   }
 }

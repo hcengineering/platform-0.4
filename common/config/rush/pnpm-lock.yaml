@@ -68,7 +68,7 @@ dependencies:
   '@microsoft/api-extractor': 7.15.1
   '@rush-temp/chunter': file:projects/chunter.tgz_ts-node@10.0.0
   '@rush-temp/chunter-assets': file:projects/chunter-assets.tgz_ts-node@10.0.0
-  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55
+  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_ts-node@10.0.0
   '@rush-temp/client': file:projects/client.tgz_ts-node@10.0.0
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz
@@ -8683,8 +8683,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/chunter-impl.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55:
-    resolution: {integrity: sha512-123MKipyFIHWBka07lBG7pqOmXMU32ti3qVxlX87gIN0TSTViIdT/iZd7PF7WBSDFKqEotRmvTkCVrN734N2JA==, tarball: file:projects/chunter-impl.tgz}
+  file:projects/chunter-impl.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-TCGbVX0qqfK0JW5B1jhxCawAgJtPEOWdzePDeUSTS9xyJEARPrZCZfEmg8k+wdCo5ulc2hw9aoZ97ChODo5kwQ==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -8693,27 +8693,15 @@ packages:
       '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
-      sass: 1.32.13
-      svelte-loader: 3.1.1
-      svelte-preprocess: 4.7.3_91bc1e7de6d4b487d8566c5c326cadc4
+      svelte: 3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:
-      - '@babel/core'
       - '@typescript-eslint/parser'
       - bufferutil
       - canvas
-      - coffeescript
-      - less
-      - node-sass
-      - postcss
-      - postcss-load-config
-      - pug
-      - stylus
-      - sugarss
       - supports-color
-      - svelte
       - ts-node
       - utf-8-validate
     dev: false
@@ -8856,7 +8844,7 @@ packages:
     dev: false
 
   file:projects/model-chunter.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-Ka6JLq55ttbBz6cHsAHa+N/Rm/VNEYFevCMxuQ3jrm5lonprWBp+JunUHnaq8RLsb34WT2fqgGh6WEx6alN6aw==, tarball: file:projects/model-chunter.tgz}
+    resolution: {integrity: sha512-Z4rK1jU917Vts29BB7ISlrkqDXRFvVH569ksvs2zNt8mTFF5RQI2mS8acdLpG/P3Tu9dEjU0SBMneWKawK/dKA==, tarball: file:projects/model-chunter.tgz}
     id: file:projects/model-chunter.tgz
     name: '@rush-temp/model-chunter'
     version: 0.0.0
