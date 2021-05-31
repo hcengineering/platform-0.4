@@ -16,7 +16,7 @@
 <script lang="ts">
   import Collapsed from './icons/Collapsed.svelte'
   import Expanded from './icons/Expanded.svelte'
-  import Add16 from './icons/Add16.svelte'
+  import Add from './icons/Add.svelte'
   import type { Asset } from '@anticrm/status'
 
   import Icon from '../Icon.svelte'
@@ -44,7 +44,7 @@
     </div>
     <span on:click={() => {actionApp()}}>{title}</span>
     {#if node && !icon}
-      <div class="tool"><Add16/></div>
+      <div class="tool"><Add/></div>
     {/if}
     {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>
