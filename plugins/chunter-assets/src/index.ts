@@ -20,5 +20,6 @@ const icons = require('../assets/icons.svg')
 console.log(icons)
 loadMetadata(chunter.icon, {
   Chunter: `${icons}#chunter`,
-  Hashtag: `${icons}#hashtag`
+  Hashtag: `${icons}#hashtag`,
+  Lock: `${icons}#lock`
 })

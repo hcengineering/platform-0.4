@@ -14,27 +14,53 @@
 -->
 
 <script lang="ts">
+  import Collapsed from './internal/icons/Collapsed.svelte'
+  import Expanded from './internal/icons/Expanded.svelte'
   import type { Asset } from '@anticrm/status'
 
   import Icon from './Icon.svelte'
 
   export let icon: Asset
+  export let avatar: Any
   export let title: string
-  export let notifications: number = 0
+  export let notifications = 0
+  export let node = false
+  export let group = false
+  export let collapsed = false
+  export let separator = false
 
+  function actionApp(): void {
+    console.log('Click')
+  }
 </script>
 
-<div class="container">
-  <div class="title">
-    <div class="icon">
-      <Icon {icon} size="16px"/>
-    </div>
+<div class="container" class:collapsed={collapsed}>
+  <div class="title" on:click={() => {if (group) collapsed = !collapsed; else actionApp()}}>
+    {#if avatar}
+      <div class="avatar"></div>
+    {:else}
+      <div class="icon" class:sub={!node && !group}>
+        {#if !group}
+          <Icon {icon} size="16px"/>
+        {:else}
+          {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
+        {/if}
+      </div>
+    {/if}
     <span>{title}</span>
     {#if notifications > 0}
       <div class="counter">{notifications}</div>
     {/if}
   </div>
 </div>
+{#if !collapsed && group}
+  <div class="dropdown">
+    <slot/>
+  </div>
+{/if}
+{#if separator}
+  <div class="separator"/>
+{/if}
 
 <style lang="scss">
   .container {
@@ -46,16 +72,19 @@
       border-radius: 8px;
       font-size: 14px;
       font-weight: 500;
+      color: var(--theme-caption-color);
       user-select: none;
-      color: var(--theme-content-color);
       cursor: pointer;
       .icon {
         width: 16px;
         min-width: 16px;
         height: 16px;
-        margin: 10px 16px 10px 50px;
+        margin: 10px 16px 10px 18px;
         border-radius: 4px;
         opacity: .3;
+        &.sub {
+          margin: 10px 16px 10px 50px;
+        }
       }
       .avatar {
         width: 24px;
@@ -63,6 +92,7 @@
         height: 24px;
         margin: 6px 8px 6px 50px;
         border-radius: 50%;
+        background-color: var(--theme-bg-selection);
       }
       span {
         flex-grow: 1;
@@ -88,5 +118,19 @@
         background-color: var(--theme-button-bg-enabled);
       }
     }
+  }
+  .collapsed {
+    margin-bottom: 8px;
+  }
+  .dropdown {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .separator {
+    width: 100%;
+    height: 1px;
+    min-height: 1px;
+    margin: 24px 0;
+    background-color: var(--theme-menu-divider);
   }
 </style>
