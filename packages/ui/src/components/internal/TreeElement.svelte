@@ -16,6 +16,7 @@
 <script lang="ts">
   import Collapsed from './icons/Collapsed.svelte'
   import Expanded from './icons/Expanded.svelte'
+  import Add from './icons/Add.svelte'
   import type { Asset } from '@anticrm/status'
 
   import Icon from '../Icon.svelte'
@@ -33,15 +34,18 @@
 </script>
 
 <div class="container">
-  <div class="title" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed; else actionApp()}}>
-    <div class="icon" class:sub={!node}>
+  <div class="title" class:sub={!node}>
+    <div class="icon" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed}}>
       {#if icon}
         <Icon {icon} size="16px"/>
       {:else}
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
     </div>
-    <span>{title}</span>
+    <span on:click={() => {actionApp()}}>{title}</span>
+    {#if node && !icon}
+      <div class="tool"><Add/></div>
+    {/if}
     {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>
     {/if}
@@ -95,6 +99,19 @@
         white-space: nowrap;
         text-overflow: ellipsis;
       }
+      .tool {
+        visibility: hidden;
+        width: 16px;
+        height: 16px;
+        margin-left: 12px;
+        opacity: .3;
+        &:last-child {
+          margin-right: 10px;
+        }
+        &:hover {
+          opacity: 1;
+        }
+      }
       .counter {
         display: flex;
         justify-content: center;
@@ -111,6 +128,9 @@
       }
       &:hover {
         background-color: var(--theme-button-bg-enabled);
+        .tool {
+          visibility: visible;
+        }
       }
     }
   }
