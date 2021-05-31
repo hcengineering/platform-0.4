@@ -14,45 +14,41 @@
 -->
 
 <script lang="ts">
-  import Collapsed from './internal/icons/Collapsed.svelte'
-  import Expanded from './internal/icons/Expanded.svelte'
+  import Collapsed from './icons/Collapsed.svelte'
+  import Expanded from './icons/Expanded.svelte'
   import type { Asset } from '@anticrm/status'
 
-  import Icon from './Icon.svelte'
+  import Icon from '../Icon.svelte'
 
-  export let icon: Asset
+  export let icon: Asset | undefined = undefined
   // export let avatar: Any
   export let title: string
   export let notifications = 0
   export let node = false
   export let collapsed = false
 
-  const group = $$slots.default ? true : false
-  let showNoty: boolean
-  $: showNoty = collapsed ? true : false
-
   function actionApp(): void {
     console.log('Click')
   }
 </script>
 
-<div class="container" class:collapsed={collapsed}>
-  <div class="title" class:sub={!node && !group} on:click={() => {if (group) collapsed = !collapsed; else actionApp()}}>
-    <div class="icon" class:sub={!node && !group}>
-      {#if !group}
+<div class="container">
+  <div class="title" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed; else actionApp()}}>
+    <div class="icon" class:sub={!node}>
+      {#if icon}
         <Icon {icon} size="16px"/>
       {:else}
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
     </div>
     <span>{title}</span>
-    {#if notifications > 0 && (showNoty || !group)}
+    {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>
     {/if}
   </div>
 </div>
-{#if !collapsed && group}
-  <div class="dropdown">
+{#if node && !icon}
+  <div class="dropdown" class:collapsed={collapsed}>
     <slot/>
   </div>
 {/if}
@@ -118,11 +114,15 @@
       }
     }
   }
-  .collapsed {
-    margin-bottom: 8px;
-  }
   .dropdown {
+    visibility: visible;
+    height: auto;
     width: 100%;
     margin-bottom: 20px;
+    &.collapsed {
+      visibility: hidden;
+      height: 0;
+      margin-bottom: 8px;
+    }
   }
 </style>
