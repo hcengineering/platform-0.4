@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2020, 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,19 +13,19 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { plugin } from '@anticrm/platform'
+import type { Asset } from '@anticrm/status'
+import type { Plugin, Service } from '@anticrm/platform'
+import type { Space } from '@anticrm/core'
 
-import { createModel as coreModel } from '@anticrm/model-core'
-import { createModel as workbenchModel } from '@anticrm/model-workbench'
-import { createModel as chunterModel } from '@anticrm/model-chunter'
-import { createModel as taskModel } from '@anticrm/model-task'
+export interface Project extends Space {}
 
-const builder = new Builder()
+export interface TaskService extends Service {}
 
-coreModel(builder)
-workbenchModel(builder)
-chunterModel(builder)
-taskModel(builder)
+const PluginTask = 'task' as Plugin<TaskService>
 
-console.log(JSON.stringify(builder.getTxes()))
-
+export default plugin(PluginTask, {}, {
+  icon: {
+    Task: '' as Asset
+  }
+})

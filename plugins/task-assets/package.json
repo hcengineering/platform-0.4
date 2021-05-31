@@ -1,17 +1,16 @@
 {
-  "name": "@anticrm/model-all",
+  "name": "@anticrm/task-assets",
   "version": "0.4.0",
-  "main": "lib/index.js",
+  "main": "src/index.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'source code'",
     "build:docs": "api-extractor run --local",
     "test": "jest",
     "lint": "ts-standard src",
     "lint:fix": "ts-standard --fix src",
-    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && ts-standard --fix src",
-    "gen-model": "ts-node src/index.ts"
+    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && ts-standard --fix src"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.13.4",
@@ -21,15 +20,10 @@
     "ts-standard": "^10.0.0",
     "typescript": "^4.2.4",
     "ts-jest": "^26.5.6",
-    "ts-node": "^10.0.0"
+    "@types/node": "~15.6.1"
   },
   "dependencies": {
-    "@anticrm/model":"~0.4.0",
-    "@anticrm/core":"~0.4.0",
-    "@anticrm/status":"~0.4.2",
-    "@anticrm/model-workbench":"~0.4.0",
-    "@anticrm/model-chunter":"~0.4.0",
-    "@anticrm/model-task":"~0.4.0",
-    "@anticrm/model-core":"~0.4.0"
+    "@anticrm/platform":"~0.4.2",
+    "@anticrm/task":"~0.4.0"
   }
 }

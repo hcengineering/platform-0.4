@@ -13,19 +13,16 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { setResource } from '@anticrm/platform'
+import type { TaskService } from '@anticrm/task'
 
-import { createModel as coreModel } from '@anticrm/model-core'
-import { createModel as workbenchModel } from '@anticrm/model-workbench'
-import { createModel as chunterModel } from '@anticrm/model-chunter'
-import { createModel as taskModel } from '@anticrm/model-task'
+import task from './plugin'
 
-const builder = new Builder()
+import Navigator from './components/Navigator.svelte'
 
-coreModel(builder)
-workbenchModel(builder)
-chunterModel(builder)
-taskModel(builder)
+export default async (): Promise<TaskService> => {
 
-console.log(JSON.stringify(builder.getTxes()))
+  setResource(task.component.Navigator, Navigator)
 
+  return {}
+}

@@ -18,6 +18,7 @@ specifiers:
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
+  '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -25,12 +26,16 @@ specifiers:
   '@rush-temp/prod': file:./projects/prod.tgz
   '@rush-temp/query': file:./projects/query.tgz
   '@rush-temp/status': file:./projects/status.tgz
+  '@rush-temp/task': file:./projects/task.tgz
+  '@rush-temp/task-assets': file:./projects/task-assets.tgz
+  '@rush-temp/task-impl': file:./projects/task-impl.tgz
   '@rush-temp/theme': file:./projects/theme.tgz
   '@rush-temp/ui': file:./projects/ui.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
   '@rush-temp/workbench-impl': file:./projects/workbench-impl.tgz
   '@types/jest': ^26.0.23
   '@types/lodash': ^4.14.168
+  '@types/toposort': ~2.0.3
   core-js: ^3.10.1
   cross-env: ^7.0.3
   css-loader: ^5.2.1
@@ -78,6 +83,7 @@ dependencies:
   '@rush-temp/model-all': file:projects/model-all.tgz
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_ts-node@10.0.0
   '@rush-temp/model-core': file:projects/model-core.tgz
+  '@rush-temp/model-task': file:projects/model-task.tgz_ts-node@10.0.0
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_ts-node@10.0.0
   '@rush-temp/platform': file:projects/platform.tgz_ts-node@10.0.0
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_ts-node@10.0.0
@@ -85,12 +91,16 @@ dependencies:
   '@rush-temp/prod': file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4
   '@rush-temp/query': file:projects/query.tgz_ts-node@10.0.0
   '@rush-temp/status': file:projects/status.tgz_ts-node@10.0.0
+  '@rush-temp/task': file:projects/task.tgz_ts-node@10.0.0
+  '@rush-temp/task-assets': file:projects/task-assets.tgz_ts-node@10.0.0
+  '@rush-temp/task-impl': file:projects/task-impl.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_d7ad990e9c9539c277b06697183ec198
   '@rush-temp/ui': file:projects/ui.tgz_37ef36bfcc7c4ee0fd86442c69e8ba55
   '@rush-temp/workbench': file:projects/workbench.tgz_ts-node@10.0.0
   '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_@babel+core@7.14.2
   '@types/jest': 26.0.23
   '@types/lodash': 4.14.169
+  '@types/toposort': 2.0.3
   core-js: 3.12.1
   cross-env: 7.0.3
   css-loader: 5.2.4_webpack@5.37.1
@@ -8899,6 +8909,28 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/model-task.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-aPsaK4eh7lMgSZtVFWCfMlZysTtMpg8CJ5bNYF/cffMwTDlh8ZogiuFa0TSAD/l4c8YgEt75Y//Po2O0vJp+RA==, tarball: file:projects/model-task.tgz}
+    id: file:projects/model-task.tgz
+    name: '@rush-temp/model-task'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/model-workbench.tgz_ts-node@10.0.0:
     resolution: {integrity: sha512-T8tRaMifDnBfV92poyzbcEGtkuNYRghN+4NV/lX0Ln4i/b8LdqsveEiOOTCraqOyCTmCcDMw/PWlIGqXbCt1Wg==, tarball: file:projects/model-workbench.tgz}
     id: file:projects/model-workbench.tgz
@@ -9078,6 +9110,74 @@ packages:
       '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/task-assets.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-AyuepwWJGY4tp/ZENvR1EmV7VIZUhaySDSAUwJKhXtuCURvASFzu8smmnt+FyFd/Fvg/4patHHWiCkPRnXiuFQ==, tarball: file:projects/task-assets.tgz}
+    id: file:projects/task-assets.tgz
+    name: '@rush-temp/task-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/node': 15.6.1
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/task-impl.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-5ewlZ8ncdfusp4WK2RiKnD0z91GVYHtcKwdH4iep5fIqStvlWU4XkvISuSCQ0B7DdJvNDsDKUdOaXD6iPwLAmg==, tarball: file:projects/task-impl.tgz}
+    id: file:projects/task-impl.tgz
+    name: '@rush-temp/task-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      svelte: 3.38.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      ts-standard: 10.0.0_typescript@4.2.4
+      typescript: 4.2.4
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/task.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-bXZj+Gc5bfNcJj2v31ngHHj1MfCWztQmRVNa19On5u6LHNlEh9l3ppmhmzOHuw6o1rd0VAokEVe66bnIu/qyHA==, tarball: file:projects/task.tgz}
+    id: file:projects/task.tgz
+    name: '@rush-temp/task'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:

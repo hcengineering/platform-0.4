@@ -450,6 +450,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/model-task",
+      "projectFolder": "models/task",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/model-all",
       "projectFolder": "models/all",
       "shouldPublish": false
@@ -487,6 +492,21 @@
     {
       "packageName": "@anticrm/chunter-impl",
       "projectFolder": "plugins/chunter-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/task",
+      "projectFolder": "plugins/task",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/task-assets",
+      "projectFolder": "plugins/task-assets",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/task-impl",
+      "projectFolder": "plugins/task-impl",
       "shouldPublish": true
     },
     {

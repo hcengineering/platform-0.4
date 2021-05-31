@@ -13,19 +13,12 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import task from '@anticrm/task-impl/src/plugin'
+import type { IntlString } from '@anticrm/status'
+import { mergeIds } from '@anticrm/status' 
 
-import { createModel as coreModel } from '@anticrm/model-core'
-import { createModel as workbenchModel } from '@anticrm/model-workbench'
-import { createModel as chunterModel } from '@anticrm/model-chunter'
-import { createModel as taskModel } from '@anticrm/model-task'
-
-const builder = new Builder()
-
-coreModel(builder)
-workbenchModel(builder)
-chunterModel(builder)
-taskModel(builder)
-
-console.log(JSON.stringify(builder.getTxes()))
-
+export default mergeIds(task, {
+  string: { 
+    ApplicationLabelTask: '' as IntlString
+  }
+})

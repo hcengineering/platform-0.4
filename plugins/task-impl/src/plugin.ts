@@ -13,19 +13,18 @@
 // limitations under the License.
 //
 
-import { Builder } from '@anticrm/model'
+import { mergeIds } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/ui'
+import type { Ref, Class } from '@anticrm/core'
+import type { Project } from '@anticrm/task'
 
-import { createModel as coreModel } from '@anticrm/model-core'
-import { createModel as workbenchModel } from '@anticrm/model-workbench'
-import { createModel as chunterModel } from '@anticrm/model-chunter'
-import { createModel as taskModel } from '@anticrm/model-task'
+import task from '@anticrm/task'
 
-const builder = new Builder()
-
-coreModel(builder)
-workbenchModel(builder)
-chunterModel(builder)
-taskModel(builder)
-
-console.log(JSON.stringify(builder.getTxes()))
-
+export default mergeIds(task, {
+  component: {
+    Navigator: '' as AnyComponent
+  },
+  class: { 
+    Project: '' as Ref<Class<Project>>
+  }
+})

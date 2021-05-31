@@ -1,4 +1,4 @@
-//
+<!--
 // Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -11,21 +11,25 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+-->
 
-import { Builder } from '@anticrm/model'
+<script lang="ts">
+  import { onDestroy } from 'svelte'
+  import type { Project } from '@anticrm/task'
+  import { getClient } from '@anticrm/workbench'
+  import { TreeNode, TreeItem } from '@anticrm/ui'
 
-import { createModel as coreModel } from '@anticrm/model-core'
-import { createModel as workbenchModel } from '@anticrm/model-workbench'
-import { createModel as chunterModel } from '@anticrm/model-chunter'
-import { createModel as taskModel } from '@anticrm/model-task'
+  import task from '../plugin'
 
-const builder = new Builder()
+  let projects: Project[] = []
+  onDestroy(getClient().query(task.class.Project, {}, result => { projects = result }))
 
-coreModel(builder)
-workbenchModel(builder)
-chunterModel(builder)
-taskModel(builder)
+</script>
 
-console.log(JSON.stringify(builder.getTxes()))
-
+<div>
+  <TreeNode title="Projects">
+    {#each projects as project}
+      <TreeItem title={project.name} icon={task.icon.Task}/>
+    {/each}
+  </TreeNode>
+</div>
