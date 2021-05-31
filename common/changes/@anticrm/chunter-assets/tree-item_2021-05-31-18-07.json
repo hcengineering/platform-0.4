@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-assets",
+      "comment": "Add `Lock` icon.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-assets",
+  "email": "sas_lord@mail.ru"
+}
