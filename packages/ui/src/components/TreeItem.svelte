@@ -14,79 +14,13 @@
 -->
 
 <script lang="ts">
+  import TreeElement from './internal/TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
-
-  import Icon from './Icon.svelte'
 
   export let icon: Asset
   export let title: string
-  export let notifications: number = 0
+  export let notifications = 0
 
 </script>
 
-<div class="container">
-  <div class="title">
-    <div class="icon">
-      <Icon {icon} size="16px"/>
-    </div>
-    <span>{title}</span>
-    {#if notifications > 0}
-      <div class="counter">{notifications}</div>
-    {/if}
-  </div>
-</div>
-
-<style lang="scss">
-  .container {
-    height: 36px;
-    .title {
-      display: flex;
-      align-items: center;
-      margin: 0 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      user-select: none;
-      color: var(--theme-content-color);
-      cursor: pointer;
-      .icon {
-        width: 16px;
-        min-width: 16px;
-        height: 16px;
-        margin: 10px 16px 10px 50px;
-        border-radius: 4px;
-        opacity: .3;
-      }
-      .avatar {
-        width: 24px;
-        min-width: 24px;
-        height: 24px;
-        margin: 6px 8px 6px 50px;
-        border-radius: 50%;
-      }
-      span {
-        flex-grow: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .counter {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 24px;
-        min-width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        margin: 6px 10px;
-        background-color: #DA5F44;
-        font-size: 12px;
-        font-weight: 600;
-        color: #fff;
-      }
-      &:hover {
-        background-color: var(--theme-button-bg-enabled);
-      }
-    }
-  }
-</style>
+<TreeElement {icon} {title} {notifications} collapsed/>

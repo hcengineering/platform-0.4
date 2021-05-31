@@ -1,4 +1,4 @@
-//
+<!--
 // Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -11,15 +11,16 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+-->
 
-import { loadMetadata } from '@anticrm/platform'
-import chunter from '@anticrm/chunter'
+<div class="separator"/>
 
-const icons = require('../assets/icons.svg')
-console.log(icons)
-loadMetadata(chunter.icon, {
-  Chunter: `${icons}#chunter`,
-  Hashtag: `${icons}#hashtag`,
-  Lock: `${icons}#lock`
-})
+<style lang="scss">
+  .separator {
+    width: 100%;
+    height: 1px;
+    min-height: 1px;
+    margin: 24px 0;
+    background-color: var(--theme-menu-divider);
+  }
+</style>

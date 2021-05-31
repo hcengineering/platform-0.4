@@ -1,4 +1,4 @@
-//
+<!--
 // Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -11,15 +11,16 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+-->
 
-import { loadMetadata } from '@anticrm/platform'
-import chunter from '@anticrm/chunter'
+<script lang="ts">
+  import TreeElement from './internal/TreeElement.svelte'
+  import type { Asset } from '@anticrm/status'
 
-const icons = require('../assets/icons.svg')
-console.log(icons)
-loadMetadata(chunter.icon, {
-  Chunter: `${icons}#chunter`,
-  Hashtag: `${icons}#hashtag`,
-  Lock: `${icons}#lock`
-})
+  export let icon: Asset
+  export let title: string
+  export let notifications = 0
+
+</script>
+
+<TreeElement {icon} {title} {notifications} node/>
