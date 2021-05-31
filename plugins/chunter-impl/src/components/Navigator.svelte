@@ -17,7 +17,7 @@
   import { onDestroy } from 'svelte'
   import type { Channel } from '@anticrm/chunter'
   import { getClient } from '@anticrm/workbench'
-  import { ListItem, TreeNode, TreeItem, TreeSeparator } from '@anticrm/ui'
+  import { TreeNode, TreeItem } from '@anticrm/ui'
 
   import chunter from '../plugin'
 
@@ -27,17 +27,9 @@
 </script>
 
 <div>
-  <ListItem title="Hashtag" icon={chunter.icon.Hashtag}/>
-  <ListItem title="Lock" icon={chunter.icon.Lock}/>
-  <TreeSeparator/>
-  <TreeNode title="Channels" collapsed>
+  <TreeNode title="Channels">
     {#each channels as channel}
       <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
     {/each}
-  </TreeNode>
-  <TreeNode title="Test" notifications={10}>
-    <TreeItem title="Hashtag" icon={chunter.icon.Hashtag} notifications={2}/>
-    <TreeItem title="Lock" icon={chunter.icon.Lock} notifications={3}/>
-    <TreeItem title="Title" icon={chunter.icon.Hashtag} notifications={5}/>
   </TreeNode>
 </div>
