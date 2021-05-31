@@ -17,7 +17,7 @@
   import { onDestroy } from 'svelte'
   import type { Channel } from '@anticrm/chunter'
   import { getClient } from '@anticrm/workbench'
-  import { TreeItem } from '@anticrm/ui'
+  import { TreeElement, TreeSeparator } from '@anticrm/ui'
 
   import chunter from '../plugin'
 
@@ -27,16 +27,17 @@
 </script>
 
 <div>
-  <TreeItem title="Hashtag" icon={chunter.icon.Hashtag} node/>
-  <TreeItem title="Lock" icon={chunter.icon.Lock} node separator/>
-  <TreeItem title="Channels" group>
+  <TreeElement title="Hashtag" icon={chunter.icon.Hashtag} node/>
+  <TreeElement title="Lock" icon={chunter.icon.Lock} node/>
+  <TreeSeparator/>
+  <TreeElement title="Channels">
     {#each channels as channel}
-      <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
+      <TreeElement title={channel.name} icon={chunter.icon.Hashtag}/>
     {/each}
-  </TreeItem>
-  <TreeItem title="Test" group>
-    <TreeItem title="Hashtag" icon={chunter.icon.Hashtag}/>
-    <TreeItem title="Lock" icon={chunter.icon.Lock}/>
-    <TreeItem title="Profile" icon={chunter.icon.Hashtag} avatar/>
-  </TreeItem>
+  </TreeElement>
+  <TreeElement title="Test" notifications="10">
+    <TreeElement title="Hashtag" icon={chunter.icon.Hashtag} notifications="2"/>
+    <TreeElement title="Lock" icon={chunter.icon.Lock} notifications="3"/>
+    <TreeElement title="Title" icon={chunter.icon.Hashtag} notifications="5"/>
+  </TreeElement>
 </div>
