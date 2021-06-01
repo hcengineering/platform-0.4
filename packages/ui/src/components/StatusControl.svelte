@@ -47,7 +47,7 @@
     color: var(--theme-content-color);
     fill: var(--theme-caption-color);
     background-color: var(--theme-bg-accent-color);
-    border: 1px solid var(--theme-border-accent-color);
+    border: 1px solid var(--theme-bg-accent-hover);
     border-radius: 8px;
     .icon {
       width: 16px;
@@ -62,9 +62,9 @@
   }
 
   .error {
-    color: var(--theme-error-color);
-    fill: var(--theme-error-color);
+    color: var(--system-error-color);
+    fill: var(--system-error-color);
     background-color: var(--theme-button-bg-error);
-    border-color: var(--theme-error-message-border);
+    border-color: var(--system-error-60-color);
   }
 </style>

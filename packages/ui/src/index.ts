@@ -30,6 +30,7 @@ export { default as TreeSeparator } from './components/TreeSeparator.svelte'
 export { default as TreeItem } from './components/TreeItem.svelte'
 export { default as TreeNode } from './components/TreeNode.svelte'
 export { default as ListItem } from './components/ListItem.svelte'
+export { default as Toggle } from './components/Toggle.svelte'
 
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
