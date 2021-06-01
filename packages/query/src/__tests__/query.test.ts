@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import { createLiveQuery } from '..'
-import core, { Class, Doc, DocumentQuery, Domain, DOMAIN_TX, Ref, Tx, Storage, createMemDb, createHierarchy, TxCreateObject } from '@anticrm/core'
+import { LiveQuery } from '..'
+import core, { Class, Doc, DocumentQuery, Domain, DOMAIN_TX, Ref, Tx, Storage, ModelDb, TxDb, createHierarchy, TxCreateObject } from '@anticrm/core'
 
 describe('query', () => {
   it('query with param', async () => {
@@ -22,7 +22,7 @@ describe('query', () => {
     let notEmptyResult
     const txes = await getModel()
     const storage = await getStorage()
-    const query = createLiveQuery(storage)
+    const query = new LiveQuery(storage)
     query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: true }, (result) => {
       emptyResult = result
     })
@@ -45,7 +45,7 @@ describe('query', () => {
     let notEmptyResult
     const txes = await getModel()
     const storage = await getStorage()
-    const query = createLiveQuery(storage)
+    const query = new LiveQuery(storage)
     const unsubscribe = query.query('class:chunter.Channel' as Ref<Class<Doc>>, { }, (result) => {
       notEmptyResult = result
     })
@@ -70,8 +70,8 @@ async function getStorage(): Promise<Storage> {
     const hierarchy = createHierarchy()
     const txes = await getModel()
     for (const tx of txes) hierarchy.tx(tx)
-    const transactions = createMemDb(hierarchy, true)
-    const model = createMemDb(hierarchy)
+    const transactions = new TxDb(hierarchy)
+    const model = new ModelDb(hierarchy)
 
     function findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
       const domain = hierarchy.getClass(_class).domain

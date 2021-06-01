@@ -15,7 +15,7 @@
 
 import type { Tx } from '../tx'
 import { createHierarchy } from '../hierarchy'
-import { createMemDb } from '../memdb'
+import { ModelDb } from '../memdb'
 import core from '../component'
 
 describe('hierarchy', () => {
@@ -32,7 +32,7 @@ describe('hierarchy', () => {
     const txes = ((await import('./core.tx.json')) as any).default as Tx[]
     const hierarchy = createHierarchy()
     for (const tx of txes) hierarchy.tx(tx)
-    const model = createMemDb(hierarchy)
+    const model = new ModelDb(hierarchy)
     for (const tx of txes) model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
     expect(result.length).toBe(3)

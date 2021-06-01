@@ -18,7 +18,7 @@ import type { Storage, DocumentQuery } from './storage'
 import type { Tx } from './tx'
 
 import { createHierarchy } from './hierarchy'
-import { createMemDb } from './memdb'
+import { ModelDb } from './memdb'
 import { DOMAIN_MODEL } from './classes'
 
 import core from './component'
@@ -30,7 +30,7 @@ export async function createClient(connect: (txHandler: TxHander) => Promise<Sto
   let txBuffer: Tx[] | undefined = []
   
   const hierarchy = createHierarchy()
-  const model = createMemDb(hierarchy)
+  const model = new ModelDb(hierarchy)
 
   function txHander(tx: Tx): void {
     if (client === undefined) {

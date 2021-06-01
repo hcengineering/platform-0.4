@@ -14,7 +14,7 @@
 //
 
 import { Tx, Storage, Ref, Doc, Class, DocumentQuery, DOMAIN_TX } from '@anticrm/core'
-import { createMemDb, createHierarchy } from '@anticrm/core'
+import { ModelDb, TxDb, createHierarchy } from '@anticrm/core'
 
 async function getModel(): Promise<Tx[]> { 
   return import('./model.tx.json') as unknown as Tx[]
@@ -28,8 +28,8 @@ export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
   const hierarchy = createHierarchy()
   for (const tx of txes) hierarchy.tx(tx)
 
-  const transactions = createMemDb(hierarchy, true)
-  const model = createMemDb(hierarchy)
+  const transactions = new TxDb(hierarchy)
+  const model = new ModelDb(hierarchy)
   for (const tx of txes) {
     transactions.tx(tx)
     model.tx(tx)
