@@ -14,6 +14,8 @@
 //
 
 import { SvelteComponent } from 'svelte'
+import type { AnySvelteComponent } from './types'
+import { store } from './stores'
 
 import Root from './components/internal/Root.svelte'
 
@@ -35,13 +37,13 @@ export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
 }
 
-// function showModal (component: AnySvelteComponent, props: any, element?: HTMLElement): void {
-//   store.set({ is: component, props, element: element })
-// }
+export function showModal (component: AnySvelteComponent, props: any, element?: HTMLElement): void {
+  store.set({ is: component, props, element: element })
+}
 
-// function closeModal (): void {
-//   store.set({ is: undefined, props: {}, element: undefined })
-// }
+export function closeModal (): void {
+  store.set({ is: undefined, props: {}, element: undefined })
+}
 
 // let documentProvider: DocumentProvider | undefined
 
