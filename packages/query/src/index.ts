@@ -26,10 +26,11 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-function match(query: DocumentQuery<Doc>, attributes: Data<Doc>): boolean {
-  for (const key in query) {
-    const value = (query as any)[key]
-    if ((attributes as any)[key] !== value)
+function match(q: Query, tx: TxCreateObject<Doc>): boolean {
+  if (q._class !== tx.objectClass) return false
+  for (const key in q.query) {
+    const value = (q.query as any)[key]
+    if ((tx.attributes as any)[key] !== value)
       return false
   }
   return true
@@ -62,7 +63,7 @@ export class LiveQuery extends TxProcessor implements Storage {
 
   async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
     for (const q of this.queries) {
-      if (match(q.query, tx.attributes)) {
+      if (match(q, tx)) {
         this.refresh(q)
       }
     }

@@ -14,9 +14,21 @@
 //
 
 import { LiveQuery } from '..'
-import core, { Class, Doc, DocumentQuery, Domain, DOMAIN_TX, Ref, Tx, Storage, ModelDb, TxDb, createHierarchy, TxCreateObject } from '@anticrm/core'
+import { Class, Doc, DocumentQuery, DOMAIN_TX, Ref, Tx, Storage, ModelDb, TxDb, createHierarchy, TxCreateObject } from '@anticrm/core'
 
 describe('query', () => {
+  it('findAll', async () => {
+    const txes = await getModel()
+    const storage = await getStorage()
+    const query = new LiveQuery(storage)
+    for (let i = 0; i < txes.length; i++) {
+      const tx = txes[i]
+      await query.tx(tx)
+    }
+    const result = await query.findAll('class:chunter.Channel' as Ref<Class<Doc>>, { private: false })
+    expect(result).toHaveLength(2)
+  })
+
   it('query with param', async () => {
     let emptyResult
     let notEmptyResult
@@ -46,7 +58,7 @@ describe('query', () => {
     const txes = await getModel()
     const storage = await getStorage()
     const query = new LiveQuery(storage)
-    const unsubscribe = query.query('class:chunter.Channel' as Ref<Class<Doc>>, { }, (result) => {
+    const unsubscribe = query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: false }, (result) => {
       notEmptyResult = result
     })
     let expectedLength = 0
