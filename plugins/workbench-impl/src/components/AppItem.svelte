@@ -77,8 +77,8 @@
       opacity: 1;
     }
     &:focus {
-      border: 1px solid var(--theme-primary-focused-border);
-      box-shadow: 0 0 0 3px var(--theme-primary-outline);
+      border: 1px solid var(--primary-button-focused-border);
+      box-shadow: 0 0 0 3px var(--primary-button-outline);
       .container {
         opacity: 1;
       }

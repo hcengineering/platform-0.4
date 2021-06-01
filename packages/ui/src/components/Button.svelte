@@ -73,25 +73,25 @@
   }
 
   .primary {
-    background-color: var(--theme-primary-enabled);
-    border-color: var(--theme-primary-border);
+    background-color: var(--primary-button-enabled);
+    border-color: var(--primary-button-border);
     &:hover {
-      background-color: var(--theme-primary-hovered);
-      border-color: var(--theme-primary-border);
+      background-color: var(--primary-button-hovered);
+      border-color: var(--primary-button-border);
     }
     &:focus {
-      background-color: var(--theme-primary-focused);
-      border-color: var(--theme-primary-focused-border);
-      box-shadow: 0 0 0 2px var(--theme-primary-outline);
+      background-color: var(--primary-button-focused);
+      border-color: var(--primary-button-focused-border);
+      box-shadow: 0 0 0 2px var(--primary-button-outline);
     }
     &:active {
-      background-color: var(--theme-primary-pressed);
-      border-color: var(--theme-primary-border);
+      background-color: var(--primary-button-pressed);
+      border-color: var(--primary-button-border);
       box-shadow: none;
     }
     &:disabled {
-      background-color: var(--theme-primary-disabled);
-      border-color: var(--theme-primary-border);
+      background-color: var(--primary-button-disabled);
+      border-color: var(--primary-button-border);
       color: rgb(var(--theme-caption-color) / 60%);
       cursor: not-allowed;
     }

@@ -22,11 +22,12 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
+  import CreateChannel from './CreateChannel.svelte'
 
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
   import type { AnyComponent } from '@anticrm/ui'
-  import { Component } from '@anticrm/ui'
+  import { Component, Button } from '@anticrm/ui'
 
   import workbench from '@anticrm/workbench'
 
@@ -39,6 +40,8 @@
   function onAppChange(event: any) {
     navigator = event.detail.navigator
   }
+
+  let kl: boolean = false
 </script>
 
 <div class="container">
@@ -79,6 +82,11 @@
   {/if}
   <div class="component">
     <AppHeader title="boring project" subtitle="27 members"/>
+
+    <Button label="Create Channel" on:click={() => {kl = !kl}}/>
+    {#if kl}
+      <CreateChannel title="Create New Channel" bind:opened={kl}/>
+    {/if}
   </div>
   <div class="aside">
     <AsideHeader title="Applications"/>

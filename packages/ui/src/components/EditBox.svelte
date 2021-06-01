@@ -47,14 +47,15 @@
     padding: 0;
     font-family: inherit;
     min-width: 50px;
+    margin-bottom: 20px;
     height: 52px;
     background-color: var(--theme-bg-accent-color);
-    border: 1px solid var(--theme-border-accent-color);
+    border: 1px solid var(--theme-bg-accent-hover);
     border-radius: 12px;
     backdrop-filter: blur(12px);
     &:focus-within {
-      background-color: var(--theme-bg-accent-hover);
-      border-color: var(--theme-border-accent-hover);
+      background-color: var(--theme-bg-focused-color);
+      border-color: var(--theme-bg-focused-border);
     }
     input {
       height: 52px;
@@ -89,16 +90,16 @@
     }
   }
   .error {
-    border: 1px solid var(--theme-error-border);
+    border: 1px solid var(--system-error-60-color);
     &:focus-within {
-      border-color: var(--theme-error-color);
+      border-color: var(--system-error-color);
     }
   }
   .error-label {
     position: absolute;
     top: 52px;
     font-size: 12px;
-    color: var(--theme-error-color);
+    color: var(--system-error-color);
     opacity: 0.7;
   }
 </style>
