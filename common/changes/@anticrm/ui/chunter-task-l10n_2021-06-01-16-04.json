@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "`TreeNode` now accept i18n label.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "andrey.v.platov@gmail.com"
+}
