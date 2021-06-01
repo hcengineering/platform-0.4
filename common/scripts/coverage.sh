@@ -14,6 +14,8 @@
 #  limitations under the License.
 #
 
+set -e
+
 pushd packages/status
 node ../../common/scripts/install-run-rushx.js test --coverage
 popd

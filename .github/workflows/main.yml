@@ -45,3 +45,4 @@ jobs:
           coverageLocations: |
             ${{github.workspace}}/packages/status/coverage/lcov.info:lcov
             ${{github.workspace}}/packages/platform/coverage/lcov.info:lcov
+            ${{github.workspace}}/packages/query/coverage/lcov.info:lcov
