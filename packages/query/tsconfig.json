@@ -6,7 +6,6 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
-    "experimentalDecorators": true,
     "resolveJsonModule": true
   }
 }

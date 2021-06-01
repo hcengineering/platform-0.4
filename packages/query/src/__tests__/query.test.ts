@@ -21,7 +21,7 @@ describe('query', () => {
     let emptyResult
     let notEmptyResult
     const txes = await getModel()
-    const storage = await getStorage(() => {})
+    const storage = await getStorage()
     const query = createLiveQuery(storage)
     query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: true }, (result) => {
       emptyResult = result
@@ -44,7 +44,7 @@ describe('query', () => {
   it('unsubscibe query', async () => {
     let notEmptyResult
     const txes = await getModel()
-    const storage = await getStorage(() => {})
+    const storage = await getStorage()
     const query = createLiveQuery(storage)
     const unsubscribe = query.query('class:chunter.Channel' as Ref<Class<Doc>>, { }, (result) => {
       notEmptyResult = result
@@ -66,7 +66,7 @@ async function getModel(): Promise<Tx[]> {
   return import('./model.tx.json') as unknown as Tx[]
 }
 
-async function getStorage(handler: (tx: Tx) => void): Promise<Storage> {
+async function getStorage(): Promise<Storage> {
     const hierarchy = createHierarchy()
     const txes = await getModel()
     for (const tx of txes) hierarchy.tx(tx)
@@ -84,7 +84,6 @@ async function getStorage(handler: (tx: Tx) => void): Promise<Storage> {
         findAll,
         tx: async (tx: Tx): Promise<void> => {
           await Promise.all([model.tx(tx), transactions.tx(tx)])
-          handler(tx)
         }
       }
   }
