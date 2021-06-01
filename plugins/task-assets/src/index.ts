@@ -13,11 +13,14 @@
 // limitations under the License.
 //
 
-import { loadMetadata } from '@anticrm/platform'
+import { loadMetadata, addStringsLoader } from '@anticrm/platform'
 import task from '@anticrm/task'
 
 const icons = require('../assets/icons.svg')
-console.log(icons)
 loadMetadata(task.icon, {
   Task: `${icons}#task`
+})
+
+addStringsLoader(task.id, (lang: string) => {
+  return import(`../lang/${lang}.json`)
 })

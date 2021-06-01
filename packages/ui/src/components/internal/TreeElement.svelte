@@ -17,13 +17,14 @@
   import Collapsed from './icons/Collapsed.svelte'
   import Expanded from './icons/Expanded.svelte'
   import Add from './icons/Add.svelte'
-  import type { Asset } from '@anticrm/status'
+  import type { Asset, IntlString } from '@anticrm/status'
 
   import Icon from '../Icon.svelte'
+  import Label from '../Label.svelte'
 
   export let icon: Asset | undefined = undefined
-  // export let avatar: Any
-  export let title: string
+  export let label: IntlString | undefined = undefined
+  export let title: string | undefined = undefined
   export let notifications = 0
   export let node = false
   export let collapsed = false
@@ -42,7 +43,9 @@
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
     </div>
-    <span on:click={() => {actionApp()}}>{title}</span>
+    <span on:click={() => {actionApp()}}>
+      {#if label}<Label {label}/>{:else}{title}{/if}
+    </span>
     {#if node && !icon}
       <div class="tool"><Add/></div>
     {/if}
