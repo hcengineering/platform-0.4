@@ -27,7 +27,7 @@
 </script>
 
 <div>
-  <TreeNode title="Channels">
+  <TreeNode label={chunter.string.Channel}>
     {#each channels as channel}
       <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
     {/each}

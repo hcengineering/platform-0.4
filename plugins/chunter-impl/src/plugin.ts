@@ -14,6 +14,7 @@
 //
 
 import { mergeIds } from '@anticrm/status'
+import type { IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 import type { Ref, Class } from '@anticrm/core'
 import type { Channel } from '@anticrm/chunter'
@@ -26,5 +27,8 @@ export default mergeIds(chunter, {
   },
   class: { 
     Channel: '' as Ref<Class<Channel>>
+  },
+  string: {
+    Channel: '' as IntlString
   }
 })

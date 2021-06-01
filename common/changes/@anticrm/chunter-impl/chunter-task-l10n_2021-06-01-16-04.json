@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Use localized strings.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "andrey.v.platov@gmail.com"
+}

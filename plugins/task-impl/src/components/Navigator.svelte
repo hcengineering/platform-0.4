@@ -27,7 +27,7 @@
 </script>
 
 <div>
-  <TreeNode title="Projects">
+  <TreeNode label={task.string.Projects}>
     {#each projects as project}
       <TreeItem title={project.name} icon={task.icon.Task}/>
     {/each}

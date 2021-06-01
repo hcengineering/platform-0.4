@@ -13,13 +13,16 @@
 // limitations under the License.
 //
 
-import { loadMetadata } from '@anticrm/platform'
+import { loadMetadata, addStringsLoader } from '@anticrm/platform'
 import chunter from '@anticrm/chunter'
 
 const icons = require('../assets/icons.svg')
-console.log(icons)
 loadMetadata(chunter.icon, {
   Chunter: `${icons}#chunter`,
   Hashtag: `${icons}#hashtag`,
   Lock: `${icons}#lock`
+})
+
+addStringsLoader(chunter.id, (lang: string) => {
+  return import(`../lang/${lang}.json`)
 })

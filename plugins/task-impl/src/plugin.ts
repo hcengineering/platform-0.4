@@ -14,6 +14,7 @@
 //
 
 import { mergeIds } from '@anticrm/status'
+import type { IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 import type { Ref, Class } from '@anticrm/core'
 import type { Project } from '@anticrm/task'
@@ -26,5 +27,8 @@ export default mergeIds(task, {
   },
   class: { 
     Project: '' as Ref<Class<Project>>
+  },
+  string: {
+    Projects: '' as IntlString
   }
 })

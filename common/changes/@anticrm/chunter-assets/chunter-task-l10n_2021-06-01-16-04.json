@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-assets",
+      "comment": "Add localized strings.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-assets",
+  "email": "andrey.v.platov@gmail.com"
+}
