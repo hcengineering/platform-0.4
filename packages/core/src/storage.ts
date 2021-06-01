@@ -25,19 +25,17 @@ export interface Storage {
   tx(tx: Tx): Promise<void>
 }
 
-export interface TxProcessor {
-  txCreateObject?: (tx: TxCreateObject<Doc>) => Promise<void>
-  txAddCollection?: (tx: TxAddCollection<Emb>) => Promise<void>
-}
-
-export function createTxProcessor(processor: TxProcessor): (tx: Tx) => Promise<void> {
-  return (tx: Tx): Promise<void> => {
+export class TxProcessor {
+  tx (tx: Tx): Promise<void> {
     switch(tx._class) {
       case core.class.TxCreateObject:
-        if (processor.txCreateObject !== undefined) return processor.txCreateObject(tx as TxCreateObject<Doc>)
+        return this.txCreateObject(tx as TxCreateObject<Doc>)
       case core.class.TxAddCollection:
-        if (processor.txAddCollection !== undefined) return processor.txAddCollection(tx as TxAddCollection<Emb>)
+        return this.txAddCollection(tx as TxAddCollection<Emb>)
     }
     return Promise.resolve()
   }
+
+  protected async txCreateObject (tx: TxCreateObject<Doc>): Promise<void> {}
+  protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {}
 }

@@ -14,11 +14,11 @@
 //
 
 import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Data } from '@anticrm/core'
-import { createTxProcessor } from '@anticrm/core'
+import { TxProcessor } from '@anticrm/core'
 
-export interface LiveQuery extends Storage {
-  query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void
-}
+// export interface LiveQuery extends Storage {
+//   query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void
+// }
 
 type Query = {
   _class: Ref<Class<Doc>>
@@ -26,44 +26,51 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-export function createLiveQuery(storage: Storage): LiveQuery {
+function match(query: DocumentQuery<Doc>, attributes: Data<Doc>): boolean {
+  for (const key in query) {
+    const value = (query as any)[key]
+    if ((attributes as any)[key] !== value)
+      return false
+  }
+  return true
+}
 
-  const queries: Query[] = []
+export class LiveQuery extends TxProcessor implements Storage {
 
-  function refresh(query: Query): Promise<void> {
-    return storage.findAll(query._class, query.query).then(result => query.callback(result))
+  private readonly storage: Storage
+  private readonly queries: Query[] = []
+
+  constructor (storage: Storage) {
+    super ()
+    this.storage = storage
   }
 
-  function query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
+  private refresh(query: Query): Promise<void> {
+    return this.storage.findAll(query._class, query.query).then(result => query.callback(result))
+  }
+
+  findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    return this.storage.findAll(_class, query)
+  }
+
+  query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
     const q: Query = { _class, query, callback: callback as (result: Doc[]) => void }
-    queries.push(q)
-    refresh(q)
-    return () => { queries.splice(queries.indexOf(q)) }
+    this.queries.push(q)
+    this.refresh(q)
+    return () => { this.queries.splice(this.queries.indexOf(q)) }
   }
 
-  function match(query: DocumentQuery<Doc>, attributes: Data<Doc>): boolean {
-    for (const key in query) {
-      const value = (query as any)[key]
-      if ((attributes as any)[key] !== value)
-        return false
-    }
-    return true
-  }
-
-  const txProcessor = createTxProcessor({
-    async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
-      for (const q of queries) {
-        if (match(q.query, tx.attributes)) {
-          refresh(q)
-        }
+  async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
+    for (const q of this.queries) {
+      if (match(q.query, tx.attributes)) {
+        this.refresh(q)
       }
     }
-  })
-
-  async function tx(tx: Tx): Promise<void> {
-    await storage.tx(tx)
-    await txProcessor(tx)
   }
 
-  return { query, tx, findAll: storage.findAll }
+  async tx(tx: Tx): Promise<void> {
+    await this.storage.tx(tx)
+    return super.tx(tx)
+  }
+
 }

@@ -15,33 +15,49 @@
 
 import { Status, Severity, PlatformError } from '@anticrm/status'
 
-import type { Storage, TxProcessor } from './storage'
+import type { Storage } from './storage'
+import { TxProcessor } from './storage'
 import type { Emb, Doc, Ref, Class, Collection, Data, PrimitiveType } from './classes'
 import type { Tx, TxAddCollection, TxCreateObject } from './tx'
 import type { Hierarchy } from './hierarchy'
 
 import { generateId } from './utils'
-import { createTxProcessor } from './storage'
 
 import core from './component'
 
-export function createMemDb(hierarchy: Hierarchy, storeTx: boolean = false): Storage {
+function findProperty(objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
+  const result: Doc[] = []
+  for (const object of objects) {
+    if ((object as any)[propertyKey] === value) {
+      result.push(object)
+    }
+  }
+  return result
+}
 
-  const objectsByClass = new Map<Ref<Class<Doc>>, Doc[]>()
-  const objectById = new Map<Ref<Doc>, Doc>()
+abstract class MemDb extends TxProcessor implements Storage {
 
-  function getObjectsByClass(_class: Ref<Class<Doc>>): Doc[] {
-    const result = objectsByClass.get(_class)
+  private readonly hierarchy: Hierarchy
+  private readonly objectsByClass = new Map<Ref<Class<Doc>>, Doc[]>()
+  private readonly objectById = new Map<Ref<Doc>, Doc>()
+
+  constructor (hierarchy: Hierarchy) {
+    super()
+    this.hierarchy = hierarchy
+  }
+
+  private getObjectsByClass(_class: Ref<Class<Doc>>): Doc[] {
+    const result = this.objectsByClass.get(_class)
     if (result === undefined) {
       const result: Doc[] = []
-      objectsByClass.set(_class, result)
+      this.objectsByClass.set(_class, result)
       return result
     }
     return result
   }
 
-  function getCollection(_id: Ref<Doc>, collection: string): Collection<Emb> {
-    const doc = objectById.get(_id)
+  protected getCollection(_id: Ref<Doc>, collection: string): Collection<Emb> {
+    const doc = this.objectById.get(_id)
     if (doc === undefined)
       throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
     const result = (doc as any)[collection]
@@ -53,22 +69,12 @@ export function createMemDb(hierarchy: Hierarchy, storeTx: boolean = false): Sto
     return result
   }
 
-  function findProperty(objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
-    const result: Doc[] = []
-    for (const object of objects) {
-      if ((object as any)[propertyKey] === value) {
-        result.push(object)
-      }
-    }
-    return result
-  }
-
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: Partial<Data<T>>): Promise<T[]> {
-    let result = getObjectsByClass(_class)
+  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: Partial<Data<T>>): Promise<T[]> {
+    let result = this.getObjectsByClass(_class)
     for (const key in query) {
       const value = (query as any)[key]
       if (key === '_id') {
-        const obj = objectById.get(value)
+        const obj = this.objectById.get(value)
         if (obj !== undefined)
           result.push()
       } else
@@ -77,19 +83,29 @@ export function createMemDb(hierarchy: Hierarchy, storeTx: boolean = false): Sto
     return result as T[]
   }
 
-  function addDoc(doc: Doc): void {
-    hierarchy.getAncestors(doc._class).forEach(_class => { getObjectsByClass(_class).push(doc) })
-    objectById.set(doc._id, doc)
+  protected addDoc(doc: Doc): void {
+    this.hierarchy.getAncestors(doc._class).forEach(_class => { this.getObjectsByClass(_class).push(doc) })
+    this.objectById.set(doc._id, doc)
   }
 
-  const tx = storeTx ? async (tx: Tx): Promise<void> => { addDoc(tx) } : createTxProcessor({ 
-    async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
-      addDoc({ _id: tx.objectId, _class: tx.objectClass, ...tx.attributes})
-    },
-    async txAddCollection(tx: TxAddCollection<Emb>): Promise<void> {
-      (getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes
-    }
-  })
+}
 
-  return { findAll, tx }
+export class TxDb extends MemDb {
+
+  async tx(tx: Tx): Promise<void> {
+    this.addDoc(tx)
+  }
+
+}
+
+export class ModelDb extends MemDb {
+
+  protected async txCreateObject (tx: TxCreateObject<Doc>): Promise<void> {
+    this.addDoc({ _id: tx.objectId, _class: tx.objectClass, ...tx.attributes})
+  }
+
+  protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {
+    (this.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes
+  }
+  
 }

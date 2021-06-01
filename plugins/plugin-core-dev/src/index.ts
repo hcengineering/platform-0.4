@@ -14,7 +14,7 @@
 //
 
 import { createClient } from '@anticrm/core'
-import { createLiveQuery } from '@anticrm/query'
+import { LiveQuery } from '@anticrm/query'
 import type { CoreService, Client } from '@anticrm/plugin-core'
 
 import { connect } from './connection'
@@ -31,7 +31,7 @@ export default async (): Promise<CoreService> => {
   async function getClient(): Promise<Client> {
     if (client === undefined) {
       const storage = await createClient(connect)
-      client = createLiveQuery(storage)  
+      client = new LiveQuery(storage)  
     }
     return client
   }
