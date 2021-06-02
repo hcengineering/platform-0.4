@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-import { Metadata, plugin } from '@anticrm/platform'
-import { Service, Plugin } from '@anticrm/platform'
-import { Storage } from '@anticrm/core'
-import { LiveQuery } from '@anticrm/query'
+import { plugin } from '@anticrm/platform'
+import type { Metadata, Service, Plugin } from '@anticrm/platform'
+import type { Storage } from '@anticrm/core'
+import type { LiveQuery } from '@anticrm/query'
 
 export interface Client extends Storage, LiveQuery {}
 
 export interface CoreService extends Service {
-  getClient(): Promise<Client>
+  getClient: () => Promise<Client>
 }
 
 const PluginCore = 'plugin-core' as Plugin<CoreService>

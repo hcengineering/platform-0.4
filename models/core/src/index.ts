@@ -13,23 +13,7 @@
 // limitations under the License.
 //
 
-import {
-  Obj,
-  Doc,
-  Ref,
-  Class,
-  Tx,
-  TxCreateObject,
-  Data,
-  Collection,
-  Space,
-  Member,
-  Domain,
-  Attribute,
-  PropertyType,
-  ClassifierKind,
-  Mixin
-} from '@anticrm/core'
+import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member, Domain, Attribute, PropertyType, ClassifierKind, Mixin } from '@anticrm/core'
 import { DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
@@ -45,7 +29,7 @@ export class TDoc extends TObj implements Doc {
   _id!: Ref<this>
 }
 
-@Model(core.class.Class, core.class.Obj)
+@Model(core.class.Class, core.class.Doc)
 class TClass extends TDoc implements Class<Obj> {
   kind!: ClassifierKind
   attributes!: Collection<Attribute<PropertyType>>
