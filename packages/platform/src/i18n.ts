@@ -52,17 +52,21 @@ async function loadTranslationsForComponent (component: Component): Promise<Mess
 }
 
 async function getTranslation (message: IntlString): Promise<IntlString | Status> {
-  if (message.indexOf('.') === -1) return message
-  const id = parseId(message)
-  let messages = translations.get(id.component)
-  if (messages === undefined) {
-    messages = await loadTranslationsForComponent(id.component)
-    translations.set(id.component, messages)
+  try {
+    const id = parseId(message)
+    let messages = translations.get(id.component)
+    if (messages === undefined) {
+      messages = await loadTranslationsForComponent(id.component)
+      translations.set(id.component, messages)
+    }
+    if (messages instanceof Status) {
+      return messages
+    }
+    return (id.kind ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
+  } catch (err) {
+    setPlatformStatus(err)
+    return err
   }
-  if (messages instanceof Status) {
-    return messages
-  }
-  return (id.kind ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
 }
 
 export async function translate<P extends Record<string, any>> (message: IntlString<P>, params: P): Promise<string> {
