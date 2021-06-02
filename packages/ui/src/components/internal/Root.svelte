@@ -10,10 +10,10 @@
 
   import StatusComponent from './Status.svelte'
   import Clock from './Clock.svelte'
-  import Mute from './icons/Mute.svelte'
+  // import Mute from './icons/Mute.svelte'
   import WiFi from './icons/WiFi.svelte'
   import Modal from './Modal.svelte'
-  // import ThemeSelector from './ThemeSelector.svelte'
+  import ThemeSelector from './ThemeSelector.svelte'
   
   let application: AnyComponent | undefined
 
@@ -51,7 +51,7 @@
             <Clock />
           </div>
           <div class="widget">
-            <Mute size={16}/>
+            <ThemeSelector />
           </div>
           <div class="widget">
             <WiFi size={16}/>
