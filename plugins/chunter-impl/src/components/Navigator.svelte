@@ -17,6 +17,9 @@
   import { onDestroy } from 'svelte'
   import type { Channel } from '@anticrm/chunter'
   import { getClient } from '@anticrm/workbench'
+
+  import type { IntlString } from '@anticrm/status'
+  import type { Action } from '@anticrm/ui'
   import { TreeNode, TreeItem } from '@anticrm/ui'
 
   import chunter from '../plugin'
@@ -24,10 +27,18 @@
   let channels: Channel[] = []
   onDestroy(getClient().query(chunter.class.Channel, {}, result => { channels = result }))
 
+  const addChannel: Action = {
+    label: 'NoLabel' as IntlString,
+    icon: chunter.icon.Lock,
+    action: async (): Promise<void> => {
+      console.log('the action')
+    }
+  }
+
 </script>
 
 <div>
-  <TreeNode label={chunter.string.Channel}>
+  <TreeNode label={chunter.string.Channel} actions={[addChannel]}>
     {#each channels as channel}
       <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
     {/each}

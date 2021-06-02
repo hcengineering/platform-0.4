@@ -17,10 +17,13 @@
   import Collapsed from './icons/Collapsed.svelte'
   import Expanded from './icons/Expanded.svelte'
   import Add from './icons/Add.svelte'
+
   import type { Asset, IntlString } from '@anticrm/status'
+  import type { Action } from '../../types'
 
   import Icon from '../Icon.svelte'
   import Label from '../Label.svelte'
+  import { default as ActionControl } from '../Action.svelte'
 
   export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
@@ -28,6 +31,7 @@
   export let notifications = 0
   export let node = false
   export let collapsed = false
+  export let actions: Action[] = []
 
   function actionApp(): void {
     console.log('Click')
@@ -38,7 +42,7 @@
   <div class="title" class:sub={!node}>
     <div class="icon" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed}}>
       {#if icon}
-        <Icon {icon} size="16px"/>
+        <Icon {icon} size={16}/>
       {:else}
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
@@ -46,9 +50,9 @@
     <span on:click={() => {actionApp()}}>
       {#if label}<Label {label}/>{:else}{title}{/if}
     </span>
-    {#if node && !icon}
-      <div class="tool"><Add/></div>
-    {/if}
+    {#each actions as action}
+      <div class="tool"><ActionControl label={action.label} icon={action.icon} size={16} action={action.action}/></div>
+    {/each}
     {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>
     {/if}

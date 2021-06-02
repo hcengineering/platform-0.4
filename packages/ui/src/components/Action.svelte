@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -14,18 +14,14 @@
 -->
 
 <script lang="ts">
-  import type { Asset } from '@anticrm/status'
-  import { getMetadata } from '@anticrm/platform'
+  import type { IntlString, Asset } from '@anticrm/status'
 
+  import Icon from './Icon.svelte'
+
+  export let label: IntlString
   export let icon: Asset
   export let size: 16 | 20 | 24
-  export let fill = 'var(--theme-caption-color)'
-
-  let url: string
-  $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'
+  export let action: () => Promise<void>
 </script>
 
-<svg width={size} height={size} {fill}>
-  <use href={url} />
-</svg>
-
+<div on:click={action}><Icon {icon} {size}/></div>

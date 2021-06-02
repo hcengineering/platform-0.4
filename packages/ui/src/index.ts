@@ -19,7 +19,7 @@ import { store } from './stores'
 
 import Root from './components/internal/Root.svelte'
 
-export type { AnyComponent } from './types'
+export type { AnyComponent, Action } from './types'
 export { applicationShortcutKey } from './utils'
 
 export { default as EditBox } from './components/EditBox.svelte'
