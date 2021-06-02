@@ -47,7 +47,6 @@ export class LiveQuery extends TxProcessor implements Storage {
     for (const key in q.query) {
       const value = (q.query as any)[key]
       if ((tx.attributes as any)[key] !== value) {
-        console.log('not match by query')
         return false
       }
     }
