@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Data } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Data, Obj } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
 
 // export interface LiveQuery extends Storage {
@@ -26,15 +26,6 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-function match(query: DocumentQuery<Doc>, attributes: Data<Doc>): boolean {
-  for (const key in query) {
-    const value = (query as any)[key]
-    if ((attributes as any)[key] !== value)
-      return false
-  }
-  return true
-}
-
 export class LiveQuery extends TxProcessor implements Storage {
 
   private readonly storage: Storage
@@ -43,6 +34,23 @@ export class LiveQuery extends TxProcessor implements Storage {
   constructor (storage: Storage) {
     super ()
     this.storage = storage
+  }
+
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.storage.isDerived(_class, from)
+  }
+
+  private match(q: Query, tx: TxCreateObject<Doc>): boolean {
+    if (this.isDerived(tx.objectClass, q._class) === false) {
+      return false
+    }  
+    for (const key in q.query) {
+      const value = (q.query as any)[key]
+      if ((tx.attributes as any)[key] !== value) {
+        return false
+      }
+    }
+    return true
   }
 
   private refresh(query: Query): Promise<void> {
@@ -62,7 +70,7 @@ export class LiveQuery extends TxProcessor implements Storage {
 
   async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
     for (const q of this.queries) {
-      if (match(q.query, tx.attributes)) {
+      if (this.match(q, tx)) {
         this.refresh(q)
       }
     }
@@ -72,5 +80,4 @@ export class LiveQuery extends TxProcessor implements Storage {
     await this.storage.tx(tx)
     return super.tx(tx)
   }
-
 }

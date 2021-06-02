@@ -58,7 +58,7 @@ export async function createClient(connect: (txHandler: TxHander) => Promise<Sto
 
   txBuffer = txBuffer.filter(tx => txMap.get(tx._id) === undefined)
 
-  client = { findAll, tx: conn.tx }
+  client = { findAll, tx: conn.tx, isDerived: hierarchy.isDerived }
 
   for (const tx of txBuffer) txHander(tx)
   txBuffer = undefined

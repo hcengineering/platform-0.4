@@ -47,6 +47,7 @@ export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
     tx: async (tx: Tx): Promise<void> => {
       await Promise.all([model.tx(tx), transactions.tx(tx)])
       handler(tx)
-    }
+    },
+    isDerived: hierarchy.isDerived
   }
 }

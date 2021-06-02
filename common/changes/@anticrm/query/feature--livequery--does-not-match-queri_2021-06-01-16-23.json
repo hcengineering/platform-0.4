@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "matching class in query",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query",
+  "email": "bykhov.denis@gmail.com"
+}
