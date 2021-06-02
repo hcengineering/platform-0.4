@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "comment": "Implemeantion of Plugin Core with WebSocket to client access",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-impl",
+  "email": "haiodo@gmail.com"
+}

@@ -47,6 +47,7 @@
     "@anticrm/chunter-impl": "~0.4.0",
     "@anticrm/task": "~0.4.0",
     "@anticrm/task-assets": "~0.4.0",
-    "@anticrm/task-impl": "~0.4.0"
+    "@anticrm/task-impl": "~0.4.0",
+    "@anticrm/plugin-core-impl": "~0.4.0"
   }
 }

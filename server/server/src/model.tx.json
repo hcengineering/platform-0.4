@@ -1,0 +1,150 @@
+[
+  {
+    "_id": "60b73133d22498e666800cbf",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Obj",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0 }
+  },
+  {
+    "_id": "60b73133d22498e666800cc0",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Doc",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Obj" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc1",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Space",
+    "objectClass": "class:core.Class",
+    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Doc" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc2",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Tx",
+    "objectClass": "class:core.Class",
+    "attributes": { "domain": "tx", "kind": 0, "extends": "class:core.Doc" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc3",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.TxCreateObject",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Tx" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc4",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Class",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Obj" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc5",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:core.Mixin",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Class" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc6",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:workbench.Application",
+    "objectClass": "class:core.Class",
+    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Doc" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc7",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:chunter.Channel",
+    "objectClass": "class:core.Class",
+    "attributes": {
+      "domain": "model",
+      "kind": 0,
+      "extends": "class:core.Space"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cc8",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cc9",
+    "objectClass": "class:workbench.Application",
+    "attributes": {
+      "label": "string:chunter.ApplicationLabelChunter",
+      "icon": "icon:chunter.Chunter",
+      "navigator": "component:chunter.Navigator"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cca",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800ccb",
+    "objectClass": "class:chunter.Channel",
+    "attributes": {
+      "name": "general",
+      "description": "General Channel",
+      "private": false
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800ccc",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800ccd",
+    "objectClass": "class:chunter.Channel",
+    "attributes": {
+      "name": "random",
+      "description": "Random Talks",
+      "private": false
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cce",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "class:task.Project",
+    "objectClass": "class:core.Class",
+    "attributes": {
+      "domain": "model",
+      "kind": 0,
+      "extends": "class:core.Space"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800ccf",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd0",
+    "objectClass": "class:workbench.Application",
+    "attributes": {
+      "label": "string:task.ApplicationLabelTask",
+      "icon": "icon:task.Task",
+      "navigator": "component:task.Navigator"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cd1",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd2",
+    "objectClass": "class:task.Project",
+    "attributes": {
+      "name": "default",
+      "description": "Default Project",
+      "private": false
+    }
+  }
+]

@@ -8,11 +8,6 @@
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": [
-      "es2020",
-      "dom",
-      "esnext.intl"
-    ]
+    "esModuleInterop": true
   }
 }

@@ -16,16 +16,18 @@
 import { setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login from '@anticrm/login'
+import pluginCore from '@anticrm/plugin-core'
 
 import { configurePlatform } from './platform'
 
 configurePlatform()
 
 const accountsUrl = process.env.APP_ACCOUNTS_URL
-// const host = process.env.APP_WSHOST
-// const port = process.env.APP_WSPORT
+const host = process.env.APP_WSHOST
+const port = process.env.APP_WSPORT
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
+setMetadata(pluginCore.metadata.ClientUrl, `${host}:${port}`)
 
 // platform.setMetadata(core.metadata.WSHost, host)
 // platform.setMetadata(core.metadata.WSPort, port)

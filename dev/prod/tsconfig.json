@@ -5,6 +5,7 @@
     "module": "esnext",
     "target": "es6",
     "allowJs": true,
+    "sourceMap": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

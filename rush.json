@@ -518,6 +518,26 @@
       "packageName": "@anticrm/plugin-core-dev",
       "projectFolder": "plugins/plugin-core-dev",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "projectFolder": "plugins/plugin-core-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/server",
+      "projectFolder": "server/server",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/node-client",
+      "projectFolder": "server/client",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/tests-server",
+      "projectFolder": "tests/server",
+      "shouldPublish": false
     }
     
     // {

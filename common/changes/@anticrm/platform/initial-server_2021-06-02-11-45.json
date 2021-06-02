@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/platform",
+      "comment": "Enable TS Source maps",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/platform",
+  "email": "haiodo@gmail.com"
+}

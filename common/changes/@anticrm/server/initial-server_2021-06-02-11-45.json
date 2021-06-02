@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Implementation of server with in memory Tx/object stores",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server",
+  "email": "haiodo@gmail.com"
+}

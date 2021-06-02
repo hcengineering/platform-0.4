@@ -13,25 +13,11 @@
 // limitations under the License.
 //
 
-import { Metadata, plugin } from '@anticrm/platform'
-import { Service, Plugin } from '@anticrm/platform'
-import { Storage } from '@anticrm/core'
-import { LiveQuery } from '@anticrm/query'
+import { createClient as createCoreClient, Storage } from '@anticrm/core'
+import { connectNode } from './connection'
 
-export interface Client extends Storage, LiveQuery {}
-
-export interface CoreService extends Service {
-  getClient(): Promise<Client>
+export async function createClient (clientUrl: string): Promise<Storage> {
+  return await createCoreClient(async tx => {
+    return await connectNode(clientUrl, tx)
+  })
 }
-
-const PluginCore = 'plugin-core' as Plugin<CoreService>
-
-export default plugin(
-  PluginCore,
-  {},
-  {
-    metadata: {
-      ClientUrl: '' as Metadata<string>
-    }
-  }
-)
