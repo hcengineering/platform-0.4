@@ -13,10 +13,4 @@
 // limitations under the License.
 //
 
-export enum Themes {
-    LIGHT = 'theme-light',
-    GREY = 'theme-grey',
-    DARK = 'theme-dark'
-}
-
 export { default as Theme } from './Theme.svelte'
