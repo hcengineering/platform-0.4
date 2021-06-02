@@ -103,4 +103,17 @@ describe('i18n', () => {
     expect(t1).toBe(t2)
     removeEventListener(PlatformEvent, eventListener)
   })
+
+  it('should return message when message not IntlString', async (done) => {
+    const message = 'testMessage' as IntlString
+    const checkStatus = new Status(Severity.ERROR, status.status.InvalidId, { id: message })
+    const eventListener = async (event: string, data: any): Promise<void> => {
+      await expect(data).toEqual(checkStatus)
+      done()
+    }
+    addEventListener(PlatformEvent, eventListener)
+    const translated = await translate(message as IntlString, {})
+    expect(translated).toBe(message)
+    removeEventListener(PlatformEvent, eventListener)
+  })
 })

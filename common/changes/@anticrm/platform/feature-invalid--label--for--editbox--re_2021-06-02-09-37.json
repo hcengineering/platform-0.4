@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/platform",
+      "comment": "Added test",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/platform",
+  "email": "bykhov.denis@gmail.com"
+}
