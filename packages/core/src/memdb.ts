@@ -88,8 +88,8 @@ abstract class MemDb extends TxProcessor implements Storage {
     this.objectById.set(doc._id, doc)
   }
 
-  isDerived (_class: Ref<Class<Obj>>, _extendedClass:Ref<Class<Obj>>): boolean {
-    return this.hierarchy.isDerived(_class, _extendedClass)
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.hierarchy.isDerived(_class, from)
   }
 }
 

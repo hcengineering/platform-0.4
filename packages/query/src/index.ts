@@ -36,8 +36,8 @@ export class LiveQuery extends TxProcessor implements Storage {
     this.storage = storage
   }
 
-  isDerived(_class: Ref<Class<Obj>>, _extendedClass: Ref<Class<Obj>>): boolean {
-    return this.storage.isDerived(_class, _extendedClass)
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.storage.isDerived(_class, from)
   }
 
   private match(q: Query, tx: TxCreateObject<Doc>): boolean {
