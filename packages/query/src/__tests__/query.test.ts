@@ -32,20 +32,21 @@ describe('query', () => {
   it('query with param', async () => {
     let emptyResult
     let notEmptyResult
+    const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
     const txes = await getModel()
     const storage = await getStorage()
     const query = new LiveQuery(storage)
-    query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: true }, (result) => {
+    query.query(queriedClass, { private: true }, (result) => {
       emptyResult = result
     })
-    query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: false }, (result) => {
+    query.query(queriedClass, { private: false }, (result) => {
       notEmptyResult = result
     })
     let expectedLength = 0
     for (let i = 0; i < txes.length; i++) {
       const tx = txes[i]
       await query.tx(tx)
-      if ((tx as TxCreateObject<Doc>).objectClass === 'class:chunter.Channel') {
+      if (storage.isDerived((tx as TxCreateObject<Doc>).objectClass, queriedClass)) {
         expectedLength++
       }
       expect(emptyResult).toHaveLength(0)
@@ -55,17 +56,18 @@ describe('query', () => {
 
   it('unsubscibe query', async () => {
     let notEmptyResult
+    const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
     const txes = await getModel()
     const storage = await getStorage()
     const query = new LiveQuery(storage)
-    const unsubscribe = query.query('class:chunter.Channel' as Ref<Class<Doc>>, { private: false }, (result) => {
+    const unsubscribe = query.query(queriedClass, { private: false }, (result) => {
       notEmptyResult = result
     })
     let expectedLength = 0
     for (let i = 0; i < txes.length; i++) {
       const tx = txes[i]
       await query.tx(tx)
-      if ((tx as TxCreateObject<Doc>).objectClass === 'class:chunter.Channel' && expectedLength === 0) {
+      if (storage.isDerived((tx as TxCreateObject<Doc>).objectClass, queriedClass) && expectedLength === 0) {
         expectedLength++
         unsubscribe()
       }
@@ -96,6 +98,7 @@ async function getStorage(): Promise<Storage> {
         findAll,
         tx: async (tx: Tx): Promise<void> => {
           await Promise.all([model.tx(tx), transactions.tx(tx)])
-        }
+        },
+        isDerived: hierarchy.isDerived
       }
   }

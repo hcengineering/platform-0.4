@@ -17,7 +17,7 @@ import { Status, Severity, PlatformError } from '@anticrm/status'
 
 import type { Storage } from './storage'
 import { TxProcessor } from './storage'
-import type { Emb, Doc, Ref, Class, Collection, Data, PrimitiveType } from './classes'
+import type { Emb, Doc, Ref, Class, Collection, Data, PrimitiveType, Obj } from './classes'
 import type { Tx, TxAddCollection, TxCreateObject } from './tx'
 import type { Hierarchy } from './hierarchy'
 
@@ -88,6 +88,9 @@ abstract class MemDb extends TxProcessor implements Storage {
     this.objectById.set(doc._id, doc)
   }
 
+  isDerived (_class: Ref<Class<Obj>>, _extendedClass:Ref<Class<Obj>>): boolean {
+    return this.hierarchy.isDerived(_class, _extendedClass)
+  }
 }
 
 export class TxDb extends MemDb {

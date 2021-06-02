@@ -23,6 +23,7 @@ export interface Hierarchy {
   getClass(_class: Ref<Class<Obj>>): Data<Class<Obj>>
   getDomain(_class: Ref<Class<Obj>>): Domain
   tx(tx: Tx): void
+  isDerived(_class: Ref<Class<Obj>>, _extendedClass: Ref<Class<Obj>>): boolean
 }
 
 export function createHierarchy(): Hierarchy {
@@ -67,5 +68,15 @@ export function createHierarchy(): Hierarchy {
     classes.set(_id as Ref<Class<Obj>>, createTx.attributes)
   }
 
-  return { getAncestors, getClass, getDomain, tx }
+  function isDerived (_class: Ref<Class<Obj>>, _extendedClass: Ref<Class<Obj>>): boolean {
+    let cl: Ref<Class<Obj>> | undefined = _class
+    while (cl !== undefined) {
+      if (cl === _extendedClass) return true
+      const attrs = classes.get(cl)
+      cl = attrs?.extends
+    }
+    return false
+  }
+
+  return { getAncestors, getClass, getDomain, tx, isDerived }
 }
