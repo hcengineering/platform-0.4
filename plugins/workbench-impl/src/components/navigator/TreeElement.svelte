@@ -14,16 +14,12 @@
 -->
 
 <script lang="ts">
-  import Collapsed from './icons/Collapsed.svelte'
-  import Expanded from './icons/Expanded.svelte'
-  import Add from './icons/Add.svelte'
+  import Collapsed from '../icons/Collapsed.svelte'
+  import Expanded from '../icons/Expanded.svelte'
 
   import type { Asset, IntlString } from '@anticrm/status'
-  import type { Action } from '../../types'
-
-  import Icon from '../Icon.svelte'
-  import Label from '../Label.svelte'
-  import { default as ActionControl } from '../Action.svelte'
+  import type { Action } from '@anticrm/ui'
+  import { Icon, Label, ActionIcon } from '@anticrm/ui'
 
   export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
@@ -51,7 +47,7 @@
       {#if label}<Label {label}/>{:else}{title}{/if}
     </span>
     {#each actions as action}
-      <div class="tool"><ActionControl label={action.label} icon={action.icon} size={16} action={action.action}/></div>
+      <div class="tool"><ActionIcon label={action.label} icon={action.icon} size={16} action={action.action}/></div>
     {/each}
     {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>

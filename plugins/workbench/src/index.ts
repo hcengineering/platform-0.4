@@ -16,18 +16,27 @@
 import { getContext } from 'svelte'
 
 import type { IntlString, Asset } from '@anticrm/status'
-import type { Ref, Class } from '@anticrm/core'
+import type { Ref, Class, Doc, Emb, Space } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
-import type { Doc } from '@anticrm/core'
 import type { Client } from '@anticrm/plugin-core'
-import type { AnyComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
 
 export interface Application extends Doc {
   label: IntlString
   icon: Asset
-  navigator?: AnyComponent
+  navigatorModel?: NavigatorModel
+}
+
+export interface SpacesNavModel {
+  label: IntlString
+  spaceIcon: Asset
+  spaceClass: Ref<Class<Space>>
+  addSpaceLabel: IntlString
+}
+
+export interface NavigatorModel {
+  spaces: SpacesNavModel[]
 }
 
 export interface WorkbenchService extends Service {

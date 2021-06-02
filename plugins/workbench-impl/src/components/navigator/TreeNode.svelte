@@ -14,22 +14,17 @@
 -->
 
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-  import type { Project } from '@anticrm/task'
-  import { getClient } from '@anticrm/workbench'
-  import { TreeNode, TreeItem } from '@anticrm/ui'
+  import type { IntlString } from '@anticrm/status'
+  import type { Action } from '@anticrm/ui'
+  import TreeElement from './TreeElement.svelte'
 
-  import task from '../plugin'
-
-  let projects: Project[] = []
-  onDestroy(getClient().query(task.class.Project, {}, result => { projects = result }))
+  export let label: IntlString
+  export let actions: Action[] = []
+  export let notifications = 0
+  export let collapsed = false
 
 </script>
 
-<div>
-  <TreeNode label={task.string.Projects}>
-    {#each projects as project}
-      <TreeItem title={project.name} icon={task.icon.Task}/>
-    {/each}
-  </TreeNode>
-</div>
+<TreeElement {label} {notifications} {collapsed} {actions} node>
+  <slot/>
+</TreeElement>

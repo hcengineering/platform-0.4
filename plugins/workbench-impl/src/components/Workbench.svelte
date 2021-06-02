@@ -22,23 +22,27 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
-  import CreateChannel from './CreateChannel.svelte'
 
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
   import type { AnyComponent } from '@anticrm/ui'
   import { Component, Button } from '@anticrm/ui'
 
+  import type { NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
+
+  import CreateChannel from './CreateChannel.svelte'
+  import Navigator from './Navigator.svelte'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
 
-  let navigator: AnyComponent | undefined
+  let navigatorModel: NavigatorModel
 
   function onAppChange(event: any) {
-    navigator = event.detail.navigator
+    navigatorModel = event.detail.navigatorModel
+    console.log('navigatorModel:', navigatorModel)
   }
 
   let kl: boolean = false
@@ -55,7 +59,7 @@
   {#if navigator}
   <div class="navigator">
     <NavHeader/>
-    <Component is={navigator}/>
+    <Navigator model={navigatorModel}/>
     <!-- 
     <NavItem icon="thread" title="Threads"/>
     <NavItem icon="mention" title="Mentions" counter="8"/>

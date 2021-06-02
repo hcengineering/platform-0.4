@@ -14,13 +14,17 @@
 -->
 
 <script lang="ts">
-  import TreeElement from './internal/TreeElement.svelte'
-  import type { Asset } from '@anticrm/status'
+  import type { NavigatorModel } from '@anticrm/workbench'
+  import SpacesNav from './navigator/SpacesNav.svelte'
 
-  export let icon: Asset
-  export let title: string
-  export let notifications = 0
+  export let model: NavigatorModel | undefined
+
+  console.log('model: ', model)
 
 </script>
 
-<TreeElement {icon} {title} {notifications} node/>
+{#if model}
+  {#each model.spaces as space}
+    <SpacesNav model={space}/>
+  {/each}
+{/if}

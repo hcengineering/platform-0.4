@@ -15,32 +15,42 @@
 
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import type { Channel } from '@anticrm/chunter'
+
+  import type { Asset } from '@anticrm/status'
+  import type { Space } from '@anticrm/core'
+  import type { SpacesNavModel } from '@anticrm/workbench'
+  import type { Action } from '@anticrm/ui'
+
   import { getClient } from '@anticrm/workbench'
 
-  import type { IntlString } from '@anticrm/status'
-  import type { Action } from '@anticrm/ui'
-  import { TreeNode, TreeItem } from '@anticrm/ui'
+  import TreeNode from './TreeNode.svelte'
+  import TreeItem from './TreeItem.svelte'
 
-  import chunter from '../plugin'
+  export let model: SpacesNavModel
 
-  let channels: Channel[] = []
-  onDestroy(getClient().query(chunter.class.Channel, {}, result => { channels = result }))
+  let spaces: Space[] = []
+  let unsubscibe = () => {}
 
-  const addChannel: Action = {
-    label: 'NoLabel' as IntlString,
-    icon: chunter.icon.Lock,
+  $: {
+    unsubscibe()
+    unsubscibe = getClient().query(model.spaceClass, {}, result => { spaces = result })
+  }
+
+  onDestroy(() => { unsubscibe() })
+
+  const addSpace: Action = {
+    label: model.addSpaceLabel,
+    icon: 'chunter.icon.Lock' as Asset,
     action: async (): Promise<void> => {
       console.log('the action')
     }
   }
-
 </script>
 
 <div>
-  <TreeNode label={chunter.string.Channel} actions={[addChannel]}>
-    {#each channels as channel}
-      <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
+  <TreeNode label={model.label} actions={[addSpace]}>
+    {#each spaces as space}
+      <TreeItem title={space.name} icon={model.spaceIcon}/>
     {/each}
   </TreeNode>
 </div>

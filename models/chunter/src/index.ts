@@ -30,7 +30,16 @@ export function createModel(builder: Builder) {
   builder.createDoc(workbench.class.Application, {
     label: chunter.string.ApplicationLabelChunter,
     icon: chunter.icon.Chunter,
-    navigator: chunter.component.Navigator
+    navigatorModel: {
+      spaces: [
+        {
+          label: chunter.string.Channels,
+          spaceIcon: chunter.icon.Hashtag,
+          spaceClass: chunter.class.Channel,
+          addSpaceLabel: chunter.string.CreateChannel
+        }
+      ]
+    }
   })
   builder.createDoc(chunter.class.Channel, {
     name: 'general',

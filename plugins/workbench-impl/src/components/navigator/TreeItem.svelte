@@ -14,7 +14,7 @@
 -->
 
 <script lang="ts">
-  import TreeElement from './internal/TreeElement.svelte'
+  import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
 
   export let icon: Asset
