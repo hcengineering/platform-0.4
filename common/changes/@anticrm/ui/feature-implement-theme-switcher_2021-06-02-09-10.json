@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Theme switcher",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "bykhov.denis@gmail.com"
+}

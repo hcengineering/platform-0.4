@@ -16,20 +16,22 @@
 <script lang="ts">
   import { setContext, onMount } from 'svelte'
 
-  const current = 'theme-dark'
+  const currentTheme = localStorage.getItem('theme') ?? 'theme-dark'
 
   const setRootColors = (theme: string) => {
     document.body.setAttribute('class', theme)
   }
 
   setContext('theme', {
+    currentTheme: currentTheme,
     setTheme: (name: string) => {
       setRootColors(name)
+      localStorage.setItem('theme', name)
     }
   })
 
   onMount(() => {
-    setRootColors(current)
+    setRootColors(currentTheme)
   })
 </script>
 
