@@ -52,6 +52,7 @@ async function loadTranslationsForComponent (component: Component): Promise<Mess
 }
 
 async function getTranslation (message: IntlString): Promise<IntlString | Status> {
+  if (message.indexOf('.') === -1) return message
   const id = parseId(message)
   let messages = translations.get(id.component)
   if (messages === undefined) {
