@@ -14,14 +14,14 @@
 //
 
 import { LiveQuery } from '..'
-import type { Class, Doc, DocumentQuery, Ref, Tx, Storage, TxCreateObject, Obj } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateObject, Obj } from '@anticrm/core'
 import { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 
 describe('query', () => {
   it('findAll', async () => {
     const txes = await getModel()
-    const storage = await getStorage()
-    const query = new LiveQuery(storage)
+    const client = await getClient()
+    const query = new LiveQuery(client)
     for (let i = 0; i < txes.length; i++) {
       const tx = txes[i]
       await query.tx(tx)
@@ -35,7 +35,7 @@ describe('query', () => {
     let notEmptyResult
     const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
     const txes = await getModel()
-    const storage = await getStorage()
+    const storage = await getClient()
     const query = new LiveQuery(storage)
     query.query(queriedClass, { private: true }, (result) => {
       emptyResult = result
@@ -59,7 +59,7 @@ describe('query', () => {
     let notEmptyResult
     const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
     const txes = await getModel()
-    const storage = await getStorage()
+    const storage = await getClient()
     const query = new LiveQuery(storage)
     const unsubscribe = query.query(queriedClass, { private: false }, (result) => {
       notEmptyResult = result
@@ -81,7 +81,7 @@ async function getModel(): Promise<Tx[]> {
   return import('./model.tx.json') as unknown as Tx[]
 }
 
-async function getStorage(): Promise<Storage> {
+async function getClient(): Promise<Client> {
     const hierarchy = new Hierarchy()
     const txes = await getModel()
     for (const tx of txes) hierarchy.tx(tx)

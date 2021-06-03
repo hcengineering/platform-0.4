@@ -15,7 +15,7 @@
 
 import { Metadata, Plugin, plugin, Resource, Service } from '@anticrm/platform'
 import { getContext, SvelteComponent } from 'svelte'
-import type { Asset } from '@anticrm/status'
+import type { Asset, IntlString } from '@anticrm/status'
 
 export type { Asset }
 
@@ -158,14 +158,10 @@ export interface UIService extends Service, DocumentProvider {
   registerDocumentProvider: (provider: DocumentProvider | undefined) => void
 }
 
-/**
- * Useful interface to provide action operations.
- */
 export interface Action {
-  name: string // A name to be displayed
-  icon?: Asset // An optional icon to be displayed
-  action?: () => void // Action to be performed on click
-  toggled?: boolean // If passed action item will looks like it is toggled
+  label: IntlString
+  icon: Asset
+  action: () => Promise<void>
 }
 
 export default plugin(

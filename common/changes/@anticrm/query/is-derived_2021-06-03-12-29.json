@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "Move `isDerived` to `Client`.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query",
+  "email": "andrey.v.platov@gmail.com"
+}

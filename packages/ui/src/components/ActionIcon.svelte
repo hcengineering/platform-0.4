@@ -14,13 +14,21 @@
 -->
 
 <script lang="ts">
-  import TreeElement from './internal/TreeElement.svelte'
-  import type { Asset } from '@anticrm/status'
+  import type { IntlString, Asset } from '@anticrm/status'
+  import type { AnySvelteComponent } from '../types'
 
-  export let icon: Asset
-  export let title: string
-  export let notifications = 0
+  import Icon from './Icon.svelte'
 
+  export let label: IntlString
+  export let icon: Asset | AnySvelteComponent
+  export let size: 16 | 20 | 24
+  export let action: () => Promise<void>
 </script>
 
-<TreeElement {icon} {title} {notifications} collapsed/>
+<div on:click={action}>
+  {#if typeof(icon) === 'string'}
+    <Icon {icon} {size}/>
+  {:else}
+    <svelte:component this={icon} />
+  {/if}
+</div>

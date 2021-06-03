@@ -13,16 +13,9 @@
 // limitations under the License.
 //
 
-import { setResource } from '@anticrm/platform'
 import type { TaskService } from '@anticrm/task'
 
-import task from './plugin'
-
-import Navigator from './components/Navigator.svelte'
-
 export default async (): Promise<TaskService> => {
-
-  setResource(task.component.Navigator, Navigator)
 
   return {}
 }

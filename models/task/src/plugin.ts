@@ -19,6 +19,7 @@ import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(task, {
   string: { 
-    ApplicationLabelTask: '' as IntlString
+    ApplicationLabelTask: '' as IntlString,
+    CreateProject: '' as IntlString
   }
 })

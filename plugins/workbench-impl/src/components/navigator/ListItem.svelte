@@ -14,22 +14,13 @@
 -->
 
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-  import type { Channel } from '@anticrm/chunter'
-  import { getClient } from '@anticrm/workbench'
-  import { TreeNode, TreeItem } from '@anticrm/ui'
+  import TreeElement from './TreeElement.svelte'
+  import type { Asset } from '@anticrm/status'
 
-  import chunter from '../plugin'
-
-  let channels: Channel[] = []
-  onDestroy(getClient().query(chunter.class.Channel, {}, result => { channels = result }))
+  export let icon: Asset
+  export let title: string
+  export let notifications = 0
 
 </script>
 
-<div>
-  <TreeNode label={chunter.string.Channel}>
-    {#each channels as channel}
-      <TreeItem title={channel.name} icon={chunter.icon.Hashtag}/>
-    {/each}
-  </TreeNode>
-</div>
+<TreeElement {icon} {title} {notifications} node/>

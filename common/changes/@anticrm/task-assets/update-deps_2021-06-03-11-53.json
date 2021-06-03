@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "Update dependencies.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets",
+  "email": "andrey.v.platov@gmail.com"
+}

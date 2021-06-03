@@ -20,6 +20,7 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
+
   import Message from './Message.svelte'
   import Send from './icons/Send.svelte'
   import Attach from './icons/Attach.svelte'
@@ -32,16 +33,20 @@
   import type { AnyComponent } from '@anticrm/ui'
   import { Component, Button } from '@anticrm/ui'
 
+  import type { NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
+
+  import Navigator from './Navigator.svelte'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
 
-  let navigator: AnyComponent | undefined
+  let navigatorModel: NavigatorModel
 
   function onAppChange(event: any) {
-    navigator = event.detail.navigator
+    navigatorModel = event.detail.navigatorModel
+    console.log('navigatorModel:', navigatorModel)
   }
 
   let kl: boolean = false

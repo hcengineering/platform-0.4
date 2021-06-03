@@ -15,6 +15,8 @@
 <script lang="ts">
   import { store as modal } from '../../stores'
 
+  import Component from '../Component.svelte'
+
   function close () {
     modal.set({ is: undefined, props: {}, element: undefined })
   }
@@ -39,7 +41,11 @@
 
 {#if $modal.is}
   <div class="modal" class:top-arrow={$modal.element} style={getStyle($modal.element)}>
-    <svelte:component this={$modal.is} {...$modal.props} on:close={close} />
+    {#if typeof($modal.is) === 'string'}
+      <Component is={$modal.is} props={$modal.props} on:close={close}/>
+    {:else}
+      <svelte:component this={$modal.is} {...$modal.props} on:close={close} />
+    {/if}
   </div>
   <div class="modal-overlay" />
 {/if}
