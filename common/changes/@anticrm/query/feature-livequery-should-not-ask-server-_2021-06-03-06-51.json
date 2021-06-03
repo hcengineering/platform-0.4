@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "Added cache in query",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query",
+  "email": "bykhov.denis@gmail.com"
+}
