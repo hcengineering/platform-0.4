@@ -63,7 +63,7 @@
   {#if navigator}
   <div class="navigator">
     <NavHeader/>
-    <Component is={navigator}/>
+    <Navigator model={navigatorModel}/>
   </div>
   {/if}
   <div class="component">
