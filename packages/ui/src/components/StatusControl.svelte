@@ -16,6 +16,8 @@
 <script lang="ts">
   import type { Status } from '@anticrm/status'
   import { Severity } from '@anticrm/status'
+
+  import Info from './internal/icons/Info.svelte'
   import Label from './Label.svelte'
 
   export let status: Status
@@ -25,12 +27,7 @@
 {#if status.severity !== Severity.OK}
 <div class="message-container" class:error={status.severity === Severity.ERROR} style="{width ? 'width: ' + width : ''}">
   <div class="icon">
-    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-      <g opacity="0.6">
-        <path d="M8,16c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S12.4,16,8,16z M8,1C4.1,1,1,4.1,1,8c0,3.9,3.1,7,7,7c3.9,0,7-3.1,7-7 C15,4.1,11.9,1,8,1z"/>
-        <path d="M8,12.1c0.4,0,0.8-0.3,0.8-0.8S8.4,10.5,8,10.5s-0.8,0.3-0.8,0.8S7.6,12.1,8,12.1z M7.6,9.6h0.8l0.2-6.2H7.5 L7.6,9.6z"/>
-      </g>
-    </svg>
+    <Info size={16}/>
   </div>
   <div class="message">
     <Label label={status.code} params={status.params}/>

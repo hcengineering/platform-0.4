@@ -2,19 +2,17 @@
   import type { Status } from '@anticrm/status'
   import { Severity } from '@anticrm/status'
 
-  // import { Severity } from '@anticrm/status'
-  // import ui from '@anticrm/plugin-ui'
-
-  // import { Icon } from '@anticrm/sparkling-components'
+  import Info from './icons/Info.svelte'
+  import Label from '../Label.svelte'
 
   export let status: Status
 </script>
 
-<span style="font-size: 11px">
-  <!-- {#if status.severity === Severity.ERROR}
-    <Icon icon={ui.icon.Error} color="#C21F39" />
-  {/if} -->
+<div style="font-size: 11px;">
   {#if status.severity !== Severity.OK}
-    {@html status.params}
+    <Info size={12}/>
   {/if}
-</span>
+  {#if status.severity !== Severity.OK}
+    <Label label={status.code} params={status.params}/>
+  {/if}
+</div>
