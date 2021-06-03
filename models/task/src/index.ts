@@ -30,7 +30,17 @@ export function createModel(builder: Builder) {
   builder.createDoc(workbench.class.Application, {
     label: task.string.ApplicationLabelTask,
     icon: task.icon.Task,
-    navigator: task.component.Navigator
+    navigatorModel: {
+      spaces: [
+        {
+          label: task.string.Projects,
+          spaceIcon: task.icon.Task,
+          spaceClass: task.class.Project,
+          addSpaceLabel: task.string.CreateProject,
+          createComponent: task.component.CreateProject
+        }
+      ]
+    }
   })
   builder.createDoc(task.class.Project, {
     name: 'default',

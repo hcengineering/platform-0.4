@@ -22,23 +22,26 @@
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
-  import CreateChannel from './CreateChannel.svelte'
 
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
   import type { AnyComponent } from '@anticrm/ui'
   import { Component, Button } from '@anticrm/ui'
 
+  import type { NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
+
+  import Navigator from './Navigator.svelte'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
 
-  let navigator: AnyComponent | undefined
+  let navigatorModel: NavigatorModel
 
   function onAppChange(event: any) {
-    navigator = event.detail.navigator
+    navigatorModel = event.detail.navigatorModel
+    console.log('navigatorModel:', navigatorModel)
   }
 
   let kl: boolean = false
@@ -55,7 +58,7 @@
   {#if navigator}
   <div class="navigator">
     <NavHeader/>
-    <Component is={navigator}/>
+    <Navigator model={navigatorModel}/>
     <!-- 
     <NavItem icon="thread" title="Threads"/>
     <NavItem icon="mention" title="Mentions" counter="8"/>
@@ -82,11 +85,6 @@
   {/if}
   <div class="component">
     <AppHeader title="boring project" subtitle="27 members"/>
-
-    <Button label="Create Channel" on:click={() => {kl = !kl}}/>
-    {#if kl}
-      <CreateChannel title="Create New Channel" bind:opened={kl}/>
-    {/if}
   </div>
   <div class="aside">
     <AsideHeader title="Applications"/>

@@ -19,6 +19,7 @@ import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(chunter, {
   string: { 
-    ApplicationLabelChunter: '' as IntlString
+    ApplicationLabelChunter: '' as IntlString,
+    CreateChannel: '' as IntlString
   }
 })

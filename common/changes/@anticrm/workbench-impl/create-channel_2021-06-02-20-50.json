@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Add Common Navigator.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "andrey.v.platov@gmail.com"
+}

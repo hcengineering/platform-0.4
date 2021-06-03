@@ -29,14 +29,16 @@
     <span class="title">{title}</span>
     <div class="tool" on:click={() => {opened = false}}><Close size={16}/></div>
   </div>
-  <EditBox label="Name" value="Channel Name" error={kl ? 'Error' : undefined}/>
-  <EditBox label="Description" value="This is a little description" error={kl ? 'Error' : undefined}/>
-  <div class="private">
-    <div class="caption">
-      Make channel private
-      <span>Lorem ipsum dolor sit amet quantum nunca sic</span>
+  <div class="content">
+    <EditBox label="Name" value="Channel Name" error={kl ? 'Error' : undefined}/>
+    <EditBox label="Description" value="This is a little description" error={kl ? 'Error' : undefined}/>
+    <div class="private">
+      <div class="caption">
+        Make channel private
+        <span>Lorem ipsum dolor sit amet quantum nunca sic</span>
+      </div>
+      <Toggle bind:on={kl}/>
     </div>
-    <Toggle bind:on={kl}/>
   </div>
   <div class="footer">
     <Button title="Create" primary/>
@@ -80,11 +82,17 @@
       }
     }
 
+    .content {
+      display: grid;
+      grid-template-rows: repeat(3, 1fr);
+      row-gap: 20px;
+    }
+
     .private {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 32px;
+      margin-top: 12px;
       .caption {
         font-size: 14px;
         font-weight: 400;

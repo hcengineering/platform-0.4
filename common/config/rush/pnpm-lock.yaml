@@ -8704,7 +8704,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-Q5jEBDife0jmLAUcOG0jBp5kuy2LLjT1me1sqYY5ltbiapbbW3aGvHHpeSWTHG2CpdphU1wZGT5kCxAbiJZr5w==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-mrrFVDViAAwew6XR7b+YMO739xBeEMrfVy9JfBIbRRlmZsGPkIlcaA+FQ6DWIZekY84lqDzdFr9ZPWm9tylBsw==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -8714,6 +8714,7 @@ packages:
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.0
       svelte: 3.38.2
+      svelte-loader: 3.1.1_svelte@3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       ts-standard: 10.0.0_typescript@4.2.4
       typescript: 4.2.4
@@ -8840,7 +8841,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz:
-    resolution: {integrity: sha512-NXTuTyWlFsY8kxMg/ZZMevvsVwg5RjSjoYeR9hYCUPLadjnejSPgNex2cDoSIGWGJAQxAO16oU8YRYkMgmjDBQ==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-XjEJ6Zf0G4rbKlDoszgU4hVM9ZmD623L2s/xw6cjJZp2eHvcafDO60xkBMIBTLrfcchpBuR5W/nI07XzWJdlAg==, tarball: file:projects/model-all.tgz}
     name: '@rush-temp/model-all'
     version: 0.0.0
     dependencies:
@@ -9046,7 +9047,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_sass@1.32.13+typescript@4.2.4:
-    resolution: {integrity: sha512-Vm9LtJ+wS/4dJML+M522o7HS7Z3lztomz4/LKghiZD1g1x005C+ioEkDMWZncVpnWJpR9gOTqDZwAVJhuOl+9Q==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-fkEHscCzdshQNUB94SOVSkw0PPh2Ix15S1Qgsxtmcbszo1bYAhVEnXBfSeW/nvzXim7+I9q7jTXsvL4d+jgwvA==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0

@@ -14,15 +14,13 @@
 -->
 
 <script lang="ts">
-  import type { IntlString } from '@anticrm/status'
-  import TreeElement from './internal/TreeElement.svelte'
+  import TreeElement from './TreeElement.svelte'
+  import type { Asset } from '@anticrm/status'
 
-  export let label: IntlString
+  export let icon: Asset
+  export let title: string
   export let notifications = 0
-  export let collapsed = false
 
 </script>
 
-<TreeElement {label} {notifications} {collapsed} node>
-  <slot/>
-</TreeElement>
+<TreeElement {icon} {title} {notifications} collapsed/>

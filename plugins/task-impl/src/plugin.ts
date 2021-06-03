@@ -23,7 +23,7 @@ import task from '@anticrm/task'
 
 export default mergeIds(task, {
   component: {
-    Navigator: '' as AnyComponent
+    CreateProject: '' as AnyComponent
   },
   class: { 
     Project: '' as Ref<Class<Project>>
