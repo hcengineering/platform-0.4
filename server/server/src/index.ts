@@ -13,27 +13,14 @@
 // limitations under the License.
 //
 
-import {
-  Class,
-  createHierarchy,
-  Doc,
-  DocumentQuery,
-  DOMAIN_TX,
-  ModelDb,
-  Obj,
-  Ref,
-  Tx,
-  TxDb
-} from '@anticrm/core'
-
-import { start } from './server'
-
+import { Class, Hierarchy, Doc, DocumentQuery, DOMAIN_TX, ModelDb, Ref, Tx, TxDb } from '@anticrm/core'
 import modelTx from './model.tx.json'
+import { start } from './server'
 
 const txes = (modelTx as unknown) as Tx[]
 console.log(txes)
 
-const hierarchy = createHierarchy()
+const hierarchy = new Hierarchy()
 for (const tx of txes) hierarchy.tx(tx)
 
 const transactions = new TxDb(hierarchy)
@@ -72,9 +59,6 @@ start('localhost', 18080, {
             c[1].txs(tx)
           }
         }
-      },
-      isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
-        return hierarchy.isDerived(_class, from)
       }
     }
   },

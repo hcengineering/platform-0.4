@@ -13,28 +13,17 @@
 // limitations under the License.
 //
 
-import { describe, it } from '@jest/globals'
-import { start } from '@anticrm/server/src/server'
-import core, {
-  Class,
-  Doc,
-  Ref,
-  Tx,
-  DocumentQuery,
-  createHierarchy,
-  TxDb,
-  ModelDb,
-  DOMAIN_TX
-} from '@anticrm/core'
+import core, { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, ModelDb, Ref, Tx, TxDb } from '@anticrm/core'
 import { createClient } from '@anticrm/node-client'
-
+import { start } from '@anticrm/server/src/server'
+import { describe, it } from '@jest/globals'
 import modelTx from './model.tx.json'
 
 const txes = (modelTx as unknown) as Tx[]
 
 describe('server', () => {
   it('client connect server', async () => {    
-    const hierarchy = createHierarchy()
+    const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
 
     const transactions = new TxDb(hierarchy)
@@ -56,8 +45,7 @@ describe('server', () => {
       connect: (clientId, txs) => {
         return {
           findAll: findAll,
-          tx: async (tx: Tx): Promise<void> => {},
-          isDerived: hierarchy.isDerived
+          tx: async (tx: Tx): Promise<void> => {}
         }
       },
       close: clientId => {},      

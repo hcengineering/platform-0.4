@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import status, { Status, StatusCode, component, Component, PlatformError, Severity } from '@anticrm/status'
-import { Class, Doc, DocumentQuery, Obj, Ref, Storage, Tx } from '@anticrm/core'
+import { Class, Doc, DocumentQuery, Ref, Storage, Tx } from '@anticrm/core'
+import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 export type ReqId = string | number
 
@@ -146,9 +146,5 @@ export class RequestProcessor implements Storage {
     await this.request('tx', tx)
     // Process on server and return result.
     this.handler(tx)
-  }
-
-  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
-    throw new PlatformError(new Status(Severity.ERROR, status.status.UnknownError, { message: 'isDerived could not be passed with client protocol' }))
   }
 }
