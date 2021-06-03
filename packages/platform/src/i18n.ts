@@ -64,8 +64,9 @@ async function getTranslation (message: IntlString): Promise<IntlString | Status
     }
     return (id.kind ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
   } catch (err) {
-    setPlatformStatus(err)
-    return err
+    const status = unknownError(err)
+    setPlatformStatus(status)
+    return status
   }
 }
 

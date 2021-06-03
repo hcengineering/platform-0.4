@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/platform",
+      "comment": "Throw status instead error",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/platform",
+  "email": "bykhov.denis@gmail.com"
+}
