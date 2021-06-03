@@ -36,7 +36,8 @@ export function createModel(builder: Builder) {
           label: task.string.Projects,
           spaceIcon: task.icon.Task,
           spaceClass: task.class.Project,
-          addSpaceLabel: task.string.CreateProject
+          addSpaceLabel: task.string.CreateProject,
+          createComponent: task.component.CreateProject
         }
       ]
     }

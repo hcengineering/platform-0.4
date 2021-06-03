@@ -31,7 +31,6 @@
   import type { NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
-  import CreateChannel from './CreateChannel.svelte'
   import Navigator from './Navigator.svelte'
 
   export let client: Client
@@ -86,11 +85,6 @@
   {/if}
   <div class="component">
     <AppHeader title="boring project" subtitle="27 members"/>
-
-    <Button label="Create Channel" on:click={() => {kl = !kl}}/>
-    {#if kl}
-      <CreateChannel title="Create New Channel" bind:opened={kl}/>
-    {/if}
   </div>
   <div class="aside">
     <AsideHeader title="Applications"/>

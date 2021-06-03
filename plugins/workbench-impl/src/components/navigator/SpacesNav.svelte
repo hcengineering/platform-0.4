@@ -21,6 +21,7 @@
   import type { SpacesNavModel } from '@anticrm/workbench'
   import type { Action } from '@anticrm/ui'
 
+  import { showModal } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import TreeNode from './TreeNode.svelte'
@@ -29,20 +30,21 @@
   export let model: SpacesNavModel
 
   let spaces: Space[] = []
-  let unsubscibe = () => {}
+  let unsubscribe = () => {}
 
   $: {
-    unsubscibe()
-    unsubscibe = getClient().query(model.spaceClass, {}, result => { spaces = result })
+    unsubscribe()
+    unsubscribe = getClient().query(model.spaceClass, {}, result => { spaces = result })
   }
 
-  onDestroy(() => { unsubscibe() })
+  onDestroy(() => { unsubscribe() })
 
   const addSpace: Action = {
     label: model.addSpaceLabel,
     icon: 'chunter.icon.Lock' as Asset,
     action: async (): Promise<void> => {
       console.log('the action')
+      showModal(model.createComponent, {})
     }
   }
 </script>

@@ -36,7 +36,8 @@ export function createModel(builder: Builder) {
           label: chunter.string.Channels,
           spaceIcon: chunter.icon.Hashtag,
           spaceClass: chunter.class.Channel,
-          addSpaceLabel: chunter.string.CreateChannel
+          addSpaceLabel: chunter.string.CreateChannel,
+          createComponent: chunter.component.CreateChannel
         }
       ]
     }

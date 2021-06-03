@@ -14,8 +14,14 @@
 //
 
 import type { ChunterService } from '@anticrm/chunter'
+import { setResource } from '@anticrm/platform'
+
+import CreateChannel from './components/CreateChannel.svelte'
+import chunter from './plugin'
 
 export default async (): Promise<ChunterService> => {
+
+  setResource(chunter.component.CreateChannel, CreateChannel)
 
   return {}
 }

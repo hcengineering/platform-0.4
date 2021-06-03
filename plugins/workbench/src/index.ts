@@ -19,6 +19,7 @@ import type { IntlString, Asset } from '@anticrm/status'
 import type { Ref, Class, Doc, Emb, Space } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Client } from '@anticrm/plugin-core'
+import type { AnyComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
 
@@ -33,6 +34,7 @@ export interface SpacesNavModel {
   spaceIcon: Asset
   spaceClass: Ref<Class<Space>>
   addSpaceLabel: IntlString
+  createComponent: AnyComponent
 }
 
 export interface NavigatorModel {
