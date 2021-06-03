@@ -28,7 +28,7 @@
     "@anticrm/core": "~0.4.0",
     "@anticrm/status": "~0.4.2",
     "ws": "^7.4.6",
-    "@anticrm/node-client": "~0.1.0",
-    "@anticrm/server": "~0.1.0"
+    "@anticrm/node-client": "~0.4.0",
+    "@anticrm/server": "~0.4.0"
   }
 }

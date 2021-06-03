@@ -27,6 +27,6 @@
     "@anticrm/status": "~0.4.2",
     "@anticrm/ui": "~0.4.1",
     "@anticrm/login": "~0.4.0",
-    "@anticrm/rpc": "~0.1.0"
+    "@anticrm/rpc": "~0.4.1"
   }
 }

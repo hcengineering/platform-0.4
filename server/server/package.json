@@ -1,6 +1,6 @@
 {
   "name": "@anticrm/server",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "scripts": {
     "build": "tsc",
     "build:docs": "echo 'no docs yet'",
@@ -41,6 +41,6 @@
     "ws": "^7.4.6",
     "@anticrm/core": "~0.4.0",
     "@anticrm/status": "~0.4.2",
-    "@anticrm/rpc": "~0.1.0"
+    "@anticrm/rpc": "~0.4.1"
   }
 }

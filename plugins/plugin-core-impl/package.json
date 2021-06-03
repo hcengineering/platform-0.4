@@ -37,6 +37,6 @@
     "@anticrm/platform":"~0.4.2",
     "@anticrm/plugin-core":"~0.4.0",
     "@anticrm/query":"~0.4.0",
-    "@anticrm/rpc":"~0.1.0"
+    "@anticrm/rpc":"~0.4.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@anticrm/node-client",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "main": "lib/index.js",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -27,6 +27,6 @@
     "@anticrm/core": "~0.4.0",
     "@anticrm/status": "~0.4.2",
     "ws": "^7.4.6",
-    "@anticrm/rpc": "~0.1.0"
+    "@anticrm/rpc": "~0.4.1"
   }
 }
