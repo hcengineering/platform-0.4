@@ -34,9 +34,6 @@
   {#if label}
     <div class="label"><Label label={label}/></div>
   {/if}
-  {#if error}
-    <div class="error-label">{error}</div>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -47,7 +44,6 @@
     padding: 0;
     font-family: inherit;
     min-width: 50px;
-    margin-bottom: 20px;
     height: 52px;
     background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-hover);
@@ -94,12 +90,5 @@
     &:focus-within {
       border-color: var(--system-error-color);
     }
-  }
-  .error-label {
-    position: absolute;
-    top: 52px;
-    font-size: 12px;
-    color: var(--system-error-color);
-    opacity: 0.7;
   }
 </style>
