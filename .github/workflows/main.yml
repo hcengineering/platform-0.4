@@ -27,6 +27,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checking for mis-matching dependencies...
+        run: node common/scripts/install-run-rush.js check
+
       - name: Checking for missing change logs...
         run: node common/scripts/install-run-rush.js change -v
 
