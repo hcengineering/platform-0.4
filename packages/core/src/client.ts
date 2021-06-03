@@ -17,7 +17,7 @@ import type { Doc, Ref, Class } from './classes'
 import type { Storage, DocumentQuery } from './storage'
 import type { Tx } from './tx'
 
-import { createHierarchy } from './hierarchy'
+import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
 import { DOMAIN_MODEL } from './classes'
 
@@ -29,7 +29,7 @@ export async function createClient(connect: (txHandler: TxHander) => Promise<Sto
   let client: Storage | undefined
   let txBuffer: Tx[] | undefined = []
   
-  const hierarchy = createHierarchy()
+  const hierarchy = new Hierarchy()
   const model = new ModelDb(hierarchy)
 
   function txHander(tx: Tx): void {

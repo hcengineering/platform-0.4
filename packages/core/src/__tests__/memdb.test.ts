@@ -14,7 +14,7 @@
 //
 
 import type { Tx } from '../tx'
-import { createHierarchy } from '../hierarchy'
+import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
 import core from '../component'
 
@@ -22,7 +22,7 @@ describe('hierarchy', () => {
 
   it('should build hierarchy', async () => {
     const txes = ((await import('./core.tx.json')) as any).default as Tx[]
-    const hierarchy = createHierarchy()
+    const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const ancestors = hierarchy.getAncestors(core.class.TxCreateObject)
     expect(ancestors).toContain(core.class.Tx)
@@ -30,7 +30,7 @@ describe('hierarchy', () => {
 
   it('should query model', async () => {
     const txes = ((await import('./core.tx.json')) as any).default as Tx[]
-    const hierarchy = createHierarchy()
+    const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
     for (const tx of txes) model.tx(tx)
