@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class } from './classes'
+import type { Doc, Ref, Class, Obj } from './classes'
 import type { Storage, DocumentQuery } from './storage'
 import type { Tx } from './tx'
 
@@ -25,8 +25,12 @@ import core from './component'
 
 type TxHander = (tx: Tx) => void
 
-export async function createClient(connect: (txHandler: TxHander) => Promise<Storage>): Promise<Storage> {
-  let client: Storage | undefined
+export interface Client extends Storage {
+  isDerived<T extends Obj> (_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean
+}
+
+export async function createClient(connect: (txHandler: TxHander) => Promise<Storage>): Promise<Client> {
+  let client: Client | undefined
   let txBuffer: Tx[] | undefined = []
   
   const hierarchy = new Hierarchy()

@@ -13,12 +13,8 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Data, Obj } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Client, Obj } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
-
-// export interface LiveQuery extends Storage {
-//   query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void
-// }
 
 type Query = {
   _class: Ref<Class<Doc>>
@@ -26,18 +22,18 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-export class LiveQuery extends TxProcessor implements Storage {
+export class LiveQuery extends TxProcessor implements Client {
   private readonly cache: Map<Query, Doc[]> = new Map<Query, Doc[]>()
-  private readonly storage: Storage
+  private readonly client: Client
   private readonly queries: Query[] = []
 
-  constructor (storage: Storage) {
+  constructor (client: Client) {
     super ()
-    this.storage = storage
+    this.client = client
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
-    return this.storage.isDerived(_class, from)
+    return this.client.isDerived(_class, from)
   }
 
   private match(q: Query, tx: TxCreateObject<Doc>): boolean {
@@ -69,13 +65,13 @@ export class LiveQuery extends TxProcessor implements Storage {
   }
 
   findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    return this.storage.findAll(_class, query)
+    return this.client.findAll(_class, query)
   }
 
   query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
     const q: Query = { _class, query, callback: callback as (result: Doc[]) => void }
     this.queries.push(q)
-    this.storage.findAll(_class, query).then((result) => {
+    this.client.findAll(_class, query).then((result) => {
       this.cache.set(q, result)
       q.callback(result)
     })
@@ -96,7 +92,7 @@ export class LiveQuery extends TxProcessor implements Storage {
   }
 
   async tx(tx: Tx): Promise<void> {
-    await this.storage.tx(tx)
+    await this.client.tx(tx)
     return super.tx(tx)
   }
 }
