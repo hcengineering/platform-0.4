@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, Storage, TxCreateObject, Client, Obj } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateObject, Client, Obj } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
 
 type Query = {
