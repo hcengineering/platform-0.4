@@ -14,7 +14,7 @@
 //
 
 import { LiveQuery } from '..'
-import type { Class, Doc, DocumentQuery, Ref, Tx, Storage, TxCreateObject } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, Ref, Tx, Storage, TxCreateObject, Obj } from '@anticrm/core'
 import { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 
 describe('query', () => {
@@ -100,6 +100,6 @@ async function getStorage(): Promise<Storage> {
         tx: async (tx: Tx): Promise<void> => {
           await Promise.all([model.tx(tx), transactions.tx(tx)])
         },
-        isDerived: hierarchy.isDerived
+        isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => { return hierarchy.isDerived(_class, from) }
       }
   }
