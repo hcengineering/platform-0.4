@@ -53,7 +53,7 @@ export class LiveQuery extends TxProcessor implements Storage {
     return true
   }
 
-  private updateCache<T extends Doc>(query: Query, object: T): void {
+  private cacheCreateObject<T extends Doc>(query: Query, object: T): void {
     const values = this.cache.get(query) || []
     const index = values.findIndex((doc) => doc._id === object._id)
     if (index === -1) {
@@ -61,7 +61,6 @@ export class LiveQuery extends TxProcessor implements Storage {
     } else {
       values[index] = object
     }
-    this.cache.set(query, values)
   }
 
   private refresh(query: Query): void {
@@ -90,7 +89,7 @@ export class LiveQuery extends TxProcessor implements Storage {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
         const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
-        this.updateCache(q, doc)
+        this.cacheCreateObject(q, doc)
         this.refresh(q)
       }
     }
