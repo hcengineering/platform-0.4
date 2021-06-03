@@ -17,8 +17,6 @@
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
-  // import NavItem from './NavItem.svelte'
-  // import NavSubitem from './NavSubitem.svelte'
   import AppHeader from './AppHeader.svelte'
   import AsideHeader from './AsideHeader.svelte'
   import avatar from '../../img/avatar.png'
@@ -61,28 +59,6 @@
   <div class="navigator">
     <NavHeader/>
     <Component is={navigator}/>
-    <!-- 
-    <NavItem icon="thread" title="Threads"/>
-    <NavItem icon="mention" title="Mentions" counter="8"/>
-    <div class="separator"></div>
-    <NavItem icon="arrow" group title="Starred">
-      <NavSubitem title="project / channel"/>
-      <NavSubitem locked title="project / channel"/>
-      <NavSubitem type="user" img="tim" title="person" counter="2"/>
-    </NavItem>
-    <NavItem icon="arrow" group title="Channels" state="expanded">
-      <NavSubitem title="random"/>
-      <NavSubitem title="general"/>
-      <NavSubitem title="achievements"/>
-      <NavSubitem title="boring project"/>
-      <NavSubitem title="fun project" locked/>
-      <NavSubitem title="secret project" locked/>
-    </NavItem>
-    <NavItem icon="arrow" group title="Messages">
-      <NavSubitem type="user" img="tim" title="Tim Ferris" counter="8"/>
-      <NavSubitem type="user" img="chen" title="Rosamund Chen"/>
-      <NavSubitem type="user" img="elon" title="Elon Musk"/>
-    </NavItem> -->
   </div>
   {/if}
   <div class="component">
