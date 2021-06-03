@@ -27,7 +27,7 @@ import type {
   TxCreateObject,
   Domain
 } from '@anticrm/core'
-import { ClassifierKind, generateId, makeEmb, createHierarchy, DOMAIN_MODEL } from '@anticrm/core'
+import { ClassifierKind, generateId, makeEmb, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 import toposort from 'toposort'
 
 import core from './component'
@@ -111,7 +111,7 @@ function _generateTx (tx: ClassTxes): Tx[] {
 
 export class Builder {
   private readonly txes: Tx[] = []
-  private readonly hierarchy = createHierarchy()
+  private readonly hierarchy = new Hierarchy()
 
   createModel (...classes: (new () => Obj)[]): void {
     const txes = classes.map((ctor) => getTxes(ctor.prototype))

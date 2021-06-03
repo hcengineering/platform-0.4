@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import { Tx, Storage, Ref, Doc, Class, DocumentQuery, DOMAIN_TX } from '@anticrm/core'
-import { ModelDb, TxDb, createHierarchy } from '@anticrm/core'
+import type { Tx, Storage, Ref, Doc, Class, DocumentQuery } from '@anticrm/core'
+import { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
 
 async function getModel(): Promise<Tx[]> { 
   return import('./model.tx.json') as unknown as Tx[]
@@ -25,7 +25,7 @@ export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
   const txes = await getModel()
   console.log(txes)
 
-  const hierarchy = createHierarchy()
+  const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)
 
   const transactions = new TxDb(hierarchy)
