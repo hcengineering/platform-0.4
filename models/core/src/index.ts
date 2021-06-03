@@ -1,19 +1,19 @@
 //
 // Copyright © 2020, 2021 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
-import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member } from '@anticrm/core'
+import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member, Domain, Attribute, PropertyType, ClassifierKind, Mixin } from '@anticrm/core'
 import { DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
@@ -29,6 +29,17 @@ export class TDoc extends TObj implements Doc {
   _id!: Ref<this>
 }
 
+@Model(core.class.Class, core.class.Doc)
+class TClass extends TDoc implements Class<Obj> {
+  kind!: ClassifierKind
+  attributes!: Collection<Attribute<PropertyType>>
+  extends!: Ref<Class<Obj>>
+  domain!: Domain
+}
+
+@Model(core.class.Mixin, core.class.Class)
+class TMixin extends TClass implements Mixin<Doc> {}
+
 // T R A N S A C T I O N S
 
 @Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
@@ -38,7 +49,8 @@ export class TTx extends TDoc implements Tx {
 }
 
 @Model(core.class.TxCreateObject, core.class.Tx)
-export class TTxCreateObject<T extends Doc> extends TTx implements TxCreateObject<T> {
+export class TTxCreateObject<T extends Doc> extends TTx
+  implements TxCreateObject<T> {
   objectClass!: Ref<Class<T>>
   attributes!: Data<T>
 }
@@ -53,8 +65,8 @@ export class TSpace extends TDoc implements Space {
   members!: Collection<Member>
 }
 
-export function createModel(builder: Builder) {
-  builder.createModel(TObj, TDoc, TTx, TTxCreateObject, TSpace)
+export function createModel (builder: Builder) {
+  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateObject, TSpace)
 }
 
 export { core as default }

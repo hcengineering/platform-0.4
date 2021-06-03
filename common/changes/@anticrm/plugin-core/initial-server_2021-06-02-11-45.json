@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core",
+      "comment": "Add ClientUrl metadata parameter to allow connecting to backend",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core",
+  "email": "haiodo@gmail.com"
+}

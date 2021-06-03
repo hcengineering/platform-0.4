@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/node-client",
+      "comment": "NodeJS Platform Client implemenation",
+      "type": "major"
+    }
+  ],
+  "packageName": "@anticrm/node-client",
+  "email": "haiodo@gmail.com"
+}

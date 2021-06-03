@@ -16,7 +16,7 @@
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
 
-import type { Ref, Class, Doc, Emb, Obj } from './classes'
+import type { Ref, Class, Doc, Emb, Obj, Mixin } from './classes'
 import type { Tx, TxCreateObject, TxAddCollection } from './tx'
 
 const ComponentCore = 'core' as Component
@@ -24,6 +24,7 @@ const ComponentCore = 'core' as Component
 export default component(ComponentCore, {
   class: {
     Class: '' as Ref<Class<Class<Obj>>>,
+    Mixin: '' as Ref<Class<Mixin<Doc>>>,
     Tx: '' as Ref<Class<Tx>>,
     TxCreateObject: '' as Ref<Class<TxCreateObject<Doc>>>,
     TxAddCollection: '' as Ref<Class<TxAddCollection<Emb>>>
