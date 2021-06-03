@@ -19,67 +19,33 @@
   import Add from './icons/Add.svelte'
 
   export let title: string
-  export let subtitle: string
 </script>
 
 <div class="header">
-  <div class="icon"></div>
-  <div class="caption">
-    <div class="title">{title}</div>
-    <div class="subtitle">{subtitle}</div>
-  </div>
-  <div class="separator"/>
-  <EditBox label="Search" width="180px"/>
+  <div class="title">{title}</div>
   <div class="buttons">
-    <div class="button"><MoreH/></div>
-    <div class="button"><Add/></div>
+    <div class="button"><MoreH size={16}/></div>
+    <div class="button"><Add size={16}/></div>
   </div>
 </div>
 
 <style lang="scss">
   .header {
     width: 100%;
-    height: 80px;
-    min-height: 80px;
+    height: 72px;
+    min-height: 72px;
     border-bottom: 1px solid var(--theme-menu-divider);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 24px 0 40px;
+    padding: 0 32px 0 40px;
 
-    .icon {
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
-      min-height: 32px;
-      border-radius: 4px;
-      background-color: var(--primary-color-pink);
-      margin-right: 16px;
-    }
-    .caption {
-      max-width: 220px;
-      color: var(--theme-caption-color);
-      display: flex;
-      flex-direction: column;
+    .title {
       overflow: hidden;
+      white-space: nowrap;
       text-overflow: ellipsis;
-      margin-right: 16px;
-      
-      .title {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-size: 16px;
-        font-weight: 500;
-      }
-      .subtitle {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        opacity: .3;
-      }
-    }
-    .separator {
+      font-size: 16px;
+      font-weight: 500;
       flex-grow: 1;
     }
     .buttons {
@@ -87,9 +53,13 @@
       flex-direction: row-reverse;
       margin-left: 24px;
       .button {
-        width: 24px;
-        height: 24px;
-        opacity: .4;
+        width: 16px;
+        height: 16px;
+        opacity: .3;
+        cursor: pointer;
+        &:hover {
+          opacity: 1;
+        }
       }
       .button + .button {
         margin-right: 16px;
