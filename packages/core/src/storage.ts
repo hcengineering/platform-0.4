@@ -23,7 +23,6 @@ export type DocumentQuery<T extends Doc> = Partial<Data<T>>
 export interface Storage {
   findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]>
   tx(tx: Tx): Promise<void>
-  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean
 }
 
 export class TxProcessor {
