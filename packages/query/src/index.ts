@@ -27,7 +27,7 @@ type Query = {
 }
 
 export class LiveQuery extends TxProcessor implements Storage {
-
+  private readonly cache: Map<Query, Doc[]> = new Map<Query, Doc[]>()
   private readonly storage: Storage
   private readonly queries: Query[] = []
 
@@ -53,24 +53,43 @@ export class LiveQuery extends TxProcessor implements Storage {
     return true
   }
 
-  private refresh(query: Query): Promise<void> {
-    return this.storage.findAll(query._class, query.query).then(result => query.callback(result))
+  private cacheCreateObject<T extends Doc>(query: Query, object: T): void {
+    const values = this.cache.get(query) || []
+    const index = values.findIndex((doc) => doc._id === object._id)
+    if (index === -1) {
+      values.push(object)
+    } else {
+      values[index] = object
+    }
+  }
+
+  private refresh(query: Query): void {
+    const result = this.cache.get(query) || []
+    query.callback(result)
   }
 
   findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     return this.storage.findAll(_class, query)
   }
 
-  query <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
+  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
     const q: Query = { _class, query, callback: callback as (result: Doc[]) => void }
     this.queries.push(q)
-    this.refresh(q)
-    return () => { this.queries.splice(this.queries.indexOf(q)) }
+    this.storage.findAll(_class, query).then((result) => {
+      this.cache.set(q, result)
+      q.callback(result)
+    })
+    return () => { 
+      this.queries.splice(this.queries.indexOf(q)) 
+      this.cache.delete(q)
+    }
   }
 
   async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
+        const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
+        this.cacheCreateObject(q, doc)
         this.refresh(q)
       }
     }
