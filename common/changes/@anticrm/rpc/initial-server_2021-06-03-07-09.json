@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/rpc",
+      "comment": "Initial Server RPC",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/rpc",
+  "email": "haiodo@gmail.com"
+}

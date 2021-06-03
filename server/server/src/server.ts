@@ -13,13 +13,15 @@
 // limitations under the License.
 //
 
+import { Storage, Tx } from '@anticrm/core'
+import { readRequest, Response, Request, serialize } from '@anticrm/rpc'
+import status, { Severity, Status } from '@anticrm/status'
 import { createServer, IncomingMessage } from 'http'
 import WebSocket, { AddressInfo, Server } from 'ws'
-import { Storage, Tx } from '@anticrm/core'
 
 export interface ServerProtocol {
   shutdown: () => void
-  address: () => { host: string; port: number }
+  address: () => { host: string, port: number }
 }
 export interface StorageProvider {
   connect: (clientId: string, tx: (tx: Tx) => void) => Storage
@@ -44,34 +46,33 @@ export async function start (
 
     const storage = provider.connect(clientId, tx => {
       // Send transaction to client.
-      ws.send(
-        JSON.stringify({
-          _id: tx._id,
-          tx: tx
-        })
-      )
+      const resp: Response<any> = {
+        id: tx._id,
+        result: tx
+      }
+      ws.send(serialize(resp))
     })
 
-    async function handleRequest (request: any): Promise<void> {
-      const { _id, action, params } = request
+    async function handleRequest (request: Request<any>): Promise<void> {
+      const { id, method, params } = request
       try {
         const result = await Reflect.apply(
-          (storage as any)[action],
+          (storage as any)[method],
           storage,
           params
         )
-        ws.send(
-          JSON.stringify({
-            _id,
-            result
-          })
-        )
+        const resp: Response<any> = {
+          id,
+          result
+        }
+        ws.send(serialize(resp))
       } catch (error) {
+        const resp: Response<any> = {
+          id,
+          error: new Status(Severity.ERROR, status.status.UnknownError, { message: error })
+        }
         ws.send(
-          JSON.stringify({
-            _id,
-            error
-          })
+          serialize(resp)
         )
       }
     }
@@ -86,7 +87,7 @@ export async function start (
       console.log('communication error:', error)
     }
     ws.on('message', (msg: string): void => {
-      const request = JSON.parse(msg)
+      const request = readRequest(msg)
       handleRequest(request) // eslint-disable-line
     })
   })

@@ -20,6 +20,7 @@ import {
   DocumentQuery,
   DOMAIN_TX,
   ModelDb,
+  Obj,
   Ref,
   Tx,
   TxDb
@@ -71,6 +72,9 @@ start('localhost', 18080, {
             c[1].txs(tx)
           }
         }
+      },
+      isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+        return hierarchy.isDerived(_class, from)
       }
     }
   },

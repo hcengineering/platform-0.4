@@ -14,16 +14,20 @@
 //
 
 import { createClient } from '@anticrm/core'
-import { Client, CoreService } from '@anticrm/plugin-core'
+import { getMetadata } from '@anticrm/platform'
+import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
-import { connectBrowser } from './connection'
+import { connect as connectBrowser } from './connection'
 
 export default async (): Promise<CoreService> => {
   let client: Client | undefined
 
   async function getClient (): Promise<Client> {
     if (client === undefined) {
-      const storage = await createClient(connectBrowser)
+      const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18018'
+      const storage = await createClient(async tx => {
+        return await connectBrowser(clientUrl, tx)
+      })
       client = new LiveQuery(storage)
     }
     return client

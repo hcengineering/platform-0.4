@@ -31,12 +31,9 @@ import { createClient } from '@anticrm/node-client'
 import modelTx from './model.tx.json'
 
 const txes = (modelTx as unknown) as Tx[]
-console.log(txes)
 
 describe('server', () => {
-  it('client connect server', async () => {
-    console.log(txes)
-
+  it('client connect server', async () => {    
     const hierarchy = createHierarchy()
     for (const tx of txes) hierarchy.tx(tx)
 
@@ -59,10 +56,11 @@ describe('server', () => {
       connect: (clientId, txs) => {
         return {
           findAll: findAll,
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {},
+          isDerived: hierarchy.isDerived
         }
       },
-      close: clientId => {}
+      close: clientId => {},      
     })
     try {
       const addr = (await serverAt).address()
