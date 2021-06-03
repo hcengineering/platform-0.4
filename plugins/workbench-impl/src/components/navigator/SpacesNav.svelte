@@ -21,7 +21,7 @@
   import type { SpacesNavModel } from '@anticrm/workbench'
   import type { Action } from '@anticrm/ui'
 
-  import { showModal } from '@anticrm/ui'
+  import { showModal, IconAdd } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import TreeNode from './TreeNode.svelte'
@@ -41,7 +41,7 @@
 
   const addSpace: Action = {
     label: model.addSpaceLabel,
-    icon: 'chunter.icon.Lock' as Asset,
+    icon: IconAdd,
     action: async (): Promise<void> => {
       console.log('the action')
       showModal(model.createComponent, {})

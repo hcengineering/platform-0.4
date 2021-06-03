@@ -15,13 +15,20 @@
 
 <script lang="ts">
   import type { IntlString, Asset } from '@anticrm/status'
+  import type { AnySvelteComponent } from '../types'
 
   import Icon from './Icon.svelte'
 
   export let label: IntlString
-  export let icon: Asset
+  export let icon: Asset | AnySvelteComponent
   export let size: 16 | 20 | 24
   export let action: () => Promise<void>
 </script>
 
-<div on:click={action}><Icon {icon} {size}/></div>
+<div on:click={action}>
+  {#if typeof(icon) === 'string'}
+    <Icon {icon} {size}/>
+  {:else}
+    <svelte:component this={icon} />
+  {/if}
+</div>

@@ -103,7 +103,7 @@
         text-overflow: ellipsis;
       }
       .tool {
-        // visibility: hidden;
+        visibility: hidden;
         width: 16px;
         height: 16px;
         margin-left: 12px;

@@ -31,6 +31,8 @@ export { default as Icon } from './components/Icon.svelte'
 export { default as ActionIcon } from './components/ActionIcon.svelte'
 export { default as Toggle } from './components/Toggle.svelte'
 
+export { default as IconAdd } from './components/icons/Add.svelte'
+
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
 }
