@@ -17,21 +17,14 @@
   import type { Status } from '@anticrm/status'
   import { Severity } from '@anticrm/status'
 
-  import Info from './internal/icons/Info.svelte'
-  import Label from './Label.svelte'
+  import StatusControl from './internal/Status.svelte'
 
   export let status: Status
-  export let width: string
 </script>
 
 {#if status.severity !== Severity.OK}
-<div class="message-container" class:error={status.severity === Severity.ERROR} style="{width ? 'width: ' + width : ''}">
-  <div class="icon">
-    <Info size={16}/>
-  </div>
-  <div class="message">
-    <Label label={status.code} params={status.params}/>
-  </div>
+<div class="message-container" class:error={status.severity === Severity.ERROR}>
+  <StatusControl {status} />
 </div>
 {/if}
 
