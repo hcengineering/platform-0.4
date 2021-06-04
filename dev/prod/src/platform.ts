@@ -47,7 +47,7 @@ export function configurePlatform() {
 // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
   if (process.env.CLIENT === 'dev')
-    addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-dev'))
+    addLocation(core, () => import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
   else
     addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
 
