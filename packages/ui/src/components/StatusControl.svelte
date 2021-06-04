@@ -34,21 +34,9 @@
     flex-direction: row;
     align-items: center;
     padding: 12px 16px;
-    color: var(--theme-content-color);
-    fill: var(--theme-caption-color);
     background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-hover);
     border-radius: 8px;
-    .icon {
-      width: 16px;
-      height: 16px;
-      margin-right: 12px;
-    }
-    .message {
-      font-family: inherit;
-      font-size: 12px;
-      flex-grow: 1;
-    }
   }
 
   .error {

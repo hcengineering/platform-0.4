@@ -8,11 +8,29 @@
   export let status: Status
 </script>
 
-<div style={'font-size: 11px;'}>
+<div class="status">
   {#if status.severity !== Severity.OK}
     <Info size={14}/>
   {/if}
   {#if status.severity !== Severity.OK}
-    <Label label={status.code} params={status.params}/>
+    <span><Label label={status.code} params={status.params}/></span>
   {/if}
 </div>
+
+<style lang="scss">
+  .status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    opacity: .3;
+    user-select: none;
+
+    span {
+      margin-left: 8px;
+    }
+    &:hover {
+      opacity: 1;
+    }
+  }
+</style>
