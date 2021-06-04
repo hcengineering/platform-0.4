@@ -19,7 +19,20 @@
 </script>
 
 <Dialog label="Create Channel">
-  <EditBox label="Name" value="Channel Name"/>
-  <EditBox label="Description" value="This is a little description"/>
-  <ToggleWithLabel title="Make channel private" subtitle="Lorem ipsum dolor sit amet quantum nunca sic"/>
+  <div class="content">
+    <EditBox label="Name" value="Channel Name"/>
+    <EditBox label="Description" value="This is a little description"/>
+    <ToggleWithLabel title="Make channel private" subtitle="Lorem ipsum dolor sit amet quantum nunca sic"/>
+  </div>
 </Dialog>
+
+
+<style lang="scss">
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+</style>

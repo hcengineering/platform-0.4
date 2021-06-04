@@ -29,9 +29,7 @@
     <div class="title"><Label {label}/></div>
     <div class="tool" on:click={() => { console.log('close') }}><Close size={16}/></div>
   </div>
-  <div class="content">
-    <slot/>
-  </div>
+  <slot/>
   <div class="footer">
     <Button label="Create" primary/>
   </div>
@@ -70,12 +68,6 @@
           opacity: 1;
         }
       }
-    }
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
     }
 
     .footer {
