@@ -46,8 +46,12 @@ export function configurePlatform() {
 // platform.setMetadata(ui.metadata.LoginApplication, 'login')
 // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
+  if (process.env.CLIENT === 'dev')
+    addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-dev'))
+  else
+    addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
+
   addLocation(login, () => import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
-  addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
   addLocation(workbench, () => import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
   addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
   addLocation(task, () => import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
