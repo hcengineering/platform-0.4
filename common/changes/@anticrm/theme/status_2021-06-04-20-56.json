@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Update colors.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme",
+  "email": "andrey.v.platov@gmail.com"
+}
