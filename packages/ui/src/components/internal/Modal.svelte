@@ -53,18 +53,14 @@
 <style lang="scss">
   .modal {
     position: fixed;
+    background: transparent;
+    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
     z-index: 1001;
-    border: solid 1px transparent;
-    border-radius: 4px;
-    padding: 0px;
-    background-color: var(--theme-bg-color);
-    border-color: var(--theme-bg-accent-color);
-    box-shadow: var(--theme-shadow);
   }
 
   .modal-overlay {
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.2);
     position: fixed;
     top: 0;
     left: 0;

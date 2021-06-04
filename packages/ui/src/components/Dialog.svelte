@@ -24,7 +24,7 @@
   export let label: IntlString
 </script>
 
-<div class="container">
+<div class="dialog">
   <div class="header">
     <div class="title"><Label {label}/></div>
     <div class="tool" on:click={() => { console.log('close') }}><Close size={16}/></div>
@@ -38,13 +38,13 @@
 </div>
 
 <style lang="scss">
-  .container {
-    width: 568px;
-    min-height: 456px;
+  .dialog {
+    display: flex;
+    flex-direction: column;
+    padding: 48px 40px;
     background-color: var(--theme-bg-modal);
     border: 1px solid var(--theme-border-modal);
     border-radius: 20px;
-    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
     .header {
       display: flex;
@@ -65,31 +65,17 @@
         height: 16px;
         margin-left: 12px;
         opacity: .4;
+        cursor: pointer;
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
     .content {
-      display: grid;
-      grid-template-rows: repeat(3, 1fr);
-      row-gap: 20px;
-    }
-
-    .private {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      .caption {
-        font-size: 14px;
-        font-weight: 400;
-        color: var(--theme-caption-color);
-
-        span {
-          display: block;
-          font-size: 12px;
-          opacity: .3;
-        }
-      }
+      flex-direction: column;
+      gap: 20px;
     }
 
     .footer {
@@ -98,5 +84,4 @@
       margin-top: 56px;
     }
   }
-
 </style>

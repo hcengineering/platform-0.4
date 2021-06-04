@@ -14,40 +14,12 @@
 -->
 
 <script lang="ts">
-  import { EditBox, Dialog, Toggle } from '@anticrm/ui'
+  import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
 
 </script>
 
 <Dialog label="Create Channel">
   <EditBox label="Name" value="Channel Name"/>
   <EditBox label="Description" value="This is a little description"/>
-  <div class="private">
-    <div class="caption">
-      Make channel private
-      <span>Lorem ipsum dolor sit amet quantum nunca sic</span>
-    </div>
-    <Toggle/>
-  </div>
+  <ToggleWithLabel title="Make channel private" subtitle="Lorem ipsum dolor sit amet quantum nunca sic"/>
 </Dialog>
-
-<style lang="scss">
-
-.private {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-  .caption {
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--theme-caption-color);
-
-    span {
-      display: block;
-      font-size: 12px;
-      opacity: .3;
-    }
-  }
-}
-
-</style>

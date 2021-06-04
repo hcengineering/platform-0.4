@@ -27,7 +27,6 @@
     display: inline-block;
     height: 28px;
     line-height: 28px;
-    margin-right: 10px;
     vertical-align: middle;
     font-size: 14px;
     user-select: none;
