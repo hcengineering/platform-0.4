@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "`CreateChannel` now uses `Dialog`.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "andrey.v.platov@gmail.com"
+}
