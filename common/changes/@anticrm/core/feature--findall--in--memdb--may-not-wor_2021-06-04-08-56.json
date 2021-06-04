@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Fixed findall in memdb when query contains _id",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "bykhov.denis@gmail.com"
+}
