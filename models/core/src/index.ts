@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Obj, Doc, Ref, Class, Tx, TxCreateObject, Data, Collection, Space, Member, Domain, Attribute, PropertyType, ClassifierKind, Mixin } from '@anticrm/core'
+import type { Obj, Doc, Ref, Class, Tx, TxCreateDoc, Data, Collection, Space, Member, Domain, Attribute, PropertyType, ClassifierKind, Mixin } from '@anticrm/core'
 import { DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
 import { Model, Builder } from '@anticrm/model'
 
@@ -48,9 +48,9 @@ export class TTx extends TDoc implements Tx {
   objectId!: Ref<Doc>
 }
 
-@Model(core.class.TxCreateObject, core.class.Tx)
-export class TTxCreateObject<T extends Doc> extends TTx
-  implements TxCreateObject<T> {
+@Model(core.class.TxCreateDoc, core.class.Tx)
+export class TTxCreateDoc<T extends Doc> extends TTx
+  implements TxCreateDoc<T> {
   objectClass!: Ref<Class<T>>
   attributes!: Data<T>
 }
@@ -66,7 +66,7 @@ export class TSpace extends TDoc implements Space {
 }
 
 export function createModel (builder: Builder) {
-  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateObject, TSpace)
+  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateDoc, TSpace)
 }
 
 export { core as default }

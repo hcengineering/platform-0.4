@@ -41,11 +41,10 @@ export interface UXObject extends Obj {
   icon?: Asset
 }
 
-export interface Type<T extends PropertyType> extends Emb, UXObject {
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface Type<T extends PropertyType> extends Emb, UXObject {}
 
 // C O L L E C T I O N
-
 
 export interface Collection<T extends Emb> {
   __collection: T
@@ -53,9 +52,7 @@ export interface Collection<T extends Emb> {
 
 export type WithoutCollections<T extends Doc> = Omit<T, KeysByType<T, Collection<Emb>>>
 
-export interface CollectionOf<T extends Emb> extends Type<Collection<T>> {
-
-}
+export interface CollectionOf<T extends Emb> extends Type<Collection<T>> {}
 
 export interface Attribute<T extends PropertyType> extends Emb, UXObject {
   type: Type<T>
@@ -63,7 +60,7 @@ export interface Attribute<T extends PropertyType> extends Emb, UXObject {
 
 export enum ClassifierKind {
   CLASS,
-  MIXIN,
+  MIXIN
 }
 
 export interface Classifier extends Doc, UXObject {
@@ -72,6 +69,7 @@ export interface Classifier extends Doc, UXObject {
 
 export type Domain = string & { __domain: true }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Class<T extends Obj> extends Classifier {
   attributes: Collection<Attribute<PropertyType>>
   extends?: Ref<Class<Obj>>
