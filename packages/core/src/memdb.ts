@@ -69,16 +69,19 @@ abstract class MemDb extends TxProcessor implements Storage {
     return result
   }
 
-  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: Partial<Data<T>>): Promise<T[]> {
-    let result = this.getObjectsByClass(_class)
+  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: Partial<Data<T>> & Partial<Doc>): Promise<T[]> {
+    let result: Doc[]
+    if (query._id !== undefined) {
+      const obj = this.objectById.get(query._id)
+      result = obj ? [obj] : []
+    } else {
+      result = this.getObjectsByClass(_class)
+    }
+
     for (const key in query) {
+      if (key === '_id') continue 
       const value = (query as any)[key]
-      if (key === '_id') {
-        const obj = this.objectById.get(value)
-        if (obj !== undefined)
-          result.push()
-      } else
-        result = findProperty(result, key, value)
+      result = findProperty(result, key, value)
     }
     return result as T[]
   }
