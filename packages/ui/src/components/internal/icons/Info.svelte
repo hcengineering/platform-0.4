@@ -14,7 +14,7 @@
 -->
 
 <script lang="ts">
-  export let size: 12 | 16
+  export let size: number
   const fill: string = 'var(--theme-caption-color)'
 </script>
 

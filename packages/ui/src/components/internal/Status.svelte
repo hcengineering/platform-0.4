@@ -8,9 +8,9 @@
   export let status: Status
 </script>
 
-<div style="font-size: 11px;">
+<div style={'font-size: 11px;'}>
   {#if status.severity !== Severity.OK}
-    <Info size={12}/>
+    <Info size={14}/>
   {/if}
   {#if status.severity !== Severity.OK}
     <Label label={status.code} params={status.params}/>
