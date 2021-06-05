@@ -53,7 +53,6 @@
   .modal {
     position: fixed;
     background: transparent;
-    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
     z-index: 1001;
   }
   .modal-overlay {
