@@ -25,7 +25,7 @@
   export let action: () => Promise<void>
 </script>
 
-<div on:click={action}>
+<div style="width: {size}px; height: {size}px" on:click={action}>
   {#if typeof(icon) === 'string'}
     <Icon {icon} {size}/>
   {:else}

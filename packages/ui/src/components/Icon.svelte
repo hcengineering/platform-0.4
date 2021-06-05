@@ -25,7 +25,8 @@
   $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'
 </script>
 
-<svg width={size} height={size} {fill}>
-  <use href={url} />
-</svg>
-
+<div style="width: {size}px; height: {size}px">
+  <svg width={size} height={size} {fill}>
+    <use href={url} />
+  </svg>
+</div>

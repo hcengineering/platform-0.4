@@ -37,6 +37,7 @@
 
 <style lang="scss">
   .mask {
+    position: absolute;
     width: 0;
     height: 0;
   }
