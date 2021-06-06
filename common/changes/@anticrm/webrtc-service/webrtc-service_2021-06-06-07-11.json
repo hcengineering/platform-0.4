@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/webrtc-service",
+      "comment": "Introduce webrtc service",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/webrtc-service",
+  "email": "ilya.sumb@gmail.com"
+}
