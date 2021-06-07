@@ -15,39 +15,22 @@
 
 import type { Tx } from '../tx'
 import { Hierarchy } from '../hierarchy'
-import { ModelDb } from '../memdb'
+import { EsDb } from '../esdb'
 import core from '../component'
 import { Domain } from '../classes'
 
 describe('hierarchy', () => {
 
-  it('should build hierarchy', async () => {
-    const txes = ((await import('./core.tx.json')) as any).default as Tx[]
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
-    const ancestors = hierarchy.getAncestors(core.class.TxCreateObject)
-    expect(ancestors).toContain(core.class.Tx)
-  })
-
-  it('should query model', async () => {
-    const txes = ((await import('./core.tx.json')) as any).default as Tx[]
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
-    const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx)
-    const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(11)
-  })
-
   it('should query model with params', async () => {
     const txes = ((await import('./core.tx.json')) as any).default as Tx[]
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
-    const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx)
+    const model = new EsDb(hierarchy)
+    for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: "model" as Domain })
     expect(first.length).toBe(1)
     const result = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: "domain" as Domain})
     expect(result.length).toBe(0)
   })
+
 })
