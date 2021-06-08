@@ -43,6 +43,7 @@
     background-color: var(--theme-bg-modal);
     border: 1px solid var(--theme-border-modal);
     border-radius: 20px;
+    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
     .header {
       display: flex;
