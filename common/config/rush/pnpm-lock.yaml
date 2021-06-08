@@ -8441,15 +8441,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/core.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-bqO6sjF+biMeUtjoj6A0eEiuNkpX+GT2OB1PekC/cTTcEqP09SebMMCdMX5yvrsqNKklQTiu60mFZx+GEPzVnQ==, tarball: file:projects/core.tgz}
+  file:projects/core.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-yDaOvsdsCLfWLbYHYvhn33bxTSZKvv6/0qvD18TKbVc1wodmvLKEu7kMMxelqHZ5enIZ5ux9zMr7LUvaJh3g8w==, tarball: file:projects/core.tgz}
     id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
     dependencies:
-      '@babel/core': 7.14.2
-      '@babel/preset-env': 7.14.2_@babel+core@7.14.2
-      '@babel/preset-typescript': 7.13.0_@babel+core@7.14.2
       '@elastic/elasticsearch': 7.13.0
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23

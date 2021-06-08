@@ -1,29 +1,29 @@
 //
 // Copyright © 2020 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
 import type { Storage } from './storage'
-import { TxProcessor } from './storage'
+import { TxProcessor } from './tx'
 import type { Emb, Doc, Ref, Class, Data, Collection } from './classes'
-import type { TxAddCollection, TxCreateObject } from './tx'
+import type { TxAddCollection, TxCreateDoc } from './tx'
 import type { Hierarchy } from './hierarchy'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 import { generateId } from './utils'
 
-export type ConnectionParams = {
-  url: string,
-  username: string,
+export interface ConnectionParams {
+  url: string
+  username: string
   password: string
 }
 
@@ -51,12 +51,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
       id: _id
     }
     const { body } = await this.client.get(request)
-    
-    return {_id: body._id, ...body._source}
+
+    return { _id: body._id, ...body._source }
   }
-  
+
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<Data<T>> & Partial<Doc>): Promise<T[]> {
-    const result:T[] = []
+    const result: T[] = []
 
     const criteries = []
     for (const key in query) {
@@ -64,7 +64,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       const criteria = {
         match: Object()
       }
-      criteria.match[key]= value
+      criteria.match[key] = value
       criteries.push(criteria)
     }
 
@@ -74,11 +74,11 @@ export class ElasticStorage extends TxProcessor implements Storage {
       const criteria = {
         match: Object()
       }
-      criteria.match._class= value
+      criteria.match._class = value
       classes.push(criteria)
     }
 
-    let domain = this.hierarchy.getDomain(_class)
+    const domain = this.hierarchy.getDomain(_class)
 
     const { body } = await this.client.search({
       index: this.workspace,
@@ -87,26 +87,26 @@ export class ElasticStorage extends TxProcessor implements Storage {
         query: {
           bool: {
             must: criteries,
-            should : classes,
-            minimum_should_match : 1
+            should: classes,
+            minimum_should_match: 1
           }
         }
       }
     })
 
     for (const doc of body.hits.hits) {
-      result.push({_id: doc._id, ...doc._source})
+      result.push({ _id: doc._id, ...doc._source })
     }
 
-    return result as T[]
+    return result
   }
 
-  protected async txCreateObject (tx: TxCreateObject<Doc>): Promise<void> {
+  protected async TxCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     const object: RequestParams.Index = {
       id: tx.objectId,
       index: this.workspace,
       type: tx.domain,
-      body: { _class: tx.objectClass, ...tx.attributes}
+      body: { _class: tx.objectClass, ...tx.attributes }
     }
     await this.client.index(object)
   }
@@ -114,18 +114,18 @@ export class ElasticStorage extends TxProcessor implements Storage {
   protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {
     const doc = await this.objectById(tx.objectId)
     if ((doc as any)[tx.collection] === undefined) {
-      (doc as any)[tx.collection] = {} as Collection<Emb>
+      (doc as any)[tx.collection] = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
     }
     const collection = (doc as any)[tx.collection]
     collection[tx.localId ?? generateId()] = tx.attributes
-    
-    const { _id, ...data } = doc;
+
+    const { _id, ...data } = doc
     const object = {
-        id: tx.objectId,
-        index: this.workspace,
-        type: tx.domain,
-        body: data
-      }
+      id: tx.objectId,
+      index: this.workspace,
+      type: tx.domain,
+      body: data
+    }
     await this.client.index(object)
   }
 }
