@@ -1,6 +1,6 @@
 [{
     "_id": "60b53fc62f79e7652f84d3d4",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:core.Obj",
     "objectClass": "class:core.Class",
@@ -9,7 +9,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3d5",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:core.Doc",
     "objectClass": "class:core.Class",
@@ -19,7 +19,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3d6",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:core.Space",
     "objectClass": "class:core.Class",
@@ -30,7 +30,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3d7",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:core.Tx",
     "objectClass": "class:core.Class",
@@ -41,9 +41,9 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3d8",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
-    "objectId": "class:core.TxCreateObject",
+    "objectId": "class:core.TxCreateDoc",
     "objectClass": "class:core.Class",
     "attributes": {
         "kind": 0,
@@ -51,7 +51,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3d9",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:workbench.Application",
     "objectClass": "class:core.Class",
@@ -62,7 +62,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3da",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:chunter.Channel",
     "objectClass": "class:core.Class",
@@ -73,7 +73,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3db",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "60b53fc62f79e7652f84d3dc",
     "objectClass": "class:workbench.Application",
@@ -84,7 +84,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3dd",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "60b53fc62f79e7652f84d3de",
     "objectClass": "class:chunter.Channel",
@@ -95,7 +95,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3df",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "60b53fc62f79e7652f84d3e0",
     "objectClass": "class:chunter.Channel",
@@ -106,7 +106,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3e1",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:task.Project",
     "objectClass": "class:core.Class",
@@ -117,7 +117,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3e2",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "60b53fc62f79e7652f84d3e3",
     "objectClass": "class:workbench.Application",
@@ -128,7 +128,7 @@
     }
 }, {
     "_id": "60b53fc62f79e7652f84d3e4",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "60b53fc62f79e7652f84d3e5",
     "objectClass": "class:task.Project",

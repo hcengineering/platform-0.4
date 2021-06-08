@@ -42,7 +42,7 @@ describe('dsl', () => {
     removeIds(txes)
     expect(txes).toEqual([
       {
-        _class: 'class:core.TxCreateObject',
+        _class: 'class:core.TxCreateDoc',
         domain: 'model',
         objectId: 'class:test.MyClass',
         attributes: {
@@ -80,7 +80,7 @@ describe('dsl', () => {
 
     const valid = [
       {
-        _class: 'class:core.TxCreateObject',
+        _class: 'class:core.TxCreateDoc',
         domain: 'model',
         objectId: 'class:test.MyClass',
         attributes: {
@@ -100,7 +100,7 @@ describe('dsl', () => {
         objectId: 'class:test.MyClass'
       },
       {
-        _class: 'class:core.TxCreateObject',
+        _class: 'class:core.TxCreateDoc',
         domain: 'model',
         objectId: 'class:test.MyClass2',
         attributes: {

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateObject, Client, Obj } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
 
 type Query = {
@@ -36,7 +36,7 @@ export class LiveQuery extends TxProcessor implements Client {
     return this.client.isDerived(_class, from)
   }
 
-  private match(q: Query, tx: TxCreateObject<Doc>): boolean {
+  private match(q: Query, tx: TxCreateDoc<Doc>): boolean {
     if (this.isDerived(tx.objectClass, q._class) === false) {
       return false
     }  
@@ -49,7 +49,7 @@ export class LiveQuery extends TxProcessor implements Client {
     return true
   }
 
-  private cacheCreateObject<T extends Doc>(query: Query, object: T): void {
+  private cacheCreateDoc<T extends Doc>(query: Query, object: T): void {
     const values = this.cache.get(query) || []
     const index = values.findIndex((doc) => doc._id === object._id)
     if (index === -1) {
@@ -81,11 +81,11 @@ export class LiveQuery extends TxProcessor implements Client {
     }
   }
 
-  async txCreateObject(tx: TxCreateObject<Doc>): Promise<void> {
+  async txCreateDoc(tx: TxCreateDoc<Doc>): Promise<void> {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
         const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
-        this.cacheCreateObject(q, doc)
+        this.cacheCreateDoc(q, doc)
         this.refresh(q)
       }
     }

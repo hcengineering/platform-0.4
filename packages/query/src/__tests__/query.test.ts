@@ -14,7 +14,7 @@
 //
 
 import { LiveQuery } from '..'
-import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateObject, Obj } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateDoc, Obj, Space } from '@anticrm/core'
 import { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 
 describe('query', () => {
@@ -26,7 +26,7 @@ describe('query', () => {
       const tx = txes[i]
       await query.tx(tx)
     }
-    const result = await query.findAll('class:chunter.Channel' as Ref<Class<Doc>>, { private: false })
+    const result = await query.findAll<Space>('class:chunter.Channel' as Ref<Class<Doc>>, { private: false })
     expect(result).toHaveLength(2)
   })
 
@@ -37,17 +37,17 @@ describe('query', () => {
     const txes = await getModel()
     const storage = await getClient()
     const query = new LiveQuery(storage)
-    query.query(queriedClass, { private: true }, (result) => {
+    query.query<Space>(queriedClass, { private: true }, (result) => {
       emptyResult = result
     })
-    query.query(queriedClass, { private: false }, (result) => {
+    query.query<Space>(queriedClass, { private: false }, (result) => {
       notEmptyResult = result
     })
     let expectedLength = 0
     for (let i = 0; i < txes.length; i++) {
       const tx = txes[i]
       await query.tx(tx)
-      if (storage.isDerived((tx as TxCreateObject<Doc>).objectClass, queriedClass)) {
+      if (storage.isDerived((tx as TxCreateDoc<Doc>).objectClass, queriedClass)) {
         expectedLength++
       }
       expect(emptyResult).toHaveLength(0)
@@ -61,14 +61,14 @@ describe('query', () => {
     const txes = await getModel()
     const storage = await getClient()
     const query = new LiveQuery(storage)
-    const unsubscribe = query.query(queriedClass, { private: false }, (result) => {
+    const unsubscribe = query.query<Space>(queriedClass, { private: false }, (result) => {
       notEmptyResult = result
     })
     let expectedLength = 0
     for (let i = 0; i < txes.length; i++) {
       const tx = txes[i]
       await query.tx(tx)
-      if (storage.isDerived((tx as TxCreateObject<Doc>).objectClass, queriedClass) && expectedLength === 0) {
+      if (storage.isDerived((tx as TxCreateDoc<Doc>).objectClass, queriedClass) && expectedLength === 0) {
         expectedLength++
         unsubscribe()
       }

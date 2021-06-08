@@ -27,11 +27,9 @@
     display: inline-block;
     height: 28px;
     line-height: 28px;
-    margin-right: 10px;
     vertical-align: middle;
     font-size: 14px;
     user-select: none;
-
     .chBox {
       display: block;
       width: 0;
@@ -39,7 +37,6 @@
       position: absolute;
       z-index: -1;
       opacity: 0;
-
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
@@ -60,7 +57,6 @@
         box-shadow: 0 0 0 2px var(--primary-button-outline);
       }
     }
-
     .toggle-switch {
       position: relative;
       display: inline-block;
@@ -72,7 +68,6 @@
       background-color: var(--theme-off-color);
       border: 1px solid transparent;
       transition: .2s;
-
       &:before {
         content: '';
         position: absolute;

@@ -24,7 +24,7 @@ import type {
   Obj,
   Data,
   TxAddCollection,
-  TxCreateObject,
+  TxCreateDoc,
   Domain
 } from '@anticrm/core'
 import { ClassifierKind, generateId, makeEmb, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
@@ -88,10 +88,10 @@ function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
   }))
 }
 
-function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attributes: Data<T>, objectId?: Ref<T>): TxCreateObject<T> {
+function txCreateDoc<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attributes: Data<T>, objectId?: Ref<T>): TxCreateDoc<T> {
   return {
-    _id: generateId<TxCreateObject<T>>(),
-    _class: core.class.TxCreateObject,
+    _id: generateId<TxCreateDoc<T>>(),
+    _class: core.class.TxCreateDoc,
     domain,
     objectId: objectId ?? generateId(),
     objectClass: _class,
@@ -101,7 +101,7 @@ function txCreateObject<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, a
 
 function _generateTx (tx: ClassTxes): Tx[] {
   const objectId = tx._id
-  const createTx = txCreateObject(core.class.Class, DOMAIN_MODEL, {
+  const createTx = txCreateDoc(core.class.Class, DOMAIN_MODEL, {
     domain: tx.domain,
     kind: ClassifierKind.CLASS,
     extends: tx.extends
@@ -129,7 +129,7 @@ export class Builder {
   }
 
   createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
-    this.txes.push(txCreateObject(_class, this.hierarchy.getDomain(_class), attributes, objectId))
+    this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId))
   }
 
   getTxes(): Tx[] { return this.txes }

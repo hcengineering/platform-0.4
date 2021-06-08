@@ -30,6 +30,8 @@ export { default as Component } from './components/Component.svelte'
 export { default as Icon } from './components/Icon.svelte'
 export { default as ActionIcon } from './components/ActionIcon.svelte'
 export { default as Toggle } from './components/Toggle.svelte'
+export { default as Dialog } from './components/Dialog.svelte'
+export { default as ToggleWithLabel } from './components/ToggleWithLabel.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
