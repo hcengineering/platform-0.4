@@ -42,24 +42,27 @@ describe('dsl', () => {
     removeIds(txes)
     expect(txes).toEqual([
       {
-        _class: 'class:core.TxCreateDoc',
-        domain: 'model',
-        objectId: 'class:test.MyClass',
-        attributes: {
-          extends: 'class:core.Doc'
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:test.MyClass",
+        "objectClass": "class:core.Class",
+        "attributes": {
+          "kind": 0,
+          "extends": "class:core.Doc"
         }
       },
       {
-        _class: 'class:core.TxAddCollection',
-        domain: 'model',
-        collection: 'attributes',
-        localId: 'name',
-        attributes: {
-          type: {
-            _class: 'class:core.TypeString'
+        "objectId": "class:test.MyClass",
+        "_class": "class:core.TxAddCollection",
+        "domain": "model",
+        "collection": "attributes",
+        "localId": "name",
+        "attributes": {
+          "_class": "class:core.Attribute",
+          "type": {
+            "_class": "class:core.TypeString"
           }
-        },
-        objectId: 'class:test.MyClass'
+        }
       }
     ])
   })
@@ -80,44 +83,50 @@ describe('dsl', () => {
 
     const valid = [
       {
-        _class: 'class:core.TxCreateDoc',
-        domain: 'model',
-        objectId: 'class:test.MyClass',
-        attributes: {
-          extends: 'class:core.Doc'
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:test.MyClass",
+        "objectClass": "class:core.Class",
+        "attributes": {
+          "kind": 0,
+          "extends": "class:core.Doc"
         }
       },
       {
-        _class: 'class:core.TxAddCollection',
-        domain: 'model',
-        collection: 'attributes',
-        localId: 'name',
-        attributes: {
-          type: {
-            _class: 'class:core.TypeString'
+        "objectId": "class:test.MyClass",
+        "_class": "class:core.TxAddCollection",
+        "domain": "model",
+        "collection": "attributes",
+        "localId": "name",
+        "attributes": {
+          "_class": "class:core.Attribute",
+          "type": {
+            "_class": "class:core.TypeString"
           }
-        },
-        objectId: 'class:test.MyClass'
-      },
-      {
-        _class: 'class:core.TxCreateDoc',
-        domain: 'model',
-        objectId: 'class:test.MyClass2',
-        attributes: {
-          extends: 'class:test.MyClass'
         }
       },
       {
-        _class: 'class:core.TxAddCollection',
-        domain: 'model',
-        collection: 'attributes',
-        localId: 'lastName',
-        attributes: {
-          type: {
-            _class: 'class:core.TypeString'
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:test.MyClass2",
+        "objectClass": "class:core.Class",
+        "attributes": {
+          "kind": 0,
+          "extends": "class:test.MyClass"
+        }
+      },
+      {
+        "objectId": "class:test.MyClass2",
+        "_class": "class:core.TxAddCollection",
+        "domain": "model",
+        "collection": "attributes",
+        "localId": "lastName",
+        "attributes": {
+          "_class": "class:core.Attribute",
+          "type": {
+            "_class": "class:core.TypeString"
           }
-        },
-        objectId: 'class:test.MyClass2'
+        }
       }
     ]
 

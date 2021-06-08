@@ -28,6 +28,10 @@ pushd packages/query
 node ../../common/scripts/install-run-rushx.js test --coverage
 popd
 
+pushd packages/model
+node ../../common/scripts/install-run-rushx.js test --coverage
+popd
+
 pushd tests/server
 node ../../common/scripts/install-run-rushx.js test --coverage
 popd
