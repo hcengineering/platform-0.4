@@ -19,7 +19,7 @@
 
   import type { Asset, IntlString } from '@anticrm/status'
   import type { Action } from '@anticrm/ui'
-  import { Icon, Label, ActionIcon, Tooltip } from '@anticrm/ui'
+  import { Icon, Label, ActionIcon } from '@anticrm/ui'
 
   export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
@@ -48,9 +48,7 @@
     </span>
     {#each actions as action}
       <div class="tool">
-        <Tooltip label="Create Channel">
-          <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action}/>
-        </Tooltip>
+        <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action}/>
       </div>
     {/each}
     {#if notifications > 0 && collapsed}

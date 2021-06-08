@@ -18,6 +18,7 @@
   import type { AnySvelteComponent } from '../types'
 
   import Icon from './Icon.svelte'
+  import Tooltip from './Tooltip.svelte'
 
   export let label: IntlString
   export let icon: Asset | AnySvelteComponent
@@ -25,10 +26,12 @@
   export let action: () => Promise<void>
 </script>
 
-<div style="width: {size}px; height: {size}px" on:click={action}>
-  {#if typeof(icon) === 'string'}
-    <Icon {icon} {size}/>
-  {:else}
-    <svelte:component this={icon} />
-  {/if}
-</div>
+<Tooltip label={label}>
+  <div style="width: {size}px; height: {size}px" on:click={action}>
+    {#if typeof(icon) === 'string'}
+      <Icon {icon} {size}/>
+    {:else}
+      <svelte:component this={icon} />
+    {/if}
+  </div>
+</Tooltip>

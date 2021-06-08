@@ -14,6 +14,10 @@
 -->
 
 <script lang="ts">
+  import type { IntlString } from '@anticrm/platform'
+  import { Tooltip } from '@anticrm/ui'
+
+  export let label: IntlString
   export let selected: boolean
   export let notify: boolean
 </script>
@@ -22,9 +26,11 @@
   {#if notify}
     <div class="marker"/>
   {/if}
-  <div class="container" class:noty={notify}>
-    <slot/>
-  </div>
+  <Tooltip label={label} direction="right">
+    <div class="container" class:noty={notify}>
+      <slot/>
+    </div>
+  </Tooltip>
 </button>
 {#if notify}
   <svg class="mask">
