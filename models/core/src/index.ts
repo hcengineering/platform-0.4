@@ -13,60 +13,22 @@
 // limitations under the License.
 //
 
-import type { Obj, Doc, Ref, Class, Tx, TxCreateDoc, Data, Collection, Space, Member, Domain, Attribute, PropertyType, ClassifierKind, Mixin } from '@anticrm/core'
-import { DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
-import { Model, Builder } from '@anticrm/model'
-
+import { Builder } from '@anticrm/model'
 import core from './component'
+import { TClass, TDoc, TMixin, TObj } from './core'
+import { TSpace } from './security'
+import { TTx, TTxAddCollection, TTxCreateDoc, TTxUpdateCollection, TTxUpdateDoc } from './tx'
+import { TTxAddVDocCollection, TTxCreateVDoc, TTxUpdateVDoc, TTxUpdateVDocCollection } from './vdoc'
 
-@Model(core.class.Obj, core.class.Obj)
-class TObj implements Obj {
-  _class!: Ref<Class<this>>
-}
-
-@Model(core.class.Doc, core.class.Obj)
-export class TDoc extends TObj implements Doc {
-  _id!: Ref<this>
-}
-
-@Model(core.class.Class, core.class.Doc)
-class TClass extends TDoc implements Class<Obj> {
-  kind!: ClassifierKind
-  attributes!: Collection<Attribute<PropertyType>>
-  extends!: Ref<Class<Obj>>
-  domain!: Domain
-}
-
-@Model(core.class.Mixin, core.class.Class)
-class TMixin extends TClass implements Mixin<Doc> {}
-
-// T R A N S A C T I O N S
-
-@Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
-export class TTx extends TDoc implements Tx {
-  domain!: string
-  objectId!: Ref<Doc>
-}
-
-@Model(core.class.TxCreateDoc, core.class.Tx)
-export class TTxCreateDoc<T extends Doc> extends TTx
-  implements TxCreateDoc<T> {
-  objectClass!: Ref<Class<T>>
-  attributes!: Data<T>
-}
-
-// S E C U R I T Y
-
-@Model(core.class.Space, core.class.Doc, DOMAIN_MODEL)
-export class TSpace extends TDoc implements Space {
-  name!: string
-  description!: string
-  private!: boolean
-  members!: Collection<Member>
-}
+export * from './core'
+export * from './security'
+export * from './tx'
+export * from './vdoc'
 
 export function createModel (builder: Builder) {
-  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateDoc, TSpace)
+  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateDoc, TTxUpdateDoc, TTxAddCollection, TTxUpdateCollection,  TSpace)
+  // Create VDocs model
+  builder.createModel(TTxCreateVDoc, TTxUpdateVDoc, TTxAddVDocCollection, TTxUpdateVDocCollection)
 }
 
 export { core as default }

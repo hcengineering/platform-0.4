@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 export * from './classes'
 export * from './tx'
 export * from './storage'
@@ -21,4 +20,5 @@ export * from './hierarchy'
 export * from './memdb'
 export * from './client'
 export * from './security'
+export * from './vdoc'
 export { default } from './component'

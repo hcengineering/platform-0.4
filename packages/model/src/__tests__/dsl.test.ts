@@ -56,9 +56,9 @@ describe('dsl', () => {
         "_class": "class:core.TxAddCollection",
         "domain": "model",
         "collection": "attributes",
+        "itemClass": "class:core.Attribute",
         "localId": "name",
         "attributes": {
-          "_class": "class:core.Attribute",
           "type": {
             "_class": "class:core.TypeString"
           }
@@ -97,9 +97,9 @@ describe('dsl', () => {
         "_class": "class:core.TxAddCollection",
         "domain": "model",
         "collection": "attributes",
+        "itemClass": "class:core.Attribute",
         "localId": "name",
         "attributes": {
-          "_class": "class:core.Attribute",
           "type": {
             "_class": "class:core.TypeString"
           }
@@ -120,9 +120,9 @@ describe('dsl', () => {
         "_class": "class:core.TxAddCollection",
         "domain": "model",
         "collection": "attributes",
+        "itemClass": "class:core.Attribute",
         "localId": "lastName",
         "attributes": {
-          "_class": "class:core.Attribute",
           "type": {
             "_class": "class:core.TypeString"
           }

@@ -58,7 +58,7 @@ export class Hierarchy {
     const createTx = tx as TxCreateDoc<Class<Obj>>
     if (createTx.objectClass !== core.class.Class) return
     const _id = createTx.objectId
-    this.classes.set(_id as Ref<Class<Obj>>, createTx.attributes)
+    this.classes.set(_id, createTx.attributes)
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {

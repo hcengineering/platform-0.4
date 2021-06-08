@@ -8420,11 +8420,12 @@ packages:
     dev: false
 
   file:projects/core.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-hKoJYPGAMS0qW//RuUwbtSmOyssDfy3K3fHKbj0rsQur5bZUya5Hps9MuwxuXX8buLs4Ggmxo6zTJ2IObWbWhg==, tarball: file:projects/core.tgz}
+    resolution: {integrity: sha512-drtrw+39Ngqqq06amrC/AXh8WFHFq7JYMdh8Vorfm7OZEDm6GxlBSVHE7/agzfMR8gldogPupdmjcmItND0diw==, tarball: file:projects/core.tgz}
     id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
     dependencies:
+      '@jest/globals': 27.0.3
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/node': 14.17.0

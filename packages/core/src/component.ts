@@ -15,21 +15,29 @@
 
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
-
-import type { Ref, Class, Doc, Emb, Obj, Mixin } from './classes'
-import type { Tx, TxCreateDoc, TxAddCollection } from './tx'
+import type { Class, Doc, Emb, Obj, Ref } from './classes'
+import type { Tx, TxAddCollection, TxCreateDoc } from './tx'
+import type { TxAddVDocCollection, TxCreateVDoc, TxUpdateVDoc, TxUpdateVDocCollection, VDoc } from './vdoc'
 
 const ComponentCore = 'core' as Component
 
 export default component(ComponentCore, {
   class: {
+    Obj: '' as Ref<Class<Obj>>,
+    Doc: '' as Ref<Class<Doc>>,
     Class: '' as Ref<Class<Class<Obj>>>,
-    Mixin: '' as Ref<Class<Mixin<Doc>>>,
     Tx: '' as Ref<Class<Tx>>,
     TxCreateDoc: '' as Ref<Class<TxCreateDoc<Doc>>>,
-    TxAddCollection: '' as Ref<Class<TxAddCollection<Emb>>>
+    TxAddCollection: '' as Ref<Class<TxAddCollection<Doc, Emb>>>,
+    // VDocs
+    VDoc: '' as Ref<Class<VDoc>>,
+    TxCreateVDoc: '' as Ref<Class<TxCreateVDoc<VDoc>>>,
+    TxUpdateVDoc: '' as Ref<Class<TxUpdateVDoc<VDoc>>>,
+    TxAddVDocCollection: '' as Ref<Class<TxAddVDocCollection<VDoc, Emb>>>,
+    TxUpdateVDocCollection: '' as Ref<Class<TxUpdateVDocCollection<VDoc, Emb>>>
   },
   status: {
-    ObjectNotFound: '' as StatusCode<{ _id: Ref<Doc> }>
+    ObjectNotFound: '' as StatusCode<{ _id: Ref<Doc> }>,
+    ItemNotFound: '' as StatusCode<{ _id: Ref<Doc>, _localId: string }>
   }
 })

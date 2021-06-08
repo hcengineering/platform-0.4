@@ -13,23 +13,18 @@
 // limitations under the License.
 //
 
-import type {
-  Ref,
-  Class,
-  Obj,
-  Doc,
-  Type,
-  PropertyType,
-  Attribute
-} from '@anticrm/core'
+import type { Collection, Member, Space } from '@anticrm/core'
+import { DOMAIN_MODEL } from '@anticrm/core'
+import { Model } from '@anticrm/model'
+import core from './component'
+import { TDoc } from './core'
 
-import core from '@anticrm/core'
-import { mergeIds } from '@anticrm/status'
+// S E C U R I T Y
 
-export default mergeIds(core, {
-  class: {    
-    Attribute: '' as Ref<Class<Attribute<PropertyType>>>,
-
-    TypeString: '' as Ref<Class<Type<string>>>
-  }
-})
+@Model(core.class.Space, core.class.Doc, DOMAIN_MODEL)
+export class TSpace extends TDoc implements Space {
+  name!: string
+  description!: string
+  private!: boolean
+  members!: Collection<Member>
+}

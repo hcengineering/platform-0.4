@@ -18,22 +18,23 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
 import { Tx } from '../tx'
+import { describe, it, expect } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('hierarchy', () => {
   it('should build hierarchy', async () => {
     const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
+    for (const tx of txes) await hierarchy.tx(tx)
     const ancestors = hierarchy.getAncestors(core.class.TxCreateDoc)
     expect(ancestors).toContain(core.class.Tx)
   })
 
   it('should query model', async () => {
     const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
+    for (const tx of txes) await hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
     expect(result.length).toBe(3)
   })
@@ -42,7 +43,7 @@ describe('hierarchy', () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, {
       _id: txes[0].objectId as Ref<Class<Obj>>,
       domain: 'model' as Domain
