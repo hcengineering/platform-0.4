@@ -35,7 +35,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
   constructor (hierarchy: Hierarchy, workspace: string, connection: ConnectionParams) {
     super()
     this.hierarchy = hierarchy
-    this.workspace = workspace ?? 'workspace'
+    this.workspace = workspace
     this.client = new Client({
       node: connection.url,
       auth: {
