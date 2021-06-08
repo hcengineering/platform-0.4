@@ -47,7 +47,7 @@ const clients = new Map<string, ClientEntry>()
 
 // eslint-disable-next-line
 start('localhost', 18080, { 
-  connect: (clientId, txs) => {
+  connect: (clientId, token, txs) => {
     clients.set(clientId, { txs })
     return {
       findAll,
