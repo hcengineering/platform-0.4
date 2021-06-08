@@ -21,25 +21,33 @@ import type { Hierarchy } from './hierarchy'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 import { generateId } from './utils'
 
-export class EsDb extends TxProcessor implements Storage {
+export type ConnectionParams = {
+  url: string,
+  username: string,
+  password: string
+}
+
+export class ElasticStorage extends TxProcessor implements Storage {
   private readonly hierarchy: Hierarchy
-  private readonly client = new Client({
-    node: process.env.ES_DB_URL ?? 'http://localhost:9200',
-    auth: {
-      username: process.env.ES_DB_USERNAME ?? 'elastic',
-      password: process.env.ES_DB_PASSWORD ?? 'changeme'
-    }
-  })
+  private readonly client: Client
+  private readonly workspace: string
 
-
-  constructor (hierarchy: Hierarchy) {
+  constructor (hierarchy: Hierarchy, workspace: string, connection: ConnectionParams) {
     super()
     this.hierarchy = hierarchy
+    this.workspace = workspace ?? 'workspace'
+    this.client = new Client({
+      node: connection.url,
+      auth: {
+        username: connection.username,
+        password: connection.password
+      }
+    })
   }
 
   private async objectById<T extends Doc>(_id: Ref<T>): Promise<T> {
     const request = {
-      index: 'workspace',
+      index: this.workspace,
       id: _id
     }
     const { body } = await this.client.get(request)
@@ -60,15 +68,27 @@ export class EsDb extends TxProcessor implements Storage {
       criteries.push(criteria)
     }
 
+    const classes = []
+    const children = this.hierarchy.extendsOfClass(_class)
+    for (const value of children) {
+      const criteria = {
+        match: Object()
+      }
+      criteria.match._class= value
+      classes.push(criteria)
+    }
+
     let domain = this.hierarchy.getDomain(_class)
-    
+
     const { body } = await this.client.search({
-      index: 'workspace',
+      index: this.workspace,
       type: domain,
       body: {
         query: {
           bool: {
-            must: criteries
+            must: criteries,
+            should : classes,
+            minimum_should_match : 1
           }
         }
       }
@@ -77,13 +97,14 @@ export class EsDb extends TxProcessor implements Storage {
     for (const doc of body.hits.hits) {
       result.push({_id: doc._id, ...doc._source})
     }
+
     return result as T[]
   }
 
   protected async txCreateObject (tx: TxCreateObject<Doc>): Promise<void> {
     const object: RequestParams.Index = {
       id: tx.objectId,
-      index: 'workspace',
+      index: this.workspace,
       type: tx.domain,
       body: { _class: tx.objectClass, ...tx.attributes}
     }
@@ -101,7 +122,7 @@ export class EsDb extends TxProcessor implements Storage {
     const { _id, ...data } = doc;
     const object = {
         id: tx.objectId,
-        index: 'workspace',
+        index: this.workspace,
         type: tx.domain,
         body: data
       }

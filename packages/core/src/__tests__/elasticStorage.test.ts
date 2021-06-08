@@ -15,7 +15,7 @@
 
 import type { Tx } from '../tx'
 import { Hierarchy } from '../hierarchy'
-import { EsDb } from '../esdb'
+import { ElasticStorage } from '../elasticStorage'
 import core from '../component'
 import { Domain } from '../classes'
 
@@ -25,7 +25,12 @@ describe('hierarchy', () => {
     const txes = ((await import('./core.tx.json')) as any).default as Tx[]
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
-    const model = new EsDb(hierarchy)
+    const connectionParams = {
+      url: process.env.ELASTIC_URL ?? 'http://localhost:9200',
+      username: process.env.ELASTIC_USERNAME ?? 'elastic',
+      password: process.env.ELASTIC_PASSWORD ?? 'changeme'
+    }
+    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: "model" as Domain })
     expect(first.length).toBe(1)
