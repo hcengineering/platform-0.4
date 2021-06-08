@@ -13,10 +13,14 @@ specifiers:
   '@rush-temp/elastic': file:./projects/elastic.tgz
   '@rush-temp/login': file:./projects/login.tgz
   '@rush-temp/login-impl': file:./projects/login-impl.tgz
+  '@rush-temp/meeting': file:./projects/meeting.tgz
+  '@rush-temp/meeting-assets': file:./projects/meeting-assets.tgz
+  '@rush-temp/meeting-impl': file:./projects/meeting-impl.tgz
   '@rush-temp/model': file:./projects/model.tgz
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
+  '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/mongo': file:./projects/mongo.tgz
@@ -50,6 +54,7 @@ specifiers:
   '@types/jwt-simple': ^0.5.33
   '@types/kurento-client': ~6.14.4
   '@types/lodash': ^4.14.168
+  '@types/lodash.debounce': ~4.0.6
   '@types/markdown-it': ^12.0.2
   '@types/node': ^14.14.40
   '@types/prosemirror-commands': ^1.0.3
@@ -85,6 +90,7 @@ specifiers:
   jwt-simple: ^0.5.6
   kurento-client: ~6.16.0
   lodash: ^4.17.21
+  lodash.debounce: ~4.0.8
   markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   postcss: ~8.3.4
@@ -137,10 +143,14 @@ dependencies:
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
+  '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/meeting-assets': file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model': file:projects/model.tgz_ts-node@10.0.0
   '@rush-temp/model-all': file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
+  '@rush-temp/model-meeting': file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.0
@@ -174,6 +184,7 @@ dependencies:
   '@types/jwt-simple': 0.5.33
   '@types/kurento-client': 6.14.4
   '@types/lodash': 4.14.169
+  '@types/lodash.debounce': 4.0.6
   '@types/markdown-it': 12.0.2
   '@types/node': 14.17.0
   '@types/prosemirror-commands': 1.0.4
@@ -209,6 +220,7 @@ dependencies:
   jwt-simple: 0.5.6
   kurento-client: 6.16.0
   lodash: 4.17.21
+  lodash.debounce: 4.0.8
   markdown-it: 12.0.6
   mini-css-extract-plugin: 1.6.0_webpack@5.37.1
   postcss: 8.3.4
@@ -1215,6 +1227,12 @@ packages:
 
   /@types/linkify-it/3.0.1:
     resolution: {integrity: sha512-pQv3Sygwxxh6jYQzXaiyWDAHevJqWtqDUv6t11Sa9CPGiXny66II7Pl6PR8QO5OVysD6HYOkHMeBgIjLnk9SkQ==}
+    dev: false
+
+  /@types/lodash.debounce/4.0.6:
+    resolution: {integrity: sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==}
+    dependencies:
+      '@types/lodash': 4.14.169
     dev: false
 
   /@types/lodash/4.14.169:
@@ -5715,6 +5733,10 @@ packages:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: false
 
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: false
+
   /lodash.get/4.4.2:
     resolution: {integrity: sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=}
     dev: false
@@ -9336,8 +9358,56 @@ packages:
       - supports-color
     dev: false
 
+  file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-hpXgdR/ShyVeM89nFG/K+/LUV3PYy8e7MDEld7n6xixjbrNAnGgD2TQiIZbb2bvQMJJr4vmXnhY630ibCHTi6g==, tarball: file:projects/meeting-assets.tgz}
+    id: file:projects/meeting-assets.tgz
+    name: '@rush-temp/meeting-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/node': 14.17.0
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
+  file:projects/meeting-impl.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-/lyfxPlbkA1fj7V/gD6vXPYkilTRdedOuVGDe25PJB3Fxzu3lKEJxBOqTgXeEqibBRc/MfSlP5hkCjJmYwRLrw==, tarball: file:projects/meeting-impl.tgz}
+    id: file:projects/meeting-impl.tgz
+    name: '@rush-temp/meeting-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/lodash.debounce': 4.0.6
+      lodash.debounce: 4.0.8
+      prettier: 2.3.1
+      svelte: 3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
+  file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-AToy/jL6iXDV3XkP2m0Ysg292+NhXV6kBZQsozsw8dwRi3sR47irdBb+UxW3gL1JBDcUPe5nNLYa/QORCFF+jg==, tarball: file:projects/meeting.tgz}
+    id: file:projects/meeting.tgz
+    name: '@rush-temp/meeting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
   file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b:
-    resolution: {integrity: sha512-XjEJ6Zf0G4rbKlDoszgU4hVM9ZmD623L2s/xw6cjJZp2eHvcafDO60xkBMIBTLrfcchpBuR5W/nI07XzWJdlAg==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-oMKDVMh9FwXQ04IEoCAu+wxvWhXuZhoTpnHbitr+Sci019KrLw/P96oots0V+m+hcHN5khLElnbJJFeP4LYiFg==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -9406,6 +9476,20 @@ packages:
       - canvas
       - supports-color
       - utf-8-validate
+    dev: false
+
+  file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-C9J7wabaeT47S+l7xQQJzjZkLv0j1BwHe2UdCFOsJzMT3hHpgabXnmeYubwWpdxnj4jGro+sYItvEvcdK3OHWQ==, tarball: file:projects/model-meeting.tgz}
+    id: file:projects/model-meeting.tgz
+    name: '@rush-temp/model-meeting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
     dev: false
 
   file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
@@ -9660,7 +9744,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-raRExlB49AcdbysfjMRTWCm1BSdyE18SRlU2J9plNBhU0vgCePMqers29Gi6Wl1AoQ4ujSncSPKIJkGB4Cu65g==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-OVmKr+p05/avX1Y/SZ9a/qmwFLkDkvF5qqUS1ur265XBW+ygAnhuyW+iMrckUJ6BUKe7ZrzH2g/SjFMYzXDcuA==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0

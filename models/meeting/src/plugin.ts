@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,19 +13,13 @@
 // limitations under the License.
 //
 
-import { connect } from '../connection'
-import core, { createClient } from '@anticrm/core'
+import meeting from '@anticrm/meeting-impl/src/plugin'
+import type { IntlString } from '@anticrm/status'
+import { mergeIds } from '@anticrm/status'
 
-describe('client', () => {
-  it('should create connection', async () => {
-    const conn = await connect(() => {})
-    const txes = await conn.findAll(core.class.Tx, {})
-    expect(txes.length).toBe(20)
-  })
-
-  it('should create client', async () => {
-    const client = await createClient(connect)
-    const txes = await client.findAll(core.class.Class, {})
-    expect(txes.length).toBe(13)
-  })
+export default mergeIds(meeting, {
+  string: {
+    ApplicationLabelMeeting: '' as IntlString,
+    CreateChannel: '' as IntlString
+  }
 })

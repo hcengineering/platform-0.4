@@ -443,6 +443,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/model-meeting",
+      "projectFolder": "models/meeting",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/model-task",
       "projectFolder": "models/task",
       "shouldPublish": false
@@ -485,6 +490,21 @@
     {
       "packageName": "@anticrm/chunter-impl",
       "projectFolder": "plugins/chunter-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/meeting",
+      "projectFolder": "plugins/meeting",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/meeting-assets",
+      "projectFolder": "plugins/meeting-assets",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/meeting-impl",
+      "projectFolder": "plugins/meeting-impl",
       "shouldPublish": true
     },
     {
