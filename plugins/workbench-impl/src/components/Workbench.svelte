@@ -52,6 +52,11 @@
   let kl: boolean = false
 </script>
 
+<svg class="mask">
+  <clipPath id="notify">
+    <path d="M0,0v48h48V0H0z M32,25c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S35.9,25,32,25z"/>
+  </clipPath>
+</svg>
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active"/>
@@ -101,6 +106,11 @@
     height: 100%;
     border-radius: 20px;
     background-color: $bg-color;
+  }
+  .mask {
+    position: absolute;
+    width: 0;
+    height: 0;
   }
 
   .container {

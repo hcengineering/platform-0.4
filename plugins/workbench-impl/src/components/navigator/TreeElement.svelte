@@ -29,12 +29,14 @@
   export let collapsed = false
   export let actions: Action[] = []
 
+  let toolInvisible: boolean = true
+
   function actionApp(): void {
     console.log('Click')
   }
 </script>
 
-<div class="container">
+<div class="container" on:mouseover={() => { toolInvisible = false }} on:mouseout={() => { toolInvisible = true }}>
   <div class="title" class:sub={!node}>
     <div class="icon" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed}}>
       {#if icon}
@@ -47,7 +49,9 @@
       {#if label}<Label {label}/>{:else}{title}{/if}
     </span>
     {#each actions as action}
-      <div class="tool"><ActionIcon label={action.label} icon={action.icon} size={16} action={action.action}/></div>
+      <div class="tool">
+        <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} invisible={toolInvisible}/>
+      </div>
     {/each}
     {#if notifications > 0 && collapsed}
       <div class="counter">{notifications}</div>
@@ -103,16 +107,12 @@
         text-overflow: ellipsis;
       }
       .tool {
-        visibility: hidden;
+        // visibility: hidden;
         width: 16px;
         height: 16px;
         margin-left: 12px;
-        opacity: .3;
         &:last-child {
           margin-right: 10px;
-        }
-        &:hover {
-          opacity: 1;
         }
       }
       .counter {

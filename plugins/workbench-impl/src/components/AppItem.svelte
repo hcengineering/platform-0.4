@@ -14,32 +14,28 @@
 -->
 
 <script lang="ts">
+  import type { IntlString, Asset } from '@anticrm/status'
+  import { Icon, Tooltip } from '@anticrm/ui'
+
+  export let label: IntlString
+  export let icon: Asset
+  export let action: () => Promise<void>
   export let selected: boolean
   export let notify: boolean
 </script>
 
-<button class="app" class:selected={selected} on:click>
+<button class="app" class:selected={selected} on:click={action}>
   {#if notify}
     <div class="marker"/>
   {/if}
-  <div class="container" class:noty={notify}>
-    <slot/>
-  </div>
+  <Tooltip label={label} direction="right">
+    <div class="container" class:noty={notify}>
+      <Icon icon={icon} size={28}/>
+    </div>
+  </Tooltip>
 </button>
-{#if notify}
-  <svg class="mask">
-    <clipPath id="notify">
-      <path d="M0,0v48h48V0H0z M32,25c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S35.9,25,32,25z"/>
-    </clipPath>
-  </svg>
-{/if}
-
 
 <style lang="scss">
-  .mask {
-    width: 0;
-    height: 0;
-  }
   .app {
     position: relative;
     padding: 0;

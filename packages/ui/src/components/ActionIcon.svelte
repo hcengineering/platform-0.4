@@ -18,17 +18,54 @@
   import type { AnySvelteComponent } from '../types'
 
   import Icon from './Icon.svelte'
+  import Tooltip from './Tooltip.svelte'
 
   export let label: IntlString
   export let icon: Asset | AnySvelteComponent
   export let size: 16 | 20 | 24
   export let action: () => Promise<void>
+  export let invisible: boolean = true
 </script>
 
-<div on:click={action}>
-  {#if typeof(icon) === 'string'}
-    <Icon {icon} {size}/>
-  {:else}
-    <svelte:component this={icon} />
-  {/if}
-</div>
+<Tooltip label={label}>
+  <button class="button" style="width: {size}px; height: {size}px" on:click={action}>
+    <div class="icon" style="width: {size}px; height: {size}px" class:invisible={invisible}>
+      {#if typeof(icon) === 'string'}
+        <Icon {icon} {size}/>
+      {:else}
+        <svelte:component this={icon} />
+      {/if}
+    </div>
+  </button>
+</Tooltip>
+
+<style lang="scss">
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+
+    .icon {
+      opacity: .3;
+      &.invisible {
+        opacity: 0;
+      }
+    }
+    &:hover .icon {
+      opacity: 1;
+    }
+    &:focus {
+      border: 1px solid var(--primary-button-focused-border);
+      box-shadow: 0 0 0 3px var(--primary-button-outline);
+      .icon {
+        opacity: 1;
+      }
+    }
+  }
+</style>
