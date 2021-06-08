@@ -50,4 +50,3 @@ jobs:
             ${{github.workspace}}/packages/platform/coverage/lcov.info:lcov
             ${{github.workspace}}/packages/query/coverage/lcov.info:lcov
             ${{github.workspace}}/packages/model/coverage/lcov.info:lcov
-            ${{github.workspace}}/tests/server/coverage/lcov.info:lcov
