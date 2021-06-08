@@ -1,7 +1,7 @@
 [
   {
     "_id": "60b102ee1f5bbd1d8fa56004",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "tx",
     "objectId": "class:core.Doc",
     "objectClass": "class:core.Class",
@@ -13,7 +13,7 @@
   },
   {
     "_id": "60b102ee1f5bbd1d8fa56005",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "tx",
     "objectId": "class:core.Tx",
     "objectClass": "class:core.Class",
@@ -25,9 +25,9 @@
   },
   {
     "_id": "60b102ee1f5bbd1d8fa56006",
-    "_class": "class:core.TxCreateObject",
+    "_class": "class:core.TxCreateDoc",
     "domain": "tx",
-    "objectId": "class:core.TxCreateObject",
+    "objectId": "class:core.TxCreateDoc",
     "objectClass": "class:core.Class",
     "attributes": {
       "domain": "model",
