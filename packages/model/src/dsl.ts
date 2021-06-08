@@ -58,7 +58,7 @@ export function Prop (type: Type<PropertyType>) {
     const txes = getTxes(target)
     const tx: NoIDs<TxAddCollection<Attribute<PropertyType>>> = {
       _class: core.class.TxAddCollection,
-      domain: 'tx',
+      domain: DOMAIN_MODEL,
       collection: 'attributes',
       localId: propertyKey,
       attributes: makeEmb(core.class.Attribute, { type })
