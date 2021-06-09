@@ -14,7 +14,7 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Collection, Data, Doc, Emb, Obj, PrimitiveType, Ref } from './classes'
+import type { Class, Collection, Data, Doc, Emb, PrimitiveType, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { DocumentQuery, Storage } from './storage'
@@ -86,10 +86,6 @@ class MemDb {
       this.getObjectsByClass(_class).push(doc)
     })
     this.objectById.set(doc._id, doc)
-  }
-
-  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
-    return this.hierarchy.isDerived(_class, from)
   }
 }
 
