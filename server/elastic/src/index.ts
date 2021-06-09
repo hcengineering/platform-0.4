@@ -73,7 +73,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       criteria.match._class = value
       classes.push(criteria)
     }
-    
+
     const domain = this.hierarchy.getDomain(_class)
 
     const { body } = await this.client.search({
@@ -97,7 +97,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     return result
   }
 
-  protected async TxCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
+  protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     const object: RequestParams.Index = {
       id: tx.objectId,
       index: this.workspace,
