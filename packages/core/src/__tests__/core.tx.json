@@ -161,9 +161,9 @@
     "_class": "class:core.TxAddCollection",
     "domain": "model",
     "collection": "collection",
+    "itemClass": "class:core.Attribute",
     "localId": "name",
     "attributes": {
-      "_class": "class:core.Attribute",
       "type": {
         "_class": "class:core.TypeString"
       }
@@ -174,9 +174,9 @@
     "objectId": "class:core.Space",
     "_class": "class:core.TxAddCollection",
     "domain": "model",
+    "itemClass": "class:core.Attribute",
     "collection": "collection",
     "attributes": {
-      "_class": "class:core.Attribute",
       "type": {
         "_class": "class:core.Attribute"
       }

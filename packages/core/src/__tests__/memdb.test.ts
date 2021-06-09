@@ -18,6 +18,7 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import { Tx, TxAddCollection } from '../tx'
+import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
@@ -61,12 +62,13 @@ describe('memdb', () => {
     expect(result.length).toBe(0)
   })
 
-  it('should throw error', async (done) => {
+  it('should throw error', async () => {
     expect.assertions(1)
-    const errorTx: TxAddCollection<Emb> = {
-      _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Emb>>,
+    const errorTx: TxAddCollection<Doc, Emb> = {
+      _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Doc, Emb>>,
       objectId: 'class:test.MyClass' as Ref<Doc>,
-      _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Emb>>>,
+      itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
+      _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
       domain: 'model' as Domain,
       collection: 'attributes',
       localId: 'name',
@@ -83,9 +85,8 @@ describe('memdb', () => {
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
 
-    model.tx(errorTx).catch((error: Error) => {
+    await model.tx(errorTx).catch((error: Error) => {
       expect(error.message).toBe('ERROR: status:core.ObjectNotFound')
-      done()
     })
   })
 })
