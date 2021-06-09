@@ -13,15 +13,14 @@
 // limitations under the License.
 //
 
-import type { Tx } from '../tx'
-import { Hierarchy } from '../hierarchy'
-import { ElasticStorage } from '../elasticStorage'
-import core from '../component'
-import { Domain } from '../classes'
+import type { Tx } from '@anticrm/core'
+import core, { Hierarchy, Domain } from '@anticrm/core'
+import { ElasticStorage } from '../index'
+
+const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('hierarchy', () => {
   it('should query model with params', async () => {
-    const txes = ((await import('./core.tx.json')) as any).default as Tx[]
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const connectionParams = {

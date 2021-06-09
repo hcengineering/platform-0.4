@@ -8,6 +8,14 @@
     "attributes": { "domain": "model", "kind": 0 }
   },
   {
+    "_id": "60b73133d22498e666800cbf",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "model",
+    "objectId": "class:core.Obj",
+    "objectClass": "class:core.Class",
+    "attributes": { "domain": "model", "kind": 0 }
+  },
+  {
     "_id": "60b73133d22498e666800cc0",
     "_class": "class:core.TxCreateDoc",
     "domain": "model",

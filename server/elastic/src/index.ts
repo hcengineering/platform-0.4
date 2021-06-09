@@ -13,13 +13,9 @@
 // limitations under the License.
 //
 
-import type { Storage } from './storage'
-import { TxProcessor } from './tx'
-import type { Emb, Doc, Ref, Class, Data, Collection } from './classes'
-import type { TxAddCollection, TxCreateDoc } from './tx'
-import type { Hierarchy } from './hierarchy'
+import { Class, Hierarchy, Doc, Data, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc } from '@anticrm/core'
+import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
-import { generateId } from './utils'
 
 export interface ConnectionParams {
   url: string
@@ -77,7 +73,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       criteria.match._class = value
       classes.push(criteria)
     }
-
+    
     const domain = this.hierarchy.getDomain(_class)
 
     const { body } = await this.client.search({
