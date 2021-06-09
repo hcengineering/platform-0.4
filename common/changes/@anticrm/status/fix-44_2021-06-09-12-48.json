@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/status",
+      "comment": "Add unknownStatus",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/status",
+  "email": "haiodo@gmail.com"
+}

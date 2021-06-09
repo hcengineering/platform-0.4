@@ -12,56 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { generateId, Storage, Tx } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, Ref, Storage, Tx } from '@anticrm/core'
+import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
+import { unknownStatus } from '@anticrm/status'
 
-export async function connect (
-  clientUrl: string,
+class WebSocketConnection extends RequestProcessor implements Storage {
+  socket: WebSocket
   handler: (tx: Tx) => void
-): Promise<Storage> {
-  // Client
-  const clientId = generateId() // <-- Uniq ID to identify client in case of re-connections.
 
-  let socket: Promise<WebSocket>
-
-  function isClosed (socket: WebSocket): boolean {
-    return socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING
+  constructor (socket: WebSocket, handler: (tx: Tx) => void) {
+    super()
+    this.socket = socket
+    this.handler = handler
+    socket.onerror = () => this.reject(unknownStatus('Unknown error'))
+    socket.onclose = (reason) => this.reject(unknownStatus(`Connection close: ${reason.reason}`))
+    socket.onmessage = (evt) => this.onmessage(evt)
   }
 
-  async function doConnect (): Promise<WebSocket> {
-    try {
-      if (socket === undefined || isClosed(await socket)) {
-        socket = new Promise<WebSocket>(resolve => {
-          const ws = new WebSocket(`ws://${clientUrl}/${clientId}`)
-          ws.onopen = () => {
-            resolve(ws)
-
-            // We need to reply requests in case they are missed.
-            processor.onOpen()
-          }
-          ws.onerror = () => {
-            // Force reconnect in 1 second.
-            setTimeout(() => { doConnect() }, 1000) // eslint-disable-line
-          }
-          ws.onmessage = evt => { processor.process(readResponse(evt.data as string)) }
-        })
-      }
-    } catch (err) {
-    // skip rejected
-    }
-    return socket
+  private onmessage (evt: MessageEvent): void {
+    this.process(readResponse(evt.data as string))
   }
-  const processor = new RequestProcessor(async () => {
-    const s = await doConnect()
-    return {
-      send: (request) => {
-        s.send(serialize(request))
-      }
+
+  protected send (request: Request<any>): void {
+    this.socket.send(serialize(request))
+  }
+
+  protected notify (response: Response<any>): void {
+    if (response.result !== undefined) {
+      this.handler(response.result as Tx)
     }
-  }, handler)
+  }
 
-  // Force socket creation.
-  doConnect() // eslint-disable-line
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    const result = await this.request('findAll', _class, query)
+    return result as T[]
+  }
 
-  return processor
+  async tx (tx: Tx): Promise<void> {
+    await this.request('tx', tx)
+    // Process on server and return result.
+    this.handler(tx)
+  }
+}
+
+export async function connect (clientUrl: string, handler: (tx: Tx) => void): Promise<Storage> {
+  const socket = new WebSocket(`ws://${clientUrl}`)
+
+  // Wait for connection to be established.
+  await new Promise<any>((resolve, reject) => {
+    socket.onopen = resolve
+    socket.onerror = () => {
+      reject(new Error(`Failed to connect to ${clientUrl}`))
+    }
+  })
+
+  return new WebSocketConnection(socket, handler)
 }
