@@ -42,27 +42,31 @@ describe('dsl', () => {
     removeIds(txes)
     expect(txes).toEqual([
       {
-        "_class": "class:core.TxCreateDoc",
-        "domain": "model",
-        "objectId": "class:test.MyClass",
-        "objectClass": "class:core.Class",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:core.Doc"
-        }
+        _class: 'class:core.TxCreateDoc',
+        domain: 'model',
+        objectId: 'class:test.MyClass',
+        objectClass: 'class:core.Class',
+        attributes: {
+          kind: 0,
+          extends: 'class:core.Doc'
+        },
+        timestamp: 0,
+        user: 'model'
       },
       {
-        "objectId": "class:test.MyClass",
-        "_class": "class:core.TxAddCollection",
-        "domain": "model",
-        "collection": "attributes",
-        "itemClass": "class:core.Attribute",
-        "localId": "name",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass',
+        _class: 'class:core.TxAddCollection',
+        domain: 'model',
+        collection: 'attributes',
+        itemClass: 'class:core.Attribute',
+        localId: 'name',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           }
-        }
+        },
+        timestamp: 0,
+        user: 'model'
       }
     ])
   })
@@ -83,50 +87,58 @@ describe('dsl', () => {
 
     const valid = [
       {
-        "_class": "class:core.TxCreateDoc",
-        "domain": "model",
-        "objectId": "class:test.MyClass",
-        "objectClass": "class:core.Class",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:core.Doc"
-        }
+        _class: 'class:core.TxCreateDoc',
+        domain: 'model',
+        objectId: 'class:test.MyClass',
+        objectClass: 'class:core.Class',
+        attributes: {
+          kind: 0,
+          extends: 'class:core.Doc'
+        },
+        timestamp: 0,
+        user: 'model'
       },
       {
-        "objectId": "class:test.MyClass",
-        "_class": "class:core.TxAddCollection",
-        "domain": "model",
-        "collection": "attributes",
-        "itemClass": "class:core.Attribute",
-        "localId": "name",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass',
+        _class: 'class:core.TxAddCollection',
+        domain: 'model',
+        collection: 'attributes',
+        itemClass: 'class:core.Attribute',
+        localId: 'name',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           }
-        }
+        },
+        timestamp: 0,
+        user: 'model'
       },
       {
-        "_class": "class:core.TxCreateDoc",
-        "domain": "model",
-        "objectId": "class:test.MyClass2",
-        "objectClass": "class:core.Class",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:test.MyClass"
-        }
+        _class: 'class:core.TxCreateDoc',
+        domain: 'model',
+        objectId: 'class:test.MyClass2',
+        objectClass: 'class:core.Class',
+        attributes: {
+          kind: 0,
+          extends: 'class:test.MyClass'
+        },
+        timestamp: 0,
+        user: 'model'
       },
       {
-        "objectId": "class:test.MyClass2",
-        "_class": "class:core.TxAddCollection",
-        "domain": "model",
-        "collection": "attributes",
-        "itemClass": "class:core.Attribute",
-        "localId": "lastName",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass2',
+        _class: 'class:core.TxAddCollection',
+        domain: 'model',
+        collection: 'attributes',
+        itemClass: 'class:core.Attribute',
+        localId: 'lastName',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           }
-        }
+        },
+        timestamp: 0,
+        user: 'model'
       }
     ]
 

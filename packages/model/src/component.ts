@@ -14,20 +14,15 @@
 //
 
 import type {
-  Ref,
-  Class,
-  Obj,
-  Doc,
-  Type,
-  PropertyType,
-  Attribute
+  Attribute, Class,
+  PropertyType, Ref,
+  Type
 } from '@anticrm/core'
-
 import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(core, {
-  class: {    
+  class: {
     Attribute: '' as Ref<Class<Attribute<PropertyType>>>,
 
     TypeString: '' as Ref<Class<Type<string>>>

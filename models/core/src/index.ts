@@ -18,17 +18,16 @@ import core from './component'
 import { TClass, TDoc, TMixin, TObj } from './core'
 import { TSpace } from './security'
 import { TTx, TTxAddCollection, TTxCreateDoc, TTxUpdateCollection, TTxUpdateDoc } from './tx'
-import { TTxAddVDocCollection, TTxCreateVDoc, TTxUpdateVDoc, TTxUpdateVDocCollection } from './vdoc'
+import { TVDoc } from './vdoc'
 
 export * from './core'
 export * from './security'
 export * from './tx'
 export * from './vdoc'
-
-export function createModel (builder: Builder) {
-  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateDoc, TTxUpdateDoc, TTxAddCollection, TTxUpdateCollection,  TSpace)
-  // Create VDocs model
-  builder.createModel(TTxCreateVDoc, TTxUpdateVDoc, TTxAddVDocCollection, TTxUpdateVDocCollection)
-}
-
 export { core as default }
+
+export function createModel (builder: Builder): void {
+  builder.createModel(TObj, TDoc, TClass, TMixin, TTx, TTxCreateDoc, TTxUpdateDoc, TTxAddCollection, TTxUpdateCollection, TSpace)
+  // Create VDocs model
+  builder.createModel(TVDoc)
+}
