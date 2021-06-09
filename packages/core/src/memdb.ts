@@ -14,12 +14,12 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Collection, Data, Doc, Emb, Obj, PrimitiveType, Ref } from './classes'
+import type { Class, Collection, Doc, Emb, Obj, PrimitiveType, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { DocumentQuery, Storage } from './storage'
 import { Tx, TxAddCollection, TxCreateDoc, TxProcessor } from './tx'
-import { generateId } from './utils'
+import { generateId, makeEmb } from './utils'
 
 function findProperty (objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
   const result: Doc[] = []
@@ -64,7 +64,7 @@ class MemDb {
     return result
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<Data<T>> & Partial<Doc>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     let result: Doc[]
     if (query._id !== undefined) {
       const obj = this.objectById.get(query._id)
@@ -93,12 +93,18 @@ class MemDb {
   }
 }
 
+/**
+ * Hold transactions
+ */
 export class TxDb extends MemDb implements Storage {
   async tx (tx: Tx): Promise<void> {
     this.addDoc(tx)
   }
 }
 
+/**
+ * Hold model objects and classes
+ */
 export class ModelDb extends TxProcessor implements Storage {
   private readonly db: MemDb
 
@@ -107,7 +113,7 @@ export class ModelDb extends TxProcessor implements Storage {
     this.db = new MemDb(hierarchy)
   }
 
-  async findAll <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     return await this.db.findAll<T>(_class, query)
   }
 
@@ -119,7 +125,7 @@ export class ModelDb extends TxProcessor implements Storage {
     })
   }
 
-  protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {
-    ;(this.db.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = tx.attributes
+  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
+    (this.db.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = makeEmb(tx.itemClass, tx.attributes)
   }
 }

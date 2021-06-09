@@ -13,13 +13,16 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { Ref, Class, Space } from '@anticrm/core'
-
+import type { Class, Doc, Emb, Mixin, Ref, Space, TxUpdateCollection, TxUpdateDoc } from '@anticrm/core'
 import core from '@anticrm/model'
+import { mergeIds } from '@anticrm/status'
+
 
 export default mergeIds(core, {
   class: {
-    Space: '' as Ref<Class<Space>>
+    Space: '' as Ref<Class<Space>>,
+    Mixin: '' as Ref<Class<Mixin<Doc>>>,
+    TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,
+    TxUpdateCollection: '' as Ref<Class<TxUpdateCollection<Doc, Emb>>>,
   }
 })

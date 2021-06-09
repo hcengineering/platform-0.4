@@ -1,0 +1,240 @@
+[
+    {
+        "_id": "60be24c04e9579368c047c13",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Obj",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c14",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Doc",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Obj"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c15",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Space",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "domain": "model",
+            "kind": 0,
+            "extends": "class:core.Doc"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c16",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Tx",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "domain": "tx",
+            "kind": 0,
+            "extends": "class:core.Doc"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c17",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.TxCreateDoc",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Tx"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c18",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Class",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Doc"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c19",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.Mixin",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Class"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1a",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.TxUpdateVDocCollection",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Tx"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1b",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.TxAddVDocCollection",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Tx"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1c",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.TxUpdateVDoc",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Tx"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1d",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:core.TxCreateVDoc",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "kind": 0,
+            "extends": "class:core.Tx"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1e",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:workbench.Application",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "domain": "model",
+            "kind": 0,
+            "extends": "class:core.Doc"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c1f",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:chunter.Channel",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "domain": "model",
+            "kind": 0,
+            "extends": "class:core.Space"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c20",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "60be24c04e9579368c047c21",
+        "objectClass": "class:workbench.Application",
+        "attributes": {
+            "label": "string:chunter.ApplicationLabelChunter",
+            "icon": "icon:chunter.Chunter",
+            "navigatorModel": {
+                "spaces": [
+                    {
+                        "label": "string:chunter.Channels",
+                        "spaceIcon": "icon:chunter.Hashtag",
+                        "spaceClass": "class:chunter.Channel",
+                        "addSpaceLabel": "string:chunter.CreateChannel",
+                        "createComponent": "component:chunter.CreateChannel"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c22",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "60be24c04e9579368c047c23",
+        "objectClass": "class:chunter.Channel",
+        "attributes": {
+            "name": "general",
+            "description": "General Channel",
+            "private": false
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c24",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "60be24c04e9579368c047c25",
+        "objectClass": "class:chunter.Channel",
+        "attributes": {
+            "name": "random",
+            "description": "Random Talks",
+            "private": false
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c26",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "class:task.Project",
+        "objectClass": "class:core.Class",
+        "attributes": {
+            "domain": "model",
+            "kind": 0,
+            "extends": "class:core.Space"
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c27",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "60be24c04e9579368c047c28",
+        "objectClass": "class:workbench.Application",
+        "attributes": {
+            "label": "string:task.ApplicationLabelTask",
+            "icon": "icon:task.Task",
+            "navigatorModel": {
+                "spaces": [
+                    {
+                        "label": "string:task.Projects",
+                        "spaceIcon": "icon:task.Task",
+                        "spaceClass": "class:task.Project",
+                        "addSpaceLabel": "string:task.CreateProject",
+                        "createComponent": "component:task.CreateProject"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "_id": "60be24c04e9579368c047c29",
+        "_class": "class:core.TxCreateDoc",
+        "domain": "model",
+        "objectId": "60be24c04e9579368c047c2a",
+        "objectClass": "class:task.Project",
+        "attributes": {
+            "name": "default",
+            "description": "Default Project",
+            "private": false
+        }
+    }
+]
