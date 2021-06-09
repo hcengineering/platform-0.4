@@ -13,9 +13,8 @@
 // limitations under the License.
 //
 
-import type { Doc, Emb, Ref } from './classes'
+import type { Doc, Ref } from './classes'
 import { Account, Space } from './security'
-import { TxAddCollection, TxCreateDoc, TxUpdateCollection, TxUpdateDoc } from './tx'
 
 /**
  * Define user versioned document.
@@ -26,39 +25,4 @@ export interface VDoc extends Doc {
   createdBy: Ref<Account>
   modifiedOn?: number
   modifiedBy?: Ref<Account>
-}
-
-export interface TxSecurityContext {
-  objectSpace: Ref<Space>
-  objectUser: Ref<Account> // A user created object
-
-  timestamp: number // transaction time.
-}
-
-/**
- * Create a VDoc.
- */
-export interface TxCreateVDoc<T extends VDoc> extends TxCreateDoc<T, VDoc>, TxSecurityContext {
-}
-
-/**
- * Update VDoc attributes.
- */
-export interface TxUpdateVDoc<T extends VDoc> extends TxUpdateDoc<T, VDoc>, TxSecurityContext {
-}
-
-/**
- * Add item to VDoc embedded collection.
- *
- * If localId is missing it will be assigned.
- */
-export interface TxAddVDocCollection<T extends VDoc, P extends Emb> extends TxAddCollection<T, P>, TxSecurityContext {
-}
-
-/**
- * Update atribute inside VDoc embedded collection.
- *
- * localId is used to identify collection item.
- */
-export interface TxUpdateVDocCollection<T extends VDoc, P extends Emb> extends TxUpdateCollection<T, P>, TxSecurityContext{
 }

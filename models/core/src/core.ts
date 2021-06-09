@@ -38,4 +38,3 @@ export class TClass extends TDoc implements Class<Obj> {
 
 @Model(core.class.Mixin, core.class.Class)
 export class TMixin extends TClass implements Mixin<Doc> {}
-

@@ -20,11 +20,12 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { Account, Space } from '../security'
 import { DocumentQuery, Storage } from '../storage'
-import { Tx, TxCreateDoc } from '../tx'
+import { Tx, TxAddCollection, TxCreateDoc, TxUpdateCollection, TxUpdateDoc } from '../tx'
 import { generateId, makeEmb } from '../utils'
-import { TxAddVDocCollection, TxCreateVDoc, TxUpdateVDoc, TxUpdateVDocCollection, VDoc } from '../vdoc'
+import { VDoc } from '../vdoc'
 
-const txes = require('./vdoc.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+import _txes from './vdoc.tx.json'
+const txes = _txes as unknown as Tx[]
 
 interface TaskItem extends Emb {
   iname: string
@@ -51,27 +52,29 @@ const docTx: TxCreateDoc<Class<Obj>> = {
     domain: DOMAIN_MODEL,
     kind: ClassifierKind.CLASS,
     extends: core.class.VDoc
-  }
+  },
+  user: 'model' as Ref<Account>,
+  timestamp: Date.now()
 }
 
 txes.push(docTx)
 
 // Helper transaction construction functions
 
-function create <T extends VDoc> (params: Omit<TxCreateVDoc<T>, '_class'>): TxCreateVDoc<T> {
-  return { ...params, _class: core.class.TxCreateVDoc }
+function create <T extends VDoc> (params: Omit<TxCreateDoc<T, VDoc>, '_class'>): TxCreateDoc<T, VDoc> {
+  return { ...params, _class: core.class.TxCreateDoc }
 }
 
-function update <T extends VDoc> (params: Omit<TxUpdateVDoc<T>, '_class'>): TxUpdateVDoc<T> {
-  return { ...params, _class: core.class.TxUpdateVDoc }
+function update <T extends VDoc> (params: Omit<TxUpdateDoc<T, VDoc>, '_class'>): TxUpdateDoc<T, VDoc> {
+  return { ...params, _class: core.class.TxUpdateDoc }
 }
 
-function addCollection <T extends VDoc, P extends Emb> (params: Omit<TxAddVDocCollection<T, P>, '_class'>): TxAddVDocCollection<T, P> {
-  return { ...params, _class: core.class.TxAddVDocCollection }
+function addCollection <T extends VDoc, P extends Emb> (params: Omit<TxAddCollection<T, P>, '_class'>): TxAddCollection<T, P> {
+  return { ...params, _class: core.class.TxAddCollection }
 }
 
-function updateCollection <T extends VDoc, P extends Emb> (params: Omit<TxUpdateVDocCollection<T, P>, '_class'>): TxUpdateVDocCollection<T, P> {
-  return { ...params, _class: core.class.TxUpdateVDocCollection }
+function updateCollection <T extends VDoc, P extends Emb> (params: Omit<TxUpdateCollection<T, P>, '_class'>): TxUpdateCollection<T, P> {
+  return { ...params, _class: core.class.TxUpdateCollection }
 }
 
 /**
@@ -83,14 +86,14 @@ class TestDb implements Storage {
   async tx (tx: Tx): Promise<void> {
     // Handle VDoc operations.
     switch (tx._class) {
-      case core.class.TxCreateVDoc:
-        return await this.txCreateVDoc(tx as TxCreateVDoc<VDoc>)
-      case core.class.TxUpdateVDoc:
-        return await this.txUpdateVDoc(tx as TxUpdateVDoc<VDoc>)
-      case core.class.TxAddVDocCollection:
-        return await this.txAddVDocCollection(tx as TxAddVDocCollection<VDoc, Emb>)
-      case core.class.TxUpdateVDocCollection:
-        return await this.txUpdateVDocCollection(tx as TxUpdateVDocCollection<VDoc, Emb>)
+      case core.class.TxCreateDoc:
+        return await this.txCreateVDoc(tx as TxCreateDoc<VDoc, VDoc>)
+      case core.class.TxUpdateDoc:
+        return await this.txUpdateVDoc(tx as TxUpdateDoc<VDoc, VDoc>)
+      case core.class.TxAddCollection:
+        return await this.txAddVDocCollection(tx as TxAddCollection<VDoc, Emb>)
+      case core.class.TxUpdateCollection:
+        return await this.txUpdateVDocCollection(tx as TxUpdateCollection<VDoc, Emb>)
     }
     throw new Error('fail')
   }
@@ -99,30 +102,30 @@ class TestDb implements Storage {
     return []
   }
 
-  async txCreateVDoc (tx: TxCreateVDoc<VDoc>): Promise<void> {
+  async txCreateVDoc (tx: TxCreateDoc<VDoc, VDoc>): Promise<void> {
     const val: VDoc = {
       _id: tx.objectId,
       _class: tx.objectClass,
-      space: tx.objectSpace,
+      space: tx.space ?? '-' as Ref<Space>,
       createdOn: tx.timestamp,
-      createdBy: tx.objectUser,
+      createdBy: tx.user,
       ...tx.attributes
     }
     this.docs[val._id as string] = val
   }
 
-  async txUpdateVDoc (tx: TxUpdateVDoc<VDoc>): Promise<void> {
+  async txUpdateVDoc (tx: TxUpdateDoc<VDoc, VDoc>): Promise<void> {
     const doc = this.docs[tx.objectId as string]
     for (const key of Object.keys(tx.attributes)) {
       ;(doc as any)[key] = (tx.attributes as any)[key]
     }
   }
 
-  async txAddVDocCollection (tx: TxAddVDocCollection<VDoc, Emb>): Promise<void> {
+  async txAddVDocCollection (tx: TxAddCollection<VDoc, Emb>): Promise<void> {
     this.items[tx.localId ?? generateId()] = makeEmb(tx.itemClass, tx.attributes)
   }
 
-  async txUpdateVDocCollection (tx: TxUpdateVDocCollection<VDoc, Emb>): Promise<void> {
+  async txUpdateVDocCollection (tx: TxUpdateCollection<VDoc, Emb>): Promise<void> {
     const item = this.items[tx.localId]
     for (const key of Object.keys(tx.attributes)) {
       ;(item as any)[key] = (tx.attributes as any)[key]
@@ -143,8 +146,8 @@ describe('hierarchy', () => {
       timestamp: Date.now(),
       objectClass: taskIds.class.Task,
       attributes: { name: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       objectId: 'task1' as Ref<Task>
     }))
     expect(Object.keys(model.docs).length).toBe(1)
@@ -162,8 +165,8 @@ describe('hierarchy', () => {
       timestamp: Date.now(),
       objectClass: taskIds.class.Task,
       attributes: { name: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       objectId: 'task1' as Ref<Task>
     }))
     await model.tx(update({
@@ -173,8 +176,8 @@ describe('hierarchy', () => {
       objectClass: taskIds.class.Task,
       objectId: 'task1' as Ref<Task>,
       attributes: { name: 'task2' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_2' as Ref<Account>
+      space: '' as Ref<Space>,
+      user: 'user_2' as Ref<Account>
     }))
     expect(Object.keys(model.docs).length).toBe(1)
     expect((model.docs.task1 as Task).name).toBe('task2')
@@ -192,8 +195,8 @@ describe('hierarchy', () => {
       timestamp: Date.now(),
       objectClass: taskIds.class.Task,
       attributes: { name: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       objectId: 'task1' as Ref<Task>
     }))
     await model.tx(addCollection<Task, TaskItem>({
@@ -204,8 +207,8 @@ describe('hierarchy', () => {
       collection: 'items',
       itemClass: taskIds.class.TaskItem,
       attributes: { iname: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       localId: 'item_1'
     }))
 
@@ -223,8 +226,8 @@ describe('hierarchy', () => {
       timestamp: Date.now(),
       objectClass: taskIds.class.Task,
       attributes: { name: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       objectId: 'task1' as Ref<Task>
     }))
     await model.tx(addCollection<Task, TaskItem>({
@@ -235,8 +238,8 @@ describe('hierarchy', () => {
       collection: 'items',
       itemClass: taskIds.class.TaskItem,
       attributes: { iname: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       localId: 'item_1'
     }))
     await model.tx(updateCollection<Task, TaskItem>({
@@ -248,8 +251,8 @@ describe('hierarchy', () => {
       itemClass: taskIds.class.TaskItem,
       localId: 'item_1',
       attributes: { iname: 'task2' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>
     }))
 
     expect(Object.keys(model.items).length).toEqual(1)
@@ -268,8 +271,8 @@ describe('hierarchy', () => {
       timestamp: Date.now(),
       objectClass: taskIds.class.Task,
       attributes: { name: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       objectId: 'task1' as Ref<Task>
     }))
     await model.tx(update({
@@ -279,8 +282,8 @@ describe('hierarchy', () => {
       objectClass: taskIds.class.Task,
       objectId: 'task1' as Ref<Task>,
       attributes: { name: 'task2' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_2' as Ref<Account>
+      space: '' as Ref<Space>,
+      user: 'user_2' as Ref<Account>
     }))
     await model.tx(addCollection<Task, TaskItem>({
       domain: hierarchy.getDomain(taskIds.class.Task),
@@ -290,8 +293,8 @@ describe('hierarchy', () => {
       collection: 'items',
       itemClass: taskIds.class.TaskItem,
       attributes: { iname: 'task1' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>,
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>,
       localId: 'item_1'
     }))
     await model.tx(updateCollection<Task, TaskItem>({
@@ -303,8 +306,8 @@ describe('hierarchy', () => {
       itemClass: taskIds.class.TaskItem,
       localId: 'item_1',
       attributes: { iname: 'task2' },
-      objectSpace: '' as Ref<Space>,
-      objectUser: 'user_1' as Ref<Account>
+      space: '' as Ref<Space>,
+      user: 'user_1' as Ref<Account>
     }))
   })
 })

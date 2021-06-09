@@ -15,10 +15,15 @@
 
 import type { Class, Data, Doc, Domain, Emb, Ref } from './classes'
 import core from './component'
+import { Account, Space } from './security'
 
 export interface Tx<T extends Doc=Doc> extends Doc {
   domain: string
   objectId: Ref<T>
+
+  space?: Ref<Space>
+  user: Ref<Account> // A user created object
+  timestamp: number // transaction time.
 }
 
 export interface TxCreateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {

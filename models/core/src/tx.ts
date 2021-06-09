@@ -13,19 +13,21 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Emb, Ref, Space, Tx, TxAddCollection, TxCreateDoc, TxUpdateCollection, TxUpdateDoc } from '@anticrm/core'
+import type { Account, Class, Data, Doc, Emb, Ref, Space, Tx, TxAddCollection, TxCreateDoc, TxUpdateCollection, TxUpdateDoc } from '@anticrm/core'
 import { DOMAIN_TX } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
 import { TDoc } from './core'
-
 
 // T R A N S A C T I O N S
 
 @Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
 export class TTx<T extends Doc> extends TDoc implements Tx<T> {
   domain!: string
-  objectId!: Ref<T>  
+  objectId!: Ref<T>
+  space?: Ref<Space>
+  user!: Ref<Account>
+  timestamp!: number
 }
 
 @Model(core.class.TxCreateDoc, core.class.Tx)
