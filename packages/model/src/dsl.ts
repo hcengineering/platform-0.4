@@ -56,12 +56,13 @@ function getTxes (target: any): ClassTxes {
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
-    const tx: NoIDs<TxAddCollection<Attribute<PropertyType>>> = {
+    const tx: NoIDs<TxAddCollection<Class<Obj>, Attribute<PropertyType>>> = {
       _class: core.class.TxAddCollection,
       domain: DOMAIN_MODEL,
       collection: 'attributes',
       localId: propertyKey,
-      attributes: makeEmb(core.class.Attribute, { type })
+      itemClass: core.class.Attribute,
+      attributes: { type }
     }
     txes.txes.push(tx)
   }

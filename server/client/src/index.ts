@@ -17,7 +17,7 @@ import { createClient as createCoreClient, Storage } from '@anticrm/core'
 import { connect as connectNode } from './connection'
 
 export async function createClient (clientUrl: string): Promise<Storage> {
-  return await createCoreClient(async tx => {
+  return await createCoreClient(async (tx) => {
     return await connectNode(clientUrl, tx)
   })
 }

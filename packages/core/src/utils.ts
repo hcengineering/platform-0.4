@@ -40,6 +40,6 @@ export function generateId<T extends Doc> (): Ref<T> {
   return (timestamp() + random + count()) as Ref<T>
 }
 
-export function makeEmb<T extends Emb> (_class: Ref<Class<T>>, data: Omit<T, '__embedded' | '_class'>): T {
+export function makeEmb<T extends Emb> (_class: Ref<Class<T>>, data: Omit<T, keyof Emb>): T {
   return { _class, ...data } as T // eslint-disable-line @typescript-eslint/consistent-type-assertions
 }

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter",
+      "comment": "Skip if no tests",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter",
+  "email": "haiodo@gmail.com"
+}

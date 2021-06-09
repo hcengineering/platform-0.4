@@ -153,14 +153,16 @@ const status = component('status' as Component, {
  */
 export const OK = new Status(Severity.OK, status.status.OK, {})
 
+export function unknownStatus(message: string): Status<{}> {
+  return new Status(Severity.ERROR, status.status.UnknownError, { message })
+}
+
 /**
  * Creates unknown error status
  * @public
  */
 export function unknownError (err: Error): Status {
-  return err instanceof PlatformError
-    ? err.status
-    : new Status(Severity.ERROR, status.status.UnknownError, { message: err.message })
+  return err instanceof PlatformError ? err.status : unknownStatus(err.message)
 }
 
 // R E S O U R C E S
@@ -213,3 +215,4 @@ type URL = string
 export type Asset = Metadata<URL>
 
 export { status as default }
+

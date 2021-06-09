@@ -13,9 +13,10 @@
 // limitations under the License.
 //
 
-import { Storage, Tx } from '@anticrm/core'
-import { readRequest, Response, Request, serialize } from '@anticrm/rpc'
-import status, { Severity, Status } from '@anticrm/status'
+import { generateId, Storage, Tx } from '@anticrm/core'
+import type { Request, Response } from '@anticrm/rpc'
+import { Code, readRequest, serialize } from '@anticrm/rpc'
+import { Severity, Status } from '@anticrm/status'
 import { createServer, IncomingMessage } from 'http'
 import WebSocket, { AddressInfo, Server } from 'ws'
 
@@ -24,7 +25,7 @@ export interface ServerProtocol {
   address: () => { host: string, port: number }
 }
 export interface StorageProvider {
-  connect: (clientId: string, tx: (tx: Tx) => void) => Storage
+  connect: (clientId: string, token: string, tx: (tx: Tx) => void, close: (code?: number, data?: string) => void) => Storage
   close: (clientId: string) => void
 }
 
@@ -41,17 +42,16 @@ export async function start (
 
   const connections = new Map<string /* clientId */, WebSocket>()
 
-  wss.on('connection', (ws: WebSocket, request: any, clientId: string) => {
-    console.log('connect:', clientId)
-
-    const storage = provider.connect(clientId, tx => {
+  wss.on('connection', (ws: WebSocket, request: any, token: string) => {
+    const clientId = generateId()
+    const storage = provider.connect(clientId, token, tx => {
       // Send transaction to client.
       const resp: Response<any> = {
         id: tx._id,
         result: tx
       }
       ws.send(serialize(resp))
-    })
+    }, () => { ws.close() })
 
     async function handleRequest (request: Request<any>): Promise<void> {
       const { id, method, params } = request
@@ -69,7 +69,7 @@ export async function start (
       } catch (error) {
         const resp: Response<any> = {
           id,
-          error: new Status(Severity.ERROR, status.status.UnknownError, { message: error })
+          error: new Status(Severity.ERROR, Code.BadRequest, { message: error.message, stack: error.stack })
         }
         ws.send(
           serialize(resp)
@@ -84,7 +84,9 @@ export async function start (
       provider.close(clientId)
     }
     ws.onerror = error => {
-      console.log('communication error:', error)
+      console.error('communication error:', error)
+      connections.delete(clientId)
+      provider.close(clientId)
     }
     ws.on('message', (msg: string): void => {
       const request = readRequest(msg)
@@ -93,14 +95,17 @@ export async function start (
   })
 
   server.on('upgrade', (request: IncomingMessage, socket, head: Buffer) => {
-    const clientId = request.url?.substring(1) // remove leading '/'
-    if (clientId === undefined || clientId.trim().length === 0) {
+    const token = request.url?.substring(1) // remove leading '/'
+    if (token === undefined || token.trim().length === 0) {
       socket.write('HTTP/1.1 400 Bad Request\r\n\r\n')
       socket.destroy()
       return
     }
+
+    // TODO: Validate token.
+
     wss.handleUpgrade(request, socket, head, ws => {
-      wss.emit('connection', ws, request, clientId)
+      wss.emit('connection', ws, request, token)
     })
   })
 
@@ -114,7 +119,6 @@ export async function start (
             provider.close(conn[0])
             conn[1].close()
           }
-          console.log('stop server itself')
           httpServer.close()
         },
         address: () => {

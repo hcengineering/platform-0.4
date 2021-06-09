@@ -13,11 +13,9 @@
 // limitations under the License.
 //
 
-import { Class, Doc, DocumentQuery, Ref, Storage, Tx } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 export type ReqId = string | number
-
 export class Request<P extends any[]> {
   id?: ReqId
   method: string
@@ -50,7 +48,9 @@ export function readResponse<D> (response: string): Response<D> {
 
 export function readRequest<P extends any[]> (request: string): Request<P> {
   const result: Request<P> = JSON.parse(request)
-  if (typeof result.method !== 'string') { throw new PlatformError(new Status(Severity.ERROR, Code.BadRequest, {})) }
+  if (typeof result.method !== 'string') {
+    throw new PlatformError(new Status(Severity.ERROR, Code.BadRequest, {}))
+  }
   return result
 }
 
@@ -62,89 +62,76 @@ export const Code = component('rpc' as Component, {
   Unauthorized: '' as StatusCode,
   Forbidden: '' as StatusCode,
   BadRequest: '' as StatusCode,
-  UnknownMethod: '' as StatusCode<{method: string}>
+  UnknownMethod: '' as StatusCode<{ method: string }>
 })
 
-export interface RequestStream {
-  send: <T extends any[]>(req: Request<T>) => void
-}
-
-interface Operation {
-  id: number
-  request: () => void // Perform request again
+class DefferedPromise {
   promise: Promise<any>
-  resolve: <T> (value: T) => void
+  resolve!: <T>(value: T) => void
+  reject!: (reason?: any) => void
+  constructor () {
+    // eslint-disable-next-line promise/param-names
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve
+      this.reject = reject
+    })
+  }
 }
 
 /**
- * Process RPC request and handle responses
+ * Process requests and handle responses.
+ * Also allow to handle non identified results passed from other side.
+ *
+ * Hold operations in progress and allow to retry them if required.
  */
-export class RequestProcessor implements Storage {
-  reqId: number = 0
-  requests = new Map<ReqId, Operation>()
-  stream: () => Promise<RequestStream>
-  handler: (tx: Tx) => void
+export abstract class RequestProcessor {
+  private reqIndex: number = 0
+  private readonly requests = new Map<ReqId, DefferedPromise>()
 
-  constructor (stream: () => Promise<RequestStream>, handler: (tx: Tx) => void) {
-    this.stream = stream
-    this.handler = handler
-  }
+  protected abstract send (request: Request<any>): void
+  protected abstract notify (response: Response<any>): void
 
-  public process<T>(response: Response<T>): void {
+  protected process (response: Response<any>): void {
     if (response.id !== undefined) {
       const req = this.requests.get(response.id)
       if (req !== undefined) {
-        req.resolve(response)
+        if (response.error !== undefined) {
+          req.reject(new PlatformError(response.error))
+          return
+        } else {
+          req.resolve(response.result)
+          return
+        }
       }
-    } else {
-      // From server transaction
-      this.handler((response.result as unknown) as Tx)
     }
+    this.notify(response)
   }
 
-  public onOpen (): void {
+  /**
+   * Reject all waited pending operations.
+   *
+   * This method is intended to be executed by protocol listening parts to
+   * cancal any pending requests to control UI is not hang.
+   *
+   * @param reason - Why request was rejected.
+   */
+  protected reject (status: Status): void {
     // We need to reply requests in case they are missed.
     for (const op of this.requests.entries()) {
-      op[1].request()
+      op[1].reject(new PlatformError(status))
     }
+    this.requests.clear()
   }
 
-  public async request (method: string, ...params: any[]): Promise<any> {
-    const id = ++this.reqId
-    let resolve: <T> (value: T) => void = () => {}
-
-    const p = new Promise((r) => { resolve = r }) // eslint-disable-line
-
-    const op: Operation = {
-      id,
-      request: async () => {
-        (await this.stream()).send({ method, id, params })
-      },
-      resolve,
-      promise: p
-    }
-    this.requests.set(id, op)
+  protected async request (method: string, ...params: any[]): Promise<any> {
+    const id = ++this.reqIndex
+    const promise = new DefferedPromise()
+    this.requests.set(id, promise)
 
     // Send request
-    op.request()
+    this.send({ id, method, params })
 
     // Waiting to be complete.
-    const response = await op.promise
-    const err = response.error as string
-    if (err !== undefined) {
-      throw new Error(`Failed to process request ${err}`)
-    }
-    return response.result
-  }
-
-  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    const result = await this.request('findAll', _class, query)
-    return result as T[]
-  }
-
-  async tx (tx: Tx): Promise<void> {
-    await this.request('tx', tx)
-    // Process on server and return result.
-    this.handler(tx)
+    return await promise.promise
   }
 }

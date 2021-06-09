@@ -80,7 +80,7 @@ export type Mixin<T extends Doc> = Class<T>
 
 // D A T A
 
-export type Data<T extends Doc> = Omit<WithoutCollections<T>, keyof Doc>
+export type Data<T extends O, O extends Doc=Doc> = Omit<WithoutCollections<T>, keyof O>
 
 // T Y P E S
 

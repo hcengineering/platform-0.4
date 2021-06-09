@@ -33,9 +33,9 @@ describe('memdb', () => {
 
   it('should query model', async () => {
     const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
+    for (const tx of txes) await hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
     expect(result.length).toBe(11)
   })
@@ -44,7 +44,7 @@ describe('memdb', () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
-    for (const tx of txes) model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, {
       _id: txes[1].objectId as Ref<Class<Obj>>,
       kind: 0

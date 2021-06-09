@@ -22,40 +22,125 @@ import modelTx from './model.tx.json'
 const txes = (modelTx as unknown) as Tx[]
 
 describe('server', () => {
-  it('client connect server', async () => {    
+  it('client connect server', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
 
     const transactions = new TxDb(hierarchy)
     const model = new ModelDb(hierarchy)
     for (const tx of txes) {
-      transactions.tx(tx)
-      model.tx(tx)
+      await transactions.tx(tx)
+      await model.tx(tx)
     }
 
-    function findAll<T extends Doc> (
+    async function findAll<T extends Doc> (
       _class: Ref<Class<T>>,
       query: DocumentQuery<T>
     ): Promise<T[]> {
       const domain = hierarchy.getClass(_class).domain
-      if (domain === DOMAIN_TX) return transactions.findAll(_class, query)
-      return model.findAll(_class, query)
+      if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+      return await model.findAll(_class, query)
     }
     const serverAt = start('localhost', 0, {
-      connect: (clientId, txs) => {
+      connect: () => {
         return {
-          findAll: findAll,
+          findAll,
           tx: async (tx: Tx): Promise<void> => {}
         }
       },
-      close: clientId => {},      
+      close: () => {}
     })
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.host}:${addr.port}`)
+      const client = await createClient(`${addr.host}:${addr.port}/t1`)
 
       const result = await client.findAll(core.class.Class, {})
       expect(result.length).toEqual(10)
+    } finally {
+      ;(await serverAt).shutdown()
+    }
+  })
+
+  it('check non existing server', async () => {
+    (await expect(createClient('localhost:10'))).rejects.toThrowError('Failed to connect to localhost:10: reason: connect ECONNREFUSED 127.0.0.1:10') // eslint-disable-line
+  })
+
+  it('check server connection closed', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+
+    const transactions = new TxDb(hierarchy)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) {
+      await transactions.tx(tx)
+      await model.tx(tx)
+    }
+
+    let req = 0
+    const serverAt = start('localhost', 0, {
+      connect: (clientId, token, tx, close) => {
+        return {
+          // Create never complete promise. ,
+          findAll: async <T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+            req++
+            if (req === 2) {
+              close(404, 'error')
+              return await new Promise<T[]>(() => {})
+            }
+            const domain = hierarchy.getClass(_class).domain
+            if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+            return await model.findAll(_class, query)
+          },
+          tx: async (tx: Tx): Promise<void> => {}
+        }
+      },
+      close: () => {}
+    })
+
+    try {
+      const addr = (await serverAt).address()
+      const client = await createClient(`${addr.host}:${addr.port}/t1`)
+      await expect(client.findAll(core.class.Class, {})).rejects.toThrowError('ERROR: status:status.UnknownError') // eslint-disable-line
+    } finally {
+      ;(await serverAt).shutdown()
+    }
+  })
+
+  it('check server reject request', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+
+    const transactions = new TxDb(hierarchy)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) {
+      await transactions.tx(tx)
+      await model.tx(tx)
+    }
+
+    let req = 0
+    const serverAt = start('localhost', 0, {
+      connect: (clientId, token, tx, close) => {
+        return {
+          // Create never complete promise. ,
+          findAll: async <T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+            req++
+            if (req === 2) {
+              throw new Error('Some error happened')
+            }
+            const domain = hierarchy.getClass(_class).domain
+            if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+            return await model.findAll(_class, query)
+          },
+          tx: async (tx: Tx): Promise<void> => {}
+        }
+      },
+      close: () => {}
+    })
+
+    try {
+      const addr = (await serverAt).address()
+      const client = await createClient(`${addr.host}:${addr.port}/t1`)
+      await expect(client.findAll(core.class.Class, {})).rejects.toThrowError('ERROR: rpc.BadRequest') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
     }

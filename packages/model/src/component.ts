@@ -27,9 +27,7 @@ import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(core, {
-  class: {
-    Obj: '' as Ref<Class<Obj>>,
-    Doc: '' as Ref<Class<Doc>>,
+  class: {    
     Attribute: '' as Ref<Class<Attribute<PropertyType>>>,
 
     TypeString: '' as Ref<Class<Type<string>>>
