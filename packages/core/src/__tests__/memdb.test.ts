@@ -62,6 +62,7 @@ describe('memdb', () => {
   })
 
   it('should throw error', async (done) => {
+    expect.assertions(1)
     const errorTx: TxAddCollection<Emb> = {
       _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Emb>>,
       objectId: 'class:test.MyClass' as Ref<Doc>,

@@ -43,11 +43,7 @@ describe('hierarchy', () => {
     const data = hierarchy.getClass(core.class.TxCreateDoc)
     expect(data).toMatchObject((txes.find(p => p.objectId === core.class.TxCreateDoc) as TxCreateDoc<Doc>).attributes)
     const notExistClass = 'class:test.MyClass' as Ref<Class<Obj>>
-    try {
-      hierarchy.getClass(notExistClass)
-    } catch (e) {
-      expect(e.message).toBe('class not found: ' + notExistClass)
-    }
+    expect(() => hierarchy.getClass(notExistClass)).toThrowError('class not found: ' + notExistClass)
   })
 
   it('getDomain', async () => {
