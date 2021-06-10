@@ -39,6 +39,9 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
 
+      - name: Setup ElasticSearch
+        uses: getong/elasticsearch-action@v1.2
+
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
         env:
