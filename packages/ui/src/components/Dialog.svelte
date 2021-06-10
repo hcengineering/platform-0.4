@@ -25,6 +25,7 @@
 
   export let label: IntlString
   export let okLabel: IntlString
+  export let okAction: () => void
 
   const dispatch = createEventDispatcher()
 </script>
@@ -36,7 +37,7 @@
   </div>
   <slot/>
   <div class="footer">
-    <Button label={okLabel} primary/>
+    <Button label={okLabel} primary on:click={() => { okAction(); dispatch('close') }}/>
   </div>
 </div>
 

@@ -17,12 +17,21 @@
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
 
+  import { getClient } from '@anticrm/workbench'
+
   import chunter from '../plugin'
 
   const dispatch = createEventDispatcher()
+
+  function createChannel() {
+    console.log('create channel')
+  }
 </script>
 
-<Dialog label={chunter.string.CreateChannel} okLabel={chunter.string.CreateChannel} on:close={() => { dispatch('close') }}>
+<Dialog label={chunter.string.CreateChannel} 
+        okLabel={chunter.string.CreateChannel} 
+        okAction={createChannel}
+        on:close={() => { dispatch('close') }}>
   <div class="content">
     <div class="row"><EditBox label={chunter.string.ChannelName} /></div>
     <div class="row"><EditBox label={chunter.string.ChannelDescription} /></div>
