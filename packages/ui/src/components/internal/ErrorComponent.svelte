@@ -14,7 +14,7 @@
 -->
 
 <script>
-  export let error
+  export let error = null
   </script>
   <style>
     .error {

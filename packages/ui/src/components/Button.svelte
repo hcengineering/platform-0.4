@@ -22,7 +22,7 @@
   export let primary: boolean = false
   export let disabled: boolean = false
   export let loading: boolean = false
-  export let width: string
+  export let width: string | undefined = undefined
 
 </script>
 

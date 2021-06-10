@@ -36,9 +36,9 @@ export type Id = string & { __id: true }
  * @public
  */
 export type Component = string & { __component: true }
-export type StatusCode<P extends Record<string, any> = {}> = Id & {
-  __status_code: P
-}
+
+// TODO: remove `StatusCode`?
+export type StatusCode<P extends Record<string, any> = {}> = IntlString<P>
 
 /**
  * Status of an operation
