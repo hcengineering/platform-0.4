@@ -76,26 +76,6 @@ export class ElasticStorage extends TxProcessor implements Storage {
 
     const domain = this.hierarchy.getDomain(_class)
 
-    console.log('check')
-    console.log(this.workspace)
-    console.log(domain)
-    const { body: index } = await this.client.indices.get({ index: this.workspace })
-    console.log(index)
-    console.log(index[this.workspace].mappings.properties)
-
-    const { body: test } = await this.client.search({
-      index: this.workspace,
-      type: domain,
-      body: {
-        query: {
-          query_string: {
-            query: '*'
-          }
-        }
-      }
-    })
-    console.log(test)
-
     const { body } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -118,21 +98,17 @@ export class ElasticStorage extends TxProcessor implements Storage {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<VDoc>): Promise<void> {
-    console.log('createDocCall')
     const object: RequestParams.Index = {
       id: tx.objectId,
       index: this.workspace,
       type: this.hierarchy.getDomain(tx.objectClass),
       body: { _class: tx.objectClass, ...tx.attributes }
     }
-    const res = await this.client.index(object)
-    console.log(res)
-    const { body } = await this.client.indices.get({ index: this.workspace })
-    console.log(body)
+    await this.client.index(object)
+    await this.client.indices.refresh({ index: this.workspace })
   }
 
   protected async txAddCollection (tx: TxAddCollection<VDoc, Emb>): Promise<void> {
-    console.log('txAddCollection')
     const doc = await this.objectById(tx.objectId)
     if ((doc as any)[tx.collection] === undefined) {
       (doc as any)[tx.collection] = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
@@ -147,7 +123,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       type: tx.domain,
       body: data
     }
-    const res = await this.client.index(object)
-    console.log(res)
+    await this.client.index(object)
+    await this.client.indices.refresh({ index: this.workspace })
   }
 }
