@@ -19,7 +19,6 @@ import { Hierarchy } from '../hierarchy'
 import { Account } from '../security'
 import { ModelDb, TxDb } from '../memdb'
 import type { Tx, TxAddCollection } from '../tx'
-import type { Account } from '../security'
 import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
@@ -76,8 +75,6 @@ describe('memdb', () => {
       timestamp: 0,
       collection: 'attributes',
       localId: 'name',
-      user: 'model' as Ref<Account>,
-      timestamp: Date.now(),
       attributes: {
         _class: 'class:core.Attribute' as Ref<Class<Doc>>,
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

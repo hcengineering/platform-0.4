@@ -20,7 +20,7 @@ import core from './component'
 
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
-  private readonly extends = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
+  private readonly descendants = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
 
   getAncestors (_class: Ref<Class<Obj>>): Array<Ref<Class<Obj>>> {
     const result: Array<Ref<Class<Obj>>> = []
@@ -74,15 +74,19 @@ export class Hierarchy {
   }
 
   getDescendants<T extends Obj>(_class: Ref<Class<T>>): Array<Ref<Class<Obj>>> {
-    return this.extends.get(_class) ?? []
+    const data = this.descendants.get(_class)
+    if (data === undefined) {
+      throw new Error('descendants not found: ' + _class)
+    }
+    return data
   }
 
   private addDescendant<T extends Obj>(_class: Ref<Class<T>>): void {
     const hierarchy = this.getAncestors(_class as Ref<Class<Obj>>)
     for (const cls of hierarchy) {
-      const list = this.extends.get(cls)
+      const list = this.descendants.get(cls)
       if (list === undefined) {
-        this.extends.set(cls, [_class as Ref<Class<Obj>>])
+        this.descendants.set(cls, [_class as Ref<Class<Obj>>])
       } else {
         list.push(_class as Ref<Class<Obj>>)
       }
