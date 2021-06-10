@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/node-client",
+      "comment": "Modify RequestProcessor to not depend on core",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/node-client",
+  "email": "haiodo@gmail.com"
+}

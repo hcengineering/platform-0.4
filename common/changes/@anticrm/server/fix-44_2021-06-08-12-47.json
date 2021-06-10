@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Modify RequestProcessor to not depend on core",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server",
+  "email": "haiodo@gmail.com"
+}

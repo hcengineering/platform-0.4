@@ -25,7 +25,8 @@ import type {
   Data,
   TxAddCollection,
   TxCreateDoc,
-  Domain
+  Domain,
+  Account
 } from '@anticrm/core'
 import { ClassifierKind, generateId, makeEmb, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 import toposort from 'toposort'
@@ -38,7 +39,7 @@ interface ClassTxes {
   _id: Ref<Doc>
   extends?: Ref<Class<Obj>>
   domain?: string
-  txes: NoIDs<Tx>[]
+  txes: Array<NoIDs<Tx>>
 }
 
 const transactions = new Map<any, ClassTxes>()
@@ -56,12 +57,15 @@ function getTxes (target: any): ClassTxes {
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
-    const tx: NoIDs<TxAddCollection<Attribute<PropertyType>>> = {
+    const tx: NoIDs<TxAddCollection<Class<Obj>, Attribute<PropertyType>>> = {
       _class: core.class.TxAddCollection,
-      domain: 'tx',
+      domain: DOMAIN_MODEL,
       collection: 'attributes',
       localId: propertyKey,
-      attributes: makeEmb(core.class.Attribute, { type })
+      itemClass: core.class.Attribute,
+      attributes: { type },
+      user: 'model' as Ref<Account>,
+      timestamp: 0
     }
     txes.txes.push(tx)
   }
@@ -69,7 +73,7 @@ export function Prop (type: Type<PropertyType>) {
 
 export function Model<T extends Obj> (
   _class: Ref<Class<T>>,
-  _extends: Ref<Class<Obj>>, 
+  _extends: Ref<Class<Obj>>,
   domain?: string
 ) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
@@ -80,7 +84,7 @@ export function Model<T extends Obj> (
   }
 }
 
-function generateIds (objectId: Ref<Doc>, txes: NoIDs<Tx>[]): Tx[] {
+function generateIds (objectId: Ref<Doc>, txes: Array<NoIDs<Tx>>): Tx[] {
   return txes.map((tx) => ({
     _id: generateId<Tx>(),
     objectId,
@@ -95,7 +99,9 @@ function txCreateDoc<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attr
     domain,
     objectId: objectId ?? generateId(),
     objectClass: _class,
-    attributes
+    attributes,
+    user: 'model' as Ref<Account>,
+    timestamp: 0
   }
 }
 
@@ -113,18 +119,18 @@ export class Builder {
   private readonly txes: Tx[] = []
   private readonly hierarchy = new Hierarchy()
 
-  createModel (...classes: (new () => Obj)[]): void {
+  createModel (...classes: Array<new () => Obj>): void {
     const txes = classes.map((ctor) => getTxes(ctor.prototype))
     const byId = new Map<string, ClassTxes>()
-    txes.forEach((tx) => {byId.set(tx._id, tx)})
+    txes.forEach((tx) => { byId.set(tx._id, tx) })
     const graph = txes.map(tx => [tx._id, tx.extends] as [string, string | undefined])
     const sortedGraph = toposort(graph).reverse()
     const sorted = sortedGraph.map(edge => byId.get(edge))
-    const generated = sorted.flatMap(tx => tx ? _generateTx(tx): [])
+    const generated = sorted.flatMap(tx => (tx != null) ? _generateTx(tx) : [])
 
-    for(const tx of generated) {
+    for (const tx of generated) {
       this.txes.push(tx)
-      this.hierarchy.tx(tx)  
+      this.hierarchy.tx(tx)
     }
   }
 
@@ -132,10 +138,8 @@ export class Builder {
     this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId))
   }
 
-  getTxes(): Tx[] { return this.txes }
-  
+  getTxes (): Tx[] { return this.txes }
 }
-
 
 // T Y P E S
 

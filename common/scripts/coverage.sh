@@ -16,18 +16,21 @@
 
 set -e
 
-pushd packages/status
-node ../../common/scripts/install-run-rushx.js test --coverage
-popd
+sourceDir=$(dirname "$0")
+sourceDir=$(realpath "$sourceDir")
+runScript=$sourceDir/install-run-rushx.js
 
-pushd packages/platform
-node ../../common/scripts/install-run-rushx.js test --coverage
-popd
+roots=$(node $sourceDir/install-run-rush.js list -f --json | grep "fullPath" | cut -f 2 -d ':' | cut -f 2 -d '"')
+for i in $roots
+do  
+  pushd ${i}
 
-pushd packages/query
-node ../../common/scripts/install-run-rushx.js test --coverage
-popd
-
-pushd tests/server
-node ../../common/scripts/install-run-rushx.js test --coverage
-popd
+  node ${runScript} test --coverage
+  
+  retVal=$?  
+  if [ $retVal -ne 0 ]; then
+    echo "Error"
+    exit $retVal
+  fi
+  popd
+done

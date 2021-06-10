@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/rpc",
+      "comment": "Skip if no tests",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/rpc",
+  "email": "haiodo@gmail.com"
+}

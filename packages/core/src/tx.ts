@@ -15,21 +15,39 @@
 
 import type { Class, Data, Doc, Domain, Emb, Ref } from './classes'
 import core from './component'
+import { Account, Space } from './security'
 
-export interface Tx extends Doc {
+export interface Tx<T extends Doc=Doc> extends Doc {
   domain: string
-  objectId: Ref<Doc>
+  objectId: Ref<T>
+
+  space?: Ref<Space>
+  user: Ref<Account> // A user created object
+  timestamp: number // transaction time.
 }
 
-export interface TxCreateDoc<T extends Doc> extends Tx {
-  objectClass: Ref<Class<Doc>>
-  attributes: Data<T>
+export interface TxCreateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+  objectClass: Ref<Class<T>>
+  attributes: Data<T, P>
 }
 
-export interface TxAddCollection<T extends Emb> extends Tx {
+export interface TxUpdateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+  objectClass: Ref<Class<T>>
+  attributes: Partial<Data<T, P>>
+}
+
+export interface TxAddCollection<T extends Doc, P extends Emb> extends Tx<T> {
   collection: string
+  itemClass: Ref<Class<P>>
   localId?: string
-  attributes: T
+  attributes: Omit<P, keyof Emb>
+}
+
+export interface TxUpdateCollection<T extends Doc, P extends Emb> extends Tx<T> {
+  collection: string
+  itemClass: Ref<Class<P>>
+  localId: string
+  attributes: Partial<Omit<P, keyof Emb>>
 }
 
 export const DOMAIN_TX = 'tx' as Domain
@@ -40,11 +58,11 @@ export class TxProcessor {
       case core.class.TxCreateDoc:
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
       case core.class.TxAddCollection:
-        return await this.txAddCollection(tx as TxAddCollection<Emb>)
+        return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
     }
     return await Promise.resolve()
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
-  protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {}
+  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
 }

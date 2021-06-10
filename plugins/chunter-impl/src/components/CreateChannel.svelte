@@ -20,19 +20,24 @@
 
 <Dialog label="Create Channel">
   <div class="content">
-    <EditBox label="Name" value="Channel Name"/>
-    <EditBox label="Description" value="This is a little description"/>
-    <ToggleWithLabel label="Make channel private" description="Lorem ipsum dolor sit amet quantum nunca sic"/>
+    <div class="row"><EditBox label="Name" value="Channel Name"/></div>
+    <div class="row"><EditBox label="Description" value="This is a little description"/></div>
+    <div class="row"><ToggleWithLabel label="Make channel private" description="Lorem ipsum dolor sit amet quantum nunca sic"/></div>
   </div>
 </Dialog>
 
 
 <style lang="scss">
 
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+    
+    .row {
+      grid-column-start: 1;
+      grid-column-end: 3;
+    }
+  }
 
 </style>

@@ -106,7 +106,7 @@ dependencies:
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/node-client': file:projects/node-client.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/node-client': file:projects/node-client.tgz_ts-node@10.0.0
   '@rush-temp/platform': file:projects/platform.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -8480,12 +8480,13 @@ packages:
     dev: false
 
   file:projects/core.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-hKoJYPGAMS0qW//RuUwbtSmOyssDfy3K3fHKbj0rsQur5bZUya5Hps9MuwxuXX8buLs4Ggmxo6zTJ2IObWbWhg==, tarball: file:projects/core.tgz}
+    resolution: {integrity: sha512-drtrw+39Ngqqq06amrC/AXh8WFHFq7JYMdh8Vorfm7OZEDm6GxlBSVHE7/agzfMR8gldogPupdmjcmItND0diw==, tarball: file:projects/core.tgz}
     id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
     dependencies:
       '@elastic/elasticsearch': 7.13.0
+      '@jest/globals': 27.0.3
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/node': 14.17.0
@@ -8724,8 +8725,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/node-client.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-3309JG2ypLqclBroL3lAOeaMZwSSuGZ4P6JRydRs4KOSdRWnG5FPzF2NQ6ymJR9RpPY+DTPyySoRr8bf2goSmQ==, tarball: file:projects/node-client.tgz}
+  file:projects/node-client.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-mjqiaajiqgrt6Okfua8xtl3aaum055CUR10hxAT44WBlMe2aKQXwjgmD1K0RUPmzY2O8vGiPERIqgzRPXfqvSQ==, tarball: file:projects/node-client.tgz}
     id: file:projects/node-client.tgz
     name: '@rush-temp/node-client'
     version: 0.0.0
@@ -8734,14 +8735,21 @@ packages:
       '@types/jest': 26.0.23
       '@types/node': 14.17.0
       '@types/ws': 7.4.4
+      '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
+      '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
+      eslint: 7.26.0
+      eslint-config-standard: 16.0.2_b2df6221fd2975543849dd834a139d74
+      eslint-config-standard-with-typescript: 20.0.0_0dfb08fdc578a3f548b56a9a1b2d85d9
+      eslint-plugin-import: 2.23.1_eslint@7.26.0
+      eslint-plugin-node: 11.1.0_eslint@7.26.0
+      eslint-plugin-promise: 5.1.0_eslint@7.26.0
+      eslint-plugin-standard: 5.0.0_eslint@7.26.0
       jest: 26.6.3_ts-node@10.0.0
-      prettier: 2.3.1
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
-      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
-      typescript: 4.3.2
+      prettier: 2.3.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       ws: 7.4.6
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
       - bufferutil
       - canvas
       - supports-color
@@ -8904,21 +8912,22 @@ packages:
     dev: false
 
   file:projects/rpc.tgz:
-    resolution: {integrity: sha512-y0gDFt4IY40UU36d3PELz3e4nNk+jAnGuQHk1FWxtzEMF8ns2mdwmaaKT81SvJuK5kSezog6FTXArHopz22bHQ==, tarball: file:projects/rpc.tgz}
+    resolution: {integrity: sha512-zGfAcPxAX0lluSaBeTpWQGrMWGm1l9DRB3Tpa/8uK1bLyxf0c8V9CXPyxn5cRqkSBhwebOrvYg65/SlY7buq2A==, tarball: file:projects/rpc.tgz}
     name: '@rush-temp/rpc'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
-      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
-      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
-      eslint: 7.28.0
-      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
-      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
-      eslint-plugin-import: 2.23.1_eslint@7.28.0
-      eslint-plugin-node: 11.1.0_eslint@7.28.0
-      eslint-plugin-promise: 5.1.0_eslint@7.28.0
-      eslint-plugin-standard: 5.0.0_eslint@7.28.0
-      typescript: 4.3.2
+      '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
+      '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
+      eslint: 7.26.0
+      eslint-config-standard: 16.0.2_b2df6221fd2975543849dd834a139d74
+      eslint-config-standard-with-typescript: 20.0.0_0dfb08fdc578a3f548b56a9a1b2d85d9
+      eslint-plugin-import: 2.23.1_eslint@7.26.0
+      eslint-plugin-node: 11.1.0_eslint@7.26.0
+      eslint-plugin-promise: 5.1.0_eslint@7.26.0
+      eslint-plugin-standard: 5.0.0_eslint@7.26.0
+      prettier: 2.3.0
+      typescript: 4.2.4
     transitivePeerDependencies:
       - supports-color
     dev: false

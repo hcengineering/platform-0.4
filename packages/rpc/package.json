@@ -5,9 +5,10 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "echo 'no docs yet'",
-    "test": "jest",
+    "test": "echo 'no tests'",
     "lint": "eslint --max-warnings=0 src",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix src",
+    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -16,6 +17,7 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.25.0",
+    "prettier": "^2.2.1",
     "eslint-config-standard": "^16.0.2",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
@@ -25,7 +27,6 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@anticrm/status": "~0.4.2",
-    "@anticrm/core": "~0.4.0"
+    "@anticrm/status": "~0.4.2"
   }
 }

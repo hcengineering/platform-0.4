@@ -13,10 +13,18 @@
     "domain": "model",
     "objectId": "class:core.Doc",
     "objectClass": "class:core.Class",
-    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Obj" }
+    "attributes": { "kind": 0, "extends": "class:core.Obj" }
   },
   {
     "_id": "60b73133d22498e666800cc1",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "model",
+    "objectId": "class:core.Space",
+    "objectClass": "class:core.Class",
+    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Doc" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc2",
     "_class": "class:core.TxCreateDoc",
     "domain": "model",
     "objectId": "class:core.Space",
@@ -34,8 +42,16 @@
   {
     "_id": "60b73133d22498e666800cc3",
     "_class": "class:core.TxCreateDoc",
-    "domain": "model",
+    "domain": "tx",
     "objectId": "class:core.TxCreateDoc",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Tx" }
+  },
+  {
+    "_id": "60b73133d22498e666800cc3",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "tx",
+    "objectId": "class:core.TxAddCollection",
     "objectClass": "class:core.Class",
     "attributes": { "kind": 0, "extends": "class:core.Tx" }
   },
@@ -61,7 +77,7 @@
     "domain": "model",
     "objectId": "class:workbench.Application",
     "objectClass": "class:core.Class",
-    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Doc" }
+    "attributes": { "kind": 0, "extends": "class:core.Doc" }
   },
   {
     "_id": "60b73133d22498e666800cc7",
@@ -121,6 +137,69 @@
       "domain": "model",
       "kind": 0,
       "extends": "class:core.Space"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800ccf",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd0",
+    "objectClass": "class:workbench.Application",
+    "attributes": {
+      "label": "string:task.ApplicationLabelTask",
+      "icon": "icon:task.Task",
+      "navigator": "component:task.Navigator"
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cd1",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd2",
+    "objectClass": "class:task.Project",
+    "attributes": {
+      "name": "default",
+      "description": "Default Project",
+      "private": false
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cd3",
+    "objectId": "class:core.Space",
+    "_class": "class:core.TxAddCollection",
+    "domain": "model",
+    "collection": "collection",
+    "itemClass": "class:core.Attribute",
+    "localId": "name",
+    "attributes": {
+      "type": {
+        "_class": "class:core.TypeString"
+      }
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800cd4",
+    "objectId": "class:core.Space",
+    "_class": "class:core.TxAddCollection",
+    "domain": "model",
+    "itemClass": "class:core.Attribute",
+    "collection": "collection",
+    "attributes": {
+      "type": {
+        "_class": "class:core.Attribute"
+      }
+    }
+  },
+  {
+    "_id": "60b73133d22498e666800ccc",
+    "_class": "class:core.TxCreateObject",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd0",
+    "objectClass": "class:workbench.Application",
+    "attributes": {
+      "label": "string:task.ApplicationLabelTask",
+      "icon": "icon:task.Task",
+      "navigator": "component:task.Navigator"
     }
   },
   {
