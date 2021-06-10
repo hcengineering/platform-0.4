@@ -29,6 +29,11 @@ export default mergeIds(chunter, {
     Channel: '' as Ref<Class<Channel>>
   },
   string: {
-    Channels: '' as IntlString
+    Channels: '' as IntlString,
+    CreateChannel: '' as IntlString,
+    ChannelName: '' as IntlString,
+    ChannelDescription: '' as IntlString,
+    MakePrivate: '' as IntlString,
+    MakePrivateDescription: '' as IntlString,
   }
 })
