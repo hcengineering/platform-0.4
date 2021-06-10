@@ -16,9 +16,9 @@
 import type { Ref, Class, Obj, Emb, Domain, Doc } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
+import { Account } from '../security'
 import { ModelDb, TxDb } from '../memdb'
 import type { Tx, TxAddCollection } from '../tx'
-import type { Account } from '../security'
 import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(11)
+    expect(result.length).toBe(12)
   })
 
   it('should query model with params', async () => {

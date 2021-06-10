@@ -536,6 +536,11 @@
       "packageName": "@anticrm/rpc",
       "projectFolder": "packages/rpc",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/elastic",
+      "projectFolder": "server/elastic",
+      "shouldPublish": true
     }
 
     // {

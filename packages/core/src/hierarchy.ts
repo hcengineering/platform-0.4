@@ -20,6 +20,7 @@ import core from './component'
 
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
+  private readonly descendants = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
 
   getAncestors (_class: Ref<Class<Obj>>): Array<Ref<Class<Obj>>> {
     const result: Array<Ref<Class<Obj>>> = []
@@ -57,8 +58,9 @@ export class Hierarchy {
     if (tx._class !== core.class.TxCreateDoc) return
     const createTx = tx as TxCreateDoc<Class<Obj>>
     if (createTx.objectClass !== core.class.Class) return
-    const _id = createTx.objectId
+    const _id: Ref<Class<Obj>> = createTx.objectId as Ref<Class<Obj>>
     this.classes.set(_id, createTx.attributes)
+    this.addDescendant(_id)
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
@@ -69,5 +71,25 @@ export class Hierarchy {
       cl = attrs?.extends
     }
     return false
+  }
+
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Array<Ref<Class<Obj>>> {
+    const data = this.descendants.get(_class)
+    if (data === undefined) {
+      throw new Error('descendants not found: ' + _class)
+    }
+    return data
+  }
+
+  private addDescendant<T extends Obj>(_class: Ref<Class<T>>): void {
+    const hierarchy = this.getAncestors(_class as Ref<Class<Obj>>)
+    for (const cls of hierarchy) {
+      const list = this.descendants.get(cls)
+      if (list === undefined) {
+        this.descendants.set(cls, [_class as Ref<Class<Obj>>])
+      } else {
+        list.push(_class as Ref<Class<Obj>>)
+      }
+    }
   }
 }

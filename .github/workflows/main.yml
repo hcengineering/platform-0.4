@@ -39,6 +39,22 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
 
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - uses: getong/elasticsearch-action@v1.2
+        with:
+          elasticsearch version: '7.12.0'
+          host port: 9200
+          container port: 9200
+          host node port: 9300
+          node port: 9300
+          discovery type: 'single-node'
+
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
         env:
