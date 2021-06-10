@@ -14,13 +14,15 @@
 -->
 
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
 
   import chunter from '../plugin'
 
+  const dispatch = createEventDispatcher()
 </script>
 
-<Dialog label={chunter.string.CreateChannel}>
+<Dialog label={chunter.string.CreateChannel} okLabel={chunter.string.CreateChannel} on:close={() => { dispatch('close') }}>
   <div class="content">
     <div class="row"><EditBox label={chunter.string.ChannelName} /></div>
     <div class="row"><EditBox label={chunter.string.ChannelDescription} /></div>

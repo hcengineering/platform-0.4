@@ -17,21 +17,26 @@
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
 
+  import { createEventDispatcher } from 'svelte'
+
   import Close from './internal/icons/Close.svelte'
   import Button from './Button.svelte'
   import Label from './Label.svelte'
 
   export let label: IntlString
+  export let okLabel: IntlString
+
+  const dispatch = createEventDispatcher()
 </script>
 
 <div class="dialog">
   <div class="header">
     <div class="title"><Label {label}/></div>
-    <div class="tool" on:click={() => { console.log('close') }}><Close size={16}/></div>
+    <div class="tool" on:click={() => { dispatch('close') }}><Close size={16}/></div>
   </div>
   <slot/>
   <div class="footer">
-    <Button label="Create" primary/>
+    <Button label={okLabel} primary/>
   </div>
 </div>
 
