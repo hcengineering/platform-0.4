@@ -16,6 +16,7 @@
 import { Ref, Class, Obj, Emb, Domain, Doc } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
+import { Account } from '../security'
 import { ModelDb, TxDb } from '../memdb'
 import { Tx, TxAddCollection } from '../tx'
 import { describe, expect, it } from '@jest/globals'
@@ -38,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(11)
+    expect(result.length).toBe(12)
   })
 
   it('should query model with params', async () => {
@@ -72,6 +73,8 @@ describe('memdb', () => {
       domain: 'model' as Domain,
       collection: 'attributes',
       localId: 'name',
+      user: 'model' as Ref<Account>,
+      timestamp: Date.now(),
       attributes: {
         _class: 'class:core.Attribute' as Ref<Class<Doc>>,
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

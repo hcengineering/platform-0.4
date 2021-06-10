@@ -225,25 +225,5 @@
       "description": "Default Project",
       "private": false
     }
-  },
-  {
-    "_id": "60b73133d22498e666800cc8",
-    "_class": "class:core.TxCreateDoc",
-    "domain": "model",
-    "objectId": "class:test.MyClass",
-    "objectClass": "class:core.Class",
-    "attributes": { "domain": "model", "kind": 0, "extends": "class:core.Doc" }
-  },
-  {
-    "_class": "class:core.TxAddCollection",
-    "domain": "model",
-    "collection": "attributes",
-    "localId": "name",
-    "attributes": {
-      "type": {
-        "_class": "class:core.TypeString"
-      }
-    },
-    "objectId": "class:test.MyClass"
   }
 ]

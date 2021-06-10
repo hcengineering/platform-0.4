@@ -107,7 +107,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.index(object)
   }
 
-  protected async txAddCollection (tx: TxAddCollection<Emb>): Promise<void> {
+  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
     const doc = await this.objectById(tx.objectId)
     if ((doc as any)[tx.collection] === undefined) {
       (doc as any)[tx.collection] = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
