@@ -38,7 +38,7 @@ jobs:
 
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
-        
+
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
@@ -48,7 +48,7 @@ jobs:
 
       - uses: getong/elasticsearch-action@v1.2
         with:
-          elasticsearch version: '7.13.0'
+          elasticsearch version: '7.12.0'
           host port: 9200
           container port: 9200
           host node port: 9300
