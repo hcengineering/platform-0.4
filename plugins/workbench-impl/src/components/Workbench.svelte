@@ -17,7 +17,6 @@
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
-  import AsideHeader from './AsideHeader.svelte'
   import Chat from './Chat.svelte'
   import avatar from '../../img/avatar.png'
 
@@ -65,10 +64,10 @@
   </div>
   {/if}
   <div class="component">
-    <Chat/>
+    <Chat title="default channel" subtitle="89 members"/>
   </div>
   <div class="aside">
-    <AsideHeader title="Applications"/>
+    <Chat title="Thread" subtitle="# default" thread/>
   </div>
 </div>
 
@@ -126,6 +125,7 @@
     .aside {
       @include panel(var(--theme-bg-color));
       min-width: 400px;
+      max-width: 400px;
       margin-right: 20px;
     }
   }

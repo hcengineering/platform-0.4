@@ -14,36 +14,52 @@
 -->
 
 <script lang="ts">
-  import FullRight from './icons/FullRight.svelte'
+  import { ActionIcon } from '@anticrm/ui'
+  import Emoji from './icons/Emoji.svelte'
+  import Share from './icons/Share.svelte'
   import Bookmark from './icons/Bookmark.svelte'
   import MoreH from './icons/MoreH.svelte'
+  import Reactions from './Reactions.svelte'
+  import Replies from './Replies.svelte'
   import avatar from '../../img/avatar.png'
 
   export let name: string
   export let time: string
   export let message: string
+  export let reactions: boolean = false
+  export let replies: boolean = false
+  export let thread: boolean = false
 </script>
 
-<div class="msgContainer">
+<div class="message-container">
   <div class="avatar"><img src={avatar} alt="Avatar"></div>
   <div class="message">
     <div class="header">{name}<span>{time}</span></div>
     <div class="text">{message}</div>
+    {#if (reactions || replies) && !thread}
+      <div class="footer">
+        <div>{#if reactions}<Reactions/>{/if}</div>
+        <div>{#if replies}<Replies/>{/if}</div>
+      </div>
+    {/if}
   </div>
-  <div class="buttons">
-    <div class="tool"><MoreH size={20}/></div>
-    <div class="tool"><Bookmark size={20}/></div>
-    <div class="tool"><FullRight size={20}/></div>
-  </div>
+  {#if !thread}
+    <div class="buttons">
+      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'}/></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'}/></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'}/></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'}/></div>
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
-  .msgContainer {
+  .message-container {
     position: relative;
     display: flex;
-    flex-direction: row;
     margin-bottom: 32px;
     z-index: 1;
+
     .avatar {
       min-width: 36px;
       width: 36px;
@@ -51,9 +67,11 @@
       background-color: var(--theme-bg-accent-color);
       border-radius: 50%;
     }
+
     .message {
       display: flex;
       flex-direction: column;
+      width: 100%;
       margin-left: 16px;
 
       .header {
@@ -61,6 +79,8 @@
         font-size: 16px;
         line-height: 150%;
         color: var(--theme-caption-color);
+        margin-bottom: 4px;
+
         span {
           margin-left: 8px;
           font-weight: 400;
@@ -71,6 +91,17 @@
       }
       .text {
         line-height: 150%;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 32px;
+        margin-top: 8px;
+
+        div + div {
+          margin-left: 16px;
+        }
       }
     }
 
@@ -86,18 +117,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 28px;
-        height: 28px;
-        background-color: transparent;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        opacity: .3;
-        cursor: pointer;
-        &:hover {
-          background-color: var(--theme-menu-divider);
-          border: 1px solid var(--theme-bg-accent-color);
-          opacity: 1;
-        }
+        width: 20px;
+        height: 20px;
       }
 
       .tool + .tool {

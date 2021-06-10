@@ -54,6 +54,7 @@
   --theme-bg-modal: #2C2B35;
   --theme-border-modal: rgba(0, 0, 0, 0.2);
   --theme-chat-selection: radial-gradient(135.96% 3333.35% at -2.36% -27.63%, rgba(210, 183, 156, 0.11) 0%, rgba(204, 196, 184, 0.0785128) 20.8%, rgba(104, 104, 114, 0.11) 100%);
+  --theme-chat-divider: rgb(36, 36, 41);
 
   --theme-bg-accent-color: rgba(255, 255, 255, .03);
   --theme-bg-accent-hover: rgba(255, 255, 255, .06);
@@ -103,6 +104,7 @@
   --theme-bg-modal: #2C2B35;
   --theme-border-modal: rgba(0, 0, 0, 0.2);
   --theme-chat-selection: radial-gradient(135.96% 3333.35% at -2.36% -27.63%, rgba(210, 183, 156, 0.11) 0%, rgba(204, 196, 184, 0.0785128) 20.8%, rgba(104, 104, 114, 0.11) 100%);
+  --theme-chat-divider: rgb(66, 65, 76);
 
   --theme-bg-accent-color: rgba(255, 255, 255, .03);
   --theme-bg-accent-hover: rgba(255, 255, 255, .06);
@@ -151,6 +153,7 @@
   --theme-bg-modal: #fff;
   --theme-border-modal: rgba(0, 0, 0, 0.2);
   --theme-chat-selection: radial-gradient(135.96% 3333.35% at -2.36% -27.63%, rgba(210, 183, 156, 0.11) 0%, rgba(204, 196, 184, 0.0785128) 20.8%, rgba(104, 104, 114, 0.11) 100%);
+  --theme-chat-divider: rgb(233, 233, 233);
 
   --theme-bg-accent-color: rgba(0, 0, 0, .03);
   --theme-bg-accent-hover: rgba(0, 0, 0, .05);
@@ -178,7 +181,7 @@
   --theme-content-accent-color: rgba(39, 33, 33, 0.8);
   --theme-content-color: rgba(39, 33, 33, 0.6);
   --theme-content-dark-color: rgba(39, 33, 33, 0.4);
-  --theme-content-trans-color: rgba(39, 33, 33, 0.3);
+  --theme-content-trans-color: rgba(31, 33, 43, 0.3);
 
   --theme-userlink-color: #b92d52;
   --theme-userlink-hover: #b92d52;

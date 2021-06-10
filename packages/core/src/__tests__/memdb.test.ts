@@ -13,12 +13,13 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Obj, Emb, Domain, Doc } from '../classes'
+import type { Ref, Class, Obj, Emb, Domain, Doc } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { Account } from '../security'
 import { ModelDb, TxDb } from '../memdb'
-import { Tx, TxAddCollection } from '../tx'
+import type { Tx, TxAddCollection } from '../tx'
+import type { Account } from '../security'
 import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
@@ -71,6 +72,8 @@ describe('memdb', () => {
       itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
       _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
       domain: 'model' as Domain,
+      user: 'user' as Ref<Account>,
+      timestamp: 0,
       collection: 'attributes',
       localId: 'name',
       user: 'model' as Ref<Account>,

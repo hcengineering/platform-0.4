@@ -14,18 +14,29 @@
 -->
 
 <script lang="ts">
-  import { EditBox } from '@anticrm/ui'
+  import { IntlString } from '@anticrm/status';
+  import { Icon, ActionIcon } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Add from './icons/Add.svelte'
+  import Star from './icons/Star.svelte'
 
-  export let title: string
+  export let title: IntlString
+  export let subtitle: IntlString | undefined
+  export let thread: boolean = false
 </script>
 
-<div class="header">
-  <div class="title">{title}</div>
+<div class="header" class:thread={thread}>
+  <div class="caption">
+    <div class="title">
+      {#if !thread}<span><Icon icon={'icon:chunter.Hashtag'} size={16}/></span>{/if}
+      {title}
+    </div>
+    {#if subtitle}<div class="subtitle">{subtitle}</div>{/if}
+  </div>
   <div class="buttons">
-    <div class="button"><MoreH size={16}/></div>
-    <div class="button"><Add size={16}/></div>
+    <div class="button"><ActionIcon icon={MoreH} size={16}/></div>
+    <div class="button"><ActionIcon icon={Add} size={16}/></div>
+    <div class="button"><ActionIcon icon={Star} size={16}/></div>
   </div>
 </div>
 
@@ -39,15 +50,42 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 32px 0 40px;
-
-    .title {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      font-size: 16px;
-      font-weight: 500;
-      flex-grow: 1;
+    &.thread {
+      width: auto;
+      border-bottom: 1px solid transparent;
     }
+
+    .caption {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      color: var(--theme-caption-color);
+
+      .title {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 16px;
+        font-weight: 500;
+
+        span {
+          width: 16px;
+          height: 16px;
+          margin-right: 8px;
+        }
+      }
+      .subtitle {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        opacity: .3;
+      }
+    }
+
     .buttons {
       display: flex;
       flex-direction: row-reverse;
@@ -55,11 +93,6 @@
       .button {
         width: 16px;
         height: 16px;
-        opacity: .3;
-        cursor: pointer;
-        &:hover {
-          opacity: 1;
-        }
       }
       .button + .button {
         margin-right: 16px;
