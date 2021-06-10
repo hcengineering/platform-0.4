@@ -30,7 +30,9 @@ describe('hierarchy', () => {
     }
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
-    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: 'model' as Domain })
+    const second = await model.findAll(core.class.Class, { domain: 'model' as Domain })
+    expect(second.length).toBe(7)
+    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId })
     expect(first.length).toBe(1)
     const result = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: 'domain' as Domain })
     expect(result.length).toBe(0)
