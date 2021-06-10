@@ -21,19 +21,20 @@
   import Tooltip from './Tooltip.svelte'
 
   export let label: IntlString
+  export let direction: string = 'top'
   export let icon: Asset | AnySvelteComponent
   export let size: 16 | 20 | 24
   export let action: () => Promise<void>
-  export let invisible: boolean = true
+  export let invisible: boolean = false
 </script>
 
-<Tooltip label={label}>
+<Tooltip label={label} direction={direction}>
   <button class="button" style="width: {size}px; height: {size}px" on:click={action}>
     <div class="icon" style="width: {size}px; height: {size}px" class:invisible={invisible}>
       {#if typeof(icon) === 'string'}
         <Icon {icon} {size}/>
       {:else}
-        <svelte:component this={icon} />
+        <svelte:component this={icon} size={size} />
       {/if}
     </div>
   </button>
