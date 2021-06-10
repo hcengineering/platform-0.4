@@ -39,8 +39,14 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
 
-      - name: Setup ElasticSearch
-        uses: getong/elasticsearch-action@v1.2
+      - uses: getong/elasticsearch-action@v1.2
+        with:
+          elasticsearch version: '7.13.0'
+          host port: 9200
+          container port: 9200
+          host node port: 9300
+          node port: 9300
+          discovery type: 'single-node'
 
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
