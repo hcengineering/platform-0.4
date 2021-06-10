@@ -77,6 +77,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const domain = this.hierarchy.getDomain(_class)
 
     console.log('check')
+    console.log(this.workspace)
+    console.log(domain)
+    const { body: index } = await this.client.indices.get({ index: this.workspace })
+    console.log(index)
+    console.log(index[this.workspace].mappings.properties)
+
     const { body: test } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -88,7 +94,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
         }
       }
     })
-    console.log(test.hits.hits)
+    console.log(test)
 
     const { body } = await this.client.search({
       index: this.workspace,
@@ -121,6 +127,8 @@ export class ElasticStorage extends TxProcessor implements Storage {
     }
     const res = await this.client.index(object)
     console.log(res)
+    const { body } = await this.client.indices.get({ index: this.workspace })
+    console.log(body)
   }
 
   protected async txAddCollection (tx: TxAddCollection<VDoc, Emb>): Promise<void> {
