@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(12)
+    expect(result.length).toBe(8)
   })
 
   it('should query model with params', async () => {
