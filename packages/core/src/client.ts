@@ -46,7 +46,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
   }
 
   const conn = await connect(txHander)
-  const txes = await conn.findAll(core.class.Tx, { domain: DOMAIN_MODEL })
+  const txes = await conn.findAll(core.class.Tx, { space: core.space.Model })
 
   async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const clazz = hierarchy.getClass(_class)

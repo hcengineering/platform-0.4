@@ -14,7 +14,8 @@
 //
 
 import type { Tx, Storage, Ref, Doc, Class, DocumentQuery } from '@anticrm/core'
-import { ModelDb, TxDb, Hierarchy, DOMAIN_TX, DOMAIN_MODEL } from '@anticrm/core'
+import { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
+import core from '@anticrm/core'
 
 async function getModel(): Promise<Tx[]> { 
   return import('./model.tx.json') as unknown as Tx[]
@@ -45,7 +46,7 @@ export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
   return { 
     findAll,
     tx: async (tx: Tx): Promise<void> => {
-      if (tx.domain === DOMAIN_MODEL) {
+      if (tx.objectSpace === core.space.Model) {
         hierarchy.tx(tx)
       }
       await Promise.all([model.tx(tx), transactions.tx(tx)])

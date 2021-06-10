@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Emb, Domain, Doc } from '../classes'
+import type { Ref, Class, Obj, Emb, Domain, Doc, Account } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
-import { Account } from '../security'
 import { ModelDb, TxDb } from '../memdb'
 import type { Tx, TxAddCollection } from '../tx'
+
 import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
@@ -67,12 +67,13 @@ describe('memdb', () => {
     expect.assertions(1)
     const errorTx: TxAddCollection<Doc, Emb> = {
       _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Doc, Emb>>,
-      objectId: 'class:test.MyClass' as Ref<Doc>,
-      itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
       _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
-      domain: 'model' as Domain,
-      user: 'user' as Ref<Account>,
-      timestamp: 0,
+      space: core.space.Tx,
+      modifiedBy: 'xxx' as Ref<Account>,
+      modifiedOn: 0,
+      objectId: 'class:test.MyClass' as Ref<Doc>,
+      objectSpace: core.space.Model,
+      itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
       collection: 'attributes',
       localId: 'name',
       attributes: {
