@@ -119,7 +119,8 @@ export class ElasticStorage extends TxProcessor implements Storage {
       type: this.hierarchy.getDomain(tx.objectClass),
       body: { _class: tx.objectClass, ...tx.attributes }
     }
-    await this.client.index(object)
+    const res = await this.client.index(object)
+    console.log(res)
   }
 
   protected async txAddCollection (tx: TxAddCollection<VDoc, Emb>): Promise<void> {
@@ -138,6 +139,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       type: tx.domain,
       body: data
     }
-    await this.client.index(object)
+    const res = await this.client.index(object)
+    console.log(res)
   }
 }
