@@ -65,7 +65,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     }
 
     const classes = []
-    const children = this.hierarchy.extendsOfClass(_class)
+    const children = this.hierarchy.getDescendants(_class)
     for (const value of children) {
       const criteria = {
         match: Object()

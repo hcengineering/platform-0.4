@@ -58,9 +58,9 @@ export class Hierarchy {
     if (tx._class !== core.class.TxCreateDoc) return
     const createTx = tx as TxCreateDoc<Class<Obj>>
     if (createTx.objectClass !== core.class.Class) return
-    const _id = createTx.objectId as Ref<Class<Obj>>
+    const _id: Ref<Class<Obj>> = createTx.objectId as Ref<Class<Obj>>
     this.classes.set(_id, createTx.attributes)
-    this.addExtends(_id)
+    this.addDescendant(_id)
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
@@ -73,17 +73,17 @@ export class Hierarchy {
     return false
   }
 
-  extendsOfClass<T extends Obj>(_class: Ref<Class<T>>): Array<Ref<Class<Obj>>> {
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Array<Ref<Class<Obj>>> {
     return this.extends.get(_class) ?? []
   }
 
-  private addExtends<T extends Obj>(_class: Ref<Class<T>>): void {
+  private addDescendant<T extends Obj>(_class: Ref<Class<T>>): void {
     const hierarchy = this.getAncestors(_class as Ref<Class<Obj>>)
     for (const cls of hierarchy) {
       const list = this.extends.get(cls)
       if (list === undefined) {
         this.extends.set(cls, [_class as Ref<Class<Obj>>])
-      } else if (!list.includes(_class)) {
+      } else {
         list.push(_class as Ref<Class<Obj>>)
       }
     }
