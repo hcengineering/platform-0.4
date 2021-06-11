@@ -20,5 +20,8 @@ module.exports = {
       '**/tsconfig.json'
     ]
   },
-  plugins: ['@typescript-eslint', 'import']
+  plugins: ['@typescript-eslint', 'import'],
+  rules: {
+    '@typescript-eslint/array-type': 'array'
+  }
 }
