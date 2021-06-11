@@ -7,6 +7,13 @@
     "attributes": {
         "kind": 0
     }
+},  {
+    "_id": "60b73133d22498e666800cc4",
+    "_class": "class:core.TxCreateDoc",
+    "domain": "model",
+    "objectId": "class:core.Class",
+    "objectClass": "class:core.Class",
+    "attributes": { "kind": 0, "extends": "class:core.Obj" }
 }, {
     "_id": "60b53fc62f79e7652f84d3d5",
     "_class": "class:core.TxCreateDoc",
