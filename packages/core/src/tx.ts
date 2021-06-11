@@ -56,7 +56,6 @@ export class TxProcessor {
       case core.class.TxAddCollection:
         return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
     }
-    return await Promise.resolve()
   }
 
   static createDoc2Doc (tx: TxCreateDoc<Doc>): Doc {

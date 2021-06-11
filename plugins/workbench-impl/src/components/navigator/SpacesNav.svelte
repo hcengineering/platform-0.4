@@ -37,13 +37,12 @@
     unsubscribe = getClient().query(model.spaceClass, {}, result => { spaces = result })
   }
 
-  onDestroy(() => { unsubscribe() })
+  onDestroy(unsubscribe)
 
   const addSpace: Action = {
     label: model.addSpaceLabel,
     icon: IconAdd,
     action: async (): Promise<void> => {
-      console.log('the action')
       showModal(model.createComponent, {})
     }
   }

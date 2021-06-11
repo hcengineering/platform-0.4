@@ -19,7 +19,7 @@ import { TxOperations } from '@anticrm/core'
 type Query = {
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
-  result: Doc[]
+  result: Doc[] | Promise<Doc[]>
   callback: (result: Doc[]) => void
 }
 
@@ -54,17 +54,15 @@ export class LiveQuery extends TxOperations implements Client {
   }
 
   query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
+    const result = this.client.findAll(_class, query)
     const q: Query = { 
       _class, 
       query,
-      result: [],
+      result,
       callback: callback as (result: Doc[]) => void
     }
     this.queries.push(q)
-    this.client.findAll(_class, query).then((result) => {
-      q.result = result
-      q.callback(result)
-    })
+    result.then(result => { q.callback([...result]) })
     return () => { 
       this.queries.splice(this.queries.indexOf(q)) 
     }
@@ -74,14 +72,17 @@ export class LiveQuery extends TxOperations implements Client {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
         const doc = TxOperations.createDoc2Doc(tx)
+        if (q.result instanceof Promise) {
+          q.result = [...await q.result]
+        }
         q.result.push(doc)
-        q.callback(q.result)
+        q.callback([...q.result])
       }
     }
   }
 
   async tx(tx: Tx): Promise<void> {
     await this.client.tx(tx)
-    return super.tx(tx)
+    await super.tx(tx)
   }
 }

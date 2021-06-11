@@ -15,8 +15,9 @@
 
 import { LiveQuery } from '..'
 import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateDoc, Obj, Space } from '@anticrm/core'
-import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations } from '@anticrm/core'
+import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations, createClient } from '@anticrm/core'
 import core from '@anticrm/core'
+import { connect } from './connection'
 
 describe('query', () => {
 
@@ -60,17 +61,22 @@ describe('query', () => {
 
     let attempt = 0
     const query = new LiveQuery(storage)
-    query.query<Space>(klass, { private: false }, (result) => {
+    query.query<Space>(klass, { private: false }, async (result) => {
       expect(result).toHaveLength(expectedLength + attempt)
       if (attempt > 0) {
         expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
       }
-      if (attempt++ === 3) done()
+      if (attempt++ === 3) {
+        // check underlying storage received all data.
+        const result = await storage.findAll<Space>(klass, { private: false })
+        expect(result).toHaveLength(expectedLength + attempt - 1)
+        done()
+      }
     })
 
-    query.createDoc(klass, core.space.Model, { x: 1, private: false })
-    query.createDoc(klass, core.space.Model, { x: 2, private: false })
-    query.createDoc(klass, core.space.Model, { x: 3, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 1, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 2, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 3, private: false })
   })
 
   it('unsubscribe query', async () => {
@@ -96,6 +102,27 @@ describe('query', () => {
     await query.createDoc(klass, core.space.Model, { private: false })
     await query.createDoc(klass, core.space.Model, { private: false })
   })
+
+  it('query against core client', async (done) => {
+    const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
+    const client = await createClient(connect)
+
+    const expectedLength = 2
+    let attempt = 0
+    const query = new LiveQuery(client)
+    query.query<Space>(klass, { private: false }, (result) => {
+      expect(result).toHaveLength(expectedLength + attempt)
+      if (attempt > 0) {
+        expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
+      }
+      if (attempt++ === 1) done()
+    })
+
+    await query.createDoc(klass, core.space.Model, { x: 1, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 2, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 3, private: false })
+  })
+
 
 })
 
