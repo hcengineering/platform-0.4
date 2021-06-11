@@ -20,11 +20,21 @@
   import { getClient } from '@anticrm/workbench'
 
   import chunter from '../plugin'
+  import core from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
+  let name: string = ''
+  let description: string = ''
+
+  const client = getClient()
+
   function createChannel() {
-    console.log('create channel')
+    client.createDoc(chunter.class.Channel, core.space.Model, {
+      name,
+      description,
+      private: false
+    })
   }
 </script>
 
@@ -33,8 +43,8 @@
         okAction={createChannel}
         on:close={() => { dispatch('close') }}>
   <div class="content">
-    <div class="row"><EditBox label={chunter.string.ChannelName} /></div>
-    <div class="row"><EditBox label={chunter.string.ChannelDescription} /></div>
+    <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name}/></div>
+    <div class="row"><EditBox label={chunter.string.ChannelDescription} bind:value={description}/></div>
     <div class="row"><ToggleWithLabel label={chunter.string.MakePrivate} description={chunter.string.MakePrivateDescription}/></div>
   </div>
 </Dialog>

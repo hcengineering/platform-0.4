@@ -14,12 +14,10 @@
 //
 
 import { SvelteComponent } from 'svelte'
-import type { AnyComponent, AnySvelteComponent } from './types'
-import { store } from './stores'
 
 import Root from './components/internal/Root.svelte'
 
-export type { AnyComponent, Action } from './types'
+export type { AnyComponent, AnySvelteComponent, Action } from './types'
 export { applicationShortcutKey } from './utils'
 
 export { default as EditBox } from './components/EditBox.svelte'
@@ -38,14 +36,6 @@ export { default as IconAdd } from './components/icons/Add.svelte'
 
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
-}
-
-export function showModal (component: AnySvelteComponent | AnyComponent, props: any, element?: HTMLElement): void {
-  store.set({ is: component, props, element: element })
-}
-
-export function closeModal (): void {
-  store.set({ is: undefined, props: {}, element: undefined })
 }
 
 // let documentProvider: DocumentProvider | undefined

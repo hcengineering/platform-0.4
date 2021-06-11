@@ -12,7 +12,6 @@
   import Clock from './Clock.svelte'
   // import Mute from './icons/Mute.svelte'
   import WiFi from './icons/WiFi.svelte'
-  import Modal from './Modal.svelte'
   import ThemeSelector from './ThemeSelector.svelte'
   
   let application: AnyComponent | undefined
@@ -69,7 +68,6 @@
       {/if}
     </div>
   </div>
-  <Modal />
 </Theme>
 
 <style lang="scss">

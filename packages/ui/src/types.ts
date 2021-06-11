@@ -160,7 +160,7 @@ export interface UIService extends Service, DocumentProvider {
 
 export interface Action {
   label: IntlString
-  icon: Asset
+  icon: Asset | AnySvelteComponent
   action: () => Promise<void>
 }
 

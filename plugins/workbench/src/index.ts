@@ -19,9 +19,10 @@ import type { IntlString, Asset } from '@anticrm/status'
 import type { Ref, Class, Doc, Emb, Space } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Client } from '@anticrm/plugin-core'
-import type { AnyComponent } from '@anticrm/ui'
+import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
+import { store } from './stores'
 
 export interface Application extends Doc {
   label: IntlString
@@ -60,4 +61,13 @@ export function getClient(): Client {
   return getContext<Client>(workbench.context.Client)
 }
 
+export function showModal (component: AnySvelteComponent | AnyComponent, props: any, element?: HTMLElement): void {
+  store.set({ is: component, props, element: element })
+}
+
+export function closeModal (): void {
+  store.set({ is: undefined, props: {}, element: undefined })
+}
+
+export { store }
 export default workbench
