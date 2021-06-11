@@ -24,7 +24,6 @@ async function getModel(): Promise<Tx[]> {
 export async function connect(handler: (tx: Tx) => void): Promise<Storage> {
 
   const txes = await getModel()
-  console.log(txes)
 
   const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)

@@ -75,7 +75,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
   }
 
   const conn = await connect(txHander)
-  const txes = await conn.findAll(core.class.Tx, { space: core.space.Model })
+  const txes = await conn.findAll(core.class.Tx, { objectSpace: core.space.Model })
 
   const txMap = new Map<Ref<Tx>, Ref<Tx>>()
   for (const tx of txes) txMap.set(tx._id, tx._id)
