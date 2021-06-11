@@ -74,12 +74,11 @@ export class TxProcessor {
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
 }
 
-export abstract class TxOperations {
+export class TxOperations extends TxProcessor {
 
   constructor (readonly user: Ref<Account>) {
+    super ()
   }
-
-  abstract tx (tx: Tx): Promise<void>
 
   async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
     const tx: TxCreateDoc<T> = {
