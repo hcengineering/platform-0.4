@@ -21,14 +21,12 @@ import core from './component'
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
   private readonly descendants = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
+  private readonly ancestors = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
 
   getAncestors (_class: Ref<Class<Obj>>): Array<Ref<Class<Obj>>> {
-    const result: Array<Ref<Class<Obj>>> = []
-    let cl: Ref<Class<Obj>> | undefined = _class
-    while (cl !== undefined) {
-      result.push(cl)
-      const attrs = this.classes.get(cl)
-      cl = attrs?.extends
+    const result = this.ancestors.get(_class)
+    if (result === undefined) {
+      throw new Error('ancestors not found: ' + _class)
     }
     return result
   }
@@ -60,6 +58,7 @@ export class Hierarchy {
     if (createTx.objectClass !== core.class.Class) return
     const _id: Ref<Class<Obj>> = createTx.objectId as Ref<Class<Obj>>
     this.classes.set(_id, createTx.attributes)
+    this.addAncestors(_id)
     this.addDescendant(_id)
   }
 
@@ -90,6 +89,20 @@ export class Hierarchy {
       } else {
         list.push(_class as Ref<Class<Obj>>)
       }
+    }
+  }
+
+  private addAncestors<T extends Obj>(_class: Ref<Class<T>>): void {
+    let cl: Ref<Class<Obj>> | undefined = _class
+    while (cl !== undefined) {
+      const list = this.ancestors.get(_class)
+      if (list === undefined) {
+        this.ancestors.set(_class, [cl])
+      } else {
+        list.push(cl)
+      }
+      const attrs = this.classes.get(cl)
+      cl = attrs?.extends
     }
   }
 }
