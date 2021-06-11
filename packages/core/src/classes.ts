@@ -16,6 +16,7 @@
 import type { KeysByType } from 'simplytyped'
 import type { IntlString, Asset } from '@anticrm/status'
 
+export type Timestamp = number
 export type PrimitiveType = number | string | boolean | undefined
 
 export type Ref<T extends Doc> = string & { __ref: T }
@@ -30,7 +31,9 @@ export interface Emb extends Obj {
 
 export interface Doc extends Obj {
   _id: Ref<this>
-  _mixins?: Array<Ref<Mixin<Doc>>>
+  space: Ref<Space>
+  modifiedOn: Timestamp
+  modifiedBy: Ref<Account>
 }
 
 export type EmbType = PrimitiveType | Emb | Ref<Doc>
@@ -80,7 +83,7 @@ export type Mixin<T extends Doc> = Class<T>
 
 // D A T A
 
-export type Data<T extends O, O extends Doc=Doc> = Omit<WithoutCollections<T>, keyof O>
+export type Data<T extends Doc> = Omit<WithoutCollections<T>, keyof Doc>
 
 // T Y P E S
 
@@ -93,3 +96,18 @@ export interface BagOf extends Type<Record<string, EmbType>> {
 }
 
 export const DOMAIN_MODEL = 'model' as Domain
+
+// S E C U R I T Y
+
+export interface Space extends Doc {
+  name: string
+  description: string
+  private: boolean
+  members: Collection<Member>
+}
+
+export interface Member extends Emb {
+  account: Ref<Account>
+}
+
+export interface Account extends Doc {}

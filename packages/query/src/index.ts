@@ -84,7 +84,7 @@ export class LiveQuery extends TxProcessor implements Client {
   async txCreateDoc(tx: TxCreateDoc<Doc>): Promise<void> {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
-        const doc = { _id: tx.objectId, _class: tx.objectClass, ...tx.attributes}
+        const doc = TxProcessor.createDoc2Doc(tx)
         this.cacheCreateDoc(q, doc)
         this.refresh(q)
       }

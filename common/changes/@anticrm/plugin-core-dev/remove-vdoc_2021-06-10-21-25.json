@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": "Remove `VDoc`.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "andrey.v.platov@gmail.com"
+}

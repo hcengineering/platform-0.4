@@ -114,11 +114,7 @@ export class ModelDb extends TxProcessor implements Storage {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    this.db.addDoc({
-      _id: tx.objectId,
-      _class: tx.objectClass,
-      ...tx.attributes
-    })
+    this.db.addDoc(TxProcessor.createDoc2Doc(tx))
   }
 
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {

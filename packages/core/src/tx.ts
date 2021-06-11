@@ -13,27 +13,22 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref } from './classes'
+import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Timestamp } from './classes'
 import core from './component'
-import { Account, Space } from './security'
 
-export interface Tx<T extends Doc=Doc> extends Doc {
-  domain: string
+export interface Tx<T extends Doc = Doc> extends Doc {  
   objectId: Ref<T>
-
-  space?: Ref<Space>
-  user: Ref<Account> // A user created object
-  timestamp: number // transaction time.
+  objectSpace: Ref<Space>
 }
 
-export interface TxCreateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Data<T, P>
+  attributes: Data<T>
 }
 
-export interface TxUpdateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Partial<Data<T, P>>
+  attributes: Partial<Data<T>>
 }
 
 export interface TxAddCollection<T extends Doc, P extends Emb> extends Tx<T> {
@@ -61,6 +56,17 @@ export class TxProcessor {
         return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
     }
     return await Promise.resolve()
+  }
+
+  static createDoc2Doc (tx: TxCreateDoc<Doc>): Doc {
+    return {
+      _id: tx.objectId,
+      _class: tx.objectClass,
+      space: tx.objectSpace,
+      modifiedBy: tx.modifiedBy,
+      modifiedOn: tx.modifiedOn,
+      ...tx.attributes
+    }
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Data, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc, VDoc } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Data, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -41,7 +41,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  private async objectById<T extends VDoc>(_id: Ref<T>): Promise<T> {
+  private async objectById<T extends Doc>(_id: Ref<T>): Promise<T> {
     const request = {
       index: this.workspace,
       id: _id
@@ -97,7 +97,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     return result
   }
 
-  protected async txCreateDoc (tx: TxCreateDoc<VDoc>): Promise<void> {
+  protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     const object: RequestParams.Index = {
       id: tx.objectId,
       index: this.workspace,
@@ -108,7 +108,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.indices.refresh({ index: this.workspace })
   }
 
-  protected async txAddCollection (tx: TxAddCollection<VDoc, Emb>): Promise<void> {
+  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
     const doc = await this.objectById(tx.objectId)
     if ((doc as any)[tx.collection] === undefined) {
       (doc as any)[tx.collection] = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
@@ -120,7 +120,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const object = {
       id: tx.objectId,
       index: this.workspace,
-      type: tx.domain,
+      type: tx.objectSpace,
       body: data
     }
     await this.client.index(object)
