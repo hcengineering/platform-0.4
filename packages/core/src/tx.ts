@@ -76,11 +76,8 @@ export class TxProcessor {
 
 export class TxOperations extends TxProcessor {
 
-  private readonly user: Ref<Account>
-
-  constructor (user: Ref<Account>) {
+  constructor (readonly user: Ref<Account>) {
     super ()
-    this.user = user
   }
 
   async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {

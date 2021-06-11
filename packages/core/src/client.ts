@@ -26,7 +26,11 @@ import core from './component'
 
 type TxHander = (tx: Tx) => void
 
-export class Client extends TxOperations implements Storage {
+export interface Client extends TxOperations, Storage {
+  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
+}
+
+class ClientImpl extends TxOperations implements Storage {
 
   constructor (
     user: Ref<Account>, 
@@ -80,7 +84,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
 
   txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
 
-  client = new Client(core.account.System, hierarchy, model, conn)
+  client = new ClientImpl(core.account.System, hierarchy, model, conn)
 
   for (const tx of txBuffer) txHander(tx)
   txBuffer = undefined
