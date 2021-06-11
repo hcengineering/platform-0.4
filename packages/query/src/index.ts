@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, TxOperations } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
 
 type Query = {
@@ -22,13 +22,13 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-export class LiveQuery extends TxProcessor implements Client {
+export class LiveQuery extends TxOperations implements Client {
   private readonly cache: Map<Query, Doc[]> = new Map<Query, Doc[]>()
   private readonly client: Client
   private readonly queries: Query[] = []
 
   constructor (client: Client) {
-    super ()
+    super (client.user)
     this.client = client
   }
 

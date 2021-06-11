@@ -15,7 +15,8 @@
 
 import { LiveQuery } from '..'
 import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateDoc, Obj, Space } from '@anticrm/core'
-import { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
+import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations } from '@anticrm/core'
+import core from '@anticrm/core'
 
 describe('query', () => {
   it('findAll', async () => {
@@ -81,25 +82,37 @@ async function getModel(): Promise<Tx[]> {
   return import('./model.tx.json') as unknown as Tx[]
 }
 
-async function getClient(): Promise<Client> {
-    const hierarchy = new Hierarchy()
-    const txes = await getModel()
-    for (const tx of txes) hierarchy.tx(tx)
-    const transactions = new TxDb(hierarchy)
-    const model = new ModelDb(hierarchy)
+class ClientImpl extends TxOperations implements Client {
 
-    function findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-      const domain = hierarchy.getClass(_class).domain
-      if (domain === DOMAIN_TX)
-        return transactions.findAll(_class, query)
-      return model.findAll(_class, query)  
-    }
-
-    return { 
-        findAll,
-        tx: async (tx: Tx): Promise<void> => {
-          await Promise.all([model.tx(tx), transactions.tx(tx)])
-        },
-        isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => { return hierarchy.isDerived(_class, from) }
-      }
+  constructor (
+    private readonly hierarchy: Hierarchy,
+    private readonly model: ModelDb, 
+    private readonly transactions: TxDb) {
+    super (core.account.System)
   }
+  
+  async tx (tx: Tx): Promise<void> {
+    await Promise.all([this.model.tx(tx), this.transactions.tx(tx)])
+  }
+
+  isDerived <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) { 
+    return this.hierarchy.isDerived(_class, from) 
+  }
+
+  findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    const domain = this.hierarchy.getClass(_class).domain
+    if (domain === DOMAIN_TX)
+      return this.transactions.findAll(_class, query)
+    return this.model.findAll(_class, query)  
+  }
+
+}
+
+async function getClient(): Promise<Client> {
+  const hierarchy = new Hierarchy()
+  const txes = await getModel()
+  for (const tx of txes) hierarchy.tx(tx)
+  const transactions = new TxDb(hierarchy)
+  const model = new ModelDb(hierarchy)
+  return new ClientImpl(hierarchy, model, transactions)
+}
