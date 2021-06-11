@@ -22,6 +22,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
-    '@typescript-eslint/array-type': 'off'
+    '@typescript-eslint/array-type': 'off',
+    'no-void': 'off'
   }
 }

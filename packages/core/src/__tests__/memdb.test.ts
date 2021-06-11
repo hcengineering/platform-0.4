@@ -28,7 +28,7 @@ describe('memdb', () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const txDb = new TxDb(hierarchy)
-    for (const tx of txes) txDb.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await txDb.tx(tx)
     const result = await txDb.findAll(core.class.Tx, {})
     expect(result.length).toBe(
       txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length

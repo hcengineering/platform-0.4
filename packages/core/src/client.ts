@@ -69,7 +69,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
       txBuffer?.push(tx)
     } else {
       hierarchy.tx(tx)
-      model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+      void model.tx(tx)
     }
   }
 
@@ -79,7 +79,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
   const txMap = new Map<Ref<Tx>, Ref<Tx>>()
   for (const tx of txes) txMap.set(tx._id, tx._id)
   for (const tx of txes) hierarchy.tx(tx)
-  for (const tx of txes) model.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+  for (const tx of txes) await model.tx(tx)
 
   txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
 
