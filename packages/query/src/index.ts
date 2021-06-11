@@ -13,17 +13,17 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, TxOperations } from '@anticrm/core'
-import { TxProcessor } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
+import { TxOperations } from '@anticrm/core'
 
 type Query = {
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
+  result: Doc[]
   callback: (result: Doc[]) => void
 }
 
 export class LiveQuery extends TxOperations implements Client {
-  private readonly cache: Map<Query, Doc[]> = new Map<Query, Doc[]>()
   private readonly client: Client
   private readonly queries: Query[] = []
 
@@ -49,44 +49,33 @@ export class LiveQuery extends TxOperations implements Client {
     return true
   }
 
-  private cacheCreateDoc<T extends Doc>(query: Query, object: T): void {
-    const values = this.cache.get(query) || []
-    const index = values.findIndex((doc) => doc._id === object._id)
-    if (index === -1) {
-      values.push(object)
-    } else {
-      values[index] = object
-    }
-  }
-
-  private refresh(query: Query): void {
-    const result = this.cache.get(query) || []
-    query.callback(result)
-  }
-
   findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     return this.client.findAll(_class, query)
   }
 
   query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
-    const q: Query = { _class, query, callback: callback as (result: Doc[]) => void }
+    const q: Query = { 
+      _class, 
+      query,
+      result: [],
+      callback: callback as (result: Doc[]) => void
+    }
     this.queries.push(q)
     this.client.findAll(_class, query).then((result) => {
-      this.cache.set(q, result)
+      q.result = result
       q.callback(result)
     })
     return () => { 
       this.queries.splice(this.queries.indexOf(q)) 
-      this.cache.delete(q)
     }
   }
 
   async txCreateDoc(tx: TxCreateDoc<Doc>): Promise<void> {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
-        const doc = TxProcessor.createDoc2Doc(tx)
-        this.cacheCreateDoc(q, doc)
-        this.refresh(q)
+        const doc = TxOperations.createDoc2Doc(tx)
+        q.result.push(doc)
+        q.callback(q.result)
       }
     }
   }

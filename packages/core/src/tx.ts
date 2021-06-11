@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Timestamp } from './classes'
+import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './classes'
 import core from './component'
 import { generateId } from './utils'
 

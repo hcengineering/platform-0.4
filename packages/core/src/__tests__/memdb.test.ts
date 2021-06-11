@@ -21,7 +21,7 @@ import type { Tx, TxAddCollection } from '../tx'
 
 import { describe, expect, it } from '@jest/globals'
 
-const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('memdb', () => {
   it('should save all tx', async () => {
@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(8)
+    expect(result.length).toBe(11)
   })
 
   it('should query model with params', async () => {

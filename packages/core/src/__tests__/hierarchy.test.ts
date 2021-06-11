@@ -18,7 +18,7 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { Tx, TxCreateDoc } from '../tx'
 
-const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('hierarchy', () => {
   it('should build hierarchy', async () => {
