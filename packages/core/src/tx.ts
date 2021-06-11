@@ -15,6 +15,7 @@
 
 import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Timestamp } from './classes'
 import core from './component'
+import { generateId } from './utils'
 
 export interface Tx<T extends Doc = Doc> extends Doc {  
   objectId: Ref<T>
@@ -71,4 +72,29 @@ export class TxProcessor {
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
+}
+
+export class TxOperations extends TxProcessor {
+
+  private readonly user: Ref<Account>
+
+  constructor (user: Ref<Account>) {
+    super ()
+    this.user = user
+  }
+
+  async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
+    const tx: TxCreateDoc<T> = {
+      _id: generateId(),
+      _class: core.class.TxCreateDoc,
+      space: core.space.Tx,
+      modifiedBy: this.user,
+      modifiedOn: Date.now(),
+      objectId: generateId(),
+      objectClass: _class,
+      objectSpace: space,
+      attributes
+    }
+    return this.tx(tx)
+  }
 }
