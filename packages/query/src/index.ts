@@ -62,7 +62,7 @@ export class LiveQuery extends TxOperations implements Client {
       callback: callback as (result: Doc[]) => void
     }
     this.queries.push(q)
-    result.then(result => { q.callback([...result]) })
+    result.then(result => { q.callback(result) })
     return () => { 
       this.queries.splice(this.queries.indexOf(q)) 
     }
@@ -73,10 +73,10 @@ export class LiveQuery extends TxOperations implements Client {
       if (this.match(q, tx)) {
         const doc = TxOperations.createDoc2Doc(tx)
         if (q.result instanceof Promise) {
-          q.result = [...await q.result]
+          q.result = await q.result
         }
         q.result.push(doc)
-        q.callback([...q.result])
+        q.callback(q.result)
       }
     }
   }

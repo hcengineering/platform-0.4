@@ -30,7 +30,6 @@
   const client = getClient()
 
   function createChannel() {
-    console.log('creating channel...')
     client.createDoc(chunter.class.Channel, core.space.Model, {
       name,
       description,

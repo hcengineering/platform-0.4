@@ -78,7 +78,7 @@ class MemDb {
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }
-    return result as T[]
+    return [...result] as T[]
   }
 
   addDoc (doc: Doc): void {
