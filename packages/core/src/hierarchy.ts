@@ -56,7 +56,7 @@ export class Hierarchy {
     if (tx._class !== core.class.TxCreateDoc) return
     const createTx = tx as TxCreateDoc<Class<Obj>>
     if (createTx.objectClass !== core.class.Class) return
-    const _id: Ref<Class<Obj>> = createTx.objectId as Ref<Class<Obj>>
+    const _id: Ref<Class<Obj>> = createTx.objectId
     this.classes.set(_id, createTx.attributes)
     this.addAncestors(_id)
     this.addDescendant(_id)

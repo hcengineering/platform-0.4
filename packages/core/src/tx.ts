@@ -17,7 +17,7 @@ import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './class
 import core from './component'
 import { generateId } from './utils'
 
-export interface Tx<T extends Doc = Doc> extends Doc {  
+export interface Tx<T extends Doc = Doc> extends Doc {
   objectId: Ref<T>
   objectSpace: Ref<Space>
 }
@@ -74,12 +74,11 @@ export class TxProcessor {
 }
 
 export class TxOperations extends TxProcessor {
-
   constructor (readonly user: Ref<Account>) {
-    super ()
+    super()
   }
 
-  async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
+  async createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxCreateDoc,
@@ -91,6 +90,6 @@ export class TxOperations extends TxProcessor {
       objectSpace: space,
       attributes
     }
-    return this.tx(tx)
+    return await this.tx(tx)
   }
 }

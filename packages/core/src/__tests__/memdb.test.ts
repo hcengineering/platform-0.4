@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Emb, Domain, Doc, Account } from '../classes'
+import type { Ref, Class, Obj, Emb, Doc, Account } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
@@ -30,7 +30,9 @@ describe('memdb', () => {
     const txDb = new TxDb(hierarchy)
     for (const tx of txes) txDb.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
     const result = await txDb.findAll(core.class.Tx, {})
-    expect(result.length).toBe(txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length)
+    expect(result.length).toBe(
+      txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length
+    )
   })
 
   it('should query model', async () => {
@@ -53,7 +55,7 @@ describe('memdb', () => {
     })
     expect(first.length).toBe(1)
     const incorrectId = await model.findAll(core.class.Class, {
-      _id: txes[1].objectId + 'test' as Ref<Class<Obj>>
+      _id: (txes[1].objectId + 'test') as Ref<Class<Obj>>
     })
     expect(incorrectId.length).toBe(0)
     const result = await model.findAll(core.class.Class, {

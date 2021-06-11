@@ -31,20 +31,20 @@ export interface Client extends TxOperations, Storage {
 }
 
 class ClientImpl extends TxOperations implements Storage {
-
   constructor (
-    user: Ref<Account>, 
+    user: Ref<Account>,
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,
-    private readonly conn: Storage) {
-    super (user)
+    private readonly conn: Storage
+  ) {
+    super(user)
   }
 
-  isDerived<T extends Obj> (_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
     return this.hierarchy.isDerived(_class, from)
   }
 
-  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const clazz = this.hierarchy.getClass(_class)
     if (clazz.domain === DOMAIN_MODEL) {
       return await this.model.findAll(_class, query)
@@ -52,10 +52,9 @@ class ClientImpl extends TxOperations implements Storage {
     return await this.conn.findAll(_class, query)
   }
 
-  async tx(tx: Tx): Promise<void> {
-    this.conn.tx(tx)
+  async tx (tx: Tx): Promise<void> {
+    await this.conn.tx(tx)
   }
-
 }
 
 export async function createClient (connect: (txHandler: TxHander) => Promise<Storage>): Promise<Client> {
