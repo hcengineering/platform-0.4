@@ -14,58 +14,51 @@
 -->
 
 <script lang="ts">
-  import logo from '../../img/voltron.png'
-  import ArrowUp from './icons/Up.svelte'
-  import ArrowDown from './icons/Down.svelte'
+  import { ActionIcon } from '@anticrm/ui'
+  import MoreH from './icons/MoreH.svelte'
 
   export let title: string = 'Company name'
-  let arrow: string = 'down'
 </script>
 
-<div class="company">
-  <div class="title" on:mouseover={() => {arrow = "up"}} on:mouseout={() => {arrow = "down"}}>
-    <div class="logo"><img src={logo} alt="logo"></div>
+<div class="navigator-header">
+  <div class="title">
     <span>{title}</span>
     <div class="arrow">
-      <svelte:component this={arrow === 'down' ? ArrowDown : ArrowUp}/>
+      <ActionIcon icon={MoreH} size={16}/>
     </div>
   </div>
 </div>
 
 <style lang="scss">
-  .company {
+  .navigator-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    height: 80px;
-    padding: 28px 10px 4px;
+    height: 72px;
+    padding: 20px 28px;
     .title {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      height: 48px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--theme-caption-color);
-      .logo {
-        width: 32px;
-        height: 32px;
-        margin: 8px 16px 8px 18px;
-        border-radius: 4px;
-      }
+      width: 100%;
+      height: 32px;
       span {
         flex-grow: 1;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 150%;
+        color: var(--theme-caption-color);
       }
       .arrow {
         width: 16px;
         min-width: 16px;
         height: 16px;
         border-radius: 4px;
-        margin: 16px 14px;
-      }
-      &:hover {
-        background-color: var(--theme-button-bg-enabled);
+        margin-left: 16px;
       }
     }
   }

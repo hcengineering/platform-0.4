@@ -16,34 +16,46 @@
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
   import AppHeader from './AppHeader.svelte'
-  import Channel from './Channel.svelte'
-  import ReferenceInput from './ReferenceInput.svelte'
+  import ViewSelection from './ViewSelection.svelte'
+  import Table from './Table.svelte'
 
   export let title: IntlString
   export let subtitle: IntlString | undefined
   export let thread: boolean = false
 </script>
 
-<div class="chat-container">
+<div class="task-container">
   <AppHeader {title} {subtitle} {thread}/>
-  <div class="msg-board">
-    <Channel {thread}/>
+  <div class="toolbar">
+    <div style="flex-grow: 1"></div>
+    <ViewSelection/>
   </div>
-  <ReferenceInput {thread}/>
+  <div class="table">
+    <Table/>
+  </div>
 </div>
 
 <style lang="scss">
-  .chat-container {
+  .task-container {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    .msg-board {
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 80px;
+      padding: 0 40px;
+    }
+
+    .table {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      margin: 15px 15px 0px;
-      padding: 25px 25px 0px;
+      margin: 0px 15px 15px;
+      padding: 0px 5px 5px;
       overflow: auto;
     }
   }

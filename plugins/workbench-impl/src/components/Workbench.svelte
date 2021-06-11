@@ -18,6 +18,7 @@
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
   import Chat from './Chat.svelte'
+  import Task from './Task.svelte'
   import avatar from '../../img/avatar.png'
 
   import { setContext } from 'svelte'
@@ -64,11 +65,14 @@
   </div>
   {/if}
   <div class="component">
+    <Task title={'Silver project'}/>
+  </div>
+  <!-- <div class="component">
     <Chat title="default channel" subtitle="89 members"/>
   </div>
   <div class="aside">
     <Chat title="Thread" subtitle="# default" thread/>
-  </div>
+  </div> -->
 </div>
 
 <style lang="scss">

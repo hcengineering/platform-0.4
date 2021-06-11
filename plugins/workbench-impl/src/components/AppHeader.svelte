@@ -14,7 +14,7 @@
 -->
 
 <script lang="ts">
-  import { IntlString } from '@anticrm/status';
+  import { IntlString } from '@anticrm/status'
   import { Icon, ActionIcon } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Add from './icons/Add.svelte'
