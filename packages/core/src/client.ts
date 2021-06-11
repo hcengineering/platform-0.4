@@ -13,20 +13,49 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Obj } from './classes'
+import type { Doc, Ref, Class, Obj, Account } from './classes'
 import type { Storage, DocumentQuery } from './storage'
 import type { Tx } from './tx'
 
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
 import { DOMAIN_MODEL } from './classes'
+import { TxOperations } from './tx'
 
 import core from './component'
 
 type TxHander = (tx: Tx) => void
 
-export interface Client extends Storage {
+export interface Client extends TxOperations, Storage {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
+}
+
+class ClientImpl extends TxOperations implements Storage {
+
+  constructor (
+    user: Ref<Account>, 
+    private readonly hierarchy: Hierarchy,
+    private readonly model: ModelDb,
+    private readonly conn: Storage) {
+    super (user)
+  }
+
+  isDerived<T extends Obj> (_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.hierarchy.isDerived(_class, from)
+  }
+
+  async findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    const clazz = this.hierarchy.getClass(_class)
+    if (clazz.domain === DOMAIN_MODEL) {
+      return await this.model.findAll(_class, query)
+    }
+    return await this.conn.findAll(_class, query)
+  }
+
+  async tx(tx: Tx): Promise<void> {
+    this.conn.tx(tx)
+  }
+
 }
 
 export async function createClient (connect: (txHandler: TxHander) => Promise<Storage>): Promise<Client> {
@@ -46,15 +75,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
   }
 
   const conn = await connect(txHander)
-  const txes = await conn.findAll(core.class.Tx, { domain: DOMAIN_MODEL })
-
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    const clazz = hierarchy.getClass(_class)
-    if (clazz.domain === DOMAIN_MODEL) {
-      return await model.findAll(_class, query)
-    }
-    return await conn.findAll(_class, query)
-  }
+  const txes = await conn.findAll(core.class.Tx, { objectSpace: core.space.Model })
 
   const txMap = new Map<Ref<Tx>, Ref<Tx>>()
   for (const tx of txes) txMap.set(tx._id, tx._id)
@@ -63,7 +84,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
 
   txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
 
-  client = { findAll, tx: conn.tx, isDerived: hierarchy.isDerived }
+  client = new ClientImpl(core.account.System, hierarchy, model, conn)
 
   for (const tx of txBuffer) txHander(tx)
   txBuffer = undefined

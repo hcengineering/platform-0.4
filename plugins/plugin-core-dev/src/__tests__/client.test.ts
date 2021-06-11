@@ -14,22 +14,20 @@
 //
 
 import { connect } from '../connection'
-import core from '@anticrm/core'
+import core, { createClient } from '@anticrm/core'
 
 describe('client', () => {
 
   it('should create connection', async () => {
     const conn = await connect(() => {})
     const txes = await conn.findAll(core.class.Tx, {})
-    console.log(txes)
-    expect(true).toBeTruthy()
+    expect(txes.length).toBe(16)
   })
 
-  // it('should create client', async () => {
-  //   const client = await getClient()
-  //   const txes = client.findAll(core.class.Tx, {})
-  //   console.log(txes)
-  //   expect(true).toBeTruthy()
-  // })
+  it('should create client', async () => {
+    const client = await createClient(connect)
+    const txes = await client.findAll(core.class.Class, {})
+    expect(txes.length).toBe(11)
+  })
 
 })

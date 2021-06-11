@@ -23,23 +23,20 @@ import { TDoc } from './core'
 
 @Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
 export class TTx<T extends Doc> extends TDoc implements Tx<T> {
-  domain!: string
   objectId!: Ref<T>
-  space?: Ref<Space>
-  user!: Ref<Account>
-  timestamp!: number
+  objectSpace!: Ref<Space>
 }
 
 @Model(core.class.TxCreateDoc, core.class.Tx)
-export class TTxCreateDoc<T extends O, O extends Doc> extends TTx<T> implements TxCreateDoc<T, O> {
+export class TTxCreateDoc<T extends O, O extends Doc> extends TTx<T> implements TxCreateDoc<T> {
   objectClass!: Ref<Class<T>>
-  attributes!: Data<T, O>
+  attributes!: Data<T>
 }
 
 @Model(core.class.TxCreateDoc, core.class.Tx)
-export class TTxUpdateDoc<T extends O, O extends Doc> extends TTx<T> implements TxUpdateDoc<T, O> {
+export class TTxUpdateDoc<T extends O, O extends Doc> extends TTx<T> implements TxUpdateDoc<T> {
   objectClass!: Ref<Class<T>>
-  attributes!: Partial<Data<T, O>>
+  attributes!: Partial<Data<T>>
 }
 
 @Model(core.class.TxAddCollection, core.class.Tx)

@@ -13,27 +13,23 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref } from './classes'
+import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Timestamp } from './classes'
 import core from './component'
-import { Account, Space } from './security'
+import { generateId } from './utils'
 
-export interface Tx<T extends Doc=Doc> extends Doc {
-  domain: string
+export interface Tx<T extends Doc = Doc> extends Doc {  
   objectId: Ref<T>
-
-  space?: Ref<Space>
-  user: Ref<Account> // A user created object
-  timestamp: number // transaction time.
+  objectSpace: Ref<Space>
 }
 
-export interface TxCreateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Data<T, P>
+  attributes: Data<T>
 }
 
-export interface TxUpdateDoc<T extends P, P extends Doc=Doc> extends Tx<T> {
+export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Partial<Data<T, P>>
+  attributes: Partial<Data<T>>
 }
 
 export interface TxAddCollection<T extends Doc, P extends Emb> extends Tx<T> {
@@ -63,6 +59,39 @@ export class TxProcessor {
     return await Promise.resolve()
   }
 
+  static createDoc2Doc (tx: TxCreateDoc<Doc>): Doc {
+    return {
+      _id: tx.objectId,
+      _class: tx.objectClass,
+      space: tx.objectSpace,
+      modifiedBy: tx.modifiedBy,
+      modifiedOn: tx.modifiedOn,
+      ...tx.attributes
+    }
+  }
+
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
+}
+
+export class TxOperations extends TxProcessor {
+
+  constructor (readonly user: Ref<Account>) {
+    super ()
+  }
+
+  async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
+    const tx: TxCreateDoc<T> = {
+      _id: generateId(),
+      _class: core.class.TxCreateDoc,
+      space: core.space.Tx,
+      modifiedBy: this.user,
+      modifiedOn: Date.now(),
+      objectId: generateId(),
+      objectClass: _class,
+      objectSpace: space,
+      attributes
+    }
+    return this.tx(tx)
+  }
 }

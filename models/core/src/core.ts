@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Attribute, Class, ClassifierKind, Collection, Doc, Domain, Mixin, Obj, PropertyType, Ref } from '@anticrm/core'
+import type { Attribute, Class, ClassifierKind, Collection, Doc, Domain, Mixin, Obj, PropertyType, Ref, Timestamp, Account, Space } from '@anticrm/core'
+import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
 
@@ -26,9 +27,12 @@ export class TObj implements Obj {
 @Model(core.class.Doc, core.class.Obj)
 export class TDoc extends TObj implements Doc {
   _id!: Ref<this>
+  space!: Ref<Space>
+  modifiedOn!: Timestamp
+  modifiedBy!: Ref<Account>
 }
 
-@Model(core.class.Class, core.class.Doc)
+@Model(core.class.Class, core.class.Doc, DOMAIN_MODEL)
 export class TClass extends TDoc implements Class<Obj> {
   kind!: ClassifierKind
   attributes!: Collection<Attribute<PropertyType>>

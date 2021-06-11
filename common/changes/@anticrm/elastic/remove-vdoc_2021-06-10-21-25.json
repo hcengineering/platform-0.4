@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "Remove `VDoc`.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic",
+  "email": "andrey.v.platov@gmail.com"
+}

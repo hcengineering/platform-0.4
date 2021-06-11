@@ -59,13 +59,14 @@ export function Prop (type: Type<PropertyType>) {
     const txes = getTxes(target)
     const tx: NoIDs<TxAddCollection<Class<Obj>, Attribute<PropertyType>>> = {
       _class: core.class.TxAddCollection,
-      domain: DOMAIN_MODEL,
+      space: core.space.Tx,
+      modifiedBy: core.account.System,
+      modifiedOn: 0,
+      objectSpace: core.space.Model,
       collection: 'attributes',
       localId: propertyKey,
       itemClass: core.class.Attribute,
       attributes: { type },
-      user: 'model' as Ref<Account>,
-      timestamp: 0
     }
     txes.txes.push(tx)
   }
@@ -96,12 +97,13 @@ function txCreateDoc<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attr
   return {
     _id: generateId<TxCreateDoc<T>>(),
     _class: core.class.TxCreateDoc,
-    domain,
+    space: core.space.Tx,
+    modifiedBy: core.account.System,
+    modifiedOn: 0,
     objectId: objectId ?? generateId(),
     objectClass: _class,
+    objectSpace: core.space.Model,
     attributes,
-    user: 'model' as Ref<Account>,
-    timestamp: 0
   }
 }
 
