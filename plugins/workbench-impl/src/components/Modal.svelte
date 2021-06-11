@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { store as modal } from '../../stores'
-  import Component from '../Component.svelte'
+  import { store as modal } from '@anticrm/workbench'
+  import Component from '@anticrm/ui/src/components/Component.svelte'
 
   function close () {
     modal.set({ is: undefined, props: {}, element: undefined })

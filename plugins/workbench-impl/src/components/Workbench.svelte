@@ -22,13 +22,12 @@
 
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
-  import type { AnyComponent } from '@anticrm/ui'
-  import { Component, Button } from '@anticrm/ui'
 
   import type { NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
   import Navigator from './Navigator.svelte'
+  import Modal from './Modal.svelte'
 
   export let client: Client
 
@@ -70,6 +69,7 @@
     <Chat title="Thread" subtitle="# default" thread/>
   </div>
 </div>
+<Modal />
 
 <style lang="scss">
   @mixin panel($bg-color) {
