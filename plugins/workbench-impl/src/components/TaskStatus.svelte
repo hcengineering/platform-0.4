@@ -15,36 +15,30 @@
 
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
-  import AppHeader from './AppHeader.svelte'
-  import Channel from './Channel.svelte'
-  import ReferenceInput from './ReferenceInput.svelte'
+  import { Label } from '@anticrm/ui'
 
   export let title: IntlString
-  export let subtitle: IntlString | undefined
-  export let thread: boolean = false
+  export let color: string = '#22CC62'
 </script>
 
-<div class="chat-container">
-  <AppHeader {title} {subtitle} {thread}/>
-  <div class="msg-board">
-    <Channel {thread}/>
-  </div>
-  <ReferenceInput {thread}/>
+<div class="taskstatus-container" style="background-color: {color}">
+  <Label label={title}/>
 </div>
 
 <style lang="scss">
-  .chat-container {
+  .taskstatus-container {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    .msg-board {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      margin: 15px 15px 0px;
-      padding: 25px 25px 0px;
-      overflow: auto;
-    }
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 100px;
+    width: 100%;
+    height: 24px;
+    padding: 6px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .5;
+    color: #fff;
+    border-radius: 8px;
   }
 </style>

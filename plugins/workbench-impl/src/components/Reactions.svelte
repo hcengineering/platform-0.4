@@ -23,7 +23,7 @@
     count: number
   }
 
-  let reactions: Reaction[] = [{ icon: Check, count: 3}, { icon: Heart, count: 10}]
+  export let reactions: Reaction[] = [{ icon: Check, count: 3}, { icon: Heart, count: 10}]
 </script>
 
 <div class="reactions-container">

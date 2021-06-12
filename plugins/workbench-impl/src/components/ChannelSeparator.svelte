@@ -14,7 +14,7 @@
 -->
 
 <script lang="ts">
-  import { IntlString } from "@anticrm/status";
+  import { IntlString } from "@anticrm/status"
 
   export let title: IntlString
   export let line: boolean = false
