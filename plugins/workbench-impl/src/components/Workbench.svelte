@@ -29,6 +29,7 @@
 
   import Navigator from './Navigator.svelte'
   import Modal from './Modal.svelte'
+  import SpaceHeader from './SpaceHeader.svelte'
 
   export let client: Client
 
@@ -63,15 +64,16 @@
     <Navigator model={navigatorModel}/>
   </div>
   {/if}
-  <div class="component">
-    <Task title={'Silver project'}/>
-  </div>
   <!-- <div class="component">
+    <Task title={'Silver project'}/>
+  </div> -->
+  <div class="component">
+    <SpaceHeader title="default channel" subtitle="89 members"/>
     <Chat title="default channel" subtitle="89 members"/>
   </div>
   <div class="aside">
     <Chat title="Thread" subtitle="# default" thread/>
-  </div> -->
+  </div>
 </div>
 <Modal />
 

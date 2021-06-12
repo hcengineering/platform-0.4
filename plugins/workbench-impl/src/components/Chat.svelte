@@ -15,7 +15,6 @@
 
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
-  import AppHeader from './AppHeader.svelte'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
 
@@ -25,7 +24,6 @@
 </script>
 
 <div class="chat-container">
-  <AppHeader {title} {subtitle} {thread}/>
   <div class="msg-board">
     <Channel {thread}/>
   </div>

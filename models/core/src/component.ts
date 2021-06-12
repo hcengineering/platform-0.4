@@ -19,7 +19,6 @@ import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(core, {
   class: {
-    Space: '' as Ref<Class<Space>>,
     Mixin: '' as Ref<Class<Mixin<Doc>>>
   }
 })
