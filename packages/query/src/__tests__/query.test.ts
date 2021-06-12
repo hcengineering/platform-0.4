@@ -15,67 +15,115 @@
 
 import { LiveQuery } from '..'
 import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateDoc, Obj, Space } from '@anticrm/core'
-import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations } from '@anticrm/core'
+import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations, createClient } from '@anticrm/core'
 import core from '@anticrm/core'
+import { connect } from './connection'
 
 describe('query', () => {
+
   it('findAll', async () => {
-    const txes = await getModel()
     const client = await getClient()
     const query = new LiveQuery(client)
-    for (let i = 0; i < txes.length; i++) {
-      const tx = txes[i]
-      await query.tx(tx)
-    }
-    const result = await query.findAll<Space>('class:chunter.Channel' as Ref<Class<Doc>>, { private: false })
+    const result = await query.findAll<Space>('class:chunter.Channel' as Ref<Class<Doc>>, {})
     expect(result).toHaveLength(2)
   })
 
-  it('query with param', async () => {
-    let emptyResult
-    let notEmptyResult
+  it('query with param', async (done) => {
     const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
-    const txes = await getModel()
     const storage = await getClient()
-    const query = new LiveQuery(storage)
-    query.query<Space>(queriedClass, { private: true }, (result) => {
-      emptyResult = result
-    })
-    query.query<Space>(queriedClass, { private: false }, (result) => {
-      notEmptyResult = result
-    })
+
     let expectedLength = 0
+    const txes = await getModel()
     for (let i = 0; i < txes.length; i++) {
-      const tx = txes[i]
-      await query.tx(tx)
-      if (storage.isDerived((tx as TxCreateDoc<Doc>).objectClass, queriedClass)) {
+      if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, queriedClass)) {
         expectedLength++
       }
-      expect(emptyResult).toHaveLength(0)
-      expect(notEmptyResult).toHaveLength(expectedLength)
     }
+
+    const query = new LiveQuery(storage)
+    query.query<Space>(queriedClass, { private: false }, (result) => {
+      expect(result).toHaveLength(expectedLength)
+      done()
+    })
   })
 
-  it('unsubscibe query', async () => {
-    let notEmptyResult
-    const queriedClass = 'class:chunter.Channel' as Ref<Class<Doc>>
-    const txes = await getModel()
+  it('query should be live', async (done) => {
+    const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
     const storage = await getClient()
-    const query = new LiveQuery(storage)
-    const unsubscribe = query.query<Space>(queriedClass, { private: false }, (result) => {
-      notEmptyResult = result
-    })
+
     let expectedLength = 0
+    const txes = await getModel()
     for (let i = 0; i < txes.length; i++) {
-      const tx = txes[i]
-      await query.tx(tx)
-      if (storage.isDerived((tx as TxCreateDoc<Doc>).objectClass, queriedClass) && expectedLength === 0) {
+      if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, klass)) {
         expectedLength++
-        unsubscribe()
       }
-      expect(notEmptyResult).toHaveLength(expectedLength)
     }
+
+    let attempt = 0
+    const query = new LiveQuery(storage)
+    query.query<Space>(klass, { private: false }, async (result) => {
+      expect(result).toHaveLength(expectedLength + attempt)
+      if (attempt > 0) {
+        expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
+      }
+      if (attempt++ === 3) {
+        // check underlying storage received all data.
+        const result = await storage.findAll<Space>(klass, { private: false })
+        expect(result).toHaveLength(expectedLength + attempt - 1)
+        done()
+      }
+    })
+
+    await query.createDoc(klass, core.space.Model, { x: 1, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 2, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 3, private: false })
   })
+
+  it('unsubscribe query', async () => {
+    const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
+    const storage = await getClient()
+
+    let expectedLength = 0
+    const txes = await getModel()
+    for (let i = 0; i < txes.length; i++) {
+      if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, klass)) {
+        expectedLength++
+      }
+    }
+
+    const query = new LiveQuery(storage)
+    const unsubscribe = query.query<Space>(klass, { private: false }, (result) => {
+      expect(result).toHaveLength(expectedLength)
+    })
+
+    unsubscribe()
+
+    await query.createDoc(klass, core.space.Model, { private: false })
+    await query.createDoc(klass, core.space.Model, { private: false })
+    await query.createDoc(klass, core.space.Model, { private: false })
+  })
+
+  it('query against core client', async (done) => {
+    const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
+    const client = await createClient(connect)
+
+    const expectedLength = 2
+    let attempt = 0
+    const query = new LiveQuery(client)
+    query.query<Space>(klass, { private: false }, (result) => {
+      expect(result).toHaveLength(expectedLength + attempt)
+      if (attempt > 0) {
+        expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
+      }
+      if (attempt++ === 1) done()
+    })
+
+    await query.createDoc(klass, core.space.Model, { x: 1, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 2, private: false })
+    await query.createDoc(klass, core.space.Model, { x: 3, private: false })
+  })
+
+
 })
 
 async function getModel(): Promise<Tx[]> { 
@@ -110,9 +158,10 @@ class ClientImpl extends TxOperations implements Client {
 
 async function getClient(): Promise<Client> {
   const hierarchy = new Hierarchy()
-  const txes = await getModel()
-  for (const tx of txes) hierarchy.tx(tx)
   const transactions = new TxDb(hierarchy)
   const model = new ModelDb(hierarchy)
+  const txes = await getModel()
+  for (const tx of txes) hierarchy.tx(tx)
+  for (const tx of txes) model.tx(tx)
   return new ClientImpl(hierarchy, model, transactions)
 }

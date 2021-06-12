@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Timestamp } from './classes'
+import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './classes'
 import core from './component'
 import { generateId } from './utils'
 
-export interface Tx<T extends Doc = Doc> extends Doc {  
+export interface Tx<T extends Doc = Doc> extends Doc {
   objectId: Ref<T>
   objectSpace: Ref<Space>
 }
@@ -56,7 +56,6 @@ export class TxProcessor {
       case core.class.TxAddCollection:
         return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
     }
-    return await Promise.resolve()
   }
 
   static createDoc2Doc (tx: TxCreateDoc<Doc>): Doc {
@@ -75,12 +74,11 @@ export class TxProcessor {
 }
 
 export class TxOperations extends TxProcessor {
-
   constructor (readonly user: Ref<Account>) {
-    super ()
+    super()
   }
 
-  async createDoc<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
+  async createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxCreateDoc,
@@ -92,6 +90,6 @@ export class TxOperations extends TxProcessor {
       objectSpace: space,
       attributes
     }
-    return this.tx(tx)
+    return await this.tx(tx)
   }
 }

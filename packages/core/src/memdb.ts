@@ -78,7 +78,7 @@ class MemDb {
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }
-    return result as T[]
+    return [...result] as T[]
   }
 
   addDoc (doc: Doc): void {
@@ -118,6 +118,9 @@ export class ModelDb extends TxProcessor implements Storage {
   }
 
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    (this.db.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = makeEmb(tx.itemClass, tx.attributes)
+    ;(this.db.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = makeEmb(
+      tx.itemClass,
+      tx.attributes
+    )
   }
 }

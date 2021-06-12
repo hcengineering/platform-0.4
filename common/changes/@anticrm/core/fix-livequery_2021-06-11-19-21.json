@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "MemDb now return new array from `findAll`. Hiding internals.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "andrey.v.platov@gmail.com"
+}

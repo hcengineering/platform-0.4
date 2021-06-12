@@ -18,7 +18,7 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { Tx, TxCreateDoc } from '../tx'
 
-const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('hierarchy', () => {
   it('should build hierarchy', async () => {
@@ -41,7 +41,7 @@ describe('hierarchy', () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const data = hierarchy.getClass(core.class.TxCreateDoc)
-    expect(data).toMatchObject((txes.find(p => p.objectId === core.class.TxCreateDoc) as TxCreateDoc<Doc>).attributes)
+    expect(data).toMatchObject((txes.find((p) => p.objectId === core.class.TxCreateDoc) as TxCreateDoc<Doc>).attributes)
     const notExistClass = 'class:test.MyClass' as Ref<Class<Obj>>
     expect(() => hierarchy.getClass(notExistClass)).toThrowError('class not found: ' + notExistClass)
   })

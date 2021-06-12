@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Emb, Domain, Doc, Account } from '../classes'
+import type { Ref, Class, Obj, Emb, Doc, Account } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
@@ -21,16 +21,18 @@ import type { Tx, TxAddCollection } from '../tx'
 
 import { describe, expect, it } from '@jest/globals'
 
-const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('memdb', () => {
   it('should save all tx', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const txDb = new TxDb(hierarchy)
-    for (const tx of txes) txDb.tx(tx) // eslint-disable-line @typescript-eslint/no-floating-promises
+    for (const tx of txes) await txDb.tx(tx)
     const result = await txDb.findAll(core.class.Tx, {})
-    expect(result.length).toBe(txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length)
+    expect(result.length).toBe(
+      txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length
+    )
   })
 
   it('should query model', async () => {
@@ -39,7 +41,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(8)
+    expect(result.length).toBe(11)
   })
 
   it('should query model with params', async () => {
@@ -53,7 +55,7 @@ describe('memdb', () => {
     })
     expect(first.length).toBe(1)
     const incorrectId = await model.findAll(core.class.Class, {
-      _id: txes[1].objectId + 'test' as Ref<Class<Obj>>
+      _id: (txes[1].objectId + 'test') as Ref<Class<Obj>>
     })
     expect(incorrectId.length).toBe(0)
     const result = await model.findAll(core.class.Class, {

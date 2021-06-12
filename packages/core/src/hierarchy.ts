@@ -20,10 +20,10 @@ import core from './component'
 
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
-  private readonly descendants = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
-  private readonly ancestors = new Map<Ref<Class<Obj>>, Array<Ref<Class<Obj>>>>()
+  private readonly descendants = new Map<Ref<Class<Obj>>, Ref<Class<Obj>>[]>()
+  private readonly ancestors = new Map<Ref<Class<Obj>>, Ref<Class<Obj>>[]>()
 
-  getAncestors (_class: Ref<Class<Obj>>): Array<Ref<Class<Obj>>> {
+  getAncestors (_class: Ref<Class<Obj>>): Ref<Class<Obj>>[] {
     const result = this.ancestors.get(_class)
     if (result === undefined) {
       throw new Error('ancestors not found: ' + _class)
@@ -56,7 +56,7 @@ export class Hierarchy {
     if (tx._class !== core.class.TxCreateDoc) return
     const createTx = tx as TxCreateDoc<Class<Obj>>
     if (createTx.objectClass !== core.class.Class) return
-    const _id: Ref<Class<Obj>> = createTx.objectId as Ref<Class<Obj>>
+    const _id: Ref<Class<Obj>> = createTx.objectId
     this.classes.set(_id, createTx.attributes)
     this.addAncestors(_id)
     this.addDescendant(_id)
@@ -72,7 +72,7 @@ export class Hierarchy {
     return false
   }
 
-  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Array<Ref<Class<Obj>>> {
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Ref<Class<Obj>>[] {
     const data = this.descendants.get(_class)
     if (data === undefined) {
       throw new Error('descendants not found: ' + _class)
