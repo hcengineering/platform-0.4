@@ -23,13 +23,9 @@
   import { getClient } from '@anticrm/workbench'
   import core from '@anticrm/core'
 
-  export let space: Ref<Space>
+  export let space: Ref<Space> | undefined
 
-  let data: Data<Space> = {
-    name: '',
-    description: '',
-    private: false
-  }
+  let data: Data<Space> | undefined
 
   let unsubscribe = () => {}
   $: {
@@ -42,9 +38,9 @@
   <div class="caption">
     <div class="title">
       <span><Icon icon={'icon:chunter.Hashtag'} size={16}/></span>
-      {data.name}
+      {#if data}{data.name}{/if}
     </div>
-    <div class="subtitle">{data.description}</div>
+    <div class="subtitle">{#if data}{data.description}{/if}</div>
   </div>
   <div class="buttons">
     <div class="button"><ActionIcon icon={MoreH} size={16}/></div>

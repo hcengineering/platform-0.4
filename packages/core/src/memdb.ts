@@ -64,7 +64,8 @@ class MemDb {
     return result
   }
 
-/*
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
       if (query._id === undefined) {
         result = []
@@ -72,16 +73,6 @@ class MemDb {
         const obj = this.objectById.get(query._id)
         result = obj !== undefined ? [obj] : []
       }
-    } else {
-      result = this.getObjectsByClass(_class)
-    }
-*/
-
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    let result: Doc[]
-    if (query._id !== undefined) {
-      const obj = this.objectById.get(query._id)
-      result = obj !== undefined ? [obj] : []
     } else {
       result = this.getObjectsByClass(_class)
     }
