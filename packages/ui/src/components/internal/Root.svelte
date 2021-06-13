@@ -3,7 +3,7 @@
   import { PlatformEvent, getMetadata, addEventListener } from '@anticrm/platform'
   import type { AnyComponent } from '../../types'
   import { applicationShortcutKey } from '../../utils'
-  import { newRouter } from '../../utils'
+  import { newRouter } from '../../router'
 
   import { Theme } from '@anticrm/theme'
   import Component from '../Component.svelte'
@@ -16,19 +16,16 @@
   
   let application: AnyComponent | undefined
 
-  interface RootRouteParams {
-    application: AnyComponent | null
-  }
-
-  newRouter<RootRouteParams>(
-    ':application',
+  newRouter(
+    1,
     (route) => {
-      if (route.application) {
-        const shortcut = getMetadata(applicationShortcutKey(route.application))
-        application = shortcut ?? route.application
+      console.log('level 1:', route)
+      if (route[0]) {
+        const app = route[0] as AnyComponent
+        const shortcut = getMetadata(applicationShortcutKey(app))
+        application = shortcut ?? app
       }
-    },
-    { application: null }
+    }
   )
 
   let status = OK

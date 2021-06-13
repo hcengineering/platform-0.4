@@ -14,7 +14,7 @@
 //
 
 import { ApplicationRouter, Location } from './types'
-import { parseHash, parsePath, parseQuery, locationToUrl, parseLocation } from './location'
+import { parseHash, parsePath, parseQuery, locationToUrl, parseLocation } from './location.txt'
 
 import { deepEqual } from 'fast-equals'
 

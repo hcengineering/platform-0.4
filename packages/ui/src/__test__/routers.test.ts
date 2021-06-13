@@ -15,8 +15,8 @@
 
 /* eslint-env jest */
 
-import { Router } from '../routes'
-import { locationToUrl } from '../location'
+import { Router } from '../routes.txt'
+import { locationToUrl } from '../location.txt'
 
 interface MyProps {
   spaceId: string

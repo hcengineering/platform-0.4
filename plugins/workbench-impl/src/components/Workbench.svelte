@@ -24,25 +24,29 @@
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
 
-  import type { NavigatorModel } from '@anticrm/workbench'
+  import type { Ref } from '@anticrm/core'
+  import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
   import Navigator from './Navigator.svelte'
   import Modal from './Modal.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
+  
+  import { getRouter, newRouter } from '@anticrm/ui'
+  import { onDestroy } from 'svelte'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
 
-  let navigatorModel: NavigatorModel
+  let currentApp: Ref<Application> | undefined
+  let navigatorModel: NavigatorModel | undefined
 
-  function onAppChange(event: any) {
-    navigatorModel = event.detail.navigatorModel
-    console.log('navigatorModel:', navigatorModel)
-  }
-
-  let kl: boolean = false
+  onDestroy(newRouter(2, async (route) => {
+    currentApp = route[0] as Ref<Application>
+    console.log('current app:', currentApp)
+    navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
+  }))
 </script>
 
 <svg class="mask">
@@ -53,7 +57,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active"/>
-    <Applications on:app-change={onAppChange}/>
+    <Applications active={currentApp}/>
     <div class="profile">
       <img class="avatar" src={avatar} alt="Profile"/>
     </div>
