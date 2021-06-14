@@ -15,7 +15,7 @@
 
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
-  import AppHeader from './AppHeader.svelte'
+  import AppHeader from './SpaceHeader.svelte'
   import ViewSelection from './ViewSelection.svelte'
   import Table from './Table.svelte'
 

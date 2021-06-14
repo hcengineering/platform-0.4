@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte'
   import { OK } from '@anticrm/status'
   import { PlatformEvent, getMetadata, addEventListener } from '@anticrm/platform'
   import type { AnyComponent } from '../../types'
   import { applicationShortcutKey } from '../../utils'
-  import { newRouter } from '../../utils'
+  import { location } from '../../location'
 
   import { Theme } from '@anticrm/theme'
   import Component from '../Component.svelte'
@@ -16,20 +17,13 @@
   
   let application: AnyComponent | undefined
 
-  interface RootRouteParams {
-    application: AnyComponent | null
-  }
-
-  newRouter<RootRouteParams>(
-    ':application',
-    (route) => {
-      if (route.application) {
-        const shortcut = getMetadata(applicationShortcutKey(route.application))
-        application = shortcut ?? route.application
+  onDestroy(location.subscribe((loc) => {
+    if (loc.path[0]) {
+        const app = loc.path[0] as AnyComponent
+        const shortcut = getMetadata(applicationShortcutKey(app))
+        application = shortcut ?? app
       }
-    },
-    { application: null }
-  )
+  }))
 
   let status = OK
 

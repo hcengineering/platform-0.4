@@ -14,24 +14,33 @@
 -->
 
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
+  import type { Ref, Space, Data } from '@anticrm/core'
   import { Icon, ActionIcon } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Add from './icons/Add.svelte'
   import Star from './icons/Star.svelte'
 
-  export let title: IntlString
-  export let subtitle: IntlString | undefined
-  export let thread: boolean = false
+  import { getClient } from '@anticrm/workbench'
+  import core from '@anticrm/core'
+
+  export let space: Ref<Space> | undefined
+
+  let data: Data<Space> | undefined
+
+  let unsubscribe = () => {}
+  $: {
+    unsubscribe()
+    unsubscribe = getClient().query(core.class.Space, { _id: space }, result => { data = result[0] })
+  }
 </script>
 
-<div class="header" class:thread={thread}>
+<div class="header">
   <div class="caption">
     <div class="title">
-      {#if !thread}<span><Icon icon={'icon:chunter.Hashtag'} size={16}/></span>{/if}
-      {title}
+      <span><Icon icon={'icon:chunter.Hashtag'} size={16}/></span>
+      {#if data}{data.name}{/if}
     </div>
-    {#if subtitle}<div class="subtitle">{subtitle}</div>{/if}
+    <div class="subtitle">{#if data}{data.description}{/if}</div>
   </div>
   <div class="buttons">
     <div class="button"><ActionIcon icon={MoreH} size={16}/></div>

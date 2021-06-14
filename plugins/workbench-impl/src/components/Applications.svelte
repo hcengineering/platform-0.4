@@ -18,19 +18,21 @@
   import { onDestroy, createEventDispatcher } from 'svelte'
   import type { Ref } from '@anticrm/core'
   import type { Application } from '@anticrm/workbench'
+  import { getCurrentLocation, navigate } from '@anticrm/ui'
   import workbench, { getClient } from '@anticrm/workbench'
 
   import AppItem from './AppItem.svelte'
 
+  export let active: Ref<Application> | undefined
+
   let apps: Application[] = []
   onDestroy(getClient().query(workbench.class.Application, {}, result => { apps = result }))
 
-  const dispatch = createEventDispatcher()
-  let active: Ref<Application> | undefined
-  
-  function onAppChange(app: Application) {
-    active = app._id
-    dispatch('app-change', app)
+  function navigateApp(app: Ref<Application>) {
+    const loc = getCurrentLocation()
+    loc.path[1] = app
+    loc.path.length = 2
+    navigate(loc)
   }
 
 </script>
@@ -38,7 +40,7 @@
 <div class="app-icons">
   {#each apps as app}
     <div class="app">
-      <AppItem selected={app._id === active} icon={app.icon} label={app.label} notify action={async () => {onAppChange(app)}}/>
+      <AppItem selected={app._id === active} icon={app.icon} label={app.label} notify action={async () => {navigateApp(app._id)}}/>
     </div>
   {/each}
 </div>

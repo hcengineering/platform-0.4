@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Fix memdb: undefined field value handling.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "andrey.v.platov@gmail.com"
+}

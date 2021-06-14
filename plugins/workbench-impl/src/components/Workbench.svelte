@@ -24,24 +24,32 @@
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
 
-  import type { NavigatorModel } from '@anticrm/workbench'
+  import type { Ref, Space } from '@anticrm/core'
+  import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
   import Navigator from './Navigator.svelte'
   import Modal from './Modal.svelte'
+  import SpaceHeader from './SpaceHeader.svelte'
+  
+  import { location } from '@anticrm/ui'
+  import { onDestroy } from 'svelte'
 
   export let client: Client
 
   setContext(workbench.context.Client, client)
 
-  let navigatorModel: NavigatorModel
+  let currentApp: Ref<Application> | undefined
+  let currentSpace: Ref<Space> | undefined
+  let navigatorModel: NavigatorModel | undefined
 
-  function onAppChange(event: any) {
-    navigatorModel = event.detail.navigatorModel
-    console.log('navigatorModel:', navigatorModel)
-  }
-
-  let kl: boolean = false
+  onDestroy(location.subscribe(async (loc) => {
+    console.log('here!')
+    currentApp = loc.path[1] as Ref<Application>
+    currentSpace = loc.path[2] as Ref<Space>
+    console.log('current app:', currentApp)
+    navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
+  }))
 </script>
 
 <svg class="mask">
@@ -52,7 +60,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active"/>
-    <Applications on:app-change={onAppChange}/>
+    <Applications active={currentApp}/>
     <div class="profile">
       <img class="avatar" src={avatar} alt="Profile"/>
     </div>
@@ -60,18 +68,19 @@
   {#if navigator}
   <div class="navigator">
     <NavHeader/>
-    <Navigator model={navigatorModel}/>
+    <Navigator model={navigatorModel} space={currentSpace}/>
   </div>
   {/if}
-  <div class="component">
-    <Task title={'Silver project'}/>
-  </div>
   <!-- <div class="component">
+    <Task title={'Silver project'}/>
+  </div> -->
+  <div class="component">
+    <SpaceHeader space={currentSpace}/>
     <Chat title="default channel" subtitle="89 members"/>
   </div>
   <div class="aside">
     <Chat title="Thread" subtitle="# default" thread/>
-  </div> -->
+  </div>
 </div>
 <Modal />
 

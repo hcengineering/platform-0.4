@@ -29,7 +29,8 @@ export default component(ComponentCore, {
     TxCreateDoc: '' as Ref<Class<TxCreateDoc<Doc>>>,
     TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,
     TxAddCollection: '' as Ref<Class<TxAddCollection<Doc, Emb>>>,
-    TxUpdateCollection: '' as Ref<Class<TxUpdateCollection<Doc, Emb>>>
+    TxUpdateCollection: '' as Ref<Class<TxUpdateCollection<Doc, Emb>>>,
+    Space: '' as Ref<Class<Space>>
   },
   space: {
     Tx: '' as Ref<Space>,
