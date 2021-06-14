@@ -16,7 +16,7 @@
 import { Location as PlatformLocation } from './types'
 import { writable, derived } from 'svelte/store'
 
-function locationToUrl (location: PlatformLocation): string {
+export function locationToUrl (location: PlatformLocation): string {
   let result = '/'
   if (location.path) {
     result += location.path.map((p) => encodeURIComponent(p)).join('/')

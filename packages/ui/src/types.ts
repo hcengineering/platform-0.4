@@ -24,8 +24,8 @@ export type { Asset }
  */
 export interface Location {
   path: string[] // A useful path value
-  query: Record<string, string | null> // a value of query parameters, no duplication are supported
-  fragment: string // a value of fragment
+  query?: Record<string, string | null> // a value of query parameters, no duplication are supported
+  fragment?: string // a value of fragment
 }
 
 export type AnySvelteComponent = typeof SvelteComponent

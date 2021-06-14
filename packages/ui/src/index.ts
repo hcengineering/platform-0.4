@@ -19,7 +19,7 @@ import Root from './components/internal/Root.svelte'
 
 export type { AnyComponent, AnySvelteComponent, Action } from './types'
 export { applicationShortcutKey } from './utils'
-export * from './location'
+export { getCurrentLocation, navigate, location } from './location'
 
 export { default as EditBox } from './components/EditBox.svelte'
 export { default as Label } from './components/Label.svelte'
