@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Remove old VDoc tests",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "haiodo@gmail.com"
+}
