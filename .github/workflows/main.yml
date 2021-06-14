@@ -55,6 +55,11 @@ jobs:
           node port: 9300
           discovery type: 'single-node'
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.3.0
+        with:
+          mongodb-version: 4.4
+
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
         env:
