@@ -32,7 +32,7 @@
   import Modal from './Modal.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   
-  import { getRouter, newRouter } from '@anticrm/ui'
+  import { location } from '@anticrm/ui'
   import { onDestroy } from 'svelte'
 
   export let client: Client
@@ -43,9 +43,10 @@
   let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
 
-  onDestroy(newRouter(2, async (route) => {
-    currentApp = route[0] as Ref<Application>
-    currentSpace = route[1] as Ref<Space>
+  onDestroy(location.subscribe(async (loc) => {
+    console.log('here!')
+    currentApp = loc.path[1] as Ref<Application>
+    currentSpace = loc.path[2] as Ref<Space>
     console.log('current app:', currentApp)
     navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
   }))
@@ -74,7 +75,7 @@
     <Task title={'Silver project'}/>
   </div> -->
   <div class="component">
-    <SpaceHeader title="default channel" subtitle="89 members"/>
+    <SpaceHeader space={currentSpace}/>
     <Chat title="default channel" subtitle="89 members"/>
   </div>
   <div class="aside">

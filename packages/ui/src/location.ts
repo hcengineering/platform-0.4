@@ -14,8 +14,9 @@
 //
 
 import { Location as PlatformLocation } from './types'
+import { writable, derived } from 'svelte/store'
 
-export function locationToUrl (location: PlatformLocation): string {
+function locationToUrl (location: PlatformLocation): string {
   let result = '/'
   if (location.path) {
     result += location.path.map((p) => encodeURIComponent(p)).join('/')
@@ -42,7 +43,7 @@ export function locationToUrl (location: PlatformLocation): string {
   return result
 }
 
-export function parseLocation (location: Location): PlatformLocation {
+function parseLocation (location: Location): PlatformLocation {
   return {
     path: parsePath(location.pathname),
     query: parseQuery(location.search),
@@ -50,7 +51,7 @@ export function parseLocation (location: Location): PlatformLocation {
   }
 }
 
-export function parseQuery (query: string): Record<string, string | null> {
+function parseQuery (query: string): Record<string, string | null> {
   query = query.trim()
   if (query.length === 0 || !query.startsWith('?')) {
     return {}
@@ -73,7 +74,7 @@ export function parseQuery (query: string): Record<string, string | null> {
   return result
 }
 
-export function parsePath (path: string): string[] {
+function parsePath (path: string): string[] {
   const split = path.split('/').map((ps) => decodeURIComponent(ps))
   if (split.length >= 1) {
     if (split[0] === '') {
@@ -88,9 +89,28 @@ export function parsePath (path: string): string[] {
   return split
 }
 
-export function parseHash (hash: string): string {
+function parseHash (hash: string): string {
   if (hash.startsWith('#')) {
     return hash.substring(1)
   }
   return hash
+}
+
+// ------------------------
+
+export function getCurrentLocation (): PlatformLocation {
+  return parseLocation(window.location)
+}
+
+const locationWritable = writable(getCurrentLocation())
+window.addEventListener('popstate', () => {
+  locationWritable.set(getCurrentLocation())
+})
+
+export const location = derived(locationWritable, (loc) => loc)
+
+export function navigate(location: PlatformLocation) {
+  const url = locationToUrl(location)
+  history.pushState(null, '', url)
+  locationWritable.set(location)
 }

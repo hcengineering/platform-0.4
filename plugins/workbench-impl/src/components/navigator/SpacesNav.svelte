@@ -19,7 +19,7 @@
   import type { Asset } from '@anticrm/status'
   import type { Ref, Space } from '@anticrm/core'
   import type { SpacesNavModel } from '@anticrm/workbench'
-  import { Action, getRouter } from '@anticrm/ui'
+  import { Action, navigate, getCurrentLocation } from '@anticrm/ui'
 
   import { IconAdd } from '@anticrm/ui'
   import { getClient, showModal } from '@anticrm/workbench'
@@ -48,13 +48,11 @@
     }
   }
 
-  const router = getRouter()
-
   function selectSpace(id: Ref<Space>) {
-    const path = router.getCurrentPath()
-    path[1] = id
-    router.navigate(path)
-    console.log('navigate:', path)
+    const loc = getCurrentLocation()
+    loc.path[2] = id
+    loc.path.length = 3
+    navigate(loc)
   }
 </script>
 

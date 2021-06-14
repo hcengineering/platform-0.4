@@ -18,7 +18,7 @@
   import { onDestroy, createEventDispatcher } from 'svelte'
   import type { Ref } from '@anticrm/core'
   import type { Application } from '@anticrm/workbench'
-  import { getRouter } from '@anticrm/ui'
+  import { getCurrentLocation, navigate } from '@anticrm/ui'
   import workbench, { getClient } from '@anticrm/workbench'
 
   import AppItem from './AppItem.svelte'
@@ -28,13 +28,19 @@
   let apps: Application[] = []
   onDestroy(getClient().query(workbench.class.Application, {}, result => { apps = result }))
 
-  const router = getRouter()
+  function navigateApp(app: Ref<Application>) {
+    const loc = getCurrentLocation()
+    loc.path[1] = app
+    loc.path.length = 2
+    navigate(loc)
+  }
+
 </script>
 
 <div class="app-icons">
   {#each apps as app}
     <div class="app">
-      <AppItem selected={app._id === active} icon={app.icon} label={app.label} notify action={async () => {router.navigate([app._id])}}/>
+      <AppItem selected={app._id === active} icon={app.icon} label={app.label} notify action={async () => {navigateApp(app._id)}}/>
     </div>
   {/each}
 </div>
