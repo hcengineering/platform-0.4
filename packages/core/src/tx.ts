@@ -78,7 +78,7 @@ export class TxOperations extends TxProcessor {
     super()
   }
 
-  async createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<void> {
+  async createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<T> {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxCreateDoc,
@@ -90,6 +90,7 @@ export class TxOperations extends TxProcessor {
       objectSpace: space,
       attributes
     }
-    return await this.tx(tx)
+    await this.tx(tx)
+    return TxProcessor.createDoc2Doc(tx) as T
   }
 }
