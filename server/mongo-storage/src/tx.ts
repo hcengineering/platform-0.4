@@ -13,13 +13,7 @@
 // limitations under the License.
 //
 
-import {
-  Class,
-  DocumentQuery,
-  Hierarchy,
-  Storage,
-  Tx
-} from '@anticrm/core'
+import { Class, DocumentQuery, Hierarchy, Storage, Tx } from '@anticrm/core'
 import { Doc, Ref } from '@anticrm/core/src/classes'
 import { Db } from 'mongodb'
 import { toMongoQuery } from './query'

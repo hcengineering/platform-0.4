@@ -17,7 +17,8 @@ import core, {
   Class,
   Doc,
   DocumentQuery,
-  Emb, Hierarchy,
+  Emb,
+  Hierarchy,
   Ref,
   Storage,
   Tx,
@@ -70,16 +71,13 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
-    return await this.collection(tx.objectClass).updateOne(
-      toMongoIdQuery(tx),
-      {
-        $set: {
-          ...tx.attributes,
-          modifiedBy: tx.modifiedBy,
-          modifiedOn: tx.modifiedOn
-        }
+    return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), {
+      $set: {
+        ...tx.attributes,
+        modifiedBy: tx.modifiedBy,
+        modifiedOn: tx.modifiedOn
       }
-    )
+    })
   }
 
   async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
@@ -88,14 +86,13 @@ export class DocStorage extends TxProcessor implements Storage {
 
   async txUpdateCollection (tx: TxUpdateCollection<Doc, Emb>): Promise<any> {
     const mongoQuery = toMongoItemIdQuery(tx)
-    return await this.collectionOfItem(tx.itemClass).updateOne(
-      mongoQuery, {
-        $set: {
-          ...toMongoItemValue(tx.attributes),
-          modifiedBy: tx.modifiedBy,
-          modifiedOn: tx.modifiedOn
-        }
-      })
+    return await this.collectionOfItem(tx.itemClass).updateOne(mongoQuery, {
+      $set: {
+        ...toMongoItemValue(tx.attributes),
+        modifiedBy: tx.modifiedBy,
+        modifiedOn: tx.modifiedOn
+      }
+    })
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
@@ -106,6 +103,6 @@ export class DocStorage extends TxProcessor implements Storage {
   // Non finalized API to search for collection items.
   async findIn<T extends Doc, P extends Emb>(itemQuery: ItemQuery<T, P>, query: Partial<P>): Promise<P[]> {
     const mongoQuery = toMongoItemQuery(this.hierarchy, itemQuery, query)
-    return (await this.collectionOfItem(itemQuery.itemClass).find(mongoQuery).toArray()).map(p => p.value)
+    return (await this.collectionOfItem(itemQuery.itemClass).find(mongoQuery).toArray()).map((p) => p.value)
   }
 }

@@ -13,13 +13,7 @@
 // limitations under the License.
 //
 
-import {
-  Class,
-  Doc,
-  DocumentQuery, Hierarchy,
-  Obj,
-  Ref, Tx
-} from '@anticrm/core'
+import { Class, Doc, DocumentQuery, Hierarchy, Obj, Ref, Tx } from '@anticrm/core'
 import { FilterQuery } from 'mongodb'
 
 export function toMongoIdQuery (tx: Tx): FilterQuery<Doc> {
@@ -35,7 +29,11 @@ export function toMongoIdQuery (tx: Tx): FilterQuery<Doc> {
  * @param objectClass - a class query is designed for.
  * @param query - a query object to convert to.
  */
-export function toMongoQuery<T extends Doc> (hierarchy: Hierarchy, objectClass: Ref<Class<T>>, query: DocumentQuery<T>): FilterQuery<T> {
+export function toMongoQuery<T extends Doc> (
+  hierarchy: Hierarchy,
+  objectClass: Ref<Class<T>>,
+  query: DocumentQuery<T>
+): FilterQuery<T> {
   const mongoQuery: FilterQuery<Doc> = query as FilterQuery<Doc>
   mongoQuery._class = objectClass
   const classes: Ref<Class<Obj>>[] = [objectClass]

@@ -7,10 +7,9 @@ import { TxStorage } from './tx'
  * Will do not pass transactions over model classes.
  */
 export class ModelFilter implements Storage {
-  constructor (readonly filterDomain: Domain, readonly hierarchy: Hierarchy, readonly store: TxStorage) {
-  }
+  constructor (readonly filterDomain: Domain, readonly hierarchy: Hierarchy, readonly store: TxStorage) {}
 
-  async findAll <T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]> {
     return await this.store.findAll(_class, query)
   }
 

@@ -14,7 +14,18 @@
 // limitations under the License.
 //
 
-import core, { Client, createClient, Doc, DOMAIN_MODEL, Emb, Hierarchy, Ref, Storage, TxCreateDoc, TxUpdateCollection } from '@anticrm/core'
+import core, {
+  Client,
+  createClient,
+  Doc,
+  DOMAIN_MODEL,
+  Emb,
+  Hierarchy,
+  Ref,
+  Storage,
+  TxCreateDoc,
+  TxUpdateCollection
+} from '@anticrm/core'
 import { Account, Class, ClassifierKind, Data, Domain, Space } from '@anticrm/core/src/classes'
 import { Tx, TxAddCollection, TxProcessor, TxUpdateDoc } from '@anticrm/core/src/tx'
 import { generateId } from '@anticrm/core/src/utils'
@@ -68,7 +79,14 @@ async function updateDoc<T extends Doc> (storage: Storage, doc: T, attributes: P
   return TxProcessor.createDoc2Doc(tx) as T
 }
 
-async function addCollection<T extends Doc, P extends Emb> (storage: Storage, doc: T, collection: string, itemClass: Ref<Class<T>>, attributes: Omit<P, keyof Emb>, localId?: string): Promise<void> {
+async function addCollection<T extends Doc, P extends Emb> (
+  storage: Storage,
+  doc: T,
+  collection: string,
+  itemClass: Ref<Class<T>>,
+  attributes: Omit<P, keyof Emb>,
+  localId?: string
+): Promise<void> {
   const tx: TxAddCollection<T, P> = {
     _id: generateId(),
     _class: core.class.TxAddCollection,
@@ -85,7 +103,14 @@ async function addCollection<T extends Doc, P extends Emb> (storage: Storage, do
   await storage.tx(tx)
 }
 
-async function updateCollection<T extends Doc, P extends Emb> (storage: Storage, doc: T, collection: string, itemClass: Ref<Class<T>>, localId: string, attributes: Partial<Omit<P, keyof Emb>>): Promise<void> {
+async function updateCollection<T extends Doc, P extends Emb> (
+  storage: Storage,
+  doc: T,
+  collection: string,
+  itemClass: Ref<Class<T>>,
+  localId: string,
+  attributes: Partial<Omit<P, keyof Emb>>
+): Promise<void> {
   const tx: TxUpdateCollection<T, P> = {
     _id: generateId(),
     _class: core.class.TxUpdateCollection,
@@ -213,15 +238,27 @@ describe('mongo operations', () => {
 })
 
 async function createComments (client: Client, t1: Task): Promise<void> {
-  await addCollection(client, t1, 'comments', taskIds.class.TaskComment,
+  await addCollection(
+    client,
+    t1,
+    'comments',
+    taskIds.class.TaskComment,
     { author: 'vasya', date: new Date(), message: 'Some msg' },
     '#1'
   )
-  await addCollection(client, t1, 'comments', taskIds.class.TaskComment,
+  await addCollection(
+    client,
+    t1,
+    'comments',
+    taskIds.class.TaskComment,
     { author: 'vasya', date: new Date(), message: 'Some msg 2' },
     '#2'
   )
-  await addCollection(client, t1, 'comments', taskIds.class.TaskComment,
+  await addCollection(
+    client,
+    t1,
+    'comments',
+    taskIds.class.TaskComment,
     { author: 'petya', date: new Date(), message: 'Some more msg' },
     '#3'
   )

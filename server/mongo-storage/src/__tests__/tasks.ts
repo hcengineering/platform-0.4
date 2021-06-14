@@ -15,9 +15,9 @@ export enum TaskStatus {
 }
 
 export enum TaskReproduce {
-  Always='always',
-  Rare='rare',
-  Sometimes='sometimes'
+  Always = 'always',
+  Rare = 'rare',
+  Sometimes = 'sometimes'
 }
 
 export interface Task extends Doc {
@@ -31,8 +31,8 @@ export interface Task extends Doc {
 }
 
 /**
-   * Define ROM and Estimated Time to arrival
-   */
+ * Define ROM and Estimated Time to arrival
+ */
 export interface TaskEstimate extends Obj {
   rom: number // in hours
   eta: number // in hours
@@ -55,16 +55,16 @@ export const taskIds = component('core' as Component, {
   //   mixin: {
   //     TaskMixin: '' as Ref<Mixin<TaskMixin>>
   //   },
-//   enum: {
-//     TaskStatus: '' as Ref<Enum<TaskStatus>>,
-//     TaskReproduce: '' as Ref<Enum<TaskReproduce>>
-//   }
+  //   enum: {
+  //     TaskStatus: '' as Ref<Enum<TaskStatus>>,
+  //     TaskReproduce: '' as Ref<Enum<TaskReproduce>>
+  //   }
 })
 
 /**
-   * Create a random task with name specified
-   * @param name
-   */
+ * Create a random task with name specified
+ * @param name
+ */
 export function createTask (name: string, rate: number, description: string): Data<Task> {
   return {
     name,

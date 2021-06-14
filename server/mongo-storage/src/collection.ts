@@ -14,7 +14,8 @@
 //
 import {
   Class,
-  Doc, Emb,
+  Doc,
+  Emb,
   generateId,
   Hierarchy,
   makeEmb,
