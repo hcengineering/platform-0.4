@@ -21,13 +21,9 @@ import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import core from '..'
 
-async function getModel (): Promise<Tx[]> {
-  return import('./model.tx.json') as unknown as Tx[]
-}
+import txes from './model.tx'
 
 export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
-  const txes = await getModel()
-
   const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)
 

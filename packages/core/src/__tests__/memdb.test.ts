@@ -17,11 +17,11 @@ import type { Ref, Class, Obj, Emb, Doc, Account } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import type { Tx, TxAddCollection } from '../tx'
+import type { TxAddCollection } from '../tx'
 
 import { describe, expect, it } from '@jest/globals'
 
-const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+import txes from './model.tx'
 
 describe('memdb', () => {
   it('should save all tx', async () => {
