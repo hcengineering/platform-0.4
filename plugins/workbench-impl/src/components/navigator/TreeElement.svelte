@@ -20,6 +20,7 @@
   import type { Asset, IntlString } from '@anticrm/status'
   import type { Action } from '@anticrm/ui'
   import { Icon, Label, ActionIcon } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
 
   export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
@@ -31,9 +32,7 @@
 
   let toolInvisible: boolean = true
 
-  function actionApp(): void {
-    console.log('Click')
-  }
+  const dispatch = createEventDispatcher()
 </script>
 
 <div class="container" on:mouseover={() => { toolInvisible = false }} on:mouseout={() => { toolInvisible = true }}>
@@ -45,7 +44,7 @@
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
     </div>
-    <span on:click={() => {actionApp()}}>
+    <span on:click={() => {dispatch('click')}}>
       {#if label}<Label {label}/>{:else}{title}{/if}
     </span>
     {#each actions as action}

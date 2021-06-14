@@ -16,11 +16,14 @@
 <script lang="ts">
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
+  import { createEventDispatcher } from 'svelte'
 
   export let icon: Asset
   export let title: string
   export let notifications = 0
 
+  const dispatch = createEventDispatcher()
+
 </script>
 
-<TreeElement {icon} {title} {notifications} collapsed/>
+<TreeElement {icon} {title} {notifications} collapsed on:click={() => {dispatch('click')}}/>

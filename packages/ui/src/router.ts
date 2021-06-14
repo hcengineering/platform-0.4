@@ -34,9 +34,6 @@ const ROUTER_CONTEXT = 'router'
 
 interface Router {
   navigate(path: string[]): void
-}
-
-interface InternalRouter extends Router {
   getCurrentPath(): string[]
 }
 
@@ -45,7 +42,7 @@ export function getRouter(): Router {
 }
 
 export function newRouter(segments: number, onChange: (route: string[]) => void) {
-  const parent = getRouter() as InternalRouter
+  const parent = getRouter()
   
   let currentPath: string[] = []
   currentPath.length = segments
@@ -58,7 +55,7 @@ export function newRouter(segments: number, onChange: (route: string[]) => void)
     return [...getParentPath(), ...currentPath]
   }
 
-  const router: InternalRouter = {
+  const router: Router = {
     navigate (path: string[]): void {
       currentPath = path
       if (path.length < segments)

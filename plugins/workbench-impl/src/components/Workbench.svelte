@@ -24,7 +24,7 @@
   import { setContext } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
 
-  import type { Ref } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
@@ -40,10 +40,12 @@
   setContext(workbench.context.Client, client)
 
   let currentApp: Ref<Application> | undefined
+  let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
 
   onDestroy(newRouter(2, async (route) => {
     currentApp = route[0] as Ref<Application>
+    currentSpace = route[1] as Ref<Space>
     console.log('current app:', currentApp)
     navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
   }))
@@ -65,7 +67,7 @@
   {#if navigator}
   <div class="navigator">
     <NavHeader/>
-    <Navigator model={navigatorModel}/>
+    <Navigator model={navigatorModel} space={currentSpace}/>
   </div>
   {/if}
   <!-- <div class="component">

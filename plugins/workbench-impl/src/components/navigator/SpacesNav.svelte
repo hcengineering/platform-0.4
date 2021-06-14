@@ -17,9 +17,9 @@
   import { onDestroy } from 'svelte'
 
   import type { Asset } from '@anticrm/status'
-  import type { Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import type { SpacesNavModel } from '@anticrm/workbench'
-  import type { Action } from '@anticrm/ui'
+  import { Action, getRouter } from '@anticrm/ui'
 
   import { IconAdd } from '@anticrm/ui'
   import { getClient, showModal } from '@anticrm/workbench'
@@ -28,6 +28,7 @@
   import TreeItem from './TreeItem.svelte'
 
   export let model: SpacesNavModel
+  export let space: Ref<Space>
 
   let spaces: Space[] = []
   let unsubscribe = () => {}
@@ -46,12 +47,21 @@
       showModal(model.createComponent, {})
     }
   }
+
+  const router = getRouter()
+
+  function selectSpace(id: Ref<Space>) {
+    const path = router.getCurrentPath()
+    path[1] = id
+    router.navigate(path)
+    console.log('navigate:', path)
+  }
 </script>
 
 <div>
   <TreeNode label={model.label} actions={[addSpace]}>
     {#each spaces as space}
-      <TreeItem title={space.name} icon={model.spaceIcon}/>
+      <TreeItem title={space.name} icon={model.spaceIcon} on:click={() => { selectSpace(space._id) }}/>
     {/each}
   </TreeNode>
 </div>
