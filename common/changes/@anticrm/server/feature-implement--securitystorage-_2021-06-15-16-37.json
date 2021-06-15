@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "implemented security storage",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/server",
+  "email": "bykhov.denis@gmail.com"
+}
