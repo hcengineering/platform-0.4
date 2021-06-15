@@ -52,7 +52,6 @@
         font-weight: 500;
         line-height: 150%;
         color: var(--theme-caption-color);
-        -webkit-user-select: none;
         user-select: none;
       }
       .arrow {

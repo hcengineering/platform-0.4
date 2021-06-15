@@ -74,7 +74,6 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--theme-caption-color);
-      -webkit-user-select: none;
       user-select: none;
       &.sub {
         font-weight: 400;

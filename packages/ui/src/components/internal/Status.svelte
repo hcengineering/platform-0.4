@@ -24,7 +24,6 @@
     align-items: center;
     font-size: 11px;
     opacity: .3;
-    -webkit-user-select: none;
     user-select: none;
 
     span {

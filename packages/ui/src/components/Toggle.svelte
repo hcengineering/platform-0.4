@@ -29,7 +29,6 @@
     line-height: 28px;
     vertical-align: middle;
     font-size: 14px;
-    -webkit-user-select: none;
     user-select: none;
     .chBox {
       display: block;

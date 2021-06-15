@@ -38,7 +38,6 @@
 <style lang="scss">
   .reactions-container {
     display: flex;
-    -webkit-user-select: none;
     user-select: none;
 
     .reaction {

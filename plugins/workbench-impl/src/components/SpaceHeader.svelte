@@ -72,7 +72,6 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        -webkit-user-select: none;
         user-select: none;
         font-size: 16px;
         font-weight: 500;
@@ -90,7 +89,6 @@
         font-size: 12px;
         font-weight: 400;
         opacity: .3;
-        -webkit-user-select: none;
         user-select: none;
       }
     }

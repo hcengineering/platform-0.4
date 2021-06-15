@@ -79,7 +79,6 @@
       pointer-events: none;
       opacity: 0.3;
       transition: all 200ms;
-      -webkit-user-select: none;
       user-select: none;
     }
     input:focus + .label,

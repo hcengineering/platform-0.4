@@ -45,7 +45,6 @@
       font-size: 14px;
       font-weight: 400;
       color: var(--theme-caption-color);
-      -webkit-user-select: none;
       user-select: none;
       span {
         display: block;
