@@ -4,7 +4,7 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "echo 'no docs yet'",
-    "test": "echo 'no tests'",
+    "test": "jest",
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev src/index.ts",
     "shutdown": "ts-node src/serverctl.ts",
