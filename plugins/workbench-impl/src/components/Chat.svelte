@@ -18,8 +18,6 @@
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
 
-  export let title: IntlString
-  export let subtitle: IntlString | undefined
   export let thread: boolean = false
 </script>
 

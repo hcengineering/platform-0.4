@@ -27,7 +27,6 @@
     nopadding?: boolean
   }
 
-  export let thread: boolean = false
   export let tableHead: string[] = ['Candidate', 'ID', 'Label', 'City']
   export let table: Cell[][] = [[{ item: Label, props: { label: 'Create UI for apps without the spaces and update the interface flow' } },
                                  { item: Reactions, props: { reactions: [{ icon: Chat, count: 3 }] } },
@@ -47,7 +46,7 @@
                                  [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
                                  { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
                                  { item: UserInfo, props: { user: 'chen' } },
-                                 { item: Progress, props: { value: 42 } }],
+                                 { item: Progress, props: { min: 0, max: 7, value: 5 } }],
 
                                 [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
                                  { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },

@@ -26,7 +26,7 @@
 </script>
 
 <div class="toggleWithLabel">
-  <div class="caption" on:click={() => { on = !on }}>
+  <div class="caption">
     <Label {label} />
     {#if description}
       <span><Label label={description} /></span>
@@ -40,12 +40,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
     .caption {
       margin-right: 16px;
       font-size: 14px;
       font-weight: 400;
       color: var(--theme-caption-color);
+      -webkit-user-select: none;
       user-select: none;
       span {
         display: block;

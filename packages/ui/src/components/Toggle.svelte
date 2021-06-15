@@ -29,6 +29,7 @@
     line-height: 28px;
     vertical-align: middle;
     font-size: 14px;
+    -webkit-user-select: none;
     user-select: none;
     .chBox {
       display: block;
@@ -40,7 +41,7 @@
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
-          transform: translateX(23px);
+          transform: translateX(22px);
         }
       }
       &:not(:disabled) + .toggle-switch {

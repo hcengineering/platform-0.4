@@ -47,6 +47,8 @@
     border: 1px solid var(--theme-button-border-enabled);
     border-radius: 12px;
     outline: none;
+    -webkit-user-select: none;
+    user-select: none;
     cursor: pointer;
     font-family: inherit;
     font-size: 14px;

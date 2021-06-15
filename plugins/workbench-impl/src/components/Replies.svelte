@@ -42,6 +42,8 @@
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    -webkit-user-select: none;
+    user-select: none;
 
     .counter {
       margin-right: 12px;
