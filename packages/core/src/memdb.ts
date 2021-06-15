@@ -24,7 +24,11 @@ import { generateId, makeEmb } from './utils'
 function findProperty (objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
   const result: Doc[] = []
   for (const object of objects) {
-    if ((object as any)[propertyKey] === value) {
+    if (Array.isArray(value)) {
+      if (value.includes((object as any)[propertyKey])) {
+        result.push(object)
+      }
+    } else if ((object as any)[propertyKey] === value) {
       result.push(object)
     }
   }
@@ -70,8 +74,16 @@ class MemDb {
       if (query._id === undefined) {
         result = []
       } else {
-        const obj = this.objectById.get(query._id)
-        result = obj !== undefined ? [obj] : []
+        if (Array.isArray(query._id)) {
+          result = []
+          query._id.forEach((id) => {
+            const obj = this.objectById.get(id)
+            if (obj !== undefined) result.push(obj)
+          })
+        } else {
+          const obj = this.objectById.get(query._id)
+          result = obj !== undefined ? [obj] : []
+        }
       }
     } else {
       result = this.getObjectsByClass(_class)

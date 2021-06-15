@@ -13,10 +13,15 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref } from './classes'
+import type { Class, Doc, Obj, Ref } from './classes'
 import type { Tx } from './tx'
 
-export type DocumentQuery<T extends Doc> = Partial<T>
+export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T
+export type ArrayQueryType<A> = A extends Array<infer T> ? ObjQueryType<T> | Array<ObjQueryType<T>> : ObjQueryType<A>
+
+export type DocumentQuery<T> = {
+  [P in keyof T]?: ArrayQueryType<T[P]>
+}
 
 export interface Storage {
   findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
