@@ -17,7 +17,7 @@ import type { Class, Doc, Obj, Ref } from './classes'
 import type { Tx } from './tx'
 
 export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T
-export type ArrayQueryType<A> = A extends Array<infer T> ? ObjQueryType<T> | Array<ObjQueryType<T>> : ObjQueryType<A>
+export type ArrayQueryType<A> = Array<ObjQueryType<A>> | ObjQueryType<A>
 
 export type DocumentQuery<T> = {
   [P in keyof T]?: ArrayQueryType<T[P]>

@@ -14,12 +14,12 @@
 //
 
 import type { Tx } from '@anticrm/core'
-import core, { Hierarchy, Domain } from '@anticrm/core'
+import core, { Hierarchy, Domain, Ref, Class, Obj } from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
-describe('hierarchy', () => {
+describe('elastic search', () => {
   it('should query model with params', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
@@ -30,10 +30,13 @@ describe('hierarchy', () => {
     }
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
-    const second = await model.findAll(core.class.Class, { domain: 'model' as Domain })
-    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId })
+    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
     expect(first.length).toBe(1)
-    const result = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: 'domain' as Domain })
+    const second = await model.findAll(core.class.Class, { _id: [txes[0].objectId as Ref<Class<Obj>>, txes[5].objectId as Ref<Class<Obj>>] })
+    expect(second.length).toBe(2)
+    const third = await model.findAll(core.class.Class, { extends: [core.class.Space, core.class.Doc] })
+    expect(third.length).toBe(6)
+    const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
   })
 })
