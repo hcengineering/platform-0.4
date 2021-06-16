@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo-storage",
+      "comment": "Fixed query",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo-storage",
+  "email": "bykhov.denis@gmail.com"
+}
