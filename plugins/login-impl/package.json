@@ -21,7 +21,7 @@
     "sass": "^1.32.8",
     "svelte-loader": "^3.1.0",
     "svelte-preprocess": "^4.7.0",
-    "svelte-check": "~2.1.0"
+    "svelte-check": "^2.1.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
