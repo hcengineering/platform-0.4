@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Add packages: autoprefixer, postcss, postcss-loader.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl",
+  "email": "sas_lord@mail.ru"
+}

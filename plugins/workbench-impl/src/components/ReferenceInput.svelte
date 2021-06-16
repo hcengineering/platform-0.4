@@ -40,12 +40,15 @@
   .ref-container {
     display: flex;
     flex-direction: column;
+    min-height: 74px;
+    height: 74px;
     margin: 20px 40px;
 
     .textInput {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      min-height: 44px;
       height: 44px;
       padding: 0 16px;
       background-color: var(--theme-bg-accent-color);

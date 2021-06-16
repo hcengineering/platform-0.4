@@ -59,10 +59,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 32px 0 40px;
-    &.thread {
-      width: auto;
-      border-bottom: 1px solid transparent;
-    }
 
     .caption {
       display: flex;
@@ -76,6 +72,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        user-select: none;
         font-size: 16px;
         font-weight: 500;
 
@@ -92,6 +89,7 @@
         font-size: 12px;
         font-weight: 400;
         opacity: .3;
+        user-select: none;
       }
     }
 

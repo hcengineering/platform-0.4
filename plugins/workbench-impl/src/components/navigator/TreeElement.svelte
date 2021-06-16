@@ -37,14 +37,14 @@
 
 <div class="container" on:mouseover={() => { toolInvisible = false }} on:mouseout={() => { toolInvisible = true }}>
   <div class="title" class:sub={!node}>
-    <div class="icon" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed}}>
+    <div class="icon" class:sub={!node} on:click={() => {if (node && !icon) collapsed = !collapsed; dispatch('click')}}>
       {#if icon}
         <Icon {icon} size={16}/>
       {:else}
         {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
       {/if}
     </div>
-    <span on:click={() => {dispatch('click')}}>
+    <span on:click={() => {if (node && !icon) collapsed = !collapsed; dispatch('click')}}>
       {#if label}<Label {label}/>{:else}{title}{/if}
     </span>
     {#each actions as action}
@@ -75,7 +75,6 @@
       font-weight: 500;
       color: var(--theme-caption-color);
       user-select: none;
-      cursor: pointer;
       &.sub {
         font-weight: 400;
         color: var(--theme-content-color);
@@ -87,6 +86,7 @@
         margin: 10px 16px 10px 18px;
         border-radius: 4px;
         opacity: .3;
+        cursor: pointer;
         &.sub {
           margin: 10px 16px 10px 50px;
         }
@@ -104,6 +104,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        cursor: pointer;
       }
       .tool {
         // visibility: hidden;

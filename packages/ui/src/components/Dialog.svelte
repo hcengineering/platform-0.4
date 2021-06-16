@@ -64,6 +64,7 @@
         font-size: 20px;
         line-height: 26px;
         color: var(--theme-caption-color);
+        user-select: none;
       }
       .tool {
         width: 16px;

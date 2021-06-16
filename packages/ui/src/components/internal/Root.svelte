@@ -99,6 +99,7 @@
             font-size: 12px;
             color: var(--theme-caption-color);
             opacity: 0.3;
+            user-select: none;
           }
           .widget {
             display: flex;

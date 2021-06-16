@@ -79,6 +79,7 @@
       pointer-events: none;
       opacity: 0.3;
       transition: all 200ms;
+      user-select: none;
     }
     input:focus + .label,
     input:not(:placeholder-shown) + .label {
