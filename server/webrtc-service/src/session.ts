@@ -18,7 +18,7 @@ import { IceCandidate, MediaPipeline, WebRtcEndpoint } from 'kurento-client'
 
 export class Session {
   private readonly pipeline: MediaPipeline
-  public readonly outgoingMedia: Promise<WebRtcEndpoint>
+  private readonly outgoingMedia: Promise<WebRtcEndpoint>
   private readonly incomingMedia = new Map<string, Promise<WebRtcEndpoint>>()
   public readonly send: (msg: Outgoing) => void
   public readonly name: string

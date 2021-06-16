@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import KurentoClient, { MediaPipeline } from 'kurento-client'
+import type { MediaPipeline } from 'kurento-client'
 
 import {
   getScreenOwner,
@@ -28,6 +28,7 @@ import {
   TaskQueue
 } from '@anticrm/webrtc'
 
+import { makeKurento } from './kurento.client'
 import { Session } from './session'
 
 const isDefined = <T> (x: T | undefined | null): x is T => x !== undefined && x !== null
@@ -39,7 +40,7 @@ interface Room {
 }
 export default class {
   private nextID = 0
-  private readonly kurento = KurentoClient('ws://359.rocks:8888/kurento')
+  private readonly kurento = makeKurento('ws://359.rocks:8888/kurento')
 
   private readonly rooms: Map<string, Room> = new Map()
 
