@@ -69,9 +69,16 @@ class MemDb {
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
       if (query._id === undefined) {
         result = []
-      } else {
+      } else if (typeof query._id === 'string') {
         const obj = this.objectById.get(query._id)
         result = obj !== undefined ? [obj] : []
+      } else {
+        const ids = query._id.$in ?? []
+        result = []
+        for (const id of ids) {
+          const obj = this.objectById.get(id)
+          if (obj !== undefined) result.push(obj)
+        }
       }
     } else {
       result = this.getObjectsByClass(_class)

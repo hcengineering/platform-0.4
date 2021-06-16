@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Tx } from '@anticrm/core'
+import type { Class, Obj, Ref, Tx } from '@anticrm/core'
 import core, { Hierarchy, Domain } from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
@@ -30,10 +30,9 @@ describe('hierarchy', () => {
     }
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
-    const second = await model.findAll(core.class.Class, { domain: 'model' as Domain })
-    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId })
+    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
     expect(first.length).toBe(1)
-    const result = await model.findAll(core.class.Class, { _id: txes[0].objectId, domain: 'domain' as Domain })
+    const result = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>>, domain: 'domain' as Domain })
     expect(result.length).toBe(0)
   })
 })
