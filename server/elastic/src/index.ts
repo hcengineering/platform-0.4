@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc, DocumentQuery } from '@anticrm/core'
+import { Class, Hierarchy, Doc, DocumentQuery, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -56,25 +56,41 @@ export class ElasticStorage extends TxProcessor implements Storage {
 
     const criteries = []
     for (const key in query) {
+      if (key === '_id') continue
       const value = (query as any)[key]
-      const criteria = {
-        match: Object()
+      if (Array.isArray(value)) {
+        const criteria = {
+          terms: Object()
+        }
+        criteria.terms[key] = value.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+        console.log(criteria.terms[key])
+        criteries.push(criteria)
+      } else {
+        const criteria = {
+          match: Object()
+        }
+        criteria.match[key] = value
+        criteries.push(criteria)
       }
-      criteria.match[key] = value
-      criteries.push(criteria)
     }
 
-    const classes = []
-    const children = this.hierarchy.getDescendants(_class)
-    for (const value of children) {
-      const criteria = {
-        match: Object()
-      }
-      criteria.match._class = value
-      classes.push(criteria)
+    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const criteria = {
+      terms: Object()
     }
+    criteria.terms._class = classes
+    criteries.push(criteria)
 
     const domain = this.hierarchy.getDomain(_class)
+
+    let filter
+    if (query._id !== undefined) {
+      filter = {
+        ids: {
+          values: query._id
+        }
+      }
+    }
 
     const { body } = await this.client.search({
       index: this.workspace,
@@ -83,10 +99,10 @@ export class ElasticStorage extends TxProcessor implements Storage {
         query: {
           bool: {
             must: criteries,
-            should: classes,
-            minimum_should_match: 1
+            filter: filter
           }
-        }
+        },
+        size: 1000
       }
     })
 
@@ -102,7 +118,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       id: tx.objectId,
       index: this.workspace,
       type: this.hierarchy.getDomain(tx.objectClass),
-      body: { _class: tx.objectClass, ...tx.attributes }
+      body: { _class: tx.objectClass, space: tx.objectSpace, ...tx.attributes }
     }
     await this.client.index(object)
     await this.client.indices.refresh({ index: this.workspace })
@@ -120,7 +136,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const object = {
       id: tx.objectId,
       index: this.workspace,
-      type: tx.objectSpace,
+      type: tx.itemClass,
       body: data
     }
     await this.client.index(object)

@@ -19,7 +19,7 @@ import { ElasticStorage } from '../index'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 
-describe('hierarchy', () => {
+describe('elastic search', () => {
   it('should query model with params', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
@@ -32,7 +32,11 @@ describe('hierarchy', () => {
     for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
     expect(first.length).toBe(1)
-    const result = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>>, domain: 'domain' as Domain })
+    const second = await model.findAll(core.class.Class, { _id: { $in: [txes[0].objectId as Ref<Class<Obj>>, txes[5].objectId as Ref<Class<Obj>>] } })
+    expect(second.length).toBe(2)
+    const third = await model.findAll(core.class.Class, { extends: { $in: [core.class.Space, core.class.Doc] } })
+    expect(third.length).toBe(6)
+    const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
   })
 })
