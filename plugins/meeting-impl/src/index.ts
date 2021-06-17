@@ -15,13 +15,19 @@
 
 import type { MeetingService } from '@anticrm/meeting'
 import { getMetadata, setResource } from '@anticrm/platform'
-import { Client } from '@anticrm/webrtc'
+import { Client, Peer as RawPeer } from '@anticrm/webrtc'
 
 import CreateChannel from './components/CreateChannel.svelte'
 import App from './components/App.svelte'
 
 import meeting from './plugin'
 import { RoomMgr } from './room/room.mgr'
+
+export interface Peer extends RawPeer {
+  peer: RTCPeerConnection
+  media: MediaStream
+  isMediaReady: boolean
+}
 
 export default async (): Promise<MeetingService> => {
   setResource(meeting.component.CreateChannel, CreateChannel)

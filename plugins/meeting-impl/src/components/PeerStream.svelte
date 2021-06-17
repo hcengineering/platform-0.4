@@ -13,20 +13,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <script type="ts">
-  import type { Peer } from '@anticrm/meeting'
-
-  export let peer: Peer
+  export let media: MediaStream
   export let isLocal = false
+  export let level = 0
   export let full = false
 
   let videoContainer: HTMLVideoElement
 
   $: if (videoContainer) {
-    videoContainer.srcObject = peer.media
+    videoContainer.srcObject = media
   }
 </script>
 
-<video class="video" class:mVideoFull={full} autoplay muted={isLocal} controls={false} bind:this={videoContainer} />
+<video class="video" class:mVideoSpeaking={level > 0} class:mVideoFull={full} autoplay muted={isLocal} controls={false} bind:this={videoContainer} />
 
 <style lang="scss">
   .video {
@@ -35,11 +34,18 @@ limitations under the License.
     width: 100%;
     height: 100%;
     object-fit: cover;
+    padding: 1px;
+
+    &.mVideoSpeaking {
+      border: 2px solid greenyellow;
+      padding: 0;
+    }
 
     &.mVideoFull {
       object-fit: contain;
       border-radius: unset;
       border: unset;
+      padding: 0;
     }
   }
 </style>

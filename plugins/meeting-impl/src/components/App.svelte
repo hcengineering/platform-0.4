@@ -24,26 +24,30 @@ limitations under the License.
   import { getScreenOwner } from '@anticrm/webrtc'
 
   import { roomMgr } from '..'
+  import type { Peer } from '..'
 
-  const { user, screen, peers, status } = roomMgr
+  const { user, screen, peers, status, gains } = roomMgr
   let container: Element
 
   let { amount, size, containerSize: cSize } = initGridStore()
   $: if (container && peers) {
-    const s = makeGridSizeStore(container, $peers.length + 1)
+    const s = makeGridSizeStore(container, $peers.size + 1)
     amount = s.amount
     size = s.size
     cSize = s.containerSize
   }
 
   $: if ($peers) {
-    amount.set($peers.length + 1 + ($screen.isMediaReady ? 1 : 0))
+    amount.set($peers.size + 1 + ($screen.isMediaReady ? 1 : 0))
   }
 
   let isScreenShared = false
   $: if ($screen) {
     isScreenShared = $screen.isMediaReady
   }
+
+  let peersArray: Peer[] = []
+  $: peersArray = [...$peers.values()]
 
   async function join () {
     roomMgr.join('common')
@@ -86,16 +90,16 @@ limitations under the License.
 <div class="root" bind:this={container}>
 {#if isScreenShared}
     <div class="video" class:mVideoFull={isScreenShared}>
-    <PeerStream peer={$screen} full={true} />
+    <PeerStream media={$screen.media} full={true} />
     </div>
 {/if}
 <div class="videos" class:mVideosCompact={isScreenShared} style={videosStyle}>
     <div class="video" class:mVideoCompact={isScreenShared} style={videoStyle}>
-    <PeerStream peer={$user} isLocal={true} />
+    <PeerStream media={$user.media} level={$gains.get('user')} isLocal={true} />
     </div>
-    {#each $peers as peer (peer.internalID)}
+    {#each peersArray as peer (peer.internalID)}
     <div class="video" class:mVideoCompact={isScreenShared} style={videoStyle}>
-        <PeerStream {peer} />
+        <PeerStream media={peer.media} level={$gains.get(peer.internalID)} />
     </div>
     {/each}
 </div>

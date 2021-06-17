@@ -26,13 +26,14 @@ import {
   TransmitResp
 } from '@anticrm/webrtc'
 
-interface Peer extends RawPeer {
-  peer: RTCPeerConnection
-  media: MediaStream
-  isMediaReady: boolean
-}
+import type { Peer } from '..'
+
+import { GainMeter } from './gain.meter'
 
 type Status = 'joining' | 'joined' | 'left'
+
+const GainPollInterval = 100
+const GainThreshold = 0.01
 
 const makePeer = (raw: RawPeer, isMediaReady = true): Peer => ({
   internalID: raw.internalID,
@@ -85,13 +86,13 @@ const makeWebRTCPeer = (): RTCPeerConnection => new RTCPeerConnection({
 })
 
 export class RoomMgr {
-  private readonly _peers = extWritable<Peer[]>([])
+  private readonly _peers = extWritable(new Map<string, Peer>())
 
-  get peers (): Readable<Peer[]> {
+  get peers (): Readable<Map<string, Peer>> {
     return this._peers
   }
 
-  private readonly _user = extWritable<Peer>(
+  private readonly _user = extWritable(
     makePeer({ internalID: '' }, false),
     () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -105,7 +106,7 @@ export class RoomMgr {
     return this._user
   }
 
-  private readonly _screen = extWritable<Peer>(makePeer({ internalID: '' }, false))
+  private readonly _screen = extWritable(makePeer({ internalID: '' }, false))
 
   get screen (): Readable<Peer> {
     return this._screen
@@ -117,13 +118,22 @@ export class RoomMgr {
     return this._status
   }
 
+  private readonly _gains = extWritable(new Map<string, number>())
+
+  get gains (): Readable<Map<string, number>> {
+    return this._gains
+  }
+
   private readonly client: Client
 
   private readonly queue = new TaskQueue()
+  private readonly gainMeters = new Map<string, {
+    timeoutHandler: any
+    meter: GainMeter
+  }>()
 
   constructor (client: Client) {
     this.client = client
-
     this.client.subscribe(NotificationMethod.ICECandidate, this.handle.bind(this))
     this.client.subscribe(NotificationMethod.PeerJoined, this.handle.bind(this))
     this.client.subscribe(NotificationMethod.PeerLeft, this.handle.bind(this))
@@ -157,6 +167,28 @@ export class RoomMgr {
     }
   }
 
+  private readonly pollPeerGain = (id: string) => (track: MediaStreamTrack) => {
+    const meter = new GainMeter(track)
+    const handler = setInterval(() => {
+      const curLevel = this._gains.get().get(id)
+      const level = meter.getValue() > GainThreshold
+        ? 1
+        : 0
+
+      if (level !== curLevel) {
+        this._gains.update((gains) => {
+          gains.set(id, level)
+          return gains
+        })
+      }
+    }, GainPollInterval)
+
+    this.gainMeters.set(id, {
+      meter,
+      timeoutHandler: handler
+    })
+  }
+
   private async init (result: JoinResp['result']): Promise<void> {
     if (this._status.get() === 'left') {
       return
@@ -176,13 +208,17 @@ export class RoomMgr {
       peer: makeWebRTCPeer()
     }))
 
-    await this.setupPeer(this._user.get())
+    await this.setupPeer(this._user.get(), this.pollPeerGain('user'))
 
-    this._peers.set(result.peers.map(x => makePeer(x, true)))
+    this._peers.set(new Map(result.peers.map(x => [x.internalID, makePeer(x, true)])))
 
     await Promise.all(
-      this._peers.get()
-        .map(async p => await this.setupPeer(p, true))
+      [...this._peers.get().values()]
+        .map(async p => await this.setupPeer(
+          p,
+          this.pollPeerGain(p.internalID),
+          true
+        ))
     )
 
     if (result.screen !== undefined) {
@@ -193,7 +229,7 @@ export class RoomMgr {
         isMediaReady: true
       }))
 
-      await this.setupPeer(this._screen.get(), true)
+      await this.setupPeer(this._screen.get(), () => {}, true)
     }
   }
 
@@ -231,8 +267,16 @@ export class RoomMgr {
         releaseMedia(p)
       })
     })
-    this._peers.set([])
+    this._peers.set(new Map())
 
+    ;([...this.gainMeters.values()])
+      .forEach(({timeoutHandler, meter}) => {
+        clearInterval(timeoutHandler)
+        meter.close()
+      })
+
+    this.gainMeters.clear()
+    this._gains.set(new Map())
     const screen = this._screen.get()
     this._screen.update(releaseMedia)
     screen.peer.close()
@@ -304,7 +348,7 @@ export class RoomMgr {
 
       switch (result.notification) {
         case NotificationMethod.ICECandidate: {
-          const target = this.findParticipant(result.params.peerID)
+          const target = this.findPeer(result.params.peerID)
 
           if (target === undefined) {
             return
@@ -319,23 +363,45 @@ export class RoomMgr {
             return
           }
 
-          const participant = makePeer(result.params.peer, true)
-          this._peers.update(xs => [...xs, participant])
+          const peer = makePeer(result.params.peer, true)
+          this._peers.update((peers) => {
+            peers.set(peer.internalID, peer)
+            return peers
+          })
 
-          await this.setupPeer(participant, true)
+          await this.setupPeer(
+            peer,
+            this.pollPeerGain(peer.internalID),
+            true
+          )
 
           return
         }
         case NotificationMethod.PeerLeft: {
-          const participant = this._peers.get().find(p => p.internalID === result.params.peer.internalID)
+          const targetID = result.params.peer.internalID
+          const peer = this._peers.get().get(targetID)
 
-          if (participant === undefined) {
+          if (peer === undefined) {
             return
           }
 
-          this._peers.update(xs => xs.filter(x => x.internalID !== result.params.peer.internalID))
-          releaseMedia(participant)
-          participant.peer.close()
+          const meter = this.gainMeters.get(targetID)
+          clearTimeout(meter?.timeoutHandler)
+          meter?.meter.close()
+
+          this.gainMeters.delete(targetID)
+          this._gains.update((gains) => {
+            gains.delete(targetID)
+            return gains
+          })
+
+          this._peers.update((peers) => {
+            peers.delete(targetID)
+            return peers
+          })
+
+          releaseMedia(peer)
+          peer.peer.close()
 
           return
         }
@@ -370,7 +436,7 @@ export class RoomMgr {
     const screen = this._screen.get()
     const user = this._user.get()
 
-    await this.setupPeer(screen, getScreenOwner(screen.internalID) !== user.internalID)
+    await this.setupPeer(screen, () => {}, getScreenOwner(screen.internalID) !== user.internalID)
   }
 
   private handleScreenSharingFinished (): void {
@@ -386,22 +452,35 @@ export class RoomMgr {
     }))
   }
 
-  private findParticipant (id: string): Peer | undefined {
-    return [...this._peers.get(), this._user.get(), this._screen.get()]
-      .find(x => x.internalID === id)
+  private findPeer (id: string): Peer | undefined {
+    if (this._user.get().internalID === id) {
+      return this._user.get()
+    }
+
+    if (this._screen.get().internalID === id) {
+      return this._screen.get()
+    }
+
+    return this._peers.get().get(id)
   }
 
-  private async setupPeer (peer: Peer, remote = false): Promise<void> {
+  private async setupPeer (peer: Peer, onAudioTrack: (track: MediaStreamTrack) => void, remote = false): Promise<void> {
     if (remote) {
       peer.peer.addTransceiver('audio', { direction: 'recvonly' })
       peer.peer.addTransceiver('video', { direction: 'recvonly' })
 
       peer.peer.addEventListener('track', ({ track }) => {
+        if (track.kind === 'audio') {
+          onAudioTrack(track)
+        }
         peer.media.addTrack(track)
       })
     } else {
       peer.media.getTracks()
         .forEach((track) => {
+          if (track.kind === 'audio') {
+            onAudioTrack(track)
+          }
           peer.peer.addTrack(track)
         })
     }
@@ -415,7 +494,7 @@ export class RoomMgr {
       this.client.sendNotification({
         method: NotificationMethod.ICECandidate,
         params: [{
-          candidate,
+          candidate: candidate as any,
           peerID: peer.internalID
         }]
       })
