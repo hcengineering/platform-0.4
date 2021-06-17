@@ -35,7 +35,7 @@ const isDefined = <T> (x: T | undefined | null): x is T => x !== undefined && x 
 
 interface Room {
   pipeline: MediaPipeline
-  peers: Set<Peer>
+  peers: Set<Peer['internalID']>
   screenSession?: Session
 }
 export default class {
@@ -44,7 +44,7 @@ export default class {
 
   private readonly rooms: Map<string, Room> = new Map()
 
-  private readonly peers: Map<string, {session: Session, roomID: string}> = new Map()
+  private readonly peers: Map<Peer['internalID'], {peer: Peer, session: Session, roomID: string}> = new Map()
   private readonly actionQueue = new TaskQueue()
 
   private closed = false
@@ -66,7 +66,7 @@ export default class {
 
     const session = new Session(peer.internalID, room.pipeline, send)
 
-    this.peers.set(peer.internalID, { session, roomID })
+    this.peers.set(peer.internalID, { session, roomID, peer })
 
     this.forEachSession(
       (s) => s.send({
@@ -78,15 +78,17 @@ export default class {
         }
       }),
       [...room.peers]
+        .map(x => this.peers.get(x)?.peer)
+        .filter(isDefined)
     )
 
-    room.peers.add(peer)
+    room.peers.add(peer.internalID)
 
     return room
   }
 
-  private async initScreenSharing (peer: Peer, send: (msg: Outgoing) => void): Promise<void> {
-    const roomID = this.peers.get(peer.internalID)?.roomID ?? ''
+  private async initScreenSharing (id: Peer['internalID'], send: (msg: Outgoing) => void): Promise<void> {
+    const roomID = this.peers.get(id)?.roomID ?? ''
     const room = this.rooms.get(roomID)
 
     if (room === undefined) {
@@ -97,7 +99,7 @@ export default class {
       throw Error('Screen session is already launched')
     }
 
-    const session = new Session(makeScreenID(peer.internalID), room.pipeline, send)
+    const session = new Session(makeScreenID(id), room.pipeline, send)
 
     room.screenSession = session
 
@@ -106,17 +108,19 @@ export default class {
         result: {
           notification: NotificationMethod.ScreenSharingStarted,
           params: {
-            owner: peer.internalID
+            owner: id
           }
         }
       }),
       [...room.peers]
-        .filter(x => x.internalID !== peer.internalID)
+        .filter(x => x !== id)
+        .map(x => this.peers.get(x)?.peer)
+        .filter(isDefined)
     )
   }
 
-  private async stopScreenSharing (peer: Peer): Promise<void> {
-    const roomID = this.peers.get(peer.internalID)?.roomID ?? ''
+  private async stopScreenSharing (id: Peer['internalID']): Promise<void> {
+    const roomID = this.peers.get(id)?.roomID ?? ''
     const room = this.rooms.get(roomID)
 
     if (room === undefined) {
@@ -127,7 +131,7 @@ export default class {
       throw Error('Screen session does not exist')
     }
 
-    if (getScreenOwner(room.screenSession.name) !== peer.internalID) {
+    if (getScreenOwner(room.screenSession.name) !== id) {
       throw Error('Permission denied')
     }
 
@@ -143,33 +147,35 @@ export default class {
         })
       },
       [...room.peers]
-        .filter(x => x.internalID !== peer.internalID)
+        .filter(x => x !== id)
+        .map(x => this.peers.get(x)?.peer)
+        .filter(isDefined)
     )
 
     room.screenSession = undefined
   }
 
-  private async leave (peer: Peer): Promise<void> {
-    const client = this.peers.get(peer.internalID)
+  private async leave (id: Peer['internalID']): Promise<void> {
+    const client = this.peers.get(id)
     if (client === undefined) {
       return
     }
 
-    const roomEntry = [...this.rooms.entries()].find(([, x]) => x.peers.has(peer))
+    const roomEntry = [...this.rooms.entries()].find(([, x]) => x.peers.has(id))
     if (roomEntry === undefined) {
       return
     }
 
     const [roomID, room] = roomEntry
 
-    if (room.screenSession !== undefined && getScreenOwner(room.screenSession.name) === peer.internalID) {
-      await this.stopScreenSharing(peer)
+    if (room.screenSession !== undefined && getScreenOwner(room.screenSession.name) === id) {
+      await this.stopScreenSharing(id)
     }
 
     await client.session.close()
-    this.peers.delete(peer.internalID)
+    this.peers.delete(id)
 
-    room.peers.delete(peer)
+    room.peers.delete(id)
 
     if (room.peers.size === 0) {
       this.rooms.delete(roomID)
@@ -184,16 +190,53 @@ export default class {
           result: {
             notification: NotificationMethod.PeerLeft,
             params: {
-              peer
+              peerID: id
             }
           }
         })
 
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        s.cancelVideoTransmission(peer.internalID)
+        s.cancelVideoTransmission(id)
       },
       [...room.peers]
+        .map(x => this.peers.get(x)?.peer)
+        .filter(isDefined)
     )
+  }
+
+  private async peerUpdated (updatedPeer: Partial<Omit<Peer, 'internalID'>> & {internalID: Peer['internalID']}): Promise<Peer> {
+    const peer = this.peers.get(updatedPeer.internalID)
+    const room = this.rooms.get(peer?.roomID ?? '')
+
+    if (peer === undefined || room === undefined) {
+      throw Error(`Peer is not found: '${updatedPeer.internalID}'`)
+    }
+
+    const actualPeer = {
+      ...peer.peer,
+      ...updatedPeer
+    }
+
+    this.peers.set(updatedPeer.internalID, {
+      ...peer,
+      peer: actualPeer
+    })
+
+    this.forEachSession(
+      (s) => s.send({
+        result: {
+          notification: NotificationMethod.PeerUpdated,
+          params: {
+            peer: actualPeer
+          }
+        }
+      }),
+      [...room.peers]
+        .map(x => this.peers.get(x)?.peer)
+        .filter(isDefined)
+    )
+
+    return actualPeer
   }
 
   async close (): Promise<void> {
@@ -221,17 +264,15 @@ export default class {
       onWSMsg: (msg: Incoming) => Promise<ResponseMsg['result']>
       onClose: () => Promise<void>
     } {
-    const peer = {
-      internalID: this.getID()
-    }
+    const internalID = this.getID()
 
     return {
-      onWSMsg: async (msg: Incoming) => {
+      onWSMsg: async (msg: Incoming): Promise<ResponseMsg['result']> => {
         if (this.closed) {
           throw Error('Meeting service is closed')
         }
 
-        const internalPeer = this.peers.get(peer.internalID)
+        const internalPeer = this.peers.get(internalID)
         const session = internalPeer?.session
 
         if (msg.method === ReqMethod.Join) {
@@ -242,15 +283,30 @@ export default class {
           const roomID = msg.params[0].room
 
           const room = await this.actionQueue
-            .add(async () => await this.join(peer, roomID, send))
+            .add(async () => await this.join(
+              {
+                internalID,
+                ...msg.params[0].peer
+              },
+              roomID,
+              send)
+            )
 
           return {
             peers: [...room.peers]
-              .filter(x => x.internalID !== peer.internalID),
-            me: peer,
+              .filter(x => x !== internalID)
+              .map(x => this.peers.get(x)?.peer)
+              .filter(isDefined),
+            me: {
+              internalID,
+              camEnabled: msg.params[0].peer.camEnabled,
+              muted: msg.params[0].peer.muted
+            },
             screen: (room.screenSession !== undefined)
               ? {
-                  internalID: room.screenSession.name
+                  internalID: room.screenSession.name,
+                  muted: true,
+                  camEnabled: true
                 }
               : undefined
           }
@@ -262,23 +318,23 @@ export default class {
 
         if (msg.method === ReqMethod.InitScreenSharing) {
           await this.actionQueue
-            .add(async () => await this.initScreenSharing(peer, send))
+            .add(async () => await this.initScreenSharing(internalID, send))
 
           return true
         }
 
         if (msg.method === ReqMethod.StopScreenSharing) {
           await this.actionQueue
-            .add(async () => await this.stopScreenSharing(peer))
+            .add(async () => await this.stopScreenSharing(internalID))
 
           return true
         }
 
         if (msg.method === NotificationMethod.ICECandidate) {
-          const isScreenOwner = makeScreenID(peer.internalID) === msg.params[0].peerID
+          const isScreenOwner = makeScreenID(internalID) === msg.params[0].peerID
 
           if (isScreenOwner) {
-            const screenSession = this.rooms.get(this.peers.get(peer.internalID)?.roomID ?? '')?.screenSession
+            const screenSession = this.rooms.get(this.peers.get(internalID)?.roomID ?? '')?.screenSession
 
             if (screenSession === undefined) {
               throw Error('Screen session is missing')
@@ -312,7 +368,7 @@ export default class {
             throw Error('Missing session')
           }
 
-          const srcSession = makeScreenID(peer.internalID) === msg.params[0].peerID
+          const srcSession = makeScreenID(internalID) === msg.params[0].peerID
             ? targetSession
             : session
 
@@ -322,9 +378,21 @@ export default class {
           }
         }
 
+        if (msg.method === ReqMethod.PeerUpdate) {
+          const updatedPeer = {
+            internalID,
+            ...msg.params[0]
+          }
+
+          return {
+            peer: await this.actionQueue
+              .add(async () => await this.peerUpdated(updatedPeer))
+          }
+        }
+
         if (msg.method === ReqMethod.Leave) {
           await this.actionQueue
-            .add(async () => await this.leave(peer))
+            .add(async () => await this.leave(internalID))
 
           return true
         }
@@ -333,7 +401,7 @@ export default class {
       },
       onClose: async () => {
         await this.actionQueue
-          .add(async () => await this.leave(peer))
+          .add(async () => await this.leave(internalID))
       }
     }
   }

@@ -67,12 +67,12 @@ limitations under the License.
 
   onDestroy(() => roomMgr.leave())
 
-  let isMuted = false
-  function toggleMute () {
-    isMuted = !isMuted
-    $user.media.getAudioTracks().forEach((track) => {
-      track.enabled = !isMuted
-    })
+  async function toggleMute () {
+    await roomMgr.toggleMute()
+  }
+
+  async function toggleCam () {
+    await roomMgr.toggleCam()
   }
 
   function requestFullscreen () {
@@ -116,7 +116,8 @@ limitations under the License.
         <Button on:click={stopSharing} label="Stop sharing" />
     {/if}
     {/if}
-    <Button on:click={toggleMute} label={isMuted ? 'Unmute' : 'Mute'} />
+    <Button on:click={toggleMute} label={$user.muted ? 'Unmute' : 'Mute'} />
+    <Button on:click={toggleCam} label={$user.camEnabled ? 'Disable cam' : 'Enable cam'} />
     <Button on:click={requestFullscreen} label="Fullscreen" />
 </div>
 </div>

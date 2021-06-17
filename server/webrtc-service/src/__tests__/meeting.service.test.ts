@@ -54,7 +54,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -69,7 +73,11 @@ describe('meeting service', () => {
     await expect(handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })).rejects.toThrowError()
   })
@@ -82,7 +90,11 @@ describe('meeting service', () => {
     await handler.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -114,14 +126,20 @@ describe('meeting service', () => {
     const join0Resp = await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
     expect(join0Resp).toEqual({
       peers: [],
       me: {
-        internalID: '0'
+        internalID: '0',
+        camEnabled: true,
+        muted: false
       },
       screen: undefined
     })
@@ -134,14 +152,20 @@ describe('meeting service', () => {
     const join2Resp = await handler2.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: 'unrelated_room'
+        room: 'unrelated_room',
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
     expect(join2Resp).toEqual({
       peers: [],
       me: {
-        internalID: '2'
+        internalID: '2',
+        camEnabled: true,
+        muted: false
       },
       screen: undefined
     })
@@ -151,16 +175,24 @@ describe('meeting service', () => {
     const join1Resp = await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
     expect(join1Resp).toEqual({
       peers: [{
-        internalID: '0'
+        internalID: '0',
+        camEnabled: true,
+        muted: false
       }],
       me: {
-        internalID: '1'
+        internalID: '1',
+        camEnabled: true,
+        muted: false
       },
       screen: undefined
     })
@@ -171,7 +203,9 @@ describe('meeting service', () => {
         notification: NotificationMethod.PeerJoined,
         params: {
           peer: {
-            internalID: '1'
+            internalID: '1',
+            camEnabled: true,
+            muted: false
           }
         }
       }
@@ -180,7 +214,11 @@ describe('meeting service', () => {
     await expect(handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: 'another_room'
+        room: 'another_room',
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })).rejects.toThrowError()
 
@@ -198,9 +236,7 @@ describe('meeting service', () => {
       result: {
         notification: NotificationMethod.PeerLeft,
         params: {
-          peer: {
-            internalID: '0'
-          }
+          peerID: '0'
         }
       }
     })
@@ -217,7 +253,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -228,7 +268,11 @@ describe('meeting service', () => {
     await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -241,9 +285,7 @@ describe('meeting service', () => {
       result: {
         notification: NotificationMethod.PeerLeft,
         params: {
-          peer: {
-            internalID: '0'
-          }
+          peerID: '0'
         }
       }
     })
@@ -258,7 +300,11 @@ describe('meeting service', () => {
     await handler.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -302,7 +348,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -313,7 +363,11 @@ describe('meeting service', () => {
     await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -358,7 +412,11 @@ describe('meeting service', () => {
     await handler.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -396,7 +454,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -407,7 +469,11 @@ describe('meeting service', () => {
     await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -462,24 +528,36 @@ describe('meeting service', () => {
     const joinResp = await handler2.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
     expect(joinResp).toEqual({
       peers: [
         {
-          internalID: '0'
+          internalID: '0',
+          camEnabled: true,
+          muted: false
         },
         {
-          internalID: '1'
+          internalID: '1',
+          camEnabled: true,
+          muted: false
         }
       ],
       me: {
-        internalID: '2'
+        internalID: '2',
+        camEnabled: true,
+        muted: false
       },
       screen: {
-        internalID: makeScreenID('0')
+        internalID: makeScreenID('0'),
+        camEnabled: true,
+        muted: true
       }
     })
 
@@ -490,14 +568,20 @@ describe('meeting service', () => {
     const joinResp3 = await handler3.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: 'unrelated_room'
+        room: 'unrelated_room',
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
     expect(joinResp3).toEqual({
       peers: [],
       me: {
-        internalID: '3'
+        internalID: '3',
+        camEnabled: true,
+        muted: false
       },
       screen: undefined
     })
@@ -537,7 +621,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -548,7 +636,11 @@ describe('meeting service', () => {
     await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -585,9 +677,7 @@ describe('meeting service', () => {
       result: {
         notification: NotificationMethod.PeerLeft,
         params: {
-          peer: {
-            internalID: '0'
-          }
+          peerID: '0'
         }
       }
     })
@@ -602,7 +692,11 @@ describe('meeting service', () => {
     await handler0.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 
@@ -613,7 +707,11 @@ describe('meeting service', () => {
     await handler1.onWSMsg({
       method: ReqMethod.Join,
       params: [{
-        room: roomName
+        room: roomName,
+        peer: {
+          camEnabled: true,
+          muted: false
+        }
       }]
     })
 

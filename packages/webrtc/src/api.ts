@@ -23,11 +23,13 @@ export const enum ReqMethod {
   Transmit = 'transmit',
   InitScreenSharing = 'init-screen-sharing',
   StopScreenSharing = 'stop-screen-sharing',
+  PeerUpdate = 'peer-update'
 }
 
 export const enum NotificationMethod {
   PeerJoined = 'participant-joined',
   PeerLeft = 'participant-left',
+  PeerUpdated = 'peer-updated',
   ICECandidate = 'ice-candidate',
   ScreenSharingStarted = 'screen-sharing-started',
   ScreenSharingFinished = 'screen-sharing-finished',
@@ -38,6 +40,8 @@ type InternalID = string
 
 export interface Peer {
   internalID: InternalID
+  muted: boolean
+  camEnabled: boolean
 }
 
 const screenSuffix = '-screen'
@@ -45,14 +49,15 @@ export const makeScreenID = (id: InternalID): InternalID => `${id}${screenSuffix
 export const getScreenOwner = (id: InternalID): InternalID => id.slice(0, -screenSuffix.length)
 export const isScreenID = (id: InternalID): boolean => id.endsWith(screenSuffix)
 
-export class JoinReq extends Request<[{ room: string }], ReqMethod.Join> {}
+export class JoinReq extends Request<[{ room: string, peer: { muted: boolean, camEnabled: boolean } }], ReqMethod.Join> {}
 export class LeaveReq extends Request<[], ReqMethod.Leave> {}
+export class PeerUpdateReq extends Request<[Partial<Omit<Peer, 'internalID'>>], ReqMethod.PeerUpdate> {}
 export class TransmitReq extends Request<
-  [{
-    peerID: InternalID
-    sdp: string
-  }],
-  ReqMethod.Transmit
+[{
+  peerID: InternalID
+  sdp: string
+}],
+ReqMethod.Transmit
 > {}
 export class InitScreenSharingReq extends Request<[], ReqMethod.InitScreenSharing> {}
 export class StopScreenSharingReq extends Request<[], ReqMethod.StopScreenSharing> {}
@@ -66,13 +71,15 @@ export type JoinResp = Response<{
   me: Peer
   screen?: Peer
 }>
+export type UpdatePeerResp = Response<{
+  peer: Peer
+}>
 export type LeaveResp = Response<boolean>
 export type TransmitResp = Response<{
   sdp: string
 }>
-export type InitScreenSharingResp = Response<boolean> 
-export type StopScreenSharingResp = Response<boolean> 
-
+export type InitScreenSharingResp = Response<boolean>
+export type StopScreenSharingResp = Response<boolean>
 
 export type PeerJoinedNotification = Response<{
   notification: NotificationMethod.PeerJoined
@@ -81,9 +88,9 @@ export type PeerJoinedNotification = Response<{
   }
 }>
 export type PeerLeftNotification = Response<{
-  notification: NotificationMethod.PeerLeft,
+  notification: NotificationMethod.PeerLeft
   params: {
-    peer: Peer
+    peerID: InternalID
   }
 }>
 export type ScreenSharingStartedNotification = Response<{
@@ -102,9 +109,16 @@ export type ServerICECandNotification = Response<{
     candidate: IceCandidate
   }
 }>
+export type PeerUpdatedNotification = Response<{
+  notification: NotificationMethod.PeerUpdated
+  params: {
+    peer: Peer
+  }
+}>
 
 export type RequestMsg =
   | JoinReq
+  | PeerUpdateReq
   | LeaveReq
   | TransmitReq
   | InitScreenSharingReq
@@ -117,12 +131,14 @@ export type Incoming =
 
 export type ResponseMsg =
   | JoinResp
+  | UpdatePeerResp
   | LeaveResp
   | TransmitResp
   | InitScreenSharingResp
   | StopScreenSharingResp
 export type OutgoingNotifications =
   | PeerJoinedNotification
+  | PeerUpdatedNotification
   | PeerLeftNotification
   | ScreenSharingStartedNotification
   | ScreenSharingFinishedNotification

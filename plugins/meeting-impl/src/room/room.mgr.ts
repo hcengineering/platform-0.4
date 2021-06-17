@@ -39,7 +39,9 @@ const makePeer = (raw: RawPeer, isMediaReady = true): Peer => ({
   internalID: raw.internalID,
   peer: makeWebRTCPeer(),
   media: new MediaStream(),
-  isMediaReady
+  isMediaReady,
+  muted: raw.muted,
+  camEnabled: raw.camEnabled
 })
 
 const extWritable = <T>(
@@ -93,7 +95,7 @@ export class RoomMgr {
   }
 
   private readonly _user = extWritable(
-    makePeer({ internalID: '' }, false),
+    makePeer({ internalID: '', muted: false, camEnabled: true }, false),
     () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.initMedia()
@@ -106,7 +108,7 @@ export class RoomMgr {
     return this._user
   }
 
-  private readonly _screen = extWritable(makePeer({ internalID: '' }, false))
+  private readonly _screen = extWritable(makePeer({ internalID: '', muted: true, camEnabled: true }, false))
 
   get screen (): Readable<Peer> {
     return this._screen
@@ -134,11 +136,14 @@ export class RoomMgr {
 
   constructor (client: Client) {
     this.client = client
-    this.client.subscribe(NotificationMethod.ICECandidate, this.handle.bind(this))
-    this.client.subscribe(NotificationMethod.PeerJoined, this.handle.bind(this))
-    this.client.subscribe(NotificationMethod.PeerLeft, this.handle.bind(this))
-    this.client.subscribe(NotificationMethod.ScreenSharingFinished, this.handle.bind(this))
-    this.client.subscribe(NotificationMethod.ScreenSharingStarted, this.handle.bind(this))
+    const boundHandler = this.handle.bind(this)
+
+    this.client.subscribe(NotificationMethod.ICECandidate, boundHandler)
+    this.client.subscribe(NotificationMethod.PeerJoined, boundHandler)
+    this.client.subscribe(NotificationMethod.PeerLeft, boundHandler)
+    this.client.subscribe(NotificationMethod.ScreenSharingFinished, boundHandler)
+    this.client.subscribe(NotificationMethod.ScreenSharingStarted, boundHandler)
+    this.client.subscribe(NotificationMethod.PeerUpdated, boundHandler)
   }
 
   private async initMedia (): Promise<void> {
@@ -165,6 +170,60 @@ export class RoomMgr {
     if (getScreenOwner(screen.internalID) === user.internalID) {
       this._screen.update(releaseMedia)
     }
+  }
+
+  async toggleMute() {
+    const user = this._user.get()
+
+    if (this._status.get() !== 'left') {
+      const {peer} = await this.client.sendRequest({
+        method: ReqMethod.PeerUpdate,
+        params: [{
+          muted: !user.muted
+        }]
+      })
+
+      this._user.update(u => ({
+        ...u,
+        ...peer
+      }))
+    } else {
+      this._user.update((u) => ({
+        ...u,
+        muted: !u.muted
+      }))
+    }
+
+    const updatedUser = this._user.get()
+    updatedUser.media.getAudioTracks()
+      .forEach((track) => track.enabled = !updatedUser.muted)
+  }
+
+  async toggleCam() {
+    const user = this._user.get()
+
+    if (this._status.get() !== 'left') {
+      const {peer} = await this.client.sendRequest({
+        method: ReqMethod.PeerUpdate,
+        params: [{
+          camEnabled: !user.camEnabled
+        }]
+      })
+
+      this._user.update(u => ({
+        ...u,
+        ...peer
+      }))
+    } else {
+      this._user.update((u) => ({
+        ...u,
+        camEnabled: !u.camEnabled
+      }))
+    }
+
+    const updatedUser = this._user.get()
+    updatedUser.media.getVideoTracks()
+      .forEach((track) => track.enabled = updatedUser.camEnabled)
   }
 
   private readonly pollPeerGain = (id: string) => (track: MediaStreamTrack) => {
@@ -239,12 +298,17 @@ export class RoomMgr {
     }
 
     this._status.set('joining')
+    const user = this._user.get()
 
     try {
       const resp: JoinResp['result'] = await this.client.sendRequest({
         method: ReqMethod.Join,
         params: [{
-          room
+          room,
+          peer: {
+            camEnabled: user.camEnabled,
+            muted: user.muted
+          }
         }]
       })
 
@@ -378,7 +442,7 @@ export class RoomMgr {
           return
         }
         case NotificationMethod.PeerLeft: {
-          const targetID = result.params.peer.internalID
+          const targetID = result.params.peerID
           const peer = this._peers.get().get(targetID)
 
           if (peer === undefined) {
@@ -420,6 +484,26 @@ export class RoomMgr {
           }
 
           this.handleScreenSharingFinished()
+          return
+        }
+        case NotificationMethod.PeerUpdated: {
+          if (this._status.get() === 'left') {
+            return
+          }
+
+          const targetPeer = this._peers.get().get(result.params.peer.internalID)
+          if (targetPeer === undefined) {
+            return
+          }
+
+          this._peers.update((peers) => {
+            peers.set(targetPeer.internalID, {
+              ...targetPeer,
+              ...result.params.peer
+            })
+
+            return peers
+          })
         }
       }
     })
