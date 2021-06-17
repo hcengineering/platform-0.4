@@ -18,12 +18,7 @@ import type { Tx } from './tx'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type QuerySelector<T> = {
-  $gt?: T
-  $gte?: T
   $in?: T[]
-  $lt?: T
-  $lte?: T
-  $nin?: T[]
 }
 export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T | QuerySelector<T>
 
