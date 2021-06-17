@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, DocumentQuery, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc } from '@anticrm/core'
+import { Class, Hierarchy, Doc, DocumentQuery, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc, QuerySelector } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -57,19 +57,18 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      const value = (query as any)[key]
-      if (Array.isArray(value)) {
-        const criteria = {
-          terms: Object()
-        }
-        criteria.terms[key] = value.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
-        console.log(criteria.terms[key])
-        criteries.push(criteria)
-      } else {
+      const value = query[key]
+      if (typeof value === 'string') {
         const criteria = {
           match: Object()
         }
         criteria.match[key] = value
+        criteries.push(criteria)
+      } else {
+        const criteria = {
+          terms: Object()
+        }
+        criteria.terms[key] = (value as QuerySelector<any>).$in?.map((item: any) => typeof item === 'string' ? item.toLowerCase() : item)
         criteries.push(criteria)
       }
     }
@@ -87,7 +86,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     if (query._id !== undefined) {
       filter = {
         ids: {
-          values: query._id
+          values: typeof query._id === 'string' ? [query._id] : query._id.$in
         }
       }
     }
