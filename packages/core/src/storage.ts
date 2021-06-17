@@ -13,23 +13,20 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Obj, Ref } from './classes'
+import type { Class, Doc, Obj, Ref, WithoutCollections } from './classes'
 import type { Tx } from './tx'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type QuerySelector<T> = {
-  $gt?: T
-  $gte?: T
   $in?: T[]
-  $lt?: T
-  $lte?: T
-  $nin?: T[]
 }
-export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T | QuerySelector<T>
+export type ObjQueryType<T> = T extends Obj ? Query<T> : T | QuerySelector<T>
 
-export type DocumentQuery<T> = {
+export type Query<T> = {
   [P in keyof T]?: ObjQueryType<T[P]>
 }
+
+export type DocumentQuery<T extends Doc> = Query<WithoutCollections<T>>
 
 export interface Storage {
   findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
