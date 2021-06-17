@@ -13,14 +13,14 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Obj, Ref, WithoutCollections } from './classes'
+import type { Class, Doc, Ref, WithoutCollections } from './classes'
 import type { Tx } from './tx'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type QuerySelector<T> = {
   $in?: T[]
 }
-export type ObjQueryType<T> = T extends Obj ? Query<T> : T | QuerySelector<T>
+export type ObjQueryType<T> = T | QuerySelector<T>
 
 export type Query<T> = {
   [P in keyof T]?: ObjQueryType<T[P]>

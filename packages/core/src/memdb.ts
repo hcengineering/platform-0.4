@@ -71,13 +71,14 @@ class MemDb {
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
-      if (query._id === undefined) {
+      const docQuery = query as DocumentQuery<Doc>
+      if (docQuery._id === undefined) {
         result = []
-      } else if (typeof query._id === 'string') {
-        const obj = this.objectById.get(query._id)
+      } else if (typeof docQuery._id === 'string') {
+        const obj = this.objectById.get(docQuery._id)
         result = obj !== undefined ? [obj] : []
       } else {
-        const ids = query._id.$in ?? []
+        const ids = docQuery._id.$in ?? []
         result = []
         for (const id of ids) {
           const obj = this.objectById.get(id)
