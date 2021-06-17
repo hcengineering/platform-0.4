@@ -16,11 +16,14 @@
 import type { Class, Doc, Obj, Ref } from './classes'
 import type { Tx } from './tx'
 
-export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T
-export type ArrayQueryType<A> = A extends Array<infer T> ? ObjQueryType<T> | Array<ObjQueryType<T>> : ObjQueryType<A>
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type QuerySelector<T> = {
+  $in?: T[]
+}
+export type ObjQueryType<T> = T extends Obj ? DocumentQuery<T> : T | QuerySelector<T>
 
 export type DocumentQuery<T> = {
-  [P in keyof T]?: ArrayQueryType<T[P]>
+  [P in keyof T]?: ObjQueryType<T[P]>
 }
 
 export interface Storage {

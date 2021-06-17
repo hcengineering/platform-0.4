@@ -61,6 +61,7 @@
       opacity: 0;
       transition: transform .3s ease, opacity .2s ease-in-out;
       pointer-events: none;
+      user-select: none;
       text-align: center;
       transition-delay: .2s;
 

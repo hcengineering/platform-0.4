@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "Updated DocumentQuery with operators like $in",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic",
+  "email": "bykhov.denis@gmail.com"
+}

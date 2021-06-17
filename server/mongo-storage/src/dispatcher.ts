@@ -1,4 +1,4 @@
-import core, { Class, Doc, Hierarchy, Ref, Storage, Tx, DocumentQuery } from '@anticrm/core'
+import core, { Class, Doc, DocumentQuery, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
 
 export class TxDispatcherStorage implements Storage {
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly docStore: Storage) {}

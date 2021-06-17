@@ -1,4 +1,4 @@
-import core, { Class, Doc, Hierarchy, Ref, Storage, Tx, TxUpdateDoc, DocumentQuery } from '@anticrm/core'
+import core, { Class, Doc, DocumentQuery, Hierarchy, Ref, Storage, Tx, TxUpdateDoc } from '@anticrm/core'
 import { Domain, Emb } from '@anticrm/core/src/classes'
 import { TxAddCollection, TxCreateDoc, TxUpdateCollection } from '@anticrm/core/src/tx'
 import { TxStorage } from './tx'

@@ -19,14 +19,13 @@
   export let max: number = 100
   export let color: string = '#50BCF9'
 
-  // let progressEl: HTMLElement
+  let proc: number = (max - min) / 100
   if (value > max) value = max
   if (value < min) value = min
 </script>
 
 <div class="progress-container">
-  <!-- <progress class="progress" {value} {min} {max}/> -->
-  <div class="bar" style="background-color: {color}; width: calc(100% * {value} / 100);"/>
+  <div class="bar" style="background-color: {color}; width: calc(100% * {Math.round((value - min) / proc)} / 100);"/>
 </div>
 
 <style lang="scss">
@@ -36,14 +35,6 @@
     height: 4px;
     background-color: var(--theme-button-bg-hovered);
     border-radius: 2px;
-
-    .progress {
-      visibility: hidden;
-      position: absolute;
-      width: 0;
-      height: 0;
-      z-index: -1;
-    }
 
     .bar {
       position: absolute;

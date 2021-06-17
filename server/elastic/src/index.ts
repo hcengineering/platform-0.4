@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Data, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc, DocumentQuery } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -51,7 +51,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     return { _id: body._id, ...body._source }
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<Data<T>> & Partial<Doc>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const result: T[] = []
 
     const criteries = []

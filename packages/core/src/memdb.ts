@@ -73,16 +73,15 @@ class MemDb {
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
       if (query._id === undefined) {
         result = []
+      } else if (typeof query._id === 'string') {
+        const obj = this.objectById.get(query._id)
+        result = obj !== undefined ? [obj] : []
       } else {
-        if (Array.isArray(query._id)) {
-          result = []
-          query._id.forEach((id) => {
-            const obj = this.objectById.get(id)
-            if (obj !== undefined) result.push(obj)
-          })
-        } else {
-          const obj = this.objectById.get(query._id)
-          result = obj !== undefined ? [obj] : []
+        const ids = query._id.$in ?? []
+        result = []
+        for (const id of ids) {
+          const obj = this.objectById.get(id)
+          if (obj !== undefined) result.push(obj)
         }
       }
     } else {

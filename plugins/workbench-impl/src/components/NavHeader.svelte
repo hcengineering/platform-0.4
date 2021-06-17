@@ -52,6 +52,7 @@
         font-weight: 500;
         line-height: 150%;
         color: var(--theme-caption-color);
+        user-select: none;
       }
       .arrow {
         width: 16px;

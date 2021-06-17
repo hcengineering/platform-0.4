@@ -76,10 +76,10 @@
   </div> -->
   <div class="component">
     <SpaceHeader space={currentSpace}/>
-    <Chat title="default channel" subtitle="89 members"/>
+    <Chat/>
   </div>
   <div class="aside">
-    <Chat title="Thread" subtitle="# default" thread/>
+    <Chat thread/>
   </div>
 </div>
 <Modal />

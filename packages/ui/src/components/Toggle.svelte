@@ -40,7 +40,7 @@
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
-          transform: translateX(23px);
+          transform: translateX(22px);
         }
       }
       &:not(:disabled) + .toggle-switch {
