@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import core, { Class, Doc, Space, DocumentQuery, Ref, Storage, Tx, Account, TxCreateDoc, TxAddCollection, Emb, TxProcessor, makeEmb, Member, Hierarchy } from '@anticrm/core'
+import core, { Class, Doc, Space, DocumentQuery, Ref, Storage, Tx, Account, TxCreateDoc, TxAddCollection, Emb, TxProcessor, makeEmb, Member, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 
 export class SecurityStorage {
   private readonly storage: Storage
@@ -27,7 +27,8 @@ export class SecurityStorage {
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, userId: Ref<Account>): Promise<T[]> {
-    if (this.hierarchy.isDerived(_class, core.class.Space)) return await this.storage.findAll(_class, query)
+    const domain = this.hierarchy.getDomain(_class)
+    if (domain === DOMAIN_MODEL) return await this.storage.findAll(_class, query)
     const querySpace = (query as any).space as Ref<Space>
     const spaces = new Set<Ref<Space>>([...this.publicSpaces, ...this.allowedSpaces.get(userId) ?? []])
     if (querySpace !== undefined) {
@@ -35,7 +36,7 @@ export class SecurityStorage {
       if (!spaces.has(querySpace)) throw new Error('Access denied')
     } else {
       if (spaces !== undefined) {
-        (query as any).space = [...spaces.values()]
+        (query as any).space = { $in: [...spaces.values()] }
       }
     }
     return await this.storage.findAll(_class, query)
