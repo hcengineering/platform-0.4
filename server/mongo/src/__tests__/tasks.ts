@@ -1,5 +1,8 @@
-import { Account, Class, Collection, Data, Doc, Emb, Obj, Ref, Space } from '@anticrm/core'
-import { Component, component } from '../../../../packages/core/node_modules/@anticrm/status/lib'
+import core, { Domain, Account, Class, Collection, Data, Doc, Emb, Obj, Ref, Space } from '@anticrm/core'
+import { ClassifierKind } from '@anticrm/core/src/classes'
+import { Tx, TxCreateDoc } from '@anticrm/core/src/tx'
+import { generateId } from '@anticrm/core/src/utils'
+import { Component, component } from '@anticrm/core/node_modules/@anticrm/status'
 
 export interface TaskComment extends Emb {
   message: string
@@ -82,4 +85,28 @@ export const doc1: Task = {
   modifiedBy: 'user' as Ref<Account>,
   modifiedOn: 10,
   space: '' as Ref<Space>
+}
+
+function addClass<T extends Doc> (txes: Tx[], _id: Ref<Class<T>>): void {
+  const doc: TxCreateDoc<Class<T>> = {
+    _id: generateId(),
+    _class: core.class.TxCreateDoc,
+    objectId: _id,
+    objectClass: core.class.Class,
+    attributes: {
+      domain: 'task' as Domain,
+      kind: ClassifierKind.CLASS,
+      extends: core.class.Doc
+    },
+    modifiedBy: 'model' as Ref<Account>,
+    modifiedOn: Date.now(),
+    objectSpace: core.space.Model,
+    space: core.space.Model
+  }
+  txes.push(doc)
+}
+export function createTaskModel (txes: Tx[]): void {
+  addClass(txes, taskIds.class.Task)
+  addClass(txes, taskIds.class.TaskComment)
+  addClass(txes, taskIds.class.TaskEstimate)
 }

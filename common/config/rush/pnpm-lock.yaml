@@ -19,7 +19,7 @@ specifiers:
   '@rush-temp/model-core': file:./projects/model-core.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
-  '@rush-temp/mongo-storage': file:./projects/mongo-storage.tgz
+  '@rush-temp/mongo': file:./projects/mongo.tgz
   '@rush-temp/node-client': file:./projects/node-client.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -76,6 +76,7 @@ specifiers:
   simplytyped: ~3.3.0
   style-loader: ^2.0.0
   svelte: ^3.37.0
+  svelte-check: ^2.1.0
   svelte-loader: ^3.1.0
   svelte-preprocess: ^4.7.0
   svgo-loader: ^3.0.0
@@ -111,7 +112,7 @@ dependencies:
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/mongo-storage': file:projects/mongo-storage.tgz_@types+node@14.17.0
+  '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.0
   '@rush-temp/node-client': file:projects/node-client.tgz_ts-node@10.0.0
   '@rush-temp/platform': file:projects/platform.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -168,6 +169,7 @@ dependencies:
   simplytyped: 3.3.0_typescript@4.3.2
   style-loader: 2.0.0_webpack@5.37.1
   svelte: 3.38.2
+  svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
   svelte-loader: 3.1.1_svelte@3.38.2
   svelte-preprocess: 4.7.3_6a527db0dee04ba4ad22a07082d255f0
   svgo-loader: 3.0.0
@@ -8601,7 +8603,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_d28de90b36bf8551326d46b52d15db52:
-    resolution: {integrity: sha512-jtzwlsRY7Q7Adm6iDvLlMs0MVML4S+g1b+2t0z6ftV+HNiW22BoE3cFMasopsg6Wbk8JiQlnka2pGe/If0pssw==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-a3KBaSM108bQQ79mZHy71V7l3bSyw6anTHIpS4LdiK6uxfrqj9vcOPC14EjIno4IA0JwXbu1j95shaHr92NYJg==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -8743,7 +8745,7 @@ packages:
     dev: false
 
   file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-tx3B9FD4JjLnS8JlUFiJcSvVs1t1E76MtiFBALU1ehYMQ1koaCwsF9/WH2/Q3yo78P35nBNAlkOpScnP/9ZyQg==, tarball: file:projects/login-impl.tgz}
+    resolution: {integrity: sha512-wNZWMcrzZdPeA5awc40itjdFH1beT17/QBxbj8/8/6mKMNMA76UnokTJhCs+8yW3Py1erGHgFs/DYGZAa4VG0w==, tarball: file:projects/login-impl.tgz}
     id: file:projects/login-impl.tgz
     name: '@rush-temp/login-impl'
     version: 0.0.0
@@ -8926,10 +8928,10 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/mongo-storage.tgz_@types+node@14.17.0:
-    resolution: {integrity: sha512-9MmTpOPc4IQZ+9QCfH2BNzQIo7aqI17JNIDvw3DC1mVsreHZ8hnFzJjl5UDbyMoiHMKj4AZdUaqUcAoRPvzLBg==, tarball: file:projects/mongo-storage.tgz}
-    id: file:projects/mongo-storage.tgz
-    name: '@rush-temp/mongo-storage'
+  file:projects/mongo.tgz_@types+node@14.17.0:
+    resolution: {integrity: sha512-FD1TtX2iPFUgrEpJpKvUZuGhHUTCH8LLk5yny3Uuq6JpheGBADTLkLAJu2nM1A4p88wIQ5Nu3jltg6tKZkzt/A==, tarball: file:projects/mongo.tgz}
+    id: file:projects/mongo.tgz
+    name: '@rush-temp/mongo'
     version: 0.0.0
     dependencies:
       '@jest/globals': 27.0.3
@@ -9339,7 +9341,7 @@ packages:
     dev: false
 
   file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4:
-    resolution: {integrity: sha512-MoPdZXq6M8I621hAJesCjMJaClfX0Om3YVOa73h/P7AuwCTaDWXYN7cfKkxJV/QWAc8dn/YtpGkxR45ePkRgYg==, tarball: file:projects/theme.tgz}
+    resolution: {integrity: sha512-NG1e4EITmnGTXV3EosD7YBLWWN1xJMMXVmjeX7CZkQDVSUgPMTnP0JbT49W6ynqeNegA9oYH1ZMexdcTvUUzIA==, tarball: file:projects/theme.tgz}
     id: file:projects/theme.tgz
     name: '@rush-temp/theme'
     version: 0.0.0
@@ -9409,7 +9411,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-vfIR/iwIEguwhc234A9P2Zn8CWZN2HZcbpOwjBTZfsK4MRGjCBUuWAS0SrfgG7ImdiKf3Y+tn9McR8Q4ZrLtEA==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-sRPGBpP+Mw7UVIdotiXGttw0VSM7mCmmWRt0cw/Ry+lcr3vevFdSpmyF1NI9BrY/1MtJ6ZdTkjcb5s58tCRabA==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
