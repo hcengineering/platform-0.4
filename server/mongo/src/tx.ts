@@ -15,24 +15,24 @@
 
 import { Class, DocumentQuery, Hierarchy, Storage, Tx } from '@anticrm/core'
 import { Doc, Ref } from '@anticrm/core/src/classes'
-import { Db } from 'mongodb'
+import { Collection } from 'mongodb'
 import { toMongoQuery } from './query'
 
 /**
  * Transaction storage based on MongoDB
  */
 export class TxStorage implements Storage {
-  constructor (readonly db: Db, readonly hierarchy: Hierarchy) {
+  constructor (readonly db: Collection, readonly hierarchy: Hierarchy) {
     this.db = db
     this.hierarchy = hierarchy
   }
 
   async tx (tx: Tx): Promise<void> {
-    await this.db.collection('tx').insertOne(tx)
+    await this.db.insertOne(tx)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
-    return await this.db.collection('tx').find(mongoQuery).toArray()
+    return await this.db.find(mongoQuery).toArray()
   }
 }

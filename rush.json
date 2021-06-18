@@ -543,8 +543,8 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@anticrm/mongo-storage",
-      "projectFolder": "server/mongo-storage",
+      "packageName": "@anticrm/mongo",
+      "projectFolder": "server/mongo",
       "shouldPublish": true
     }
 
