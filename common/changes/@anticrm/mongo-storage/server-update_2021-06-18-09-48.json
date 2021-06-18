@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo-storage",
+      "comment": "Server rework",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo-storage",
+  "email": "haiodo@gmail.com"
+}

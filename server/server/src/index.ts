@@ -13,56 +13,28 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, DocumentQuery, DOMAIN_TX, ModelDb, Ref, Tx, TxDb } from '@anticrm/core'
-import modelTx from './model.tx.json'
 import { start } from './server'
+import { decodeToken } from './token'
+import { assignWorkspace, closeWorkspace } from './workspaces'
 
-const txes = (modelTx as unknown) as Tx[]
-console.log(txes)
-
-const hierarchy = new Hierarchy()
-for (const tx of txes) hierarchy.tx(tx)
-
-const transactions = new TxDb(hierarchy)
-const model = new ModelDb(hierarchy)
-for (const tx of txes) {
-  transactions.tx(tx) // eslint-disable-line
-  model.tx(tx) // eslint-disable-line
-}
-
-async function findAll<T extends Doc> (
-  _class: Ref<Class<T>>,
-  query: DocumentQuery<T>
-): Promise<T[]> {
-  const domain = hierarchy.getClass(_class).domain
-  if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-  return await model.findAll(_class, query)
-}
-
-// Will be used to hold security information.
-interface ClientEntry {
-  txs: (tx: Tx) => void
-}
-const clients = new Map<string, ClientEntry>()
+const SERVER_SECRET = process.env.SERVER_SECRET ?? 'secret'
+const SERVER_HOST = process.env.SERVER_HOST ?? 'localhost'
+const SERVER_PORT = parseInt(process.env.SERVER_PORT ?? '18080')
 
 // eslint-disable-next-line
-start('localhost', 18080, { 
-  connect: (clientId, token, txs) => {
-    clients.set(clientId, { txs })
-    return {
-      findAll,
-      tx: async (tx: Tx): Promise<void> => {
-        await Promise.all([model.tx(tx), transactions.tx(tx)])
-        // Send transaction to all suitable clients.
-        for (const c of clients.entries()) {
-          if (c[0] !== clientId) {
-            c[1].txs(tx)
-          }
-        }
-      }
+start(SERVER_HOST, SERVER_PORT, {
+  connect: async (clientId, token, sendTx, close) => {
+    try {
+      const { accountId, workspaceId } = decodeToken(SERVER_SECRET, token)
+      console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
+      return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx, close })
+    } catch (err) {
+      throw new Error('invalid token')
     }
   },
-  close: clientId => {
-    clients.delete(clientId)
+  close: async (clientId) => {
+    await closeWorkspace(clientId)
   }
+}).then((s) => {
+  console.log('server is active at:', s.address())
 })

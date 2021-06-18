@@ -24,9 +24,12 @@ export interface ServerProtocol {
   shutdown: () => void
   address: () => { host: string, port: number }
 }
+
+export type ShutdownOperation = (code?: number, data?: string) => void
+
 export interface StorageProvider {
-  connect: (clientId: string, token: string, tx: (tx: Tx) => void, close: (code?: number, data?: string) => void) => Storage
-  close: (clientId: string) => void
+  connect: (clientId: string, token: string, sendTx: (tx: Tx) => void, close: ShutdownOperation) => Promise<Storage>
+  close: (clientId: string) => Promise<void>
 }
 
 export async function start (
@@ -44,54 +47,52 @@ export async function start (
 
   wss.on('connection', (ws: WebSocket, request: any, token: string) => {
     const clientId = generateId()
-    const storage = provider.connect(clientId, token, tx => {
-      // Send transaction to client.
-      const resp: Response<any> = {
-        id: tx._id,
-        result: tx
-      }
-      ws.send(serialize(resp))
-    }, () => { ws.close() })
 
-    async function handleRequest (request: Request<any>): Promise<void> {
+    const sendTx = (tx: Tx): void => {
+      // Send transaction to client.
+      ws.send(serialize({ id: tx._id, result: tx }))
+    }
+
+    async function handleRequest (storage: Promise<Storage>, request: Request<any>): Promise<void> {
       const { id, method, params } = request
       try {
-        const result = await Reflect.apply(
-          (storage as any)[method],
-          storage,
-          params
-        )
-        const resp: Response<any> = {
-          id,
-          result
-        }
-        ws.send(serialize(resp))
+        const store = await storage
+        const callOp = (store as any)[method]
+        const result = await Reflect.apply(callOp, store, params)
+        ws.send(serialize({ id, result }))
       } catch (error) {
-        const resp: Response<any> = {
-          id,
-          error: new Status(Severity.ERROR, Code.BadRequest, { message: error.message, stack: error.stack })
-        }
-        ws.send(
-          serialize(resp)
-        )
+        const params = { message: error.message, stack: error.stack }
+        const resp: Response<any> = { id, error: new Status(Severity.ERROR, Code.BadRequest, params) }
+        ws.send(serialize(resp))
       }
     }
+
+    const storage = provider.connect(clientId, token, sendTx, (): void => {
+      ws.close()
+    })
+    storage.catch((err) => {
+      console.log(err)
+      ws.close(404, err.message)
+      connections.delete(clientId)
+    })
 
     connections.set(clientId, ws)
 
-    ws.onclose = () => {
-      connections.delete(clientId)
-      provider.close(clientId)
-    }
-    ws.onerror = error => {
-      console.error('communication error:', error)
-      connections.delete(clientId)
-      provider.close(clientId)
-    }
     ws.on('message', (msg: string): void => {
       const request = readRequest(msg)
-      handleRequest(request) // eslint-disable-line
+      handleRequest(storage, request) // eslint-disable-line
     })
+
+    ws.onclose = () => {
+      console.log('clientClose client', clientId)
+      connections.delete(clientId)
+      provider.close(clientId) // eslint-disable-line @typescript-eslint/no-floating-promises
+    }
+    ws.onerror = (error) => {
+      console.error('communication error:', error)
+      connections.delete(clientId)
+      provider.close(clientId) // eslint-disable-line @typescript-eslint/no-floating-promises
+    }
   })
 
   server.on('upgrade', (request: IncomingMessage, socket, head: Buffer) => {
@@ -104,19 +105,19 @@ export async function start (
 
     // TODO: Validate token.
 
-    wss.handleUpgrade(request, socket, head, ws => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request, token)
     })
   })
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const httpServer = server.listen(port, host, () => {
       const serverProtocol: ServerProtocol = {
         shutdown: async () => {
           console.log('Shutting down server:', httpServer.address())
 
           for (const conn of connections.entries()) {
-            provider.close(conn[0])
+            provider.close(conn[0]) // eslint-disable-line @typescript-eslint/no-floating-promises
             conn[1].close()
           }
           httpServer.close()

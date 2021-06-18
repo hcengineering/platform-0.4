@@ -29,6 +29,7 @@ specifiers:
   '@rush-temp/query': file:./projects/query.tgz
   '@rush-temp/rpc': file:./projects/rpc.tgz
   '@rush-temp/server': file:./projects/server.tgz
+  '@rush-temp/server-tools': file:./projects/server-tools.tgz
   '@rush-temp/status': file:./projects/status.tgz
   '@rush-temp/task': file:./projects/task.tgz
   '@rush-temp/task-assets': file:./projects/task-assets.tgz
@@ -76,6 +77,7 @@ specifiers:
   simplytyped: ~3.3.0
   style-loader: ^2.0.0
   svelte: ^3.37.0
+  svelte-check: ^2.1.0
   svelte-loader: ^3.1.0
   svelte-preprocess: ^4.7.0
   svgo-loader: ^3.0.0
@@ -120,12 +122,13 @@ dependencies:
   '@rush-temp/prod': file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5
   '@rush-temp/query': file:projects/query.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/rpc': file:projects/rpc.tgz
-  '@rush-temp/server': file:projects/server.tgz_@types+node@14.17.0
+  '@rush-temp/server': file:projects/server.tgz
+  '@rush-temp/server-tools': file:projects/server-tools.tgz
   '@rush-temp/status': file:projects/status.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task': file:projects/task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task-assets': file:projects/task-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task-impl': file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/tests-server': file:projects/tests-server.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/tests-server': file:projects/tests-server.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4
   '@rush-temp/ui': file:projects/ui.tgz_dea33292b11ce5d7cfaa07c95df0d48c
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -168,6 +171,7 @@ dependencies:
   simplytyped: 3.3.0_typescript@4.3.2
   style-loader: 2.0.0_webpack@5.37.1
   svelte: 3.38.2
+  svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
   svelte-loader: 3.1.1_svelte@3.38.2
   svelte-preprocess: 4.7.3_6a527db0dee04ba4ad22a07082d255f0
   svgo-loader: 3.0.0
@@ -8601,7 +8605,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_d28de90b36bf8551326d46b52d15db52:
-    resolution: {integrity: sha512-jtzwlsRY7Q7Adm6iDvLlMs0MVML4S+g1b+2t0z6ftV+HNiW22BoE3cFMasopsg6Wbk8JiQlnka2pGe/If0pssw==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-a3KBaSM108bQQ79mZHy71V7l3bSyw6anTHIpS4LdiK6uxfrqj9vcOPC14EjIno4IA0JwXbu1j95shaHr92NYJg==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -8743,7 +8747,7 @@ packages:
     dev: false
 
   file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-tx3B9FD4JjLnS8JlUFiJcSvVs1t1E76MtiFBALU1ehYMQ1koaCwsF9/WH2/Q3yo78P35nBNAlkOpScnP/9ZyQg==, tarball: file:projects/login-impl.tgz}
+    resolution: {integrity: sha512-wNZWMcrzZdPeA5awc40itjdFH1beT17/QBxbj8/8/6mKMNMA76UnokTJhCs+8yW3Py1erGHgFs/DYGZAa4VG0w==, tarball: file:projects/login-impl.tgz}
     id: file:projects/login-impl.tgz
     name: '@rush-temp/login-impl'
     version: 0.0.0
@@ -9184,16 +9188,46 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/server.tgz_@types+node@14.17.0:
-    resolution: {integrity: sha512-fOIO7H3rvV2vgtgCop6UKGgjxZxgs8aOvR8VAFHWrWUAX1ZwgCssNqQlI+nrUqqboySLbILepmPen5Qhj6x3vg==, tarball: file:projects/server.tgz}
-    id: file:projects/server.tgz
+  file:projects/server-tools.tgz:
+    resolution: {integrity: sha512-S22pYBPKtw03b7IVWqqQGPOt+5KRbG4sRQFRa+AVuW1VSNC97Bml6/0u30KbxSS5D24i4HZ/yZfQh/bInB7HEQ==, tarball: file:projects/server-tools.tgz}
+    name: '@rush-temp/server-tools'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/node': 14.17.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
+      ts-node: 10.0.0_3a163292b5c9a249026cd43cb9eea8ec
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/server.tgz:
+    resolution: {integrity: sha512-e6EitEtBpyuKkRqIk2DzdE/S/DmQhJ3dUk1+sXV7AU9pqYnADTkKLLiKM9m9ZdKI0jw4Caf24jQbVWo9lngiSw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/jwt-simple': 0.5.33
-      '@types/mongodb': 3.6.18
+      '@types/node': 14.17.0
       '@types/ws': 7.4.4
       '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
       '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
@@ -9206,7 +9240,6 @@ packages:
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
       jwt-simple: 0.5.6
-      mongodb: 3.6.9
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
       ts-node: 10.0.0_3a163292b5c9a249026cd43cb9eea8ec
       ts-node-dev: 1.1.6_typescript@4.3.2
@@ -9215,7 +9248,6 @@ packages:
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
-      - '@types/node'
       - bufferutil
       - canvas
       - node-notifier
@@ -9312,8 +9344,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/tests-server.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-L0fTYbxfphEr6EyHS4pCqiSLKSo9Fuy/ZxVHUZR5yQRsqEsPehm37B5vUnz1wq2H4po6qIhSxEqvhduiylYxKw==, tarball: file:projects/tests-server.tgz}
+  file:projects/tests-server.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-Fn/nAI442+tQ4aw9V0dYTfWjxSVgzOeiGbvpx3xSGzPCaQSS8Sv3BLBtNkdPtSLCrmsNH0e6xrZlmUnwf9K76A==, tarball: file:projects/tests-server.tgz}
     id: file:projects/tests-server.tgz
     name: '@rush-temp/tests-server'
     version: 0.0.0
@@ -9321,25 +9353,40 @@ packages:
       '@jest/globals': 27.0.3
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
+      '@types/mongodb': 3.6.18
       '@types/node': 14.17.0
       '@types/ws': 7.4.4
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
+      mongodb: 3.6.9
       prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
-      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
       ws: 7.4.6
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
+      - aws4
+      - bson-ext
       - bufferutil
       - canvas
+      - kerberos
+      - mongodb-client-encryption
+      - mongodb-extjson
+      - snappy
       - supports-color
       - ts-node
       - utf-8-validate
     dev: false
 
   file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4:
-    resolution: {integrity: sha512-MoPdZXq6M8I621hAJesCjMJaClfX0Om3YVOa73h/P7AuwCTaDWXYN7cfKkxJV/QWAc8dn/YtpGkxR45ePkRgYg==, tarball: file:projects/theme.tgz}
+    resolution: {integrity: sha512-NG1e4EITmnGTXV3EosD7YBLWWN1xJMMXVmjeX7CZkQDVSUgPMTnP0JbT49W6ynqeNegA9oYH1ZMexdcTvUUzIA==, tarball: file:projects/theme.tgz}
     id: file:projects/theme.tgz
     name: '@rush-temp/theme'
     version: 0.0.0
@@ -9409,7 +9456,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-vfIR/iwIEguwhc234A9P2Zn8CWZN2HZcbpOwjBTZfsK4MRGjCBUuWAS0SrfgG7ImdiKf3Y+tn9McR8Q4ZrLtEA==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-sRPGBpP+Mw7UVIdotiXGttw0VSM7mCmmWRt0cw/Ry+lcr3vevFdSpmyF1NI9BrY/1MtJ6ZdTkjcb5s58tCRabA==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0

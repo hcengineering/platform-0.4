@@ -22,3 +22,22 @@ export interface Storage {
   findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
   tx: (tx: Tx) => Promise<void>
 }
+
+/**
+ * Create a combined storage.
+ * @param storage
+ * @returns
+ */
+export function combine (...storage: Storage[]): Storage {
+  return {
+    async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]> {
+      return (await Promise.all(storage.map(async (it) => await it.findAll(_class, query)))).reduce((result, cur) => {
+        result.push(...cur)
+        return result
+      })
+    },
+    async tx (tx: Tx): Promise<void> {
+      await Promise.all(storage.map(async (it) => await it.tx(tx)))
+    }
+  }
+}

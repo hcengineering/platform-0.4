@@ -34,5 +34,4 @@ export interface ItemQuery<T extends Doc, P extends Emb> {
   localId?: string // Item local id
 }
 
-export * from './storage'
-export * from './tx'
+export * from './connection'

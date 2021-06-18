@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './classes'
+import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space, Obj } from './classes'
 import core from './component'
 import { generateId } from './utils'
 
@@ -93,4 +93,19 @@ export class TxOperations extends TxProcessor {
     await this.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
   }
+}
+
+export function txObjectClass (tx: Tx<Doc>): Ref<Class<Obj>> {
+  switch (tx._class) {
+    case core.class.TxCreateDoc:
+      return (tx as TxCreateDoc<Doc>).objectClass
+    case core.class.TxUpdateDoc:
+      return (tx as TxUpdateDoc<Doc>).objectClass
+    case core.class.TxAddCollection:
+      return (tx as TxAddCollection<Doc, Emb>).itemClass
+    case core.class.TxUpdateCollection:
+      return (tx as TxUpdateCollection<Doc, Emb>).itemClass
+  }
+
+  throw new Error(`Tx has no objectClass defined ${tx._class}`)
 }
