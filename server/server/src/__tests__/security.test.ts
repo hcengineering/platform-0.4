@@ -13,22 +13,45 @@
 // limitations under the License.
 //
 
-import core, { Storage, Account, generateId, Ref, Space, Tx, TxCreateDoc, Hierarchy, ModelDb, Doc, TxAddCollection, Member } from '@anticrm/core'
-import { SecurityStorage } from '../securityStorage'
+import core, { Storage, Account, generateId, Ref, Space, Tx, TxCreateDoc, Hierarchy, ModelDb, Doc, TxAddCollection, Member, ClassifierKind, Class, Domain } from '@anticrm/core'
+import { SecurityModel, SecurityStorage } from '../security'
 
 const txes = require('../model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 const user = 'testUser' as Ref<Account>
 
 describe('security', () => {
   let db: Storage
+  let hierarchy: Hierarchy
   let securityStorage: SecurityStorage
+  let securityModel: SecurityModel
   async function initDb (): Promise<void> {
-    const hierarchy = new Hierarchy()
+    const objectClassTx: TxCreateDoc<Doc> = {
+      objectId: 'task' as Ref<Class<Doc>>,
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user,
+      modifiedOn: Date.now(),
+      _class: core.class.TxCreateDoc,
+      objectClass: core.class.Class,
+      attributes: {
+        domain: 'task' as Domain,
+        kind: ClassifierKind.CLASS,
+        extends: core.class.Doc
+      }
+    }
+
+    hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
+    hierarchy.tx(objectClassTx)
 
     db = new ModelDb(hierarchy)
-    securityStorage = new SecurityStorage(db, hierarchy)
-    for (const tx of txes) await securityStorage.tx(tx, user)
+    securityModel = new SecurityModel(hierarchy)
+    for (const tx of txes) await securityModel.tx(tx)
+    await securityModel.tx(objectClassTx)
+    securityStorage = new SecurityStorage(db, hierarchy, securityModel, user)
+    for (const tx of txes) await securityStorage.tx(tx)
+    await securityStorage.tx(objectClassTx)
   }
 
   beforeEach(async () => {
@@ -36,7 +59,7 @@ describe('security', () => {
   })
 
   it('space visibility, should visible all spaces', async () => {
-    const init = await securityStorage.findAll(core.class.Space, {}, user)
+    const init = await securityStorage.findAll(core.class.Space, {})
     expect(init).toHaveLength(3)
 
     const privateSpaceTx: TxCreateDoc<Space> = {
@@ -54,9 +77,10 @@ describe('security', () => {
         private: true
       }
     }
-    await securityStorage.tx(privateSpaceTx, user)
+    await securityModel.tx(privateSpaceTx)
+    await securityStorage.tx(privateSpaceTx)
 
-    const second = await securityStorage.findAll(core.class.Space, {}, user)
+    const second = await securityStorage.findAll(core.class.Space, {})
     expect(second).toHaveLength(4)
   })
 
@@ -78,7 +102,8 @@ describe('security', () => {
         private: true
       }
     }
-    await securityStorage.tx(spaceTx, user)
+    await securityModel.tx(spaceTx)
+    await securityStorage.tx(spaceTx)
 
     const objectTx: TxCreateDoc<Doc> = {
       objectId: generateId(),
@@ -88,16 +113,17 @@ describe('security', () => {
       modifiedBy: user,
       modifiedOn: Date.now(),
       _class: core.class.TxCreateDoc,
-      objectClass: core.class.Doc,
-      attributes: {}
+      objectClass: 'task' as Ref<Class<Doc>>,
+      attributes: {
+      }
     }
 
     await db.tx(objectTx) // add object ignore security
 
-    const first = await securityStorage.findAll(core.class.Doc, {}, user)
+    const first = await securityStorage.findAll('task' as Ref<Class<Doc>>, {})
     expect(first).toHaveLength(0)
 
-    await securityStorage.findAll(core.class.Doc, { space: objectTx.objectSpace }, user).catch((error: Error) => {
+    await securityStorage.findAll('task' as Ref<Class<Doc>>, { space: objectTx.objectSpace }).catch((error: Error) => {
       expect(error.message).toBe('Access denied')
     })
 
@@ -116,12 +142,13 @@ describe('security', () => {
       }
     }
 
-    await securityStorage.tx(addMemberTx, user)
+    await securityModel.tx(addMemberTx)
+    await securityStorage.tx(addMemberTx)
 
-    const third = await securityStorage.findAll(core.class.Doc, { space: objectTx.objectSpace }, user)
+    const third = await securityStorage.findAll('task' as Ref<Class<Doc>>, { space: objectTx.objectSpace })
     expect(third).toHaveLength(1)
 
-    const last = await securityStorage.findAll(core.class.Doc, { }, user)
+    const last = await securityStorage.findAll('task' as Ref<Class<Doc>>, { })
     expect(last).toHaveLength(1)
   })
 
@@ -143,7 +170,8 @@ describe('security', () => {
         private: false
       }
     }
-    await securityStorage.tx(spaceTx, user)
+    await securityModel.tx(spaceTx)
+    await securityStorage.tx(spaceTx)
 
     const objectTx: TxCreateDoc<Doc> = {
       objectId: generateId(),
@@ -153,11 +181,12 @@ describe('security', () => {
       modifiedBy: user,
       modifiedOn: Date.now(),
       _class: core.class.TxCreateDoc,
-      objectClass: core.class.Doc,
-      attributes: {}
+      objectClass: 'task' as Ref<Class<Doc>>,
+      attributes: {
+      }
     }
 
-    await securityStorage.tx(objectTx, user).catch((error: Error) => {
+    await securityStorage.tx(objectTx).catch((error: Error) => {
       expect(error.message).toBe('Access denied')
     })
 
@@ -176,8 +205,9 @@ describe('security', () => {
       }
     }
 
-    await securityStorage.tx(addMemberTx, user)
-    await securityStorage.tx(objectTx, user)
+    await securityModel.tx(addMemberTx)
+    await securityStorage.tx(addMemberTx)
+    await securityStorage.tx(objectTx)
     expect(true).toBeTruthy()
   })
 })
