@@ -17,15 +17,15 @@ import { PlatformError, Severity, Status } from '@anticrm/status'
 import type { Class, Collection, Doc, Emb, PrimitiveType, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
-import { DocumentQuery, Storage } from './storage'
+import { DocumentQuery, QuerySelector, Storage } from './storage'
 import { Tx, TxAddCollection, TxCreateDoc, TxProcessor } from './tx'
 import { generateId, makeEmb } from './utils'
 
-function findProperty (objects: Doc[], propertyKey: string, value: PrimitiveType): Doc[] {
+function findProperty<T extends Doc> (objects: Doc[], propertyKey: string, value: PrimitiveType | QuerySelector<T>): Doc[] {
   const result: Doc[] = []
   for (const object of objects) {
-    if (Array.isArray(value)) {
-      if (value.includes((object as any)[propertyKey])) {
+    if (typeof value === 'object') {
+      if ((value.$in?.includes((object as any)[propertyKey])) === true) {
         result.push(object)
       }
     } else if ((object as any)[propertyKey] === value) {
@@ -71,13 +71,14 @@ class MemDb {
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
-      if (query._id === undefined) {
+      const docQuery = query as DocumentQuery<Doc>
+      if (docQuery._id === undefined) {
         result = []
-      } else if (typeof query._id === 'string') {
-        const obj = this.objectById.get(query._id)
+      } else if (typeof docQuery._id === 'string') {
+        const obj = this.objectById.get(docQuery._id)
         result = obj !== undefined ? [obj] : []
       } else {
-        const ids = query._id.$in ?? []
+        const ids = docQuery._id.$in ?? []
         result = []
         for (const id of ids) {
           const obj = this.objectById.get(id)
@@ -91,7 +92,7 @@ class MemDb {
     for (const key in query) {
       if (key === '_id') continue
       const value = (query as any)[key]
-      result = findProperty(result, key, value)
+      result = findProperty<T>(result, key, value)
     }
     return [...result] as T[]
   }
