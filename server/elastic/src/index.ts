@@ -57,7 +57,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      const value = query[key]
+      const value = (query as any)[key]
       if (typeof value === 'string') {
         const criteria = {
           match: Object()
@@ -81,12 +81,13 @@ export class ElasticStorage extends TxProcessor implements Storage {
     criteries.push(criteria)
 
     const domain = this.hierarchy.getDomain(_class)
+    const docQuery = query as DocumentQuery<Doc>
 
     let filter
-    if (query._id !== undefined) {
+    if (docQuery._id !== undefined) {
       filter = {
         ids: {
-          values: typeof query._id === 'string' ? [query._id] : query._id.$in
+          values: typeof docQuery._id === 'string' ? [docQuery._id] : docQuery._id.$in
         }
       }
     }
