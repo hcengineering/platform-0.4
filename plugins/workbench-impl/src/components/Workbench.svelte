@@ -71,16 +71,12 @@
     <Navigator model={navigatorModel} space={currentSpace}/>
   </div>
   {/if}
-  <!-- <div class="component">
-    <Task title={'Silver project'}/>
-  </div> -->
   <div class="component">
     <SpaceHeader space={currentSpace}/>
-    <Chat/>
+    <Task/>
+    <!-- <Chat/> -->
   </div>
-  <div class="aside">
-    <Chat thread/>
-  </div>
+  <div class="aside"><Chat thread/></div>
 </div>
 <Modal />
 

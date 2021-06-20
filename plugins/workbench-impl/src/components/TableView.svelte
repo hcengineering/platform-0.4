@@ -62,7 +62,7 @@
 
 <div class="table-container">
   <table class="table-body">
-    <tr>
+    <tr class="tr-head">
       {#each tableHead as cellHead}
         <th>{cellHead}</th>
       {/each}
@@ -80,18 +80,15 @@
 <style lang="scss">
   .table-container {
     display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
 
     .table-body {
       display: table;
       border-collapse: collapse;
-      z-index: 1;
 
       td {
         align-items: center;
         height: 64px;
-        padding: 0 20px;
+        padding: 6px 20px;
         color: var(--theme-content-accent-color);
       }
       th {
@@ -108,22 +105,16 @@
         border-top: 1px solid var(--theme-bg-accent-hover);
       }
       .tr-body:hover {
-        border-color: transparent;
-
-        & + .tr-body {
-          border-color: transparent;
-        }
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+        & > td {
+          border-top: 1px solid transparent;
+          border-bottom: 1px solid transparent;
           background-color: var(--theme-button-bg-enabled);
-          border: 1px solid var(--theme-bg-accent-color);
-          border-radius: 12px;
-          z-index: -1;
+          &:first-child {
+            border-radius: 12px 0 0 12px;
+          }
+          &:last-child {
+            border-radius: 0 12px 12px 0;
+          }
         }
       }
     }

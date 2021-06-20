@@ -34,6 +34,8 @@ export { default as ToggleWithLabel } from './components/ToggleWithLabel.svelte'
 export { default as Tooltip } from './components/Tooltip.svelte'
 export { default as CheckBox } from './components/CheckBox.svelte'
 export { default as Progress } from './components/Progress.svelte'
+export { default as Tabs } from './components/Tabs.svelte'
+export { default as ScrollBox } from './components/ScrollBox.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
