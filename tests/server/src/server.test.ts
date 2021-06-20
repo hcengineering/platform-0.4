@@ -17,9 +17,10 @@ import core, { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, ModelDb, Ref, Tx
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { describe, it } from '@jest/globals'
-import modelTx from './model.tx.json'
 
-const txes = (modelTx as unknown) as Tx[]
+import builder from '@anticrm/model-all'
+
+const txes = builder.getTxes()
 
 describe('server', () => {
   it('client connect server', async () => {
@@ -41,21 +42,23 @@ describe('server', () => {
       if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
       return await model.findAll(_class, query)
     }
+
     const serverAt = start('localhost', 0, {
-      connect: () => {
+      connect: async () => {
         return {
           findAll,
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {
+          }
         }
       },
-      close: () => {}
+      close: async () => {}
     })
     try {
       const addr = (await serverAt).address()
       const client = await createClient(`${addr.host}:${addr.port}/t1`)
 
       const result = await client.findAll(core.class.Class, {})
-      expect(result.length).toEqual(10)
+      expect(result.length).toEqual(11)
     } finally {
       ;(await serverAt).shutdown()
     }
@@ -78,14 +81,17 @@ describe('server', () => {
 
     let req = 0
     const serverAt = start('localhost', 0, {
-      connect: (clientId, token, tx, close) => {
+      connect: async (clientId, token, tx, close) => {
         return {
           // Create never complete promise. ,
-          findAll: async <T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
             req++
+            console.log('req', req, _class, query)
             if (req === 2) {
+              console.log('close DONE')
               close(404, 'error')
-              return await new Promise<T[]>(() => {})
+              return await new Promise<T[]>(() => {
+              })
             }
             const domain = hierarchy.getClass(_class).domain
             if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
@@ -94,13 +100,13 @@ describe('server', () => {
           tx: async (tx: Tx): Promise<void> => {}
         }
       },
-      close: () => {}
+      close: async () => {}
     })
 
     try {
       const addr = (await serverAt).address()
       const client = await createClient(`${addr.host}:${addr.port}/t1`)
-      await expect(client.findAll(core.class.Class, {})).rejects.toThrowError('ERROR: status:status.UnknownError') // eslint-disable-line
+      await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: status:status.UnknownError') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
     }
@@ -119,10 +125,10 @@ describe('server', () => {
 
     let req = 0
     const serverAt = start('localhost', 0, {
-      connect: (clientId, token, tx, close) => {
+      connect: async (clientId, token, tx, close) => {
         return {
           // Create never complete promise. ,
-          findAll: async <T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
             req++
             if (req === 2) {
               throw new Error('Some error happened')
@@ -134,13 +140,13 @@ describe('server', () => {
           tx: async (tx: Tx): Promise<void> => {}
         }
       },
-      close: () => {}
+      close: async () => {}
     })
 
     try {
       const addr = (await serverAt).address()
       const client = await createClient(`${addr.host}:${addr.port}/t1`)
-      await expect(client.findAll(core.class.Class, {})).rejects.toThrowError('ERROR: rpc.BadRequest') // eslint-disable-line
+      await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: rpc.BadRequest') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
     }
