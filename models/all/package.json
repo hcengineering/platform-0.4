@@ -11,7 +11,7 @@
     "lint": "ts-standard src",
     "lint:fix": "ts-standard --fix src",
     "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && ts-standard --fix src",
-    "gen-model": "ts-node src/index.ts"
+    "gen-model": "ts-node src/genmodel.ts"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.13.4",
