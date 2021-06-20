@@ -25,9 +25,10 @@ configurePlatform()
 const accountsUrl = process.env.APP_ACCOUNTS_URL
 const host = process.env.APP_WSHOST
 const port = process.env.APP_WSPORT
+const token = process.env.APP_TOKEN
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
-setMetadata(pluginCore.metadata.ClientUrl, `${host}:${port}`)
+setMetadata(pluginCore.metadata.ClientUrl, `${host}:${port}/${token}`)
 
 // platform.setMetadata(core.metadata.WSHost, host)
 // platform.setMetadata(core.metadata.WSPort, port)

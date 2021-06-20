@@ -24,7 +24,7 @@ export default async (): Promise<CoreService> => {
 
   async function getClient (): Promise<Client> {
     if (client === undefined) {
-      const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18018'
+      const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
       const storage = await createClient(async tx => {
         return await connectBrowser(clientUrl, tx)
       })

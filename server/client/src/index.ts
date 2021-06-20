@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-import { createClient as createCoreClient, Storage } from '@anticrm/core'
+import { Client, createClient as createCoreClient } from '@anticrm/core'
 import { connect as connectNode } from './connection'
 
-export async function createClient (clientUrl: string): Promise<Storage> {
+export async function createClient (clientUrl: string): Promise<Client> {
   return await createCoreClient(async (tx) => {
     return await connectNode(clientUrl, tx)
   })
