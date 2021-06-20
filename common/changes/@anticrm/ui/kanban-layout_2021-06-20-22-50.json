@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Kanban layout.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "sas_lord@mail.ru"
+}
