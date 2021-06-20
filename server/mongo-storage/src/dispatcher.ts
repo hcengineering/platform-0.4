@@ -1,9 +1,9 @@
-import core, { Class, Doc, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
+import core, { Class, Doc, DocumentQuery, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
 
 export class TxDispatcherStorage implements Storage {
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly docStore: Storage) {}
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     if (this.hierarchy.isDerived(_class, core.class.Tx)) {
       // This is tx
       return await this.txStore.findAll(_class, query)

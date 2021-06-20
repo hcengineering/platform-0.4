@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo-storage",
+      "comment": "Updated DocumentQuery with operators like $in",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo-storage",
+  "email": "bykhov.denis@gmail.com"
+}
