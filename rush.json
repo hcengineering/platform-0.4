@@ -523,6 +523,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/server-tools",
+      "projectFolder": "server/tools",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/node-client",
       "projectFolder": "server/client",
       "shouldPublish": true
