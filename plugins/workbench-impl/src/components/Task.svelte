@@ -14,49 +14,53 @@
 -->
 
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
-  import AppHeader from './SpaceHeader.svelte'
   import ViewSelection from './ViewSelection.svelte'
-  import Table from './Table.svelte'
+  import KanbanView from './KanbanView.svelte'
+  import TableView from './TableView.svelte'
+  import { Tabs, ScrollBox } from '@anticrm/ui'
 
-  export let title: IntlString
-  export let subtitle: IntlString | undefined
-  export let thread: boolean = false
+  export let view: string = 'list'
 </script>
 
-<div class="task-container">
-  <AppHeader {title} {subtitle} {thread}/>
-  <div class="toolbar">
-    <div style="flex-grow: 1"></div>
-    <ViewSelection/>
-  </div>
-  <div class="table">
-    <Table/>
+<div class="container">
+  <Tabs/>
+  <div class="tab">
+    <div class="toolbar">
+      <div style="flex-grow: 1"></div>
+      <ViewSelection bind:selected={view}/>
+    </div>
+    {#if view === 'kanban'}
+      <ScrollBox>
+        <KanbanView/>
+      </ScrollBox>
+    {:else if view === 'list'}
+      <ScrollBox vertical>
+        <TableView/>
+      </ScrollBox>
+    {/if}
   </div>
 </div>
 
 <style lang="scss">
-  .task-container {
+  .container {
     display: flex;
     flex-direction: column;
+    width: 100%;
     height: 100%;
 
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      height: 80px;
-      padding: 0 40px;
-    }
-
-    .table {
+    .tab {
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
-      margin: 0px 15px 15px;
-      padding: 0px 5px 5px;
-      overflow: auto;
+      height: 100%;
+      margin: 40px;
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        min-height: 80px;
+        height: 80px;
+      }
     }
   }
 </style>

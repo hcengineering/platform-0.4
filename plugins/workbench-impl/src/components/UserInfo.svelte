@@ -24,11 +24,16 @@
                                     { avatar: elon, name: 'elon', title: 'Elon Musk' },
                                     { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }]
   export let user: string = 'chen'
+  export let suptitle: string | undefined
+  export let size: 24 | 32 = 24
 </script>
 
 <div class="user-container">
-  <div class="avatar"><img src={users.find(u => u.name === user).avatar} alt={20}/></div>
-  <div class="title">{users.find(u => u.name === user).title}</div>
+  <div style="width: {size}px; height: {size}px;"><img style="width: {size}px; height: {size}px;" src={users.find(u => u.name === user).avatar} alt={20}/></div>
+  <div class="caption">
+    {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
+    <div class="title">{users.find(u => u.name === user).title}</div>
+  </div>
 </div>
 
 <style lang="scss">
@@ -38,14 +43,19 @@
     align-items: center;
     flex-wrap: nowrap;
 
-    .avatar {
-      width: 24px;
-      height: 24px;
-    }
-    .title {
+    .caption {
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
       margin-left: 12px;
-      color: var(--theme-content-color);
+      color: var(--theme-caption-color);
+
+      .suptitle {
+        opacity: .4;
+      }
+      .title {
+        font-weight: 500;
+      }
     }
   }
 </style>

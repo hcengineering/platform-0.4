@@ -87,6 +87,7 @@
       }
       &.bottom {
         top: 100%;
+        box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
         &::after {
           top: -5px;
           transform: rotate(-135deg);
@@ -99,6 +100,7 @@
       }
       &.right {
         left: 100%;
+        box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
         &::after {
           left: -5px;
           transform: rotate(135deg);
@@ -106,6 +108,7 @@
       }
       &.left {
         right: 100%;
+        box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
         &::after {
           right: -5px;
           transform: rotate(-45deg);
