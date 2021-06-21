@@ -59,7 +59,7 @@
         border-top: 2px solid transparent;
         border-bottom: 2px solid var(--primary-button-enabled);
         color: var(--theme-caption-color);
-        cursor: auto;
+        cursor: default;
       }
     }
     .tab + .tab {

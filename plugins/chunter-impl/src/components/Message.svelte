@@ -66,6 +66,7 @@
       height: 36px;
       background-color: var(--theme-bg-accent-color);
       border-radius: 50%;
+      user-select: none;
     }
 
     .message {
@@ -98,6 +99,7 @@
         align-items: center;
         height: 32px;
         margin-top: 8px;
+        user-select: none;
 
         div + div {
           margin-left: 16px;
@@ -112,6 +114,7 @@
       right: -8px;
       display: flex;
       flex-direction: row-reverse;
+      user-select: none;
 
       .tool {
         display: flex;

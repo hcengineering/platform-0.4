@@ -43,9 +43,9 @@
     <div class="subtitle">{#if data}{data.description}{/if}</div>
   </div>
   <div class="buttons">
-    <div class="button"><ActionIcon icon={MoreH} size={16}/></div>
-    <div class="button"><ActionIcon icon={Add} size={16}/></div>
     <div class="button"><ActionIcon icon={Star} size={16}/></div>
+    <div class="button"><ActionIcon icon={Add} size={16}/></div>
+    <div class="button"><ActionIcon icon={MoreH} size={16}/></div>
   </div>
 </div>
 
@@ -95,14 +95,13 @@
 
     .buttons {
       display: flex;
-      flex-direction: row-reverse;
       margin-left: 24px;
       .button {
         width: 16px;
         height: 16px;
       }
       .button + .button {
-        margin-right: 16px;
+        margin-left: 16px;
       }
     }
   }
