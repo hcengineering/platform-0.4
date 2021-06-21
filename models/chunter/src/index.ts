@@ -39,7 +39,8 @@ export function createModel(builder: Builder) {
           addSpaceLabel: chunter.string.CreateChannel,
           createComponent: chunter.component.CreateChannel
         }
-      ]
+      ],
+      spaceView: chunter.component.ChannelView
     }
   })
   builder.createDoc(chunter.class.Channel, {

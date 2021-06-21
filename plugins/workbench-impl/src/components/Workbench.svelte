@@ -17,11 +17,9 @@
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import NavHeader from './NavHeader.svelte'
-  import Chat from './Chat.svelte'
-  import Task from './Task.svelte'
   import avatar from '../../img/avatar.png'
 
-  import { setContext } from 'svelte'
+  import { setContext, onDestroy } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
 
   import type { Ref, Space } from '@anticrm/core'
@@ -32,8 +30,7 @@
   import Modal from './Modal.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   
-  import { location } from '@anticrm/ui'
-  import { onDestroy } from 'svelte'
+  import { Component, location } from '@anticrm/ui'
 
   export let client: Client
 
@@ -44,10 +41,8 @@
   let navigatorModel: NavigatorModel | undefined
 
   onDestroy(location.subscribe(async (loc) => {
-    console.log('here!')
     currentApp = loc.path[1] as Ref<Application>
     currentSpace = loc.path[2] as Ref<Space>
-    console.log('current app:', currentApp)
     navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
   }))
 </script>
@@ -73,10 +68,11 @@
   {/if}
   <div class="component">
     <SpaceHeader space={currentSpace}/>
-    <!-- <Task/> -->
-    <Chat/>
+    {#if navigatorModel}
+      <Component is={navigatorModel.spaceView} />
+    {/if}
   </div>
-  <div class="aside"><Chat thread/></div>
+  <!-- <div class="aside"><Chat thread/></div> -->
 </div>
 <Modal />
 
