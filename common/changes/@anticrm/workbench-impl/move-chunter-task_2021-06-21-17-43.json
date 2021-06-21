@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Move Chunter and Task UIs out.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "andrey.v.platov@gmail.com"
+}

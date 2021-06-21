@@ -7552,6 +7552,14 @@ packages:
       svelte: 3.38.2
     dev: false
 
+  /svelte-hmr/0.14.4_svelte@3.38.2:
+    resolution: {integrity: sha512-kItFF7vqzStckSigoFmMnxJpTOdB9TWnQAW6Js+yAB4277tLbJIIE5KBlGHNmJNpA7MguqidsPB27Uw5UzQPCA==}
+    peerDependencies:
+      svelte: '>=3.19.0'
+    dependencies:
+      svelte: 3.38.2
+    dev: false
+
   /svelte-loader/3.1.1_svelte@3.38.2:
     resolution: {integrity: sha512-JU7qo1yBdDeJ3Aw23WoGKXrVaSn3KeWkM9KMl43HuMVFrsPNHIzZHTsf1ARJX/Abm3jeqNjigaO35RVbixhmWg==}
     peerDependencies:
@@ -7561,6 +7569,17 @@ packages:
       svelte: 3.38.2
       svelte-dev-helper: 1.1.9
       svelte-hmr: 0.12.9_svelte@3.38.2
+    dev: false
+
+  /svelte-loader/3.1.2_svelte@3.38.2:
+    resolution: {integrity: sha512-RhVIvitb+mtIwKNyvNQoDQ0EhXg2KH8LhQiiqeJh8u6vqJyGWoMoFcYCar69TT+1iaK5IYe0wPNYJ6TILcsurw==}
+    peerDependencies:
+      svelte: '>3.0.0'
+    dependencies:
+      loader-utils: 2.0.0
+      svelte: 3.38.2
+      svelte-dev-helper: 1.1.9
+      svelte-hmr: 0.14.4_svelte@3.38.2
     dev: false
 
   /svelte-preprocess/4.7.3_6a527db0dee04ba4ad22a07082d255f0:
@@ -9185,7 +9204,7 @@ packages:
       sass-loader: 11.1.1_sass@1.32.13+webpack@5.37.1
       style-loader: 2.0.0_webpack@5.37.1
       svelte: 3.38.2
-      svelte-loader: 3.1.1_svelte@3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
       svgo-loader: 3.0.0
       ts-loader: 8.3.0_typescript@4.3.2+webpack@5.37.1
       webpack: 5.37.1_webpack-cli@4.7.0
@@ -9360,7 +9379,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-UC8qSkOzdGiSZuybNpWl5FsbElHq5OgdzCZaAwOEdLYjslQERTfV4WlH3fcL00oZwCdGc1egO9QdmPegEDhitQ==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-BEocjOSDsR0djABV8LHnS6JwzILZ9E1m/Q2Immbaq2R6ykI/jeW5afFqlmHPY6UjNSB8dsseJLjJaJuctfgcWg==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
@@ -9370,6 +9389,7 @@ packages:
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       svelte: 3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
       ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
@@ -9491,7 +9511,7 @@ packages:
       sass-loader: 11.1.1_sass@1.32.13+webpack@5.37.1
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
-      svelte-loader: 3.1.1_svelte@3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
       svelte-preprocess: 4.7.3_6a527db0dee04ba4ad22a07082d255f0
       ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
@@ -9526,7 +9546,7 @@ packages:
       sass: 1.32.13
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
-      svelte-loader: 3.1.1_svelte@3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
       svelte-preprocess: 4.7.3_6a527db0dee04ba4ad22a07082d255f0
       ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
@@ -9559,7 +9579,7 @@ packages:
       sass: 1.32.13
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
-      svelte-loader: 3.1.1_svelte@3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
       svelte-preprocess: 4.7.3_6a527db0dee04ba4ad22a07082d255f0
       ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2

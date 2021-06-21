@@ -39,7 +39,8 @@ export function createModel(builder: Builder) {
           addSpaceLabel: task.string.CreateProject,
           createComponent: task.component.CreateProject
         }
-      ]
+      ],
+      spaceView: task.component.TaskView
     }
   })
   builder.createDoc(task.class.Project, {
