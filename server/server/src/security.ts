@@ -52,8 +52,7 @@ export class SecurityModel extends TxProcessor {
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
     const spaces = this.allowedSpaces.get(userId)
     if (spaces === undefined || spaces.size === 0) return false
-    if (!spaces.has(space)) return false
-    return true
+    return spaces.has(space)
   }
 
   getSpaces (userId: Ref<Account>): Set<Ref<Space>> {
@@ -96,9 +95,11 @@ export class SecurityStorage implements Storage {
     let domain
     switch (tx._class) {
       case core.class.TxCreateDoc:
+      case core.class.TxUpdateDoc:
         domain = this.hierarchy.getDomain((tx as TxCreateDoc<Doc>).objectClass)
         break
       case core.class.TxAddCollection:
+      case core.class.TxUpdateCollection:
         domain = this.hierarchy.getDomain((tx as TxAddCollection<Doc, Emb>).itemClass)
         break
     }
