@@ -27,5 +27,5 @@ workbenchModel(builder)
 chunterModel(builder)
 taskModel(builder)
 
-console.log(JSON.stringify(builder.getTxes()))
+export default builder
 
