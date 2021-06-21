@@ -51,6 +51,7 @@
       .icon {
         width: 24px;
         height: 24px;
+        fill: var(--theme-caption-color);
       }
       .title {
         margin-left: 8px;

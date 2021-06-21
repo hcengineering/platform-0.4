@@ -14,33 +14,24 @@
 -->
 
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
 
   export let thread: boolean = false
 </script>
 
-<div class="chat-container">
-  <div class="msg-board">
-    <Channel {thread}/>
-  </div>
-  <ReferenceInput {thread}/>
+<div class="msg-board">
+  <Channel {thread}/>
 </div>
+<ReferenceInput {thread}/>
 
 <style lang="scss">
-  .chat-container {
+  .msg-board {
     display: flex;
     flex-direction: column;
-    height: 100%;
-
-    .msg-board {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      margin: 15px 15px 0px;
-      padding: 25px 25px 0px;
-      overflow: auto;
-    }
+    flex-grow: 1;
+    margin: 15px 15px 0px;
+    padding: 25px 25px 0px;
+    overflow: auto;
   }
 </style>

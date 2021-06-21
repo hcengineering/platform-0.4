@@ -3,8 +3,8 @@
   const fill: string = 'var(--theme-caption-color)'
 </script>
 
-<svg width={size} height={size} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-  <g {fill}>
+<svg width={size} height={size} {fill} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <g>
     <rect width="2.9" height="2.9"/>
     <rect x="6.6" width="2.9" height="2.9"/>
     <rect x="13.1" width="2.9" height="2.9"/>
