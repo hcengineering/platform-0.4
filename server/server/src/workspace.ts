@@ -1,10 +1,10 @@
-import { Class, Doc, DocumentQuery, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
+import { Account, Class, Doc, DocumentQuery, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
 import { SecurityModel } from './security'
 import { ShutdownOperation } from './server'
 
 export interface ClientInfo {
   clientId: string
-  accountId: string
+  accountId: Ref<Account>
   workspaceId: string
   tx: (tx: Tx) => void
   close: ShutdownOperation

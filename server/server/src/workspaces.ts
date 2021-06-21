@@ -16,7 +16,7 @@ import core, {
   TxUpdateDoc
 } from '@anticrm/core'
 import { MongoConnection } from '@anticrm/mongo'
-import { newSecurityModel, SecurityClientStorage, SecurityModel } from './security'
+import { SecurityClientStorage, SecurityModel } from './security'
 import { ClientInfo, Workspace } from './workspace'
 
 const workspaces = new Map<string, Workspace>()
@@ -85,8 +85,7 @@ async function createWorkspace (workspaceId: string): Promise<Workspace> {
 
   const store = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
-  // TODO: Replace with a real security implementation.
-  const security: SecurityModel = newSecurityModel()
+  const security = new SecurityModel(hierarchy)
 
   return new Workspace(
     hierarchy,

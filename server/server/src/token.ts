@@ -1,4 +1,5 @@
 import { decode, encode } from 'jwt-simple'
+import { Ref, Account } from '@anticrm/core'
 
 /**
  * Generate a server secret to be used to authenticate.
@@ -10,6 +11,6 @@ import { decode, encode } from 'jwt-simple'
 export function generateToken (secret: string, accountId: string, workspaceId: string): string {
   return encode({ accountId, workspaceId }, secret)
 }
-export function decodeToken (secret: string, token: string): { accountId: string, workspaceId: string } {
+export function decodeToken (secret: string, token: string): { accountId: Ref<Account>, workspaceId: string } {
   return decode(token, secret)
 }
