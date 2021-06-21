@@ -14,6 +14,7 @@
 //
 
 import core, { Class, Doc, Space, DocumentQuery, Ref, Storage, Tx, Account, TxCreateDoc, TxAddCollection, Emb, TxProcessor, makeEmb, Member, Hierarchy, DOMAIN_MODEL, DOMAIN_TX } from '@anticrm/core'
+import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
@@ -50,6 +51,7 @@ export class SecurityModel extends TxProcessor {
   }
 
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
+    if (space === core.space.Model) return true
     const spaces = this.allowedSpaces.get(userId)
     if (spaces === undefined || spaces.size === 0) return false
     return spaces.has(space)
@@ -78,12 +80,12 @@ export class SecurityStorage implements Storage {
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.storage.findAll(_class, query)
     const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.securityModel.getSpaces(this.userId)
-    if (spaces === undefined || spaces.size === 0) throw new Error('Access denied')
+    if (spaces === undefined || spaces.size === 0) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     if (querySpace !== undefined) {
       if (typeof querySpace === 'string') {
-        if (!spaces.has(querySpace)) throw new Error('Access denied')
+        if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
       } else {
-        if ((querySpace.$in?.every((space) => spaces.has(space))) === false) throw new Error('Access denied')
+        if ((querySpace.$in?.every((space) => spaces.has(space))) === false) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
       }
     } else {
       (query as any).space = { $in: [...spaces.values()] }
@@ -92,19 +94,11 @@ export class SecurityStorage implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    let domain
-    switch (tx._class) {
-      case core.class.TxCreateDoc:
-      case core.class.TxUpdateDoc:
-        domain = this.hierarchy.getDomain((tx as TxCreateDoc<Doc>).objectClass)
-        break
-      case core.class.TxAddCollection:
-      case core.class.TxUpdateCollection:
-        domain = this.hierarchy.getDomain((tx as TxAddCollection<Doc, Emb>).itemClass)
-        break
-    }
-    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.storage.tx(tx)
-    if (!this.securityModel.checkSecurity(this.userId, tx.objectSpace)) throw new Error('Access denied')
+    if (!this.securityModel.checkSecurity(this.userId, tx.objectSpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     return await this.storage.tx(tx)
   }
 }
+
+export const Code = component('security' as Component, {
+  AccessDenied: '' as StatusCode
+})
