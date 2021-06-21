@@ -13,55 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 import core, {
+  Class,
   Client,
   createClient,
-  Doc,
-  DOMAIN_MODEL,
-  Emb,
-  Hierarchy,
-  Ref,
+  Data, Doc, Emb, generateId, Hierarchy, Ref, Space,
   Storage,
-  TxCreateDoc,
-  TxUpdateCollection
+  Tx,
+  TxAddCollection, TxProcessor,
+  TxUpdateCollection,
+  TxUpdateDoc
 } from '@anticrm/core'
-import { Account, Class, ClassifierKind, Data, Domain, Space } from '@anticrm/core/src/classes'
-import { Tx, TxAddCollection, TxProcessor, TxUpdateDoc } from '@anticrm/core/src/tx'
-import { generateId } from '@anticrm/core/src/utils'
-import { Db, MongoClient } from 'mongodb'
-import { TxDispatcherStorage } from '../dispatcher'
+import { describe, expect, it } from '@jest/globals'
+import { MongoConnection } from '../connection'
 import { DocStorage } from '../storage'
-import { ModelFilter } from '../domainFilter'
-import { TxStorage } from '../tx'
-import { createTask, Task, TaskComment, taskIds } from './tasks'
-import { describe, it, expect } from '@jest/globals'
+import { createTask, createTaskModel, Task, TaskComment, taskIds } from './tasks'
 
 const txesRaw = require('@anticrm/core/src/__tests__/model.tx.json') // eslint-disable-line @typescript-eslint/no-var-requires
 const txes = txesRaw as unknown as Tx[]
 
-function addClass<T extends Doc> (_id: Ref<Class<T>>): void {
-  const doc: TxCreateDoc<Class<T>> = {
-    _id: generateId(),
-    _class: core.class.TxCreateDoc,
-    objectId: _id,
-    objectClass: core.class.Class,
-    attributes: {
-      domain: 'task' as Domain,
-      kind: ClassifierKind.CLASS,
-      extends: core.class.Doc
-    },
-    modifiedBy: 'model' as Ref<Account>,
-    modifiedOn: Date.now(),
-    objectSpace: core.space.Model as Ref<Space>,
-    space: core.space.Model as Ref<Space>
-  }
-  txes.push(doc)
-}
-
-addClass(taskIds.class.Task)
-addClass(taskIds.class.TaskComment)
-addClass(taskIds.class.TaskEstimate)
+createTaskModel(txes)
 
 async function updateDoc<T extends Doc> (storage: Storage, doc: T, attributes: Partial<Data<T>>): Promise<T> {
   const tx: TxUpdateDoc<T> = {
@@ -129,49 +100,42 @@ async function updateCollection<T extends Doc, P extends Emb> (
 
 describe('mongo operations', () => {
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
-  let dbClient!: MongoClient
-  const dbId = 'mongo-storage-tests'
-  let db!: Db
+  let connection!: MongoConnection
+  const dbId = generateId()
   let hierarchy = new Hierarchy()
-  let client: Client
   let docStorage: DocStorage
+  let client!: Client
 
   beforeAll(async () => {
-    dbClient = await MongoClient.connect(mongodbUri, { useUnifiedTopology: true })
-
-    // Take a random database and drop all stuff if it exists.
-    db = dbClient.db(dbId)
+    connection = new MongoConnection(mongodbUri)
   })
 
   afterAll(async () => {
-    // await db.dropDatabase() // Remove our generated stuff.
-    await dbClient.close()
+    await connection.dropWorkspace(dbId)
+    await connection.shutdown()
   })
 
   async function initDb (): Promise<void> {
     // Remove all stuff from database.
-    const cls = await db.collections()
-    for (const c of cls) {
-      await c.drop()
-    }
-
     hierarchy = new Hierarchy()
 
-    const txStorage = new TxStorage(db, hierarchy)
-    docStorage = new DocStorage(db, hierarchy)
-
-    const disp = new TxDispatcherStorage(hierarchy, txStorage, new ModelFilter(DOMAIN_MODEL, hierarchy, docStorage))
-
     for (const t of txes) {
-      try {
-        await disp.tx(t)
-      } catch (ex) {
-        console.error(ex)
-      }
+      await hierarchy.tx(t)
     }
 
+    await connection.dropWorkspace(dbId)
+
+    const txStorage = await connection.createMongoTxStorage(dbId, hierarchy)
+
+    // Put all transactions to Tx
+    for (const t of txes) {
+      await txStorage.tx(t)
+    }
+
+    docStorage = await connection.createMongoDocStorage(dbId, hierarchy) as DocStorage
+
     client = await createClient(async (handler) => {
-      return await Promise.resolve(disp)
+      return await Promise.resolve(docStorage)
     })
   }
 

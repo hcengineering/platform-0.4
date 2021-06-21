@@ -1,6 +1,7 @@
 {
-  "name": "@anticrm/mongo-storage",
-  "version": "0.1.0",
+  "name": "@anticrm/mongo",
+  "version": "0.4.0",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "build:docs": "echo 'no docs yet'",
