@@ -9,7 +9,8 @@
     "dev": "ts-node-dev src/index.ts",
     "shutdown": "ts-node src/serverctl.ts",
     "lint": "eslint --max-warnings=0 src",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix src",
+    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -31,7 +32,9 @@
     "ts-jest": "^26.5.6",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.0.0",
+    "@types/node": "^14.14.40",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
@@ -39,6 +42,7 @@
     "ws": "^7.4.6",
     "@anticrm/core": "~0.4.0",
     "@anticrm/status": "~0.4.2",
-    "@anticrm/rpc": "~0.4.1"
+    "@anticrm/rpc": "~0.4.1",
+    "@anticrm/mongo": "~0.4.0"    
   }
 }
