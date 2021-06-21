@@ -8,8 +8,7 @@ export interface SecurityModel {
 }
 
 export class SecurityClientStorage implements Storage {
-  constructor (readonly workspace: Workspace, readonly user: ClientInfo) {
-  }
+  constructor (readonly workspace: Workspace, readonly user: ClientInfo) {}
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     // Filter for client accountId
@@ -23,7 +22,7 @@ export class SecurityClientStorage implements Storage {
     // Check security and send to other clients.
     const security = this.workspace.getSecurity()
     for (const cl of this.workspace.clients.entries()) {
-      if (cl[0] !== this.user.clientId && await security.checkSecurity(cl[1].accountId, tx)) {
+      if (cl[0] !== this.user.clientId && (await security.checkSecurity(cl[1].accountId, tx))) {
         cl[1].tx(tx)
       }
     }

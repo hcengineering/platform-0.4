@@ -1,13 +1,21 @@
 import core, {
-  Class, Doc, DOMAIN_MODEL,
-  DOMAIN_TX, Emb, Hierarchy, Obj, Ref, Storage,
+  Class,
+  Doc,
+  DocumentQuery,
+  DOMAIN_MODEL,
+  DOMAIN_TX,
+  Emb,
+  Hierarchy,
+  Obj,
+  Ref,
+  Storage,
   Tx,
   TxAddCollection,
   TxCreateDoc,
   TxUpdateCollection,
   TxUpdateDoc
 } from '@anticrm/core'
-import { MongoConnection } from '../../mongo/lib'
+import { MongoConnection } from '@anticrm/mongo'
 import { newSecurityModel, SecurityClientStorage, SecurityModel } from './security'
 import { ClientInfo, Workspace } from './workspace'
 
@@ -17,8 +25,7 @@ const clients = new Map<string, ClientInfo>()
 const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
 
 export class WorkspaceStorage implements Storage {
-  constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {
-  }
+  constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {}
 
   txObjectClass (tx: Tx<Doc>): Ref<Class<Obj>> {
     switch (tx._class) {
@@ -35,7 +42,7 @@ export class WorkspaceStorage implements Storage {
     throw new Error(`Tx has no objectClass defined ${tx._class}`)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: Partial<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const domain = this.hierarchy.getDomain(_class)
     switch (domain) {
       case DOMAIN_TX:

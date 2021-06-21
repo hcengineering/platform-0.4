@@ -9220,7 +9220,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-EUm0aVpVZoz0O8nw5zAAOCybTs7AyqUPNF+gHYscY5T4fIGjwpbfOvzntEL3JQhU4255mAu38abOOShzJruLzw==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-pWPtVVrU4ek7reyAmT9hif4idzS2IXNWCTyszkN4Ja3ooIlESj/HGpeGUgB64X3HzQAzX98B8httE2DiJCNt4g==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -9240,6 +9240,7 @@ packages:
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
       jwt-simple: 0.5.6
+      prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
       ts-node: 10.0.0_3a163292b5c9a249026cd43cb9eea8ec
       ts-node-dev: 1.1.6_typescript@4.3.2
@@ -9345,7 +9346,7 @@ packages:
     dev: false
 
   file:projects/tests-server.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-Fn/nAI442+tQ4aw9V0dYTfWjxSVgzOeiGbvpx3xSGzPCaQSS8Sv3BLBtNkdPtSLCrmsNH0e6xrZlmUnwf9K76A==, tarball: file:projects/tests-server.tgz}
+    resolution: {integrity: sha512-jQzw9b0P48xiWV5TWCbgTHL0qzLrrICjhY8uuguTufG2LyIDVEnaVuucLTFPLRH4rQc+7RIpw57JGQMJ0J4UbA==, tarball: file:projects/tests-server.tgz}
     id: file:projects/tests-server.tgz
     name: '@rush-temp/tests-server'
     version: 0.0.0
