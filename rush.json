@@ -551,6 +551,11 @@
       "packageName": "@anticrm/mongo",
       "projectFolder": "server/mongo",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/text",
+      "projectFolder": "packages/text",
+      "shouldPublish": true
     }
 
     // {
