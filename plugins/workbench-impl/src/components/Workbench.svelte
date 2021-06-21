@@ -73,8 +73,8 @@
   {/if}
   <div class="component">
     <SpaceHeader space={currentSpace}/>
-    <!-- <Task/> -->
-    <Chat/>
+    <Task view={'card'}/>
+    <!-- <Chat/> -->
   </div>
   <div class="aside"><Chat thread/></div>
 </div>

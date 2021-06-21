@@ -14,6 +14,7 @@
 -->
 
 <script lang="ts">
+  import { Tooltip } from '@anticrm/ui'
   import VCard from './icons/VCard.svelte'
   import VList from './icons/VList.svelte'
   import VKanban from './icons/VKanban.svelte'
@@ -26,9 +27,11 @@
 
 <div class="viewSelection-container">
   {#each views as view}
-    <div class="button" class:selected={selected === view.name} on:click={() => { selected = view.name }}>
-      <div class="icon"><svelte:component this={view.icon} size={16}/></div>
-    </div>
+    <Tooltip label={view.name}>
+      <div class="button" class:selected={selected === view.name} on:click={() => { selected = view.name }}>
+        <div class="icon"><svelte:component this={view.icon} size={16}/></div>
+      </div>
+    </Tooltip>
   {/each}
 </div>
 
@@ -60,6 +63,7 @@
 
       &.selected {
         background-color: var(--theme-button-bg-enabled);
+        cursor: default;
         .icon {
           opacity: .8;
         }

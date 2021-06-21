@@ -17,6 +17,7 @@
   import ViewSelection from './ViewSelection.svelte'
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
+  import CardView from './CardView.svelte'
   import { Tabs, ScrollBox } from '@anticrm/ui'
 
   export let view: string = 'list'
@@ -32,6 +33,10 @@
     {#if view === 'kanban'}
       <ScrollBox>
         <KanbanView/>
+      </ScrollBox>
+    {:else if view === 'card'}
+      <ScrollBox vertical>
+        <CardView/>
       </ScrollBox>
     {:else if view === 'list'}
       <ScrollBox vertical>
