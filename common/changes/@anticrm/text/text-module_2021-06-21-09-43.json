@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/text",
+      "comment": "Text module support",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/text",
+  "email": "haiodo@gmail.com"
+}
