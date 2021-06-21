@@ -35,6 +35,7 @@ specifiers:
   '@rush-temp/task-assets': file:./projects/task-assets.tgz
   '@rush-temp/task-impl': file:./projects/task-impl.tgz
   '@rush-temp/tests-server': file:./projects/tests-server.tgz
+  '@rush-temp/text': file:./projects/text.tgz
   '@rush-temp/theme': file:./projects/theme.tgz
   '@rush-temp/ui': file:./projects/ui.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
@@ -42,6 +43,7 @@ specifiers:
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
   '@types/lodash': ^4.14.168
+  '@types/markdown-it': ^12.0.2
   '@types/mongodb': ^3.6.18
   '@types/node': ^14.14.40
   '@types/toposort': ~2.0.3
@@ -66,6 +68,7 @@ specifiers:
   jest: ^26.6.3
   jwt-simple: ^0.5.6
   lodash: ^4.17.21
+  markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   mongodb: ^3.6.9
   postcss: ~8.3.4
@@ -129,6 +132,7 @@ dependencies:
   '@rush-temp/task-assets': file:projects/task-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task-impl': file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/tests-server': file:projects/tests-server.tgz_ts-node@10.0.0
+  '@rush-temp/text': file:projects/text.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4
   '@rush-temp/ui': file:projects/ui.tgz_dea33292b11ce5d7cfaa07c95df0d48c
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -136,6 +140,7 @@ dependencies:
   '@types/jest': 26.0.23
   '@types/jwt-simple': 0.5.33
   '@types/lodash': 4.14.169
+  '@types/markdown-it': 12.0.2
   '@types/mongodb': 3.6.18
   '@types/node': 14.17.0
   '@types/toposort': 2.0.3
@@ -160,6 +165,7 @@ dependencies:
   jest: 26.6.3_ts-node@10.0.0
   jwt-simple: 0.5.6
   lodash: 4.17.21
+  markdown-it: 12.0.6
   mini-css-extract-plugin: 1.6.0_webpack@5.37.1
   mongodb: 3.6.9
   postcss: 8.3.4
@@ -1041,6 +1047,10 @@ packages:
       '@types/node': 15.12.2
     dev: false
 
+  /@types/highlight.js/9.12.4:
+    resolution: {integrity: sha512-t2szdkwmg2JJyuCM20e8kR2X59WCE5Zkl4bzm1u1Oukjm79zpbiAv+QjnwLnuuV0WHEcX2NgUItu0pAMKuOPww==}
+    dev: false
+
   /@types/istanbul-lib-coverage/2.0.3:
     resolution: {integrity: sha512-sz7iLqvVUg1gIedBOvlkxPlc8/uVzyS5OwGz1cKjXzkl3FpL3al0crU8YGU1WoHkxn0Wxbw5tyi6hvzJKNzFsw==}
     dev: false
@@ -1076,8 +1086,24 @@ packages:
     resolution: {integrity: sha1-+4Ocq+gUN5VPfQzQF2CtgJbsUm4=}
     dev: false
 
+  /@types/linkify-it/3.0.1:
+    resolution: {integrity: sha512-pQv3Sygwxxh6jYQzXaiyWDAHevJqWtqDUv6t11Sa9CPGiXny66II7Pl6PR8QO5OVysD6HYOkHMeBgIjLnk9SkQ==}
+    dev: false
+
   /@types/lodash/4.14.169:
     resolution: {integrity: sha512-DvmZHoHTFJ8zhVYwCLWbQ7uAbYQEk52Ev2/ZiQ7Y7gQGeV9pjBqjnQpECMHfKS1rCYAhMI7LHVxwyZLZinJgdw==}
+    dev: false
+
+  /@types/markdown-it/12.0.2:
+    resolution: {integrity: sha512-p4DIfLMmGN0iLSbMxknDXeSm8W2ZRqQeN/1EAwVxVqJietzgp3WeP1UQjCKWDXWBcEbUa1ECx8YAfdpQdDQmZQ==}
+    dependencies:
+      '@types/highlight.js': 9.12.4
+      '@types/linkify-it': 3.0.1
+      '@types/mdurl': 1.0.2
+    dev: false
+
+  /@types/mdurl/1.0.2:
+    resolution: {integrity: sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==}
     dev: false
 
   /@types/minimatch/3.0.4:
@@ -1666,6 +1692,10 @@ packages:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
     dependencies:
       sprintf-js: 1.0.3
+    dev: false
+
+  /argparse/2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: false
 
   /arr-diff/4.0.0:
@@ -2825,6 +2855,10 @@ packages:
     engines: {node: '>=8.6'}
     dependencies:
       ansi-colors: 4.1.1
+    dev: false
+
+  /entities/2.1.0:
+    resolution: {integrity: sha512-hCx1oky9PFrJ611mf0ifBLBRW8lUUVRlFolb5gWRfIELabBlbp9xZvrqZLZAs+NxFnbfQoeGd8wDkygjg7U85w==}
     dev: false
 
   /entities/2.2.0:
@@ -5292,6 +5326,12 @@ packages:
     resolution: {integrity: sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=}
     dev: false
 
+  /linkify-it/3.0.2:
+    resolution: {integrity: sha512-gDBO4aHNZS6coiZCKVhSNh43F9ioIL4JwRjLZPkoLIY4yZFwg264Y5lu2x6rb1Js42Gh6Yqm2f6L2AJcnkzinQ==}
+    dependencies:
+      uc.micro: 1.0.6
+    dev: false
+
   /load-json-file/1.1.0:
     resolution: {integrity: sha1-lWkFcI1YtLq0wiYbBPWfMcmTdMA=}
     engines: {node: '>=0.10.0'}
@@ -5455,8 +5495,23 @@ packages:
       object-visit: 1.0.1
     dev: false
 
+  /markdown-it/12.0.6:
+    resolution: {integrity: sha512-qv3sVLl4lMT96LLtR7xeRJX11OUFjsaD5oVat2/SNBIb21bJXwal2+SklcRbTwGwqWpWH/HRtYavOoJE+seL8w==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
+      entities: 2.1.0
+      linkify-it: 3.0.2
+      mdurl: 1.0.1
+      uc.micro: 1.0.6
+    dev: false
+
   /mdn-data/2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
+    dev: false
+
+  /mdurl/1.0.1:
+    resolution: {integrity: sha1-/oWy7HWlkDfyrf7BAP1sYBdhFS4=}
     dev: false
 
   /media-typer/0.3.0:
@@ -7992,6 +8047,10 @@ packages:
     hasBin: true
     dev: false
 
+  /uc.micro/1.0.6:
+    resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
+    dev: false
+
   /unbox-primitive/1.0.1:
     resolution: {integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==}
     dependencies:
@@ -9381,6 +9440,39 @@ packages:
       - mongodb-client-encryption
       - mongodb-extjson
       - snappy
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/text.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-q0WEblqDKwSxIQQIyYD3QyDNZoV2OfGHJqRkVYnpAnjN+OND53YGJmqYV/Fl+SxJhYGgAy3Ot7x2VqGmSbD/ug==, tarball: file:projects/text.tgz}
+    id: file:projects/text.tgz
+    name: '@rush-temp/text'
+    version: 0.0.0
+    dependencies:
+      '@jest/globals': 27.0.3
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/markdown-it': 12.0.2
+      '@types/node': 14.17.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      jest: 26.6.3_ts-node@10.0.0
+      markdown-it: 12.0.6
+      prettier: 2.3.1
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
       - ts-node
       - utf-8-validate
