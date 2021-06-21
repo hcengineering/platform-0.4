@@ -1,4 +1,4 @@
-import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Hierarchy, Ref, Space, TxCreateDoc } from '@anticrm/core'
+import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Hierarchy, Ref, Space, Member, TxAddCollection, TxCreateDoc } from '@anticrm/core'
 //
 // Copyright © 2020 Anticrm Platform Contributors.
 //
@@ -51,6 +51,37 @@ const createMyTaskClass: TxCreateDoc<Class<MyTask>> = {
   modifiedOn: Date.now(),
   objectSpace: core.space.Model,
   space: core.space.Model
+}
+
+const createMyTaskSpace: TxCreateDoc<Space> = {
+  _id: generateId(),
+  _class: core.class.TxCreateDoc,
+  objectId: 'sp1' as Ref<Space>,
+  objectClass: core.class.Space,
+  modifiedBy: 'model' as Ref<Account>,
+  modifiedOn: Date.now(),
+  objectSpace: core.space.Model,
+  space: core.space.Model,
+  attributes: {
+    name: 'myTaskSpace',
+    description: 'test Space',
+    private: false
+  }
+}
+
+const joinMySpace: TxAddCollection<Space, Member> = {
+  objectId: createMyTaskSpace.objectId,
+  objectSpace: core.space.Model,
+  _id: generateId(),
+  space: core.space.Tx,
+  modifiedBy: 'test' as Ref<Account>,
+  modifiedOn: Date.now(),
+  collection: 'members',
+  _class: core.class.TxAddCollection,
+  itemClass: core.class.Space,
+  attributes: {
+    account: 'test' as Ref<Account>
+  }
 }
 
 describe('workspace', () => {
@@ -111,6 +142,10 @@ describe('workspace', () => {
       // Register a new class
 
       await client.tx(createMyTaskClass)
+
+      // create space and join
+      await client.tx(createMyTaskSpace)
+      await client.tx(joinMySpace)
 
       // check where is no our classes.
       const q1 = await client.findAll(taskIds.class.MyTask, {})
