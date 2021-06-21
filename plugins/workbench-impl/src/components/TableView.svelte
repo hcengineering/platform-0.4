@@ -60,61 +60,67 @@
 
 </script>
 
-<div class="table-container">
-  <table class="table-body">
-    <tr class="tr-head">
-      {#each tableHead as cellHead}
-        <th>{cellHead}</th>
-      {/each}
-    </tr>
-    {#each table as row}
-      <tr class="tr-body">
-      {#each row as cell}
-        <td><svelte:component this={cell.item} {...cell.props}/></td>
-      {/each}
-      </tr>
+<table class="table-body">
+  <tr class="tr-head">
+    {#each tableHead as cellHead}
+      <th>{cellHead}</th>
     {/each}
-  </table>
-</div>
+  </tr>
+  {#each table as row}
+    <tr class="tr-body">
+    {#each row as cell}
+      <td><svelte:component this={cell.item} {...cell.props}/></td>
+    {/each}
+    </tr>
+  {/each}
+</table>
 
 <style lang="scss">
-  .table-container {
-    display: flex;
+  .table-body {
+    display: table;
+    border-collapse: collapse;
 
-    .table-body {
-      display: table;
-      border-collapse: collapse;
-
-      td {
-        align-items: center;
-        height: 64px;
-        padding: 6px 20px;
-        color: var(--theme-content-accent-color);
+    td {
+      align-items: center;
+      height: 64px;
+      padding: 6px 20px;
+      color: var(--theme-content-accent-color);
+    }
+    th {
+      align-items: center;
+      height: 50px;
+      padding: 0 20px;
+      font-weight: 500;
+      text-align: left;
+      color: var(--theme-content-trans-color);
+    }
+    .tr-head {
+      position: sticky;
+      top: 0;
+      background-color: var(--theme-bg-color);
+      box-shadow: 0 1px 0 var(--theme-bg-focused-color);
+      z-index: 10;
+    }
+    .tr-body {
+      position: relative;
+      border-top: 1px solid var(--theme-bg-accent-hover);
+      &:nth-child(2) {
+        border-top: 1px solid transparent;
       }
-      th {
-        align-items: center;
-        height: 50px;
-        padding: 0 20px;
-        font-weight: 500;
-        text-align: left;
-        border-bottom: 1px solid var(--theme-bg-focused-color);
-        color: var(--theme-content-trans-color);
+      &:last-child {
+        border-bottom: 1px solid transparent;
       }
-      .tr-body {
-        position: relative;
-        border-top: 1px solid var(--theme-bg-accent-hover);
-      }
-      .tr-body:hover {
-        & > td {
-          border-top: 1px solid transparent;
-          border-bottom: 1px solid transparent;
-          background-color: var(--theme-button-bg-enabled);
-          &:first-child {
-            border-radius: 12px 0 0 12px;
-          }
-          &:last-child {
-            border-radius: 0 12px 12px 0;
-          }
+    }
+    .tr-body:hover {
+      & > td {
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        background-color: var(--theme-button-bg-enabled);
+        &:first-child {
+          border-radius: 12px 0 0 12px;
+        }
+        &:last-child {
+          border-radius: 0 12px 12px 0;
         }
       }
     }

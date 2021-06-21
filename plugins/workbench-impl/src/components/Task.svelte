@@ -19,7 +19,7 @@
   import TableView from './TableView.svelte'
   import { Tabs, ScrollBox } from '@anticrm/ui'
 
-  export let view: string = 'kanban'
+  export let view: string = 'list'
 </script>
 
 <div class="container">
