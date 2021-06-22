@@ -28,10 +28,12 @@
 
 <div class="reactions-container">
   {#each reactions as reaction}
-    <div class="reaction">
-      <div class="icon"><svelte:component this={reaction.icon} size={20}/></div>
-      <div class="counter">{reaction.count}</div>
-    </div>
+    {#if reaction.count}
+      <div class="reaction">
+        <div class="icon"><svelte:component this={reaction.icon} size={20}/></div>
+        <div class="counter">{reaction.count}</div>
+      </div>
+    {/if}
   {/each}
 </div>
 

@@ -14,9 +14,48 @@
 -->
 
 <script lang="ts">
+  import ActionIcon from '@anticrm/ui/src/components/ActionIcon.svelte'
+import Add from '@anticrm/ui/src/components/icons/Add.svelte'
+import Card from './Card.svelte'
+
   export let cards: Array<Object> =
-             []
+             [{ id: 'c01', user: 'chen', progress: { min: 0, max: 5, value: 4 }, discussion: 4, attach: 2,
+                title: 'Create UI for apps without the spaces',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c02', user: 'tim', progress: { color: '#22CC62', value: 100 }, discussion: 10,
+                title: 'Change font size from 16px to 14px',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c03', user: 'kathryn', progress: { color: '#F96E50', min: 0, max: 5, value: 1 }, discussion: 4, attach: 18,
+                title: 'Create UI for apps without the spaces',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c04', user: 'elon', progress: { color: '#AA83FC', value: 5 }, attach: 1,
+                title: 'Change font size from 16px to 14px',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c05', user: 'chen', discussion: 4, attach: 2,
+                title: 'Create UI for apps without the spaces',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c06', user: 'tim', progress: { color: '#22CC62', value: 100 },
+                title: 'Change font size from 16px to 14px',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c07', user: 'kathryn', progress: { color: '#F96E50', min: 0, max: 5, value: 1 }, discussion: 4, attach: 18,
+                title: 'Create UI for apps without the spaces',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` },
+              { id: 'c08', user: 'elon', progress: { color: '#AA83FC', value: 5 }, attach: 1,
+                title: 'Change font size from 16px to 14px',
+                description: `That's the only place in the lands we've ever heard of that we don't want to see.` }]
 </script>
 
-{#each cards as card}
-{/each}
+<div class="cards-container">
+  {#each cards as card}
+    <Card {...card}/>
+  {/each}
+</div>
+
+<style lang="scss">
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 220px);
+    grid-auto-rows: 280px;
+    grid-gap: 20px;
+  }
+</style>

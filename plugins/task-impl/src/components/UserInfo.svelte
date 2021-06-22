@@ -26,14 +26,17 @@
   export let user: string = 'chen'
   export let suptitle: string | undefined
   export let size: 24 | 32 = 24
+  export let avatarOnly: boolean = false
 </script>
 
 <div class="user-container">
   <div style="width: {size}px; height: {size}px;"><img style="width: {size}px; height: {size}px;" src={users.find(u => u.name === user).avatar} alt={20}/></div>
-  <div class="caption">
-    {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
-    <div class="title">{users.find(u => u.name === user).title}</div>
-  </div>
+  {#if !avatarOnly}
+    <div class="caption">
+      {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
+      <div class="title">{users.find(u => u.name === user).title}</div>
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
