@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Introduce RichEditor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor",
+  "email": "haiodo@gmail.com"
+}
