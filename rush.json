@@ -556,7 +556,13 @@
       "packageName": "@anticrm/text",
       "projectFolder": "packages/text",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/richeditor",
+      "projectFolder": "packages/richeditor",
+      "shouldPublish": true
     }
+    
 
     // {
     //   /**
