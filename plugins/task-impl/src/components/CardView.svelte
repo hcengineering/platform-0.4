@@ -14,9 +14,7 @@
 -->
 
 <script lang="ts">
-  import ActionIcon from '@anticrm/ui/src/components/ActionIcon.svelte'
-import Add from '@anticrm/ui/src/components/icons/Add.svelte'
-import Card from './Card.svelte'
+  import Card from './Card.svelte'
 
   export let cards: Array<Object> =
              [{ id: 'c01', user: 'chen', progress: { min: 0, max: 5, value: 4 }, discussion: 4, attach: 2,
@@ -54,7 +52,7 @@ import Card from './Card.svelte'
 <style lang="scss">
   .cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 220px);
+    grid-template-columns: repeat(auto-fit, minmax(220px, auto));
     grid-auto-rows: 280px;
     grid-gap: 20px;
   }

@@ -29,15 +29,18 @@
 <style lang="scss">
   .scroll {
     position: relative;
-    width: 100%;
+    width: auto;
     height: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-right: 0;
+    margin-bottom: -5px;
 
     .box {
       position: absolute;
       display: grid;
       grid-auto-flow: column;
+      padding: 0 0 5px 0;
       gap: 12px;
       top: 0;
       left: 0;
@@ -49,9 +52,12 @@
     }
 
     &.vertical {
+      margin-right: -5px;
+      margin-bottom: 0;
       overflow-x: hidden;
       overflow-y: auto;
       .box {
+        padding: 0 5px 0 0;
         width: 100%;
         height: auto;
         grid-auto-flow: row;
@@ -62,7 +68,11 @@
     }
 
     &.bothScroll {
+      margin: 0 -5px -5px 0;
       overflow: auto;
+      .box {
+        padding: 0 5px 5px 0;
+      }
     }
   }
 </style>
