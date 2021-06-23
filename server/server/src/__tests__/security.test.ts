@@ -133,7 +133,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       collection: 'members',
       _class: core.class.TxAddCollection,
-      itemClass: core.class.Space,
+      itemClass: core.class.Member,
       attributes: {
         account: user.accountId
       }
@@ -194,7 +194,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       collection: 'members',
       _class: core.class.TxAddCollection,
-      itemClass: core.class.Space,
+      itemClass: core.class.Member,
       attributes: {
         account: user.accountId
       }
