@@ -185,7 +185,9 @@ function withoutTrailingNewline (str: string): string {
   return str[str.length - 1] === '\n' ? str.slice(0, str.length - 1) : str
 }
 
-function tokenHandlers (tokens: { [key: string]: ParsingRule }): Record<string, (state: MarkdownParseState, tok: Token) => void> {
+function tokenHandlers (tokens: {
+  [key: string]: ParsingRule
+}): Record<string, (state: MarkdownParseState, tok: Token) => void> {
   const handlers: Record<string, (state: MarkdownParseState, tok: Token) => void> = {}
 
   function addSpecBlock (spec: ParsingRule, type: string, specBlock: MessageNodeType): void {

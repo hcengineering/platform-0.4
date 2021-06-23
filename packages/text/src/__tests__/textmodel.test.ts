@@ -166,7 +166,7 @@ describe('server', () => {
   })
 
   it('Check code block', () => {
-    const t1 = '```\n# code block\nprint \'3 backticks or\'\nprint \'indent 4 spaces\'\n```'
+    const t1 = "```\n# code block\nprint '3 backticks or'\nprint 'indent 4 spaces'\n```"
     const msg = parseMessageMarkdown(t1)
     expect(msg.type).toEqual(MessageNodeType.doc)
     expect(msg.content?.[0].type).toEqual(MessageNodeType.code_block)
@@ -176,7 +176,7 @@ describe('server', () => {
     expect(md).toEqual(t1)
   })
   it('Check code block language', () => {
-    const t1 = '```typescript\n# code block\nprint \'3 backticks or\'\nprint \'indent 4 spaces\'\n```'
+    const t1 = "```typescript\n# code block\nprint '3 backticks or'\nprint 'indent 4 spaces'\n```"
     const msg = parseMessageMarkdown(t1)
     expect(msg.type).toEqual(MessageNodeType.doc)
     expect(msg.content?.[0].type).toEqual(MessageNodeType.code_block)
