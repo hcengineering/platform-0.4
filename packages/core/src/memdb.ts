@@ -14,21 +14,22 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Collection, Doc, Emb, PrimitiveType, Ref } from './classes'
+import type { Class, Collection, Doc, Emb, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
-import { DocumentQuery, QuerySelector, Storage } from './storage'
+import { DocumentQuery, Storage } from './storage'
 import { Tx, TxAddCollection, TxCreateDoc, TxProcessor } from './tx'
 import { generateId, makeEmb } from './utils'
+import { isPredicate, createPredicate } from './predicate'
 
-function findProperty<T extends Doc> (objects: Doc[], propertyKey: string, value: PrimitiveType | QuerySelector<T>): Doc[] {
+function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
+  if (isPredicate(value)) {
+    const pred = createPredicate(value, propertyKey)
+    return pred(objects)
+  }
   const result: Doc[] = []
   for (const object of objects) {
-    if (typeof value === 'object') {
-      if ((value.$in?.includes((object as any)[propertyKey])) === true) {
-        result.push(object)
-      }
-    } else if ((object as any)[propertyKey] === value) {
+    if ((object as any)[propertyKey] === value) {
       result.push(object)
     }
   }
@@ -92,7 +93,7 @@ class MemDb {
     for (const key in query) {
       if (key === '_id') continue
       const value = (query as any)[key]
-      result = findProperty<T>(result, key, value)
+      result = findProperty(result, key, value)
     }
     return [...result] as T[]
   }
