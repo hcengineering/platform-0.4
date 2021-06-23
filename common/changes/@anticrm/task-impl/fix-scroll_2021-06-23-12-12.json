@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Fix ScrollBox, peel off scroll.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl",
+  "email": "sas_lord@mail.ru"
+}
