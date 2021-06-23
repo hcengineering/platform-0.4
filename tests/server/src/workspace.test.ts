@@ -78,7 +78,7 @@ const joinMySpace: TxAddCollection<Space, Member> = {
   modifiedOn: Date.now(),
   collection: 'members',
   _class: core.class.TxAddCollection,
-  itemClass: core.class.Space,
+  itemClass: core.class.Member,
   attributes: {
     account: 'test' as Ref<Account>
   }

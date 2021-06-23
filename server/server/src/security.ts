@@ -20,18 +20,16 @@ export class SecurityModel extends TxProcessor {
   }
 
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    if (this.hierarchy.isDerived(tx.itemClass, core.class.Space)) {
-      if (tx.collection === 'members') {
-        const obj = makeEmb(
-          tx.itemClass,
-          tx.attributes
-        ) as Member
-        const accountSpaces = this.allowedSpaces.get(obj.account)
-        if (accountSpaces === undefined) {
-          this.allowedSpaces.set(obj.account, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
-        } else {
-          accountSpaces.add(tx.objectId as Ref<Space>)
-        }
+    if (tx.itemClass === core.class.Member && tx.collection === 'members') {
+      const obj = makeEmb(
+        tx.itemClass,
+        tx.attributes
+      ) as Member
+      const accountSpaces = this.allowedSpaces.get(obj.account)
+      if (accountSpaces === undefined) {
+        this.allowedSpaces.set(obj.account, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
+      } else {
+        accountSpaces.add(tx.objectId as Ref<Space>)
       }
     }
   }

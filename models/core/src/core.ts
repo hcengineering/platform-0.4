@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Attribute, Class, ClassifierKind, Collection, Doc, Domain, Mixin, Obj, PropertyType, Ref, Timestamp, Account, Space } from '@anticrm/core'
+import type { Attribute, Class, ClassifierKind, Collection, Doc, Domain, Mixin, Obj, PropertyType, Ref, Timestamp, Account, Space, Emb } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
@@ -22,6 +22,11 @@ import core from './component'
 @Model(core.class.Obj, core.class.Obj)
 export class TObj implements Obj {
   _class!: Ref<Class<this>>
+}
+
+@Model(core.class.Emb, core.class.Obj)
+export class TEmb extends TObj implements Emb {
+  __embedded!: this
 }
 
 @Model(core.class.Doc, core.class.Obj)
