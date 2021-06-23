@@ -27,7 +27,7 @@ start(SERVER_HOST, SERVER_PORT, {
     try {
       const { accountId, workspaceId } = decodeToken(SERVER_SECRET, token)
       console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
-      return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx, close })
+      return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
     } catch (err) {
       throw new Error('invalid token')
     }

@@ -30,7 +30,7 @@ export class MongoConnection {
   public async dropDomain (workspaceId: string, domain: Domain): Promise<void> {
     const dbId = this.workspaceDb(workspaceId)
     const db = (await this.client).db(dbId)
-    await db.dropCollection(domain as string)
+    await db.collection(domain as string).deleteMany({})
   }
 
   /**

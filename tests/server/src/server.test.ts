@@ -34,10 +34,7 @@ describe('server', () => {
       await model.tx(tx)
     }
 
-    async function findAll<T extends Doc> (
-      _class: Ref<Class<T>>,
-      query: DocumentQuery<T>
-    ): Promise<T[]> {
+    async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
       const domain = hierarchy.getClass(_class).domain
       if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
       return await model.findAll(_class, query)
@@ -47,8 +44,7 @@ describe('server', () => {
       connect: async () => {
         return {
           findAll,
-          tx: async (tx: Tx): Promise<void> => {
-          }
+          tx: async (tx: Tx): Promise<void> => {}
         }
       },
       close: async () => {}
@@ -65,7 +61,10 @@ describe('server', () => {
   })
 
   it('check non existing server', async () => {
-    (await expect(createClient('localhost:10'))).rejects.toThrowError('Failed to connect to localhost:10: reason: connect ECONNREFUSED 127.0.0.1:10') // eslint-disable-line
+    // eslint-disable-next-line
+    ;(await expect(createClient('localhost:10'))).rejects.toThrowError(
+      'Failed to connect to localhost:10: reason: connect ECONNREFUSED 127.0.0.1:10'
+    )
   })
 
   it('check server connection closed', async () => {
@@ -90,8 +89,7 @@ describe('server', () => {
             if (req === 2) {
               console.log('close DONE')
               close(404, 'error')
-              return await new Promise<T[]>(() => {
-              })
+              return await new Promise<T[]>(() => {})
             }
             const domain = hierarchy.getClass(_class).domain
             if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)

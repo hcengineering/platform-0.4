@@ -538,6 +538,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/workspace",
+      "projectFolder": "server/workspace",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/rpc",
       "projectFolder": "packages/rpc",
       "shouldPublish": true

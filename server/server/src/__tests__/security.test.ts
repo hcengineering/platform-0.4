@@ -14,24 +14,37 @@
 //
 
 import builder from '@anticrm/model-all'
-import core, { Storage, generateId, Ref, Space, Tx, TxCreateDoc, Hierarchy, ModelDb, Doc, TxAddCollection, Member, ClassifierKind, Class, Domain, TxDb } from '@anticrm/core'
-import { SecurityModel, SecurityClientStorage } from '../security'
-import { Workspace, ClientInfo } from '../workspace'
-import { WorkspaceStorage } from '../workspaces'
+import core, {
+  Storage,
+  generateId,
+  Ref,
+  Space,
+  Tx,
+  TxCreateDoc,
+  Hierarchy,
+  ModelDb,
+  Doc,
+  TxAddCollection,
+  Member,
+  ClassifierKind,
+  Class,
+  Domain,
+  TxDb
+} from '@anticrm/core'
+import { SecurityModel, SecurityClientStorage, ClientInfo } from '../security'
+import { WorkspaceStorage } from '@anticrm/workspace/src/storage'
 
 const txes = builder.getTxes()
 const user: ClientInfo = {
   clientId: '',
   accountId: core.account.System,
   workspaceId: 'string',
-  tx: (tx: Tx) => {},
-  close: () => {}
+  tx: (tx: Tx) => {}
 }
 
 describe('security', () => {
   let db: Storage
   let hierarchy: Hierarchy
-  let workspace: Workspace
   let securityStorage: SecurityClientStorage
   let security: SecurityModel
   async function initDb (): Promise<void> {
@@ -60,18 +73,20 @@ describe('security', () => {
     security = new SecurityModel(hierarchy)
     for (const tx of txes) await security.tx(tx)
     await security.tx(objectClassTx)
-    workspace = new Workspace(
+    securityStorage = new SecurityClientStorage(
+      security,
+      {
+        findAll: async (_class, query) => await store.findAll(_class, query),
+        tx: async (tx) => {
+          hierarchy.tx(tx)
+          await store.tx(tx)
+          await security.tx(tx)
+        }
+      },
       hierarchy,
-      store,
-      [
-        { tx: async (tx) => hierarchy.tx(tx) }, // Update hierarchy
-        store, // Update tx and doc storage
-        security // Update security
-      ],
-      async () => {},
-      security
+      user,
+      new Map<string, ClientInfo>()
     )
-    securityStorage = new SecurityClientStorage(workspace, user)
   }
 
   beforeAll(async () => {
@@ -107,8 +122,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       _class: core.class.TxCreateDoc,
       objectClass: 'task' as Ref<Class<Doc>>,
-      attributes: {
-      }
+      attributes: {}
     }
 
     await db.tx(objectTx) // add object ignore security
@@ -120,9 +134,11 @@ describe('security', () => {
       expect(error.message).toBe('ERROR: security.AccessDenied')
     })
 
-    await securityStorage.findAll('task' as Ref<Class<Doc>>, { space: { $in: [objectTx.objectSpace] } }).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: security.AccessDenied')
-    })
+    await securityStorage
+      .findAll('task' as Ref<Class<Doc>>, { space: { $in: [objectTx.objectSpace] } })
+      .catch((error: Error) => {
+        expect(error.message).toBe('ERROR: security.AccessDenied')
+      })
 
     const addMemberTx: TxAddCollection<Space, Member> = {
       objectId: spaceTx.objectId,
@@ -144,7 +160,7 @@ describe('security', () => {
     const third = await securityStorage.findAll('task' as Ref<Class<Doc>>, { space: objectTx.objectSpace })
     expect(third).toHaveLength(1)
 
-    const last = await securityStorage.findAll('task' as Ref<Class<Doc>>, { })
+    const last = await securityStorage.findAll('task' as Ref<Class<Doc>>, {})
     expect(last).toHaveLength(1)
   })
 
@@ -177,8 +193,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       _class: core.class.TxCreateDoc,
       objectClass: 'task' as Ref<Class<Doc>>,
-      attributes: {
-      }
+      attributes: {}
     }
 
     await securityStorage.tx(objectTx).catch((error: Error) => {

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server-tools",
+      "comment": "Move Workspace to separate module",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server-tools",
+  "email": "haiodo@gmail.com"
+}
