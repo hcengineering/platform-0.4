@@ -1,5 +1,22 @@
-import core, { Class, Doc, Space, DocumentQuery, Ref, Storage, Tx, Account, TxCreateDoc, TxAddCollection, Emb, TxProcessor, makeEmb, Member, Hierarchy, DOMAIN_MODEL, DOMAIN_TX } from '@anticrm/core'
-import { ClientInfo, Workspace } from './workspace'
+import core, {
+  Account,
+  Class,
+  Doc,
+  DocumentQuery,
+  DOMAIN_MODEL,
+  DOMAIN_TX,
+  Emb,
+  Hierarchy,
+  makeEmb,
+  Member,
+  Ref,
+  Space,
+  Storage,
+  Tx,
+  TxAddCollection,
+  TxCreateDoc,
+  TxProcessor
+} from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 export class SecurityModel extends TxProcessor {
@@ -21,10 +38,7 @@ export class SecurityModel extends TxProcessor {
 
   protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
     if (tx.itemClass === core.class.Member && tx.collection === 'members') {
-      const obj = makeEmb(
-        tx.itemClass,
-        tx.attributes
-      ) as Member
+      const obj = makeEmb(tx.itemClass, tx.attributes) as Member
       const accountSpaces = this.allowedSpaces.get(obj.account)
       if (accountSpaces === undefined) {
         this.allowedSpaces.set(obj.account, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
@@ -42,41 +56,53 @@ export class SecurityModel extends TxProcessor {
   }
 
   getSpaces (userId: Ref<Account>): Set<Ref<Space>> {
-    return new Set<Ref<Space>>([...this.publicSpaces, ...this.allowedSpaces.get(userId) ?? []])
+    return new Set<Ref<Space>>([...this.publicSpaces, ...(this.allowedSpaces.get(userId) ?? [])])
   }
 }
 
+export interface ClientInfo {
+  clientId: string
+  accountId: Ref<Account>
+  workspaceId: string
+  tx: (tx: Tx) => void
+}
+
 export class SecurityClientStorage implements Storage {
-  constructor (readonly workspace: Workspace, readonly user: ClientInfo) {}
+  constructor (
+    readonly security: SecurityModel,
+    readonly workspace: Storage,
+    readonly hierarchy: Hierarchy,
+    readonly user: ClientInfo,
+    readonly clients: Map<string, ClientInfo>
+  ) {}
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     // Filter for client accountId
-    const domain = this.workspace.hierarchy.getDomain(_class)
+    const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query)
     const querySpace = (query as DocumentQuery<Doc>).space
-    const spaces = this.workspace.security.getSpaces(this.user.accountId)
-    if (spaces === undefined || spaces.size === 0) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    const spaces = this.security.getSpaces(this.user.accountId)
+    if (spaces === undefined || spaces.size === 0) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
     if (querySpace !== undefined) {
       if (typeof querySpace === 'string') {
         if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
       } else {
-        if ((querySpace.$in?.every((space) => spaces.has(space))) === false) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+        if (querySpace.$in?.every((space) => spaces.has(space)) === false) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
       }
     } else {
-      (query as any).space = { $in: [...spaces.values()] }
+      ;(query as any).space = { $in: [...spaces.values()] }
     }
     return await this.workspace.findAll(_class, query)
   }
 
   async tx (tx: Tx): Promise<void> {
-    const security = this.workspace.getSecurity()
-    if (!security.checkSecurity(this.user.accountId, tx.objectSpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    if (!this.security.checkSecurity(this.user.accountId, tx.objectSpace)) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
     // Check if tx is allowed and process with workspace
     await this.workspace.tx(tx)
 
     // Check security and send to other clients.
-    for (const cl of this.workspace.clients.entries()) {
-      if (cl[0] !== this.user.clientId && (security.checkSecurity(cl[1].accountId, tx.objectSpace))) {
+    for (const cl of this.clients.entries()) {
+      if (cl[0] !== this.user.clientId && this.security.checkSecurity(cl[1].accountId, tx.objectSpace)) {
         cl[1].tx(tx)
       }
     }

@@ -1,4 +1,3 @@
-import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Hierarchy, Ref, Space, Member, TxAddCollection, TxCreateDoc } from '@anticrm/core'
 //
 // Copyright © 2020 Anticrm Platform Contributors.
 //
@@ -13,13 +12,26 @@ import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Hierarch
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+import core, {
+  Account,
+  Class,
+  ClassifierKind,
+  Doc,
+  Domain,
+  generateId,
+  Member,
+  Ref,
+  Space,
+  TxAddCollection,
+  TxCreateDoc
+} from '@anticrm/core'
 import builder from '@anticrm/model-all'
-import { MongoConnection } from '@anticrm/mongo'
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { decodeToken, generateToken } from '@anticrm/server/src/token'
 import { assignWorkspace, closeWorkspace } from '@anticrm/server/src/workspaces'
 import { Component, component } from '@anticrm/status'
+import { shutdown, Workspace } from '@anticrm/workspace'
 import { describe, expect, it } from '@jest/globals'
 
 const txes = builder.getTxes()
@@ -85,40 +97,30 @@ const joinMySpace: TxAddCollection<Space, Member> = {
 }
 
 describe('workspace', () => {
-  const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
-  let mongoConnection!: MongoConnection
-  const dbId = generateId()
+  const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
+  let dbId: string
+  let workspace!: Workspace
 
-  beforeAll(async () => {
-    mongoConnection = new MongoConnection(mongodbUri)
+  beforeEach(async () => {
+    dbId = 'ws-test-db-' + generateId()
+    workspace = await Workspace.create(dbId, { mongoDBUri })
+    await workspace.initialize(txes)
+  })
+  afterEach(async () => {
+    await workspace.cleanup()
   })
   afterAll(async () => {
-    await mongoConnection.dropWorkspace(dbId)
-    await mongoConnection.shutdown()
+    await shutdown()
   })
 
-  async function initWorkspace (): Promise<void> {
-    const hierarchy = new Hierarchy()
-    const txes = builder.getTxes()
-    for (const t of txes) {
-      await hierarchy.tx(t)
-    }
-
-    await mongoConnection.dropWorkspace(dbId)
-    const txStore = await mongoConnection.createMongoTxStorage(dbId, hierarchy)
-    for (const t of txes) {
-      await txStore.tx(t)
-    }
-  }
   it('connect to workspace', async () => {
     // Initialize workspace
-    await initWorkspace()
     // eslint-disable-next-line
     const serverAt = await start('localhost', 0, {
-      connect: async (clientId, token, txs, close) => {
+      connect: async (clientId, token) => {
         try {
           const { accountId, workspaceId } = decodeToken(TEST_SECRET, token)
-          return await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {}, close })
+          return await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
         } catch (err) {
           console.error(err)
           throw new Error('invalid token')

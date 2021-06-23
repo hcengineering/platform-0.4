@@ -44,6 +44,6 @@
     "@anticrm/core": "~0.4.0",
     "@anticrm/status": "~0.4.2",
     "@anticrm/rpc": "~0.4.1",
-    "@anticrm/mongo": "~0.4.0"    
+    "@anticrm/workspace": "~0.4.0"    
   }
 }

@@ -14,9 +14,8 @@
 //
 
 import builder from '@anticrm/model-all'
-import core, { Hierarchy, Tx } from '@anticrm/core'
 import { generateToken } from '@anticrm/server/src/token'
-import { MongoConnection } from '../../mongo/lib'
+import { Workspace, shutdown } from '@anticrm/workspace'
 
 if (process.argv.length < 2) {
   console.warn('please use server-cli with {command} {arg} ')
@@ -29,41 +28,27 @@ const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
 const SECRET = process.env.SERVER_SECRET ?? 'mongodb://localhost:27017'
 
 async function main (): Promise<void> {
-  switch (cmd) {
-    case 'generate-token': {
-      const token = generateToken(SECRET, arg1, arg2)
-      console.log('TOKEN: ', token)
-      break
+  try {
+    switch (cmd) {
+      case 'generate-token': {
+        const token = generateToken(SECRET, arg1, arg2)
+        console.log('TOKEN: ', token)
+        break
+      }
+      case 'create-workspace': {
+        console.log(`creating workspace ${arg1} (with dropping all model transactions)`)
+        const ws = await Workspace.create(arg1, { mongoDBUri: MONGO_URI })
+        await ws.initialize(builder.getTxes())
+        break
+      }
+      default:
+        console.error('Unknown command', process.argv)
     }
-    case 'create-workspace': {
-      console.log('creating workspace: ', arg1)
-
-      const mongoConnection = new MongoConnection(MONGO_URI)
-
-      const hierarchy = new Hierarchy()
-      const txes = builder.getTxes()
-      for (const t of txes) {
-        await hierarchy.tx(t)
-      }
-
-      const txStore = await mongoConnection.createMongoTxStorage(arg1, hierarchy)
-
-      const wsTxes = await txStore.findAll<Tx>(core.class.Tx, { objectSpace: core.space.Model })
-      if (wsTxes.length > 0) {
-        console.warn('space is already created. Consider upgrade procedure.')
-        return
-      }
-
-      // If no txes found, let's create all transactions.
-      for (const tx of txes) {
-        await txStore.tx(tx)
-      }
-      await mongoConnection.shutdown()
-      break
-    }
-    default:
-      console.error('Unknown command', process.argv)
+  } finally {
+    await shutdown()
   }
 }
 
-main().catch((err) => console.error(err))
+main().catch((err) => {
+  console.error(err)
+})

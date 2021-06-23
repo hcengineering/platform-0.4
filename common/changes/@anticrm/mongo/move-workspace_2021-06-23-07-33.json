@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "Move Workspace to separate module",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "haiodo@gmail.com"
+}

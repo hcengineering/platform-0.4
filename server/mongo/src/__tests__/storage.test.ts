@@ -17,16 +17,24 @@ import core, {
   Class,
   Client,
   createClient,
-  Data, Doc, Emb, generateId, Hierarchy, Ref, Space,
+  Data,
+  Doc,
+  Emb,
+  generateId,
+  Hierarchy,
+  Ref,
+  Space,
   Storage,
   Tx,
-  TxAddCollection, TxProcessor,
+  TxAddCollection,
+  TxProcessor,
   TxUpdateCollection,
   TxUpdateDoc
 } from '@anticrm/core'
 import { describe, expect, it } from '@jest/globals'
-import { MongoConnection } from '../connection'
+import { MongoClient } from 'mongodb'
 import { DocStorage } from '../storage'
+import { TxStorage } from '../tx'
 import { createTask, createTaskModel, Task, TaskComment, taskIds } from './tasks'
 
 const txesRaw = require('@anticrm/core/src/__tests__/model.tx.json') // eslint-disable-line @typescript-eslint/no-var-requires
@@ -100,19 +108,28 @@ async function updateCollection<T extends Doc, P extends Emb> (
 
 describe('mongo operations', () => {
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
-  let connection!: MongoConnection
-  const dbId = generateId()
+  let mongoClient!: MongoClient
+  let dbId: string = generateId()
   let hierarchy = new Hierarchy()
   let docStorage: DocStorage
   let client!: Client
 
   beforeAll(async () => {
-    connection = new MongoConnection(mongodbUri)
+    mongoClient = await MongoClient.connect(mongodbUri, { useUnifiedTopology: true })
   })
 
   afterAll(async () => {
-    await connection.dropWorkspace(dbId)
-    await connection.shutdown()
+    await mongoClient.close()
+  })
+
+  beforeEach(async () => {
+    dbId = 'mongo-testdb-' + generateId()
+  })
+
+  afterEach(async () => {
+    try {
+      await mongoClient.db(dbId).dropDatabase()
+    } catch (eee) {}
   })
 
   async function initDb (): Promise<void> {
@@ -123,16 +140,15 @@ describe('mongo operations', () => {
       await hierarchy.tx(t)
     }
 
-    await connection.dropWorkspace(dbId)
-
-    const txStorage = await connection.createMongoTxStorage(dbId, hierarchy)
+    const db = mongoClient.db(dbId)
+    const txStorage = new TxStorage(db.collection('tx'), hierarchy)
 
     // Put all transactions to Tx
     for (const t of txes) {
       await txStorage.tx(t)
     }
 
-    docStorage = await connection.createMongoDocStorage(dbId, hierarchy) as DocStorage
+    docStorage = new DocStorage(db, hierarchy)
 
     client = await createClient(async (handler) => {
       return await Promise.resolve(docStorage)

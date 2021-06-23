@@ -40,7 +40,7 @@ export function toMongoQuery<T extends Doc> (
 
   const byClass = hierarchy.getDescendants(objectClass)
   // We need find for all classes extending our own.
-  classes.push(...byClass)
+  classes.push(...byClass.filter((c) => c !== objectClass))
 
   // Find by all classes.
   if (classes.length > 1) {
