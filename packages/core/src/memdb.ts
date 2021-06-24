@@ -59,6 +59,7 @@ class MemDb extends TxProcessor {
   getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
+      console.log(_id)
       throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
     }
     return doc as T
@@ -120,13 +121,13 @@ export class ModelDb extends MemDb implements Storage {
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     const doc = this.getObject(tx.objectId) as any
-    const attrs = tx.attributes as any
-    for (const key in attrs) {
+    const ops = tx.operations as any
+    for (const key in ops) {
       if (key.startsWith('$')) {
         const operator = getOperator(key)
-        operator(doc, attrs[key])
+        operator(doc, ops[key])
       } else {
-        doc[key] = attrs[key]
+        doc[key] = ops[key]
       }
     }
   }

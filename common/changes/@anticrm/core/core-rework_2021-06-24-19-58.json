@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Rework some core parts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "andrey.v.platov@gmail.com"
+}

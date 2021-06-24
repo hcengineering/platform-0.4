@@ -56,18 +56,17 @@ describe('dsl', () => {
       },
       {
         "objectId": "class:test.MyClass",
-        "_class": "class:core.TxAddCollection",
+        "_class": "class:core.TxCreateDoc",
         "space": "space:core.Tx",
         "modifiedBy": "account:core.System",
         "modifiedOn": 0,
         "objectSpace": "space:core.Model",
-        "collection": "attributes",
-        "localId": "name",
-        "itemClass": "class:core.Attribute",
+        "objectClass": "class:core.Attribute",
         "attributes": {
           "type": {
             "_class": "class:core.TypeString"
-          }
+          },
+          "name": "name"
         }
       }
     ])
@@ -103,18 +102,17 @@ describe('dsl', () => {
       },
       {
         "objectId": "class:test.MyClass",
-        "_class": "class:core.TxAddCollection",
+        "_class": "class:core.TxCreateDoc",
         "space": "space:core.Tx",
         "modifiedBy": "account:core.System",
         "modifiedOn": 0,
         "objectSpace": "space:core.Model",
-        "collection": "attributes",
-        "localId": "name",
-        "itemClass": "class:core.Attribute",
+        "objectClass": "class:core.Attribute",
         "attributes": {
           "type": {
             "_class": "class:core.TypeString"
-          }
+          },
+          "name": "name"
         }
       },
       {
@@ -132,18 +130,17 @@ describe('dsl', () => {
       },
       {
         "objectId": "class:test.MyClass2",
-        "_class": "class:core.TxAddCollection",
+        "_class": "class:core.TxCreateDoc",
         "space": "space:core.Tx",
         "modifiedBy": "account:core.System",
         "modifiedOn": 0,
         "objectSpace": "space:core.Model",
-        "collection": "attributes",
-        "localId": "lastName",
-        "itemClass": "class:core.Attribute",
+        "objectClass": "class:core.Attribute",
         "attributes": {
           "type": {
             "_class": "class:core.TypeString"
-          }
+          },
+          "name": "lastName"
         }
       }
     ]

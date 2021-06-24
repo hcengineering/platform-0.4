@@ -29,7 +29,8 @@ import core, {
   Space,
   Tx,
   TxCreateDoc,
-  TxUpdateDoc
+  TxUpdateDoc,
+  withOperations
 } from '@anticrm/core'
 import { Component, component } from '@anticrm/status'
 import { describe, expect, it } from '@jest/globals'
@@ -154,9 +155,9 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = await createClient(async () => {
+    const client = withOperations(core.account.System, await createClient(async () => {
       return await Promise.resolve(workspace)
-    })
+    }))
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -178,9 +179,9 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = await createClient(async () => {
+    const client = withOperations(core.account.System, await createClient(async () => {
       return await Promise.resolve(workspace)
-    })
+    }))
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -238,9 +239,9 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = await createClient(async () => {
+    const client = withOperations(core.account.System, await createClient(async () => {
       return await Promise.resolve(workspace)
-    })
+    }))
 
     const d1 = await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -258,7 +259,7 @@ describe('workspace', () => {
       objectSpace: d1.space,
       space: core.space.Tx,
       objectClass: d1._class,
-      attributes: {
+      operations: {
         name: 'my-task2'
       }
     }

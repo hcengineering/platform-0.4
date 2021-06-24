@@ -17,12 +17,13 @@
 import type { Ref, Class, Doc } from '../classes'
 import { connect } from './connection'
 import { createClient } from '../client'
+import { withOperations } from '../tx'
 import core from '..'
 
 describe('client', () => {
   it('client', async () => {
     const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
-    const client = await createClient(connect)
+    const client = withOperations(core.account.System, await createClient(connect))
     const result = await client.findAll(klass, {})
     expect(result).toHaveLength(2)
 

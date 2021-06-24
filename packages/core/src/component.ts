@@ -28,7 +28,8 @@ export default component(ComponentCore, {
     Tx: '' as Ref<Class<Tx>>,
     TxCreateDoc: '' as Ref<Class<TxCreateDoc<Doc>>>,
     TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,
-    Space: '' as Ref<Class<Space>>
+    Space: '' as Ref<Class<Space>>,
+    Account: '' as Ref<Class<Account>>
   },
   space: {
     Tx: '' as Ref<Space>,

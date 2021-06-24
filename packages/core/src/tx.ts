@@ -34,18 +34,24 @@ type ArrayAsElement<T extends Doc> = {
 
 type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-export interface PushOptions<T extends Doc> {
+interface PushOptions<T extends Doc> {
   $push?: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
+export type DocumentUpdate<T extends Doc> = Partial<Data<T>> & PushOptions<T>
+
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Partial<Data<T>> & PushOptions<T>
+  operations: DocumentUpdate<T>
 }
 
 export const DOMAIN_TX = 'tx' as Domain
 
-export class TxProcessor {
+interface WithTx {
+  tx: (tx: Tx) => Promise<void>
+}
+
+export class TxProcessor implements WithTx {
   async tx (tx: Tx): Promise<void> {
     switch (tx._class) {
       case core.class.TxCreateDoc:
@@ -70,24 +76,58 @@ export class TxProcessor {
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {}
 }
 
-export class TxOperations extends TxProcessor {
-  constructor (readonly user: Ref<Account>) {
-    super()
-  }
+export interface TxOperations {
+  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
+  updateDoc: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    operations: DocumentUpdate<T>
+  ) => Promise<void>
+}
 
-  async createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<T> {
+export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T): T & TxOperations {
+  const result = storage as T & TxOperations
+
+  result.createDoc = async <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    attributes: Data<T>
+  ): Promise<T> => {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxCreateDoc,
       space: core.space.Tx,
-      modifiedBy: this.user,
+      modifiedBy: user,
       modifiedOn: Date.now(),
       objectId: generateId(),
       objectClass: _class,
       objectSpace: space,
       attributes
     }
-    await this.tx(tx)
+    await storage.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
   }
+
+  result.updateDoc = async <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    operations: DocumentUpdate<T>
+  ): Promise<void> => {
+    const tx: TxUpdateDoc<T> = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: user,
+      modifiedOn: Date.now(),
+      objectId,
+      objectClass: _class,
+      objectSpace: space,
+      operations
+    }
+    await storage.tx(tx)
+  }
+
+  return result
 }
