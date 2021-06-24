@@ -146,7 +146,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       _class: core.class.TxUpdateDoc,
       objectClass: core.class.Space,
-      attributes: {
+      operations: {
         $push: { members: user.accountId }
       }
     }
@@ -206,7 +206,7 @@ describe('security', () => {
       modifiedOn: Date.now(),
       _class: core.class.TxUpdateDoc,
       objectClass: core.class.Space,
-      attributes: { $push: { members: user.accountId } }
+      operations: { $push: { members: user.accountId } }
     }
 
     await securityStorage.tx(addMemberTx)

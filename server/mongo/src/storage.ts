@@ -59,7 +59,7 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
-    const { $push, ...leftAttrs } = tx.attributes
+    const { $push, ...leftAttrs } = tx.operations
     const op: UpdateQuery<Doc> = {
       $set: {
         ...leftAttrs,

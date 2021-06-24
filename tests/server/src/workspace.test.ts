@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Ref, Space, TxCreateDoc } from '@anticrm/core'
+import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Ref, Space, TxCreateDoc, withOperations } from '@anticrm/core'
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { decodeToken, generateToken } from '@anticrm/server/src/token'
@@ -118,7 +118,9 @@ describe('workspace', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+      const client = withOperations(core.account.System, 
+        await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+      )
 
       console.log('client connected')
 

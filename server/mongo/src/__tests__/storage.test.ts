@@ -20,12 +20,14 @@ import core, {
   Doc,
   generateId,
   Hierarchy,
-  PushOptions,
+  DocumentUpdate,
   Ref,
   Space,
   Storage,
   Tx,
-  TxUpdateDoc
+  TxUpdateDoc,
+  withOperations,
+  TxOperations
 } from '@anticrm/core'
 import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
@@ -41,7 +43,7 @@ createTaskModel(txes)
 async function updateDoc<T extends Doc> (
   storage: Storage,
   doc: T,
-  attributes: Partial<Data<T>> & PushOptions<T>
+  operations: DocumentUpdate<T>
 ): Promise<void> {
   const tx: TxUpdateDoc<T> = {
     _id: generateId(),
@@ -52,7 +54,7 @@ async function updateDoc<T extends Doc> (
     objectId: doc._id,
     objectClass: doc._class,
     objectSpace: doc.space,
-    attributes
+    operations
   }
   await storage.tx(tx)
 }
@@ -63,7 +65,7 @@ describe('mongo operations', () => {
   let dbId: string = generateId()
   let hierarchy = new Hierarchy()
   let docStorage: DocStorage
-  let client!: Client
+  let client!: Client & TxOperations
 
   beforeAll(async () => {
     mongoClient = await MongoClient.connect(mongodbUri, { useUnifiedTopology: true })
@@ -101,9 +103,9 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
-    client = await createClient(async (handler) => {
+    client = withOperations(core.account.System, await createClient(async (handler) => {
       return await Promise.resolve(docStorage)
-    })
+    }))
   }
 
   beforeEach(async () => {

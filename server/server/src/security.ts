@@ -44,7 +44,7 @@ export class SecurityModel extends TxProcessor {
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
-      const member = (tx as TxUpdateDoc<Space>).attributes?.$push?.members
+      const member = (tx as TxUpdateDoc<Space>).operations?.$push?.members
       if (member !== undefined) {
         const accountSpaces = this.allowedSpaces.get(member)
         if (accountSpaces === undefined) {

@@ -34,7 +34,7 @@ type ArrayAsElement<T extends Doc> = {
 
 type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-export interface PushOptions<T extends Doc> {
+interface PushOptions<T extends Doc> {
   $push?: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
