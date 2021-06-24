@@ -34,9 +34,9 @@ import core from './component'
 type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
 
 interface ClassTxes {
-  _id: Ref<Doc>
+  _id: Ref<Class<Obj>>
   extends?: Ref<Class<Obj>>
-  domain?: string
+  domain?: Domain
   txes: Array<NoIDs<Tx>>
 }
 
@@ -64,9 +64,8 @@ export function Prop (type: Type<PropertyType>) {
       objectClass: core.class.Attribute,
       attributes: { 
         type,
-        collection: 'attributes',
-        localId: propertyKey,
-        objectId: txes._id
+        name: propertyKey,
+        attributeOf: txes._id
       },
     }
     txes.txes.push(tx)
@@ -76,7 +75,7 @@ export function Prop (type: Type<PropertyType>) {
 export function Model<T extends Obj> (
   _class: Ref<Class<T>>,
   _extends: Ref<Class<Obj>>,
-  domain?: string
+  domain?: Domain
 ) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)

@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Ref, Account, Space } from './classes'
+import type { KeysByType } from 'simplytyped'
+import type { Class, Data, Doc, Domain, Ref, Account, Space, Arr } from './classes'
 import core from './component'
 import { generateId } from './utils'
 
@@ -27,9 +28,19 @@ export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   attributes: Data<T>
 }
 
+type ArrayAsElement<T extends Doc> = { 
+  [P in keyof T]: T[P] extends Arr<infer X> ? X : never 
+}
+
+type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
+
+export type PushOptions<T extends Doc> = {
+  $push: Partial<OmitNever<ArrayAsElement<T>>>
+}
+
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Partial<Data<T>>
+  attributes: Partial<Data<T>> & PushOptions<T>
 }
 
 export const DOMAIN_TX = 'tx' as Domain

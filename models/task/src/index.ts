@@ -46,6 +46,7 @@ export function createModel(builder: Builder) {
   builder.createDoc(task.class.Project, {
     name: 'default',
     description: 'Default Project',
-    private: false
+    private: false,
+    members: []
   })
 }

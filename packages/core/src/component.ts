@@ -15,7 +15,7 @@
 
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
-import type { Class, Doc, CollectionItem, Obj, Ref, Space, Account, Member } from './classes'
+import type { Class, Doc, Obj, Ref, Space, Account } from './classes'
 import type { Tx, TxCreateDoc, TxUpdateDoc } from './tx'
 
 const ComponentCore = 'core' as Component
@@ -24,13 +24,11 @@ export default component(ComponentCore, {
   class: {
     Obj: '' as Ref<Class<Obj>>,
     Doc: '' as Ref<Class<Doc>>,
-    CollectionItem: '' as Ref<Class<CollectionItem>>,
     Class: '' as Ref<Class<Class<Obj>>>,
     Tx: '' as Ref<Class<Tx>>,
     TxCreateDoc: '' as Ref<Class<TxCreateDoc<Doc>>>,
     TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,
     Space: '' as Ref<Class<Space>>,
-    Member: '' as Ref<Class<Member>>
   },
   space: {
     Tx: '' as Ref<Space>,

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Data, Doc, CollectionItem, Ref, Space, Tx, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
+import type { Class, Data, Doc, PushOptions, Ref, Space, Tx, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
 import { DOMAIN_TX } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
@@ -36,5 +36,5 @@ export class TTxCreateDoc<T extends O, O extends Doc> extends TTx<T> implements 
 @Model(core.class.TxCreateDoc, core.class.Tx)
 export class TTxUpdateDoc<T extends O, O extends Doc> extends TTx<T> implements TxUpdateDoc<T> {
   objectClass!: Ref<Class<T>>
-  attributes!: Partial<Data<T>>
+  attributes!: Partial<Data<T>> & PushOptions<T>
 }
