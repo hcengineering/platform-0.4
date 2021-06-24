@@ -82,8 +82,6 @@ txes.push(createClass(core.class.Space, { extends: core.class.Doc }))
 txes.push(createClass(core.class.Tx, { extends: core.class.Doc }, DOMAIN_TX))
 txes.push(createClass(core.class.TxCreateDoc, { extends: core.class.Tx }, DOMAIN_TX))
 txes.push(createClass(core.class.TxUpdateDoc, { extends: core.class.Tx }, DOMAIN_TX))
-txes.push(createClass(core.class.TxAddCollection, { extends: core.class.Tx }, DOMAIN_TX))
-txes.push(createClass(core.class.TxUpdateCollection, { extends: core.class.Tx }, DOMAIN_TX))
 
 const myTx = createClass(taskIds.class.MyTx, { extends: core.class.TxCreateDoc }, DOMAIN_TX)
 

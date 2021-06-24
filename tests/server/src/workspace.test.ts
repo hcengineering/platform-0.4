@@ -12,19 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import core, {
-  Account,
-  Class,
-  ClassifierKind,
-  Doc,
-  Domain,
-  generateId,
-  Member,
-  Ref,
-  Space,
-  TxAddCollection,
-  TxCreateDoc
-} from '@anticrm/core'
+import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Ref, Space, TxCreateDoc } from '@anticrm/core'
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { decodeToken, generateToken } from '@anticrm/server/src/token'
@@ -74,22 +62,8 @@ const createMyTaskSpace: TxCreateDoc<Space> = {
   attributes: {
     name: 'myTaskSpace',
     description: 'test Space',
-    private: false
-  }
-}
-
-const joinMySpace: TxAddCollection<Space, Member> = {
-  objectId: createMyTaskSpace.objectId,
-  objectSpace: core.space.Model,
-  _id: generateId(),
-  space: core.space.Tx,
-  modifiedBy: 'test' as Ref<Account>,
-  modifiedOn: Date.now(),
-  collection: 'members',
-  _class: core.class.TxAddCollection,
-  itemClass: core.class.Member,
-  attributes: {
-    account: 'test' as Ref<Account>
+    private: false,
+    members: ['test' as Ref<Account>]
   }
 }
 
@@ -160,7 +134,6 @@ describe('workspace', () => {
 
       // create space and join
       await client.tx(createMyTaskSpace)
-      await client.tx(joinMySpace)
 
       // check where is no our classes.
       const q1 = await client.findAll(taskIds.class.MyTask, {})

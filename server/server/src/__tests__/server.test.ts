@@ -75,7 +75,7 @@ describe('server', () => {
       const client = await createClient(`${addr.address}:${addr.port}/t1`)
 
       const result = await client.findAll(core.class.Class, {})
-      expect(result.length).toEqual(13)
+      expect(result.length).toEqual(11)
     } finally {
       ;(await serverAt).shutdown()
     }

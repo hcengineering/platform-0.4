@@ -1,10 +1,11 @@
-import core, { Domain, Account, Class, Collection, Data, Doc, Emb, Obj, Ref, Space } from '@anticrm/core'
+import core, { Domain, Account, Class, Data, Doc, Obj, Ref, Space } from '@anticrm/core'
 import { ClassifierKind } from '@anticrm/core/src/classes'
 import { Tx, TxCreateDoc } from '@anticrm/core/src/tx'
 import { generateId } from '@anticrm/core/src/utils'
 import { Component, component } from '@anticrm/core/node_modules/@anticrm/status'
 
-export interface TaskComment extends Emb {
+export interface TaskComment {
+  id: string
   message: string
   author: string
   date: Date
@@ -27,7 +28,7 @@ export interface Task extends Doc {
   name: string
   description: string
   rate?: number
-  comments?: Collection<TaskComment>
+  comments: TaskComment[]
   eta?: TaskEstimate
   status?: TaskStatus
   reproduce?: TaskReproduce
@@ -52,8 +53,7 @@ export interface TaskWithSecond extends Task {
 export const taskIds = component('core' as Component, {
   class: {
     Task: '' as Ref<Class<Task>>,
-    TaskEstimate: '' as Ref<Class<TaskEstimate>>,
-    TaskComment: '' as Ref<Class<TaskComment>>
+    TaskEstimate: '' as Ref<Class<TaskEstimate>>
   }
   //   mixin: {
   //     TaskMixin: '' as Ref<Mixin<TaskMixin>>
@@ -72,7 +72,8 @@ export function createTask (name: string, rate: number, description: string): Da
   return {
     name,
     description,
-    rate
+    rate,
+    comments: []
   }
 }
 
@@ -84,7 +85,8 @@ export const doc1: Task = {
   rate: 20,
   modifiedBy: 'user' as Ref<Account>,
   modifiedOn: 10,
-  space: '' as Ref<Space>
+  space: '' as Ref<Space>,
+  comments: []
 }
 
 function addClass<T extends Doc> (txes: Tx[], _id: Ref<Class<T>>): void {
@@ -107,6 +109,5 @@ function addClass<T extends Doc> (txes: Tx[], _id: Ref<Class<T>>): void {
 }
 export function createTaskModel (txes: Tx[]): void {
   addClass(txes, taskIds.class.Task)
-  addClass(txes, taskIds.class.TaskComment)
   addClass(txes, taskIds.class.TaskEstimate)
 }

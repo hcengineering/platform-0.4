@@ -17,10 +17,10 @@ import { PlatformError, Severity, Status } from '@anticrm/status'
 import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
+import { getOperator } from './operator'
+import { createPredicate, isPredicate } from './predicate'
 import { DocumentQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxUpdateDoc } from './tx'
-import { isPredicate, createPredicate } from './predicate'
-import { getOperator } from './operator'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {

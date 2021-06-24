@@ -17,20 +17,15 @@ import core, {
   Class,
   Doc,
   DocumentQuery,
-  Emb,
   Hierarchy,
   Ref,
   Storage,
   Tx,
-  TxAddCollection,
   TxCreateDoc,
   TxProcessor,
-  TxUpdateCollection,
   TxUpdateDoc
 } from '@anticrm/core'
-import { Collection, Db } from 'mongodb'
-import { createEmb2Doc, toMongoItemIdQuery, toMongoItemQuery, toMongoItemValue } from './collection'
-import { ItemQuery } from './model'
+import { Collection, Db, UpdateQuery } from 'mongodb'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
@@ -39,9 +34,7 @@ import { toMongoIdQuery, toMongoQuery } from './query'
 export class DocStorage extends TxProcessor implements Storage {
   txHandlers = {
     [core.class.TxCreateDoc]: async (tx: Tx) => await this.txCreateDoc(tx as TxCreateDoc<Doc>),
-    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>),
-    [core.class.TxAddCollection]: async (tx: Tx) => await this.txAddCollection(tx as TxAddCollection<Doc, Emb>),
-    [core.class.TxUpdateCollection]: async (tx: Tx) => await this.txUpdateCollection(tx as TxUpdateCollection<Doc, Emb>)
+    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
   }
 
   constructor (readonly db: Db, readonly hierarchy: Hierarchy) {
@@ -61,47 +54,27 @@ export class DocStorage extends TxProcessor implements Storage {
     return this.db.collection(domain)
   }
 
-  private collectionOfItem<T extends Emb>(itemClass: Ref<Class<T>>): Collection {
-    return this.db.collection(this.hierarchy.getDomain(itemClass) + '-' + 'collections')
-  }
-
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
-    return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), {
+    const { $push, ...leftAttrs } = tx.attributes
+    const op: UpdateQuery<Doc> = {
       $set: {
-        ...tx.attributes,
+        ...leftAttrs,
         modifiedBy: tx.modifiedBy,
         modifiedOn: tx.modifiedOn
       }
-    })
-  }
-
-  async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    await this.collectionOfItem(tx.itemClass).insertOne(createEmb2Doc(tx))
-  }
-
-  async txUpdateCollection (tx: TxUpdateCollection<Doc, Emb>): Promise<any> {
-    const mongoQuery = toMongoItemIdQuery(tx)
-    return await this.collectionOfItem(tx.itemClass).updateOne(mongoQuery, {
-      $set: {
-        ...toMongoItemValue(tx.attributes),
-        modifiedBy: tx.modifiedBy,
-        modifiedOn: tx.modifiedOn
-      }
-    })
+    }
+    if ($push !== undefined) {
+      op.$push = $push
+    }
+    return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     return await this.collection(_class).find(mongoQuery).toArray()
-  }
-
-  // Non finalized API to search for collection items.
-  async findIn<T extends Doc, P extends Emb>(itemQuery: ItemQuery<T, P>, query: Partial<P>): Promise<P[]> {
-    const mongoQuery = toMongoItemQuery(this.hierarchy, itemQuery, query)
-    return (await this.collectionOfItem(itemQuery.itemClass).find(mongoQuery).toArray()).map((p) => p.value)
   }
 }

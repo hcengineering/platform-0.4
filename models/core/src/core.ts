@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Attribute, Class, ClassifierKind, Doc, Domain, Mixin, Obj, PropertyType, Ref, Timestamp, Account, Space } from '@anticrm/core'
+import type { Account, Class, ClassifierKind, Doc, Domain, Mixin, Obj, Ref, Space, Timestamp } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'

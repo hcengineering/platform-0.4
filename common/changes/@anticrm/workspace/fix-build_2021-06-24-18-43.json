@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Collection Removal compile fix update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace",
+  "email": "haiodo@gmail.com"
+}
