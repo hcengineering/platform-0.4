@@ -25,8 +25,8 @@ import {
   TxUpdateCollection
 } from '@anticrm/core'
 import { FilterQuery } from 'mongodb'
-import { CollectionItemDoc, ItemQuery } from '.'
 import mongoIds from './component'
+import { CollectionItemDoc, ItemQuery } from './model'
 
 /**
  * Construct document to store collection item.

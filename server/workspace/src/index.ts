@@ -1,7 +1,6 @@
-import core, { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, Ref, Tx } from '@anticrm/core'
-import { DocStorage, TxStorage } from '@anticrm/mongo'
+import { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
+import { DocStorage, getMongoClient, TxStorage } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
-import { dropDomain, dropWorkspace, dumpDomain, initMongoConnection } from './mongo'
 import { WorkspaceStorage } from './storage'
 
 /**
@@ -12,11 +11,7 @@ export interface TxHandler {
 }
 
 /**
- * Workspace initialization options.
- *
- * Options available now:
- *
- * - MONGO_URI - MongoDB Uri
+ * Workspace connection options.
  */
 export interface WorkspaceOptions {
   mongoDBUri: string // Mongo DB URI.
@@ -27,20 +22,25 @@ export interface WorkspaceOptions {
  * Represent a workspace.
  * Before find*, tx operations could be used, consider initialize Db with model transactions.
  */
-export class Workspace {
+export class Workspace implements Storage {
   static async create (
     workspaceId: string,
     options: WorkspaceOptions,
     txh?: (hierarchy: Hierarchy) => TxHandler[]
   ): Promise<Workspace> {
     const hierarchy: Hierarchy = new Hierarchy()
-    const db = await initMongoConnection(workspaceId, options.mongoDBUri, options.mongoOptions as MongoClientOptions)
+    const db = (await getMongoClient(options.mongoDBUri, options.mongoOptions as MongoClientOptions)).db(
+      'ws-' + workspaceId
+    )
 
-    const txStorage = new TxStorage(db.collection('tx'), hierarchy)
+    const txStorage = new TxStorage(db.collection(DOMAIN_TX as string), hierarchy)
     const mongoDocStorage = new DocStorage(db, hierarchy)
 
     // Load hierarchy from transactions.
-    const transactions = (await dumpDomain(workspaceId, DOMAIN_TX)) as Tx[]
+    const transactions = (await db
+      .collection(DOMAIN_TX as string)
+      .find({})
+      .toArray()) as Tx[]
     for (const tx of transactions) {
       hierarchy.tx(tx) // we could cast since we sure all documents are Tx based.
     }
@@ -72,19 +72,7 @@ export class Workspace {
 
     await Promise.all(this.txh.map(async (t) => await t.tx(tx)))
   }
-
-  async initialize (transactions: Tx[]): Promise<void> {
-    await dropDomain(this.workspaceId, DOMAIN_TX, { objectSpace: core.space.Model })
-    const txStore = this.storage.txStorage()
-    for (const tx of transactions) {
-      this.hierarchy.tx(tx)
-      await txStore.tx(tx)
-    }
-  }
-
-  async cleanup (): Promise<void> {
-    await dropWorkspace(this.workspaceId)
-  }
 }
+
 // This need this export to not hang on jest tests
-export { shutdown } from './mongo'
+export { shutdown } from '@anticrm/mongo'

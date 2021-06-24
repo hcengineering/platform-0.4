@@ -13,9 +13,8 @@
 // limitations under the License.
 //
 
-import builder from '@anticrm/model-all'
 import { generateToken } from '@anticrm/server/src/token'
-import { Workspace, shutdown } from '@anticrm/workspace'
+import { createWorkspace, shutdown, upgradeWorkspace } from '@anticrm/workspaces'
 
 if (process.argv.length < 2) {
   console.warn('please use server-cli with {command} {arg} ')
@@ -36,9 +35,13 @@ async function main (): Promise<void> {
         break
       }
       case 'create-workspace': {
-        console.log(`creating workspace ${arg1} (with dropping all model transactions)`)
-        const ws = await Workspace.create(arg1, { mongoDBUri: MONGO_URI })
-        await ws.initialize(builder.getTxes())
+        console.log(`creating workspace ${arg1}`)
+        await createWorkspace(arg1, { mongoDBUri: MONGO_URI })
+        break
+      }
+      case 'upgrade-workspace': {
+        console.log(`upgrading workspace ${arg1} (with dropping all model transactions)`)
+        await upgradeWorkspace(arg1, { mongoDBUri: MONGO_URI })
         break
       }
       default:

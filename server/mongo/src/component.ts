@@ -16,7 +16,7 @@
 import { Class, Doc, Emb, Ref } from '@anticrm/core'
 import type { Component } from '@anticrm/status'
 import { component } from '@anticrm/status'
-import { CollectionItemDoc } from '.'
+import { CollectionItemDoc } from './model'
 
 const MongoCore = 'mongo' as Component
 

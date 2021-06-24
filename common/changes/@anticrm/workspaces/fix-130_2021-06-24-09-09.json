@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspaces",
+      "comment": "Introduce Workspaces to create/delete",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspaces",
+  "email": "haiodo@gmail.com"
+}

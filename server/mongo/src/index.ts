@@ -13,26 +13,33 @@
 // limitations under the License.
 //
 
-import { Class, Doc, Emb, Ref } from '@anticrm/core'
+import { MongoClient, MongoClientOptions } from 'mongodb'
 
-/**
- * A document we use to store collection item inside DB.
- */
-export interface CollectionItemDoc<T extends Doc, P extends Emb> extends Doc {
-  objectId: Ref<T> // A source document this item is belong to
-  localId: string // An item local uniq identifier.
-  collection: String // Collection field name
-
-  value: P // A value of embedded object itself.
-}
-
-export interface ItemQuery<T extends Doc, P extends Emb> {
-  objectId: Ref<T> // Source object id
-  collection: string // Collection field name
-  itemClass: Ref<Class<P>> // Item class
-
-  localId?: string // Item local id
-}
-
-export * from './tx'
 export * from './storage'
+export * from './tx'
+
+const connections = new Map<string, Promise<MongoClient>>()
+
+// Register mongo close on process exit.
+process.on('exit', () => {
+  shutdown().catch((err) => console.error(err))
+})
+
+export async function shutdown (): Promise<void> {
+  for (const c of connections.values()) {
+    await (await c).close()
+  }
+  connections.clear()
+}
+/**
+ * Initialize a workspace connection to DB
+ */
+export async function getMongoClient (uri: string, options?: MongoClientOptions): Promise<MongoClient> {
+  let client = connections.get(uri)
+  if (client === undefined) {
+    client = MongoClient.connect(uri, { ...options, useUnifiedTopology: true })
+    await client
+    connections.set(uri, client)
+  }
+  return await client
+}
