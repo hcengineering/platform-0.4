@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "Update core structures",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "andrey.v.platov@gmail.com"
+}
