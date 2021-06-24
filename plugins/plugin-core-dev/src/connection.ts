@@ -29,8 +29,7 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
   const transactions = new TxDb(hierarchy)
   const model = new ModelDb(hierarchy)
   for (const tx of txes) {
-    transactions.tx(tx)
-    model.tx(tx)
+    await Promise.all([transactions.tx(tx), model.tx(tx)])
   }
 
   async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
