@@ -34,7 +34,8 @@ import core, {
 import { Component, component } from '@anticrm/status'
 import { describe, expect, it } from '@jest/globals'
 import { Workspace } from '..'
-import { shutdown } from '../mongo'
+import { shutdown, getMongoClient } from '@anticrm/mongo'
+import { MongoClient } from 'mongodb'
 
 const txes: Tx[] = []
 
@@ -91,23 +92,34 @@ const createMyTaskClass = createClass(taskIds.class.MyTask, { extends: core.clas
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
   let dbId: string = generateId()
+  let mongoDbClient!: MongoClient
 
   let workspace!: Workspace
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dbId = generateId()
+    mongoDbClient = await getMongoClient(mongoDBUri, {})
   })
+
   afterEach(async () => {
-    await workspace.cleanup()
+    await mongoDbClient.db('ws-' + dbId).dropDatabase()
   })
+
   afterAll(async () => {
     await shutdown()
   })
 
+  async function createDatabase (dbId: string, transactions: Tx[]): Promise<void> {
+    const txColl = mongoDbClient.db('ws-' + dbId).collection(DOMAIN_TX as string)
+    for (const tx of transactions) {
+      await txColl.insertOne(tx)
+    }
+  }
+
   it('connect to workspace', async () => {
     // Initialize workspace
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
@@ -117,10 +129,8 @@ describe('workspace', () => {
 
   it('reconnect to workspace', async () => {
     // Initialize workspace
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
-
-    await workspace.initialize(txes)
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
@@ -135,8 +145,8 @@ describe('workspace', () => {
 
   it('create custom class', async () => {
     // Initialize workspace
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
@@ -159,8 +169,8 @@ describe('workspace', () => {
   })
 
   it('create custom classes', async () => {
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
@@ -189,8 +199,8 @@ describe('workspace', () => {
   })
 
   it('create custom tx', async () => {
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
 
     // Register a new class
     await workspace.tx(myTx)
@@ -219,8 +229,8 @@ describe('workspace', () => {
   })
 
   it('check update document', async () => {
+    await createDatabase(dbId, txes)
     workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
 
     // Register a new class
     await workspace.tx(createMyTaskClass)

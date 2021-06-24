@@ -25,16 +25,13 @@ import core, {
   TxAddCollection,
   TxCreateDoc
 } from '@anticrm/core'
-import builder from '@anticrm/model-all'
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { decodeToken, generateToken } from '@anticrm/server/src/token'
 import { assignWorkspace, closeWorkspace } from '@anticrm/server/src/workspaces'
 import { Component, component } from '@anticrm/status'
-import { shutdown, Workspace } from '@anticrm/workspace'
+import { createWorkspace, deleteWorkspace, shutdown } from '@anticrm/workspaces'
 import { describe, expect, it } from '@jest/globals'
-
-const txes = builder.getTxes()
 
 // Will be used to hold security information.
 const TEST_SECRET = 'test-secret'
@@ -99,16 +96,16 @@ const joinMySpace: TxAddCollection<Space, Member> = {
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
   let dbId: string
-  let workspace!: Workspace
 
   beforeEach(async () => {
-    dbId = 'ws-test-db-' + generateId()
-    workspace = await Workspace.create(dbId, { mongoDBUri })
-    await workspace.initialize(txes)
+    dbId = 'test-' + generateId()
+    await createWorkspace(dbId, { mongoDBUri })
   })
+
   afterEach(async () => {
-    await workspace.cleanup()
+    await deleteWorkspace(dbId, { mongoDBUri })
   })
+
   afterAll(async () => {
     await shutdown()
   })
@@ -138,7 +135,7 @@ describe('workspace', () => {
       // We should be able to fill all model now.
       const resultTxs = await client.findAll(core.class.Tx, {})
 
-      expect(resultTxs.length).toEqual(txes.length)
+      expect(resultTxs.length).toBeGreaterThan(0)
 
       // Check we could create some real objects
       // Register a new class

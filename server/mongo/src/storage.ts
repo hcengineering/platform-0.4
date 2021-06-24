@@ -29,14 +29,21 @@ import core, {
   TxUpdateDoc
 } from '@anticrm/core'
 import { Collection, Db } from 'mongodb'
-import { ItemQuery } from '.'
 import { createEmb2Doc, toMongoItemIdQuery, toMongoItemQuery, toMongoItemValue } from './collection'
+import { ItemQuery } from './model'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
  * Document storage based on MongoDB
  */
 export class DocStorage extends TxProcessor implements Storage {
+  txHandlers = {
+    [core.class.TxCreateDoc]: async (tx: Tx) => await this.txCreateDoc(tx as TxCreateDoc<Doc>),
+    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>),
+    [core.class.TxAddCollection]: async (tx: Tx) => await this.txAddCollection(tx as TxAddCollection<Doc, Emb>),
+    [core.class.TxUpdateCollection]: async (tx: Tx) => await this.txUpdateCollection(tx as TxUpdateCollection<Doc, Emb>)
+  }
+
   constructor (readonly db: Db, readonly hierarchy: Hierarchy) {
     super()
     this.db = db
@@ -44,16 +51,8 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    switch (tx._class) {
-      case core.class.TxCreateDoc:
-        return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
-      case core.class.TxUpdateDoc:
-        return await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
-      case core.class.TxAddCollection:
-        return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
-      case core.class.TxUpdateCollection:
-        return await this.txUpdateCollection(tx as TxUpdateCollection<Doc, Emb>)
-    }
+    const handler = this.txHandlers[tx._class]
+    await handler?.(tx)
     return await Promise.resolve()
   }
 

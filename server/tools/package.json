@@ -11,6 +11,7 @@
     "lint:fix": "eslint --fix src",
     "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src",
     "create-workspace": "ts-node src/index.ts create-workspace",
+    "upgrade-workspace": "ts-node src/index.ts upgrade-workspace",
     "generate-token": "ts-node src/index.ts generate-token"
   },
   "devDependencies": {
@@ -33,9 +34,7 @@
     "@types/node":"^14.14.40"
   },
   "dependencies": {
-    "@anticrm/model":"~0.4.0",
-    "@anticrm/model-all":"~0.4.0",
-    "@anticrm/workspace":"~0.4.0",
+    "@anticrm/workspaces":"~0.4.0",
     "@anticrm/server": "~0.4.0"
   }
 }
