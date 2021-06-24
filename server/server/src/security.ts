@@ -82,12 +82,16 @@ export class SecurityClientStorage implements Storage {
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query)
     const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.security.getSpaces(this.user.accountId)
-    if (spaces === undefined || spaces.size === 0) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
+    if (spaces === undefined || spaces.size === 0) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    }
     if (querySpace !== undefined) {
       if (typeof querySpace === 'string') {
         if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
       } else {
-        if (querySpace.$in?.every((space) => spaces.has(space)) === false) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
+        if (querySpace.$in?.every((space) => spaces.has(space)) === false) {
+          throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+        }
       }
     } else {
       ;(query as any).space = { $in: [...spaces.values()] }
@@ -96,7 +100,9 @@ export class SecurityClientStorage implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    if (!this.security.checkSecurity(this.user.accountId, tx.objectSpace)) { throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {})) }
+    if (!this.security.checkSecurity(this.user.accountId, tx.objectSpace)) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    }
     // Check if tx is allowed and process with workspace
     await this.workspace.tx(tx)
 

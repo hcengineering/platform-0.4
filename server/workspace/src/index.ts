@@ -26,7 +26,7 @@ export class Workspace implements Storage {
   static async create (
     workspaceId: string,
     options: WorkspaceOptions,
-    txh?: (hierarchy: Hierarchy) => TxHandler[]
+    txh?: (hierarchy: Hierarchy, storage: Storage) => TxHandler[]
   ): Promise<Workspace> {
     const hierarchy: Hierarchy = new Hierarchy()
     const db = (await getMongoClient(options.mongoDBUri, options.mongoOptions as MongoClientOptions)).db(
@@ -47,7 +47,7 @@ export class Workspace implements Storage {
 
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
-    return new Workspace(workspaceId, hierarchy, storage, txh !== undefined ? txh(hierarchy) : [])
+    return new Workspace(workspaceId, hierarchy, storage, txh !== undefined ? txh(hierarchy, storage) : [])
   }
 
   private constructor (

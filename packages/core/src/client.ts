@@ -57,7 +57,10 @@ class ClientImpl extends TxOperations implements Storage {
   }
 }
 
-export async function createClient (connect: (txHandler: TxHander) => Promise<Storage>): Promise<Client> {
+export async function createClient (
+  connect: (txHandler: TxHander) => Promise<Storage>,
+  notify?: (tx: Tx) => void
+): Promise<Client> {
   let client: Client | null = null
   let txBuffer: Tx[] | undefined = []
 
@@ -70,6 +73,7 @@ export async function createClient (connect: (txHandler: TxHander) => Promise<St
     } else {
       hierarchy.tx(tx)
       void model.tx(tx)
+      notify?.(tx)
     }
   }
 

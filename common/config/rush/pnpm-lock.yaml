@@ -740,6 +740,16 @@ packages:
       jest-mock: 27.0.3
     dev: false
 
+  /@jest/environment/27.0.5:
+    resolution: {integrity: sha512-IAkJPOT7bqn0GiX5LPio6/e1YpcmLbrd8O5EFYpAOZ6V+9xJDsXjdgN2vgv9WOKIs/uA1kf5WeD96HhlBYO+FA==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dependencies:
+      '@jest/fake-timers': 27.0.5
+      '@jest/types': 27.0.2
+      '@types/node': 15.12.2
+      jest-mock: 27.0.3
+    dev: false
+
   /@jest/fake-timers/26.6.2:
     resolution: {integrity: sha512-14Uleatt7jdzefLPYM3KLcnUl1ZNikaKq34enpb5XG9i81JpppDb5muZvonvKyrl7ftEHkKS5L5/eB/kxJ+bvA==}
     engines: {node: '>= 10.14.2'}
@@ -764,6 +774,18 @@ packages:
       jest-util: 27.0.2
     dev: false
 
+  /@jest/fake-timers/27.0.5:
+    resolution: {integrity: sha512-d6Tyf7iDoKqeUdwUKrOBV/GvEZRF67m7lpuWI0+SCD9D3aaejiOQZxAOxwH2EH/W18gnfYaBPLi0VeTGBHtQBg==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dependencies:
+      '@jest/types': 27.0.2
+      '@sinonjs/fake-timers': 7.1.2
+      '@types/node': 15.12.2
+      jest-message-util: 27.0.2
+      jest-mock: 27.0.3
+      jest-util: 27.0.2
+    dev: false
+
   /@jest/globals/26.6.2:
     resolution: {integrity: sha512-85Ltnm7HlB/KesBUuALwQ68YTU72w9H2xW9FjZ1eL1U3lhtefjjl5c2MiUbpXt/i6LaPRvoOFJ22yCBSfQ0JIA==}
     engines: {node: '>= 10.14.2'}
@@ -778,6 +800,15 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/environment': 27.0.3
+      '@jest/types': 27.0.2
+      expect: 27.0.2
+    dev: false
+
+  /@jest/globals/27.0.5:
+    resolution: {integrity: sha512-qqKyjDXUaZwDuccpbMMKCCMBftvrbXzigtIsikAH/9ca+kaae8InP2MDf+Y/PdCSMuAsSpHS6q6M25irBBUh+Q==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dependencies:
+      '@jest/environment': 27.0.5
       '@jest/types': 27.0.2
       expect: 27.0.2
     dev: false
@@ -9313,7 +9344,7 @@ packages:
     name: '@rush-temp/mongo'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/jwt-simple': 0.5.33
@@ -9550,7 +9581,7 @@ packages:
     name: '@rush-temp/richeditor'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@testing-library/svelte': 3.0.3_svelte@3.38.2
       '@types/jest': 26.0.23
       '@types/prosemirror-commands': 1.0.4
@@ -9632,7 +9663,7 @@ packages:
     dev: false
 
   file:projects/server-tools.tgz:
-    resolution: {integrity: sha512-7gYazBIhQuTgmylogb2/kp/Q1WFvNcE3y9XUW/qZGrbsiW0BrQUR8EaS40bbv0B8n8r4Oi8UwD487Zb42UBMAA==, tarball: file:projects/server-tools.tgz}
+    resolution: {integrity: sha512-ifdeR4th9fJmSyRp8THWoZNloLjWFVNGqK6SDXeAslLx43tv0WSaLFSRW5Q0scJn3ajVWIqNll1cwCsdXI/69w==, tarball: file:projects/server-tools.tgz}
     name: '@rush-temp/server-tools'
     version: 0.0.0
     dependencies:
@@ -9663,10 +9694,11 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-m0Vvy8Yxtxxrik2+LxP57JFiixhmlypSXD6ZkXRzf6R/fFUo/MZ8KLf/mr1de08VwcZ2uuZOTQZwQGHMT+0gQw==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-tDDQHt1jiXg4cZ6OTbsek/cSP5eSiFCFRCWmOkVxjx4LbO1oPgKK1sHMEV01FlPYob2AEBXOXSsqIqG6pd1bIQ==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/jwt-simple': 0.5.33
@@ -9790,12 +9822,12 @@ packages:
     dev: false
 
   file:projects/tests-server.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-xJSmkw/cYX2C+4KK5tbTw2MPCNv8UYhb3WJnFVjyMuOsOTWEMAq5Nl+RDZ4bVinSuDc28Vsx2zVeSnq7HjJMDQ==, tarball: file:projects/tests-server.tgz}
+    resolution: {integrity: sha512-M5xVREwH3nTgc6k+I8PY+HCQah3wx7pLBMQKcBPLAPiUbP8J3OEojDnm+FQeA4bcBPs4eWfDYNrD+isT1pXOYw==, tarball: file:projects/tests-server.tgz}
     id: file:projects/tests-server.tgz
     name: '@rush-temp/tests-server'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/mongodb': 3.6.18
@@ -9836,7 +9868,7 @@ packages:
     name: '@rush-temp/text'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/markdown-it': 12.0.2
@@ -9991,7 +10023,7 @@ packages:
     name: '@rush-temp/workspace'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/mongodb': 3.6.18
@@ -10033,7 +10065,7 @@ packages:
     name: '@rush-temp/workspaces'
     version: 0.0.0
     dependencies:
-      '@jest/globals': 27.0.3
+      '@jest/globals': 27.0.5
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/mongodb': 3.6.18
