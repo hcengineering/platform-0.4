@@ -21,7 +21,12 @@ type OperatorFunc = (doc: Doc, op: object) => void
 function $push(document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
   for (const key in keyval) {
-    doc[key] = keyval[key]
+    const arr = doc[key]
+    if (arr === undefined) {
+      doc[key] = [keyval[key]]
+    } else {
+      arr.push(keyval[key])
+    }
   }
 }
 

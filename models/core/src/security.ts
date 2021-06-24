@@ -28,3 +28,7 @@ export class TSpace extends TDoc implements Space {
   private!: boolean
   members!: Arr<Ref<Account>>
 }
+
+@Model(core.class.Account, core.class.Doc, DOMAIN_MODEL)
+export class TAccount extends TDoc implements Account {
+}

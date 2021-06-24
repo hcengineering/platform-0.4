@@ -15,15 +15,16 @@
 
 import { LiveQuery } from '..'
 import type { Class, Doc, DocumentQuery, Ref, Tx, Client, TxCreateDoc, Obj, Space } from '@anticrm/core'
-import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations, createClient } from '@anticrm/core'
-import core from '@anticrm/core'
+import { DOMAIN_TX, Hierarchy, ModelDb, TxDb, TxOperations, createClient, withOperations } from '@anticrm/core'
 import { connect } from './connection'
+
+import core from '@anticrm/core'
 
 describe('query', () => {
 
   it('findAll', async () => {
     const client = await getClient()
-    const query = new LiveQuery(client)
+    const query = withOperations(core.account.System, new LiveQuery(client))
     const result = await query.findAll<Space>('class:chunter.Channel' as Ref<Class<Doc>>, {})
     expect(result).toHaveLength(2)
   })
@@ -60,7 +61,7 @@ describe('query', () => {
     }
 
     let attempt = 0
-    const query = new LiveQuery(storage)
+    const query = withOperations(core.account.System, new LiveQuery(storage))
     query.query<Space>(klass, { private: false }, async (result) => {
       expect(result).toHaveLength(expectedLength + attempt)
       if (attempt > 0) {
@@ -91,7 +92,7 @@ describe('query', () => {
       }
     }
 
-    const query = new LiveQuery(storage)
+    const query = withOperations(core.account.System, new LiveQuery(storage))
     const unsubscribe = query.query<Space>(klass, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength)
     })
@@ -109,7 +110,7 @@ describe('query', () => {
 
     const expectedLength = 2
     let attempt = 0
-    const query = new LiveQuery(client)
+    const query = withOperations(core.account.System, new LiveQuery(client))
     query.query<Space>(klass, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength + attempt)
       if (attempt > 0) {
@@ -130,13 +131,12 @@ async function getModel(): Promise<Tx[]> {
   return import('./model.tx.json') as unknown as Tx[]
 }
 
-class ClientImpl extends TxOperations implements Client {
+class ClientImpl implements Client {
 
   constructor (
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb, 
     private readonly transactions: TxDb) {
-    super (core.account.System)
   }
   
   async tx (tx: Tx): Promise<void> {

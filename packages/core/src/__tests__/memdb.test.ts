@@ -18,6 +18,7 @@ import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import type { Tx } from '../tx'
+import { withOperations } from '../tx'
 
 import { describe, expect, it } from '@jest/globals'
 
@@ -31,7 +32,7 @@ describe('memdb', () => {
     for (const tx of txes) await txDb.tx(tx)
     const result = await txDb.findAll(core.class.Tx, {})
     expect(result.length).toBe(
-      txes.filter((tx) => tx._class === 'class:core.TxCreateDoc' || tx._class === 'class:core.TxAddCollection').length
+      txes.filter((tx) => tx._class === core.class.TxCreateDoc).length
     )
   })
 
@@ -73,6 +74,18 @@ describe('memdb', () => {
       space: { $in: [core.space.Model, core.space.Tx] }
     })
     expect(multipleParam.length).toBe(17)
+  })
+
+  it('should push to array', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) await hierarchy.tx(tx)
+    const model = withOperations(core.account.System, new ModelDb(hierarchy))
+    for (const tx of txes) await model.tx(tx)    
+    const space = await model.createDoc(core.class.Space, core.space.Model, { name: 'name', description: 'desc', private: false, members: [] })
+    const account = await model.createDoc(core.class.Account, core.space.Model, {})
+    await model.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id }})
+    const txSpace = await model.findAll(core.class.Space, { _id: space._id })
+    expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
   })
 
   // it('should throw error', async () => {

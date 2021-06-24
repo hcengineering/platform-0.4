@@ -14,7 +14,7 @@
 //
 
 import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
-import { TxOperations } from '@anticrm/core'
+import { TxProcessor } from '@anticrm/core'
 
 type Query = {
   _class: Ref<Class<Doc>>
@@ -23,12 +23,12 @@ type Query = {
   callback: (result: Doc[]) => void
 }
 
-export class LiveQuery extends TxOperations implements Client {
+export class LiveQuery extends TxProcessor implements Client {
   private readonly client: Client
   private readonly queries: Query[] = []
 
   constructor (client: Client) {
-    super (client.user)
+    super ()
     this.client = client
   }
 
@@ -71,7 +71,7 @@ export class LiveQuery extends TxOperations implements Client {
   async txCreateDoc(tx: TxCreateDoc<Doc>): Promise<void> {
     for (const q of this.queries) {
       if (this.match(q, tx)) {
-        const doc = TxOperations.createDoc2Doc(tx)
+        const doc = TxProcessor.createDoc2Doc(tx)
         if (q.result instanceof Promise) {
           q.result = await q.result
         }

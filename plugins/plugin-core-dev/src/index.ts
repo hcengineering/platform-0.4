@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import { createClient } from '@anticrm/core'
+import type { TxOperations } from '@anticrm/core'
+import core, { createClient, withOperations } from '@anticrm/core'
 import { LiveQuery } from '@anticrm/query'
 import type { CoreService, Client } from '@anticrm/plugin-core'
 
@@ -26,12 +27,12 @@ import { connect } from './connection'
  */
 export default async (): Promise<CoreService> => {
 
-  let client: Client | undefined
+  let client: Client & TxOperations | undefined
 
-  async function getClient(): Promise<Client> {
+  async function getClient(): Promise<Client & TxOperations> {
     if (client === undefined) {
       const storage = await createClient(connect)
-      client = new LiveQuery(storage)  
+      client = withOperations(core.account.System, new LiveQuery(storage))
     }
     return client
   }

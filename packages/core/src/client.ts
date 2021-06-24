@@ -20,24 +20,23 @@ import type { Tx } from './tx'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
 import { DOMAIN_MODEL } from './classes'
-import { TxOperations } from './tx'
+import { TxProcessor } from './tx'
 
 import core from './component'
 
 type TxHander = (tx: Tx) => void
 
-export interface Client extends TxOperations, Storage {
+export interface Client extends Storage {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
 
-class ClientImpl extends TxOperations implements Storage {
+class ClientImpl extends TxProcessor implements Storage {
   constructor (
-    user: Ref<Account>,
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,
     private readonly conn: Storage
   ) {
-    super(user)
+    super()
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
@@ -87,7 +86,7 @@ export async function createClient (
 
   txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
 
-  client = new ClientImpl(core.account.System, hierarchy, model, conn)
+  client = new ClientImpl(hierarchy, model, conn)
 
   for (const tx of txBuffer) txHander(tx)
   txBuffer = undefined
