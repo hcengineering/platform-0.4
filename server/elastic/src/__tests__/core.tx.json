@@ -156,6 +156,26 @@
     }
   },
   {
+    "_id": "60b73133d22498e666802cd1",
+    "_class": "class:core.TxUpdateDoc",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd2",
+    "objectClass": "class:task.Project",
+    "attributes": {
+      "private": true
+    }
+  },
+  {
+    "_id": "60b73133d22498e666804cd1",
+    "_class": "class:core.TxUpdateDoc",
+    "domain": "model",
+    "objectId": "60b73133d22498e666800cd2",
+    "objectClass": "class:task.Project",
+    "attributes": {
+     "$push": "members: systemUser"
+    }
+  },
+  {
     "_id": "60b73133d22498e666800cc8",
     "_class": "class:core.TxCreateDoc",
     "domain": "model",

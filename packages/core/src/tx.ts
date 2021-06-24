@@ -50,6 +50,8 @@ export class TxProcessor {
     switch (tx._class) {
       case core.class.TxCreateDoc:
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
+      case core.class.TxUpdateDoc:
+        return await this.txUpdateDoc(tx as TxCreateDoc<Doc>)
     }
   }
 
@@ -65,6 +67,7 @@ export class TxProcessor {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
+  protected async txUpdateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
 }
 
 export class TxOperations extends TxProcessor {

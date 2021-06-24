@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Collection, generateId, Ref, Emb, TxProcessor, TxAddCollection, TxCreateDoc, DocumentQuery, QuerySelector } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -114,30 +114,32 @@ export class ElasticStorage extends TxProcessor implements Storage {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    const object: RequestParams.Index = {
-      id: tx.objectId,
-      index: this.workspace,
-      type: this.hierarchy.getDomain(tx.objectClass),
-      body: { _class: tx.objectClass, space: tx.objectSpace, ...tx.attributes }
-    }
-    await this.client.index(object)
-    await this.client.indices.refresh({ index: this.workspace })
+    const { _id, ...body } = TxProcessor.createDoc2Doc(tx)
+    await this.index(_id, tx.objectClass, body)
   }
 
-  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    const doc = await this.objectById(tx.objectId)
-    if ((doc as any)[tx.collection] === undefined) {
-      (doc as any)[tx.collection] = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
+  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    const doc = this.objectById(tx.objectId) as any
+    const attrs = tx.attributes as any
+    for (const key in attrs) {
+      if (key.startsWith('$')) {
+        const operator = getOperator(key)
+        operator(doc, attrs[key])
+      } else {
+        doc[key] = attrs[key]
+      }
     }
-    const collection = (doc as any)[tx.collection]
-    collection[tx.localId ?? generateId()] = tx.attributes
 
-    const { _id, ...data } = doc
-    const object = {
-      id: tx.objectId,
+    const { _id, ...body } = doc
+    await this.index(_id, tx.objectClass, body)
+  }
+
+  private async index (_id: Ref<Doc>, _class: Ref<Class<Doc>>, body: Omit<Doc, '_id'>): Promise<void> {
+    const object: RequestParams.Index = {
+      id: _id,
       index: this.workspace,
-      type: tx.itemClass,
-      body: data
+      type: this.hierarchy.getDomain(_class),
+      body: { ...body }
     }
     await this.client.index(object)
     await this.client.indices.refresh({ index: this.workspace })
