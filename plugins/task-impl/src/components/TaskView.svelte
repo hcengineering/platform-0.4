@@ -14,13 +14,22 @@
 -->
 
 <script lang="ts">
+  import core, { Ref, Class, Doc, Space} from '@anticrm/core'
+  import type { IntlString } from '@anticrm/status'
   import ViewSelection from './ViewSelection.svelte'
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
   import { Tabs, ScrollBox } from '@anticrm/ui'
+  import Label from '@anticrm/ui/src/components/Label.svelte'
+  import TaskStatus from './TaskStatus.svelte'
 
   export let view: string = 'list'
+  const _class: Ref<Class<Doc>> = core.class.Space
+  const space: Ref<Space> = core.space.Model
+  const fields = [{label: 'Name' as IntlString, properties: [{key: 'name', property: 'label'}], component: Label},
+   {label: 'MODIFIED' as IntlString, properties: [{key: 'modifiedBy', property: 'label'}], component: Label},
+   {label: 'Description' as IntlString, properties: [{key: 'description', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus}]
 </script>
 
 <div class="container">
@@ -40,7 +49,7 @@
       </ScrollBox>
     {:else if view === 'list'}
       <ScrollBox vertical>
-        <TableView/>
+        <TableView {_class} {fields} {space} />
       </ScrollBox>
     {/if}
   </div>
