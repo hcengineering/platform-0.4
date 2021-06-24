@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Doc, Account } from '../classes'
+import type { Ref, Class, Obj, Doc } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
@@ -31,9 +31,7 @@ describe('memdb', () => {
     const txDb = new TxDb(hierarchy)
     for (const tx of txes) await txDb.tx(tx)
     const result = await txDb.findAll(core.class.Tx, {})
-    expect(result.length).toBe(
-      txes.filter((tx) => tx._class === core.class.TxCreateDoc).length
-    )
+    expect(result.length).toBe(txes.filter((tx) => tx._class === core.class.TxCreateDoc).length)
   })
 
   it('should query model', async () => {
@@ -80,10 +78,15 @@ describe('memdb', () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) await hierarchy.tx(tx)
     const model = withOperations(core.account.System, new ModelDb(hierarchy))
-    for (const tx of txes) await model.tx(tx)    
-    const space = await model.createDoc(core.class.Space, core.space.Model, { name: 'name', description: 'desc', private: false, members: [] })
+    for (const tx of txes) await model.tx(tx)
+    const space = await model.createDoc(core.class.Space, core.space.Model, {
+      name: 'name',
+      description: 'desc',
+      private: false,
+      members: []
+    })
     const account = await model.createDoc(core.class.Account, core.space.Model, {})
-    await model.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id }})
+    await model.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id } })
     const txSpace = await model.findAll(core.class.Space, { _id: space._id })
     expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
   })

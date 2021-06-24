@@ -14,7 +14,7 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Doc, Data, Ref, Account } from './classes'
+import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { DocumentQuery, Storage } from './storage'
@@ -42,7 +42,7 @@ class MemDb extends TxProcessor {
   private readonly objectById = new Map<Ref<Doc>, Doc>()
 
   constructor (hierarchy: Hierarchy) {
-    super ()
+    super()
     this.hierarchy = hierarchy
   }
 
@@ -56,7 +56,7 @@ class MemDb extends TxProcessor {
     return result
   }
 
-  getObject<T extends Doc> (_id: Ref<T>): T {
+  getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
       console.log(_id)
@@ -115,7 +115,6 @@ export class TxDb extends MemDb implements Storage {
  * Hold model objects and classes
  */
 export class ModelDb extends MemDb implements Storage {
-
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     this.addDoc(TxProcessor.createDoc2Doc(tx))
   }
@@ -132,5 +131,4 @@ export class ModelDb extends MemDb implements Storage {
       }
     }
   }
-
 }

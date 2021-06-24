@@ -28,13 +28,13 @@ export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   attributes: Data<T>
 }
 
-type ArrayAsElement<T extends Doc> = { 
-  [P in keyof T]: T[P] extends Arr<infer X> ? X : never 
+type ArrayAsElement<T extends Doc> = {
+  [P in keyof T]: T[P] extends Arr<infer X> ? X : never
 }
 
 type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-type PushOptions<T extends Doc> = {
+interface PushOptions<T extends Doc> {
   $push: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
@@ -47,8 +47,8 @@ export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
 
 export const DOMAIN_TX = 'tx' as Domain
 
-interface WithTx { 
-  tx (tx: Tx): Promise<void>
+interface WithTx {
+  tx: (tx: Tx) => Promise<void>
 }
 
 export class TxProcessor implements WithTx {
@@ -77,15 +77,23 @@ export class TxProcessor implements WithTx {
 }
 
 export interface TxOperations {
-  createDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<T>
-  updateDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>, operations: DocumentUpdate<T>): Promise<void>
+  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
+  updateDoc: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    operations: DocumentUpdate<T>
+  ) => Promise<void>
 }
 
-export function withOperations<T extends WithTx>(user: Ref<Account>, storage: T): T & TxOperations {
-
+export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T): T & TxOperations {
   const result = storage as T & TxOperations
 
-  result.createDoc = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>): Promise<T> => {
+  result.createDoc = async <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    attributes: Data<T>
+  ): Promise<T> => {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxCreateDoc,
@@ -100,8 +108,13 @@ export function withOperations<T extends WithTx>(user: Ref<Account>, storage: T)
     await storage.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
   }
-  
-  result.updateDoc = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>, operations: DocumentUpdate<T>): Promise<void> => {
+
+  result.updateDoc = async <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    operations: DocumentUpdate<T>
+  ): Promise<void> => {
     const tx: TxUpdateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
@@ -117,6 +130,4 @@ export function withOperations<T extends WithTx>(user: Ref<Account>, storage: T)
   }
 
   return result
-    
 }
-

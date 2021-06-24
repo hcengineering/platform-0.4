@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Obj, Account } from './classes'
+import type { Doc, Ref, Class, Obj } from './classes'
 import type { Storage, DocumentQuery } from './storage'
 import type { Tx } from './tx'
 
@@ -31,11 +31,7 @@ export interface Client extends Storage {
 }
 
 class ClientImpl extends TxProcessor implements Storage {
-  constructor (
-    private readonly hierarchy: Hierarchy,
-    private readonly model: ModelDb,
-    private readonly conn: Storage
-  ) {
+  constructor (private readonly hierarchy: Hierarchy, private readonly model: ModelDb, private readonly conn: Storage) {
     super()
   }
 
