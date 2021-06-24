@@ -119,7 +119,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
   }
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
-    const doc = this.objectById(tx.objectId) as any
+    const doc = await this.objectById(tx.objectId) as any
     const attrs = tx.attributes as any
     for (const key in attrs) {
       if (key.startsWith('$')) {

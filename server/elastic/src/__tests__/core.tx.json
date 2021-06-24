@@ -172,7 +172,9 @@
     "objectId": "60b73133d22498e666800cd2",
     "objectClass": "class:task.Project",
     "attributes": {
-     "$push": "members: systemUser"
+     "$push": {
+       "members": "systemUser"
+     }
     }
   },
   {
