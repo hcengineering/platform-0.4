@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -15,114 +15,113 @@
 
 <script lang="ts">
   import type { AnySvelteComponent } from '@anticrm/ui'
-  import { Label, Progress } from '@anticrm/ui'
-  import Reactions from './Reactions.svelte'
-  import UserInfo from './UserInfo.svelte'
-  import TaskStatus from './TaskStatus.svelte'
-  import Chat from './icons/Chat.svelte'
+  import { Ref, Class, Doc, Space} from '@anticrm/core'
+  import type { IntlString } from '@anticrm/status'
+  import { getClient } from '@anticrm/workbench'
+  import Label from '@anticrm/ui/src/components/Label.svelte'
 
   interface Cell {
-    item: AnySvelteComponent
+    component: AnySvelteComponent
     props?: Object
-    nopadding?: boolean
   }
 
-  export let tableHead: string[] = ['Candidate', 'ID', 'Label', 'City']
-  export let table: Cell[][] = [[{ item: Label, props: { label: 'Create UI for apps without the spaces and update the interface flow' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 3 }] } },
-                                 { item: UserInfo, props: { user: 'tim' } },
-                                 { item: TaskStatus, props: { title: 'ACTIVE', color: '#73A5C9' } }],
+  interface Field {
+    properties: FieldProp[],
+    label: IntlString,
+    component: AnySvelteComponent
+  }
 
-                                [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
-                                 { item: UserInfo, props: { user: 'chen' } },
-                                 { item: TaskStatus, props: { title: 'CANCELLED', color: '#D0826E' } }],
+  interface FieldProp {
+    property: string,
+    key?: string,
+    value?: any
+  }
 
-                                [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
-                                 { item: UserInfo, props: { user: 'elon' } },
-                                 { item: TaskStatus, props: { title: 'ARCHIVED', color: 'rgba(255,255,255,.1)' } }],
+  export let _class: Ref<Class<Doc>>
+  export let space: Ref<Space>
+  export let fields: Field[]
+  const client = getClient()
+  client.query(_class, { space: space }, (result) => data = result)
 
-                                 [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
-                                 { item: UserInfo, props: { user: 'chen' } },
-                                 { item: Progress, props: { min: 0, max: 7, value: 5 } }],
-
-                                [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
-                                 { item: UserInfo, props: { user: 'elon' } },
-                                 { item: TaskStatus, props: { title: 'IN REVIEW' } }],
-
-                                [{ item: Label, props: { label: 'Bitcoin price ‘relief’ move to $47K pushes BTC below stock-to-flow trajectory' } },
-                                 { item: Reactions, props: { reactions: [{ icon: Chat, count: 10 }] } },
-                                 { item: UserInfo, props: { user: 'kathryn' } },
-                                 { item: TaskStatus, props: { title: 'IN REVIEW' } }]]
+  let data: Doc[] = []
+  function getCells (doc: Doc): Cell[] {
+    const result: Cell[] = []
+    for (const field of fields) {
+      const props = new Object()
+      for (const prop of field.properties) {
+        (props as any)[prop.property] = prop.key === undefined ? prop.value : (doc as any)[prop.key]
+      }
+      result.push({component: field.component, props: props})
+    }
+    return result
+  }
 
 </script>
 
-<table class="table-body">
-  <tr class="tr-head">
-    {#each tableHead as cellHead}
-      <th>{cellHead}</th>
-    {/each}
-  </tr>
-  {#each table as row}
-    <tr class="tr-body">
-    {#each row as cell}
-      <td><svelte:component this={cell.item} {...cell.props}/></td>
-    {/each}
+  <table class="table-body">
+    <tr class="tr-head">
+      {#each fields as field}
+        <th><Label label = {field.label}/></th>
+      {/each}
     </tr>
-  {/each}
-</table>
-
-<style lang="scss">
-  .table-body {
-    display: table;
-    border-collapse: collapse;
-
-    td {
-      align-items: center;
-      height: 64px;
-      padding: 6px 20px;
-      color: var(--theme-content-accent-color);
-    }
-    th {
-      align-items: center;
-      height: 50px;
-      padding: 0 20px;
-      font-weight: 500;
-      text-align: left;
-      color: var(--theme-content-trans-color);
-    }
-    .tr-head {
-      position: sticky;
-      top: 0;
-      background-color: var(--theme-bg-color);
-      box-shadow: 0 1px 0 var(--theme-bg-focused-color);
-      z-index: 10;
-    }
-    .tr-body {
-      position: relative;
-      border-top: 1px solid var(--theme-bg-accent-hover);
-      &:nth-child(2) {
-        border-top: 1px solid transparent;
+    {#each data as object (object._id)}
+      <tr class="tr-body">
+      {#each getCells(object) as cell}
+        <td><svelte:component this={cell.component} {...cell.props}/></td>
+      {/each}
+      </tr>
+    {/each}
+  </table>
+  
+  <style lang="scss">
+    .table-body {
+      display: table;
+      border-collapse: collapse;
+  
+      td {
+        align-items: center;
+        height: 64px;
+        padding: 6px 20px;
+        color: var(--theme-content-accent-color);
       }
-      &:last-child {
-        border-bottom: 1px solid transparent;
+      th {
+        align-items: center;
+        height: 50px;
+        padding: 0 20px;
+        font-weight: 500;
+        text-align: left;
+        color: var(--theme-content-trans-color);
       }
-    }
-    .tr-body:hover {
-      & > td {
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
-        background-color: var(--theme-button-bg-enabled);
-        &:first-child {
-          border-radius: 12px 0 0 12px;
+      .tr-head {
+        position: sticky;
+        top: 0;
+        background-color: var(--theme-bg-color);
+        box-shadow: 0 1px 0 var(--theme-bg-focused-color);
+        z-index: 10;
+      }
+      .tr-body {
+        position: relative;
+        border-top: 1px solid var(--theme-bg-accent-hover);
+        &:nth-child(2) {
+          border-top: 1px solid transparent;
         }
         &:last-child {
-          border-radius: 0 12px 12px 0;
+          border-bottom: 1px solid transparent;
+        }
+      }
+      .tr-body:hover {
+        & > td {
+          border-top: 1px solid transparent;
+          border-bottom: 1px solid transparent;
+          background-color: var(--theme-button-bg-enabled);
+          &:first-child {
+            border-radius: 12px 0 0 12px;
+          }
+          &:last-child {
+            border-radius: 0 12px 12px 0;
+          }
         }
       }
     }
-  }
-</style>
+  </style>
+  
