@@ -58,7 +58,7 @@ const extWritable = <T>(
     },
     update: (f: (x: T) => T) => {
       value = f(value)
-      w.update(f)
+      w.set(value)
     },
     get: () => value,
     run: (f: (x: T) => void) => {
@@ -98,9 +98,11 @@ export class RoomMgr {
     makePeer({ internalID: '', muted: false, camEnabled: true }, false),
     () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.initMedia()
+      this.queue.add(() => this.initMedia())
 
-      return () => this.releaseMedia()
+      return () => {
+        this.queue.add(async () => this.releaseMedia())
+      }
     }
   )
 
@@ -167,7 +169,7 @@ export class RoomMgr {
 
     const screen = this._screen.get()
     const user = this._user.get()
-    if (getScreenOwner(screen.internalID) === user.internalID) {
+    if (screen.internalID !== '' && getScreenOwner(screen.internalID) === user.internalID) {
       this._screen.update(releaseMedia)
     }
   }
@@ -313,14 +315,13 @@ export class RoomMgr {
       })
 
       await this.queue.add(async () => await this.init(resp))
-    } catch {
+    } catch (e) {
+      console.error(e)
       this._status.set('left')
     }
   }
 
   async leave (): Promise<void> {
-    this._status.set('left')
-
     this._user.run(u => {
       u.peer.close()
     })
@@ -341,9 +342,15 @@ export class RoomMgr {
 
     this.gainMeters.clear()
     this._gains.set(new Map())
+
     const screen = this._screen.get()
-    this._screen.update(releaseMedia)
-    screen.peer.close()
+    const user = this._user.get()
+    if (screen.internalID !== '' && getScreenOwner(screen.internalID) === user.internalID) {
+      await this.handleScreenSharingFinished()
+    }
+
+
+    this._status.set('left')
 
     await this.client.sendRequest({
       method: ReqMethod.Leave,
@@ -352,6 +359,10 @@ export class RoomMgr {
   }
 
   async shareScreen (): Promise<void> {
+    if (this._status.get() !== 'joined') {
+      return
+    }
+
     const screen = this._screen.get()
 
     if (screen.isMediaReady) {
@@ -390,20 +401,18 @@ export class RoomMgr {
     const screen = this._screen.get()
     const user = this._user.get()
 
-    if (getScreenOwner(screen.internalID) !== user.internalID) {
+    if (screen.internalID === '' || getScreenOwner(screen.internalID) !== user.internalID) {
       return
     }
-
-    releaseMedia(screen)
-    await this.client.sendRequest({
-      method: ReqMethod.StopScreenSharing,
-      params: []
-    })
 
     await this.queue.add(async () => this.handleScreenSharingFinished())
   }
 
-  async handle (msg: OutgoingNotifications): Promise<void> {
+  private async handle (msg: OutgoingNotifications): Promise<void> {
+    if (this._status.get() === 'left') {
+      return
+    }
+
     await this.queue.add(async () => {
       const {result} = msg
       if (result === undefined) {
@@ -423,10 +432,6 @@ export class RoomMgr {
           return
         }
         case NotificationMethod.PeerJoined: {
-          if (this._status.get() === 'left') {
-            return
-          }
-
           const peer = makePeer(result.params.peer, true)
           this._peers.update((peers) => {
             peers.set(peer.internalID, peer)
@@ -470,27 +475,15 @@ export class RoomMgr {
           return
         }
         case NotificationMethod.ScreenSharingStarted: {
-          if (this._status.get() === 'left') {
-            return
-          }
-
           await this.handleScreenSharingStarted(result.params.owner)
 
           return
         }
         case NotificationMethod.ScreenSharingFinished: {
-          if (this._status.get() === 'left') {
-            return
-          }
-
           this.handleScreenSharingFinished()
           return
         }
         case NotificationMethod.PeerUpdated: {
-          if (this._status.get() === 'left') {
-            return
-          }
-
           const targetPeer = this._peers.get().get(result.params.peer.internalID)
           if (targetPeer === undefined) {
             return
@@ -523,7 +516,7 @@ export class RoomMgr {
     await this.setupPeer(screen, () => {}, getScreenOwner(screen.internalID) !== user.internalID)
   }
 
-  private handleScreenSharingFinished (): void {
+  private async handleScreenSharingFinished (): Promise<void> {
     const screen = this._screen.get()
     releaseMedia(screen)
     screen.peer.close()
@@ -534,6 +527,13 @@ export class RoomMgr {
       internalID: '',
       isMediaReady: false
     }))
+
+    if (this._status.get() === 'joined') {
+      await this.client.sendRequest({
+        method: ReqMethod.StopScreenSharing,
+        params: []
+      })
+    }
   }
 
   private findPeer (id: string): Peer | undefined {

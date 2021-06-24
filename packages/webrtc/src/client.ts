@@ -28,6 +28,7 @@ export class Client extends RequestProcessor {
   }
 
   protected send (request: Request<any>): void {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.ws.then((ws) => {
       ws.send(serialize(request))
     })
@@ -41,7 +42,8 @@ export class Client extends RequestProcessor {
     }
 
     (this.subs.get(notification) ?? [])
-        .forEach(s => s(response))
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      .forEach(s => s(response))
   }
 
   private async initWS (url: string): Promise<WebSocket> {

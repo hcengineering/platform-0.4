@@ -145,7 +145,7 @@ dependencies:
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
   '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/meeting-assets': file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.23.0
-  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model': file:projects/model.tgz_ts-node@10.0.0
   '@rush-temp/model-all': file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -9373,23 +9373,30 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/meeting-impl.tgz_@typescript-eslint+parser@4.23.0:
-    resolution: {integrity: sha512-/lyfxPlbkA1fj7V/gD6vXPYkilTRdedOuVGDe25PJB3Fxzu3lKEJxBOqTgXeEqibBRc/MfSlP5hkCjJmYwRLrw==, tarball: file:projects/meeting-impl.tgz}
+  file:projects/meeting-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
+    resolution: {integrity: sha512-HCNvbv7zuIrF0ca5c95eiGxuWgj5nd0bgURaeB7Q2/Smnm/J6aSHBtyo9XAfNNFGHjst0zfKtPmlaFnK/vymXw==, tarball: file:projects/meeting-impl.tgz}
     id: file:projects/meeting-impl.tgz
     name: '@rush-temp/meeting-impl'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
       '@types/lodash.debounce': 4.0.6
+      jest: 26.6.3_ts-node@10.0.0
       lodash.debounce: 4.0.8
       prettier: 2.3.1
       svelte: 3.38.2
       svelte-loader: 3.1.2_svelte@3.38.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
       ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
     dev: false
 
   file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0:
