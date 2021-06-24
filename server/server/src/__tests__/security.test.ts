@@ -13,26 +13,23 @@
 // limitations under the License.
 //
 
-import builder from '@anticrm/model-all'
 import core, {
-  Storage,
+  Class,
+  ClassifierKind,
+  Doc,
+  Domain,
   generateId,
-  Ref,
-  Space,
-  Tx,
-  TxCreateDoc,
   Hierarchy,
   ModelDb,
-  Doc,
-  TxAddCollection,
-  Member,
-  ClassifierKind,
-  Class,
-  Domain,
-  TxDb
+  Ref,
+  Space,
+  Storage,
+  Tx,
+  TxCreateDoc,
+  TxUpdateDoc
 } from '@anticrm/core'
-import { SecurityModel, SecurityClientStorage, ClientInfo } from '../security'
-import { WorkspaceStorage } from '@anticrm/workspace/src/storage'
+import builder from '@anticrm/model-all'
+import { ClientInfo, SecurityClientStorage, SecurityModel } from '../security'
 
 const txes = builder.getTxes()
 const user: ClientInfo = {
@@ -68,7 +65,6 @@ describe('security', () => {
     for (const tx of txes) hierarchy.tx(tx)
     hierarchy.tx(objectClassTx)
     db = new ModelDb(hierarchy)
-    const store = new WorkspaceStorage(hierarchy, new TxDb(hierarchy), db)
 
     security = new SecurityModel(hierarchy)
     for (const tx of txes) await security.tx(tx)
@@ -76,10 +72,10 @@ describe('security', () => {
     securityStorage = new SecurityClientStorage(
       security,
       {
-        findAll: async (_class, query) => await store.findAll(_class, query),
+        findAll: async (_class, query) => await db.findAll(_class, query),
         tx: async (tx) => {
           hierarchy.tx(tx)
-          await store.tx(tx)
+          await db.tx(tx)
           await security.tx(tx)
         }
       },
@@ -108,7 +104,8 @@ describe('security', () => {
       attributes: {
         name: 'test',
         description: 'test public Space',
-        private: true
+        private: true,
+        members: []
       }
     }
     await securityStorage.tx(spaceTx)
@@ -140,18 +137,17 @@ describe('security', () => {
         expect(error.message).toBe('ERROR: security.AccessDenied')
       })
 
-    const addMemberTx: TxAddCollection<Space, Member> = {
+    const addMemberTx: TxUpdateDoc<Space> = {
       objectId: spaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
       space: core.space.Tx,
       modifiedBy: user.accountId,
       modifiedOn: Date.now(),
-      collection: 'members',
-      _class: core.class.TxAddCollection,
-      itemClass: core.class.Member,
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space,
       attributes: {
-        account: user.accountId
+        $push: { members: user.accountId }
       }
     }
 
@@ -179,7 +175,8 @@ describe('security', () => {
       attributes: {
         name: 'test',
         description: 'test public Space',
-        private: false
+        private: false,
+        members: []
       }
     }
     await securityStorage.tx(spaceTx)
@@ -200,19 +197,16 @@ describe('security', () => {
       expect(error.message).toBe('ERROR: security.AccessDenied')
     })
 
-    const addMemberTx: TxAddCollection<Space, Member> = {
+    const addMemberTx: TxUpdateDoc<Space> = {
       objectId: spaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
       space: core.space.Tx,
       modifiedBy: user.accountId,
       modifiedOn: Date.now(),
-      collection: 'members',
-      _class: core.class.TxAddCollection,
-      itemClass: core.class.Member,
-      attributes: {
-        account: user.accountId
-      }
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space,
+      attributes: { $push: { members: user.accountId } }
     }
 
     await securityStorage.tx(addMemberTx)

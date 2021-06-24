@@ -14,35 +14,35 @@
 // limitations under the License.
 //
 import core, {
-  Class,
   Client,
   createClient,
   Data,
   Doc,
-  Emb,
   generateId,
   Hierarchy,
+  PushOptions,
   Ref,
   Space,
   Storage,
   Tx,
-  TxAddCollection,
-  TxProcessor,
-  TxUpdateCollection,
   TxUpdateDoc
 } from '@anticrm/core'
 import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
 import { DocStorage } from '../storage'
 import { TxStorage } from '../tx'
-import { createTask, createTaskModel, Task, TaskComment, taskIds } from './tasks'
+import { createTask, createTaskModel, Task, taskIds } from './tasks'
 
 const txesRaw = require('@anticrm/core/src/__tests__/model.tx.json') // eslint-disable-line @typescript-eslint/no-var-requires
 const txes = txesRaw as unknown as Tx[]
 
 createTaskModel(txes)
 
-async function updateDoc<T extends Doc> (storage: Storage, doc: T, attributes: Partial<Data<T>>): Promise<T> {
+async function updateDoc<T extends Doc> (
+  storage: Storage,
+  doc: T,
+  attributes: Partial<Data<T>> & PushOptions<T>
+): Promise<void> {
   const tx: TxUpdateDoc<T> = {
     _id: generateId(),
     _class: core.class.TxUpdateDoc,
@@ -53,55 +53,6 @@ async function updateDoc<T extends Doc> (storage: Storage, doc: T, attributes: P
     objectClass: doc._class,
     objectSpace: doc.space,
     attributes
-  }
-  await storage.tx(tx)
-  return TxProcessor.createDoc2Doc(tx) as T
-}
-
-async function addCollection<T extends Doc, P extends Emb> (
-  storage: Storage,
-  doc: T,
-  collection: string,
-  itemClass: Ref<Class<T>>,
-  attributes: Omit<P, keyof Emb>,
-  localId?: string
-): Promise<void> {
-  const tx: TxAddCollection<T, P> = {
-    _id: generateId(),
-    _class: core.class.TxAddCollection,
-    space: core.space.Tx,
-    modifiedBy: doc.modifiedBy,
-    modifiedOn: Date.now(),
-    objectId: doc._id,
-    localId,
-    itemClass,
-    objectSpace: doc.space,
-    attributes,
-    collection
-  }
-  await storage.tx(tx)
-}
-
-async function updateCollection<T extends Doc, P extends Emb> (
-  storage: Storage,
-  doc: T,
-  collection: string,
-  itemClass: Ref<Class<T>>,
-  localId: string,
-  attributes: Partial<Omit<P, keyof Emb>>
-): Promise<void> {
-  const tx: TxUpdateCollection<T, P> = {
-    _id: generateId(),
-    _class: core.class.TxUpdateCollection,
-    space: core.space.Tx,
-    modifiedBy: doc.modifiedBy,
-    modifiedOn: Date.now(),
-    objectId: doc._id,
-    localId,
-    itemClass,
-    objectSpace: doc.space,
-    attributes,
-    collection
   }
   await storage.tx(tx)
 }
@@ -164,11 +115,12 @@ describe('mongo operations', () => {
       await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
         name: `my-task-${i}`,
         description: `${i * i}`,
-        rate: 20 + i
+        rate: 20 + i,
+        comments: []
       })
     }
 
-    const r = await client.findAll(taskIds.class.Task, {})
+    const r = await client.findAll<Task>(taskIds.class.Task, {})
     expect(r.length).toEqual(50)
   })
 
@@ -176,70 +128,40 @@ describe('mongo operations', () => {
     await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
       name: 'my-task',
       description: 'some data ',
-      rate: 20
+      rate: 20,
+      comments: []
     })
 
-    const doc = (await client.findAll(taskIds.class.Task, {}))[0]
+    const doc = (await client.findAll<Task>(taskIds.class.Task, {}))[0]
 
     await updateDoc(client, doc, { rate: 30 })
-    const tasks = await client.findAll(taskIds.class.Task, {})
+    const tasks = await client.findAll<Task>(taskIds.class.Task, {})
     expect(tasks.length).toEqual(1)
     expect(tasks[0].rate).toEqual(30)
   })
 
-  it('find in test', async () => {
-    await client.createDoc(taskIds.class.Task, '' as Ref<Space>, createTask('t1', 10, 'test task1'))
-    const t1 = (await client.findAll(taskIds.class.Task, {}))[0]
-    await createComments(client, t1)
-
-    const result = await docStorage.findIn<Task, TaskComment>(
-      { objectId: t1._id, collection: 'comments', itemClass: taskIds.class.TaskComment },
-      {}
-    )
-    expect(result).toBeDefined()
-    expect(result.length).toEqual(3)
-    expect(result[0]._class).toEqual(taskIds.class.TaskComment)
-  })
   it('update in test', async () => {
     await client.createDoc(taskIds.class.Task, '' as Ref<Space>, createTask('t1', 10, 'test task1'))
-    const t1 = (await client.findAll(taskIds.class.Task, {}))[0]
+    const t1 = (await client.findAll<Task>(taskIds.class.Task, {}))[0]
     await createComments(client, t1)
 
-    await updateCollection(client, t1, 'comments', taskIds.class.TaskComment, '#2', { message: '#2' })
-
-    const result = await docStorage.findIn<Task, TaskComment>(
-      { objectId: t1._id, collection: 'comments', itemClass: taskIds.class.TaskComment },
-      { message: '#2' }
-    )
+    const result = await docStorage.findAll<Task>(taskIds.class.Task, { _id: t1._id })
     expect(result).toBeDefined()
     expect(result.length).toEqual(1)
-    expect(result[0]._class).toEqual(taskIds.class.TaskComment)
+    expect(result[0].comments?.length).toEqual(3)
   })
 })
 
 async function createComments (client: Client, t1: Task): Promise<void> {
-  await addCollection(
-    client,
-    t1,
-    'comments',
-    taskIds.class.TaskComment,
-    { author: 'vasya', date: new Date(), message: 'Some msg' },
-    '#1'
-  )
-  await addCollection(
-    client,
-    t1,
-    'comments',
-    taskIds.class.TaskComment,
-    { author: 'vasya', date: new Date(), message: 'Some msg 2' },
-    '#2'
-  )
-  await addCollection(
-    client,
-    t1,
-    'comments',
-    taskIds.class.TaskComment,
-    { author: 'petya', date: new Date(), message: 'Some more msg' },
-    '#3'
-  )
+  await updateDoc<Task>(client, t1, {
+    $push: { comments: { id: '#1', author: 'vasya', date: new Date(), message: 'Some msg' } }
+  })
+
+  await updateDoc(client, t1, {
+    $push: { comments: { id: '#2', author: 'vasya', date: new Date(), message: 'Some msg 2' } }
+  })
+
+  await updateDoc(client, t1, {
+    $push: { comments: { id: '#3', author: 'petya', date: new Date(), message: 'Some more msg' } }
+  })
 }
