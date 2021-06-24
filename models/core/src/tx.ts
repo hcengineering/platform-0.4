@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Data, Doc, Emb, Ref, Space, Tx, TxAddCollection, TxCreateDoc, TxUpdateCollection, TxUpdateDoc } from '@anticrm/core'
+import type { Class, Data, Doc, PushOptions, Ref, Space, Tx, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
 import { DOMAIN_TX } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
@@ -36,22 +36,5 @@ export class TTxCreateDoc<T extends O, O extends Doc> extends TTx<T> implements 
 @Model(core.class.TxCreateDoc, core.class.Tx)
 export class TTxUpdateDoc<T extends O, O extends Doc> extends TTx<T> implements TxUpdateDoc<T> {
   objectClass!: Ref<Class<T>>
-  attributes!: Partial<Data<T>>
-}
-
-@Model(core.class.TxAddCollection, core.class.Tx)
-export class TTxAddCollection<T extends Doc, P extends Emb> extends TTx<T> implements TxAddCollection<T, P> {
-  collection!: string
-  itemClass!: Ref<Class<P>>
-  localId?: string | undefined
-  attributes!: Omit<P, keyof Emb>
-  objectSpace!: Ref<Space>
-}
-@Model(core.class.TxAddCollection, core.class.Tx)
-export class TTxUpdateCollection<T extends Doc, P extends Emb> extends TTx<T> implements TxUpdateCollection<T, P> {
-  collection!: string
-  itemClass!: Ref<Class<P>>
-  localId!: string
-  attributes!: Partial<Omit<P, keyof Emb>>
-  objectSpace!: Ref<Space>
+  attributes!: Partial<Data<T>> & PushOptions<T>
 }

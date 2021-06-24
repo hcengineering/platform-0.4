@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "Collections rework",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench",
+  "email": "andrey.v.platov@gmail.com"
+}

@@ -13,20 +13,14 @@
 // limitations under the License.
 //
 
-import type { KeysByType } from 'simplytyped'
 import type { IntlString, Asset } from '@anticrm/status'
 
-export type Timestamp = number
-export type PrimitiveType = number | string | boolean | undefined
-
 export type Ref<T extends Doc> = string & { __ref: T }
+export type PrimitiveType = number | string | boolean | undefined | Ref<Doc>
+export type Timestamp = number
 
 export interface Obj {
   _class: Ref<Class<this>>
-}
-
-export interface Emb extends Obj {
-  __embedded: this
 }
 
 export interface Doc extends Obj {
@@ -36,8 +30,7 @@ export interface Doc extends Obj {
   modifiedBy: Ref<Account>
 }
 
-export type EmbType = PrimitiveType | Emb | Ref<Doc>
-export type PropertyType = EmbType | Collection<Emb> | Record<string, EmbType>
+export type PropertyType = any
 
 export interface UXObject extends Obj {
   label?: IntlString
@@ -45,19 +38,13 @@ export interface UXObject extends Obj {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface Type<T extends PropertyType> extends Emb, UXObject {}
+export interface Type<T extends PropertyType> extends UXObject {}
 
 // C O L L E C T I O N
 
-export interface Collection<T extends Emb> {
-  __collection: T
-}
-
-export type WithoutCollections<T extends Doc> = Omit<T, KeysByType<T, Collection<Emb>>>
-
-export interface CollectionOf<T extends Emb> extends Type<Collection<T>> {}
-
-export interface Attribute<T extends PropertyType> extends Emb, UXObject {
+export interface Attribute<T extends PropertyType> extends Doc, UXObject {
+  attributeOf: Ref<Class<Obj>>
+  name: string
   type: Type<T>
 }
 
@@ -74,7 +61,6 @@ export type Domain = string & { __domain: true }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Class<T extends Obj> extends Classifier {
-  attributes: Collection<Attribute<PropertyType>>
   extends?: Ref<Class<Obj>>
   domain?: Domain
 }
@@ -83,7 +69,7 @@ export type Mixin<T extends Doc> = Class<T>
 
 // D A T A
 
-export type Data<T extends Doc> = Omit<WithoutCollections<T>, keyof Doc>
+export type Data<T extends Doc> = Omit<T, keyof Doc>
 
 // T Y P E S
 
@@ -91,8 +77,16 @@ export interface RefTo<T extends Doc> extends Type<Ref<Class<T>>> {
   to: Ref<Class<T>>
 }
 
-export interface BagOf extends Type<Record<string, EmbType>> {
-  of: Type<EmbType>
+export type Bag<T extends PropertyType> = Record<string, T>
+
+export interface BagOf<T extends PropertyType> extends Type<Bag<T>> {
+  of: Type<T>
+}
+
+export type Arr<T extends PropertyType> = T[]
+
+export interface ArrOf<T extends PropertyType> extends Type<T[]> {
+  of: Type<T>
 }
 
 export const DOMAIN_MODEL = 'model' as Domain
@@ -103,11 +97,7 @@ export interface Space extends Doc {
   name: string
   description: string
   private: boolean
-  members: Collection<Member>
-}
-
-export interface Member extends Emb {
-  account: Ref<Account>
+  members: Arr<Ref<Account>>
 }
 
 export interface Account extends Doc {}

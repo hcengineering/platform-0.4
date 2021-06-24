@@ -46,11 +46,13 @@ export function createModel(builder: Builder) {
   builder.createDoc(chunter.class.Channel, {
     name: 'general',
     description: 'General Channel',
-    private: false
+    private: false,
+    members: []
   })
   builder.createDoc(chunter.class.Channel, {
     name: 'random',
     description: 'Random Talks',
-    private: false
+    private: false,
+    members: []
   })
 }

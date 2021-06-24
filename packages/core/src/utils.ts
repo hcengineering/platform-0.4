@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Emb, Ref } from './classes'
+import type { Class, Doc, Ref } from './classes'
 
 function toHex (value: number, chars: number): string {
   const result = value.toString(16)
@@ -38,8 +38,4 @@ function count (): string {
 
 export function generateId<T extends Doc> (): Ref<T> {
   return (timestamp() + random + count()) as Ref<T>
-}
-
-export function makeEmb<T extends Emb> (_class: Ref<Class<T>>, data: Omit<T, keyof Emb>): T {
-  return { _class, ...data } as T // eslint-disable-line @typescript-eslint/consistent-type-assertions
 }

@@ -81,13 +81,13 @@ export class Hierarchy {
   }
 
   private addDescendant<T extends Obj>(_class: Ref<Class<T>>): void {
-    const hierarchy = this.getAncestors(_class as Ref<Class<Obj>>)
+    const hierarchy = this.getAncestors(_class)
     for (const cls of hierarchy) {
       const list = this.descendants.get(cls)
       if (list === undefined) {
-        this.descendants.set(cls, [_class as Ref<Class<Obj>>])
+        this.descendants.set(cls, [_class])
       } else {
-        list.push(_class as Ref<Class<Obj>>)
+        list.push(_class)
       }
     }
   }

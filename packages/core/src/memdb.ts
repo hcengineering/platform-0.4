@@ -14,13 +14,13 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Collection, Doc, Emb, Ref } from './classes'
+import type { Class, Doc, Data, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { DocumentQuery, Storage } from './storage'
-import { Tx, TxAddCollection, TxCreateDoc, TxProcessor } from './tx'
-import { generateId, makeEmb } from './utils'
+import { Tx, TxCreateDoc, TxProcessor, TxUpdateDoc } from './tx'
 import { isPredicate, createPredicate } from './predicate'
+import { getOperator } from './operator'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {
@@ -36,12 +36,13 @@ function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   return result
 }
 
-class MemDb {
-  private readonly hierarchy: Hierarchy
+class MemDb extends TxProcessor {
+  protected readonly hierarchy: Hierarchy
   private readonly objectsByClass = new Map<Ref<Class<Doc>>, Doc[]>()
   private readonly objectById = new Map<Ref<Doc>, Doc>()
 
   constructor (hierarchy: Hierarchy) {
+    super ()
     this.hierarchy = hierarchy
   }
 
@@ -55,18 +56,12 @@ class MemDb {
     return result
   }
 
-  getCollection (_id: Ref<Doc>, collection: string): Collection<Emb> {
+  getObject<T extends Doc> (_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
       throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
     }
-    const result = (doc as any)[collection]
-    if (result === undefined) {
-      const result = {} as Collection<Emb> // eslint-disable-line @typescript-eslint/consistent-type-assertions
-      ;(doc as any)[collection] = result
-      return result
-    }
-    return result
+    return doc as T
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
@@ -118,26 +113,23 @@ export class TxDb extends MemDb implements Storage {
 /**
  * Hold model objects and classes
  */
-export class ModelDb extends TxProcessor implements Storage {
-  private readonly db: MemDb
-
-  constructor (hierarchy: Hierarchy) {
-    super()
-    this.db = new MemDb(hierarchy)
-  }
-
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    return await this.db.findAll<T>(_class, query)
-  }
+export class ModelDb extends MemDb implements Storage {
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    this.db.addDoc(TxProcessor.createDoc2Doc(tx))
+    this.addDoc(TxProcessor.createDoc2Doc(tx))
   }
 
-  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    ;(this.db.getCollection(tx.objectId, tx.collection) as any)[tx.localId ?? generateId()] = makeEmb(
-      tx.itemClass,
-      tx.attributes
-    )
+  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    const doc = this.getObject(tx.objectId) as any
+    const attrs = tx.attributes as any
+    for (const key in attrs) {
+      if (key.startsWith('$')) {
+        const operator = getOperator(key)
+        operator(doc, attrs[key])
+      } else {
+        doc[key] = attrs[key]
+      }
+    }
   }
+
 }

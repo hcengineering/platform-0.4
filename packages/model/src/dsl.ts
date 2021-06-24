@@ -23,12 +23,10 @@ import type {
   Class,
   Obj,
   Data,
-  TxAddCollection,
   TxCreateDoc,
   Domain,
-  Account
 } from '@anticrm/core'
-import { ClassifierKind, generateId, makeEmb, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
+import { ClassifierKind, generateId, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 import toposort from 'toposort'
 
 import core from './component'
@@ -36,9 +34,9 @@ import core from './component'
 type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
 
 interface ClassTxes {
-  _id: Ref<Doc>
+  _id: Ref<Class<Obj>>
   extends?: Ref<Class<Obj>>
-  domain?: string
+  domain?: Domain
   txes: Array<NoIDs<Tx>>
 }
 
@@ -57,16 +55,18 @@ function getTxes (target: any): ClassTxes {
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
-    const tx: NoIDs<TxAddCollection<Class<Obj>, Attribute<PropertyType>>> = {
-      _class: core.class.TxAddCollection,
+    const tx: NoIDs<TxCreateDoc<Attribute<PropertyType>>> = {
+      _class: core.class.TxCreateDoc,
       space: core.space.Tx,
       modifiedBy: core.account.System,
       modifiedOn: 0,
       objectSpace: core.space.Model,
-      collection: 'attributes',
-      localId: propertyKey,
-      itemClass: core.class.Attribute,
-      attributes: { type },
+      objectClass: core.class.Attribute,
+      attributes: { 
+        type,
+        name: propertyKey,
+        attributeOf: txes._id
+      },
     }
     txes.txes.push(tx)
   }
@@ -75,7 +75,7 @@ export function Prop (type: Type<PropertyType>) {
 export function Model<T extends Obj> (
   _class: Ref<Class<T>>,
   _extends: Ref<Class<Obj>>,
-  domain?: string
+  domain?: Domain
 ) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
@@ -146,5 +146,5 @@ export class Builder {
 // T Y P E S
 
 export function TypeString (): Type<string> {
-  return makeEmb(core.class.TypeString, {})
+  return { _class: core.class.TypeString }
 }

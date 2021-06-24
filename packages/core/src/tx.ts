@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './classes'
+import type { KeysByType } from 'simplytyped'
+import type { Class, Data, Doc, Domain, Ref, Account, Space, Arr } from './classes'
 import core from './component'
 import { generateId } from './utils'
 
@@ -27,23 +28,19 @@ export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   attributes: Data<T>
 }
 
+type ArrayAsElement<T extends Doc> = { 
+  [P in keyof T]: T[P] extends Arr<infer X> ? X : never 
+}
+
+type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
+
+export type PushOptions<T extends Doc> = {
+  $push: Partial<OmitNever<ArrayAsElement<T>>>
+}
+
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
-  attributes: Partial<Data<T>>
-}
-
-export interface TxAddCollection<T extends Doc, P extends Emb> extends Tx<T> {
-  collection: string
-  itemClass: Ref<Class<P>>
-  localId?: string
-  attributes: Omit<P, keyof Emb>
-}
-
-export interface TxUpdateCollection<T extends Doc, P extends Emb> extends Tx<T> {
-  collection: string
-  itemClass: Ref<Class<P>>
-  localId: string
-  attributes: Partial<Omit<P, keyof Emb>>
+  attributes: Partial<Data<T>> & PushOptions<T>
 }
 
 export const DOMAIN_TX = 'tx' as Domain
@@ -53,8 +50,8 @@ export class TxProcessor {
     switch (tx._class) {
       case core.class.TxCreateDoc:
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
-      case core.class.TxAddCollection:
-        return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
+      case core.class.TxUpdateDoc:
+        return await this.txUpdateDoc(tx as TxCreateDoc<Doc>)
     }
   }
 
@@ -70,7 +67,7 @@ export class TxProcessor {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
-  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
+  protected async txUpdateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
 }
 
 export class TxOperations extends TxProcessor {
