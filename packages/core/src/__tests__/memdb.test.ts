@@ -13,13 +13,12 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Doc, Account } from '../classes'
+import { describe, expect, it } from '@jest/globals'
+import type { Class, Doc, Obj, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import type { Tx } from '../tx'
-
-import { describe, expect, it } from '@jest/globals'
 
 const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
 

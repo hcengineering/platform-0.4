@@ -28,14 +28,14 @@ export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   attributes: Data<T>
 }
 
-type ArrayAsElement<T extends Doc> = { 
-  [P in keyof T]: T[P] extends Arr<infer X> ? X : never 
+type ArrayAsElement<T extends Doc> = {
+  [P in keyof T]: T[P] extends Arr<infer X> ? X : never
 }
 
 type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-export type PushOptions<T extends Doc> = {
-  $push: Partial<OmitNever<ArrayAsElement<T>>>
+export interface PushOptions<T extends Doc> {
+  $push?: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
@@ -51,7 +51,7 @@ export class TxProcessor {
       case core.class.TxCreateDoc:
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
       case core.class.TxUpdateDoc:
-        return await this.txUpdateDoc(tx as TxCreateDoc<Doc>)
+        return await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
     }
   }
 
@@ -67,7 +67,7 @@ export class TxProcessor {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
-  protected async txUpdateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
+  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {}
 }
 
 export class TxOperations extends TxProcessor {

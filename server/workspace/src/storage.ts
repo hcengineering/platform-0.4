@@ -4,24 +4,19 @@ import core, {
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
-  Emb,
   Hierarchy,
   Obj,
   Ref,
   Storage,
   Tx,
-  TxAddCollection,
   TxCreateDoc,
-  TxUpdateCollection,
   TxUpdateDoc
 } from '@anticrm/core'
 
 export class WorkspaceStorage implements Storage {
   txHandlers: Array<{ id: Ref<Class<Tx>>, tx: (tx: Tx) => Ref<Class<Doc>> }> = [
     { id: core.class.TxCreateDoc, tx: (tx: Tx) => (tx as TxCreateDoc<Doc>).objectClass },
-    { id: core.class.TxUpdateDoc, tx: (tx: Tx) => (tx as TxUpdateDoc<Doc>).objectClass },
-    { id: core.class.TxAddCollection, tx: (tx: Tx) => (tx as TxAddCollection<Doc, Emb>).itemClass },
-    { id: core.class.TxUpdateCollection, tx: (tx: Tx) => (tx as TxUpdateCollection<Doc, Emb>).itemClass }
+    { id: core.class.TxUpdateDoc, tx: (tx: Tx) => (tx as TxUpdateDoc<Doc>).objectClass }
   ]
 
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {}

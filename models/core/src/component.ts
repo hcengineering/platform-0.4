@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Mixin, Ref, Space } from '@anticrm/core'
+import type { Class, Doc, Mixin, Ref } from '@anticrm/core'
 import core from '@anticrm/model'
 import { mergeIds } from '@anticrm/status'
 

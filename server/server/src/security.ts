@@ -5,17 +5,14 @@ import core, {
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
-  Emb,
   Hierarchy,
-  makeEmb,
-  Member,
   Ref,
   Space,
   Storage,
   Tx,
-  TxAddCollection,
   TxCreateDoc,
-  TxProcessor
+  TxProcessor,
+  TxUpdateDoc
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
@@ -33,20 +30,33 @@ export class SecurityModel extends TxProcessor {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
       const obj = TxProcessor.createDoc2Doc(tx) as Space
       if (!obj.private) this.publicSpaces.add(tx.objectId as Ref<Space>)
-    }
-  }
 
-  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {
-    if (tx.itemClass === core.class.Member && tx.collection === 'members') {
-      const obj = makeEmb(tx.itemClass, tx.attributes) as Member
-      const accountSpaces = this.allowedSpaces.get(obj.account)
-      if (accountSpaces === undefined) {
-        this.allowedSpaces.set(obj.account, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
-      } else {
-        accountSpaces.add(tx.objectId as Ref<Space>)
+      for (const acc of obj.members) {
+        const accountSpaces = this.allowedSpaces.get(acc)
+        if (accountSpaces === undefined) {
+          this.allowedSpaces.set(acc, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
+        } else {
+          accountSpaces.add(tx.objectId as Ref<Space>)
+        }
       }
     }
   }
+
+  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
+      const member = (tx as TxUpdateDoc<Space>).attributes?.$push?.members
+      if (member !== undefined) {
+        const accountSpaces = this.allowedSpaces.get(member)
+        if (accountSpaces === undefined) {
+          this.allowedSpaces.set(member, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
+        } else {
+          accountSpaces.add(tx.objectId as Ref<Space>)
+        }
+      }
+    }
+  }
+
+  // TODO: Handle update
 
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
     if (space === core.space.Model) return true

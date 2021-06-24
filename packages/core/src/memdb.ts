@@ -14,13 +14,13 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
-import type { Class, Doc, Data, Ref } from './classes'
+import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
+import { getOperator } from './operator'
+import { createPredicate, isPredicate } from './predicate'
 import { DocumentQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxUpdateDoc } from './tx'
-import { isPredicate, createPredicate } from './predicate'
-import { getOperator } from './operator'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {
@@ -42,7 +42,7 @@ class MemDb extends TxProcessor {
   private readonly objectById = new Map<Ref<Doc>, Doc>()
 
   constructor (hierarchy: Hierarchy) {
-    super ()
+    super()
     this.hierarchy = hierarchy
   }
 
@@ -56,7 +56,7 @@ class MemDb extends TxProcessor {
     return result
   }
 
-  getObject<T extends Doc> (_id: Ref<T>): T {
+  getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
       throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
@@ -114,7 +114,6 @@ export class TxDb extends MemDb implements Storage {
  * Hold model objects and classes
  */
 export class ModelDb extends MemDb implements Storage {
-
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     this.addDoc(TxProcessor.createDoc2Doc(tx))
   }
@@ -131,5 +130,4 @@ export class ModelDb extends MemDb implements Storage {
       }
     }
   }
-
 }

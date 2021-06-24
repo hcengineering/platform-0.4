@@ -33,7 +33,7 @@ export class TTxCreateDoc<T extends O, O extends Doc> extends TTx<T> implements 
   attributes!: Data<T>
 }
 
-@Model(core.class.TxCreateDoc, core.class.Tx)
+@Model(core.class.TxUpdateDoc, core.class.Tx)
 export class TTxUpdateDoc<T extends O, O extends Doc> extends TTx<T> implements TxUpdateDoc<T> {
   objectClass!: Ref<Class<T>>
   attributes!: Partial<Data<T>> & PushOptions<T>
