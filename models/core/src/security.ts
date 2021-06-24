@@ -17,7 +17,7 @@ import type { Account, Collection, Member, Ref, Space } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
-import { TDoc, TEmb } from './core'
+import { TDoc, TCollectionItem } from './core'
 
 // S E C U R I T Y
 
@@ -29,7 +29,7 @@ export class TSpace extends TDoc implements Space {
   members!: Collection<Member>
 }
 
-@Model(core.class.Member, core.class.Emb, DOMAIN_MODEL)
-export class TMember extends TEmb implements Member {
+@Model(core.class.Member, core.class.CollectionItem, DOMAIN_MODEL)
+export class TMember extends TCollectionItem implements Member {
   account!: Ref<Account>
 }

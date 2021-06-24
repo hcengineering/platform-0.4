@@ -16,7 +16,7 @@
 import { getContext } from 'svelte'
 
 import type { IntlString, Asset } from '@anticrm/status'
-import type { Ref, Class, Doc, Emb, Space } from '@anticrm/core'
+import type { Ref, Class, Doc, Space } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { Client } from '@anticrm/plugin-core'
 import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'

@@ -23,12 +23,10 @@ import type {
   Class,
   Obj,
   Data,
-  TxAddCollection,
   TxCreateDoc,
   Domain,
-  Account
 } from '@anticrm/core'
-import { ClassifierKind, generateId, makeEmb, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
+import { ClassifierKind, generateId, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 import toposort from 'toposort'
 
 import core from './component'
@@ -57,16 +55,19 @@ function getTxes (target: any): ClassTxes {
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
-    const tx: NoIDs<TxAddCollection<Class<Obj>, Attribute<PropertyType>>> = {
-      _class: core.class.TxAddCollection,
+    const tx: NoIDs<TxCreateDoc<Attribute<PropertyType>>> = {
+      _class: core.class.TxCreateDoc,
       space: core.space.Tx,
       modifiedBy: core.account.System,
       modifiedOn: 0,
       objectSpace: core.space.Model,
-      collection: 'attributes',
-      localId: propertyKey,
-      itemClass: core.class.Attribute,
-      attributes: { type },
+      objectClass: core.class.Attribute,
+      attributes: { 
+        type,
+        collection: 'attributes',
+        localId: propertyKey,
+        objectId: txes._id
+      },
     }
     txes.txes.push(tx)
   }
@@ -146,5 +147,5 @@ export class Builder {
 // T Y P E S
 
 export function TypeString (): Type<string> {
-  return makeEmb(core.class.TypeString, {})
+  return { _class: core.class.TypeString }
 }

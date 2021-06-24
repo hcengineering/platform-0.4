@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Emb, Doc, Account } from '../classes'
+import type { Ref, Class, Obj, Doc, Account } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import type { Tx, TxAddCollection } from '../tx'
+import type { Tx } from '../tx'
 
 import { describe, expect, it } from '@jest/globals'
 
@@ -41,7 +41,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(11)
+    expect(result.length).toBe(12)
     const result2 = await model.findAll('class:workbench.Application' as Ref<Class<Doc>>, { _id: undefined })
     expect(result2).toHaveLength(0)
   })
@@ -72,37 +72,37 @@ describe('memdb', () => {
     const multipleParam = await model.findAll(core.class.Doc, {
       space: { $in: [core.space.Model, core.space.Tx] }
     })
-    expect(multipleParam.length).toBe(16)
+    expect(multipleParam.length).toBe(17)
   })
 
-  it('should throw error', async () => {
-    expect.assertions(1)
-    const errorTx: TxAddCollection<Doc, Emb> = {
-      _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Doc, Emb>>,
-      _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
-      space: core.space.Tx,
-      modifiedBy: 'xxx' as Ref<Account>,
-      modifiedOn: 0,
-      objectId: 'class:test.MyClass' as Ref<Doc>,
-      objectSpace: core.space.Model,
-      itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
-      collection: 'attributes',
-      localId: 'name',
-      attributes: {
-        _class: 'class:core.Attribute' as Ref<Class<Doc>>,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        __embedded: {
-          _class: 'class:core.Attribute' as Ref<Class<Doc>>
-        } as Emb
-      }
-    }
+  // it('should throw error', async () => {
+  //   expect.assertions(1)
+  //   const errorTx: TxAddCollection<Doc, Emb> = {
+  //     _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Doc, Emb>>,
+  //     _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
+  //     space: core.space.Tx,
+  //     modifiedBy: 'xxx' as Ref<Account>,
+  //     modifiedOn: 0,
+  //     objectId: 'class:test.MyClass' as Ref<Doc>,
+  //     objectSpace: core.space.Model,
+  //     itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
+  //     collection: 'attributes',
+  //     localId: 'name',
+  //     attributes: {
+  //       _class: 'class:core.Attribute' as Ref<Class<Doc>>,
+  //       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  //       __embedded: {
+  //         _class: 'class:core.Attribute' as Ref<Class<Doc>>
+  //       } as Emb
+  //     }
+  //   }
 
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
-    const model = new ModelDb(hierarchy)
+  //   const hierarchy = new Hierarchy()
+  //   for (const tx of txes) hierarchy.tx(tx)
+  //   const model = new ModelDb(hierarchy)
 
-    await model.tx(errorTx).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: status:core.ObjectNotFound')
-    })
-  })
+  //   await model.tx(errorTx).catch((error: Error) => {
+  //     expect(error.message).toBe('ERROR: status:core.ObjectNotFound')
+  //   })
+  // })
 })

@@ -16,17 +16,12 @@
 import type { KeysByType } from 'simplytyped'
 import type { IntlString, Asset } from '@anticrm/status'
 
-export type Timestamp = number
-export type PrimitiveType = number | string | boolean | undefined
-
 export type Ref<T extends Doc> = string & { __ref: T }
+export type PrimitiveType = number | string | boolean | undefined | Ref<Doc>
+export type Timestamp = number
 
 export interface Obj {
   _class: Ref<Class<this>>
-}
-
-export interface Emb extends Obj {
-  __embedded: this
 }
 
 export interface Doc extends Obj {
@@ -36,8 +31,7 @@ export interface Doc extends Obj {
   modifiedBy: Ref<Account>
 }
 
-export type EmbType = PrimitiveType | Emb | Ref<Doc>
-export type PropertyType = EmbType | Collection<Emb> | Record<string, EmbType>
+export type PropertyType = any
 
 export interface UXObject extends Obj {
   label?: IntlString
@@ -45,19 +39,26 @@ export interface UXObject extends Obj {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface Type<T extends PropertyType> extends Emb, UXObject {}
+export interface Type<T extends PropertyType> extends UXObject {}
 
 // C O L L E C T I O N
 
-export interface Collection<T extends Emb> {
-  __collection: T
+export interface CollectionItem extends Doc {
+  objectId: Ref<Doc>
+  localId: string
+  collection: string
 }
 
-export type WithoutCollections<T extends Doc> = Omit<T, KeysByType<T, Collection<Emb>>>
+export interface Collection<T extends CollectionItem> {
+  get(localId: string | number): T
+  length: number
+}
 
-export interface CollectionOf<T extends Emb> extends Type<Collection<T>> {}
+export type WithoutCollections<T extends Doc> = Omit<T, KeysByType<T, Collection<CollectionItem>>>
 
-export interface Attribute<T extends PropertyType> extends Emb, UXObject {
+export interface CollectionOf<T extends CollectionItem> extends Type<Collection<T>> {}
+
+export interface Attribute<T extends PropertyType> extends CollectionItem, UXObject {
   type: Type<T>
 }
 
@@ -91,8 +92,8 @@ export interface RefTo<T extends Doc> extends Type<Ref<Class<T>>> {
   to: Ref<Class<T>>
 }
 
-export interface BagOf extends Type<Record<string, EmbType>> {
-  of: Type<EmbType>
+export interface BagOf extends Type<Record<string, PrimitiveType>> {
+  of: Type<PrimitiveType>
 }
 
 export const DOMAIN_MODEL = 'model' as Domain
@@ -106,7 +107,7 @@ export interface Space extends Doc {
   members: Collection<Member>
 }
 
-export interface Member extends Emb {
+export interface Member extends CollectionItem {
   account: Ref<Account>
 }
 

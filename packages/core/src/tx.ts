@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Data, Doc, Domain, Emb, Ref, Account, Space } from './classes'
+import type { Class, Data, Doc, Domain, Ref, Account, Space } from './classes'
 import core from './component'
 import { generateId } from './utils'
 
@@ -32,20 +32,6 @@ export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   attributes: Partial<Data<T>>
 }
 
-export interface TxAddCollection<T extends Doc, P extends Emb> extends Tx<T> {
-  collection: string
-  itemClass: Ref<Class<P>>
-  localId?: string
-  attributes: Omit<P, keyof Emb>
-}
-
-export interface TxUpdateCollection<T extends Doc, P extends Emb> extends Tx<T> {
-  collection: string
-  itemClass: Ref<Class<P>>
-  localId: string
-  attributes: Partial<Omit<P, keyof Emb>>
-}
-
 export const DOMAIN_TX = 'tx' as Domain
 
 export class TxProcessor {
@@ -53,8 +39,6 @@ export class TxProcessor {
     switch (tx._class) {
       case core.class.TxCreateDoc:
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
-      case core.class.TxAddCollection:
-        return await this.txAddCollection(tx as TxAddCollection<Doc, Emb>)
     }
   }
 
@@ -70,7 +54,6 @@ export class TxProcessor {
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
-  protected async txAddCollection (tx: TxAddCollection<Doc, Emb>): Promise<void> {}
 }
 
 export class TxOperations extends TxProcessor {
