@@ -13,137 +13,163 @@
 // limitations under the License.
 //
 
-import { generateId, Storage, Tx } from '@anticrm/core'
-import type { Request, Response } from '@anticrm/rpc'
+import { Doc, generateId, Ref, Storage, Tx } from '@anticrm/core'
+import type { Request } from '@anticrm/rpc'
 import { Code, readRequest, serialize } from '@anticrm/rpc'
-import { Severity, Status } from '@anticrm/status'
-import { createServer, IncomingMessage } from 'http'
-import WebSocket, { AddressInfo, Server } from 'ws'
-
-export interface ServerProtocol {
-  shutdown: () => void
-  address: () => { host: string, port: number }
-}
-
-export type ShutdownOperation = (code?: number, data?: string) => void
+import { PlatformError, Severity, Status, unknownStatus } from '@anticrm/status'
+import { createServer, IncomingMessage, Server as HttpServer } from 'http'
+import * as net from 'net'
+import WebSocket, { Server as WebSocketServer } from 'ws'
 
 export interface StorageProvider {
-  connect: (clientId: string, token: string, sendTx: (tx: Tx) => void, close: ShutdownOperation) => Promise<Storage>
+  connect: (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage>
   close: (clientId: string) => Promise<void>
 }
 
-export async function start (
-  host: string | undefined,
-  port: number,
-  provider: StorageProvider
-): Promise<ServerProtocol> {
-  console.log(`starting server on port ${port}...`)
-  console.log(`host: ${host ?? 'localhost'}`)
-
-  const server = createServer()
-  const wss = new Server({ noServer: true })
-
-  const connections = new Map<string /* clientId */, WebSocket>()
-
-  wss.on('connection', (ws: WebSocket, request: any, token: string) => {
-    const clientId = generateId()
-
-    const sendTx = (tx: Tx): void => {
-      // Send transaction to client.
-      ws.send(serialize({ id: tx._id, result: tx }))
+export function parseAddress (addr: string): net.AddressInfo {
+  const addrSegm = addr.split(':')
+  if (addrSegm.length === 2) {
+    const pport = parseInt(addrSegm[1])
+    if (!isNaN(pport)) {
+      return { family: 'IPv4', address: addrSegm[0], port: pport }
     }
+  }
+  throw new PlatformError(unknownStatus(`Invalid address returned:${addr}`))
+}
 
-    async function handleRequest (storage: Promise<Storage>, request: Request<any>): Promise<void> {
-      const { id, method, params } = request
-      try {
-        const store = await storage
-        const callOp = (store as any)[method]
-        const result = await Reflect.apply(callOp, store, params)
-        ws.send(serialize({ id, result }))
-      } catch (error) {
-        const params = { message: error.message, stack: error.stack }
-        const resp: Response<any> = { id, error: new Status(Severity.ERROR, Code.BadRequest, params) }
-        ws.send(serialize(resp))
-      }
-    }
+class Server {
+  connections = new Map<string /* clientId */, WebSocket>()
+  server: WebSocketServer
+  httpServer: HttpServer
+  constructor (readonly host: string | undefined, readonly port: number, readonly provider: StorageProvider) {
+    this.httpServer = createServer()
+    this.server = new WebSocketServer({ noServer: true })
 
-    const storage = provider.connect(clientId, token, sendTx, (): void => {
-      ws.close()
+    this.httpServer.on('upgrade', (request, socket, head) => {
+      this.upgradeHandler(request, socket, head)
     })
-    storage.catch((err) => {
-      console.log(err)
-      ws.close(404, err.message)
-      connections.delete(clientId)
-    })
+  }
 
-    connections.set(clientId, ws)
-
-    ws.on('message', (msg: string): void => {
-      const request = readRequest(msg)
-      handleRequest(storage, request) // eslint-disable-line
-    })
-
-    ws.onclose = () => {
-      console.log('clientClose client', clientId)
-      connections.delete(clientId)
-      provider.close(clientId) // eslint-disable-line @typescript-eslint/no-floating-promises
-    }
-    ws.onerror = (error) => {
-      console.error('communication error:', error)
-      connections.delete(clientId)
-      provider.close(clientId) // eslint-disable-line @typescript-eslint/no-floating-promises
-    }
-  })
-
-  server.on('upgrade', (request: IncomingMessage, socket, head: Buffer) => {
+  private upgradeHandler (request: IncomingMessage, socket: net.Socket, head: Buffer): void {
     const token = request.url?.substring(1) // remove leading '/'
     if (token === undefined || token.trim().length === 0) {
       socket.write('HTTP/1.1 400 Bad Request\r\n\r\n')
       socket.destroy()
       return
     }
-
-    // TODO: Validate token.
-
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request, token)
+    this.server.handleUpgrade(request, socket, head, (ws) => {
+      this.handleConnection(ws, token).catch((err) => {
+        this.traceError(err)
+        ws.close()
+      })
     })
-  })
+  }
 
-  return new Promise((resolve) => {
-    const httpServer = server.listen(port, host, () => {
-      const serverProtocol: ServerProtocol = {
-        shutdown: async () => {
-          console.log('Shutting down server:', httpServer.address())
-
-          for (const conn of connections.entries()) {
-            provider.close(conn[0]) // eslint-disable-line @typescript-eslint/no-floating-promises
-            conn[1].close()
-          }
-          httpServer.close()
-        },
-        address: () => {
-          const addr = httpServer.address()
-          if (addr !== null && typeof addr !== 'string') {
-            const ad = addr as AddressInfo
-            return { host: ad.address, port: ad.port }
-          }
-          if (addr !== null && typeof addr === 'string') {
-            const addrSegm = addr.split(':')
-            if (addrSegm.length === 2) {
-              const phost = addrSegm[0]
-              const pport = parseInt(addrSegm[1])
-              if (!isNaN(pport)) {
-                return { host: phost, port: pport }
-              }
-            }
-            console.error('Invalid address returned:', addr)
-          }
-
-          return { host: host ?? 'locahost', port: port }
-        }
-      }
-      resolve(serverProtocol)
+  async listen (): Promise<void> {
+    return await new Promise((resolve) => {
+      this.httpServer.listen(this.port, this.host, () => {
+        resolve()
+      })
     })
-  })
+  }
+
+  shutdown (): void {
+    console.log('Shutting down server:', this.httpServer.address())
+
+    for (const conn of this.connections.entries()) {
+      this.provider.close(conn[0]).catch(this.traceError)
+      conn[1].close()
+    }
+    this.server.close()
+    this.httpServer.close()
+  }
+
+  address (): net.AddressInfo {
+    const addr = this.httpServer.address()
+    if (typeof addr === 'string') {
+      return parseAddress(addr)
+    } else {
+      return addr ?? { family: 'IPv4', address: this.host ?? 'locahost', port: this.port }
+    }
+  }
+
+  private async handleConnection (ws: WebSocket, token: string): Promise<void> {
+    const clientId = generateId()
+
+    const storage = this.provider.connect(
+      clientId,
+      token,
+      (tx) => ws.send(serialize({ id: tx._id, result: tx })),
+      (): void => ws.close()
+    )
+    this.registerOnMessage(ws, storage)
+
+    this.connections.set(clientId, ws)
+
+    this.registerOnClose(ws, clientId)
+    this.registerOnError(ws, clientId)
+  }
+
+  private async handleRequest (ws: WebSocket, storage: Storage, request: Request<any>): Promise<void> {
+    const { id, method, params } = request
+    const callOp = (storage as any)[method]
+    try {
+      const result = await Reflect.apply(callOp, storage, params)
+      ws.send(serialize({ id, result }))
+    } catch (error) {
+      ws.send(
+        serialize({
+          id,
+          error: new Status(Severity.ERROR, Code.BadRequest, { message: error.message, stack: error.stack })
+        })
+      )
+    }
+  }
+
+  private registerOnMessage (ws: WebSocket, storage: Promise<Storage>): void {
+    ws.on('message', (msg: string): void => {
+      const request = readRequest(msg)
+      storage
+        .then((s) => {
+          this.handleRequest(ws, s, request).catch(this.traceError)
+        })
+        .catch(this.traceError)
+    })
+  }
+
+  private registerOnError (ws: WebSocket, clientId: Ref<Doc>): void {
+    ws.on('error', (error) => {
+      console.error('communication error:', error)
+      this.connections.delete(clientId)
+      this.provider.close(clientId).catch(this.traceError)
+    })
+  }
+
+  private registerOnClose (ws: WebSocket, clientId: Ref<Doc>): void {
+    ws.on('close', () => {
+      this.connections.delete(clientId)
+      this.provider.close(clientId).catch(this.traceError)
+    })
+  }
+
+  private traceError (err: Error): void {
+    console.error(err)
+  }
+}
+
+/**
+ * Starts a server handling websocket connections.
+ * @param host - host or undefined
+ * @param port - port, could pass 0 to handle on any random port.
+ * @param provider - a client connection storage provider.
+ * @returns a server promise, promise will be resolved in case of server become available.
+ */
+export async function start (host: string | undefined, port: number, provider: StorageProvider): Promise<Server> {
+  console.log(`starting server on port ${port}...`)
+
+  const server = new Server(host, port, provider)
+  await server.listen()
+  const addr = server.address()
+  console.log(`server is listening on host: ${addr.address}: ${addr.port} `)
+  return server
 }

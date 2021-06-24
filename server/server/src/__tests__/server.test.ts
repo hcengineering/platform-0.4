@@ -13,33 +13,54 @@
 // limitations under the License.
 //
 
-import core, { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, ModelDb, Ref, Tx, TxDb } from '@anticrm/core'
-import { createClient } from '@anticrm/node-client'
-import { start } from '@anticrm/server/src/server'
-import { describe, it } from '@jest/globals'
-
+import core, {
+  Account,
+  Class,
+  Doc,
+  DocumentQuery,
+  DOMAIN_TX,
+  generateId,
+  Hierarchy,
+  ModelDb,
+  Ref,
+  Tx,
+  TxCreateDoc,
+  TxDb
+} from '@anticrm/core'
 import builder from '@anticrm/model-all'
+import { describe, it } from '@jest/globals'
+import { parseAddress, start } from '../server'
+import { createClient } from './client'
 
 const txes = builder.getTxes()
 
+async function prepareInMemServer (): Promise<{
+  hierarchy: Hierarchy
+  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
+  transactions: TxDb
+  model: ModelDb
+}> {
+  const hierarchy = new Hierarchy()
+  for (const tx of txes) hierarchy.tx(tx)
+
+  const transactions = new TxDb(hierarchy)
+  const model = new ModelDb(hierarchy)
+  for (const tx of txes) {
+    await transactions.tx(tx)
+    await model.tx(tx)
+  }
+
+  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+    const domain = hierarchy.getClass(_class).domain
+    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+    return await model.findAll(_class, query)
+  }
+  return { hierarchy, findAll, transactions, model }
+}
+
 describe('server', () => {
   it('client connect server', async () => {
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
-
-    const transactions = new TxDb(hierarchy)
-    const model = new ModelDb(hierarchy)
-    for (const tx of txes) {
-      await transactions.tx(tx)
-      await model.tx(tx)
-    }
-
-    async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-      const domain = hierarchy.getClass(_class).domain
-      if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-      return await model.findAll(_class, query)
-    }
-
+    const { findAll } = await prepareInMemServer()
     const serverAt = start('localhost', 0, {
       connect: async () => {
         return {
@@ -51,7 +72,7 @@ describe('server', () => {
     })
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.host}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`)
 
       const result = await client.findAll(core.class.Class, {})
       expect(result.length).toEqual(13)
@@ -67,16 +88,12 @@ describe('server', () => {
     )
   })
 
-  it('check server connection closed', async () => {
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
+  it('check parseAddess', () => {
+    expect(parseAddress('localhost:300')).toEqual({ family: 'IPv4', address: 'localhost', port: 300 })
+  })
 
-    const transactions = new TxDb(hierarchy)
-    const model = new ModelDb(hierarchy)
-    for (const tx of txes) {
-      await transactions.tx(tx)
-      await model.tx(tx)
-    }
+  it('check server connection closed', async () => {
+    const { hierarchy, model, transactions } = await prepareInMemServer()
 
     let req = 0
     const serverAt = start('localhost', 0, {
@@ -85,10 +102,8 @@ describe('server', () => {
           // Create never complete promise. ,
           findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
             req++
-            console.log('req', req, _class, query)
             if (req === 2) {
-              console.log('close DONE')
-              close(404, 'error')
+              close()
               return await new Promise<T[]>(() => {})
             }
             const domain = hierarchy.getClass(_class).domain
@@ -103,7 +118,7 @@ describe('server', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.host}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`)
       await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: status:status.UnknownError') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
@@ -111,15 +126,7 @@ describe('server', () => {
   })
 
   it('check server reject request', async () => {
-    const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
-
-    const transactions = new TxDb(hierarchy)
-    const model = new ModelDb(hierarchy)
-    for (const tx of txes) {
-      await transactions.tx(tx)
-      await model.tx(tx)
-    }
+    const { hierarchy, model, transactions } = await prepareInMemServer()
 
     let req = 0
     const serverAt = start('localhost', 0, {
@@ -143,8 +150,52 @@ describe('server', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.host}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`)
       await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: rpc.BadRequest') // eslint-disable-line
+    } finally {
+      ;(await serverAt).shutdown()
+    }
+  })
+
+  it('server send transaction', async () => {
+    const { findAll } = await prepareInMemServer()
+    const transactions: Tx[] = []
+    let sendTx!: (tx: Tx) => void
+    const serverAt = start('localhost', 0, {
+      connect: async (clientId, token, clientSendTx) => {
+        sendTx = clientSendTx
+        return {
+          findAll,
+          tx: async (tx: Tx): Promise<void> => {}
+        }
+      },
+      close: async () => {}
+    })
+    try {
+      const addr = (await serverAt).address()
+      const tx: TxCreateDoc<Doc> = {
+        _id: generateId(),
+        _class: core.class.TxCreateDoc,
+        space: core.space.Tx,
+        modifiedBy: 'user' as Ref<Account>,
+        modifiedOn: Date.now(),
+        objectId: generateId(),
+        objectClass: core.class.Doc,
+        objectSpace: core.space.Model,
+        attributes: {}
+      }
+      await new Promise((resolve) => {
+        createClient(`${addr.address}:${addr.port}/t1`, (tx) => {
+          transactions.push(tx)
+          resolve(null)
+        })
+          .then((c) => {
+            sendTx(tx)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      })
     } finally {
       ;(await serverAt).shutdown()
     }

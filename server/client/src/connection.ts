@@ -66,6 +66,9 @@ export async function connect (clientUrl: string, handler: (tx: Tx) => void): Pr
     socket.onerror = (reason) => {
       reject(new Error(`Failed to connect to ${clientUrl}: reason: ${reason.message}`))
     }
+    socket.onclose = (reason) => {
+      reject(new Error(`Failed to connect to ${clientUrl}: reason: ${reason.reason}`))
+    }
   })
 
   return new WebSocketConnection(socket, handler)

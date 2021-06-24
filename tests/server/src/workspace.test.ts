@@ -99,25 +99,39 @@ describe('workspace', () => {
 
   beforeEach(async () => {
     dbId = 'test-' + generateId()
-    await createWorkspace(dbId, { mongoDBUri })
+    return await createWorkspace(dbId, { mongoDBUri })
   })
 
   afterEach(async () => {
-    await deleteWorkspace(dbId, { mongoDBUri })
+    return await deleteWorkspace(dbId, { mongoDBUri })
   })
 
   afterAll(async () => {
-    await shutdown()
+    return await shutdown()
   })
 
   it('connect to workspace', async () => {
+    console.log('start connecting')
     // Initialize workspace
-    // eslint-disable-next-line
     const serverAt = await start('localhost', 0, {
       connect: async (clientId, token) => {
+        console.log('server accepted client')
         try {
           const { accountId, workspaceId } = decodeToken(TEST_SECRET, token)
-          return await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
+          const storage = await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
+          console.log('workspace assigned')
+          return {
+            findAll: async (_class, query) => {
+              // console.log('findAll', _class, query)
+              const result = await storage.findAll(_class, query)
+              // console.log('findAll result', result)
+              return result
+            },
+            tx: async (tx) => {
+              // console.log('tx', tx)
+              await storage.tx(tx)
+            }
+          }
         } catch (err) {
           console.error(err)
           throw new Error('invalid token')
@@ -130,7 +144,9 @@ describe('workspace', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.host}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+      const client = await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+
+      console.log('client connected')
 
       // We should be able to fill all model now.
       const resultTxs = await client.findAll(core.class.Tx, {})
