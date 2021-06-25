@@ -35,7 +35,7 @@ describe('elastic search', () => {
     const second = await model.findAll(core.class.Class, { _id: { $in: [txes[0].objectId as Ref<Class<Obj>>, txes[5].objectId as Ref<Class<Obj>>] } })
     expect(second.length).toBe(2)
     const third = await model.findAll(core.class.Class, { extends: { $in: [core.class.Space, core.class.Doc] } })
-    expect(third.length).toBe(6)
+    expect(third.length).toBe(5)
     const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
   })

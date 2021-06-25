@@ -41,16 +41,6 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  private async objectById<T extends Doc>(_id: Ref<T>): Promise<T> {
-    const request = {
-      index: this.workspace,
-      id: _id
-    }
-    const { body } = await this.client.get(request)
-
-    return { _id: body._id, ...body._source }
-  }
-
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     const result: T[] = []
 
@@ -68,7 +58,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
         const criteria = {
           terms: Object()
         }
-        criteria.terms[key] = (value as QuerySelector<any>).$in?.map((item: any) => typeof item === 'string' ? item.toLowerCase() : item)
+        criteria.terms[key] = (value as QuerySelector<any>).$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
         criteries.push(criteria)
       }
     }
@@ -115,33 +105,41 @@ export class ElasticStorage extends TxProcessor implements Storage {
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     const { _id, ...body } = TxProcessor.createDoc2Doc(tx)
-    await this.index(_id, tx.objectClass, body)
-  }
-
-  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
-    const doc = await this.objectById(tx.objectId) as any
-    const attrs = tx.operations as any
-    for (const key in attrs) {
-      if (key.startsWith('$')) {
-        const operator = getOperator(key)
-        operator(doc, attrs[key])
-      } else {
-        doc[key] = attrs[key]
-      }
-    }
-
-    const { _id, ...body } = doc
-    await this.index(_id, tx.objectClass, body)
-  }
-
-  private async index (_id: Ref<Doc>, _class: Ref<Class<Doc>>, body: Omit<Doc, '_id'>): Promise<void> {
     const object: RequestParams.Index = {
       id: _id,
       index: this.workspace,
-      type: this.hierarchy.getDomain(_class),
+      type: this.hierarchy.getDomain(tx.objectClass),
       body: { ...body }
     }
     await this.client.index(object)
+    await this.client.indices.refresh({ index: this.workspace })
+  }
+
+  protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    let script = `ctx._source.modifiedBy = '${tx.modifiedBy}';`
+    script += ` ctx._source.modifiedOn = '${tx.modifiedOn}';`
+    const attrs = tx.operations as any
+    for (const key in attrs) {
+      if (key === '$push') {
+        const keyval = attrs[key]
+        for (const key in keyval) {
+          script += ` if (ctx._source.${key} == null) { ctx._source.${key} = ['${keyval[key]}'] } else { ctx._source.${key}.add('${keyval[key]}') }`
+        }
+      } else {
+        script += ` ctx._source.${key} = '${attrs[key]}';`
+      }
+    }
+
+    const object: RequestParams.Update = {
+      id: tx.objectId,
+      index: this.workspace,
+      body: {
+        script: {
+          source: script
+        }
+      }
+    }
+    await this.client.update(object)
     await this.client.indices.refresh({ index: this.workspace })
   }
 }
