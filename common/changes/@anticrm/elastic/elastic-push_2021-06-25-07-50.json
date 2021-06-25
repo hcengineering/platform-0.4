@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "changed elastic update to script",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic",
+  "email": "bykhov.denis@gmail.com"
+}
