@@ -14,23 +14,25 @@
 -->
 
 <script lang="ts">
+  import type { Ref, Space } from '@anticrm/core'
+
   import Message from './Message.svelte'
   import ChannelSeparator from './ChannelSeparator.svelte'
 
-  export let thread: boolean = false
+  export let space: Ref<Space>
 </script>
 
 <div class="channel-container">
-  {#if thread}
+  <!-- {#if thread}
     <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One!"/>
     <ChannelSeparator title={'6 replies'} line={true}/>
-  {/if}
-  <Message {thread} reactions replies name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. "/>
+  {/if} -->
+  <Message reactions replies name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. "/>
   <ChannelSeparator title={'MAR 25, 3:20 PM'}/>
-  <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
-  <Message {thread} reactions name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. "/>
-  <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
-  <Message {thread} replies name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One!"/>
+  <Message name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
+  <Message reactions name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. "/>
+  <Message name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
+  <Message replies name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One!"/>
 </div>
 
 <style lang="scss">

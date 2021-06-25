@@ -14,16 +14,18 @@
 -->
 
 <script lang="ts">
+  import type { Ref, Space } from '@anticrm/core'
+
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
 
-  export let thread: boolean = false
+  export let space: Ref<Space>
 </script>
 
 <div class="msg-board">
-  <Channel {thread}/>
+  <Channel {space}/>
 </div>
-<ReferenceInput {thread}/>
+<ReferenceInput thread={false}/>
 
 <style lang="scss">
   .msg-board {

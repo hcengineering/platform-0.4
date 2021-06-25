@@ -28,7 +28,6 @@
   export let message: string
   export let reactions: boolean = false
   export let replies: boolean = false
-  export let thread: boolean = false
 </script>
 
 <div class="message-container">
@@ -36,21 +35,19 @@
   <div class="message">
     <div class="header">{name}<span>{time}</span></div>
     <div class="text">{message}</div>
-    {#if (reactions || replies) && !thread}
+    {#if (reactions || replies)}
       <div class="footer">
         <div>{#if reactions}<Reactions/>{/if}</div>
         <div>{#if replies}<Replies/>{/if}</div>
       </div>
     {/if}
   </div>
-  {#if !thread}
-    <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'}/></div>
-    </div>
-  {/if}
+  <div class="buttons">
+    <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'}/></div>
+    <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'}/></div>
+    <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'}/></div>
+    <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'}/></div>
+  </div>
 </div>
 
 <style lang="scss">

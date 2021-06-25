@@ -16,9 +16,19 @@
 import { plugin } from '@anticrm/platform'
 import type { Asset } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Space } from '@anticrm/core'
+import type { Ref, Doc, Space } from '@anticrm/core'
 
 export interface Channel extends Space {}
+
+export interface Message extends Doc {
+  message: string,
+  replyCount: number
+}
+
+export interface Comment extends Doc {
+  replyOf: Ref<Message>
+  message: string
+}
 
 export interface ChunterService extends Service {}
 

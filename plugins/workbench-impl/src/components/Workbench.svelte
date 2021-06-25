@@ -69,7 +69,7 @@
   <div class="component">
     <SpaceHeader space={currentSpace}/>
     {#if navigatorModel}
-      <Component is={navigatorModel.spaceView} />
+      <Component is={navigatorModel.spaceView} props={ {space:currentSpace} }/>
     {/if}
   </div>
   <!-- <div class="aside"><Chat thread/></div> -->

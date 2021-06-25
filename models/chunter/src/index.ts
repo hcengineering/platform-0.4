@@ -13,17 +13,32 @@
 // limitations under the License.
 //
 
+import type { Ref, Doc, Domain } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 
-import { TSpace } from '@anticrm/model-core'
-import type { Channel } from '@anticrm/chunter'
+import { TSpace, TDoc } from '@anticrm/model-core'
+import type { Channel, Message, Comment } from '@anticrm/chunter'
 
 import workbench from '@anticrm/model-workbench'
 import core from '@anticrm/model-core'
 import chunter from './plugin'
 
+const DOMAIN_CHUNTER = 'chunter' as Domain
+
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {}
+
+@Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
+export class TMessage extends TDoc implements Message {
+  message!: string
+  replyCount!: number
+}
+
+@Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
+export class TComment extends TDoc implements Comment {
+  replyOf!: Ref<Message>
+  message!: string
+}
 
 export function createModel(builder: Builder) {
   builder.createModel(TChannel)
