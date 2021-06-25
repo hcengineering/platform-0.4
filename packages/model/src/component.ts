@@ -13,11 +13,7 @@
 // limitations under the License.
 //
 
-import type {
-  Attribute, Class,
-  PropertyType, Ref,
-  Type
-} from '@anticrm/core'
+import type { Attribute, Class, PropertyType, Ref, Type } from '@anticrm/core'
 import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
