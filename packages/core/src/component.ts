@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
-import type { Class, Doc, Obj, Ref, Space, Account } from './classes'
+import type { Account, Class, Doc, Obj, Ref, Space } from './classes'
+import { DerivedData, DerivedDataDescriptor } from './derived'
+import { Reference } from './reference'
+import { Title } from './title'
 import type { Tx, TxCreateDoc, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 const ComponentCore = 'core' as Component
@@ -30,7 +32,12 @@ export default component(ComponentCore, {
     TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,
     TxRemoveDoc: '' as Ref<Class<TxRemoveDoc<Doc>>>,
     Space: '' as Ref<Class<Space>>,
-    Account: '' as Ref<Class<Account>>
+    Account: '' as Ref<Class<Account>>,
+
+    DerivedData: '' as Ref<Class<DerivedData>>,
+    DerivedDataDescriptor: '' as Ref<Class<DerivedDataDescriptor<Doc, DerivedData>>>,
+    Title: '' as Ref<Class<Title>>,
+    Reference: '' as Ref<Class<Reference>>
   },
   space: {
     Tx: '' as Ref<Space>,

@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import core from '..'
 import { Space } from '../classes'
 import { createClient } from '../client'
+import core from '../component'
 import { withOperations } from '../tx'
 import { connect } from './connection'
 

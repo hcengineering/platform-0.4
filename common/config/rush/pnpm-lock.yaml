@@ -9092,7 +9092,7 @@ packages:
     dev: false
 
   file:projects/core.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-KIdF86akboHuOedpTRtElvT+3AMl5Ysau7fagizoP8eUlxPOVd/eC/PtecOuibbRZTCzUNYw07emOpEqdFCWKw==, tarball: file:projects/core.tgz}
+    resolution: {integrity: sha512-/D1vaODFmO5i5m91srC2hiV4ETctvaWJfKhBE/QmeNlXdMK45uyggy9aWjncMz6SUKEkEWKAU9XeCWLBYV/oGg==, tarball: file:projects/core.tgz}
     id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
@@ -9111,6 +9111,7 @@ packages:
       eslint-plugin-node: 11.1.0_eslint@7.28.0
       eslint-plugin-promise: 5.1.0_eslint@7.28.0
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      fast-equals: 2.0.3
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       simplytyped: 3.3.0_typescript@4.3.2
