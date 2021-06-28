@@ -13,19 +13,7 @@
 // limitations under the License.
 //
 
-import type {
-  Ref,
-  Doc,
-  Type,
-  PropertyType,
-  Attribute,
-  Tx,
-  Class,
-  Obj,
-  Data,
-  TxCreateDoc,
-  Domain,
-} from '@anticrm/core'
+import type { Ref, Doc, Type, PropertyType, Attribute, Tx, Class, Obj, Data, TxCreateDoc, Domain } from '@anticrm/core'
 import { ClassifierKind, generateId, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
 import toposort from 'toposort'
 
@@ -62,11 +50,11 @@ export function Prop (type: Type<PropertyType>) {
       modifiedOn: 0,
       objectSpace: core.space.Model,
       objectClass: core.class.Attribute,
-      attributes: { 
+      attributes: {
         type,
         name: propertyKey,
         attributeOf: txes._id
-      },
+      }
     }
     txes.txes.push(tx)
   }
@@ -93,7 +81,12 @@ function generateIds (objectId: Ref<Doc>, txes: Array<NoIDs<Tx>>): Tx[] {
   }))
 }
 
-function txCreateDoc<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attributes: Data<T>, objectId?: Ref<T>): TxCreateDoc<T> {
+function txCreateDoc<T extends Doc> (
+  _class: Ref<Class<T>>,
+  domain: Domain,
+  attributes: Data<T>,
+  objectId?: Ref<T>
+): TxCreateDoc<T> {
   return {
     _id: generateId<TxCreateDoc<T>>(),
     _class: core.class.TxCreateDoc,
@@ -103,17 +96,22 @@ function txCreateDoc<T extends Doc> (_class: Ref<Class<T>>, domain: Domain, attr
     objectId: objectId ?? generateId(),
     objectClass: _class,
     objectSpace: core.space.Model,
-    attributes,
+    attributes
   }
 }
 
 function _generateTx (tx: ClassTxes): Tx[] {
   const objectId = tx._id
-  const createTx = txCreateDoc(core.class.Class, DOMAIN_MODEL, {
-    domain: tx.domain,
-    kind: ClassifierKind.CLASS,
-    extends: tx.extends
-  }, objectId)
+  const createTx = txCreateDoc(
+    core.class.Class,
+    DOMAIN_MODEL,
+    {
+      domain: tx.domain,
+      kind: ClassifierKind.CLASS,
+      extends: tx.extends
+    },
+    objectId
+  )
   return [createTx, ...generateIds(objectId, tx.txes)]
 }
 
@@ -124,11 +122,12 @@ export class Builder {
   createModel (...classes: Array<new () => Obj>): void {
     const txes = classes.map((ctor) => getTxes(ctor.prototype))
     const byId = new Map<string, ClassTxes>()
-    txes.forEach((tx) => { byId.set(tx._id, tx) })
-    const graph = txes.map(tx => [tx._id, tx.extends] as [string, string | undefined])
-    const sortedGraph = toposort(graph).reverse()
-    const sorted = sortedGraph.map(edge => byId.get(edge))
-    const generated = sorted.flatMap(tx => (tx != null) ? _generateTx(tx) : [])
+
+    txes.forEach((tx) => {
+      byId.set(tx._id, tx)
+    })
+
+    const generated = this.generateTransactions(txes, byId)
 
     for (const tx of generated) {
       this.txes.push(tx)
@@ -136,11 +135,25 @@ export class Builder {
     }
   }
 
-  createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
+  private generateTransactions (txes: ClassTxes[], byId: Map<string, ClassTxes>): Tx[] {
+    const graph = this.createGraph(txes)
+    const sorted = toposort(graph)
+      .reverse()
+      .map((edge) => byId.get(edge))
+    return sorted.flatMap((tx) => (tx != null ? _generateTx(tx) : []))
+  }
+
+  private createGraph (txes: ClassTxes[]): [string, string | undefined][] {
+    return txes.map((tx) => [tx._id, tx.extends] as [string, string | undefined])
+  }
+
+  createDoc<T extends Doc>(_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
     this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId))
   }
 
-  getTxes (): Tx[] { return this.txes }
+  getTxes (): Tx[] {
+    return this.txes
+  }
 }
 
 // T Y P E S

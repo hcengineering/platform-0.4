@@ -42,31 +42,31 @@ describe('dsl', () => {
     removeIds(txes)
     expect(txes).toEqual([
       {
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectId": "class:test.MyClass",
-        "objectClass": "class:core.Class",
-        "objectSpace": "space:core.Model",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:core.Doc"
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectId: 'class:test.MyClass',
+        objectClass: 'class:core.Class',
+        objectSpace: 'space:core.Model',
+        attributes: {
+          kind: 0,
+          extends: 'class:core.Doc'
         }
       },
       {
-        "objectId": "class:test.MyClass",
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectSpace": "space:core.Model",
-        "objectClass": "class:core.Attribute",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass',
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectSpace: 'space:core.Model',
+        objectClass: 'class:core.Attribute',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           },
-          "name": "name"
+          name: 'name'
         }
       }
     ])
@@ -78,69 +78,66 @@ describe('dsl', () => {
       _class!: Ref<Class<MyClass>>
       @Prop(TypeString()) name!: string
     }
-    @Model(
-      'class:test.MyClass2' as Ref<Class<Obj>>,
-      'class:test.MyClass' as Ref<Class<Obj>>
-    )
+    @Model('class:test.MyClass2' as Ref<Class<Obj>>, 'class:test.MyClass' as Ref<Class<Obj>>)
     class MyClass2 extends MyClass {
       @Prop(TypeString()) lastName!: string
     }
 
     const valid = [
       {
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectId": "class:test.MyClass",
-        "objectClass": "class:core.Class",
-        "objectSpace": "space:core.Model",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:core.Doc"
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectId: 'class:test.MyClass',
+        objectClass: 'class:core.Class',
+        objectSpace: 'space:core.Model',
+        attributes: {
+          kind: 0,
+          extends: 'class:core.Doc'
         }
       },
       {
-        "objectId": "class:test.MyClass",
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectSpace": "space:core.Model",
-        "objectClass": "class:core.Attribute",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass',
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectSpace: 'space:core.Model',
+        objectClass: 'class:core.Attribute',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           },
-          "name": "name"
+          name: 'name'
         }
       },
       {
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectId": "class:test.MyClass2",
-        "objectClass": "class:core.Class",
-        "objectSpace": "space:core.Model",
-        "attributes": {
-          "kind": 0,
-          "extends": "class:test.MyClass"
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectId: 'class:test.MyClass2',
+        objectClass: 'class:core.Class',
+        objectSpace: 'space:core.Model',
+        attributes: {
+          kind: 0,
+          extends: 'class:test.MyClass'
         }
       },
       {
-        "objectId": "class:test.MyClass2",
-        "_class": "class:core.TxCreateDoc",
-        "space": "space:core.Tx",
-        "modifiedBy": "account:core.System",
-        "modifiedOn": 0,
-        "objectSpace": "space:core.Model",
-        "objectClass": "class:core.Attribute",
-        "attributes": {
-          "type": {
-            "_class": "class:core.TypeString"
+        objectId: 'class:test.MyClass2',
+        _class: 'class:core.TxCreateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'account:core.System',
+        modifiedOn: 0,
+        objectSpace: 'space:core.Model',
+        objectClass: 'class:core.Attribute',
+        attributes: {
+          type: {
+            _class: 'class:core.TypeString'
           },
-          "name": "lastName"
+          name: 'lastName'
         }
       }
     ]
