@@ -16,35 +16,29 @@
 import core, {
   Client,
   createClient,
-  Data,
   Doc,
+  DocumentUpdate,
   generateId,
   Hierarchy,
-  DocumentUpdate,
   Ref,
   Space,
   Storage,
-  Tx,
+  TxOperations,
   TxUpdateDoc,
-  withOperations,
-  TxOperations
+  withOperations
 } from '@anticrm/core'
+import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
 import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
 import { DocStorage } from '../storage'
 import { TxStorage } from '../tx'
 import { createTask, createTaskModel, Task, taskIds } from './tasks'
 
-const txesRaw = require('@anticrm/core/src/__tests__/model.tx.json') // eslint-disable-line @typescript-eslint/no-var-requires
-const txes = txesRaw as unknown as Tx[]
+const txes = genMinModel()
 
 createTaskModel(txes)
 
-async function updateDoc<T extends Doc> (
-  storage: Storage,
-  doc: T,
-  operations: DocumentUpdate<T>
-): Promise<void> {
+async function updateDoc<T extends Doc> (storage: Storage, doc: T, operations: DocumentUpdate<T>): Promise<void> {
   const tx: TxUpdateDoc<T> = {
     _id: generateId(),
     _class: core.class.TxUpdateDoc,
@@ -103,9 +97,12 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
-    client = withOperations(core.account.System, await createClient(async (handler) => {
-      return await Promise.resolve(docStorage)
-    }))
+    client = withOperations(
+      core.account.System,
+      await createClient(async (handler) => {
+        return await Promise.resolve(docStorage)
+      })
+    )
   }
 
   beforeEach(async () => {

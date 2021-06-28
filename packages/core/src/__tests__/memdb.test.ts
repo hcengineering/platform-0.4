@@ -18,10 +18,10 @@ import type { Class, Doc, Obj, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import type { Tx } from '../tx'
 import { withOperations } from '../tx'
+import { genMinModel } from './minmodel'
 
-const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = genMinModel()
 
 describe('memdb', () => {
   it('should save all tx', async () => {
@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(12)
+    expect(result.length).toBe(8)
     const result2 = await model.findAll('class:workbench.Application' as Ref<Class<Doc>>, { _id: undefined })
     expect(result2).toHaveLength(0)
   })
@@ -70,7 +70,7 @@ describe('memdb', () => {
     const multipleParam = await model.findAll(core.class.Doc, {
       space: { $in: [core.space.Model, core.space.Tx] }
     })
-    expect(multipleParam.length).toBe(17)
+    expect(multipleParam.length).toBe(10)
   })
 
   it('should push to array', async () => {

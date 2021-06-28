@@ -14,24 +14,29 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc } from '../classes'
-import { connect } from './connection'
+import core from '..'
+import { Space } from '../classes'
 import { createClient } from '../client'
 import { withOperations } from '../tx'
-import core from '..'
+import { connect } from './connection'
 
 describe('client', () => {
   it('client', async () => {
-    const klass = 'class:chunter.Channel' as Ref<Class<Doc>>
+    const klass = core.class.Space
     const client = withOperations(core.account.System, await createClient(connect))
     const result = await client.findAll(klass, {})
     expect(result).toHaveLength(2)
 
-    await client.createDoc(klass, core.space.Model, { private: false })
+    await client.createDoc<Space>(klass, core.space.Model, {
+      private: false,
+      name: 'NewSpace',
+      description: '',
+      members: []
+    })
     const result2 = await client.findAll(klass, {})
     expect(result2).toHaveLength(3)
 
-    await client.createDoc(klass, core.space.Model, { private: false })
+    await client.createDoc(klass, core.space.Model, { private: false, name: 'NewSpace', description: '', members: [] })
     const result3 = await client.findAll(klass, {})
     expect(result3).toHaveLength(4)
   })

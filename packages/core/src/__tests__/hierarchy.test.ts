@@ -13,12 +13,13 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Obj, Doc } from '../classes'
+import { Class, Doc, Obj, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
-import { Tx, TxCreateDoc } from '../tx'
+import { TxCreateDoc } from '../tx'
+import { genMinModel } from './minmodel'
 
-const txes = require('./model.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = genMinModel()
 
 describe('hierarchy', () => {
   it('should build hierarchy', async () => {
