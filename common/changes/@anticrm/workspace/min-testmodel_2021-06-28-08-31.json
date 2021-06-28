@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Use minimal test model",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace",
+  "email": "haiodo@gmail.com"
+}
