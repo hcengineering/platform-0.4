@@ -148,7 +148,7 @@ dependencies:
   '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core-impl': file:projects/plugin-core-impl.tgz_ts-node@10.0.0
   '@rush-temp/prod': file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5
-  '@rush-temp/query': file:projects/query.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/query': file:projects/query.tgz_ts-node@10.0.0
   '@rush-temp/richeditor': file:projects/richeditor.tgz_dbf4af031ea72cadd58e9967f1c25279
   '@rush-temp/rpc': file:projects/rpc.tgz
   '@rush-temp/server': file:projects/server.tgz
@@ -9560,21 +9560,28 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/query.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-FUFR1moimQe8KKYcTic/IExrqVQkW5/zYj4WrIi981arxztYgKX2LG9D9cr99ensL5gOMwBe9CivlCSck2rbEA==, tarball: file:projects/query.tgz}
+  file:projects/query.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-oknLMo81ZkgBjOK+Dq3mwx0G2oplHyWADALZN222diTxhCPYSqY3hCc1jjQd+0A85asxf5trnIZrVxJYPZwRLw==, tarball: file:projects/query.tgz}
     id: file:projects/query.tgz
     name: '@rush-temp/query'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
-      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
       typescript: 4.3.2
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
       - bufferutil
       - canvas
       - supports-color
