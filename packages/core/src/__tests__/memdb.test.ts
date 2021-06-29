@@ -69,7 +69,7 @@ describe('memdb', () => {
     })
     expect(first.length).toBe(1)
     const second = await model.findAll(core.class.Class, {
-      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>] }
+      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>], type: '$in' }
     })
     expect(second.length).toBe(2)
     const incorrectId = await model.findAll(core.class.Class, {
@@ -82,9 +82,41 @@ describe('memdb', () => {
     })
     expect(result.length).toBe(0)
     const multipleParam = await model.findAll(core.class.Doc, {
-      space: { $in: [core.space.Model, core.space.Tx] }
+      space: { $in: [core.space.Model, core.space.Tx], type: '$in' }
     })
     expect(multipleParam.length).toBe(10)
+  })
+
+  it('should query model like params', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) await model.tx(tx)
+    const expectedLength = txes.filter(tx => tx.objectSpace === core.space.Model).length
+    const without = await model.findAll(core.class.Doc, {
+      space: { $like: core.space.Model, type: '$like' }
+    })
+    expect(without).toHaveLength(expectedLength)
+    const begin = await model.findAll(core.class.Doc, {
+      space: { $like: '*Model', type: '$like' }
+    })
+    expect(begin).toHaveLength(expectedLength)
+    const zero = await model.findAll(core.class.Doc, {
+      space: { $like: 'Model', type: '$like' }
+    })
+    expect(zero).toHaveLength(0)
+    const end = await model.findAll(core.class.Doc, {
+      space: { $like: 'space:core.M*', type: '$like' }
+    })
+    expect(end).toHaveLength(expectedLength)
+    const mid = await model.findAll(core.class.Doc, {
+      space: { $like: '*M*de*', type: '$like' }
+    })
+    expect(mid).toHaveLength(expectedLength)
+    const all = await model.findAll(core.class.Doc, {
+      space: { $like: '*Mod*', type: '$like' }
+    })
+    expect(all).toHaveLength(expectedLength)
   })
 
   it('should push to array', async () => {

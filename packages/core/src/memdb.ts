@@ -64,6 +64,26 @@ class MemDb extends TxProcessor {
     }
   }
 
+  private getByIdQuery (query: DocumentQuery<Doc>): Doc[] {
+    const result = []
+    if (typeof query._id === 'string') {
+      const obj = this.objectById.get(query._id)
+      if (obj !== undefined) result.push(obj)
+    } else {
+      switch (query._id?.type) {
+        case '$in': {
+          const ids = query._id.$in
+          for (const id of ids) {
+            const obj = this.objectById.get(id)
+            if (obj !== undefined) result.push(obj)
+          }
+          break
+        }
+      }
+    }
+    return result
+  }
+
   getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
@@ -76,26 +96,13 @@ class MemDb extends TxProcessor {
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
-      const docQuery = query as DocumentQuery<Doc>
-      if (docQuery._id === undefined) {
-        result = []
-      } else if (typeof docQuery._id === 'string') {
-        const obj = this.objectById.get(docQuery._id)
-        result = obj !== undefined ? [obj] : []
-      } else {
-        const ids = docQuery._id.$in ?? []
-        result = []
-        for (const id of ids) {
-          const obj = this.objectById.get(id)
-          if (obj !== undefined) result.push(obj)
-        }
-      }
+      result = this.getByIdQuery(query)
     } else {
       result = this.getObjectsByClass(_class)
     }
 
     for (const key in query) {
-      if (key === '_id') continue
+      if (key === '_id' && (query._id as any)?.$like === undefined) continue
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }

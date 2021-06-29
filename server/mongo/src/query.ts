@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Doc, DocumentQuery, Hierarchy, Obj, Ref, Tx } from '@anticrm/core'
+import { Class, Doc, DocumentQuery, Hierarchy, Obj, Ref, Tx, InSelector, LikeSelector } from '@anticrm/core'
 import { FilterQuery } from 'mongodb'
 
 export function toMongoIdQuery (tx: Tx): FilterQuery<Doc> {
@@ -35,6 +35,12 @@ export function toMongoQuery<T extends Doc> (
   query: DocumentQuery<T>
 ): FilterQuery<T> {
   const mongoQuery: FilterQuery<Doc> = query as FilterQuery<Doc>
+  for (const key in query) {
+    const value = query[key]
+    if (typeof value === 'string') continue
+    mongoQuery[key] = translateQuery(value as InSelector<Ref<T>> | LikeSelector)
+  }
+
   mongoQuery._class = objectClass
   const classes: Ref<Class<Obj>>[] = [objectClass]
 
@@ -44,7 +50,18 @@ export function toMongoQuery<T extends Doc> (
 
   // Find by all classes.
   if (classes.length > 1) {
-    mongoQuery._class = { $in: classes.map((cl) => cl as Ref<Class<Doc>>) }
+    mongoQuery._class = { $in: classes.map((cl) => cl) }
   }
+
+  console.log(mongoQuery)
   return mongoQuery
+}
+
+function translateQuery<T extends Doc> (value: InSelector<Ref<T>> | LikeSelector): any {
+  switch (value.type) {
+    case '$in':
+      return { $in: value.$in }
+    case '$like':
+      return new RegExp(value.$like.split('*').join('.*'))
+  }
 }

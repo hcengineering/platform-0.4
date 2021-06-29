@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 //
 // Copyright © 2020 Anticrm Platform Contributors.
 //
@@ -13,7 +14,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, TxUpdateDoc, ObjQueryType, LikeSelector, InSelector } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -47,40 +48,14 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      const value = (query as any)[key]
-      if (typeof value === 'string') {
-        const criteria = {
-          match: Object()
-        }
-        criteria.match[key] = value
-        criteries.push(criteria)
-      } else {
-        const criteria = {
-          terms: Object()
-        }
-        criteria.terms[key] = (value as QuerySelector<any>).$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
-        criteries.push(criteria)
-      }
+      criteries.push(getCriteria((query as any)[key], key))
     }
 
-    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
-    const criteria = {
-      terms: Object()
-    }
-    criteria.terms._class = classes
-    criteries.push(criteria)
+    criteries.push(this.getClassesTerms(_class))
 
     const domain = this.hierarchy.getDomain(_class)
-    const docQuery = query as DocumentQuery<Doc>
 
-    let filter
-    if (docQuery._id !== undefined) {
-      filter = {
-        ids: {
-          values: typeof docQuery._id === 'string' ? [docQuery._id] : docQuery._id.$in
-        }
-      }
-    }
+    const filter = getIdFilter(query)
 
     const { body } = await this.client.search({
       index: this.workspace,
@@ -141,5 +116,63 @@ export class ElasticStorage extends TxProcessor implements Storage {
     }
     await this.client.update(object)
     await this.client.indices.refresh({ index: this.workspace })
+  }
+
+  private getClassesTerms<T extends Doc>(_class: Ref<Class<T>>): any {
+    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const criteria = {
+      terms: Object()
+    }
+    criteria.terms._class = classes
+    return criteria
+  }
+}
+
+function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
+  if (query._id !== undefined) {
+    if (typeof query._id === 'string') {
+      return {
+        ids: {
+          values: [query._id]
+        }
+      }
+    } else if ((query._id as any).$in !== undefined) {
+      return {
+        ids: {
+          values: (query._id as any).$in
+        }
+      }
+    }
+  }
+}
+
+function getCriteria (value: ObjQueryType<Doc>, key: string): any | undefined {
+  if (typeof value === 'string') {
+    const criteria = {
+      match: Object()
+    }
+    criteria.match[key] = value
+    return criteria
+  } else {
+    const selector = value as InSelector<Ref<Doc>> | LikeSelector
+    switch (selector.type) {
+      case '$in': {
+        const criteria = {
+          terms: Object()
+        }
+        criteria.terms[key] = selector.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+        return criteria
+      }
+      case '$like': {
+        const criteria = {
+          wildcard: Object()
+        }
+        criteria.wildcard[key] = {
+          value: selector.$like,
+          case_insensitive: true
+        }
+        return criteria
+      }
+    }
   }
 }

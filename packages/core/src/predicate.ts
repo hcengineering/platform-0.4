@@ -31,12 +31,35 @@ const predicates: Record<string, PredicateFactory> = {
       }
       return result
     }
+  },
+
+  $like: (query: string, propertyKey: string): Predicate => {
+    const likeSymbol = '*'
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = (doc as any)[propertyKey] as string
+        const searchValues = query.split(likeSymbol)
+        let isSuccess = true
+        let startIndex = 0
+        for (const searchValue of searchValues) {
+          const index = value.indexOf(searchValue, startIndex)
+          if (index === -1 || (searchValues[0] !== '' && index > 0 && startIndex === 0)) {
+            isSuccess = false
+            break
+          }
+          startIndex = index + searchValue.length
+        }
+        if (isSuccess) result.push(doc)
+      }
+      return result
+    }
   }
 }
 
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
-  return keys.length === 1 && keys[0].startsWith('$')
+  return keys.length === 2 && ((keys[0].startsWith('$') && keys[1] === 'type') || (keys[1].startsWith('$') && keys[0] === 'type'))
 }
 
 export function createPredicate (o: Record<string, any>, propertyKey: string): Predicate {
