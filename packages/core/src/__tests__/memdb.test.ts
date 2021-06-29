@@ -69,7 +69,7 @@ describe('memdb', () => {
     })
     expect(first.length).toBe(1)
     const second = await model.findAll(core.class.Class, {
-      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>] }
+      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>], type: '$in' }
     })
     expect(second.length).toBe(2)
     const incorrectId = await model.findAll(core.class.Class, {
@@ -82,7 +82,7 @@ describe('memdb', () => {
     })
     expect(result.length).toBe(0)
     const multipleParam = await model.findAll(core.class.Doc, {
-      space: { $in: [core.space.Model, core.space.Tx] }
+      space: { $in: [core.space.Model, core.space.Tx], type: '$in' }
     })
     expect(multipleParam.length).toBe(10)
   })
