@@ -66,7 +66,7 @@ class MemDb extends TxProcessor {
 
   private getByIdQuery (query: DocumentQuery<Doc>): Doc[] {
     const result = []
-    if (query._id === 'string') {
+    if (typeof query._id === 'string') {
       const obj = this.objectById.get(query._id)
       if (obj !== undefined) result.push(obj)
     } else if (query._id !== undefined && '$in' in query._id) {
