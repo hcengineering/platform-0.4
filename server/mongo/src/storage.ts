@@ -23,9 +23,10 @@ import core, {
   Tx,
   TxCreateDoc,
   TxProcessor,
-  TxUpdateDoc
+  TxUpdateDoc,
+  TxRemoveDoc
 } from '@anticrm/core'
-import { Collection, Db, UpdateQuery } from 'mongodb'
+import { Collection, Db, UpdateQuery, FilterQuery } from 'mongodb'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
@@ -34,7 +35,8 @@ import { toMongoIdQuery, toMongoQuery } from './query'
 export class DocStorage extends TxProcessor implements Storage {
   txHandlers = {
     [core.class.TxCreateDoc]: async (tx: Tx) => await this.txCreateDoc(tx as TxCreateDoc<Doc>),
-    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
+    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>),
+    [core.class.TxRemoveDoc]: async (tx: Tx) => await this.txRemoveDoc(tx as TxRemoveDoc<Doc>)
   }
 
   constructor (readonly db: Db, readonly hierarchy: Hierarchy) {
@@ -71,6 +73,15 @@ export class DocStorage extends TxProcessor implements Storage {
       op.$push = $push
     }
     return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
+  }
+
+  async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    const deleteQuery: FilterQuery<Doc> = {
+      _id: tx.objectId,
+      _class: tx.objectClass,
+      space: tx.objectSpace
+    }
+    await this.collection(tx.objectClass).deleteOne(deleteQuery)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {

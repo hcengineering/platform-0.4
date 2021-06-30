@@ -45,6 +45,10 @@ export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   operations: DocumentUpdate<T>
 }
 
+export interface TxRemoveDoc<T extends Doc> extends Tx<T> {
+  objectClass: Ref<Class<T>>
+}
+
 export const DOMAIN_TX = 'tx' as Domain
 
 interface WithTx {
@@ -58,6 +62,8 @@ export class TxProcessor implements WithTx {
         return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
       case core.class.TxUpdateDoc:
         return await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
+      case core.class.TxRemoveDoc:
+        return await this.txRemoveDoc(tx as TxRemoveDoc<Doc>)
     }
   }
 
@@ -74,6 +80,7 @@ export class TxProcessor implements WithTx {
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {}
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {}
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {}
 }
 
 export interface TxOperations {
@@ -84,6 +91,7 @@ export interface TxOperations {
     objectId: Ref<T>,
     operations: DocumentUpdate<T>
   ) => Promise<void>
+  removeDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
 }
 
 export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T): T & TxOperations {
@@ -125,6 +133,24 @@ export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T
       objectClass: _class,
       objectSpace: space,
       operations
+    }
+    await storage.tx(tx)
+  }
+
+  result.removeDoc = async <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>
+  ): Promise<void> => {
+    const tx: TxRemoveDoc<T> = {
+      _id: generateId(),
+      _class: core.class.TxRemoveDoc,
+      space: core.space.Tx,
+      modifiedBy: user,
+      modifiedOn: Date.now(),
+      objectId,
+      objectClass: _class,
+      objectSpace: space
     }
     await storage.tx(tx)
   }

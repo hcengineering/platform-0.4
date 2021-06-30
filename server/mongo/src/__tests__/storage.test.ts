@@ -139,6 +139,23 @@ describe('mongo operations', () => {
     expect(tasks[0].rate).toEqual(30)
   })
 
+  it('check remove', async () => {
+    for (let i = 0; i < 10; i++) {
+      await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
+        name: `my-task-${i}`,
+        description: `${i * i}`,
+        rate: 20 + i,
+        comments: []
+      })
+    }
+
+    let r = await client.findAll<Task>(taskIds.class.Task, {})
+    expect(r.length).toEqual(10)
+    await client.removeDoc<Task>(taskIds.class.Task, '' as Ref<Space>, r[0]._id)
+    r = await client.findAll<Task>(taskIds.class.Task, {})
+    expect(r.length).toEqual(9)
+  })
+
   it('update in test', async () => {
     await client.createDoc(taskIds.class.Task, '' as Ref<Space>, createTask('t1', 10, 'test task1'))
     const t1 = (await client.findAll<Task>(taskIds.class.Task, {}))[0]

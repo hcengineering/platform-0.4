@@ -20,7 +20,7 @@ import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
 import { createPredicate, isPredicate } from './predicate'
 import { DocumentQuery, Storage } from './storage'
-import { Tx, TxCreateDoc, TxProcessor, TxUpdateDoc } from './tx'
+import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {
@@ -54,6 +54,14 @@ class MemDb extends TxProcessor {
       return result
     }
     return result
+  }
+
+  private cleanObjectByClass (_class: Ref<Class<Doc>>, _id: Ref<Doc>): void {
+    let result = this.objectsByClass.get(_class)
+    if (result !== undefined) {
+      result = result.filter((cl) => cl._id !== _id)
+      this.objectsByClass.set(_class, result)
+    }
   }
 
   getObject<T extends Doc>(_id: Ref<T>): T {
@@ -100,6 +108,17 @@ class MemDb extends TxProcessor {
     })
     this.objectById.set(doc._id, doc)
   }
+
+  delDoc (_id: Ref<Doc>): void {
+    const doc = this.objectById.get(_id)
+    if (doc === undefined) {
+      throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
+    }
+    this.objectById.delete(_id)
+    this.hierarchy.getAncestors(doc._class).forEach((_class) => {
+      this.cleanObjectByClass(_class, _id)
+    })
+  }
 }
 
 /**
@@ -130,5 +149,9 @@ export class ModelDb extends MemDb implements Storage {
         doc[key] = ops[key]
       }
     }
+  }
+
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    this.delDoc(tx.objectId)
   }
 }
