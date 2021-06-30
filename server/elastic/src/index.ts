@@ -48,7 +48,9 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      criteries.push(getCriteria((query as any)[key], key))
+      for (const criteria of getCriteria((query as any)[key], key)) {
+        criteries.push(criteria)
+      }
     }
 
     criteries.push(this.getClassesTerms(_class))
@@ -56,7 +58,6 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const domain = this.hierarchy.getDomain(_class)
 
     const filter = getIdFilter(query)
-
     const { body } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -146,25 +147,32 @@ function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
   }
 }
 
-function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, key: string): any | undefined {
+function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, key: string): any[] {
+  const result: any[] = []
   if (typeof value !== 'object') {
     const criteria = {
       match: Object()
     }
     criteria.match[key] = value
-    return criteria
+    result.push(criteria)
   } else {
-    const criteria: any = {}
     if (value.$in !== undefined) {
-      criteria.terms = {}
+      const criteria: any = {
+        terms: {}
+      }
       criteria.terms[key] = value.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
-    } else if (value.$like !== undefined) {
-      criteria.wildcard = {}
+      result.push(criteria)
+    }
+    if (value.$like !== undefined) {
+      const criteria: any = {
+        wildcard: {}
+      }
       criteria.wildcard[key] = {
         value: value.$like,
         case_insensitive: true
       }
+      result.push(criteria)
     }
-    return criteria
   }
+  return result
 }
