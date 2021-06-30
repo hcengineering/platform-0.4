@@ -99,11 +99,13 @@ export class SecurityClientStorage implements Storage {
       if (typeof querySpace === 'string') {
         if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
       } else {
-        if ('$in' in querySpace && !querySpace.$in.every((space) => spaces.has(space))) {
+        if ((querySpace.$in?.every((space) => spaces.has(space))) === false) {
           throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
         }
-        if ('$like' in querySpace) {
-          query.space = { $in: [...spaces.values()].filter(p => p.match(querySpace.$like)) }
+        if (querySpace.$like !== undefined) {
+          const like = querySpace.$like
+          const querySpaces = querySpace.$in ?? [...spaces.values()]
+          query.space = { $in: querySpaces.filter(p => p.match(like)) }
         }
       }
     } else {

@@ -18,14 +18,17 @@ import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-import { createPredicate, isPredicate } from './predicate'
+import { createPredicates, isPredicate } from './predicate'
 import { DocumentQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {
-    const pred = createPredicate(value, propertyKey)
-    return pred(objects)
+    const preds = createPredicates(value, propertyKey)
+    for (const pred of preds) {
+      objects = pred(objects)
+    }
+    return objects
   }
   const result: Doc[] = []
   for (const object of objects) {
@@ -69,7 +72,7 @@ class MemDb extends TxProcessor {
     if (typeof query._id === 'string') {
       const obj = this.objectById.get(query._id)
       if (obj !== undefined) result.push(obj)
-    } else if (query._id !== undefined && '$in' in query._id) {
+    } else if (query._id?.$in !== undefined) {
       const ids = query._id.$in
       for (const id of ids) {
         const obj = this.objectById.get(id)

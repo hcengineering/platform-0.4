@@ -17,16 +17,12 @@ import type { Class, Doc, Ref } from './classes'
 import type { Tx } from './tx'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type InSelector<T> = {
-  $in: T[]
+export type QuerySelector<T> = {
+  $in?: T[]
+  $like?: string
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type LikeSelector = {
-  $like: string
-}
-
-export type ObjQueryType<T> = T | InSelector<T> | LikeSelector
+export type ObjQueryType<T> = T | QuerySelector<T>
 
 export type DocumentQuery<T extends Doc> = {
   [P in keyof T]?: ObjQueryType<T[P]>

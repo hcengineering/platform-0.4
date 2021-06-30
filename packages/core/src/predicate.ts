@@ -59,12 +59,16 @@ const predicates: Record<string, PredicateFactory> = {
 
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
-  return keys.length === 1 && keys[0].startsWith('$')
+  return keys.every(key => key.startsWith('$'))
 }
 
-export function createPredicate (o: Record<string, any>, propertyKey: string): Predicate {
+export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
   const keys = Object.keys(o)
-  const factory = predicates[keys[0]]
-  if (factory === undefined) throw new Error('unknown predicate: ' + keys[0])
-  return factory(o[keys[0]], propertyKey)
+  const result: Predicate[] = []
+  for (const key of keys) {
+    const factory = predicates[key]
+    if (factory === undefined) throw new Error('unknown predicate: ' + keys[0])
+    result.push(factory(o[key], propertyKey))
+  }
+  return result
 }
