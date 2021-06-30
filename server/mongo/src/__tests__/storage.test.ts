@@ -139,10 +139,10 @@ describe('mongo operations', () => {
     const first = await client.findAll<Task>(taskIds.class.Task, { name: 'my-task-0' })
     expect(first.length).toEqual(1)
 
-    const second = await client.findAll<Task>(taskIds.class.Task, { name: { $like: '*0', type: '$like' } })
+    const second = await client.findAll<Task>(taskIds.class.Task, { name: { $like: '*0' } })
     expect(second.length).toEqual(5)
 
-    const third = await client.findAll<Task>(taskIds.class.Task, { rate: { $in: [25, 26, 27, 28], type: '$in' } })
+    const third = await client.findAll<Task>(taskIds.class.Task, { rate: { $in: [25, 26, 27, 28] } })
     expect(third.length).toEqual(4)
   })
 

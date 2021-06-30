@@ -69,7 +69,7 @@ describe('memdb', () => {
     })
     expect(first.length).toBe(1)
     const second = await model.findAll(core.class.Class, {
-      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>], type: '$in' }
+      _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>] }
     })
     expect(second.length).toBe(2)
     const incorrectId = await model.findAll(core.class.Class, {
@@ -82,7 +82,7 @@ describe('memdb', () => {
     })
     expect(result.length).toBe(0)
     const multipleParam = await model.findAll(core.class.Doc, {
-      space: { $in: [core.space.Model, core.space.Tx], type: '$in' }
+      space: { $in: [core.space.Model, core.space.Tx] }
     })
     expect(multipleParam.length).toBe(10)
   })
@@ -94,27 +94,27 @@ describe('memdb', () => {
     for (const tx of txes) await model.tx(tx)
     const expectedLength = txes.filter(tx => tx.objectSpace === core.space.Model).length
     const without = await model.findAll(core.class.Doc, {
-      space: { $like: core.space.Model, type: '$like' }
+      space: { $like: core.space.Model }
     })
     expect(without).toHaveLength(expectedLength)
     const begin = await model.findAll(core.class.Doc, {
-      space: { $like: '*Model', type: '$like' }
+      space: { $like: '*Model' }
     })
     expect(begin).toHaveLength(expectedLength)
     const zero = await model.findAll(core.class.Doc, {
-      space: { $like: 'Model', type: '$like' }
+      space: { $like: 'Model' }
     })
     expect(zero).toHaveLength(0)
     const end = await model.findAll(core.class.Doc, {
-      space: { $like: 'space:core.M*', type: '$like' }
+      space: { $like: 'space:core.M*' }
     })
     expect(end).toHaveLength(expectedLength)
     const mid = await model.findAll(core.class.Doc, {
-      space: { $like: '*M*de*', type: '$like' }
+      space: { $like: '*M*de*' }
     })
     expect(mid).toHaveLength(expectedLength)
     const all = await model.findAll(core.class.Doc, {
-      space: { $like: '*Mod*', type: '$like' }
+      space: { $like: '*Mod*' }
     })
     expect(all).toHaveLength(expectedLength)
   })

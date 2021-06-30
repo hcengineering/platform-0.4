@@ -18,13 +18,11 @@ import type { Tx } from './tx'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type InSelector<T> = {
-  type: '$in'
   $in: T[]
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type LikeSelector = {
-  type: '$like'
   $like: string
 }
 

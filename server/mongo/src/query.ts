@@ -58,10 +58,6 @@ export function toMongoQuery<T extends Doc> (
 }
 
 function translateQuery<T extends Doc> (value: InSelector<Ref<T>> | LikeSelector): any {
-  switch (value.type) {
-    case '$in':
-      return { $in: value.$in }
-    case '$like':
-      return new RegExp(value.$like.split('*').join('.*'))
-  }
+  if ('$in' in value) return { $in: value.$in }
+  if ('$like' in value) return new RegExp(value.$like.split('*').join('.*'))
 }

@@ -132,7 +132,7 @@ describe('security', () => {
     })
 
     await securityStorage
-      .findAll('task' as Ref<Class<Doc>>, { space: { $in: [objectTx.objectSpace], type: '$in' } })
+      .findAll('task' as Ref<Class<Doc>>, { space: { $in: [objectTx.objectSpace] } })
       .catch((error: Error) => {
         expect(error.message).toBe('ERROR: security.AccessDenied')
       })

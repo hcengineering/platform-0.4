@@ -155,24 +155,22 @@ function getCriteria (value: ObjQueryType<Doc>, key: string): any | undefined {
     return criteria
   } else {
     const selector = value as InSelector<Ref<Doc>> | LikeSelector
-    switch (selector.type) {
-      case '$in': {
-        const criteria = {
-          terms: Object()
-        }
-        criteria.terms[key] = selector.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
-        return criteria
+    if ('$in' in selector) {
+      const criteria = {
+        terms: Object()
       }
-      case '$like': {
-        const criteria = {
-          wildcard: Object()
-        }
-        criteria.wildcard[key] = {
-          value: selector.$like,
-          case_insensitive: true
-        }
-        return criteria
+      criteria.terms[key] = selector.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+      return criteria
+    }
+    if ('$like' in selector) {
+      const criteria = {
+        wildcard: Object()
       }
+      criteria.wildcard[key] = {
+        value: selector.$like,
+        case_insensitive: true
+      }
+      return criteria
     }
   }
 }
