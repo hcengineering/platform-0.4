@@ -28,7 +28,22 @@ export type Query<T> = {
 
 export type DocumentQuery<T extends Doc> = Query<T>
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type FindOptions<T extends Doc> = {
+  limit?: number
+  sort?: SortingQuery<T>
+}
+
+export type SortingQuery<T extends Doc> = {
+  [P in keyof T]?: SortingOrder
+}
+
+export enum SortingOrder {
+  Ascending = 1,
+  Descending = -1
+}
+
 export interface Storage {
-  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
+  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>) => Promise<T[]>
   tx: (tx: Tx) => Promise<void>
 }

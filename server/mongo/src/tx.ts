@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, DocumentQuery, Hierarchy, Storage, Tx } from '@anticrm/core'
+import { Class, DocumentQuery, FindOptions, Hierarchy, Storage, Tx } from '@anticrm/core'
 import { Doc, Ref } from '@anticrm/core/src/classes'
 import { Collection } from 'mongodb'
 import { toMongoQuery } from './query'
@@ -31,8 +31,11 @@ export class TxStorage implements Storage {
     await this.db.insertOne(tx)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
-    return await this.db.find(mongoQuery).toArray()
+    let cursor = this.db.find(mongoQuery)
+    if (options?.sort !== undefined) cursor = cursor.sort(options.sort)
+    if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
+    return await cursor.toArray()
   }
 }

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator, FindOptions, SortingQuery, SortingOrder } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -21,6 +21,17 @@ export interface ConnectionParams {
   url: string
   username: string
   password: string
+}
+
+function createSort<T extends Doc> (sort: SortingQuery<T> | undefined): any {
+  if (sort !== undefined) {
+    const result: any[] = []
+    for (const key in sort) {
+      const direction = sort[key] === SortingOrder.Ascending ? 'asc' : 'desc'
+      result.push({ [key]: { order: direction, mode: 'median' } })
+    }
+    return result
+  }
 }
 
 export class ElasticStorage extends TxProcessor implements Storage {
@@ -41,7 +52,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     const result: T[] = []
 
     const criteries = []
@@ -82,6 +93,8 @@ export class ElasticStorage extends TxProcessor implements Storage {
       }
     }
 
+    const sort = createSort(options?.sort)
+    console.log(sort)
     const { body } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -92,7 +105,8 @@ export class ElasticStorage extends TxProcessor implements Storage {
             filter: filter
           }
         },
-        size: 1000
+        sort: sort,
+        size: options?.limit ?? 1000
       }
     })
 

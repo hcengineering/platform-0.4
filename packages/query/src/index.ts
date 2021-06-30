@@ -13,13 +13,14 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
-import { TxProcessor } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator } from '@anticrm/core'
+import { TxProcessor, resultSort } from '@anticrm/core'
 
 interface Query {
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
   result: Doc[] | Promise<Doc[]>
+  options?: FindOptions<Doc>
   callback: (result: Doc[]) => void
 }
 
@@ -49,16 +50,17 @@ export class LiveQuery extends TxProcessor implements Client {
     return true
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    return await this.client.findAll(_class, query)
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+    return await this.client.findAll(_class, query, options)
   }
 
-  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
-    const result = this.client.findAll(_class, query)
+  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void, options?: FindOptions<T>): () => void {
+    const result = this.client.findAll(_class, query, options)
     const q: Query = {
       _class,
       query,
       result,
+      options,
       callback: callback as (result: Doc[]) => void
     }
     this.queries.push(q)
@@ -69,8 +71,50 @@ export class LiveQuery extends TxProcessor implements Client {
       .catch((err) => {
         console.log('failed to update Live Query: ', err)
       })
+
     return () => {
       this.queries.splice(this.queries.indexOf(q))
+    }
+  }
+
+  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    for (const q of this.queries) {
+      if (q.result instanceof Promise) {
+        q.result = await q.result
+      }
+      const updatedDoc = q.result.find(p => p._id === tx.objectId)
+      if (updatedDoc !== undefined) {
+        const sort = q.options?.sort
+        let needSort = sort?.modifiedBy !== undefined || sort?.modifiedOn !== undefined
+        const ops = tx.operations as any
+        for (const key in ops) {
+          if (key.startsWith('$')) {
+            const operator = getOperator(key)
+            operator(updatedDoc, ops[key])
+            for (const opKey in ops[key]) {
+              if (!needSort && sort !== undefined && opKey in sort) needSort = true
+            }
+          } else {
+            (updatedDoc as any)[key] = ops[key]
+            if (!needSort && sort !== undefined && key in sort) needSort = true
+          }
+        }
+        updatedDoc.modifiedBy = tx.modifiedBy
+        updatedDoc.modifiedOn = tx.modifiedOn
+
+        if (needSort && q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
+
+        if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+          if (q.result[q.options?.limit]._id === updatedDoc._id) {
+            q.result = await this.findAll(q._class, q.query, q.options)
+            q.callback(q.result)
+            return
+          }
+          if (q.result.pop()?._id !== updatedDoc._id) q.callback(q.result)
+        } else {
+          q.callback(q.result)
+        }
+      }
     }
   }
 
@@ -82,7 +126,16 @@ export class LiveQuery extends TxProcessor implements Client {
           q.result = await q.result
         }
         q.result.push(doc)
-        q.callback(q.result)
+
+        if (q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
+
+        if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+          if (q.result.pop()?._id !== doc._id) {
+            q.callback(q.result)
+          }
+        } else {
+          q.callback(q.result)
+        }
       }
     }
   }

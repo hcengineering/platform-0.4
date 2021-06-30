@@ -14,7 +14,7 @@
 //
 
 import type { Doc, Ref, Class, Obj } from './classes'
-import type { Storage, DocumentQuery } from './storage'
+import type { Storage, DocumentQuery, FindOptions } from './storage'
 import type { Tx } from './tx'
 
 import { Hierarchy } from './hierarchy'
@@ -39,12 +39,12 @@ class ClientImpl extends TxProcessor implements Storage {
     return this.hierarchy.isDerived(_class, from)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     const clazz = this.hierarchy.getClass(_class)
     if (clazz.domain === DOMAIN_MODEL) {
-      return await this.model.findAll(_class, query)
+      return await this.model.findAll(_class, query, options)
     }
-    return await this.conn.findAll(_class, query)
+    return await this.conn.findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {

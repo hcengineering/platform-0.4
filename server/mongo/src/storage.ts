@@ -17,6 +17,7 @@ import core, {
   Class,
   Doc,
   DocumentQuery,
+  FindOptions,
   Hierarchy,
   Ref,
   Storage,
@@ -84,8 +85,11 @@ export class DocStorage extends TxProcessor implements Storage {
     await this.collection(tx.objectClass).deleteOne(deleteQuery)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
-    return await this.collection(_class).find(mongoQuery).toArray()
+    let cursor = this.collection(_class).find(mongoQuery)
+    if (options?.sort !== undefined) cursor = cursor.sort(options.sort)
+    if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
+    return await cursor.toArray()
   }
 }

@@ -14,7 +14,7 @@
 //
 
 import type { Class, Obj, Ref, Tx } from '@anticrm/core'
-import core, { Hierarchy, Domain } from '@anticrm/core'
+import core, { Hierarchy, Domain, SortingOrder } from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
 const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
@@ -38,5 +38,29 @@ describe('elastic search', () => {
     expect(third.length).toBe(5)
     const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
+  })
+
+  it('limit and sorting', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const connectionParams = {
+      url: process.env.ELASTIC_URL ?? 'http://localhost:9200',
+      username: process.env.ELASTIC_USERNAME ?? 'elastic',
+      password: process.env.ELASTIC_PASSWORD ?? 'changeme'
+    }
+    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
+    for (const tx of txes) await model.tx(tx)
+
+    const without = await model.findAll(core.class.Space, { })
+    expect(without).toHaveLength(3)
+
+    const limit = await model.findAll(core.class.Space, { }, { limit: 1 })
+    expect(limit).toHaveLength(1)
+
+    const sortAsc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Ascending } })
+    expect(sortAsc[0].name).toMatch('Sp1')
+
+    const sortDesc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Descending } })
+    expect(sortDesc[0].name).toMatch('Sp2')
   })
 })

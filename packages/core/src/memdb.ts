@@ -19,7 +19,7 @@ import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
 import { createPredicate, isPredicate } from './predicate'
-import { DocumentQuery, Storage } from './storage'
+import { DocumentQuery, FindOptions, SortingQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
@@ -34,6 +34,21 @@ function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
     }
   }
   return result
+}
+
+export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuery<T>): void {
+  const sortFunc = (a: any, b: any): number => {
+    for (const key in sortOptions) {
+      if (a[key] > b[key]) {
+        return +sortOptions[key]
+      }
+      if (a[key] < b[key]) {
+        return -sortOptions[key]
+      }
+    }
+    return 0
+  }
+  result.sort(sortFunc)
 }
 
 class MemDb extends TxProcessor {
@@ -73,13 +88,13 @@ class MemDb extends TxProcessor {
     return doc as T
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
       const docQuery = query as DocumentQuery<Doc>
       if (docQuery._id === undefined) {
         result = []
-      } else if (typeof docQuery._id === 'string') {
+      } else if (typeof docQuery._id !== 'object') {
         const obj = this.objectById.get(docQuery._id)
         result = obj !== undefined ? [obj] : []
       } else {
@@ -99,6 +114,10 @@ class MemDb extends TxProcessor {
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }
+
+    if (options?.sort !== undefined) resultSort(result, options?.sort)
+
+    result = result.slice(0, options?.limit)
     return [...result] as T[]
   }
 
@@ -149,6 +168,8 @@ export class ModelDb extends MemDb implements Storage {
         doc[key] = ops[key]
       }
     }
+    doc.modifiedBy = tx.modifiedBy
+    doc.modifiedOn = tx.modifiedOn
   }
 
   protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
