@@ -154,13 +154,12 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
     criteria.match[key] = value
     return criteria
   } else {
-    const criteria = {
-      terms: Object(),
-      wildcard: Object()
-    }
+    const criteria: any = {}
     if (value.$in !== undefined) {
+      criteria.terms = {}
       criteria.terms[key] = value.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
     } else if (value.$like !== undefined) {
+      criteria.wildcard = {}
       criteria.wildcard[key] = {
         value: value.$like,
         case_insensitive: true
