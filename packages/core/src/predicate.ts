@@ -59,7 +59,7 @@ const predicates: Record<string, PredicateFactory> = {
 
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
-  return keys.every(key => key.startsWith('$'))
+  return keys.length > 0 && keys.every(key => key.startsWith('$'))
 }
 
 export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
