@@ -59,8 +59,8 @@ export function toMongoQuery<T extends Doc> (
 
 function translateQuery<P extends keyof T, T extends Doc> (value: QuerySelector<P>): any {
   const result: any = {
-    $in: value.$in
   }
+  if (value.$in !== undefined) result.$in = value.$in
   if (value.$like !== undefined) {
     result.$regex = new RegExp(value.$like.split('*').join('.*'))
   }
