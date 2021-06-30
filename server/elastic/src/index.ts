@@ -173,6 +173,7 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
       }
       result.push(criteria)
     }
+    return criteria
   }
   return result
 }
