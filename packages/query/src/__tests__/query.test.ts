@@ -14,10 +14,9 @@
 //
 
 import type { Class, Client, Doc, DocumentQuery, FindOptions, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
-import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations } from '@anticrm/core'
+import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations, SortingOrder } from '@anticrm/core'
 import { genMinModel as getModel } from '@anticrm/core/src/__tests__/minmodel'
 import { LiveQuery } from '..'
-import { SortingOrder } from '../../../core/src'
 import { connect } from './connection'
 
 interface Channel extends Space {
