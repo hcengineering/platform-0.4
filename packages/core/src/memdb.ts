@@ -67,7 +67,7 @@ class MemDb extends TxProcessor {
     }
   }
 
-  private getByIdQuery (query: DocumentQuery<Doc>): Doc[] {
+  private getByIdQuery<T extends Doc> (query: DocumentQuery<T>, _class: Ref<Class<T>>): Doc[] {
     const result = []
     if (typeof query._id === 'string') {
       const obj = this.objectById.get(query._id)
@@ -93,8 +93,8 @@ class MemDb extends TxProcessor {
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
     let result: Doc[]
-    if (Object.prototype.hasOwnProperty.call(query, '_id')) {
-      result = this.getByIdQuery(query)
+    if (Object.prototype.hasOwnProperty.call(query, '_id') && (typeof query._id === 'string' || query._id?.$in !== undefined)) {
+      result = this.getByIdQuery(query, _class)
     } else {
       result = this.getObjectsByClass(_class)
     }

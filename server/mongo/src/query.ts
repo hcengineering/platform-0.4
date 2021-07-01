@@ -37,7 +37,7 @@ export function toMongoQuery<T extends Doc> (
   const mongoQuery: FilterQuery<Doc> = query as FilterQuery<Doc>
   for (const key in query) {
     const value = query[key]
-    if (typeof value === 'string') continue
+    if (typeof value !== 'object') continue
     mongoQuery[key] = translateQuery(value as any)
   }
 

@@ -34,27 +34,29 @@ const predicates: Record<string, PredicateFactory> = {
   },
 
   $like: (query: string, propertyKey: string): Predicate => {
-    const likeSymbol = '*'
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
         const value = (doc as any)[propertyKey] as string
-        const searchValues = query.split(likeSymbol)
-        let isSuccess = true
-        let startIndex = 0
-        for (const searchValue of searchValues) {
-          const index = value.indexOf(searchValue, startIndex)
-          if (index === -1 || (searchValues[0] !== '' && index > 0 && startIndex === 0)) {
-            isSuccess = false
-            break
-          }
-          startIndex = index + searchValue.length
-        }
-        if (isSuccess) result.push(doc)
+        if (checkValue(query, value)) result.push(doc)
       }
       return result
     }
   }
+}
+
+function checkValue (query: string, value: string): boolean {
+  const likeSymbol = '*'
+  const searchValues = query.split(likeSymbol)
+  let startIndex = 0
+  for (const searchValue of searchValues) {
+    const index = value.indexOf(searchValue, startIndex)
+    if (index === -1 || (searchValues[0] !== '' && index > 0 && startIndex === 0)) {
+      return false
+    }
+    startIndex = index + searchValue.length
+  }
+  return true
 }
 
 export function isPredicate (o: Record<string, any>): boolean {
