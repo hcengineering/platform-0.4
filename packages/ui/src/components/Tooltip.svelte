@@ -25,10 +25,6 @@
   <div class="trigger"><slot/></div>
   <div class="tooltip {direction}">
     <Label label={label}/>
-    <div class="tooltip-bg"/>
-    <div class="tooltip-label">
-      <Label label={label}/>
-    </div>
   </div>
 </div>
 
@@ -75,16 +71,17 @@
       &::after {
         content: "";
         position: absolute;
-        width: 15px;
-        height: 15px;
-        background: linear-gradient(-45deg, var(--theme-tooltip-color) 50%, var(--theme-tooltip-color) 40%);
+        width: 14px;
+        height: 14px;
+        background-color: var(--theme-tooltip-color);
         border: 1px solid var(--theme-bg-accent-color);
         border-radius: 0 0 3px;
+        mask-image: linear-gradient(-45deg, rgba(0, 0, 0, 1) 9px, rgba(0, 0, 0, 0) 9.1px);
       }
 
       &.top::after, &.bottom::after {
         left: 50%;
-        margin-left: -8.5px;
+        margin-left: -8px;
       }
       &.top {
         bottom: 100%;
@@ -104,7 +101,7 @@
 
       &.right::after, &.left::after {
         top: 50%;
-        margin-top: -8.5px;
+        margin-top: -8px;
       }
       &.right {
         left: 100%;
@@ -121,26 +118,6 @@
           right: -5px;
           transform: rotate(-45deg);
         }
-      }
-
-      .tooltip-bg, .tooltip-label {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .tooltip-bg {
-        background-color: var(--theme-tooltip-color);
-        border-radius: 8px;
-        z-index: 11;
-      }
-      .tooltip-label {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--theme-caption-color);
-        z-index: 12;
       }
     }
   }
