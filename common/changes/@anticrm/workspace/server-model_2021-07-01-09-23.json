@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Server ModelDb Instance",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace",
+  "email": "haiodo@gmail.com"
+}
