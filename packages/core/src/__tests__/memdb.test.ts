@@ -44,6 +44,20 @@ describe('memdb', () => {
     expect(result2).toHaveLength(0)
   })
 
+  it('should allow delete', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) await hierarchy.tx(tx)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) await model.tx(tx)
+    const result = await model.findAll(core.class.Space, {})
+    expect(result.length).toBe(2)
+
+    const ops = withOperations(core.account.System, model)
+    await ops.removeDoc(result[0]._class, result[0].space, result[0]._id)
+    const result2 = await model.findAll(core.class.Space, {})
+    expect(result2).toHaveLength(1)
+  })
+
   it('should query model with params', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
