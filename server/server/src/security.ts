@@ -6,6 +6,7 @@ import core, {
   DOMAIN_MODEL,
   DOMAIN_TX,
   Hierarchy,
+  ObjQueryType,
   Ref,
   Space,
   Storage,
@@ -77,6 +78,22 @@ export interface ClientInfo {
   tx: (tx: Tx) => void
 }
 
+function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref<Space>>): ObjQueryType<Ref<Space>> {
+  if (typeof querySpace === 'string') {
+    if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+  } else {
+    if ((querySpace.$in?.every((space) => spaces.has(space))) === false) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    }
+    if (querySpace.$like !== undefined) {
+      const regex = new RegExp(querySpace.$like.split('*').join('.*'))
+      const querySpaces = querySpace.$in ?? [...spaces.values()]
+      return { $in: querySpaces.filter(p => p.match(regex)) }
+    }
+  }
+  return querySpace
+}
+
 export class SecurityClientStorage implements Storage {
   constructor (
     readonly security: SecurityModel,
@@ -90,27 +107,12 @@ export class SecurityClientStorage implements Storage {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query)
-    const querySpace = (query as DocumentQuery<Doc>).space
+    const querySpace = query.space
     const spaces = this.security.getSpaces(this.user.accountId)
     if (spaces === undefined || spaces.size === 0) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
-    if (querySpace !== undefined) {
-      if (typeof querySpace === 'string') {
-        if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
-      } else {
-        if ((querySpace.$in?.every((space) => spaces.has(space))) === false) {
-          throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
-        }
-        if (querySpace.$like !== undefined) {
-          const like = querySpace.$like
-          const querySpaces = querySpace.$in ?? [...spaces.values()]
-          query.space = { $in: querySpaces.filter(p => p.match(like)) }
-        }
-      }
-    } else {
-      query.space = { $in: [...spaces.values()] }
-    }
+    query.space = querySpace !== undefined ? query.space = checkQuerySpaces(spaces, querySpace) : query.space = { $in: [...spaces.values()] }
     return await this.workspace.findAll(_class, query)
   }
 
