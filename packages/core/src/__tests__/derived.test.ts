@@ -112,16 +112,14 @@ const pageTitleDD = createDoc<DerivedDataDescriptor<Task, Title>>(core.class.Der
 })
 
 describe('deried data', () => {
-  async function prepare (
-    txes: Tx[]
-  ): Promise<{
-      hierarchy: Hierarchy
-      model: ModelDb
-      processor: DerivedDataProcessor
-      operations: Storage & TxOperations
-      storage: Storage
-      counter: Counter
-    }> {
+  async function prepare (txes: Tx[]): Promise<{
+    hierarchy: Hierarchy
+    model: ModelDb
+    processor: DerivedDataProcessor
+    operations: Storage & TxOperations
+    storage: Storage
+    counter: Counter
+  }> {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
@@ -172,7 +170,7 @@ describe('deried data', () => {
     expect(titles[0].title).toEqual('T-101')
   })
 
-  it('check DD  updatedappear after being updated', async () => {
+  it('check DD updatedappear after being updated', async () => {
     // We need few descriptors to be available
 
     const { operations, model, storage } = await prepare([...dtxes, taskTitleDD])
@@ -317,8 +315,8 @@ describe('deried data', () => {
       description: 'AQ'
     })
     titles = await model.findAll(core.class.Title, {})
-    expect(titles.length).toEqual(4)
-    expect(titles.map((t) => t.title)).toEqual(['AQ', 'AC', 'AD', 'AE']) // <--------- TODO: Update after delete will be available.
+    expect(titles.length).toEqual(1)
+    expect(titles.map((t) => t.title)).toEqual(['AQ'])
   })
   it('check regexp group rule', async () => {
     // We need few descriptors to be available

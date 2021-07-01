@@ -1,47 +1,51 @@
 import { deepEqual } from 'fast-equals'
 import { DerivedData, DerivedDataDescriptor, MappingRule, RuleExpresson } from '.'
-import { Data, Doc, Ref } from '../classes'
+import { Data, Doc } from '../classes'
 import { generateId } from '../utils'
 
 type Descr = DerivedDataDescriptor<Doc, DerivedData>
+export interface DerivedDataOperations {
+  additions: DerivedData[]
+  updates: DerivedData[]
+  deletes: DerivedData[]
+}
+
+function dataEqual (a: DerivedData, b: DerivedData): boolean {
+  const { _id: aId, modifiedOn: mona, ...aData } = a
+  const { _id: bId, modifiedOn: monb, ...bData } = b
+  return deepEqual(aData, bData)
+}
 /**
  * Find same data with old Id.
  */
-export function popByValue (
-  d: DerivedData,
-  values: DerivedData[]
-): { data: DerivedData, oldId: Ref<DerivedData> } | undefined {
-  const { _id: oldId, ...data } = d
-  let pos = 0
-  for (const newValue of values) {
-    const { _id: newId, ...newData } = newValue
-    if (deepEqual(data, newData)) {
-      values.splice(pos, 1)
-      return { data: newValue, oldId } // Return new derived data if old one is found, without id matching.
-    }
-    pos++
+export function popSameValue (d: DerivedData, values: DerivedData[]): boolean {
+  const di = values.findIndex((newValue) => dataEqual(newValue, d))
+  if (di === -1) {
+    return true
   }
-  return undefined
+  values.splice(di, 1)
+  return false // Return new derived data if old one is found, without id matching.
 }
 
-export function findExistingData (
-  oldData: DerivedData[],
-  newData: DerivedData[]
-): { deletes: Map<Ref<DerivedData>, DerivedData>, existing: DerivedData[] } {
-  const results: { deletes: Map<Ref<DerivedData>, DerivedData>, existing: DerivedData[] } = {
-    deletes: new Map(),
-    existing: []
-  }
+export function findExistingData (oldData: DerivedData[], newData: DerivedData[]): DerivedDataOperations {
+  const ops: DerivedDataOperations = { additions: [], updates: [], deletes: [] }
 
-  for (const old of oldData) {
-    const newValue = popByValue(old, newData)
-    if (newValue !== undefined) {
-      results.existing.push(newValue.data) // Same data, but different Id, no actions required.
+  // Check deletes
+  // If same but different Id, no actions required.
+  oldData.forEach((old) => (popSameValue(old, newData) ? ops.deletes.push(old) : 0))
+
+  // Check updates
+  for (const newd of newData) {
+    const oldi = ops.deletes.findIndex((d) => d._class === newd._class)
+    if (oldi !== -1) {
+      const old = ops.deletes.splice(oldi, 1)[0]
+      ops.updates.push({ ...newd, _id: old._id })
     } else {
-      results.deletes.set(old._id, old) // No data in new set.
+      ops.additions.push(newd)
     }
   }
-  return results
+
+  return ops
 }
 
 export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr): T {

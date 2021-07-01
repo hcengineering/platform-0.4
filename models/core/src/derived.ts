@@ -39,9 +39,9 @@ const DOMAIN_REFERENCE = 'references' as Domain
 
 @Model(core.class.DerivedData, core.class.Doc, DOMAIN_MODEL)
 export class TDerivedData extends TDoc implements DerivedData {
-  descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>;
-  objectId!: Ref<Doc>;
-  objectClass!: Ref<Class<Doc>>;
+  descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  objectId!: Ref<Doc>
+  objectClass!: Ref<Class<Doc>>
 }
 
 @Model(core.class.DerivedDataDescriptor, core.class.Doc, DOMAIN_MODEL)

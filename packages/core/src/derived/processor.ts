@@ -1,7 +1,7 @@
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
 import core, { generateId, Storage, Tx, TxOperations, withOperations } from '..'
 import { Resource } from '../../../status/lib'
-import { Account, Class, Data, Doc, Ref } from '../classes'
+import { Account, Class, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
 import { TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
@@ -20,7 +20,6 @@ interface ObjTx {
   objectId: Ref<Doc>
   objectClass: Ref<Class<Doc>>
 }
-
 /**
  * Register derived data mapper globally.
  */
@@ -67,7 +66,7 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     for (const d of descriptors) {
-      let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc, tx.attributes))
+      let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       results = this.withDescrId(results, d._id, tx.objectId, tx.objectClass)
       await this.applyDerivedData([], results, ops)
     }
@@ -97,7 +96,7 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     for (const d of descriptors) {
-      const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc, tx.operations))
+      const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       const oldData = await this.storage.findAll(core.class.DerivedData, {
         objectId: tx.objectId,
         objectClass: tx.objectClass,
@@ -107,12 +106,12 @@ export class DerivedDataProcessor extends TxProcessor {
     }
   }
 
-  async applyRule (d: Descr, tx: ObjTx, doc: CachedDoc, attrs: Partial<Data<Doc>>): Promise<DerivedData[]> {
-    const ruleFields = getRuleFieldValues(sortRules(d), attrs)
+  async applyRule (d: Descr, tx: ObjTx, doc: CachedDoc): Promise<DerivedData[]> {
+    doc.doc = doc.doc ?? (await doc.resolve())
+    const ruleFields = getRuleFieldValues(sortRules(d), doc.doc)
     if (ruleFields.length === 0) {
       return []
     }
-    doc.doc = doc.doc ?? (await doc.resolve())
     return await this.applyRules(d, doc.doc, ruleFields)
   }
 
@@ -137,36 +136,13 @@ export class DerivedDataProcessor extends TxProcessor {
     storage: Storage & TxOperations
   ): Promise<void> {
     // Do diff from old refs to remove only missing.
-    const { deletes, existing } = findExistingData(oldData, newData)
-    const additions = newData.filter((e) => !existing.includes(e))
+    const { additions, updates, deletes } = findExistingData(oldData, newData)
 
-    const stored = Promise.all(additions.map(async (dd) => await this.storeOrReplace(dd, deletes, storage)))
+    const added = Promise.all(additions.map(async (add) => await storage.createDoc(add._class, add.space, add)))
+    const updated = Promise.all(updates.map(async (up) => await storage.updateDoc(up._class, up.space, up._id, up)))
+    const deleted = Promise.all(deletes.map(async (del) => await storage.removeDoc(del._class, del.space, del._id)))
 
-    const deleted = Promise.all(
-      Array.from(deletes.values()).map(async (d) => {
-        // TODO: Perform remove.
-      })
-    )
-    await Promise.all([stored, deleted])
-  }
-
-  private async storeOrReplace (
-    d: DerivedData,
-    deletes: Map<Ref<DerivedData>, DerivedData>,
-    storage: Storage & TxOperations
-  ): Promise<void> {
-    // Let's choose DD items we could override
-    for (const dd of Array.from(deletes.values())) {
-      if (dd._class === d._class) {
-        // We could override data
-        const { _id, ...ddData } = d
-        await storage.updateDoc<DerivedData>(d._class, d.space, dd._id, ddData)
-        deletes.delete(dd._id)
-        return
-      }
-    }
-    // Let's create new one, if we could not found existing one.
-    await storage.createDoc<DerivedData>(d._class, d.space, d)
+    await Promise.all([added, updated, deleted])
   }
 
   private async applyMapper (descriptor: Descr, tx: Tx): Promise<DerivedData[] | undefined> {
@@ -254,7 +230,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectSpace: dbDoc.space,
         attributes: dbDoc
       }
-      const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc, dbDoc))
+      const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       await this.applyDerivedData(Array.from(dbDD), results, ops)
     }
   }
