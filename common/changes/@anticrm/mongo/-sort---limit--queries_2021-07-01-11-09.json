@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "added `sort` & `limit` options",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "bykhov.denis@gmail.com"
+}
