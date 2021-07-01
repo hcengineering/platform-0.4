@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator } from '@anticrm/core'
-import { TxProcessor, resultSort } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery } from '@anticrm/core'
 
 interface Query {
   _class: Ref<Class<Doc>>
@@ -84,36 +83,9 @@ export class LiveQuery extends TxProcessor implements Client {
       }
       const updatedDoc = q.result.find(p => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
-        const sort = q.options?.sort
-        let needSort = sort?.modifiedBy !== undefined || sort?.modifiedOn !== undefined
-        const ops = tx.operations as any
-        for (const key in ops) {
-          if (key.startsWith('$')) {
-            const operator = getOperator(key)
-            operator(updatedDoc, ops[key])
-            for (const opKey in ops[key]) {
-              if (!needSort && sort !== undefined && opKey in sort) needSort = true
-            }
-          } else {
-            (updatedDoc as any)[key] = ops[key]
-            if (!needSort && sort !== undefined && key in sort) needSort = true
-          }
-        }
-        updatedDoc.modifiedBy = tx.modifiedBy
-        updatedDoc.modifiedOn = tx.modifiedOn
-
-        if (needSort && q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
-
-        if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
-          if (q.result[q.options?.limit]._id === updatedDoc._id) {
-            q.result = await this.findAll(q._class, q.query, q.options)
-            q.callback(q.result)
-            return
-          }
-          if (q.result.pop()?._id !== updatedDoc._id) q.callback(q.result)
-        } else {
-          q.callback(q.result)
-        }
+        await this.updateDoc(updatedDoc, tx)
+        this.sort(q, tx)
+        await this.callback(updatedDoc, q)
       }
     }
   }
@@ -143,5 +115,57 @@ export class LiveQuery extends TxProcessor implements Client {
   async tx (tx: Tx): Promise<void> {
     await this.client.tx(tx)
     await super.tx(tx)
+  }
+
+  async updateDoc (updatedDoc: Doc, tx: TxUpdateDoc<Doc>): Promise<void> {
+    const ops = tx.operations as any
+    for (const key in ops) {
+      if (key.startsWith('$')) {
+        const operator = getOperator(key)
+        operator(updatedDoc, ops[key])
+      } else {
+        (updatedDoc as any)[key] = ops[key]
+      }
+    }
+    updatedDoc.modifiedBy = tx.modifiedBy
+    updatedDoc.modifiedOn = tx.modifiedOn
+  }
+
+  private sort (q: Query, tx: TxUpdateDoc<Doc>): void {
+    const sort = q.options?.sort
+    if (sort === undefined) return
+    let needSort = sort.modifiedBy !== undefined || sort.modifiedOn !== undefined
+    if (!needSort) needSort = this.checkNeedSort(sort, tx)
+
+    if (needSort) resultSort(q.result as Doc[], sort)
+  }
+
+  private checkNeedSort (sort: SortingQuery<Doc>, tx: TxUpdateDoc<Doc>): boolean {
+    const ops = tx.operations as any
+    for (const key in ops) {
+      if (key.startsWith('$')) {
+        for (const opKey in ops[key]) {
+          if (opKey in sort) return true
+        }
+      } else {
+        if (key in sort) return true
+      }
+    }
+    return false
+  }
+
+  async callback (updatedDoc: Doc, q: Query): Promise<void> {
+    q.result = q.result as Doc[]
+
+    if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+      if (q.result[q.options?.limit]._id === updatedDoc._id) {
+        q.result = await this.findAll(q._class, q.query, q.options)
+        q.callback(q.result)
+        return
+      }
+      if (q.result.pop()?._id !== updatedDoc._id) q.callback(q.result)
+    } else {
+      q.callback(q.result)
+    }
   }
 }

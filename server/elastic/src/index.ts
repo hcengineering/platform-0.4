@@ -23,21 +23,19 @@ export interface ConnectionParams {
   password: string
 }
 
-function createSort<T extends Doc> (sort: SortingQuery<T> | undefined): any {
-  if (sort !== undefined) {
-    const result: any[] = []
-    for (const key in sort) {
-      const direction = sort[key] === SortingOrder.Ascending ? 'asc' : 'desc'
-      result.push({ [key]: { order: direction, mode: 'median' } })
-    }
-    return result
-  }
+function getSortingDirection (direction: SortingOrder | undefined): string {
+  return direction === SortingOrder.Descending ? 'desc' : 'asc'
+}
+
+function toLowerCase (item: any): any {
+  return typeof item === 'string' ? item.toLowerCase() : item
 }
 
 export class ElasticStorage extends TxProcessor implements Storage {
   private readonly hierarchy: Hierarchy
   private readonly client: Client
   private readonly workspace: string
+  private mappingProfile: any
 
   constructor (hierarchy: Hierarchy, workspace: string, connection: ConnectionParams) {
     super()
@@ -52,13 +50,13 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<P extends keyof T, T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
     const result: T[] = []
 
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      const value = (query as any)[key]
+      const value = query[key]
       if (typeof value === 'string') {
         const criteria = {
           match: Object()
@@ -69,12 +67,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
         const criteria = {
           terms: Object()
         }
-        criteria.terms[key] = (value as QuerySelector<any>).$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+        criteria.terms[key] = (value as QuerySelector<P>).$in?.map((item) => toLowerCase(item))
         criteries.push(criteria)
       }
     }
 
-    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const classes = this.hierarchy.getDescendants(_class).map((item) => toLowerCase(item))
     const criteria = {
       terms: Object()
     }
@@ -93,8 +91,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
       }
     }
 
-    const sort = createSort(options?.sort)
-    console.log(sort)
+    const sort = this.createSort(options?.sort)
     const { body } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -155,5 +152,26 @@ export class ElasticStorage extends TxProcessor implements Storage {
     }
     await this.client.update(object)
     await this.client.indices.refresh({ index: this.workspace })
+  }
+
+  private async createSort<T extends Doc> (sort: SortingQuery<T> | undefined): Promise<Array<Record<string, { order: string, mode: string}>> | undefined> {
+    if (sort !== undefined) {
+      const result: Array<Record<string, { order: string, mode: string}>> = []
+      for (const key in sort) {
+        const name = await this.getName(key)
+        const direction = getSortingDirection(sort[key])
+        result.push({ [name]: { order: direction, mode: 'max' } })
+      }
+      return result
+    }
+  }
+
+  private async getName (key: string): Promise<string> {
+    if (this.mappingProfile === undefined) {
+      const mapping = await this.client.indices.getMapping()
+      this.mappingProfile = mapping.body[this.workspace].mappings.properties
+    }
+    const data = this.mappingProfile[key]
+    return data.type === 'text' ? `${key}.keyword` : key
   }
 }
