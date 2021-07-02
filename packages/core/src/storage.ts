@@ -35,5 +35,6 @@ export interface Storage {
 
 export function likeToRegExp (value: string): RegExp {
   const likeSymbol = '*'
-  return new RegExp(value.split(likeSymbol).join('.*'))
+  const searchString = value.split(likeSymbol).join('.*')
+  return new RegExp(`^${searchString}$`)
 }
