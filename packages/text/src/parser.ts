@@ -4,22 +4,34 @@ import Token = require('markdown-it/lib/token')
 import { MessageNode, MessageNodeType, MessageMarkType, MessageMark } from './model'
 import { addToSet, removeFromSet, sameSet } from './marks'
 
-interface ParsingRule {
-  block?: MessageNodeType
+interface ParsingBlockRule {
+  block: MessageNodeType
   getAttrs?: (tok: Token) => { [key: string]: string }
   noCloseToken?: boolean
-  node?: MessageNodeType
-  mark?: MessageMarkType
 }
+
+interface ParsingNodeRule {
+  node: MessageNodeType
+  getAttrs?: (tok: Token) => { [key: string]: string }
+}
+
+interface ParsingMarkRule {
+  mark: MessageMarkType
+  getAttrs?: (tok: Token) => { [key: string]: string }
+  noCloseToken?: boolean
+}
+
+type HandlerRecord = (state: MarkdownParseState, tok: Token) => void
+type HandlersRecord = Record<string, HandlerRecord >
 
 // ****************************************************************
 // Mark down parser
 // ****************************************************************
-function isText (a: MessageNode): boolean {
-  return a.type === MessageNodeType.text
+function isText (a: MessageNode, b: MessageNode): boolean {
+  return a.type === MessageNodeType.text && b.type === MessageNodeType.text
 }
 function maybeMerge (a: MessageNode, b: MessageNode): MessageNode | undefined {
-  if (isText(a) && isText(b) && sameSet(a.marks, b.marks)) {
+  if (isText(a, b) && sameSet(a.marks, b.marks)) {
     return { ...a, text: (a.text ?? '') + (b.text ?? '') }
   }
   return undefined
@@ -54,61 +66,65 @@ class MarkdownParseState {
     }
   }
 
+  convertRef (m: MessageMark): MessageMark {
+    const ref = (m.attrs.href ?? '') as string
+    const refPrefix = 'ref://'
+    const hashPos = ref.indexOf('#')
+    if (ref.startsWith(refPrefix) && hashPos !== -1) {
+      // Convert any url with ref to reference mark
+      return {
+        type: MessageMarkType.reference,
+        attrs: {
+          id: ref.substring(hashPos + 1),
+          class: 'class:' + ref.substring(refPrefix.length, hashPos)
+        }
+      }
+    }
+    return m
+  }
+
   // : (MessageMark[])
   // Convert linsk to references in case of ref:// schema.
-  convertReferences (marks: MessageMark[]): MessageMark[] {
-    const result: MessageMark[] = []
+  convertReferences (marks: MessageMark[]): MessageMark[] | undefined {
+    let result: MessageMark[] | undefined
     for (let i = 0; i < marks.length; i++) {
+      result = result ?? []
       const m = marks[i]
       if (m.type !== MessageMarkType.link) {
         result.push(m)
         continue
       }
-      if (m.attrs.href !== undefined) {
-        const ref = m.attrs.href as string
-        const refPrefix = 'ref://'
-        const hashPos = ref.indexOf('#')
-        if (ref.startsWith(refPrefix) && hashPos !== -1) {
-          // Convert any url with ref to reference mark
-          result.push({
-            type: MessageMarkType.reference,
-            attrs: {
-              id: ref.substring(hashPos + 1),
-              class: 'class:' + ref.substring(refPrefix.length, hashPos)
-            }
-          })
-        } else {
-          // Not our ref case, just add link
-          result.push(m)
-        }
-      }
+      result.push(this.convertRef(m))
     }
     return result
+  }
+
+  mergeWithLast (nodes: MessageNode[], node: MessageNode): boolean {
+    const last = nodes[nodes.length - 1]
+    let merged: MessageNode | undefined
+    if (last !== undefined && (merged = maybeMerge(last, node)) !== undefined) {
+      nodes[nodes.length - 1] = merged
+      return true
+    }
+    return false
   }
 
   // : (string)
   // Adds the given text to the current position in the document,
   // using the current marks as styling.
-  addText (text: string | undefined): void {
-    if (text === undefined) return
+  addText (text?: string): void {
     const top = this.top()
-    if (top === undefined) {
-      return
-    }
-    const nodes = top.content
-    const last = nodes[nodes.length - 1]
+    if (text === undefined || top === undefined) return
+
     const node: MessageNode = {
       type: MessageNodeType.text,
-      text: text
-    }
-    if (this.marks.length > 0) {
-      node.marks = this.convertReferences(this.marks)
+      text: text,
+      marks: this.convertReferences(this.marks)
     }
 
-    let merged: MessageNode | undefined
-    if (last !== undefined && (merged = maybeMerge(last, node)) !== undefined) {
-      nodes[nodes.length - 1] = merged
-    } else {
+    const nodes = top.content
+
+    if (!this.mergeWithLast(nodes, node)) {
       nodes.push(node)
     }
   }
@@ -126,10 +142,7 @@ class MarkdownParseState {
   }
 
   parseTokens (toks: Token[] | null): void {
-    if (toks === null) {
-      return
-    }
-    for (const tok of toks) {
+    for (const tok of toks ?? []) {
       const handler = this.tokenHandlers[tok.type]
       if (handler === undefined) {
         throw new Error(`Token type '${String(tok.type)} not supported by Markdown parser`)
@@ -171,76 +184,72 @@ class MarkdownParseState {
   }
 }
 
-function attrs (spec: ParsingRule, token: Token): { [key: string]: string } {
+function attrs (spec: ParsingBlockRule | ParsingMarkRule | ParsingNodeRule, token: Token): { [key: string]: string } {
   return spec.getAttrs?.(token) ?? {}
 }
 
 // Code content is represented as a single token with a `content`
 // property in Markdown-it.
-function noCloseToken (spec: ParsingRule, type: any): boolean {
-  return (spec?.noCloseToken ?? false) || type === 'code_inline' || type === 'code_block' || type === 'fence'
+function noCloseToken (spec: ParsingBlockRule | ParsingMarkRule, type: string): boolean {
+  return (spec.noCloseToken ?? false) || ['code_inline', 'code_block', 'fence'].indexOf(type) > 0
 }
 
 function withoutTrailingNewline (str: string): string {
   return str[str.length - 1] === '\n' ? str.slice(0, str.length - 1) : str
 }
 
-function tokenHandlers (tokens: {
-  [key: string]: ParsingRule
-}): Record<string, (state: MarkdownParseState, tok: Token) => void> {
-  const handlers: Record<string, (state: MarkdownParseState, tok: Token) => void> = {}
-
-  function addSpecBlock (spec: ParsingRule, type: string, specBlock: MessageNodeType): void {
-    if (noCloseToken(spec, type)) {
-      handlers[type] = (state: MarkdownParseState, tok: Token) => {
-        state.openNode(specBlock, attrs(spec, tok))
-        state.addText(withoutTrailingNewline(tok.content))
-        state.closeNode()
-      }
-    } else {
-      handlers[type + '_open'] = (state: MarkdownParseState, tok: Token) => state.openNode(specBlock, attrs(spec, tok))
-      handlers[type + '_close'] = (state: MarkdownParseState) => state.closeNode()
-    }
+function addSpecBlock (handlers: HandlersRecord, spec: ParsingBlockRule, type: string, specBlock: MessageNodeType): void {
+  if (noCloseToken(spec, type)) {
+    handlers[type] = newSimpleBlockHandler(specBlock, spec)
+  } else {
+    handlers[type + '_open'] = (state, tok) => state.openNode(specBlock, attrs(spec, tok))
+    handlers[type + '_close'] = (state) => state.closeNode()
   }
-
-  function addMarkBlock (spec: ParsingRule, type: string, specMark: MessageMarkType): void {
-    if (noCloseToken(spec, type)) {
-      handlers[type] = (state: MarkdownParseState, tok: Token) => {
-        state.openMark({ attrs: attrs(spec, tok), type: specMark })
-        state.addText(withoutTrailingNewline(tok.content))
-        state.closeMark(specMark)
-      }
-    } else {
-      handlers[type + '_open'] = (state: MarkdownParseState, tok: Token) =>
-        state.openMark({ type: specMark, attrs: attrs(spec, tok) })
-      handlers[type + '_close'] = (state: MarkdownParseState) => {
-        state.closeMark(specMark)
-      }
-    }
+}
+function newSimpleBlockHandler (specBlock: MessageNodeType, spec: ParsingBlockRule): HandlerRecord {
+  return (state, tok) => {
+    state.openNode(specBlock, attrs(spec, tok))
+    state.addText(withoutTrailingNewline(tok.content))
+    state.closeNode()
   }
+}
 
-  for (const type in tokens) {
-    const spec = tokens[type]
-    const specBlock = spec.block
-    const specNode = spec.node
-    const specMark = spec.mark
-
-    if (specBlock !== undefined) {
-      addSpecBlock(spec, type, specBlock)
-    } else if (specNode !== undefined) {
-      handlers[type] = (state: MarkdownParseState, tok: Token) => state.addNode(specNode, attrs(spec, tok))
-    } else if (specMark !== undefined) {
-      addMarkBlock(spec, type, specMark)
-    } else {
-      throw new RangeError('Unrecognized parsing spec ' + JSON.stringify(spec))
-    }
+function addSpecMark (handlers: HandlersRecord, spec: ParsingMarkRule, type: string, specMark: MessageMarkType): void {
+  if (noCloseToken(spec, type)) {
+    handlers[type] = newSimpleMarkHandler(spec, specMark)
+  } else {
+    handlers[type + '_open'] = (state, tok) => state.openMark({ type: specMark, attrs: attrs(spec, tok) })
+    handlers[type + '_close'] = (state) => state.closeMark(specMark)
   }
+}
+function newSimpleMarkHandler (spec: ParsingMarkRule, specMark: MessageMarkType): HandlerRecord {
+  return (state: MarkdownParseState, tok: Token): void => {
+    state.openMark({ attrs: attrs(spec, tok), type: specMark })
+    state.addText(withoutTrailingNewline(tok.content))
+    state.closeMark(specMark)
+  }
+}
 
-  handlers.text = (state, tok) => state.addText(tok.content)
-  handlers.inline = (state, tok) => state.parseTokens(tok.children)
-  handlers.softbreak = handlers.softbreak ?? ((state: any) => state.addText('\n'))
+function tokenHandlers (tokensBlock: {[key: string]: ParsingBlockRule}, tokensNode: {[key: string]: ParsingNodeRule}, tokensMark: {[key: string]: ParsingMarkRule}): HandlersRecord {
+  const handlers: HandlersRecord = {}
+
+  Object.entries(tokensBlock).forEach(([type, spec]) => addSpecBlock(handlers, spec, type, spec.block))
+  Object.entries(tokensNode).forEach(([type, spec]) => addSpecNode(handlers, type, spec))
+  Object.entries(tokensMark).forEach(([type, spec]) => addSpecMark(handlers, spec, type, spec.mark))
+
+  addTextHandlers(handlers)
 
   return handlers
+}
+
+function addTextHandlers (handlers: HandlersRecord): void {
+  handlers.text = (state, tok) => state.addText(tok.content)
+  handlers.inline = (state, tok) => state.parseTokens(tok.children)
+  handlers.softbreak = handlers.softbreak ?? ((state) => state.addText('\n'))
+}
+
+function addSpecNode (handlers: HandlersRecord, type: string, spec: ParsingNodeRule): void {
+  handlers[type] = (state: MarkdownParseState, tok: Token) => state.addNode(spec.node, attrs(spec, tok))
 }
 
 function tokAttrGet (token: Token, name: string): string | undefined {
@@ -262,7 +271,7 @@ function tokToAttrs (token: Token, ...names: string[]): Record<string, string> {
 }
 
 // ::- A configuration of a Markdown parser. Such a parser uses
-const tokens: { [key: string]: ParsingRule } = {
+const tokensBlock: { [key: string]: ParsingBlockRule } = {
   blockquote: { block: MessageNodeType.blockquote },
   paragraph: { block: MessageNodeType.paragraph },
   list_item: { block: MessageNodeType.list_item },
@@ -283,7 +292,9 @@ const tokens: { [key: string]: ParsingRule } = {
     block: MessageNodeType.code_block,
     getAttrs: (tok: Token) => ({ params: tok.info ?? '' }),
     noCloseToken: true
-  },
+  }
+}
+const tokensNode: { [key: string]: ParsingNodeRule } = {
   hr: { node: MessageNodeType.horizontal_rule },
   image: {
     node: MessageNodeType.image,
@@ -295,8 +306,9 @@ const tokens: { [key: string]: ParsingRule } = {
       return result
     }
   },
-  hardbreak: { node: MessageNodeType.hard_break },
-
+  hardbreak: { node: MessageNodeType.hard_break }
+}
+const tokensMark: { [key: string]: ParsingMarkRule } = {
   em: { mark: MessageMarkType.em },
   strong: { mark: MessageMarkType.strong },
   link: {
@@ -315,7 +327,7 @@ export class MarkdownParser {
 
   constructor () {
     this.tokenizer = MarkdownIt('commonmark', { html: false })
-    this.tokenHandlers = tokenHandlers(tokens)
+    this.tokenHandlers = tokenHandlers(tokensBlock, tokensNode, tokensMark)
   }
 
   parse (text: string): MessageNode {
