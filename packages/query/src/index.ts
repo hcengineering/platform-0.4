@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj } from '@anticrm/core'
+import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, TxRemoveDoc } from '@anticrm/core'
 import { TxProcessor } from '@anticrm/core'
 
 interface Query {
@@ -82,6 +82,19 @@ export class LiveQuery extends TxProcessor implements Client {
           q.result = await q.result
         }
         q.result.push(doc)
+        q.callback(q.result)
+      }
+    }
+  }
+
+  async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    for (const q of this.queries) {
+      if (q.result instanceof Promise) {
+        q.result = await q.result
+      }
+      const index = q.result.findIndex(p => p._id === tx.objectId)
+      if (index > -1) {
+        q.result.splice(index, 1)
         q.callback(q.result)
       }
     }
