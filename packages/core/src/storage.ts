@@ -35,7 +35,7 @@ export type FindOptions<T extends Doc> = {
 }
 
 export type SortingQuery<T extends Doc> = {
-  [P in keyof T]?: SortingOrder
+  [P in keyof T]?: T[P] extends object ? never : SortingOrder
 }
 
 export enum SortingOrder {
