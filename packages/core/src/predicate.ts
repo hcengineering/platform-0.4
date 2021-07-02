@@ -15,6 +15,7 @@
 //
 
 import type { Doc } from './classes'
+import { likeToRegExp } from './storage'
 
 type Predicate = (docs: Doc[]) => Doc[]
 type PredicateFactory = (pred: any, propertyKey: string) => Predicate
@@ -36,27 +37,15 @@ const predicates: Record<string, PredicateFactory> = {
   $like: (query: string, propertyKey: string): Predicate => {
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
+      const regex = likeToRegExp(query)
       for (const doc of docs) {
         const value = (doc as any)[propertyKey] as string
-        if (checkValue(query, value)) result.push(doc)
+        if (regex.test(value)) result.push(doc)
+        regex.lastIndex = 0
       }
       return result
     }
   }
-}
-
-function checkValue (query: string, value: string): boolean {
-  const likeSymbol = '*'
-  const searchValues = query.split(likeSymbol)
-  let startIndex = 0
-  for (const searchValue of searchValues) {
-    const index = value.indexOf(searchValue, startIndex)
-    if (index === -1 || (searchValues[0] !== '' && index > 0 && startIndex === 0)) {
-      return false
-    }
-    startIndex = index + searchValue.length
-  }
-  return true
 }
 
 export function isPredicate (o: Record<string, any>): boolean {

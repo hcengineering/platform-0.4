@@ -32,3 +32,8 @@ export interface Storage {
   findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
   tx: (tx: Tx) => Promise<void>
 }
+
+export function likeToRegExp (value: string): RegExp {
+  const likeSymbol = '*'
+  return new RegExp(value.split(likeSymbol).join('.*'))
+}
