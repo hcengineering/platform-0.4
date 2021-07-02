@@ -69,7 +69,10 @@ export type ClientICECandNotification = Request<[{
 export type JoinResp = Response<{
   peers: Peer[]
   me: Peer
-  screen?: Peer
+  screen?: {
+    peer: Peer
+    owner: string
+  }
 }>
 export type UpdatePeerResp = Response<{
   peer: Peer
@@ -78,7 +81,9 @@ export type LeaveResp = Response<boolean>
 export type TransmitResp = Response<{
   sdp: string
 }>
-export type InitScreenSharingResp = Response<boolean>
+export type InitScreenSharingResp = Response<{
+  peerID: InternalID
+}>
 export type StopScreenSharingResp = Response<boolean>
 
 export type PeerJoinedNotification = Response<{
@@ -96,6 +101,7 @@ export type PeerLeftNotification = Response<{
 export type ScreenSharingStartedNotification = Response<{
   notification: NotificationMethod.ScreenSharingStarted
   params: {
+    peerID: InternalID
     owner: InternalID
   }
 }>

@@ -18,8 +18,6 @@ import {
   NotificationMethod,
   Peer as RawPeer,
   Client,
-  getScreenOwner,
-  makeScreenID,
   JoinResp,
   ReqMethod,
   OutgoingNotifications,
@@ -169,7 +167,7 @@ export class RoomMgr {
 
     const screen = this._screen.get()
     const user = this._user.get()
-    if (screen.internalID !== '' && getScreenOwner(screen.internalID) === user.internalID) {
+    if (screen.owner === user.internalID) {
       this._screen.update(releaseMedia)
     }
   }
@@ -283,11 +281,15 @@ export class RoomMgr {
     )
 
     if (result.screen !== undefined) {
+      const internalID = result.screen.peer.internalID
+      const owner = result.screen.owner
+
       this._screen.update((screen) => ({
         ...screen,
-        internalID: result?.screen?.internalID ?? '',
+        internalID,
         peer: makeWebRTCPeer(),
-        isMediaReady: true
+        isMediaReady: true,
+        owner
       }))
 
       await this.setupPeer(this._screen.get(), () => {}, true)
@@ -345,7 +347,7 @@ export class RoomMgr {
 
     const screen = this._screen.get()
     const user = this._user.get()
-    if (screen.internalID !== '' && getScreenOwner(screen.internalID) === user.internalID) {
+    if (screen.owner === user.internalID) {
       await this.handleScreenSharingFinished()
     }
 
@@ -389,19 +391,19 @@ export class RoomMgr {
       isMediaReady: true
     }))
 
-    await this.client.sendRequest({
+    const {peerID} = await this.client.sendRequest({
       method: ReqMethod.InitScreenSharing,
       params: []
     })
 
-    await this.queue.add(async () => await this.handleScreenSharingStarted(this._user.get().internalID))
+    await this.queue.add(async () => await this.handleScreenSharingStarted(peerID, this._user.get().internalID))
   }
 
   async stopSharingScreen (): Promise<void> {
     const screen = this._screen.get()
     const user = this._user.get()
 
-    if (screen.internalID === '' || getScreenOwner(screen.internalID) !== user.internalID) {
+    if (screen.owner !== user.internalID) {
       return
     }
 
@@ -475,7 +477,7 @@ export class RoomMgr {
           return
         }
         case NotificationMethod.ScreenSharingStarted: {
-          await this.handleScreenSharingStarted(result.params.owner)
+          await this.handleScreenSharingStarted(result.params.peerID, result.params.owner)
 
           return
         }
@@ -502,18 +504,19 @@ export class RoomMgr {
     })
   }
 
-  private async handleScreenSharingStarted (ownerID: string): Promise<void> {
+  private async handleScreenSharingStarted (peerID: string, ownerID: string): Promise<void> {
     this._screen.update((screen) => ({
       ...screen,
-      internalID: makeScreenID(ownerID),
+      internalID: peerID,
       peer: makeWebRTCPeer(),
-      isMediaReady: true
+      isMediaReady: true,
+      owner: ownerID
     }))
 
     const screen = this._screen.get()
     const user = this._user.get()
 
-    await this.setupPeer(screen, () => {}, getScreenOwner(screen.internalID) !== user.internalID)
+    await this.setupPeer(screen, () => {}, screen.owner !== user.internalID)
   }
 
   private async handleScreenSharingFinished (): Promise<void> {
@@ -525,7 +528,8 @@ export class RoomMgr {
       ...screen,
       id: '',
       internalID: '',
-      isMediaReady: false
+      isMediaReady: false,
+      owner: undefined
     }))
 
     if (this._status.get() === 'joined') {

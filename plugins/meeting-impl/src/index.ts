@@ -27,6 +27,7 @@ export interface Peer extends RawPeer {
   peer: RTCPeerConnection
   media: MediaStream
   isMediaReady: boolean
+  owner?: string
 }
 
 export default async (): Promise<MeetingService> => {

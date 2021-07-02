@@ -26,21 +26,13 @@ module.exports = {
  * The `context` parameter provides a log() function.
  * The return value is the updated object.
  */
-function readPackage(pkg, context) {
+function readPackage(packageJson, context) {
 
   // // The karma types have a missing dependency on typings from the log4js package.
-  // if (pkg.name === '@types/karma') {
+  // if (packageJson.name === '@types/karma') {
   //  context.log('Fixed up dependencies for @types/karma');
-  //  pkg.dependencies['log4js'] = '0.6.38';
+  //  packageJson.dependencies['log4js'] = '0.6.38';
   // }
 
-  // Installation script of ws 0.4.32 does some weird things as the result other
-  // packages could be affected by its output, specifically @babel/types
-  // This ws version is kurento-client dependency
-  if (pkg.name === 'websocket-stream' && pkg.version.startsWith('0.')) {
-    context.log('Fix outdated ws dependency version')
-    pkg.dependencies.ws = '1.1.5';
-  }
-
-  return pkg;
+  return packageJson;
 }

@@ -596,13 +596,7 @@
       "packageName": "@anticrm/webrtc",
       "projectFolder": "packages/webrtc",
       "shouldPublish": true
-    },
-    {
-      "packageName": "@anticrm/webrtc-service",
-      "projectFolder": "server/webrtc-service",
-      "shouldPublish": true
     }
-    
 
     // {
     //   /**

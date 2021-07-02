@@ -13,7 +13,7 @@
 
 import { get, Readable, Unsubscriber } from 'svelte/store';
 
-import { makeScreenID, NotificationMethod, ReqMethod } from '@anticrm/webrtc'
+import { NotificationMethod, ReqMethod } from '@anticrm/webrtc'
 import { RoomMgr } from '../room.mgr'
 import { Peer } from '../..';
 
@@ -784,7 +784,8 @@ describe('room manager', () => {
         camEnabled: true
       }
     }
-    const screenID = makeScreenID(joinResp.me.internalID)
+
+    const screenID = 'screen-id'
 
     const mgr = new RoomMgr(client as any)
     const unsubUser = checkStore(
@@ -866,6 +867,12 @@ describe('room manager', () => {
       if (request.method === ReqMethod.Transmit) {
         return {
           sdp: answer
+        }
+      }
+
+      if (request.method === ReqMethod.InitScreenSharing) {
+        return {
+          peerID: screenID
         }
       }
     })
@@ -943,7 +950,7 @@ describe('room manager', () => {
         camEnabled: true
       }
     }
-    const screenID = makeScreenID(joinResp.me.internalID)
+    const screenID = 'sceen-id'
 
     const mgr = new RoomMgr(client as any)
     const unsubUser = checkStore(
@@ -1027,6 +1034,11 @@ describe('room manager', () => {
           sdp: answer
         }
       }
+      if (request.method === ReqMethod.InitScreenSharing) {
+        return {
+          peerID: screenID
+        }
+      }
     })
 
     await mgr.shareScreen()
@@ -1074,7 +1086,7 @@ describe('room manager', () => {
         camEnabled: true
       }
     }
-    const screenID = makeScreenID(joinResp.me.internalID)
+    const screenID = 'screen-id'
 
     const mgr = new RoomMgr(client as any)
     const unsubUser = checkStore(
@@ -1150,6 +1162,11 @@ describe('room manager', () => {
       if (request.method === ReqMethod.Transmit) {
         return {
           sdp: answer
+        }
+      }
+      if (request.method === ReqMethod.InitScreenSharing) {
+        return {
+          peerID: screenID
         }
       }
     })
