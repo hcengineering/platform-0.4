@@ -6,6 +6,7 @@ import core, {
   DOMAIN_MODEL,
   DOMAIN_TX,
   Hierarchy,
+  ModelDb,
   Ref,
   Space,
   Storage,
@@ -18,27 +19,39 @@ import { component, Component, PlatformError, Severity, Status, StatusCode } fro
 
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
+  private readonly model: ModelDb
   private readonly allowedSpaces: Map<Ref<Account>, Set<Ref<Space>>> = new Map<Ref<Account>, Set<Ref<Space>>>()
   private readonly publicSpaces: Set<Ref<Space>> = new Set<Ref<Space>>()
 
-  constructor (hierarchy: Hierarchy) {
+  constructor (hierarchy: Hierarchy, model: ModelDb) {
     super()
     this.hierarchy = hierarchy
+    this.model = model
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    model.findAll(core.class.Space, {}).then(spaces => {
+      for (const space of spaces) {
+        this.addSpace(space)
+      }
+    })
+  }
+
+  private addSpace (space: Space): void {
+    if (!space.private) this.publicSpaces.add(space._id)
+    for (const acc of space.members) {
+      const accountSpaces = this.allowedSpaces.get(acc)
+      if (accountSpaces === undefined) {
+        this.allowedSpaces.set(acc, new Set<Ref<Space>>([space._id]))
+      } else {
+        accountSpaces.add(space._id)
+      }
+    }
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
-      const obj = TxProcessor.createDoc2Doc(tx) as Space
-      if (!obj.private) this.publicSpaces.add(tx.objectId as Ref<Space>)
-
-      for (const acc of obj.members) {
-        const accountSpaces = this.allowedSpaces.get(acc)
-        if (accountSpaces === undefined) {
-          this.allowedSpaces.set(acc, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
-        } else {
-          accountSpaces.add(tx.objectId as Ref<Space>)
-        }
-      }
+      const space = TxProcessor.createDoc2Doc(tx) as Space
+      this.addSpace(space)
     }
   }
 
@@ -55,8 +68,6 @@ export class SecurityModel extends TxProcessor {
       }
     }
   }
-
-  // TODO: Handle update
 
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
     if (space === core.space.Model) return true

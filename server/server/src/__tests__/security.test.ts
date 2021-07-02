@@ -41,6 +41,7 @@ const user: ClientInfo = {
 
 describe('security', () => {
   let db: Storage
+  let model: ModelDb
   let hierarchy: Hierarchy
   let securityStorage: SecurityClientStorage
   let security: SecurityModel
@@ -65,8 +66,8 @@ describe('security', () => {
     for (const tx of txes) hierarchy.tx(tx)
     hierarchy.tx(objectClassTx)
     db = new ModelDb(hierarchy)
-
-    security = new SecurityModel(hierarchy)
+    model = new ModelDb(hierarchy)
+    security = new SecurityModel(hierarchy, model)
     for (const tx of txes) await security.tx(tx)
     await security.tx(objectClassTx)
     securityStorage = new SecurityClientStorage(
