@@ -19,7 +19,7 @@ import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
 import { createPredicate, isPredicate } from './predicate'
-import { DocumentQuery, FindOptions, SortingQuery, Storage } from './storage'
+import { DocumentQuery, FindOptions, FindResult, SortingQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
@@ -84,7 +84,7 @@ class MemDb extends TxProcessor {
     return doc as T
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     let result: Doc[]
     if (Object.prototype.hasOwnProperty.call(query, '_id')) {
       const docQuery = query as DocumentQuery<Doc>
@@ -113,8 +113,9 @@ class MemDb extends TxProcessor {
 
     if (options?.sort !== undefined) resultSort(result, options?.sort)
 
+    const total = result.length
     result = result.slice(0, options?.limit)
-    return [...result] as T[]
+    return Object.assign(result as T[], { total })
   }
 
   addDoc (doc: Doc): void {

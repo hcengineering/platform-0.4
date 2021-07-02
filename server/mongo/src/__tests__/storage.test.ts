@@ -21,6 +21,7 @@ import core, {
   generateId,
   Hierarchy,
   Ref,
+  SortingOrder,
   Space,
   Storage,
   TxOperations,
@@ -165,6 +166,29 @@ describe('mongo operations', () => {
     expect(result).toBeDefined()
     expect(result.length).toEqual(1)
     expect(result[0].comments?.length).toEqual(3)
+  })
+
+  it('limit and sorting', async () => {
+    for (let i = 0; i < 5; i++) {
+      await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
+        name: `my-task-${i}`,
+        description: `${i * i}`,
+        rate: 20 + i,
+        comments: []
+      })
+    }
+
+    const without = await client.findAll(taskIds.class.Task, { })
+    expect(without).toHaveLength(5)
+
+    const limit = await client.findAll(taskIds.class.Task, { }, { limit: 1 })
+    expect(limit).toHaveLength(1)
+
+    const sortAsc = await client.findAll(taskIds.class.Task, { }, { sort: { name: SortingOrder.Ascending } })
+    expect(sortAsc[0].name).toMatch('my-task-0')
+
+    const sortDesc = await client.findAll(taskIds.class.Task, { }, { sort: { name: SortingOrder.Descending } })
+    expect(sortDesc[0].name).toMatch('my-task-4')
   })
 })
 

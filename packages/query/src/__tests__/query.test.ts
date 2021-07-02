@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Client, Doc, DocumentQuery, FindOptions, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
+import type { Class, Client, Doc, DocumentQuery, FindOptions, FindResult, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
 import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations, SortingOrder } from '@anticrm/core'
 import { genMinModel as getModel } from '@anticrm/core/src/__tests__/minmodel'
 import { LiveQuery } from '..'
@@ -229,7 +229,7 @@ class ClientImpl implements Client {
     return this.hierarchy.isDerived(_class, from)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
     if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
     return await this.model.findAll(_class, query, options)

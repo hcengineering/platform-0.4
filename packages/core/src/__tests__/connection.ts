@@ -15,7 +15,7 @@
 
 import type { Ref, Doc, Class } from '../classes'
 import type { Tx } from '../tx'
-import type { Storage, DocumentQuery } from '../storage'
+import type { Storage, DocumentQuery, FindResult } from '../storage'
 import { DOMAIN_TX } from '../tx'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
@@ -35,7 +35,7 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
     await model.tx(tx)
   }
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = hierarchy.getClass(_class).domain
     if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
     return await model.findAll(_class, query)

@@ -1,4 +1,4 @@
-import { Class, Client, createClient as createCoreClient, Doc, DocumentQuery, Ref, Storage, Tx } from '@anticrm/core'
+import { Class, Client, createClient as createCoreClient, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
 import { readResponse, Request, RequestProcessor, Response, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
@@ -30,9 +30,8 @@ export class TestConnection extends RequestProcessor implements Storage {
     }
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    const result = await this.request('findAll', _class, query)
-    return result as T[]
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+    return await this.request('findAll', _class, query) as FindResult<T>
   }
 
   async tx (tx: Tx): Promise<void> {

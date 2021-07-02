@@ -13,14 +13,15 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery, FindResult } from '@anticrm/core'
 
 interface Query {
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
   result: Doc[] | Promise<Doc[]>
+  total: number
   options?: FindOptions<Doc>
-  callback: (result: Doc[]) => void
+  callback: (result: FindResult<Doc>) => void
 }
 
 export class LiveQuery extends TxProcessor implements Client {
@@ -49,7 +50,7 @@ export class LiveQuery extends TxProcessor implements Client {
     return true
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     return await this.client.findAll(_class, query, options)
   }
 
@@ -59,6 +60,7 @@ export class LiveQuery extends TxProcessor implements Client {
       _class,
       query,
       result,
+      total: 0,
       options,
       callback: callback as (result: Doc[]) => void
     }
@@ -98,15 +100,16 @@ export class LiveQuery extends TxProcessor implements Client {
           q.result = await q.result
         }
         q.result.push(doc)
+        q.total++
 
         if (q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
 
         if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
           if (q.result.pop()?._id !== doc._id) {
-            q.callback(q.result)
+            q.callback(Object.assign(q.result, { total: q.total }))
           }
         } else {
-          q.callback(q.result)
+          q.callback(Object.assign(q.result, { total: q.total }))
         }
       }
     }
@@ -159,13 +162,15 @@ export class LiveQuery extends TxProcessor implements Client {
 
     if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
       if (q.result[q.options?.limit]._id === updatedDoc._id) {
-        q.result = await this.findAll(q._class, q.query, q.options)
-        q.callback(q.result)
+        const res = await this.findAll(q._class, q.query, q.options)
+        q.result = res
+        q.total = res.total
+        q.callback(res)
         return
       }
-      if (q.result.pop()?._id !== updatedDoc._id) q.callback(q.result)
+      if (q.result.pop()?._id !== updatedDoc._id) q.callback(Object.assign(q.result, { total: q.total }))
     } else {
-      q.callback(q.result)
+      q.callback(Object.assign(q.result, { total: q.total }))
     }
   }
 }

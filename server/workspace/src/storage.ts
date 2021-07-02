@@ -4,6 +4,7 @@ import core, {
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
+  FindResult,
   Hierarchy,
   Obj,
   Ref,
@@ -34,12 +35,12 @@ export class WorkspaceStorage implements Storage {
     throw new Error(`Tx has no objectClass defined ${tx._class}`)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_TX) {
       return await this.txStore.findAll(_class, query)
     }
-    return domain === DOMAIN_MODEL ? [] : await this.doc.findAll(_class, query)
+    return domain === DOMAIN_MODEL ? Object.assign([], { total: 0 }) : await this.doc.findAll(_class, query)
   }
 
   async tx (tx: Tx): Promise<void> {

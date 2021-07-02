@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator, FindOptions, SortingQuery, SortingOrder } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator, FindOptions, SortingQuery, SortingOrder, FindResult } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -50,7 +50,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<P extends keyof T, T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<P extends keyof T, T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const result: T[] = []
 
     const criteries = []
@@ -107,11 +107,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
       }
     })
 
+    const total = body.hits.total.value
     for (const doc of body.hits.hits) {
       result.push({ _id: doc._id, ...doc._source })
     }
 
-    return result
+    return Object.assign(result, { total })
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {

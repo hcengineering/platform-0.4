@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import type { Class, Doc, DocumentQuery, Ref, Storage, Tx } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
@@ -44,9 +44,8 @@ class WebSocketConnection extends RequestProcessor implements Storage {
     }
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    const result = await this.request('findAll', _class, query)
-    return result as T[]
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+    return await this.request('findAll', _class, query) as FindResult<T>
   }
 
   async tx (tx: Tx): Promise<void> {

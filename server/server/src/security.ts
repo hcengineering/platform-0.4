@@ -6,6 +6,7 @@ import core, {
   DOMAIN_MODEL,
   DOMAIN_TX,
   FindOptions,
+  FindResult,
   Hierarchy,
   Ref,
   Space,
@@ -87,7 +88,7 @@ export class SecurityClientStorage implements Storage {
     readonly clients: Map<string, ClientInfo>
   ) {}
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query, options)
