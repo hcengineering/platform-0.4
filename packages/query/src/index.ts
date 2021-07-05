@@ -115,6 +115,19 @@ export class LiveQuery extends TxProcessor implements Client {
     }
   }
 
+  async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    for (const q of this.queries) {
+      if (q.result instanceof Promise) {
+        q.result = await q.result
+      }
+      const index = q.result.findIndex(p => p._id === tx.objectId)
+      if (index > -1) {
+        q.result.splice(index, 1)
+        q.callback(q.result)
+      }
+    }
+  }
+
   async tx (tx: Tx): Promise<void> {
     await this.client.tx(tx)
     await super.tx(tx)

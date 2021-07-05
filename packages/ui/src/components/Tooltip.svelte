@@ -23,7 +23,9 @@
 
 <div class="container">
   <div class="trigger"><slot/></div>
-  <div class="tooltip {direction}"><Label label={label}/></div>
+  <div class="tooltip {direction}">
+    <Label label={label}/>
+  </div>
 </div>
 
 <style lang="scss">
@@ -53,9 +55,9 @@
       box-sizing: border-box;
       position: absolute;
       padding: 8px;
-      color: #fff;
-      background-color: #2C2C34;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--theme-caption-color);
+      background-color: var(--theme-tooltip-color);
+      border: 1px solid var(--theme-bg-accent-color);
       border-radius: 8px;
       box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
       opacity: 0;
@@ -64,19 +66,22 @@
       user-select: none;
       text-align: center;
       transition-delay: .2s;
+      z-index: 10;
 
       &::after {
         content: "";
         position: absolute;
-        width: 15px;
-        height: 15px;
-        background: linear-gradient(-45deg, rgba(44, 44, 52, 1) 50%, rgba(44, 44, 52, 0) 40%);
+        width: 14px;
+        height: 14px;
+        background-color: var(--theme-tooltip-color);
+        border: 1px solid var(--theme-bg-accent-color);
         border-radius: 0 0 3px;
+        mask-image: linear-gradient(-45deg, rgba(0, 0, 0, 1) 9px, rgba(0, 0, 0, 0) 9.1px);
       }
 
       &.top::after, &.bottom::after {
         left: 50%;
-        margin-left: -7.5px;
+        margin-left: -8px;
       }
       &.top {
         bottom: 100%;
@@ -96,7 +101,7 @@
 
       &.right::after, &.left::after {
         top: 50%;
-        margin-top: -7.5px;
+        margin-top: -8px;
       }
       &.right {
         left: 100%;

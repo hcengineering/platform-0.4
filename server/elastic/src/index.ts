@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, getOperator, FindOptions, SortingQuery, SortingOrder, FindResult } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, TxRemoveDoc, FindOptions, SortingQuery, SortingOrder, FindResult } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -174,5 +174,15 @@ export class ElasticStorage extends TxProcessor implements Storage {
     }
     const data = this.mappingProfile[key]
     return data.type === 'text' ? `${key}.keyword` : key
+  }
+
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    const object: RequestParams.Delete = {
+      id: tx.objectId,
+      index: this.workspace,
+      type: this.hierarchy.getDomain(tx.objectClass)
+    }
+    await this.client.delete(object)
+    await this.client.indices.refresh({ index: this.workspace })
   }
 }

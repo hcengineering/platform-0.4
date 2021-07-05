@@ -121,7 +121,7 @@
     .app {
       height: calc(100vh - #{$status-bar-height});
       min-width: 1200px;
-      min-height: 800px;
+      min-height: 600px;
     }
   }
 </style>
