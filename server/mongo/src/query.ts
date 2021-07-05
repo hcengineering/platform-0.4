@@ -53,7 +53,6 @@ export function toMongoQuery<T extends Doc> (
     mongoQuery._class = { $in: classes.map((cl) => cl) }
   }
 
-  console.log(mongoQuery)
   return mongoQuery
 }
 

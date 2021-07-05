@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc, likeSymbol } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -119,6 +119,16 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.indices.refresh({ index: this.workspace })
   }
 
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    const object: RequestParams.Delete = {
+      id: tx.objectId,
+      index: this.workspace,
+      type: this.hierarchy.getDomain(tx.objectClass)
+    }
+    await this.client.delete(object)
+    await this.client.indices.refresh({ index: this.workspace })
+  }
+
   private getClassesTerms<T extends Doc>(_class: Ref<Class<T>>): any {
     const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
     const criteria = {
@@ -168,21 +178,11 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
         wildcard: {}
       }
       criteria.wildcard[key] = {
-        value: value.$like,
+        value: value.$like.split(likeSymbol).join('*'),
         case_insensitive: true
       }
       result.push(criteria)
     }
   }
   return result
-
-  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
-    const object: RequestParams.Delete = {
-      id: tx.objectId,
-      index: this.workspace,
-      type: this.hierarchy.getDomain(tx.objectClass)
-    }
-    await this.client.delete(object)
-    await this.client.indices.refresh({ index: this.workspace })
-  }
 }
