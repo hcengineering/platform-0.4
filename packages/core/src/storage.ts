@@ -33,6 +33,11 @@ export interface Storage {
   tx: (tx: Tx) => Promise<void>
 }
 
+export function checkLikeQuery (value: string, query: string): boolean {
+  const regex = likeToRegExp(query)
+  return regex.test(value)
+}
+
 export function likeToRegExp (value: string): RegExp {
   const likeSymbol = '*'
   const searchString = value.split(likeSymbol).join('.*')

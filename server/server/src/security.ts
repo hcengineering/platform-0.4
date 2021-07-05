@@ -6,7 +6,7 @@ import core, {
   DOMAIN_MODEL,
   DOMAIN_TX,
   Hierarchy,
-  likeToRegExp,
+  checkLikeQuery,
   ObjQueryType,
   Ref,
   Space,
@@ -87,9 +87,9 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
     if (querySpace.$like !== undefined) {
-      const regex = likeToRegExp(querySpace.$like)
+      const query = querySpace.$like
       const querySpaces = querySpace.$in ?? [...spaces.values()]
-      return { $in: querySpaces.filter(p => regex.test(p)) }
+      return { $in: querySpaces.filter(p => checkLikeQuery(p, query)) }
     }
   }
   return querySpace
