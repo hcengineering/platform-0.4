@@ -6,6 +6,7 @@ import core, {
   DOMAIN_MODEL,
   DOMAIN_TX,
   Hierarchy,
+  ModelDb,
   Ref,
   Space,
   Storage,
@@ -26,19 +27,31 @@ export class SecurityModel extends TxProcessor {
     this.hierarchy = hierarchy
   }
 
+  static async create (hierarchy: Hierarchy, model: ModelDb): Promise<SecurityModel> {
+    const spaces = await model.findAll(core.class.Space, {})
+    const securityModel = new SecurityModel(hierarchy)
+    for (const space of spaces) {
+      securityModel.addSpace(space)
+    }
+    return securityModel
+  }
+
+  addSpace (space: Space): void {
+    if (!space.private) this.publicSpaces.add(space._id)
+    for (const acc of space.members) {
+      const accountSpaces = this.allowedSpaces.get(acc)
+      if (accountSpaces === undefined) {
+        this.allowedSpaces.set(acc, new Set<Ref<Space>>([space._id]))
+      } else {
+        accountSpaces.add(space._id)
+      }
+    }
+  }
+
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
-      const obj = TxProcessor.createDoc2Doc(tx) as Space
-      if (!obj.private) this.publicSpaces.add(tx.objectId as Ref<Space>)
-
-      for (const acc of obj.members) {
-        const accountSpaces = this.allowedSpaces.get(acc)
-        if (accountSpaces === undefined) {
-          this.allowedSpaces.set(acc, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
-        } else {
-          accountSpaces.add(tx.objectId as Ref<Space>)
-        }
-      }
+      const space = TxProcessor.createDoc2Doc(tx) as Space
+      this.addSpace(space)
     }
   }
 
@@ -55,8 +68,6 @@ export class SecurityModel extends TxProcessor {
       }
     }
   }
-
-  // TODO: Handle update
 
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
     if (space === core.space.Model) return true

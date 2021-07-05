@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "security use model",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server",
+  "email": "bykhov.denis@gmail.com"
+}
