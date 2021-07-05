@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Doc, DocumentQuery, Hierarchy, likeToRegExp, Obj, Ref, Tx, QuerySelector } from '@anticrm/core'
+import { Class, Doc, DocumentQuery, Hierarchy, likeSymbol, Obj, Ref, Tx, QuerySelector } from '@anticrm/core'
 import { FilterQuery } from 'mongodb'
 
 export function toMongoIdQuery (tx: Tx): FilterQuery<Doc> {
@@ -60,7 +60,9 @@ function translateQuery<P extends keyof T, T extends Doc> (value: QuerySelector<
   const { $like, ...data } = value
   const result = data as any
   if ($like !== undefined) {
-    result.$regex = likeToRegExp($like)
+    const searchString = $like.split(likeSymbol).join('.*')
+    const regex = RegExp(`^${searchString}$`)
+    result.$regex = regex
   }
   return result
 }

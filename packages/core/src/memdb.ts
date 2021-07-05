@@ -18,26 +18,9 @@ import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-import { createPredicates, isPredicate } from './predicate'
+import { findProperty } from './query'
 import { DocumentQuery, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
-
-function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
-  if (isPredicate(value)) {
-    const preds = createPredicates(value, propertyKey)
-    for (const pred of preds) {
-      objects = pred(objects)
-    }
-    return objects
-  }
-  const result: Doc[] = []
-  for (const object of objects) {
-    if ((object as any)[propertyKey] === value) {
-      result.push(object)
-    }
-  }
-  return result
-}
 
 class MemDb extends TxProcessor {
   protected readonly hierarchy: Hierarchy

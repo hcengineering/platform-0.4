@@ -16,7 +16,6 @@
 import type { Class, Doc, Ref } from './classes'
 import type { Tx } from './tx'
 
-export const likeSymbol = '%'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type QuerySelector<T> = {
   $in?: T[]
@@ -32,14 +31,4 @@ export type DocumentQuery<T extends Doc> = {
 export interface Storage {
   findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
   tx: (tx: Tx) => Promise<void>
-}
-
-export function checkLikeQuery (value: string, query: string): boolean {
-  const regex = likeToRegExp(query)
-  return regex.test(value)
-}
-
-export function likeToRegExp (value: string): RegExp {
-  const searchString = value.split(likeSymbol).join('.*')
-  return new RegExp(`^${searchString}$`)
 }

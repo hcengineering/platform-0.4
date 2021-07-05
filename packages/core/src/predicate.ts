@@ -15,7 +15,7 @@
 //
 
 import type { Doc } from './classes'
-import { checkLikeQuery } from './storage'
+import { checkLikeQuery } from './query'
 
 type Predicate = (docs: Doc[]) => Doc[]
 type PredicateFactory = (pred: any, propertyKey: string) => Predicate
