@@ -98,7 +98,7 @@ describe('workspace', () => {
   it('connect to workspace, check processing', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri }, (hierarchy, storage, model) => {
+    workspace = await Workspace.create(dbId, { mongoDBUri }, async (hierarchy, storage, model) => {
       expect(model.getObject(core.class.Class)).toBeDefined()
       return []
     })

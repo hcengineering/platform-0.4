@@ -26,18 +26,10 @@ export function removeFromSet (markType: MessageMarkType, marks: MessageMark[]):
   return marks.filter((m) => m.type !== markType)
 }
 
-export function sameSet (a: MessageMark[] | undefined, b: MessageMark[] | undefined): boolean {
-  if (a === b) return true
-  if (a === undefined || b === undefined || a.length !== b.length) return false
-
-  for (let i = 0; i < a.length; i++) {
-    if (!markEq(a[i], b[i])) {
-      return false
-    }
-  }
-  return true
+export function sameSet (a?: MessageMark[], b?: MessageMark[]): boolean {
+  return deepEqual(a, b)
 }
 
 export function markEq (first: MessageMark, other: MessageMark): boolean {
-  return first === other || (first.type === other.type && deepEqual(first.attrs, other.attrs))
+  return deepEqual(first, other)
 }

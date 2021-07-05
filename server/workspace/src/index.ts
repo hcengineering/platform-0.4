@@ -10,7 +10,7 @@ export interface TxHandler {
   tx: (tx: Tx) => Promise<void>
 }
 
-export type TxHandlerFactory = (hierarchy: Hierarchy, storage: Storage, model: ModelDb) => TxHandler[]
+export type TxHandlerFactory = (hierarchy: Hierarchy, storage: Storage, model: ModelDb) => Promise<TxHandler[]>
 
 /**
  * Workspace connection options.
@@ -47,7 +47,7 @@ export class Workspace implements Storage {
 
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
-    const handlers: TxHandler[] = txh !== undefined ? [model, ...txh(hierarchy, storage, model)] : [model]
+    const handlers: TxHandler[] = txh !== undefined ? [model, ...await txh(hierarchy, storage, model)] : [model]
     return new Workspace(workspaceId, hierarchy, storage, handlers)
   }
 

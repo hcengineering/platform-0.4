@@ -15,8 +15,8 @@ const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
 
 async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   let security!: SecurityModel
-  const workspace = await Workspace.create(workspaceId, { mongoDBUri: MONGO_URI }, (hierarchy, storage, model) => {
-    security = new SecurityModel(hierarchy)
+  const workspace = await Workspace.create(workspaceId, { mongoDBUri: MONGO_URI }, async (hierarchy, storage, model) => {
+    security = await SecurityModel.create(hierarchy, model)
     return [
       security
       // <<---- Placeholder: Add triggers here

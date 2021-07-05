@@ -175,6 +175,54 @@ describe('server', () => {
 
     expect(md).toEqual(t1)
   })
+
+  it('Check inline block', () => {
+    const t1 = 'Hello `Some code` block'
+    const msg = parseMessageMarkdown(t1)
+    expect(msg.type).toEqual(MessageNodeType.doc)
+    expect(msg.content?.[0].type).toEqual(MessageNodeType.paragraph)
+    expect(msg.content?.[0].content?.length).toEqual(3)
+    expect(msg.content?.[0].content?.[1].marks?.[0].type).toEqual(MessageMarkType.code)
+
+    const md = serializeMessage(msg)
+
+    expect(md).toEqual(t1)
+  })
+
+  it('Check underline heading rule', () => {
+    const t1 = 'Hello\n---\nSome text'
+    const msg = parseMessageMarkdown(t1)
+    expect(msg.type).toEqual(MessageNodeType.doc)
+
+    const md = serializeMessage(msg)
+
+    expect(md).toEqual('## Hello\n\nSome text')
+  })
+
+  it('Check horizontal line', () => {
+    const t1 = 'Hello\n\n---\n\nSome text'
+    const msg = parseMessageMarkdown(t1)
+    expect(msg.type).toEqual(MessageNodeType.doc)
+    expect(msg.content?.length).toEqual(3)
+    expect(msg.content?.[1].type).toEqual(MessageNodeType.horizontal_rule)
+
+    const md = serializeMessage(msg)
+
+    expect(md).toEqual(t1)
+  })
+
+  it('Check big inline block', () => {
+    const t1 = 'Hello ```Some code``` block'
+    const msg = parseMessageMarkdown(t1)
+    expect(msg.type).toEqual(MessageNodeType.doc)
+    expect(msg.content?.[0].type).toEqual(MessageNodeType.paragraph)
+    expect(msg.content?.[0].content?.length).toEqual(3)
+    expect(msg.content?.[0].content?.[1].marks?.[0].type).toEqual(MessageMarkType.code)
+
+    const md = serializeMessage(msg)
+
+    expect(md).toEqual('Hello `Some code` block')
+  })
   it('Check code block language', () => {
     const t1 = "```typescript\n# code block\nprint '3 backticks or'\nprint 'indent 4 spaces'\n```"
     const msg = parseMessageMarkdown(t1)
