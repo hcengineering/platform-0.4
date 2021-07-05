@@ -19,24 +19,24 @@ import { component, Component, PlatformError, Severity, Status, StatusCode } fro
 
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
-  private readonly model: ModelDb
   private readonly allowedSpaces: Map<Ref<Account>, Set<Ref<Space>>> = new Map<Ref<Account>, Set<Ref<Space>>>()
   private readonly publicSpaces: Set<Ref<Space>> = new Set<Ref<Space>>()
 
-  constructor (hierarchy: Hierarchy, model: ModelDb) {
+  constructor (hierarchy: Hierarchy) {
     super()
     this.hierarchy = hierarchy
-    this.model = model
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    model.findAll(core.class.Space, {}).then(spaces => {
-      for (const space of spaces) {
-        this.addSpace(space)
-      }
-    })
   }
 
-  private addSpace (space: Space): void {
+  static async create (hierarchy: Hierarchy, model: ModelDb): Promise<SecurityModel> {
+    const spaces = await model.findAll(core.class.Space, {})
+    const securityModel = new SecurityModel(hierarchy)
+    for (const space of spaces) {
+      securityModel.addSpace(space)
+    }
+    return securityModel
+  }
+
+  addSpace (space: Space): void {
     if (!space.private) this.publicSpaces.add(space._id)
     for (const acc of space.members) {
       const accountSpaces = this.allowedSpaces.get(acc)

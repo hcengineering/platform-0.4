@@ -67,7 +67,7 @@ describe('security', () => {
     hierarchy.tx(objectClassTx)
     db = new ModelDb(hierarchy)
     model = new ModelDb(hierarchy)
-    security = new SecurityModel(hierarchy, model)
+    security = await SecurityModel.create(hierarchy, model)
     for (const tx of txes) await security.tx(tx)
     await security.tx(objectClassTx)
     securityStorage = new SecurityClientStorage(
