@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery, FindResult } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, TxRemoveDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery, FindResult } from '@anticrm/core'
 
 interface Query {
   _class: Ref<Class<Doc>>
@@ -123,7 +123,7 @@ export class LiveQuery extends TxProcessor implements Client {
       const index = q.result.findIndex(p => p._id === tx.objectId)
       if (index > -1) {
         q.result.splice(index, 1)
-        q.callback(q.result)
+        q.callback(Object.assign(q.result, { total: --q.total }))
       }
     }
   }

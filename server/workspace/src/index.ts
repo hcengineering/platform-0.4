@@ -1,4 +1,4 @@
-import { Class, Doc, DocumentQuery, DOMAIN_TX, FindResult, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
+import { ModelDb, Class, Doc, DocumentQuery, DOMAIN_TX, FindResult, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
 import { DocStorage, getMongoClient, TxStorage } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
