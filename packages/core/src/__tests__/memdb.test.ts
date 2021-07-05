@@ -98,7 +98,7 @@ describe('memdb', () => {
     })
     expect(without).toHaveLength(expectedLength)
     const begin = await model.findAll(core.class.Doc, {
-      space: { $like: '*Model' }
+      space: { $like: '%Model' }
     })
     expect(begin).toHaveLength(expectedLength)
     const zero = await model.findAll(core.class.Doc, {
@@ -106,15 +106,15 @@ describe('memdb', () => {
     })
     expect(zero).toHaveLength(0)
     const end = await model.findAll(core.class.Doc, {
-      space: { $like: 'space:core.M*' }
+      space: { $like: 'space:core.M%' }
     })
     expect(end).toHaveLength(expectedLength)
     const mid = await model.findAll(core.class.Doc, {
-      space: { $like: '*M*de*' }
+      space: { $like: '%M%de%' }
     })
     expect(mid).toHaveLength(expectedLength)
     const all = await model.findAll(core.class.Doc, {
-      space: { $like: '*Mod*' }
+      space: { $like: '%Mod%' }
     })
     expect(all).toHaveLength(expectedLength)
   })

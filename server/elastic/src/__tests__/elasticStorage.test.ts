@@ -36,7 +36,7 @@ describe('elastic search', () => {
     expect(second.length).toBe(2)
     const third = await model.findAll(core.class.Space, { name: { $in: ['Sp1', 'Sp2'] } })
     expect(third.length).toBe(2)
-    const like = await model.findAll(core.class.Space, { name: { $like: 'Sp*' } })
+    const like = await model.findAll(core.class.Space, { name: { $like: 'Sp%' } })
     expect(like.length).toBe(2)
     const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
