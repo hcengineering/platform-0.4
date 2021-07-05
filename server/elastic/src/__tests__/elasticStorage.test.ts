@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import core, { Hierarchy, Domain, Class, Obj, Ref, withOperations, SortingOrder } from '@anticrm/core'
+import core, { Hierarchy, Domain, Class, Obj, Ref, withOperations, SortingOrder, Doc } from '@anticrm/core'
 import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
 import { ElasticStorage } from '../index'
 
@@ -54,19 +54,16 @@ describe('elastic search', () => {
     for (const tx of txes) await model.tx(tx)
 
     const without = await model.findAll(core.class.Space, { })
-    expect(without).toHaveLength(3)
+    expect(without).toHaveLength(2)
 
     const limit = await model.findAll(core.class.Space, { }, { limit: 1 })
     expect(limit).toHaveLength(1)
 
-    const sortAsc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Ascending } })
-    expect(sortAsc[0].name).toMatch('general')
+    const sortAsc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Ascending } })
+    expect(sortAsc[0].name).toMatch('Sp1')
 
-    const sortDesc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Descending } })
-    expect(sortDesc[0].name).toMatch('general')
-
-    const sortNumber = await model.findAll(core.class.Space, { }, { limit: 1, sort: { modifiedOn: SortingOrder.Descending } })
-    expect(sortNumber[0].modifiedOn).toEqual(0)
+    const sortDesc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Descending } })
+    expect(sortDesc[0].name).toMatch('Sp2')
   })
 
   it('should allow delete', async () => {

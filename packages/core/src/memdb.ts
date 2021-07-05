@@ -18,17 +18,9 @@ import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-
-export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuery<T>): void {
-  const sortFunc = (a: any, b: any): number => {
-    for (const key in sortOptions) {
-      const result = typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a - b
-      if (result !== 0) return result * (sortOptions[key] as number)
-    }
-    return 0
-  }
-  result.sort(sortFunc)
-}
+import { findProperty, resultSort } from './query'
+import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
+import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 class MemDb extends TxProcessor {
   protected readonly hierarchy: Hierarchy

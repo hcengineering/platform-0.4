@@ -66,7 +66,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
 
     const domain = this.hierarchy.getDomain(_class)
 
-    const sort = this.createSort(options?.sort)
+    const sort = await this.createSort(options?.sort)
     const filter = getIdFilter(query)
     const { body } = await this.client.search({
       index: this.workspace,
@@ -163,7 +163,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
   }
 
   private getClassesTerms<T extends Doc>(_class: Ref<Class<T>>): any {
-    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const classes = this.hierarchy.getDescendants(_class).map((item) => toLowerCase(item))
     const criteria = {
       terms: Object()
     }
@@ -203,7 +203,7 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
       const criteria: any = {
         terms: {}
       }
-      criteria.terms[key] = value.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+      criteria.terms[key] = value.$in?.map((item) => toLowerCase(item))
       result.push(criteria)
     }
     if (value.$like !== undefined) {
