@@ -8,6 +8,9 @@ import core, {
   FindOptions,
   FindResult,
   Hierarchy,
+  checkLikeQuery,
+  ObjQueryType,
+  ModelDb,
   Ref,
   Space,
   Storage,
@@ -28,19 +31,31 @@ export class SecurityModel extends TxProcessor {
     this.hierarchy = hierarchy
   }
 
+  static async create (hierarchy: Hierarchy, model: ModelDb): Promise<SecurityModel> {
+    const spaces = await model.findAll(core.class.Space, {})
+    const securityModel = new SecurityModel(hierarchy)
+    for (const space of spaces) {
+      securityModel.addSpace(space)
+    }
+    return securityModel
+  }
+
+  addSpace (space: Space): void {
+    if (!space.private) this.publicSpaces.add(space._id)
+    for (const acc of space.members) {
+      const accountSpaces = this.allowedSpaces.get(acc)
+      if (accountSpaces === undefined) {
+        this.allowedSpaces.set(acc, new Set<Ref<Space>>([space._id]))
+      } else {
+        accountSpaces.add(space._id)
+      }
+    }
+  }
+
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
-      const obj = TxProcessor.createDoc2Doc(tx) as Space
-      if (!obj.private) this.publicSpaces.add(tx.objectId as Ref<Space>)
-
-      for (const acc of obj.members) {
-        const accountSpaces = this.allowedSpaces.get(acc)
-        if (accountSpaces === undefined) {
-          this.allowedSpaces.set(acc, new Set<Ref<Space>>([tx.objectId as Ref<Space>]))
-        } else {
-          accountSpaces.add(tx.objectId as Ref<Space>)
-        }
-      }
+      const space = TxProcessor.createDoc2Doc(tx) as Space
+      this.addSpace(space)
     }
   }
 
@@ -57,8 +72,6 @@ export class SecurityModel extends TxProcessor {
       }
     }
   }
-
-  // TODO: Handle update
 
   checkSecurity (userId: Ref<Account>, space: Ref<Space>): boolean {
     if (space === core.space.Model) return true
@@ -79,6 +92,22 @@ export interface ClientInfo {
   tx: (tx: Tx) => void
 }
 
+function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref<Space>>): ObjQueryType<Ref<Space>> {
+  if (typeof querySpace === 'string') {
+    if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+  } else {
+    if ((querySpace.$in?.every((space) => spaces.has(space))) === false) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    }
+    if (querySpace.$like !== undefined) {
+      const query = querySpace.$like
+      const querySpaces = querySpace.$in ?? [...spaces.values()]
+      return { $in: querySpaces.filter(p => checkLikeQuery(p, query)) }
+    }
+  }
+  return querySpace
+}
+
 export class SecurityClientStorage implements Storage {
   constructor (
     readonly security: SecurityModel,
@@ -97,17 +126,7 @@ export class SecurityClientStorage implements Storage {
     if (spaces === undefined || spaces.size === 0) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
-    if (querySpace !== undefined) {
-      if (typeof querySpace === 'string') {
-        if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
-      } else {
-        if (querySpace.$in?.every((space) => spaces.has(space)) === false) {
-          throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
-        }
-      }
-    } else {
-      ;(query as any).space = { $in: [...spaces.values()] }
-    }
+    query.space = querySpace !== undefined ? query.space = checkQuerySpaces(spaces, querySpace) : query.space = { $in: [...spaces.values()] }
     return await this.workspace.findAll(_class, query, options)
   }
 

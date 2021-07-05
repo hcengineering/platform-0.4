@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 //
 // Copyright © 2020 Anticrm Platform Contributors.
 //
@@ -13,7 +14,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, QuerySelector, TxUpdateDoc, TxRemoveDoc, FindOptions, SortingQuery, SortingOrder, FindResult } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc, FindOptions, SortingQuery, SortingOrder, FindResult, likeSymbol } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -50,48 +51,23 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<P extends keyof T, T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const result: T[] = []
 
     const criteries = []
     for (const key in query) {
       if (key === '_id') continue
-      const value = query[key]
-      if (typeof value === 'string') {
-        const criteria = {
-          match: Object()
-        }
-        criteria.match[key] = value
-        criteries.push(criteria)
-      } else {
-        const criteria = {
-          terms: Object()
-        }
-        criteria.terms[key] = (value as QuerySelector<P>).$in?.map((item) => toLowerCase(item))
+      for (const criteria of getCriteria((query as any)[key], key)) {
         criteries.push(criteria)
       }
     }
 
-    const classes = this.hierarchy.getDescendants(_class).map((item) => toLowerCase(item))
-    const criteria = {
-      terms: Object()
-    }
-    criteria.terms._class = classes
-    criteries.push(criteria)
+    criteries.push(this.getClassesTerms(_class))
 
     const domain = this.hierarchy.getDomain(_class)
-    const docQuery = query as DocumentQuery<Doc>
-
-    let filter
-    if (docQuery._id !== undefined) {
-      filter = {
-        ids: {
-          values: typeof docQuery._id === 'string' ? [docQuery._id] : docQuery._id.$in
-        }
-      }
-    }
 
     const sort = this.createSort(options?.sort)
+    const filter = getIdFilter(query)
     const { body } = await this.client.search({
       index: this.workspace,
       type: domain,
@@ -185,4 +161,61 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.delete(object)
     await this.client.indices.refresh({ index: this.workspace })
   }
+
+  private getClassesTerms<T extends Doc>(_class: Ref<Class<T>>): any {
+    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const criteria = {
+      terms: Object()
+    }
+    criteria.terms._class = classes
+    return criteria
+  }
+}
+
+function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
+  if (query._id !== undefined) {
+    if (typeof query._id === 'string') {
+      return {
+        ids: {
+          values: [query._id]
+        }
+      }
+    } else if ((query._id as any).$in !== undefined) {
+      return {
+        ids: {
+          values: (query._id as any).$in
+        }
+      }
+    }
+  }
+}
+
+function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, key: string): any[] {
+  const result: any[] = []
+  if (typeof value !== 'object') {
+    const criteria = {
+      match: Object()
+    }
+    criteria.match[key] = value
+    result.push(criteria)
+  } else {
+    if (value.$in !== undefined) {
+      const criteria: any = {
+        terms: {}
+      }
+      criteria.terms[key] = value.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+      result.push(criteria)
+    }
+    if (value.$like !== undefined) {
+      const criteria: any = {
+        wildcard: {}
+      }
+      criteria.wildcard[key] = {
+        value: value.$like.split(likeSymbol).join('*'),
+        case_insensitive: true
+      }
+      result.push(criteria)
+    }
+  }
+  return result
 }

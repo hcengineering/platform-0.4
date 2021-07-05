@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "changed txhandlerfactory to async",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace",
+  "email": "bykhov.denis@gmail.com"
+}

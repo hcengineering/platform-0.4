@@ -18,23 +18,6 @@ import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-import { createPredicate, isPredicate } from './predicate'
-import { DocumentQuery, FindOptions, FindResult, SortingQuery, Storage } from './storage'
-import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
-
-function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
-  if (isPredicate(value)) {
-    const pred = createPredicate(value, propertyKey)
-    return pred(objects)
-  }
-  const result: Doc[] = []
-  for (const object of objects) {
-    if ((object as any)[propertyKey] === value) {
-      result.push(object)
-    }
-  }
-  return result
-}
 
 export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuery<T>): void {
   const sortFunc = (a: any, b: any): number => {
@@ -75,6 +58,21 @@ class MemDb extends TxProcessor {
     }
   }
 
+  private getByIdQuery<T extends Doc> (query: DocumentQuery<T>, _class: Ref<Class<T>>): Doc[] {
+    const result = []
+    if (typeof query._id === 'string') {
+      const obj = this.objectById.get(query._id)
+      if (obj !== undefined) result.push(obj)
+    } else if (query._id?.$in !== undefined) {
+      const ids = query._id.$in
+      for (const id of ids) {
+        const obj = this.objectById.get(id)
+        if (obj !== undefined) result.push(obj)
+      }
+    }
+    return result
+  }
+
   getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
@@ -86,27 +84,14 @@ class MemDb extends TxProcessor {
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     let result: Doc[]
-    if (Object.prototype.hasOwnProperty.call(query, '_id')) {
-      const docQuery = query as DocumentQuery<Doc>
-      if (docQuery._id === undefined) {
-        result = []
-      } else if (typeof docQuery._id !== 'object') {
-        const obj = this.objectById.get(docQuery._id)
-        result = obj !== undefined ? [obj] : []
-      } else {
-        const ids = docQuery._id.$in ?? []
-        result = []
-        for (const id of ids) {
-          const obj = this.objectById.get(id)
-          if (obj !== undefined) result.push(obj)
-        }
-      }
+    if (Object.prototype.hasOwnProperty.call(query, '_id') && (typeof query._id === 'string' || query._id?.$in !== undefined)) {
+      result = this.getByIdQuery(query, _class)
     } else {
       result = this.getObjectsByClass(_class)
     }
 
     for (const key in query) {
-      if (key === '_id') continue
+      if (key === '_id' && (query._id as any)?.$like === undefined) continue
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }

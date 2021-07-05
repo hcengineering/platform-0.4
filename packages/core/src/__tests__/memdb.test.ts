@@ -88,6 +88,38 @@ describe('memdb', () => {
     expect(multipleParam.length).toBe(11)
   })
 
+  it('should query model like params', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) await model.tx(tx)
+    const expectedLength = txes.filter(tx => tx.objectSpace === core.space.Model).length
+    const without = await model.findAll(core.class.Doc, {
+      space: { $like: core.space.Model }
+    })
+    expect(without).toHaveLength(expectedLength)
+    const begin = await model.findAll(core.class.Doc, {
+      space: { $like: '%Model' }
+    })
+    expect(begin).toHaveLength(expectedLength)
+    const zero = await model.findAll(core.class.Doc, {
+      space: { $like: 'Model' }
+    })
+    expect(zero).toHaveLength(0)
+    const end = await model.findAll(core.class.Doc, {
+      space: { $like: 'space:core.M%' }
+    })
+    expect(end).toHaveLength(expectedLength)
+    const mid = await model.findAll(core.class.Doc, {
+      space: { $like: '%M%de%' }
+    })
+    expect(mid).toHaveLength(expectedLength)
+    const all = await model.findAll(core.class.Doc, {
+      space: { $like: '%Mod%' }
+    })
+    expect(all).toHaveLength(expectedLength)
+  })
+
   it('should push to array', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) await hierarchy.tx(tx)
