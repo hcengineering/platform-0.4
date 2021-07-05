@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import { Class, Obj, Ref, Tx, withOperations } from '@anticrm/core'
-import core, { Hierarchy, Domain } from '@anticrm/core'
+import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
+import core, { Hierarchy, Domain, Ref, Class, Doc, Obj, withOperations } from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
-const txes = require('./core.tx.json') as Tx[] // eslint-disable-line @typescript-eslint/no-var-requires
+const txes = genMinModel()
 
 describe('elastic search', () => {
   it('should query model with params', async () => {
@@ -30,12 +30,14 @@ describe('elastic search', () => {
     }
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
-    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
+    const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Doc>> })
     expect(first.length).toBe(1)
-    const second = await model.findAll(core.class.Class, { _id: { $in: [txes[0].objectId as Ref<Class<Obj>>, txes[5].objectId as Ref<Class<Obj>>] } })
+    const second = await model.findAll(core.class.Class, { _id: { $in: [txes[0].objectId as Ref<Class<Doc>>, txes[5].objectId as Ref<Class<Doc>>] } })
     expect(second.length).toBe(2)
-    const third = await model.findAll(core.class.Class, { extends: { $in: [core.class.Space, core.class.Doc] } })
-    expect(third.length).toBe(5)
+    const third = await model.findAll(core.class.Space, { name: { $in: ['Sp1', 'Sp2'] } })
+    expect(third.length).toBe(2)
+    const like = await model.findAll(core.class.Space, { name: { $like: 'Sp%' } })
+    expect(like.length).toBe(2)
     const result = await model.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
   })

@@ -15,6 +15,7 @@
 //
 
 import type { Doc } from './classes'
+import { checkLikeQuery } from './query'
 
 type Predicate = (docs: Doc[]) => Doc[]
 type PredicateFactory = (pred: any, propertyKey: string) => Predicate
@@ -31,17 +32,32 @@ const predicates: Record<string, PredicateFactory> = {
       }
       return result
     }
+  },
+
+  $like: (query: string, propertyKey: string): Predicate => {
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = (doc as any)[propertyKey] as string
+        if (checkLikeQuery(value, query)) result.push(doc)
+      }
+      return result
+    }
   }
 }
 
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
-  return keys.length === 1 && keys[0].startsWith('$')
+  return keys.length > 0 && keys.every(key => key.startsWith('$'))
 }
 
-export function createPredicate (o: Record<string, any>, propertyKey: string): Predicate {
+export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
   const keys = Object.keys(o)
-  const factory = predicates[keys[0]]
-  if (factory === undefined) throw new Error('unknown predicate: ' + keys[0])
-  return factory(o[keys[0]], propertyKey)
+  const result: Predicate[] = []
+  for (const key of keys) {
+    const factory = predicates[key]
+    if (factory === undefined) throw new Error('unknown predicate: ' + keys[0])
+    result.push(factory(o[key], propertyKey))
+  }
+  return result
 }

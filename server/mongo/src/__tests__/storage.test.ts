@@ -123,6 +123,29 @@ describe('mongo operations', () => {
     expect(r.length).toEqual(50)
   })
 
+  it('check find by criteria', async () => {
+    for (let i = 0; i < 50; i++) {
+      await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
+        name: `my-task-${i}`,
+        description: `${i * i}`,
+        rate: 20 + i,
+        comments: []
+      })
+    }
+
+    const r = await client.findAll<Task>(taskIds.class.Task, {})
+    expect(r.length).toEqual(50)
+
+    const first = await client.findAll<Task>(taskIds.class.Task, { name: 'my-task-0' })
+    expect(first.length).toEqual(1)
+
+    const second = await client.findAll<Task>(taskIds.class.Task, { name: { $like: '%0' } })
+    expect(second.length).toEqual(5)
+
+    const third = await client.findAll<Task>(taskIds.class.Task, { rate: { $in: [25, 26, 27, 28] } })
+    expect(third.length).toEqual(4)
+  })
+
   it('check update', async () => {
     await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
       name: 'my-task',
