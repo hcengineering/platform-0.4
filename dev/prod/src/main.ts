@@ -17,19 +17,22 @@ import { setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
+import meetingPlugin from '@anticrm/meeting'
 
 import { configurePlatform } from './platform'
 
 configurePlatform()
 
 const accountsUrl = process.env.APP_ACCOUNTS_URL
-const host = process.env.APP_WSHOST
-const port = process.env.APP_WSPORT
-const token = process.env.APP_TOKEN
+const appHost = process.env.APP_WSHOST
+const appPort = process.env.APP_WSPORT
+const appToken = process.env.APP_TOKEN
+const meetingHost = process.env.MEETING_WSHOST
+const meetingPort = process.env.MEETING_WSPORT
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
-setMetadata(pluginCore.metadata.ClientUrl, `${host}:${port}/${token}`)
-
+setMetadata(pluginCore.metadata.ClientUrl, `${appHost}:${appPort}/${appToken}`)
+setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
 // platform.setMetadata(core.metadata.WSHost, host)
 // platform.setMetadata(core.metadata.WSPort, port)
 

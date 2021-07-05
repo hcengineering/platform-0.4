@@ -16,12 +16,12 @@
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 export type ReqId = string | number
-export class Request<P extends any[]> {
+export class Request<P extends any[], M extends string = string> {
   id?: ReqId
-  method: string
+  method: M
   params: P
 
-  constructor (method: string, ...params: P) {
+  constructor (method: M, ...params: P) {
     this.method = method
     this.params = params
   }
@@ -65,7 +65,7 @@ export const Code = component('rpc' as Component, {
   UnknownMethod: '' as StatusCode<{ method: string }>
 })
 
-class DefferedPromise {
+class DeferredPromise {
   promise: Promise<any>
   resolve!: <T>(value: T) => void
   reject!: (reason?: any) => void
@@ -86,7 +86,7 @@ class DefferedPromise {
  */
 export abstract class RequestProcessor {
   private reqIndex: number = 0
-  private readonly requests = new Map<ReqId, DefferedPromise>()
+  private readonly requests = new Map<ReqId, DeferredPromise>()
 
   protected abstract send (request: Request<any>): void
   protected abstract notify (response: Response<any>): void
@@ -125,7 +125,7 @@ export abstract class RequestProcessor {
 
   protected async request (method: string, ...params: any[]): Promise<any> {
     const id = ++this.reqIndex
-    const promise = new DefferedPromise()
+    const promise = new DeferredPromise()
     this.requests.set(id, promise)
 
     // Send request
