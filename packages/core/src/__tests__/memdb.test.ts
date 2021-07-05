@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(8)
+    expect(result.length).toBe(9)
     const result2 = await model.findAll('class:workbench.Application' as Ref<Class<Doc>>, { _id: undefined })
     expect(result2).toHaveLength(0)
   })
@@ -84,7 +84,7 @@ describe('memdb', () => {
     const multipleParam = await model.findAll(core.class.Doc, {
       space: { $in: [core.space.Model, core.space.Tx] }
     })
-    expect(multipleParam.length).toBe(10)
+    expect(multipleParam.length).toBe(11)
   })
 
   it('should query model like params', async () => {

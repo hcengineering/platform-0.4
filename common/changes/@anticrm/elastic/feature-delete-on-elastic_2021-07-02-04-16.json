@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "deleteTx for elastic",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic",
+  "email": "bykhov.denis@gmail.com"
+}

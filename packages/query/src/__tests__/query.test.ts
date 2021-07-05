@@ -175,6 +175,23 @@ describe('query', () => {
       members: []
     })
   })
+
+  it('remove', async (done) => {
+    const client = await createClient(connect)
+
+    const expectedLength = 2
+    let attempt = 0
+    const query = withOperations(core.account.System, new LiveQuery(client))
+    query.query<Space>(core.class.Space, { private: false }, (result) => {
+      expect(result).toHaveLength(expectedLength - attempt)
+      if (attempt++ === expectedLength) done()
+    })
+
+    const spaces = await query.findAll(core.class.Space, {})
+    for (const space of spaces) {
+      await query.removeDoc(space._class, space.space, space._id)
+    }
+  })
 })
 
 class ClientImpl implements Client {

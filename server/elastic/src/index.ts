@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, TxUpdateDoc, ObjQueryType } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -175,4 +175,14 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
     }
   }
   return result
+
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    const object: RequestParams.Delete = {
+      id: tx.objectId,
+      index: this.workspace,
+      type: this.hierarchy.getDomain(tx.objectClass)
+    }
+    await this.client.delete(object)
+    await this.client.indices.refresh({ index: this.workspace })
+  }
 }
