@@ -53,6 +53,7 @@ export function genMinModel (): Tx[] {
   txes.push(createClass(core.class.Tx, { extends: core.class.Doc }, DOMAIN_TX))
   txes.push(createClass(core.class.TxCreateDoc, { extends: core.class.Tx }, DOMAIN_TX))
   txes.push(createClass(core.class.TxUpdateDoc, { extends: core.class.Tx }, DOMAIN_TX))
+  txes.push(createClass(core.class.TxRemoveDoc, { extends: core.class.Tx }, DOMAIN_TX))
 
   txes.push(
     createDoc(core.class.Space, {

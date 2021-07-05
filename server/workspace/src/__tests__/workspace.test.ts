@@ -21,7 +21,8 @@ import core, {
   Domain,
   DOMAIN_MODEL,
   DOMAIN_TX,
-  generateId, Ref,
+  generateId,
+  Ref,
   Space,
   Tx,
   TxCreateDoc,
@@ -94,6 +95,20 @@ describe('workspace', () => {
     expect(resultTxs.length).toEqual(txes.length)
   })
 
+  it('connect to workspace, check processing', async () => {
+    // Initialize workspace
+    await createDatabase(dbId, txes)
+    workspace = await Workspace.create(dbId, { mongoDBUri }, async (hierarchy, storage, model) => {
+      expect(model.getObject(core.class.Class)).toBeDefined()
+      return []
+    })
+
+    // We should be able to fill all model now.
+    const resultTxs = await workspace.findAll(core.class.Tx, {})
+
+    expect(resultTxs.length).toEqual(txes.length)
+  })
+
   it('reconnect to workspace', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
@@ -123,9 +138,12 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(core.account.System, await createClient(async () => {
-      return await Promise.resolve(workspace)
-    }))
+    const client = withOperations(
+      core.account.System,
+      await createClient(async () => {
+        return await Promise.resolve(workspace)
+      })
+    )
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -147,9 +165,12 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(core.account.System, await createClient(async () => {
-      return await Promise.resolve(workspace)
-    }))
+    const client = withOperations(
+      core.account.System,
+      await createClient(async () => {
+        return await Promise.resolve(workspace)
+      })
+    )
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -207,9 +228,12 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(core.account.System, await createClient(async () => {
-      return await Promise.resolve(workspace)
-    }))
+    const client = withOperations(
+      core.account.System,
+      await createClient(async () => {
+        return await Promise.resolve(workspace)
+      })
+    )
 
     const d1 = await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'

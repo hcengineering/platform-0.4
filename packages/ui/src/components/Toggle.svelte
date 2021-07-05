@@ -31,12 +31,15 @@
     font-size: 14px;
     user-select: none;
     .chBox {
-      display: block;
-      width: 0;
-      height: 0;
       position: absolute;
-      z-index: -1;
-      opacity: 0;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      border: 0;
+      padding: 0;
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+      
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {

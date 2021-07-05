@@ -39,7 +39,7 @@ describe('memdb', () => {
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const result = await model.findAll(core.class.Class, {})
-    expect(result.length).toBe(8)
+    expect(result.length).toBe(9)
     const result2 = await model.findAll('class:workbench.Application' as Ref<Class<Doc>>, { _id: undefined })
     expect(result2).toHaveLength(0)
   })
@@ -84,7 +84,39 @@ describe('memdb', () => {
     const multipleParam = await model.findAll(core.class.Doc, {
       space: { $in: [core.space.Model, core.space.Tx] }
     })
-    expect(multipleParam.length).toBe(10)
+    expect(multipleParam.length).toBe(11)
+  })
+
+  it('should query model like params', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) await model.tx(tx)
+    const expectedLength = txes.filter(tx => tx.objectSpace === core.space.Model).length
+    const without = await model.findAll(core.class.Doc, {
+      space: { $like: core.space.Model }
+    })
+    expect(without).toHaveLength(expectedLength)
+    const begin = await model.findAll(core.class.Doc, {
+      space: { $like: '%Model' }
+    })
+    expect(begin).toHaveLength(expectedLength)
+    const zero = await model.findAll(core.class.Doc, {
+      space: { $like: 'Model' }
+    })
+    expect(zero).toHaveLength(0)
+    const end = await model.findAll(core.class.Doc, {
+      space: { $like: 'space:core.M%' }
+    })
+    expect(end).toHaveLength(expectedLength)
+    const mid = await model.findAll(core.class.Doc, {
+      space: { $like: '%M%de%' }
+    })
+    expect(mid).toHaveLength(expectedLength)
+    const all = await model.findAll(core.class.Doc, {
+      space: { $like: '%Mod%' }
+    })
+    expect(all).toHaveLength(expectedLength)
   })
 
   it('should push to array', async () => {
