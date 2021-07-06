@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/webrtc",
+      "comment": "Introduce webrtc package including rpc methods and client",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/webrtc",
+  "email": "ilya.sumb@gmail.com"
+}

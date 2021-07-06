@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Make possible to provide application component for testing purposes",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "ilya.sumb@gmail.com"
+}

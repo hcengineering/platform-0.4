@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/rpc",
+      "comment": "Adjust `Request` template and fix typo",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/rpc",
+  "email": "ilya.sumb@gmail.com"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting",
+      "comment": "Introduce meeting plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/meeting",
+  "email": "ilya.sumb@gmail.com"
+}
