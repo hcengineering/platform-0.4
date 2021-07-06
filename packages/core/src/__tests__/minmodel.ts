@@ -1,5 +1,5 @@
-import core from '..'
 import { Account, Class, ClassifierKind, Data, Doc, Domain, DOMAIN_MODEL, Obj, Ref } from '../classes'
+import core from '../component'
 import { DOMAIN_TX, Tx, TxCreateDoc } from '../tx'
 import { generateId } from '../utils'
 
