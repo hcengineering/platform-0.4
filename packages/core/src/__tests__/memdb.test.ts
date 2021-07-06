@@ -154,6 +154,12 @@ describe('memdb', () => {
 
     const sortDesc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Descending } })
     expect(sortDesc[0].name).toMatch('Sp2')
+
+    const numberSortDesc = await model.findAll(core.class.Doc, { }, { sort: { modifiedOn: SortingOrder.Descending } })
+    expect(numberSortDesc[0].modifiedOn).toBeGreaterThanOrEqual(numberSortDesc[numberSortDesc.length - 1].modifiedOn)
+
+    const numberSort = await model.findAll(core.class.Doc, { }, { sort: { modifiedOn: SortingOrder.Ascending } })
+    expect(numberSort[0].modifiedOn).toBeLessThanOrEqual(numberSort[numberSortDesc.length - 1].modifiedOn)
   })
 
   // it('should throw error', async () => {
