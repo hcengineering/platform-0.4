@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc, likeSymbol } from '@anticrm/core'
+import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc, FindOptions, SortingQuery, SortingOrder, FindResult, likeSymbol } from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -24,10 +24,19 @@ export interface ConnectionParams {
   password: string
 }
 
+function getSortingDirection (direction: SortingOrder | undefined): string {
+  return direction === SortingOrder.Descending ? 'desc' : 'asc'
+}
+
+function toLowerCase (item: any): any {
+  return typeof item === 'string' ? item.toLowerCase() : item
+}
+
 export class ElasticStorage extends TxProcessor implements Storage {
   private readonly hierarchy: Hierarchy
   private readonly client: Client
   private readonly workspace: string
+  private mappingProfile: any
 
   constructor (hierarchy: Hierarchy, workspace: string, connection: ConnectionParams) {
     super()
@@ -42,7 +51,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const result: T[] = []
 
     const criteries = []
@@ -57,6 +66,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
 
     const domain = this.hierarchy.getDomain(_class)
 
+    const sort = await this.createSort(options?.sort)
     const filter = getIdFilter(query)
     const { body } = await this.client.search({
       index: this.workspace,
@@ -68,15 +78,17 @@ export class ElasticStorage extends TxProcessor implements Storage {
             filter: filter
           }
         },
-        size: 1000
+        sort: sort,
+        size: options?.limit ?? 1000
       }
     })
 
+    const total = body.hits.total.value
     for (const doc of body.hits.hits) {
       result.push({ _id: doc._id, ...doc._source })
     }
 
-    return result
+    return Object.assign(result, { total })
   }
 
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
@@ -119,6 +131,27 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.indices.refresh({ index: this.workspace })
   }
 
+  private async createSort<T extends Doc> (sort: SortingQuery<T> | undefined): Promise<Array<Record<string, { order: string, mode: string}>> | undefined> {
+    if (sort !== undefined) {
+      const result: Array<Record<string, { order: string, mode: string}>> = []
+      for (const key in sort) {
+        const name = await this.getName(key)
+        const direction = getSortingDirection(sort[key])
+        result.push({ [name]: { order: direction, mode: 'max' } })
+      }
+      return result
+    }
+  }
+
+  private async getName (key: string): Promise<string> {
+    if (this.mappingProfile === undefined) {
+      const mapping = await this.client.indices.getMapping()
+      this.mappingProfile = mapping.body[this.workspace].mappings.properties
+    }
+    const data = this.mappingProfile[key]
+    return data.type === 'text' ? `${key}.keyword` : key
+  }
+
   protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
     const object: RequestParams.Delete = {
       id: tx.objectId,
@@ -130,7 +163,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
   }
 
   private getClassesTerms<T extends Doc>(_class: Ref<Class<T>>): any {
-    const classes = this.hierarchy.getDescendants(_class).map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+    const classes = this.hierarchy.getDescendants(_class).map((item) => toLowerCase(item))
     const criteria = {
       terms: Object()
     }
@@ -170,7 +203,7 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
       const criteria: any = {
         terms: {}
       }
-      criteria.terms[key] = value.$in?.map((item) => typeof item === 'string' ? item.toLowerCase() : item)
+      criteria.terms[key] = value.$in?.map((item) => toLowerCase(item))
       result.push(criteria)
     }
     if (value.$like !== undefined) {

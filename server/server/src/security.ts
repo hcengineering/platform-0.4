@@ -5,6 +5,8 @@ import core, {
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
+  FindOptions,
+  FindResult,
   Hierarchy,
   checkLikeQuery,
   ObjQueryType,
@@ -115,17 +117,17 @@ export class SecurityClientStorage implements Storage {
     readonly clients: Map<string, ClientInfo>
   ) {}
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
-    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query)
-    const querySpace = query.space
+    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query, options)
+    const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.security.getSpaces(this.user.accountId)
     if (spaces === undefined || spaces.size === 0) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
     query.space = querySpace !== undefined ? query.space = checkQuerySpaces(spaces, querySpace) : query.space = { $in: [...spaces.values()] }
-    return await this.workspace.findAll(_class, query)
+    return await this.workspace.findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {

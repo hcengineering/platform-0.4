@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/node-client",
+      "comment": "added `total` to `findAll` result",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/node-client",
+  "email": "bykhov.denis@gmail.com"
+}

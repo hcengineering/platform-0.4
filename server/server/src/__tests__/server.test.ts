@@ -19,6 +19,7 @@ import core, {
   Doc,
   DocumentQuery,
   DOMAIN_TX,
+  FindResult,
   generateId,
   Hierarchy,
   ModelDb,
@@ -36,7 +37,7 @@ const txes = builder.getTxes()
 
 async function prepareInMemServer (): Promise<{
   hierarchy: Hierarchy
-  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<T[]>
+  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>) => Promise<FindResult<T>>
   transactions: TxDb
   model: ModelDb
 }> {
@@ -50,7 +51,7 @@ async function prepareInMemServer (): Promise<{
     await model.tx(tx)
   }
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = hierarchy.getClass(_class).domain
     if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
     return await model.findAll(_class, query)
@@ -100,11 +101,11 @@ describe('server', () => {
       connect: async (clientId, token, tx, close) => {
         return {
           // Create never complete promise. ,
-          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
             req++
             if (req === 2) {
               close()
-              return await new Promise<T[]>(() => {})
+              return await new Promise<FindResult<T>>(() => {})
             }
             const domain = hierarchy.getClass(_class).domain
             if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
@@ -133,7 +134,7 @@ describe('server', () => {
       connect: async (clientId, token, tx, close) => {
         return {
           // Create never complete promise. ,
-          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> => {
+          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
             req++
             if (req === 2) {
               throw new Error('Some error happened')

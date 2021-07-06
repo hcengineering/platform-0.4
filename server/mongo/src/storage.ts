@@ -17,6 +17,7 @@ import core, {
   Class,
   Doc,
   DocumentQuery,
+  FindOptions,
   Hierarchy,
   Ref,
   Storage,
@@ -24,7 +25,8 @@ import core, {
   TxCreateDoc,
   TxProcessor,
   TxUpdateDoc,
-  TxRemoveDoc
+  TxRemoveDoc,
+  FindResult
 } from '@anticrm/core'
 import { Collection, Db, UpdateQuery, FilterQuery } from 'mongodb'
 import { toMongoIdQuery, toMongoQuery } from './query'
@@ -84,8 +86,12 @@ export class DocStorage extends TxProcessor implements Storage {
     await this.collection(tx.objectClass).deleteOne(deleteQuery)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
-    return await this.collection(_class).find(mongoQuery).toArray()
+    let cursor = this.collection(_class).find(mongoQuery)
+    if (options?.sort !== undefined) cursor = cursor.sort(options.sort)
+    const total = await cursor.count()
+    if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
+    return Object.assign(await cursor.toArray(), { total })
   }
 }

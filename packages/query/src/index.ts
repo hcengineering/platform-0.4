@@ -13,14 +13,15 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, Client, Obj, TxRemoveDoc } from '@anticrm/core'
-import { TxProcessor } from '@anticrm/core'
+import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, TxRemoveDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery, FindResult } from '@anticrm/core'
 
 interface Query {
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
   result: Doc[] | Promise<Doc[]>
-  callback: (result: Doc[]) => void
+  total: number
+  options?: FindOptions<Doc>
+  callback: (result: FindResult<Doc>) => void
 }
 
 export class LiveQuery extends TxProcessor implements Client {
@@ -49,16 +50,18 @@ export class LiveQuery extends TxProcessor implements Client {
     return true
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
-    return await this.client.findAll(_class, query)
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+    return await this.client.findAll(_class, query, options)
   }
 
-  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void): () => void {
-    const result = this.client.findAll(_class, query)
+  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void, options?: FindOptions<T>): () => void {
+    const result = this.client.findAll(_class, query, options)
     const q: Query = {
       _class,
       query,
       result,
+      total: 0,
+      options,
       callback: callback as (result: Doc[]) => void
     }
     this.queries.push(q)
@@ -69,8 +72,23 @@ export class LiveQuery extends TxProcessor implements Client {
       .catch((err) => {
         console.log('failed to update Live Query: ', err)
       })
+
     return () => {
       this.queries.splice(this.queries.indexOf(q))
+    }
+  }
+
+  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    for (const q of this.queries) {
+      if (q.result instanceof Promise) {
+        q.result = await q.result
+      }
+      const updatedDoc = q.result.find(p => p._id === tx.objectId)
+      if (updatedDoc !== undefined) {
+        await this.updateDoc(updatedDoc, tx)
+        this.sort(q, tx)
+        await this.callback(updatedDoc, q)
+      }
     }
   }
 
@@ -82,7 +100,17 @@ export class LiveQuery extends TxProcessor implements Client {
           q.result = await q.result
         }
         q.result.push(doc)
-        q.callback(q.result)
+        q.total++
+
+        if (q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
+
+        if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+          if (q.result.pop()?._id !== doc._id) {
+            q.callback(Object.assign(q.result, { total: q.total }))
+          }
+        } else {
+          q.callback(Object.assign(q.result, { total: q.total }))
+        }
       }
     }
   }
@@ -95,7 +123,7 @@ export class LiveQuery extends TxProcessor implements Client {
       const index = q.result.findIndex(p => p._id === tx.objectId)
       if (index > -1) {
         q.result.splice(index, 1)
-        q.callback(q.result)
+        q.callback(Object.assign(q.result, { total: --q.total }))
       }
     }
   }
@@ -103,5 +131,59 @@ export class LiveQuery extends TxProcessor implements Client {
   async tx (tx: Tx): Promise<void> {
     await this.client.tx(tx)
     await super.tx(tx)
+  }
+
+  async updateDoc (updatedDoc: Doc, tx: TxUpdateDoc<Doc>): Promise<void> {
+    const ops = tx.operations as any
+    for (const key in ops) {
+      if (key.startsWith('$')) {
+        const operator = getOperator(key)
+        operator(updatedDoc, ops[key])
+      } else {
+        (updatedDoc as any)[key] = ops[key]
+      }
+    }
+    updatedDoc.modifiedBy = tx.modifiedBy
+    updatedDoc.modifiedOn = tx.modifiedOn
+  }
+
+  private sort (q: Query, tx: TxUpdateDoc<Doc>): void {
+    const sort = q.options?.sort
+    if (sort === undefined) return
+    let needSort = sort.modifiedBy !== undefined || sort.modifiedOn !== undefined
+    if (!needSort) needSort = this.checkNeedSort(sort, tx)
+
+    if (needSort) resultSort(q.result as Doc[], sort)
+  }
+
+  private checkNeedSort (sort: SortingQuery<Doc>, tx: TxUpdateDoc<Doc>): boolean {
+    const ops = tx.operations as any
+    for (const key in ops) {
+      if (key.startsWith('$')) {
+        for (const opKey in ops[key]) {
+          if (opKey in sort) return true
+        }
+      } else {
+        if (key in sort) return true
+      }
+    }
+    return false
+  }
+
+  async callback (updatedDoc: Doc, q: Query): Promise<void> {
+    q.result = q.result as Doc[]
+
+    if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+      if (q.result[q.options?.limit]._id === updatedDoc._id) {
+        const res = await this.findAll(q._class, q.query, q.options)
+        q.result = res
+        q.total = res.total
+        q.callback(res)
+        return
+      }
+      if (q.result.pop()?._id !== updatedDoc._id) q.callback(Object.assign(q.result, { total: q.total }))
+    } else {
+      q.callback(Object.assign(q.result, { total: q.total }))
+    }
   }
 }

@@ -14,10 +14,11 @@
 //
 
 import { describe, expect, it } from '@jest/globals'
-import type { Class, Doc, Obj, Ref } from '../classes'
+import type { Class, Doc, Obj, Ref, Space } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
+import { SortingOrder } from '../storage'
 import { withOperations } from '../tx'
 import { genMinModel } from './minmodel'
 
@@ -134,6 +135,31 @@ describe('memdb', () => {
     await model.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id } })
     const txSpace = await model.findAll(core.class.Space, { _id: space._id })
     expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
+  })
+
+  it('limit and sorting', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const model = withOperations(core.account.System, new ModelDb(hierarchy))
+    for (const tx of txes) await model.tx(tx)
+
+    const without = await model.findAll(core.class.Space, { })
+    expect(without).toHaveLength(2)
+
+    const limit = await model.findAll(core.class.Space, { }, { limit: 1 })
+    expect(limit).toHaveLength(1)
+
+    const sortAsc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Ascending } })
+    expect(sortAsc[0].name).toMatch('Sp1')
+
+    const sortDesc = await model.findAll(core.class.Space, { }, { limit: 1, sort: { name: SortingOrder.Descending } })
+    expect(sortDesc[0].name).toMatch('Sp2')
+
+    const numberSortDesc = await model.findAll(core.class.Doc, { }, { sort: { modifiedOn: SortingOrder.Descending } })
+    expect(numberSortDesc[0].modifiedOn).toBeGreaterThanOrEqual(numberSortDesc[numberSortDesc.length - 1].modifiedOn)
+
+    const numberSort = await model.findAll(core.class.Doc, { }, { sort: { modifiedOn: SortingOrder.Ascending } })
+    expect(numberSort[0].modifiedOn).toBeLessThanOrEqual(numberSort[numberSortDesc.length - 1].modifiedOn)
   })
 
   // it('should throw error', async () => {

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "added `sort` & `limit` options",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic",
+  "email": "bykhov.denis@gmail.com"
+}

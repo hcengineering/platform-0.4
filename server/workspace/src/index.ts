@@ -1,4 +1,4 @@
-import { Class, Doc, DocumentQuery, DOMAIN_TX, Hierarchy, ModelDb, Ref, Storage, Tx } from '@anticrm/core'
+import { ModelDb, Class, Doc, DocumentQuery, DOMAIN_TX, FindResult, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
 import { DocStorage, getMongoClient, TxStorage } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
@@ -62,7 +62,7 @@ export class Workspace implements Storage {
     return this.hierarchy
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const result = await this.storage.findAll(_class, query)
     return result
   }

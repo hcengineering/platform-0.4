@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import type { Class, Client, Doc, DocumentQuery, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
-import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations } from '@anticrm/core'
+import type { Class, Client, Doc, DocumentQuery, FindOptions, FindResult, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
+import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations, SortingOrder } from '@anticrm/core'
 import { genMinModel as getModel } from '@anticrm/core/src/__tests__/minmodel'
 import { LiveQuery } from '..'
 import { connect } from './connection'
@@ -176,6 +176,42 @@ describe('query', () => {
     })
   })
 
+  it('limit and sorting', async (done) => {
+    const storage = await getClient()
+
+    const limit = 1
+    let attempt = 0
+    let doneCount = 0
+
+    const query = withOperations(core.account.System, new LiveQuery(storage))
+    query.query<Space>(core.class.Space, { private: true }, (result) => {
+      if (attempt > 0 && result.length > 0) {
+        expect(result.length).toEqual(limit)
+        expect(result[0].name).toMatch('0')
+      }
+      if (attempt === 1) doneCount++
+      if (doneCount === 2) done()
+    }, { limit: limit, sort: { name: SortingOrder.Ascending } })
+
+    query.query<Space>(core.class.Space, { private: true }, (result) => {
+      if (attempt > 0 && result.length > 0) {
+        expect(result.length).toEqual(limit)
+        expect(result[0].name).toMatch(attempt.toString())
+      }
+      if (attempt === 10) doneCount++
+      if (doneCount === 2) done()
+    }, { limit: limit, sort: { name: SortingOrder.Descending } })
+
+    for (let i = 0; i < 10; i++) {
+      attempt++
+      await query.createDoc(core.class.Space, core.space.Model, {
+        private: true,
+        name: i.toString(),
+        description: '',
+        members: []
+      })
+    }
+  })
   it('remove', async (done) => {
     const client = await createClient(connect)
 
@@ -209,10 +245,10 @@ class ClientImpl implements Client {
     return this.hierarchy.isDerived(_class, from)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<T[]> {
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
-    return await this.model.findAll(_class, query)
+    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
+    return await this.model.findAll(_class, query, options)
   }
 }
 

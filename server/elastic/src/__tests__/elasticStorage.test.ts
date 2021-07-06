@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
+import core, { Hierarchy, Domain, Class, Obj, Ref, withOperations, SortingOrder, Doc } from '@anticrm/core'
 import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
-import core, { Hierarchy, Domain, Ref, Class, Doc, Obj, withOperations } from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
 const txes = genMinModel()
@@ -42,6 +42,30 @@ describe('elastic search', () => {
     expect(result.length).toBe(0)
   })
 
+  it('limit and sorting', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const connectionParams = {
+      url: process.env.ELASTIC_URL ?? 'http://localhost:9200',
+      username: process.env.ELASTIC_USERNAME ?? 'elastic',
+      password: process.env.ELASTIC_PASSWORD ?? 'changeme'
+    }
+    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
+    for (const tx of txes) await model.tx(tx)
+
+    const without = await model.findAll(core.class.Space, { })
+    expect(without).toHaveLength(2)
+
+    const limit = await model.findAll(core.class.Space, { }, { limit: 1 })
+    expect(limit).toHaveLength(1)
+
+    const sortAsc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Ascending } })
+    expect(sortAsc[0].name).toMatch('Sp1')
+
+    const sortDesc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Descending } })
+    expect(sortDesc[0].name).toMatch('Sp2')
+  })
+
   it('should allow delete', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
@@ -52,6 +76,7 @@ describe('elastic search', () => {
     }
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
+
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
     expect(first.length).toBe(1)
     const ops = withOperations(core.account.System, model)
