@@ -13,13 +13,14 @@
 // limitations under the License.
 //
 
-import type { Ref, Doc, Class } from '../classes'
-import type { Tx } from '../tx'
+
 import type { Storage, DocumentQuery, FindResult } from '../storage'
-import { DOMAIN_TX } from '../tx'
+import type { Class, Doc, Ref } from '../classes'
+import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import core from '..'
+import type { Tx } from '../tx'
+import { DOMAIN_TX } from '../tx'
 import { genMinModel } from './minmodel'
 
 export async function connect (handler: (tx: Tx) => void): Promise<Storage> {

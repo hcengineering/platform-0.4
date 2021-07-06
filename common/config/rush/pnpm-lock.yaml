@@ -13,10 +13,14 @@ specifiers:
   '@rush-temp/elastic': file:./projects/elastic.tgz
   '@rush-temp/login': file:./projects/login.tgz
   '@rush-temp/login-impl': file:./projects/login-impl.tgz
+  '@rush-temp/meeting': file:./projects/meeting.tgz
+  '@rush-temp/meeting-assets': file:./projects/meeting-assets.tgz
+  '@rush-temp/meeting-impl': file:./projects/meeting-impl.tgz
   '@rush-temp/model': file:./projects/model.tgz
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
+  '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/mongo': file:./projects/mongo.tgz
@@ -39,6 +43,7 @@ specifiers:
   '@rush-temp/text': file:./projects/text.tgz
   '@rush-temp/theme': file:./projects/theme.tgz
   '@rush-temp/ui': file:./projects/ui.tgz
+  '@rush-temp/webrtc': file:./projects/webrtc.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
   '@rush-temp/workbench-impl': file:./projects/workbench-impl.tgz
   '@rush-temp/workspace': file:./projects/workspace.tgz
@@ -46,7 +51,9 @@ specifiers:
   '@testing-library/svelte': ^3.0.3
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
+  '@types/kurento-client': ~6.14.4
   '@types/lodash': ^4.14.168
+  '@types/lodash.debounce': ~4.0.6
   '@types/markdown-it': ^12.0.2
   '@types/mongodb': ^3.6.18
   '@types/node': ^14.14.40
@@ -82,6 +89,7 @@ specifiers:
   jest: ^26.6.3
   jwt-simple: ^0.5.6
   lodash: ^4.17.21
+  lodash.debounce: ~4.0.8
   markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   mongodb: ^3.6.9
@@ -135,10 +143,14 @@ dependencies:
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
+  '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/meeting-assets': file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model': file:projects/model.tgz_ts-node@10.0.0
   '@rush-temp/model-all': file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
+  '@rush-temp/model-meeting': file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.0
@@ -161,6 +173,7 @@ dependencies:
   '@rush-temp/text': file:projects/text.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4
   '@rush-temp/ui': file:projects/ui.tgz_dea33292b11ce5d7cfaa07c95df0d48c
+  '@rush-temp/webrtc': file:projects/webrtc.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678
   '@rush-temp/workspace': file:projects/workspace.tgz
@@ -168,7 +181,9 @@ dependencies:
   '@testing-library/svelte': 3.0.3_svelte@3.38.2
   '@types/jest': 26.0.23
   '@types/jwt-simple': 0.5.33
+  '@types/kurento-client': 6.14.4
   '@types/lodash': 4.14.169
+  '@types/lodash.debounce': 4.0.6
   '@types/markdown-it': 12.0.2
   '@types/mongodb': 3.6.18
   '@types/node': 14.17.0
@@ -204,6 +219,7 @@ dependencies:
   jest: 26.6.3_ts-node@10.0.0
   jwt-simple: 0.5.6
   lodash: 4.17.21
+  lodash.debounce: 4.0.8
   markdown-it: 12.0.6
   mini-css-extract-plugin: 1.6.0_webpack@5.37.1
   mongodb: 3.6.9
@@ -1203,8 +1219,20 @@ packages:
     resolution: {integrity: sha1-+4Ocq+gUN5VPfQzQF2CtgJbsUm4=}
     dev: false
 
+  /@types/kurento-client/6.14.4:
+    resolution: {integrity: sha512-/Qjw/KnKfOvOy0iP4J49ydjsrrbKD8tHHSEXMLgDFoztbKxOI1IWXI+6CJNRRQB4qLvINN/9P+ixp/S/t2Bqlw==}
+    dependencies:
+      '@types/node': 15.12.2
+    dev: false
+
   /@types/linkify-it/3.0.1:
     resolution: {integrity: sha512-pQv3Sygwxxh6jYQzXaiyWDAHevJqWtqDUv6t11Sa9CPGiXny66II7Pl6PR8QO5OVysD6HYOkHMeBgIjLnk9SkQ==}
+    dev: false
+
+  /@types/lodash.debounce/4.0.6:
+    resolution: {integrity: sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==}
+    dependencies:
+      '@types/lodash': 4.14.169
     dev: false
 
   /@types/lodash/4.14.169:
@@ -5636,6 +5664,10 @@ packages:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: false
 
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: false
+
   /lodash.get/4.4.2:
     resolution: {integrity: sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=}
     dev: false
@@ -9092,7 +9124,7 @@ packages:
     dev: false
 
   file:projects/core.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-KIdF86akboHuOedpTRtElvT+3AMl5Ysau7fagizoP8eUlxPOVd/eC/PtecOuibbRZTCzUNYw07emOpEqdFCWKw==, tarball: file:projects/core.tgz}
+    resolution: {integrity: sha512-/D1vaODFmO5i5m91srC2hiV4ETctvaWJfKhBE/QmeNlXdMK45uyggy9aWjncMz6SUKEkEWKAU9XeCWLBYV/oGg==, tarball: file:projects/core.tgz}
     id: file:projects/core.tgz
     name: '@rush-temp/core'
     version: 0.0.0
@@ -9111,6 +9143,7 @@ packages:
       eslint-plugin-node: 11.1.0_eslint@7.28.0
       eslint-plugin-promise: 5.1.0_eslint@7.28.0
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      fast-equals: 2.0.3
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       simplytyped: 3.3.0_typescript@4.3.2
@@ -9198,8 +9231,63 @@ packages:
       - supports-color
     dev: false
 
+  file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-hpXgdR/ShyVeM89nFG/K+/LUV3PYy8e7MDEld7n6xixjbrNAnGgD2TQiIZbb2bvQMJJr4vmXnhY630ibCHTi6g==, tarball: file:projects/meeting-assets.tgz}
+    id: file:projects/meeting-assets.tgz
+    name: '@rush-temp/meeting-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/node': 14.17.0
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
+  file:projects/meeting-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
+    resolution: {integrity: sha512-HCNvbv7zuIrF0ca5c95eiGxuWgj5nd0bgURaeB7Q2/Smnm/J6aSHBtyo9XAfNNFGHjst0zfKtPmlaFnK/vymXw==, tarball: file:projects/meeting-impl.tgz}
+    id: file:projects/meeting-impl.tgz
+    name: '@rush-temp/meeting-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/lodash.debounce': 4.0.6
+      jest: 26.6.3_ts-node@10.0.0
+      lodash.debounce: 4.0.8
+      prettier: 2.3.1
+      svelte: 3.38.2
+      svelte-loader: 3.1.2_svelte@3.38.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-AToy/jL6iXDV3XkP2m0Ysg292+NhXV6kBZQsozsw8dwRi3sR47irdBb+UxW3gL1JBDcUPe5nNLYa/QORCFF+jg==, tarball: file:projects/meeting.tgz}
+    id: file:projects/meeting.tgz
+    name: '@rush-temp/meeting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
   file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b:
-    resolution: {integrity: sha512-XjEJ6Zf0G4rbKlDoszgU4hVM9ZmD623L2s/xw6cjJZp2eHvcafDO60xkBMIBTLrfcchpBuR5W/nI07XzWJdlAg==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-oMKDVMh9FwXQ04IEoCAu+wxvWhXuZhoTpnHbitr+Sci019KrLw/P96oots0V+m+hcHN5khLElnbJJFeP4LYiFg==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -9268,6 +9356,20 @@ packages:
       - canvas
       - supports-color
       - utf-8-validate
+    dev: false
+
+  file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-C9J7wabaeT47S+l7xQQJzjZkLv0j1BwHe2UdCFOsJzMT3hHpgabXnmeYubwWpdxnj4jGro+sYItvEvcdK3OHWQ==, tarball: file:projects/model-meeting.tgz}
+    id: file:projects/model-meeting.tgz
+    name: '@rush-temp/model-meeting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
     dev: false
 
   file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
@@ -9522,7 +9624,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-raRExlB49AcdbysfjMRTWCm1BSdyE18SRlU2J9plNBhU0vgCePMqers29Gi6Wl1AoQ4ujSncSPKIJkGB4Cu65g==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-OVmKr+p05/avX1Y/SZ9a/qmwFLkDkvF5qqUS1ur265XBW+ygAnhuyW+iMrckUJ6BUKe7ZrzH2g/SjFMYzXDcuA==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -9978,6 +10080,27 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
+    dev: false
+
+  file:projects/webrtc.tgz:
+    resolution: {integrity: sha512-+X1wM6n8m7qQWK510VzB87OCvC7FHmQeaohkKf8KyVyVCaG2e8VpYHGONaqbetJxSepqtYV7gHHsVMBvQFNdPw==, tarball: file:projects/webrtc.tgz}
+    name: '@rush-temp/webrtc'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/kurento-client': 6.14.4
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678:

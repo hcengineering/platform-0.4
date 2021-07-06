@@ -20,12 +20,12 @@ describe('client', () => {
   it('should create connection', async () => {
     const conn = await connect(() => {})
     const txes = await conn.findAll(core.class.Tx, {})
-    expect(txes.length).toBe(17)
+    expect(txes.length).toBe(20)
   })
 
   it('should create client', async () => {
     const client = await createClient(connect)
     const txes = await client.findAll(core.class.Class, {})
-    expect(txes.length).toBe(12)
+    expect(txes.length).toBe(13)
   })
 })

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Make tests independent",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server",
+  "email": "haiodo@gmail.com"
+}
