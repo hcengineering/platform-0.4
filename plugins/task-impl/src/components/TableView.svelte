@@ -38,10 +38,10 @@
   }
 
   export let _class: Ref<Class<Doc>>
-  export let space: Ref<Space>
+  export let currentSpace: Ref<Space> | undefined
   export let fields: Field[]
   const client = getClient()
-  client.query(_class, { space: space }, (result) => data = result)
+  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => data = result)
 
   let data: Doc[] = []
   function getCells (doc: Doc): Cell[] {

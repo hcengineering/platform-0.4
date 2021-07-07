@@ -253,7 +253,8 @@
             "createComponent": "component:task.CreateProject"
           }
         ],
-        "spaceView": "component:task.TaskView"
+        "spaceView": "component:task.TaskView",
+        "createComponent": "component:task.CreateTask"
       }
     }
   },
@@ -328,6 +329,21 @@
       "description": "Kitchen Talks",
       "private": false,
       "members": []
+    }
+  },
+  {
+    "_id": "60dee58cb356b58d3f4bed10",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:task.Task",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "domain": "task",
+      "kind": 0,
+      "extends": "class:core.Doc"
     }
   }
 ]
