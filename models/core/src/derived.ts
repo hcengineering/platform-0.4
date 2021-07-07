@@ -14,6 +14,7 @@
 //
 
 import type {
+  BackReference,
   Class,
   Data,
   DerivedData,
@@ -61,7 +62,10 @@ export class TTitle extends TDerivedData implements Title {
 }
 
 @Model(core.class.Reference, core.class.DerivedData, DOMAIN_REFERENCE)
-export class TReference extends TDerivedData implements Reference {
-  targetObjectId!: Ref<Doc>
-  targetObjectClass!: Ref<Class<Doc>>
+export class TReference extends TDerivedData implements Reference {}
+
+@Model(core.class.BackReference, core.class.Reference, DOMAIN_REFERENCE)
+export class TBackReference extends TDerivedData implements BackReference {
+  sourceObjectId!: Ref<Doc>
+  sourceObjectClass!: Ref<Class<Doc>>
 }

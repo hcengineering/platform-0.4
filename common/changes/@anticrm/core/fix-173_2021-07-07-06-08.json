@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Remove support for back references",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "haiodo@gmail.com"
+}

@@ -1,5 +1,5 @@
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
-import core, { generateId, Storage, Tx, TxOperations, withOperations } from '..'
+import core, { generateId, Storage, Tx, TxOperations, TxRemoveDoc, withOperations } from '..'
 import { Resource } from '../../../status/lib'
 import { Account, Class, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
@@ -78,7 +78,7 @@ export class DerivedDataProcessor extends TxProcessor {
     const descr = this.model.getObject(objectId)
     this.descrs.update(descr)
 
-    await this.refreshDerivedData(descr, modifiedBy)
+    await this.refreshDerivedData(descr, modifiedBy, true)
   }
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
@@ -103,6 +103,33 @@ export class DerivedDataProcessor extends TxProcessor {
         descriptorId: d._id
       })
       await this.applyDerivedData(oldData, results, ops)
+    }
+  }
+
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    if (this.hierarchy.isDerived(tx.objectClass, core.class.DerivedDataDescriptor)) {
+      await this.removeDescriptorDerivedData(tx)
+      return
+    }
+
+    const descriptors = this.descrs.getByClass(tx.objectClass)
+    const ops = withOperations(tx.modifiedBy, this.storage)
+
+    for (const d of descriptors) {
+      const oldData = await this.storage.findAll(core.class.DerivedData, {
+        objectId: tx.objectId,
+        objectClass: tx.objectClass,
+        descriptorId: d._id
+      })
+      await this.applyDerivedData(oldData, [], ops)
+    }
+  }
+
+  private async removeDescriptorDerivedData (tx: TxRemoveDoc<Doc>): Promise<void> {
+    const descr = this.descrs.descriptors.get(tx.objectId)
+    if (descr != null) {
+      this.descrs.remove(tx.objectId as Ref<Descr>)
+      await this.refreshDerivedData(descr, tx.modifiedBy, false)
     }
   }
 
@@ -166,15 +193,10 @@ export class DerivedDataProcessor extends TxProcessor {
         this.processRulePattern(d, doc, rule.pattern, rule.targetField, value, results)
       } else {
         // Just copy of value
-        this.processAssignValue(results, d, doc, rule.targetField, value)
+        this.assignValue(lastOrAdd(results, d, doc), rule.targetField, value)
       }
     }
     return results
-  }
-
-  private processAssignValue (results: DerivedData[], d: Descr, doc: Doc, targetField: string, value: string): void {
-    const lastResult = lastOrAdd(results, d, doc)
-    ;(lastResult as any)[targetField] = value
   }
 
   private processRulePattern (
@@ -197,7 +219,7 @@ export class DerivedDataProcessor extends TxProcessor {
         needAdd = false
       }
       const lastResult = lastOrAdd(results, d, doc)
-      ;(lastResult as any)[targetField] = groupOrValue(pattern, matches)
+      this.assignValue(lastResult, targetField, groupOrValue(pattern, matches))
 
       if (pattern.multDoc ?? false) {
         needAdd = true
@@ -206,7 +228,11 @@ export class DerivedDataProcessor extends TxProcessor {
     return results
   }
 
-  private async refreshDerivedData (d: Descr, modifiedBy: Ref<Account>): Promise<void> {
+  private assignValue (lastResult: DerivedData, targetField: string, value: any): void {
+    ;(lastResult as any)[targetField] = value
+  }
+
+  private async refreshDerivedData (d: Descr, modifiedBy: Ref<Account>, apply: boolean): Promise<void> {
     // Perform a full rebuild of derived data of required type.
     const ops = withOperations(modifiedBy, this.storage)
 
@@ -230,7 +256,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectSpace: dbDoc.space,
         attributes: dbDoc
       }
-      const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
+      const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
       await this.applyDerivedData(Array.from(dbDD), results, ops)
     }
   }

@@ -49,6 +49,10 @@ export function genMinModel (): Tx[] {
   txes.push(createClass(core.class.Class, { extends: core.class.Doc }))
   txes.push(createClass(core.class.Space, { extends: core.class.Doc }))
   txes.push(createClass(core.class.Account, { extends: core.class.Doc }))
+  txes.push(createClass(core.class.Reference, { extends: core.class.Doc }, 'refs' as Domain))
+  txes.push(createClass(core.class.DerivedData, { extends: core.class.Doc }))
+  txes.push(createClass(core.class.DerivedDataDescriptor, { extends: core.class.Doc }))
+  txes.push(createClass(core.class.Title, { extends: core.class.DerivedData }))
 
   txes.push(createClass(core.class.Tx, { extends: core.class.Doc }, DOMAIN_TX))
   txes.push(createClass(core.class.TxCreateDoc, { extends: core.class.Tx }, DOMAIN_TX))
