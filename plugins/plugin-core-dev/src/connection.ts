@@ -41,10 +41,18 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
   return {
     findAll,
     tx: async (tx: Tx): Promise<void> => {
+      // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
+      await model.tx(tx)
+
+      // 2. update hierarchy
       if (tx.objectSpace === core.space.Model) {
         hierarchy.tx(tx)
       }
-      await Promise.all([model.tx(tx), transactions.tx(tx)])
+
+      // 3. update transactions
+      await transactions.tx(tx)
+
+      // 4. process client handlers
       handler(tx)
     }
   }

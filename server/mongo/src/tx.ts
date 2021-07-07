@@ -31,7 +31,11 @@ export class TxStorage implements Storage {
     await this.db.insertOne(tx)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     let cursor = this.db.find(mongoQuery)
     if (options?.sort !== undefined) cursor = cursor.sort(options.sort)

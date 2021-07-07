@@ -14,8 +14,12 @@
 // limitations under the License.
 //
 import core, {
+  Account,
   Client,
   createClient,
+  createShortRef,
+  DerivedData,
+  DerivedDataDescriptor,
   Doc,
   DocumentUpdate,
   generateId,
@@ -24,6 +28,8 @@ import core, {
   SortingOrder,
   Space,
   Storage,
+  Title,
+  TxCreateDoc,
   TxOperations,
   TxUpdateDoc,
   withOperations
@@ -54,6 +60,18 @@ async function updateDoc<T extends Doc> (storage: Storage, doc: T, operations: D
   await storage.tx(tx)
 }
 
+export async function dropAllDBWithPrefix (prefix: string, mongoClient: MongoClient): Promise<void> {
+  // Drop all existing test databases.
+
+  const dbs = await mongoClient.db().admin().listDatabases()
+  for (const db of dbs.databases) {
+    const dbName = db.name as string
+    if (dbName.startsWith(prefix)) {
+      await mongoClient.db(dbName).dropDatabase()
+    }
+  }
+}
+
 describe('mongo operations', () => {
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
   let mongoClient!: MongoClient
@@ -64,6 +82,7 @@ describe('mongo operations', () => {
 
   beforeAll(async () => {
     mongoClient = await MongoClient.connect(mongodbUri, { useUnifiedTopology: true })
+    return await dropAllDBWithPrefix('mongo-testdb-', mongoClient)
   })
 
   afterAll(async () => {
@@ -201,16 +220,16 @@ describe('mongo operations', () => {
       })
     }
 
-    const without = await client.findAll(taskIds.class.Task, { })
+    const without = await client.findAll(taskIds.class.Task, {})
     expect(without).toHaveLength(5)
 
-    const limit = await client.findAll(taskIds.class.Task, { }, { limit: 1 })
+    const limit = await client.findAll(taskIds.class.Task, {}, { limit: 1 })
     expect(limit).toHaveLength(1)
 
-    const sortAsc = await client.findAll(taskIds.class.Task, { }, { sort: { name: SortingOrder.Ascending } })
+    const sortAsc = await client.findAll(taskIds.class.Task, {}, { sort: { name: SortingOrder.Ascending } })
     expect(sortAsc[0].name).toMatch('my-task-0')
 
-    const sortDesc = await client.findAll(taskIds.class.Task, { }, { sort: { name: SortingOrder.Descending } })
+    const sortDesc = await client.findAll(taskIds.class.Task, {}, { sort: { name: SortingOrder.Descending } })
     expect(sortDesc[0].name).toMatch('my-task-4')
   })
 })

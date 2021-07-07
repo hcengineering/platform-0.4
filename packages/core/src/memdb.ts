@@ -103,6 +103,10 @@ class MemDb extends TxProcessor {
   }
 
   addDoc (doc: Doc): void {
+    const obj = this.objectById.get(doc._id)
+    if (obj !== undefined) {
+      throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: doc._id }))
+    }
     this.hierarchy.getAncestors(doc._class).forEach((_class) => {
       this.getObjectsByClass(_class).push(doc)
     })

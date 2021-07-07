@@ -17,9 +17,11 @@ import core, {
   Account,
   Class,
   createClient,
+  createShortRef,
   Doc,
   Domain,
   DOMAIN_MODEL,
+  DOMAIN_REFERENCES,
   DOMAIN_TX,
   generateId,
   Ref,
@@ -31,6 +33,7 @@ import core, {
 } from '@anticrm/core'
 import { createClass, genMinModel } from '@anticrm/core/src/__tests__/minmodel'
 import { getMongoClient, shutdown } from '@anticrm/mongo'
+import { dropAllDBWithPrefix } from '@anticrm/mongo/src/__tests__/storage.test'
 import { Component, component } from '@anticrm/status'
 import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
@@ -49,6 +52,7 @@ interface MyTx extends TxCreateDoc<Doc> {
 const taskIds = component('my-task' as Component, {
   class: {
     MyTask: '' as Ref<Class<MyTask>>,
+    MyRef: '' as Ref<Class<MyTask>>,
     MyTx: '' as Ref<Class<MyTx>>
   }
 })
@@ -64,13 +68,17 @@ describe('workspace', () => {
 
   let workspace!: Workspace
 
+  beforeAll(async () => {
+    mongoDbClient = await getMongoClient(mongoDBUri, {})
+    await dropAllDBWithPrefix('ws-test-', mongoDbClient)
+  })
+
   beforeEach(async () => {
     dbId = generateId()
-    mongoDbClient = await getMongoClient(mongoDBUri, {})
   })
 
   afterEach(async () => {
-    await mongoDbClient.db('ws-' + dbId).dropDatabase()
+    await mongoDbClient.db('ws-test-' + dbId).dropDatabase()
   })
 
   afterAll(async () => {
@@ -78,7 +86,7 @@ describe('workspace', () => {
   })
 
   async function createDatabase (dbId: string, transactions: Tx[]): Promise<void> {
-    const txColl = mongoDbClient.db('ws-' + dbId).collection(DOMAIN_TX as string)
+    const txColl = mongoDbClient.db('ws-test-' + dbId).collection(DOMAIN_TX as string)
     for (const tx of transactions) {
       await txColl.insertOne(tx)
     }
@@ -87,7 +95,7 @@ describe('workspace', () => {
   it('connect to workspace', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
@@ -98,7 +106,7 @@ describe('workspace', () => {
   it('connect to workspace, check processing', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri }, async (hierarchy, storage, model) => {
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri }, async (hierarchy, storage, model) => {
       expect(model.getObject(core.class.Class)).toBeDefined()
       return []
     })
@@ -112,13 +120,13 @@ describe('workspace', () => {
   it('reconnect to workspace', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
     expect(resultTxs.length).toEqual(txes.length)
 
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
     expect(workspace.getHierarchy().getDomain(core.class.Class)).toEqual(DOMAIN_MODEL)
 
     const tx2 = await workspace.findAll(core.class.Tx, {})
@@ -128,7 +136,7 @@ describe('workspace', () => {
   it('create custom class', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
@@ -155,7 +163,7 @@ describe('workspace', () => {
 
   it('create custom classes', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
@@ -188,7 +196,7 @@ describe('workspace', () => {
 
   it('create custom tx', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx(myTx)
@@ -218,7 +226,7 @@ describe('workspace', () => {
 
   it('check update document', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(dbId, { mongoDBUri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
@@ -258,5 +266,61 @@ describe('workspace', () => {
     await client.tx(upd)
     const q3 = await client.findAll(taskIds.class.MyTask, { name: 'my-task2' })
     expect(q3.length).toEqual(1)
+  })
+
+  it('check create ShortRef', async () => {
+    jest.setTimeout(500000)
+    await createDatabase(dbId, txes)
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
+
+    // Register a new class
+    await workspace.tx(createMyTaskClass)
+    await workspace.tx(createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
+
+    // Let's create a client instance, since it has usefull functions.
+    const client = withOperations(
+      core.account.System,
+      await createClient(async () => {
+        return await Promise.resolve(workspace)
+      })
+    )
+
+    await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
+      name: 'my-task'
+    })
+
+    const sp = (await workspace.findAll(taskIds.class.MyTask, {}))[0]
+
+    const initial = (await workspace.findAll(core.class.Tx, {})).length
+    const t1 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    expect(t1).toBe('TASK-1')
+
+    expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(1)
+
+    const t2 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    expect(t2).toBe('TASK-2')
+
+    expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(2)
+
+    const tx: TxCreateDoc<MyTask> = {
+      _id: generateId(),
+      _class: core.class.TxCreateDoc,
+      space: core.space.Tx,
+      modifiedBy: '' as Ref<Account>,
+      modifiedOn: Date.now(),
+      objectId: 'TASK-3' as Ref<MyTask>,
+      objectClass: taskIds.class.MyRef,
+      objectSpace: '' as Ref<Space>,
+      attributes: {
+        name: 'qwe'
+      }
+    }
+    await workspace.tx(tx)
+
+    const t4 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    expect(t4).toBe('TASK-4')
+
+    const lastTx = await workspace.findAll(core.class.Tx, {})
+    expect(lastTx.length - initial).toEqual(4)
   })
 })
