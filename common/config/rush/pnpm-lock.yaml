@@ -11,6 +11,8 @@ specifiers:
   '@rush-temp/client': file:./projects/client.tgz
   '@rush-temp/core': file:./projects/core.tgz
   '@rush-temp/elastic': file:./projects/elastic.tgz
+  '@rush-temp/fsm': file:./projects/fsm.tgz
+  '@rush-temp/fsm-impl': file:./projects/fsm-impl.tgz
   '@rush-temp/login': file:./projects/login.tgz
   '@rush-temp/login-impl': file:./projects/login-impl.tgz
   '@rush-temp/meeting': file:./projects/meeting.tgz
@@ -20,6 +22,7 @@ specifiers:
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
+  '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
@@ -141,6 +144,8 @@ dependencies:
   '@rush-temp/client': file:projects/client.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
+  '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_1bb2ce79a84a3e40cbe57e148da7259c
   '@rush-temp/login': file:projects/login.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
   '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
@@ -150,6 +155,7 @@ dependencies:
   '@rush-temp/model-all': file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
+  '@rush-temp/model-fsm': file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-meeting': file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -9157,7 +9163,7 @@ packages:
     dev: false
 
   file:projects/elastic.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-2qkSIfxgPnEvTgSDYmPaJvo6+xDuwPor79tFaWuxAZC4WFKprVU9boU1Z/FWcWXTf0tLFWdsO38NoX59S53jLw==, tarball: file:projects/elastic.tgz}
+    resolution: {integrity: sha512-EgfFmHhZcQVVIkD/4h9ctrIRuRm9tDcLcViHpkz5M74AcatuLSlSKkTYrafLl9gvfoT8o+6DunLBFhTdl6CHxQ==, tarball: file:projects/elastic.tgz}
     id: file:projects/elastic.tgz
     name: '@rush-temp/elastic'
     version: 0.0.0
@@ -9184,6 +9190,45 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
+    dev: false
+
+  file:projects/fsm-impl.tgz_1bb2ce79a84a3e40cbe57e148da7259c:
+    resolution: {integrity: sha512-4n07qDEJ7KQNopLurpH+TsU+2k0vUmxYRsOK/2USTDEYMij8z9TJ9ebombV+OBgCC9UDbaP/iI5QrPn2Z0tEyw==, tarball: file:projects/fsm-impl.tgz}
+    id: file:projects/fsm-impl.tgz
+    name: '@rush-temp/fsm-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/lodash.debounce': 4.0.6
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
+      svelte-loader: 3.1.2_svelte@3.38.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.2
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/fsm.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-31pAnQL34LXJqxy+uomxz+upvPqqVvso1nW41Wf3UYK9TjKQOGolVY8WAxZTue0tJGLBMc9vx4S1Gly3/vEwYw==, tarball: file:projects/fsm.tgz}
+    id: file:projects/fsm.tgz
+    name: '@rush-temp/fsm'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
     dev: false
 
   file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678:
@@ -9355,6 +9400,20 @@ packages:
       - canvas
       - supports-color
       - utf-8-validate
+    dev: false
+
+  file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0:
+    resolution: {integrity: sha512-5mUIKndQ8LqBatVUoJ0XzwZT7dlxIvsygzPX1UbwN87qe5GXhkbrzJrIFF2q+PHOigjD044WJJpiI+MbwxERUw==, tarball: file:projects/model-fsm.tgz}
+    id: file:projects/model-fsm.tgz
+    name: '@rush-temp/model-fsm'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      ts-standard: 10.0.0_f449690769d268be8252d4a3fecd2872
+      typescript: 4.3.2
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
     dev: false
 
   file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0:

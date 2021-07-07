@@ -13,19 +13,18 @@
 // limitations under the License.
 //
 
-import { connect } from '../connection'
-import core, { createClient } from '@anticrm/core'
+import { mergeIds } from '@anticrm/status'
+import type { Ref, Class } from '@anticrm/core'
+import type { FSM, WithFSM, FSMItem, Transition, State } from '@anticrm/fsm'
 
-describe('client', () => {
-  it('should create connection', async () => {
-    const conn = await connect(() => {})
-    const txes = await conn.findAll(core.class.Tx, {})
-    expect(txes.length).toBe(25)
-  })
+import fsm from '@anticrm/fsm'
 
-  it('should create client', async () => {
-    const client = await createClient(connect)
-    const txes = await client.findAll(core.class.Class, {})
-    expect(txes.length).toBe(18)
-  })
+export default mergeIds(fsm, {
+  class: {
+    FSM: '' as Ref<Class<FSM>>,
+    WithFSM: '' as Ref<Class<WithFSM>>,
+    FSMItem: '' as Ref<Class<FSMItem>>,
+    Transition: '' as Ref<Class<Transition>>,
+    State: '' as Ref<Class<State>>
+  }
 })
