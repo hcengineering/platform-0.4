@@ -37,13 +37,13 @@ export class LiveQuery extends TxProcessor implements Client {
     return this.client.isDerived(_class, from)
   }
 
-  private match (q: Query, tx: TxCreateDoc<Doc>): boolean {
-    if (!this.isDerived(tx.objectClass, q._class)) {
+  private match (q: Query, doc: Doc): boolean {
+    if (!this.isDerived(doc._class, q._class)) {
       return false
     }
     for (const key in q.query) {
       const value = (q.query as any)[key]
-      if ((tx.attributes as any)[key] !== value) {
+      if ((doc as any)[key] !== value) {
         return false
       }
     }
@@ -94,8 +94,8 @@ export class LiveQuery extends TxProcessor implements Client {
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     for (const q of this.queries) {
-      if (this.match(q, tx)) {
-        const doc = TxProcessor.createDoc2Doc(tx)
+      const doc = TxProcessor.createDoc2Doc(tx)
+      if (this.match(q, doc)) {
         if (q.result instanceof Promise) {
           q.result = await q.result
         }
