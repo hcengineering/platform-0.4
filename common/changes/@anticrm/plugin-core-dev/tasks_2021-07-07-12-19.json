@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": "tasks",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "bykhov.denis@gmail.com"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "bykhov.denis@gmail.com"
+}
