@@ -16,7 +16,7 @@
 import { Builder } from '@anticrm/model'
 import core from './component'
 import { TClass, TDoc, TMixin, TObj } from './core'
-import { TDerivedData, TDerivedDataDescriptor, TReference, TTitle } from './derived'
+import { TBackReference, TDerivedData, TDerivedDataDescriptor, TReference, TTitle } from './derived'
 import { TSpace, TAccount } from './security'
 import { TTx, TTxCreateDoc, TTxUpdateDoc } from './tx'
 
@@ -39,6 +39,7 @@ export function createModel (builder: Builder): void {
     TDerivedData,
     TDerivedDataDescriptor,
     TTitle,
-    TReference
+    TReference,
+    TBackReference
   )
 }

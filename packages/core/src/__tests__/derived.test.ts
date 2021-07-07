@@ -56,11 +56,6 @@ const testIds = component('test' as Component, {
 
 const dtxes = [
   ...txes,
-  createClass(core.class.DerivedData, { extends: core.class.Doc }),
-  createClass(core.class.DerivedDataDescriptor, { extends: core.class.Doc }),
-  createClass(core.class.Title, { extends: core.class.DerivedData }),
-  createClass(core.class.Reference, { extends: core.class.DerivedData }),
-
   // Test ids
   createClass(testIds.class.Task, { extends: core.class.Doc }),
   createClass(testIds.class.Message, { extends: core.class.Doc }),
@@ -170,10 +165,10 @@ describe('deried data', () => {
     expect(titles[0].title).toEqual('T-101')
   })
 
-  it('check DD updatedappear after being updated', async () => {
+  it('check DD updated appear after being updated', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes, taskTitleDD])
+    const { operations, model, storage } = await prepare([...dtxes])
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -201,6 +196,34 @@ describe('deried data', () => {
     titles = await model.findAll(core.class.Title, {})
     expect(titles.length).toEqual(1)
     expect(titles[0].title).toEqual('my-task')
+  })
+  it('check DD remove appear after being removed', async () => {
+    // We need few descriptors to be available
+
+    const { operations, model, storage } = await prepare([...dtxes])
+
+    await operations.createDoc(testIds.class.Task, core.space.Model, {
+      title: 'my-task',
+      shortId: 'T-101',
+      description: ''
+    })
+
+    // Add descriptor
+    await storage.tx(taskTitleDD)
+
+    // Check for Title to be created
+
+    let titles = await model.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(1)
+    expect(titles[0].title).toEqual('T-101')
+
+    await operations.removeDoc<DerivedDataDescriptor<Doc, DerivedData>>(
+      core.class.DerivedDataDescriptor,
+      core.space.Model,
+      taskTitleDD.objectId as Ref<DerivedDataDescriptor<Doc, DerivedData>>
+    )
+    titles = await model.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(0)
   })
 
   it('check task update not modify titles', async () => {

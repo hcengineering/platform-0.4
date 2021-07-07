@@ -13,7 +13,6 @@
 // limitations under the License.
 //
 
-
 import type { Storage, DocumentQuery, FindResult } from '../storage'
 import type { Class, Doc, Ref } from '../classes'
 import core from '../component'

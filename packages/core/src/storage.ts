@@ -48,6 +48,10 @@ export interface FindResult<T extends Doc> extends Array<T> {
 }
 
 export interface Storage {
-  findAll: <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>) => Promise<FindResult<T>>
+  findAll: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ) => Promise<FindResult<T>>
   tx: (tx: Tx) => Promise<void>
 }
