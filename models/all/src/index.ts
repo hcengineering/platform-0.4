@@ -18,6 +18,7 @@ import { Builder } from '@anticrm/model'
 import { createModel as coreModel } from '@anticrm/model-core'
 import { createModel as workbenchModel } from '@anticrm/model-workbench'
 import { createModel as chunterModel } from '@anticrm/model-chunter'
+import { createModel as fsmModel } from '@anticrm/model-fsm'
 import { createModel as taskModel } from '@anticrm/model-task'
 import { createModel as meetingModel } from '@anticrm/model-meeting'
 
@@ -26,6 +27,7 @@ const builder = new Builder()
 coreModel(builder)
 workbenchModel(builder)
 chunterModel(builder)
+fsmModel(builder)
 taskModel(builder)
 meetingModel(builder)
 

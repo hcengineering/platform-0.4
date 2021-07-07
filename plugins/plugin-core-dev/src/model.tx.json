@@ -1,6 +1,6 @@
 [
   {
-    "_id": "60dee58cb356b58d3f4beae7",
+    "_id": "60e5445ab7ec2b08ef3a5127",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -13,7 +13,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beae8",
+    "_id": "60e5445ab7ec2b08ef3a5128",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -27,7 +27,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beae9",
+    "_id": "60e5445ab7ec2b08ef3a5129",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -42,7 +42,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaea",
+    "_id": "60e5445ab7ec2b08ef3a512a",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -57,7 +57,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaeb",
+    "_id": "60e5445ab7ec2b08ef3a512b",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -72,7 +72,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaec",
+    "_id": "60e5445ab7ec2b08ef3a512c",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -86,7 +86,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaed",
+    "_id": "60e5445ab7ec2b08ef3a512d",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -100,7 +100,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaee",
+    "_id": "60e5445ab7ec2b08ef3a512e",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -115,7 +115,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaef",
+    "_id": "60e5445ab7ec2b08ef3a512f",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -129,7 +129,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf0",
+    "_id": "60e5445ab7ec2b08ef3a5130",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -144,7 +144,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf1",
+    "_id": "60e5445ab7ec2b08ef3a5131",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -159,12 +159,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf2",
+    "_id": "60e5445ab7ec2b08ef3a5132",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beaf3",
+    "objectId": "60e5445ab7ec2b08ef3a5133",
     "objectClass": "class:workbench.Application",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -185,12 +185,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf4",
+    "_id": "60e5445ab7ec2b08ef3a5134",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beaf5",
+    "objectId": "60e5445ab7ec2b08ef3a5135",
     "objectClass": "class:chunter.Channel",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -201,12 +201,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf6",
+    "_id": "60e5445ab7ec2b08ef3a5136",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beaf7",
+    "objectId": "60e5445ab7ec2b08ef3a5137",
     "objectClass": "class:chunter.Channel",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -217,7 +217,77 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf8",
+    "_id": "60e5445ab7ec2b08ef3a5138",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:fsm.WithFSM",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "kind": 0,
+      "extends": "class:core.Doc"
+    }
+  },
+  {
+    "_id": "60e5445ab7ec2b08ef3a5139",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:fsm.FSMItem",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "kind": 0,
+      "extends": "class:core.Doc"
+    }
+  },
+  {
+    "_id": "60e5445ab7ec2b08ef3a513a",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:fsm.Transition",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "kind": 0,
+      "extends": "class:core.Doc"
+    }
+  },
+  {
+    "_id": "60e5445ab7ec2b08ef3a513b",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:fsm.State",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "kind": 0,
+      "extends": "class:core.Doc"
+    }
+  },
+  {
+    "_id": "60e5445ab7ec2b08ef3a513c",
+    "_class": "class:core.TxCreateDoc",
+    "space": "space:core.Tx",
+    "modifiedBy": "account:core.System",
+    "modifiedOn": 0,
+    "objectId": "class:fsm.FSM",
+    "objectClass": "class:core.Class",
+    "objectSpace": "space:core.Model",
+    "attributes": {
+      "kind": 0,
+      "extends": "class:core.Doc"
+    }
+  },
+  {
+    "_id": "60e5445ab7ec2b08ef3a513d",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -232,12 +302,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beaf9",
+    "_id": "60e5445ab7ec2b08ef3a513e",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beafa",
+    "objectId": "60e5445ab7ec2b08ef3a513f",
     "objectClass": "class:workbench.Application",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -258,12 +328,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beafb",
+    "_id": "60e5445ab7ec2b08ef3a5140",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beafc",
+    "objectId": "60e5445ab7ec2b08ef3a5141",
     "objectClass": "class:task.Project",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -274,7 +344,7 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beafd",
+    "_id": "60e5445ab7ec2b08ef3a5142",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
@@ -289,12 +359,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beafe",
+    "_id": "60e5445ab7ec2b08ef3a5143",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beaff",
+    "objectId": "60e5445ab7ec2b08ef3a5144",
     "objectClass": "class:workbench.Application",
     "objectSpace": "space:core.Model",
     "attributes": {
@@ -315,12 +385,12 @@
     }
   },
   {
-    "_id": "60dee58cb356b58d3f4beb00",
+    "_id": "60e5445ab7ec2b08ef3a5145",
     "_class": "class:core.TxCreateDoc",
     "space": "space:core.Tx",
     "modifiedBy": "account:core.System",
     "modifiedOn": 0,
-    "objectId": "60dee58cb356b58d3f4beb01",
+    "objectId": "60e5445ab7ec2b08ef3a5146",
     "objectClass": "class:meeting.RoomSpace",
     "objectSpace": "space:core.Model",
     "attributes": {

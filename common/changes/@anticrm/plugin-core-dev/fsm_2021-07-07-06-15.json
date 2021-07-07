@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": "Update model",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "ilya.sumb@gmail.com"
+}

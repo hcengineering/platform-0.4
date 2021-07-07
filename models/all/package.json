@@ -31,6 +31,7 @@
     "@anticrm/model-chunter":"~0.4.0",
     "@anticrm/model-task":"~0.4.0",
     "@anticrm/model-core":"~0.4.0",
-    "@anticrm/model-meeting":"~0.4.0"
+    "@anticrm/model-meeting":"~0.4.0",
+    "@anticrm/model-fsm":"~0.4.0"
   }
 }
