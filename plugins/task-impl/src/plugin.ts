@@ -33,13 +33,6 @@ export interface Task extends Doc {
   description: string,
   asignee?: Ref<Account>,
   status: TaskStatus,
-  comments: TaskComment[]
-}
-
-export interface TaskComment {
-  message: string,
-  createdBy: Ref<Account>,
-  createdOn: Date
 }
 
 export default mergeIds(task, {
