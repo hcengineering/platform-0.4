@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-fsm",
+      "comment": "Introduce fsm plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/model-fsm",
+  "email": "ilya.sumb@gmail.com"
+}
