@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "ShortRef references support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "haiodo@gmail.com"
+}

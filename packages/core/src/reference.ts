@@ -1,4 +1,4 @@
-import { Class, Doc, Ref } from './classes'
+import { Class, Doc, Domain, Ref } from './classes'
 import { DerivedData } from './derived'
 
 /**
@@ -13,3 +13,5 @@ export interface BackReference extends Reference {
   sourceObjectId: Ref<Doc>
   sourceObjectClass: Ref<Class<Doc>>
 }
+
+export const DOMAIN_REFERENCES = 'refs' as Domain
