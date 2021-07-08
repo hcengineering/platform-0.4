@@ -39,6 +39,9 @@ export { default as ScrollBox } from './components/ScrollBox.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
+export { default as MessageViewer } from './components/text/MessageViewer.svelte'
+export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
+
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
 }

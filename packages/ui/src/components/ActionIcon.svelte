@@ -31,7 +31,7 @@
 <Tooltip label={label} direction={direction}>
   <button class="button" style="width: {size}px; height: {size}px" on:click|stopPropagation={action}>
     <div class="icon" style="width: {size}px; height: {size}px" class:invisible={invisible}>
-      {#if typeof(icon) === 'string'}
+      {#if typeof (icon) === 'string'}
         <Icon {icon} {size}/>
       {:else}
         <svelte:component this={icon} size={size} />

@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import { Metadata, Plugin, plugin, Resource, Service } from '@anticrm/platform'
-import { getContext, SvelteComponent } from 'svelte'
+import { /* Metadata, Plugin, plugin, */ Resource /*, Service */ } from '@anticrm/platform'
+import { /* getContext, */ SvelteComponent } from 'svelte'
 import type { Asset, IntlString } from '@anticrm/status'
 
 export type { Asset }
@@ -52,7 +52,6 @@ export interface DocumentProvider {
    */
   selection: () => Document | undefined
 }
-
 
 export interface Action {
   label: IntlString
