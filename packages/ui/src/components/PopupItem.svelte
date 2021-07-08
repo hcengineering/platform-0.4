@@ -18,7 +18,7 @@
   import Label from './Label.svelte'
   import Check from './icons/Check.svelte'
 
-  export let title: IntlString | undefined = undefined
+  export let title: IntlString | string | undefined = undefined
   export let component: AnySvelteComponent | undefined = undefined
   export let props: Object = {}
   export let selectable: boolean = false
