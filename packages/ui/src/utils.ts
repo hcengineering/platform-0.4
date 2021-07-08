@@ -14,10 +14,10 @@
 //
 
 import type { Metadata } from '@anticrm/platform'
-import type { AnyComponent, Location } from './types'
+import type { AnyComponent /*, Location */ } from './types'
 
-import { Readable, derived, writable } from 'svelte/store'
-import { onDestroy, getContext, setContext } from 'svelte'
+// import { Readable, derived, writable } from 'svelte/store'
+// import { onDestroy, getContext, setContext } from 'svelte'
 
 // function windowLocation (): Location {
 //   return parseLocation(window.location)

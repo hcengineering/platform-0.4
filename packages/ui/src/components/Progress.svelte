@@ -19,7 +19,7 @@
   export let max: number = 100
   export let color: string = '#50BCF9'
 
-  let proc: number = (max - min) / 100
+  const proc: number = (max - min) / 100
   if (value > max) value = max
   if (value < min) value = min
 </script>

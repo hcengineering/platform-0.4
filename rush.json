@@ -596,6 +596,21 @@
       "packageName": "@anticrm/webrtc",
       "projectFolder": "packages/webrtc",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-fsm",
+      "projectFolder": "models/fsm",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/fsm",
+      "projectFolder": "plugins/fsm",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "projectFolder": "plugins/fsm-impl",
+      "shouldPublish": true
     }
 
     // {

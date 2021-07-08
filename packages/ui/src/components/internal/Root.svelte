@@ -19,10 +19,10 @@
 
   onDestroy(location.subscribe((loc) => {
     if (loc.path[0]) {
-        const app = loc.path[0] as AnyComponent
-        const shortcut = getMetadata(applicationShortcutKey(app))
-        application = shortcut ?? app
-      }
+      const app = loc.path[0] as AnyComponent
+      const shortcut = getMetadata(applicationShortcutKey(app))
+      application = shortcut ?? app
+    }
   }))
 
   let status = OK

@@ -29,6 +29,7 @@ import core, {
   FindResult
 } from '@anticrm/core'
 import { Collection, Db, UpdateQuery, FilterQuery } from 'mongodb'
+import { PlatformError, Severity, Status } from '@anticrm/status'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
@@ -59,7 +60,15 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
+    try {
+      await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
+    } catch (err) {
+      // Convert error to platform known ones.
+      if (err.code === 11000) {
+        // Duplicate code error
+        throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: tx.objectId }))
+      }
+    }
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
@@ -86,7 +95,11 @@ export class DocStorage extends TxProcessor implements Storage {
     await this.collection(tx.objectClass).deleteOne(deleteQuery)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     let cursor = this.collection(_class).find(mongoQuery)
     if (options?.sort !== undefined) cursor = cursor.sort(options.sort)

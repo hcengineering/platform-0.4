@@ -17,6 +17,7 @@ import { component } from '@anticrm/status'
 import type { Account, Class, Doc, Obj, Ref, Space } from './classes'
 import { DerivedData, DerivedDataDescriptor } from './derived'
 import { BackReference, Reference } from './reference'
+import { ShortRef } from './shortref'
 import { Title } from './title'
 import type { Tx, TxCreateDoc, TxRemoveDoc, TxUpdateDoc } from './tx'
 
@@ -33,6 +34,7 @@ export default component(ComponentCore, {
     TxRemoveDoc: '' as Ref<Class<TxRemoveDoc<Doc>>>,
     Space: '' as Ref<Class<Space>>,
     Account: '' as Ref<Class<Account>>,
+    ShortRef: '' as Ref<Class<ShortRef>>,
 
     DerivedData: '' as Ref<Class<DerivedData>>,
     DerivedDataDescriptor: '' as Ref<Class<DerivedDataDescriptor<Doc, DerivedData>>>,
@@ -49,6 +51,7 @@ export default component(ComponentCore, {
   },
   status: {
     ObjectNotFound: '' as StatusCode<{ _id: Ref<Doc> }>,
+    ObjectAlreadyExists: '' as StatusCode<{ _id: Ref<Doc> }>,
     ItemNotFound: '' as StatusCode<{ _id: Ref<Doc>, _localId: string }>
   }
 })
