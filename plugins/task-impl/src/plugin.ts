@@ -16,20 +16,43 @@
 import { mergeIds } from '@anticrm/status'
 import type { IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
-import type { Ref, Class } from '@anticrm/core'
+import type { Ref, Class, Doc, Account } from '@anticrm/core'
 import type { Project } from '@anticrm/task'
 
 import task from '@anticrm/task'
+
+export enum TaskStatus {
+  Open,
+  InProgress,
+  Resolved,
+  Closed
+}
+
+export interface Task extends Doc {
+  name: string,
+  description: string,
+  assignee?: Ref<Account>,
+  status: TaskStatus,
+}
 
 export default mergeIds(task, {
   component: {
     CreateProject: '' as AnyComponent,
     TaskView: '' as AnyComponent,
+    CreateTask: '' as AnyComponent
   },
   class: { 
-    Project: '' as Ref<Class<Project>>
+    Project: '' as Ref<Class<Project>>,
+    Task: '' as Ref<Class<Task>>
   },
   string: {
-    Projects: '' as IntlString
+    Projects: '' as IntlString,
+    ProjectName: '' as IntlString,
+    ProjectDescription: '' as IntlString,
+    MakePrivate: '' as IntlString,
+    MakePrivateDescription: '' as IntlString,
+    TaskName: '' as IntlString,
+    TaskDescription: '' as IntlString,
+    CreateTask: '' as IntlString
   }
 })

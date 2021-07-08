@@ -17,11 +17,16 @@ import type { TaskService } from '@anticrm/task'
 import { setResource } from '@anticrm/platform'
 import task from './plugin'
 
+import CreateTask from './components/CreateTask.svelte'
 import TaskView from './components/TaskView.svelte'
+import CreateProject from './components/CreateProject.svelte'
+export { Task, TaskStatus } from './plugin'
 
 export default async (): Promise<TaskService> => {
 
+  setResource(task.component.CreateProject, CreateProject)
   setResource(task.component.TaskView, TaskView)
+  setResource(task.component.CreateTask, CreateTask)
 
   return {}
 }
