@@ -52,19 +52,6 @@ export class Hierarchy {
     throw new Error('domain not found: ' + _class)
   }
 
-  getDomainByTx (tx: Tx): Domain {
-    if (this.isDerived(tx._class, core.class.TxCreateDoc)) {
-      return this.getDomain((tx as TxCreateDoc<Doc>).objectClass)
-    }
-    if (this.isDerived(tx._class, core.class.TxUpdateDoc)) {
-      return this.getDomain((tx as TxUpdateDoc<Doc>).objectClass)
-    }
-    if (this.isDerived(tx._class, core.class.TxRemoveDoc)) {
-      return this.getDomain((tx as TxRemoveDoc<Doc>).objectClass)
-    }
-    throw new Error(`Tx has no objectClass defined ${tx._class}`)
-  }
-
   tx (tx: Tx): void {
     if (tx._class !== core.class.TxCreateDoc) return
     const createTx = tx as TxCreateDoc<Class<Obj>>

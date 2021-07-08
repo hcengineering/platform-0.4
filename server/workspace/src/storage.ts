@@ -27,12 +27,9 @@ export class WorkspaceStorage implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    await this.txStore.tx(tx) // In any case send into transaction storage.
-
-    const domain = this.hierarchy.getDomainByTx(tx)
-    if (domain === DOMAIN_TX || domain === DOMAIN_MODEL) {
-      return // No need since already performed or not required
+    if (tx.objectSpace !== core.space.Model) {
+      await this.doc.tx(tx)
     }
-    return await this.doc.tx(tx)
+    await this.txStore.tx(tx) // In any case send into transaction storage.
   }
 }

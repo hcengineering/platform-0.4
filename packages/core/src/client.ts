@@ -52,8 +52,7 @@ class ClientImpl extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    const domain = this.hierarchy.getDomainByTx(tx)
-    if (domain === DOMAIN_MODEL) {
+    if (tx.objectSpace === core.space.Model) {
       return await this.model.tx(tx)
     }
     await this.conn.tx(tx)
