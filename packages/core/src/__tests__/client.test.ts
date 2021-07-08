@@ -26,7 +26,8 @@ describe('client', () => {
     const klass = core.class.Space
     const client = withOperations(core.account.System, await createClient(connect))
     const result = await client.findAll(klass, {})
-    expect(result).toHaveLength(2)
+    let expectedCount = 2
+    expect(result).toHaveLength(expectedCount)
 
     await client.createDoc<Space>(klass, core.space.Model, {
       private: false,
@@ -35,11 +36,11 @@ describe('client', () => {
       members: []
     })
     const result2 = await client.findAll(klass, {})
-    expect(result2).toHaveLength(3)
+    expect(result2).toHaveLength(++expectedCount)
 
     await client.createDoc(klass, core.space.Model, { private: false, name: 'NewSpace', description: '', members: [] })
     const result3 = await client.findAll(klass, {})
-    expect(result3).toHaveLength(4)
+    expect(result3).toHaveLength(++expectedCount)
 
     await client.createDoc(core.class.Reference, result3[0]._id, { objectClass: core.class.Reference, objectId: '' as Ref<Doc>, descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>> })
     const res = await client.findAll(core.class.Reference, {})

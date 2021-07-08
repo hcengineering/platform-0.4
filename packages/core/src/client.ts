@@ -52,11 +52,6 @@ class ClientImpl extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    this.hierarchy.tx(tx)
-
-    if (tx.objectSpace === core.space.Model) {
-      await this.model.tx(tx)
-    }
     await this.conn.tx(tx)
   }
 }
@@ -76,7 +71,9 @@ export async function createClient (
       txBuffer?.push(tx)
     } else {
       hierarchy.tx(tx)
-      void model.tx(tx)
+      if (tx.objectSpace === core.space.Model) {
+        void model.tx(tx)
+      }
       notify?.(tx)
     }
   }
