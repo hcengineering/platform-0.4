@@ -31,7 +31,7 @@ export enum TaskStatus {
 export interface Task extends Doc {
   name: string,
   description: string,
-  asignee?: Ref<Account>,
+  assignee?: Ref<Account>,
   status: TaskStatus,
 }
 

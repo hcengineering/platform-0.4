@@ -39,10 +39,6 @@
   let currentApp: Ref<Application> | undefined
   let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
-  
-  $: props = {
-    currentSpace: currentSpace
-  }
 
   onDestroy(location.subscribe(async (loc) => {
     currentApp = loc.path[1] as Ref<Application>
@@ -73,7 +69,8 @@
   <div class="component">
     <SpaceHeader model={navigatorModel} space={currentSpace}/>
     {#if navigatorModel}
-      <Component is={navigatorModel.spaceView} props={props}/>
+      <Component is={navigatorModel.spaceView} props={{currentSpace: currentSpace
+      }}/>
     {/if}
   </div>
   <!-- <div class="aside"><Chat thread/></div> -->

@@ -26,6 +26,7 @@
 
   let name: string = ''
   let description: string = ''
+  let isPrivate: boolean = false
 
   const client = getClient()
 
@@ -33,7 +34,7 @@
     client.createDoc(task.class.Project, core.space.Model, {
       name,
       description,
-      private: false
+      private: isPrivate
     })
   }
 </script>
@@ -45,7 +46,7 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.ProjectName} bind:value={name}/></div>
     <div class="row"><EditBox label={task.string.ProjectDescription} bind:value={description}/></div>
-    <div class="row"><ToggleWithLabel label={task.string.MakePrivate} description={task.string.MakePrivateDescription}/></div>
+    <div class="row"><ToggleWithLabel label={task.string.MakePrivate} description={task.string.MakePrivateDescription} bind:on={isPrivate}/></div>
   </div>
 </Dialog>
 

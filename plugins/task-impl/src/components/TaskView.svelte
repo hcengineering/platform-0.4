@@ -32,7 +32,7 @@
   const fields = [{label: 'Name' as IntlString, properties: [{key: 'name', property: 'label'}], component: Label},
   {label: 'Description' as IntlString, properties: [{key: 'description', property: 'label'}], component: Label},
   {label: 'Status' as IntlString, properties: [{key: 'status', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus},
-  {label: 'Asignee' as IntlString, properties: [{value:'elon', property: 'user'}], component: UserInfo}]
+  {label: 'Assignee' as IntlString, properties: [{value:'elon', property: 'user'}], component: UserInfo}]
 </script>
 
 <div class="container">

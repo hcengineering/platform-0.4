@@ -33,7 +33,7 @@ export class TProject extends TSpace implements Project {}
 export class TTask extends TDoc implements Task {
   name!: string
   description!: string
-  asignee!: Ref<Account>
+  assignee!: Ref<Account>
   status!: TaskStatus
 }
 

@@ -27,14 +27,14 @@
   export let space: Ref<Space>
   let name: string = ''
   let description: string = ''
-  let asignee: Ref<Account> | undefined
+  let assignee: Ref<Account> | undefined
 
   const client = getClient()
 
   function create() {
     client.createDoc(task.class.Task, space, {
       name,
-      asignee,
+      assignee,
       description,
       status: TaskStatus.Open
     })
