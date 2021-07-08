@@ -14,9 +14,10 @@
 // limitations under the License.
 //
 
-import { Space } from '../classes'
+import { Doc, Ref, Space } from '../classes'
 import { createClient } from '../client'
 import core from '../component'
+import { DerivedData, DerivedDataDescriptor } from '../derived'
 import { withOperations } from '../tx'
 import { connect } from './connection'
 
@@ -39,5 +40,9 @@ describe('client', () => {
     await client.createDoc(klass, core.space.Model, { private: false, name: 'NewSpace', description: '', members: [] })
     const result3 = await client.findAll(klass, {})
     expect(result3).toHaveLength(4)
+
+    await client.createDoc(core.class.Reference, result3[0]._id, { objectClass: core.class.Reference, objectId: '' as Ref<Doc>, descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>> })
+    const res = await client.findAll(core.class.Reference, {})
+    expect(res).toHaveLength(1)
   })
 })

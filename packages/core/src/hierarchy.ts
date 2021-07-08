@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Data, Domain } from './classes'
-import type { Tx, TxCreateDoc } from './tx'
+import type { Ref, Class, Obj, Data, Domain, Doc } from './classes'
+import type { Tx, TxCreateDoc, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 import core from './component'
 
@@ -50,6 +50,19 @@ export class Hierarchy {
       return domain
     }
     throw new Error('domain not found: ' + _class)
+  }
+
+  getDomainByTx (tx: Tx): Domain {
+    if (this.isDerived(tx._class, core.class.TxCreateDoc)) {
+      return this.getDomain((tx as TxCreateDoc<Doc>).objectClass)
+    }
+    if (this.isDerived(tx._class, core.class.TxCreateDoc)) {
+      return this.getDomain((tx as TxUpdateDoc<Doc>).objectClass)
+    }
+    if (this.isDerived(tx._class, core.class.TxCreateDoc)) {
+      return this.getDomain((tx as TxRemoveDoc<Doc>).objectClass)
+    }
+    throw new Error(`Tx has no objectClass defined ${tx._class}`)
   }
 
   tx (tx: Tx): void {
