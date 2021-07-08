@@ -16,7 +16,7 @@
 <script lang="ts">
   import { getResource } from '@anticrm/platform'
   import type { AnyComponent } from '../types'
-    
+  
   // import Icon from './Icon.svelte'
   import Spinner from './Spinner.svelte'
   import ErrorBoundary from './internal/ErrorBoundary'

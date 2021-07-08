@@ -18,13 +18,13 @@ import { writable, derived } from 'svelte/store'
 
 export function locationToUrl (location: PlatformLocation): string {
   let result = '/'
-  if (location.path) {
+  if (location.path != null) {
     result += location.path.map((p) => encodeURIComponent(p)).join('/')
   }
-  if (location.query) {
+  if (location.query != null) {
     const queryValue = Object.entries(location.query)
       .map((e) => {
-        if (e[1]) {
+        if (e[1] != null) {
           // Had value
           return e[0] + '=' + e[1]
         } else {
@@ -36,7 +36,7 @@ export function locationToUrl (location: PlatformLocation): string {
       result += '?' + queryValue
     }
   }
-  if (location.fragment && location.fragment.length > 0) {
+  if (location.fragment != null && location.fragment.length > 0) {
     result += '#' + location.fragment
   }
 
@@ -109,7 +109,7 @@ window.addEventListener('popstate', () => {
 
 export const location = derived(locationWritable, (loc) => loc)
 
-export function navigate(location: PlatformLocation) {
+export function navigate (location: PlatformLocation): void {
   const url = locationToUrl(location)
   history.pushState(null, '', url)
   locationWritable.set(location)

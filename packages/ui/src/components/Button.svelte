@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Spinner from './Spinner.svelte'
@@ -23,15 +22,13 @@
   export let disabled: boolean = false
   export let loading: boolean = false
   export let width: string | undefined = undefined
-
 </script>
 
-<button class="button" class:primary={primary} disabled={disabled || loading}
-        style="{width ? 'width: ' + width : ''}" on:click>
+<button class="button" class:primary disabled={disabled || loading} style={width ? 'width: ' + width : ''} on:click>
   {#if loading}
-    <Spinner/>
+    <Spinner />
   {:else}
-    <Label label={label}/>
+    <Label {label} />
   {/if}
 </button>
 
@@ -97,5 +94,4 @@
       cursor: not-allowed;
     }
   }
-
 </style>
