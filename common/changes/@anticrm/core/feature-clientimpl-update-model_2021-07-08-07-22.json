@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "get domain by tx",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "bykhov.denis@gmail.com"
+}
