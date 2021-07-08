@@ -19,15 +19,21 @@
   import MoreH from './icons/MoreH.svelte'
 
   export let user: string
+  export let onDrag: boolean = false
+  export let draggable: boolean = false
 </script>
 
-<section class="card-container">
+<div class="card-container" class:drag={onDrag}
+  draggable={draggable}
+  on:dragstart
+  on:dragend
+>
   <div class="header">
     <UserInfo {user} suptitle={'Candidate'} size={32}/>
     <ActionIcon icon={MoreH} direction={'left'} label={'More...'}/>
   </div>
   <slot/>
-</section>
+</div>
 
 <style lang="scss">
   .card-container {
@@ -47,6 +53,11 @@
       min-height: 72px;
       background-color: var(--theme-button-bg-focused);
       border-radius: 11px 11px 0 0;
+      cursor: pointer;
+    }
+
+    &.drag {
+      opacity: .5;
     }
   }
 </style>
