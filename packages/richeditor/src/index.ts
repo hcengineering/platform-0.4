@@ -47,3 +47,5 @@ export interface EditorActions {
   toggleOrderedList: () => void
   focus: () => void
 }
+
+export { default as MessageEditor } from './MessageEditor.svelte'

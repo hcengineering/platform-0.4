@@ -12,18 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
+  import type { Ref, Space } from '@anticrm/core'
+
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
 
-  export let thread: boolean = false
+  import chunter from '../plugin'
+
+  import { getClient } from '@anticrm/workbench'
+
+  export let currentSpace: Ref<Space>
+
+  const client = getClient()
+
+  function addMessage (message: string): void {
+    client.createDoc(chunter.class.Message, currentSpace, {
+      message,
+      replyCount: 0
+    })
+  }
 </script>
 
 <div class="msg-board">
-  <Channel {thread}/>
+  <Channel space={currentSpace} />
 </div>
-<ReferenceInput {thread}/>
+<ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
 
 <style lang="scss">
   .msg-board {

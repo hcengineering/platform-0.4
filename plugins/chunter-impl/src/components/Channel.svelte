@@ -12,25 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
+  import { Message as MessageModel } from '@anticrm/chunter'
+  import type { Ref, Space } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
+  import { onDestroy } from 'svelte'
+  import chunter from '../plugin'
   import Message from './Message.svelte'
-  import ChannelSeparator from './ChannelSeparator.svelte'
 
-  export let thread: boolean = false
+  export let space: Ref<Space>
+
+  const client = getClient()
+  let unsubscribe = () => {}
+
+  let messages: MessageModel[] = []
+  $: if (space !== undefined) {
+    unsubscribe()
+    unsubscribe = client.query(chunter.class.Message, { space }, (result) => {
+      messages = result
+      console.log(space)
+    })
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
 <div class="channel-container">
-  {#if thread}
-    <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One!"/>
-    <ChannelSeparator title={'6 replies'} line={true}/>
-  {/if}
-  <Message {thread} reactions replies name="Rosamund Chen" time="3:20 PM" message={'# Auditorum \nThe **Dark** Lord has *Nine*. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him.\n ## Curiocity \n I believe the QR `Typography and spacing` is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. '}/>
-  <ChannelSeparator title={'MAR 25, 3:20 PM'}/>
-  <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
-  <Message {thread} reactions name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they: the White Rider. Hero  has passed through the fire and the abyss, and they shall fear him. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts. Hero  has passed through the fire and the abyss, and they shall fear him. mightier than they. "/>
-  <Message {thread} name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One, mightier than they: the White Rider. I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts."/>
-  <Message {thread} replies name="Rosamund Chen" time="3:20 PM" message="The Dark Lord has Nine. But we have One!"/>
+  {#each messages as m (m._id)}
+    <Message reactions replies name={m.modifiedBy} time={`${m.modifiedOn}`} message={m.message} />
+  {/each}
 </div>
 
 <style lang="scss">

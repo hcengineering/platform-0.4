@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import avatar from '../../img/avatar.png'
 
   export let replies: string[] = ['Chen', 'Elon', 'Tim', 'Elon', 'Tim', 'Chen']
 
-  let shown: number = 4
-  let showReplies: Array<string> = []
+  const shown: number = 4
+  const showReplies: Array<string> = []
   for (let i = 0; i < shown; i++) {
     showReplies.push(replies[i])
   }
@@ -29,7 +28,7 @@
   <div class="counter">{replies.length} Replies</div>
   <div class="replies">
     {#each showReplies as reply}
-      <div class="reply"><img class="circle" src={avatar} alt={reply}></div>
+      <div class="reply"><img class="circle" src={avatar} alt={reply} /></div>
     {/each}
     {#if replies.length > shown}
       <div class="reply"><span>+{replies.length - shown}</span></div>
@@ -80,7 +79,7 @@
           height: 28px;
           font-size: 12px;
           font-weight: 500;
-          line-height: .5;
+          line-height: 0.5;
           color: var(--theme-caption-color);
           background-color: var(--theme-bg-selection);
           border-radius: 50%;

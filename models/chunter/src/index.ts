@@ -1,32 +1,44 @@
 //
 // Copyright © 2020, 2021 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
+import type { Channel, Comment, Message } from '@anticrm/chunter'
+import type { Domain, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-
-import { TSpace } from '@anticrm/model-core'
-import type { Channel } from '@anticrm/chunter'
-
+import core, { TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
-import core from '@anticrm/model-core'
 import chunter from './plugin'
+
+const DOMAIN_CHUNTER = 'chunter' as Domain
 
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {}
 
-export function createModel(builder: Builder) {
-  builder.createModel(TChannel)
+@Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
+export class TMessage extends TDoc implements Message {
+  message!: string
+  replyCount!: number
+}
+
+@Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
+export class TComment extends TDoc implements Comment {
+  replyOf!: Ref<Message>
+  message!: string
+}
+
+export function createModel (builder: Builder): void {
+  builder.createModel(TChannel, TMessage, TComment)
   builder.createDoc(workbench.class.Application, {
     label: chunter.string.ApplicationLabelChunter,
     icon: chunter.icon.Chunter,

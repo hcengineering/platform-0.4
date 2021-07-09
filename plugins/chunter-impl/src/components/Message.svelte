@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { ActionIcon } from '@anticrm/ui'
   import Emoji from './icons/Emoji.svelte'
@@ -33,25 +32,29 @@
 </script>
 
 <div class="message-container">
-  <div class="avatar"><img src={avatar} alt="Avatar"></div>
+  <div class="avatar"><img src={avatar} alt="Avatar" /></div>
   <div class="message">
     <div class="header">{name}<span>{time}</span></div>
     <div class="text">
-      <MarkdownViewer {message}/>
+      <MarkdownViewer {message} />
     </div>
     {#if (reactions || replies) && !thread}
       <div class="footer">
-        <div>{#if reactions}<Reactions/>{/if}</div>
-        <div>{#if replies}<Replies/>{/if}</div>
+        <div>
+          {#if reactions}<Reactions />{/if}
+        </div>
+        <div>
+          {#if replies}<Replies />{/if}
+        </div>
       </div>
     {/if}
   </div>
   {#if !thread}
     <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'}/></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'}/></div>
+      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
     </div>
   {/if}
 </div>
@@ -90,7 +93,7 @@
           font-weight: 400;
           font-size: 14px;
           line-height: 18px;
-          opacity: .4;
+          opacity: 0.4;
         }
       }
       .text {
