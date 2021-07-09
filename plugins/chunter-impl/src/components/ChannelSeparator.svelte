@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import { IntlString } from "@anticrm/status"
+  import { IntlString } from '@anticrm/status'
 
   export let title: IntlString
   export let line: boolean = false
 </script>
 
-<div class="separator-container" class:line={line}>
+<div class="separator-container" class:line>
   <div class="title">{title}</div>
 </div>
 
@@ -38,7 +37,7 @@
       padding: 6px 12px;
       font-weight: 600;
       font-size: 12px;
-      letter-spacing: .5px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       color: var(--theme-content-trans-color);
       z-index: 1;

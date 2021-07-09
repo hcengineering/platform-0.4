@@ -85,7 +85,8 @@ specifiers:
   eslint-plugin-node: ^11.1.0
   eslint-plugin-promise: ^5.1.0
   eslint-plugin-standard: ^5.0.0
-  eslint-plugin-svelte3: ^3.2.0
+  eslint-plugin-svelte3: ^3.1.2
+  eslint-svelte3-preprocess: ~0.0.5
   fast-equals: ^2.0.1
   file-loader: ^6.2.0
   intl-messageformat: ^9.6.12
@@ -140,7 +141,7 @@ dependencies:
   '@microsoft/api-extractor': 7.15.1
   '@rush-temp/chunter': file:projects/chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/chunter-assets': file:projects/chunter-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_d28de90b36bf8551326d46b52d15db52
+  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_dbf4af031ea72cadd58e9967f1c25279
   '@rush-temp/client': file:projects/client.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
@@ -219,6 +220,7 @@ dependencies:
   eslint-plugin-promise: 5.1.0_eslint@7.28.0
   eslint-plugin-standard: 5.0.0_eslint@7.28.0
   eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
+  eslint-svelte3-preprocess: 0.0.5_svelte@3.38.2
   fast-equals: 2.0.3
   file-loader: 6.2.0_webpack@5.37.1
   intl-messageformat: 9.6.13
@@ -9509,25 +9511,35 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/chunter-impl.tgz_d28de90b36bf8551326d46b52d15db52:
-    resolution: {integrity: sha512-a3KBaSM108bQQ79mZHy71V7l3bSyw6anTHIpS4LdiK6uxfrqj9vcOPC14EjIno4IA0JwXbu1j95shaHr92NYJg==, tarball: file:projects/chunter-impl.tgz}
+  file:projects/chunter-impl.tgz_dbf4af031ea72cadd58e9967f1c25279:
+    resolution: {integrity: sha512-jNqb+JPd/p80BpAru0d3kz6qHaPtJRL8kH17hMN8t9VRW44DT+E+DhPCY/sb7LFlqR2CKWDnFHl8jX3SJYXUgg==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
+      sass: 1.32.13
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
       svelte-loader: 3.1.2_svelte@3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
-      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
-      - '@typescript-eslint/parser'
       - bufferutil
       - canvas
       - coffeescript
@@ -9536,7 +9548,6 @@ packages:
       - postcss
       - postcss-load-config
       - pug
-      - sass
       - stylus
       - sugarss
       - supports-color
@@ -10065,7 +10076,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-VIP7HnBZ764RWCcBmNaWTzYpi8wihmih/5UxQ7tLfj0ii4BYJsDjqnULEFrVelVpPsu924l8IRkTKQf/On+YXg==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-QoMXSfKLq1KChA0Jk6GmaIhOmMiMXoegMPTFUZk7axALsWpFGKPZIIRdR/axGemTWI1P3bmSyt+TgJOXaylpKg==, tarball: file:projects/plugin-core-dev.tgz}
     id: file:projects/plugin-core-dev.tgz
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
@@ -10208,7 +10219,7 @@ packages:
     dev: false
 
   file:projects/richeditor.tgz_dbf4af031ea72cadd58e9967f1c25279:
-    resolution: {integrity: sha512-WvgtWkWpOn4aIq5jJwf2HCA/WyHaygParRNsH+SwDqb027Xvvb244qiB3u3Cp8MsYus4MLcwX6/glpEyIHI+FQ==, tarball: file:projects/richeditor.tgz}
+    resolution: {integrity: sha512-Di2FLXZPTY7qnQFjWFm+3i6SIm41Twx9Uj0WKkR5ASjDbAamFcGErpGTxmNmyrrprqw7bdrkybOZ7yXSZdMliA==, tarball: file:projects/richeditor.tgz}
     id: file:projects/richeditor.tgz
     name: '@rush-temp/richeditor'
     version: 0.0.0
@@ -10562,7 +10573,7 @@ packages:
     dev: false
 
   file:projects/ui.tgz_dbf4af031ea72cadd58e9967f1c25279:
-    resolution: {integrity: sha512-4HiaAJ9hJJ7OG2fIx6MuLfSPAIV6Ru3+D2SPyoo6ViuA3BcJBCZ8TVlKxpBGCMLYj8czizIHrYGhfBOI90m4Yg==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-wnE5NPCtA0ip+YeFJ0LmbPM+wc4z7va9QHJxbaEci1uMyw2/qroWw7mTuw37y0/KRb/LCIhSBHk0kic2DCXn1g==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0

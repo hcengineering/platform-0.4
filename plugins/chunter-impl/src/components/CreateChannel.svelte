@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
@@ -29,38 +28,42 @@
 
   const client = getClient()
 
-  function createChannel() {
+  function createChannel () {
     client.createDoc(chunter.class.Channel, core.space.Model, {
       name,
       description,
-      private: false
+      private: false,
+      members: []
     })
   }
 </script>
 
-<Dialog label={chunter.string.CreateChannel} 
-        okLabel={chunter.string.CreateChannel} 
-        okAction={createChannel}
-        on:close={() => { dispatch('close') }}>
+<Dialog
+  label={chunter.string.CreateChannel}
+  okLabel={chunter.string.CreateChannel}
+  okAction={createChannel}
+  on:close={() => {
+    dispatch('close')
+  }}
+>
   <div class="content">
-    <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name}/></div>
-    <div class="row"><EditBox label={chunter.string.ChannelDescription} bind:value={description}/></div>
-    <div class="row"><ToggleWithLabel label={chunter.string.MakePrivate} description={chunter.string.MakePrivateDescription}/></div>
+    <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name} /></div>
+    <div class="row"><EditBox label={chunter.string.ChannelDescription} bind:value={description} /></div>
+    <div class="row">
+      <ToggleWithLabel label={chunter.string.MakePrivate} description={chunter.string.MakePrivateDescription} />
+    </div>
   </div>
 </Dialog>
 
-
 <style lang="scss">
-
   .content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     row-gap: 20px;
-    
+
     .row {
       grid-column-start: 1;
       grid-column-end: 3;
     }
   }
-
 </style>
