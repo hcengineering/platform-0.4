@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-impl",
+  "email": "haiodo@gmail.com"
+}

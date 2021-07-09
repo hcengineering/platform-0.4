@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { createClient } from '@anticrm/core'
+import { createClient, withOperations } from '@anticrm/core'
 import { getMetadata } from '@anticrm/platform'
 import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
@@ -25,10 +25,14 @@ export default async (): Promise<CoreService> => {
   async function getClient (): Promise<Client> {
     if (client === undefined) {
       const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
+      const accountId = getMetadata(pluginCore.metadata.AccountId)
+      if (accountId === undefined) {
+        throw Error('Unauthorized')
+      }
       const storage = await createClient(async tx => {
         return await connectBrowser(clientUrl, tx)
       })
-      client = new LiveQuery(storage)
+      client = withOperations(accountId, new LiveQuery(storage))
     }
     return client
   }
