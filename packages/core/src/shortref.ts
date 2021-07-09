@@ -30,9 +30,7 @@ export interface ShortRef extends Doc {
 export async function createShortRef<T extends Doc> (
   storage: Storage,
   user: Ref<Account>,
-  space: Ref<Space>,
-  objectId: Ref<T>,
-  objectClass: Ref<Class<T>>,
+  doc: T,
   namespace: string
 ): Promise<string | undefined> {
   let extraAdd = 0
@@ -66,10 +64,10 @@ export async function createShortRef<T extends Doc> (
       modifiedOn: Date.now(),
       objectId: shortId,
       objectClass: core.class.ShortRef,
-      objectSpace: space,
+      objectSpace: doc.space,
       attributes: {
-        objectId,
-        objectClass,
+        objectId: doc._id,
+        objectClass: doc._class,
         namespace,
         counter
       }

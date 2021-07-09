@@ -43,12 +43,12 @@ describe('memdb.shortref', () => {
 
     const sp = (await model.findAll(core.class.Space, {}))[0]
 
-    const t1 = await createShortRef(storage, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t1 = await createShortRef(storage, '' as Ref<Account>, sp, 'TASK')
     expect(t1).toBe('TASK-1')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(1)
 
-    const t2 = await createShortRef(storage, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t2 = await createShortRef(storage, '' as Ref<Account>, sp, 'TASK')
     expect(t2).toBe('TASK-2')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(2)
@@ -61,7 +61,7 @@ describe('memdb.shortref', () => {
       modifiedOn: Date.now()
     })
 
-    const t4 = await createShortRef(storage, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t4 = await createShortRef(storage, '' as Ref<Account>, sp, 'TASK')
     expect(t4).toBe('TASK-4')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(3)

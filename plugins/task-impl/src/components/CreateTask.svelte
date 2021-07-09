@@ -20,7 +20,7 @@
   import { getClient } from '@anticrm/workbench'
 
   import task, { TaskStatus } from '../plugin'
-  import core, { Account, Ref, Space } from '@anticrm/core'
+  import { Account, Ref, Space } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
@@ -32,7 +32,7 @@
   const client = getClient()
 
   function create() {
-    client.createDoc(task.class.Task, space, {
+    client.createDocWithShortRef(task.class.Task, space, {
       name,
       assignee,
       description,

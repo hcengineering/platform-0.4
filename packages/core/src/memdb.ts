@@ -22,7 +22,7 @@ import { findProperty, resultSort } from './query'
 import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
-class MemDb extends TxProcessor {
+class MemDb extends TxProcessor implements Storage {
   protected readonly hierarchy: Hierarchy
   private readonly objectsByClass = new Map<Ref<Class<Doc>>, Doc[]>()
   private readonly objectById = new Map<Ref<Doc>, Doc>()
@@ -128,7 +128,7 @@ class MemDb extends TxProcessor {
 /**
  * Hold transactions
  */
-export class TxDb extends MemDb implements Storage {
+export class TxDb extends MemDb {
   async tx (tx: Tx): Promise<void> {
     this.addDoc(tx)
   }
@@ -137,7 +137,7 @@ export class TxDb extends MemDb implements Storage {
 /**
  * Hold model objects and classes
  */
-export class ModelDb extends MemDb implements Storage {
+export class ModelDb extends MemDb {
   protected async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     this.addDoc(TxProcessor.createDoc2Doc(tx))
   }
