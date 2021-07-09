@@ -22,7 +22,7 @@
   export let color: string = '#F28469'
 </script>
 
-<section class="panel">
+<section class="panel" on:dragover on:drop>
   <div class="header" style="background-color: {color}">
     <div class="title"><Label label={title}/></div>
     {#if counter}<div class="counter">{counter}</div>{/if}

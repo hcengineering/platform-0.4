@@ -15,18 +15,30 @@
 
 import { Builder, Model } from '@anticrm/model'
 
-import { TSpace } from '@anticrm/model-core'
+import { TDoc, TSpace } from '@anticrm/model-core'
 import type { Project } from '@anticrm/task'
+import { Task, TaskStatus } from '@anticrm/task-impl'
+import { Account, Domain, Ref } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
 import core from '@anticrm/model-core'
 import task from './plugin'
 
+const DOMAIN_TASK = 'task' as Domain
+
 @Model(task.class.Project, core.class.Space)
 export class TProject extends TSpace implements Project {}
 
+@Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
+export class TTask extends TDoc implements Task {
+  name!: string
+  description!: string
+  assignee!: Ref<Account>
+  status!: TaskStatus
+}
+
 export function createModel(builder: Builder) {
-  builder.createModel(TProject)
+  builder.createModel(TProject, TTask)
   builder.createDoc(workbench.class.Application, {
     label: task.string.ApplicationLabelTask,
     icon: task.icon.Task,
@@ -40,7 +52,8 @@ export function createModel(builder: Builder) {
           createComponent: task.component.CreateProject
         }
       ],
-      spaceView: task.component.TaskView
+      spaceView: task.component.TaskView,
+      createComponent: task.component.CreateTask
     }
   })
   builder.createDoc(task.class.Project, {

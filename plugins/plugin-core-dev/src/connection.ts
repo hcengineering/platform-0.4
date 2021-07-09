@@ -15,13 +15,10 @@
 
 import type { Tx, Storage, Ref, Doc, Class, DocumentQuery, FindResult } from '@anticrm/core'
 import core, { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
-
-async function getModel (): Promise<Tx[]> {
-  return import('./model.tx.json') as unknown as Tx[]
-}
+import builder from '@anticrm/model-all'
 
 export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
-  const txes = await getModel()
+  const txes = builder.getTxes()
 
   const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)
@@ -41,10 +38,18 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
   return {
     findAll,
     tx: async (tx: Tx): Promise<void> => {
+      // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
+      await model.tx(tx)
+
+      // 2. update hierarchy
       if (tx.objectSpace === core.space.Model) {
         hierarchy.tx(tx)
       }
-      await Promise.all([model.tx(tx), transactions.tx(tx)])
+
+      // 3. update transactions
+      await transactions.tx(tx)
+
+      // 4. process client handlers
       handler(tx)
     }
   }

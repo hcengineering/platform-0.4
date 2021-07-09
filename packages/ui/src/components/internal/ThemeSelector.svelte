@@ -2,9 +2,9 @@
   import { getContext } from 'svelte'
   import Mute from './icons/Mute.svelte'
 
-  let { currentTheme, setTheme } = getContext('theme')
+  const { currentTheme, setTheme } = getContext('theme')
 
-  const themes = ['theme-light','theme-grey','theme-dark']
+  const themes = ['theme-light', 'theme-grey', 'theme-dark']
 
   let current = themes.indexOf(currentTheme)
 

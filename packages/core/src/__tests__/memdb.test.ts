@@ -161,35 +161,4 @@ describe('memdb', () => {
     const numberSort = await model.findAll(core.class.Doc, {}, { sort: { modifiedOn: SortingOrder.Ascending } })
     expect(numberSort[0].modifiedOn).toBeLessThanOrEqual(numberSort[numberSortDesc.length - 1].modifiedOn)
   })
-
-  // it('should throw error', async () => {
-  //   expect.assertions(1)
-  //   const errorTx: TxAddCollection<Doc, Emb> = {
-  //     _id: '60b73133d22498e666800cd2' as Ref<TxAddCollection<Doc, Emb>>,
-  //     _class: 'class:core.TxAddCollection' as Ref<Class<TxAddCollection<Doc, Emb>>>,
-  //     space: core.space.Tx,
-  //     modifiedBy: 'xxx' as Ref<Account>,
-  //     modifiedOn: 0,
-  //     objectId: 'class:test.MyClass' as Ref<Doc>,
-  //     objectSpace: core.space.Model,
-  //     itemClass: 'class:core.Attribute' as Ref<Class<Doc>>,
-  //     collection: 'attributes',
-  //     localId: 'name',
-  //     attributes: {
-  //       _class: 'class:core.Attribute' as Ref<Class<Doc>>,
-  //       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  //       __embedded: {
-  //         _class: 'class:core.Attribute' as Ref<Class<Doc>>
-  //       } as Emb
-  //     }
-  //   }
-
-  //   const hierarchy = new Hierarchy()
-  //   for (const tx of txes) hierarchy.tx(tx)
-  //   const model = new ModelDb(hierarchy)
-
-  //   await model.tx(errorTx).catch((error: Error) => {
-  //     expect(error.message).toBe('ERROR: status:core.ObjectNotFound')
-  //   })
-  // })
 })

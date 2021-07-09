@@ -23,13 +23,16 @@
   import { Tabs, ScrollBox } from '@anticrm/ui'
   import Label from '@anticrm/ui/src/components/Label.svelte'
   import TaskStatus from './TaskStatus.svelte'
+  import task from '../plugin'
+  import UserInfo from './UserInfo.svelte';
 
   export let view: string = 'list'
-  const _class: Ref<Class<Doc>> = core.class.Space
-  const space: Ref<Space> = core.space.Model
+  export let currentSpace: Ref<Space>
+  const _class: Ref<Class<Doc>> = task.class.Task
   const fields = [{label: 'Name' as IntlString, properties: [{key: 'name', property: 'label'}], component: Label},
-   {label: 'MODIFIED' as IntlString, properties: [{key: 'modifiedBy', property: 'label'}], component: Label},
-   {label: 'Description' as IntlString, properties: [{key: 'description', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus}]
+  {label: 'Description' as IntlString, properties: [{key: 'description', property: 'label'}], component: Label},
+  {label: 'Status' as IntlString, properties: [{key: 'status', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus},
+  {label: 'Assignee' as IntlString, properties: [{value:'elon', property: 'user'}], component: UserInfo}]
 </script>
 
 <div class="container">
@@ -49,7 +52,7 @@
       </ScrollBox>
     {:else if view === 'list'}
       <ScrollBox vertical>
-        <TableView {_class} {fields} {space} />
+        <TableView {_class} {fields} {currentSpace} />
       </ScrollBox>
     {/if}
   </div>

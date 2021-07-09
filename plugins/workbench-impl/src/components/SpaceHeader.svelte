@@ -20,12 +20,16 @@
   import Add from './icons/Add.svelte'
   import Star from './icons/Star.svelte'
 
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, NavigatorModel, showModal } from '@anticrm/workbench'
   import core from '@anticrm/core'
 
   export let space: Ref<Space> | undefined
+  export let model: NavigatorModel | undefined
 
   let data: Data<Space> | undefined
+  let addAction = async (): Promise<void> => {
+    if (model?.createComponent !== undefined) showModal(model.createComponent, {space})
+  }
 
   let unsubscribe = () => {}
   $: {
@@ -44,7 +48,7 @@
   </div>
   <div class="buttons">
     <div class="button"><ActionIcon icon={Star} size={16}/></div>
-    <div class="button"><ActionIcon icon={Add} size={16}/></div>
+    <div class="button"><ActionIcon icon={Add} size={16} action={addAction}/></div>
     <div class="button"><ActionIcon icon={MoreH} size={16}/></div>
   </div>
 </div>

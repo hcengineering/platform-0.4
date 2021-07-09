@@ -30,6 +30,7 @@ export class WorkspaceStorage implements Storage {
     if (tx.objectSpace !== core.space.Model) {
       await this.doc.tx(tx)
     }
+
     await this.txStore.tx(tx) // In any case send into transaction storage.
   }
 }

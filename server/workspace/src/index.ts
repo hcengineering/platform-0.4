@@ -1,4 +1,15 @@
-import { ModelDb, Class, Doc, DocumentQuery, DOMAIN_TX, FindResult, Hierarchy, Ref, Storage, Tx } from '@anticrm/core'
+import core, {
+  ModelDb,
+  Class,
+  Doc,
+  DocumentQuery,
+  DOMAIN_TX,
+  FindResult,
+  Hierarchy,
+  Ref,
+  Storage,
+  Tx
+} from '@anticrm/core'
 import { DocStorage, getMongoClient, TxStorage } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
@@ -47,7 +58,15 @@ export class Workspace implements Storage {
 
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
-    const handlers: TxHandler[] = txh !== undefined ? [model, ...await txh(hierarchy, storage, model)] : [model]
+    const modelTx: TxHandler = {
+      tx: async (tx) => {
+        if (tx.objectSpace === core.space.Model) {
+          await model.tx(tx)
+        }
+      }
+    }
+
+    const handlers: TxHandler[] = txh !== undefined ? [model, ...(await txh(hierarchy, storage, model))] : [modelTx]
     return new Workspace(workspaceId, hierarchy, storage, handlers)
   }
 
@@ -68,9 +87,15 @@ export class Workspace implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    this.hierarchy.tx(tx)
+    // 1. go to storage to check for potential object duplicate transactions.
     await (await this.storage).tx(tx)
 
+    // 2. update hierarchy
+    if (tx.objectSpace === core.space.Model) {
+      this.hierarchy.tx(tx)
+    }
+
+    // 3. process all other transaction handlers
     await Promise.all(this.txh.map(async (t) => await t.tx(tx)))
   }
 }

@@ -15,17 +15,21 @@
 
 import { connect } from '../connection'
 import core, { createClient } from '@anticrm/core'
+import builder from '@anticrm/model-all'
 
 describe('client', () => {
   it('should create connection', async () => {
     const conn = await connect(() => {})
-    const txes = await conn.findAll(core.class.Tx, {})
-    expect(txes.length).toBe(25)
+    const txes = builder.getTxes()
+    const result = await conn.findAll(core.class.Tx, {})
+    expect(result).toHaveLength(txes.length)
   })
 
   it('should create client', async () => {
     const client = await createClient(connect)
-    const txes = await client.findAll(core.class.Class, {})
-    expect(txes.length).toBe(18)
+    const txes = builder.getTxes()
+    const result = await client.findAll(core.class.Class, {})
+    const expectedLength = txes.filter(tx => client.isDerived((tx as any).objectClass, core.class.Class)).length
+    expect(result).toHaveLength(expectedLength)
   })
 })
