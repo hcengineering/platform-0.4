@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Data, Domain } from './classes'
-import type { Tx, TxCreateDoc } from './tx'
+import type { Ref, Class, Obj, Data, Domain, Doc } from './classes'
+import type { Tx, TxCreateDoc, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 import core from './component'
 
