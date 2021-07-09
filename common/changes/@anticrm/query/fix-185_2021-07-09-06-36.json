@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "Fix live query register",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query",
+  "email": "haiodo@gmail.com"
+}
