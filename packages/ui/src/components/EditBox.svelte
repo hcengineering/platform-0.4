@@ -48,7 +48,6 @@
     background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-hover);
     border-radius: 12px;
-    backdrop-filter: blur(12px);
     &:focus-within {
       background-color: var(--theme-bg-focused-color);
       border-color: var(--theme-bg-focused-border);

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting-impl",
+      "comment": "Add postcss.config.js",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting-impl",
+  "email": "sas_lord@mail.ru"
+}

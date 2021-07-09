@@ -14,8 +14,7 @@
 -->
 
 <script lang="ts">
-  import { Progress } from '@anticrm/ui'
-  import UserInfo from './UserInfo.svelte'
+  import { Progress, UserInfo } from '@anticrm/ui'
   import Reactions from './Reactions.svelte'
   import Chat from './icons/Chat.svelte'
   import Attach from './icons/Attach.svelte'

@@ -36,6 +36,11 @@ export { default as CheckBox } from './components/CheckBox.svelte'
 export { default as Progress } from './components/Progress.svelte'
 export { default as Tabs } from './components/Tabs.svelte'
 export { default as ScrollBox } from './components/ScrollBox.svelte'
+export { default as PopupMenu } from './components/PopupMenu.svelte'
+export { default as PopupItem } from './components/PopupItem.svelte'
+export { default as SelectBox } from './components/SelectBox.svelte'
+export { default as SelectItem } from './components/SelectItem.svelte'
+export { default as UserInfo } from './components/UserInfo.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 

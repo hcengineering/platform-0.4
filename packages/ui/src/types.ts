@@ -59,6 +59,15 @@ export interface Action {
   action: () => Promise<void>
 }
 
+export interface IPopupItem {
+  _id?: number
+  title?: IntlString | undefined
+  component?: AnySvelteComponent | undefined
+  props?: Object
+  selected?: boolean
+  action?: Function
+}
+
 // export default plugin(
 //   'ui' as Plugin<UIService>,
 //   {},

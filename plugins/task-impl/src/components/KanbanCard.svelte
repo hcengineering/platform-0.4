@@ -14,8 +14,7 @@
 -->
 
 <script lang="ts">
-  import { ActionIcon } from '@anticrm/ui'
-  import UserInfo from './UserInfo.svelte'
+  import { ActionIcon, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
 
   export let user: string
