@@ -273,4 +273,29 @@ describe('server', () => {
 
     expect(md).toEqual('Link to *<https://hardware.it](https://hardware.it)*')
   })
+  it('check header hard_break serialize', () => {
+    const doc: MessageNode = {
+      type: MessageNodeType.doc,
+      content: [
+        {
+          type: MessageNodeType.paragraph,
+          content: [
+            {
+              type: MessageNodeType.text,
+              text: '# Hello'
+            },
+            {
+              type: MessageNodeType.hard_break
+            },
+            {
+              type: MessageNodeType.text,
+              text: 'World'
+            }
+          ]
+        }
+      ]
+    }
+    const md = serializeMessage(doc)
+    expect(md).toEqual('# Hello\nWorld')
+  })
 })
