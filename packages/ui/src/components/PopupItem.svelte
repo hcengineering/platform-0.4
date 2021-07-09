@@ -34,7 +34,7 @@
 
 <button class="popup-item" on:click={() => {
   if (selectable) selected = !selected
-  action
+  action()
 }}>
   <div class="title">
     <svelte:component this={component} {...props}/>

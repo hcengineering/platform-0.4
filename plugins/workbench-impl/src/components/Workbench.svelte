@@ -34,16 +34,7 @@
 
   import { SelectBox, UserInfo } from '@anticrm/ui'
   import type { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent } from '../types'
-
-  interface IPopupItem {
-    _id?: number
-    title?: IntlString | undefined
-    component?: AnySvelteComponent | undefined
-    props?: Object
-    selected?: boolean
-    action?: Function
-  }
+  import type { AnySvelteComponent, IPopupItem } from '../types'
 
   let items: Array<IPopupItem> = [{ selected: false, props: { user: 'chen' } },
                                   { selected: false, props: { user: 'tim' } },

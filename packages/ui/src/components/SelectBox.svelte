@@ -15,22 +15,13 @@
 
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent } from '../types'
+  import type { AnySvelteComponent, IPopupItem } from '../types'
   import Label from './Label.svelte'
   import PopupMenu from './PopupMenu.svelte'
   import PopupItem from './PopupItem.svelte'
   import SelectItem from './SelectItem.svelte'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
-
-  interface IPopupItem {
-    _id?: number
-    title?: IntlString | undefined
-    component?: AnySvelteComponent | undefined
-    props?: Object
-    selected?: boolean
-    action?: Function
-  }
 
   export let component: AnySvelteComponent | undefined = undefined
   export let title: IntlString | undefined = undefined
@@ -66,9 +57,9 @@
       </button>
       {#each items.filter(i => !i.selected) as item}
         {#if byTitle }
-          <PopupItem title={item.title} selectable bind:selected={item.selected}/>
+          <PopupItem title={item.title} selectable bind:selected={item.selected} action={async () => { pressed = !pressed }}/>
         {:else}
-          <PopupItem component={component} props={item.props} selectable bind:selected={item.selected}/>
+          <PopupItem component={component} props={item.props} selectable bind:selected={item.selected} action={async () => { pressed = !pressed }}/>
         {/if}
       {/each}
     </PopupMenu>

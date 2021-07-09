@@ -15,21 +15,12 @@
 
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent } from '../types'
+  import type { AnySvelteComponent, IPopupItem } from '../types'
   import Label from './Label.svelte'
   import PopupMenu from './PopupMenu.svelte'
   import PopupItem from './PopupItem.svelte'
   import ActionIcon from './ActionIcon.svelte'
   import Close from './icons/Close.svelte'
-
-  interface IPopupItem {
-    _id?: number
-    title?: IntlString | undefined
-    component?: AnySvelteComponent | undefined
-    props?: Object
-    selected?: boolean
-    action?: Function
-  }
 
   export let component: AnySvelteComponent | undefined = undefined
   export let items: Array<IPopupItem>

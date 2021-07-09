@@ -20,14 +20,14 @@
   export let show: boolean
 
   let style: string = ''
-  if (vAlign == 'top') style = `transform: translateY(-${margin}px);`
-  if (vAlign == 'middle') {
-    if (hAlign == 'left') style = `transform: translateX(-${margin}px);`
-    if (hAlign == 'right') style = `transform: translateX(${margin}px);`
+  $: {
+    if (vAlign == 'top') style = `transform: translateY(-${margin}px);`
+    if (vAlign == 'middle') {
+      if (hAlign == 'left') style = `transform: translateX(-${margin}px);`
+      if (hAlign == 'right') style = `transform: translateX(${margin}px);`
+    }
+    if (vAlign == 'bottom') style = `transform: translateY(${margin}px);`
   }
-  if (vAlign == 'bottom') style = `transform: translateY(${margin}px);`
-
-  let opened: boolean = false
   const waitClick = (event: any) => {
     let context: boolean = false
     let startNode: Node = event.target
@@ -35,18 +35,11 @@
       if (startNode.classList.contains('popup')) context = true
       startNode = startNode.parentNode
     }
-    if (!context) {
-      window.removeEventListener('mouseup', waitClick)
-      show = false
-      opened = false
-    }
-  }
-  $: if (show && !opened) {
-    window.addEventListener('mouseup', waitClick)
-    opened = true
+    if (!context) show = false
   }
 </script>
 
+<svelte:window on:mouseup={waitClick}/>
 <div class="popup-menu">
   <div class="trigger"><slot name="trigger"/></div>
   {#if show}
