@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core",
+      "comment": "A proper Client interface",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core",
+  "email": "haiodo@gmail.com"
+}
