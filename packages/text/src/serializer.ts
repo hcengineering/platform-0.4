@@ -128,7 +128,7 @@ export const storeNodes: { [key: string]: NodeProcessor } = {
     const content = messageContent(parent)
     for (let i = index + 1; i < content.length; i++) {
       if (content[i].type !== node.type) {
-        state.write('\\\n')
+        state.write('\n')
         return
       }
     }
