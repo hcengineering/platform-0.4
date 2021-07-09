@@ -13,9 +13,28 @@
 // limitations under the License.
 //
 
-import { Ref, Class, Doc, Tx, DocumentQuery, TxCreateDoc, TxRemoveDoc, Client, Obj, FindOptions, TxUpdateDoc, getOperator, TxProcessor, resultSort, SortingQuery, FindResult } from '@anticrm/core'
+import {
+  Ref,
+  Class,
+  Doc,
+  Tx,
+  DocumentQuery,
+  TxCreateDoc,
+  TxRemoveDoc,
+  Client,
+  Obj,
+  FindOptions,
+  TxUpdateDoc,
+  getOperator,
+  TxProcessor,
+  resultSort,
+  SortingQuery,
+  FindResult,
+  generateId
+} from '@anticrm/core'
 
 interface Query {
+  _id: string
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
   result: Doc[] | Promise<Doc[]>
@@ -26,7 +45,8 @@ interface Query {
 
 export class LiveQuery extends TxProcessor implements Client {
   private readonly client: Client
-  private readonly queries: Query[] = []
+  private readonly queries: Map<string, Query> = new Map<string, Query>()
+  private readonly qid = generateId()
 
   constructor (client: Client) {
     super()
@@ -50,13 +70,23 @@ export class LiveQuery extends TxProcessor implements Client {
     return true
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     return await this.client.findAll(_class, query, options)
   }
 
-  query<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, callback: (result: T[]) => void, options?: FindOptions<T>): () => void {
+  query<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    callback: (result: T[]) => void,
+    options?: FindOptions<T>
+  ): () => void {
     const result = this.client.findAll(_class, query, options)
     const q: Query = {
+      _id: generateId(),
       _class,
       query,
       result,
@@ -64,7 +94,7 @@ export class LiveQuery extends TxProcessor implements Client {
       options,
       callback: callback as (result: Doc[]) => void
     }
-    this.queries.push(q)
+    this.queries.set(q._id, q)
     result
       .then((result) => {
         q.callback(result)
@@ -74,18 +104,18 @@ export class LiveQuery extends TxProcessor implements Client {
       })
 
     return () => {
-      this.queries.splice(this.queries.indexOf(q))
+      this.queries.delete(q._id)
     }
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
-    for (const q of this.queries) {
+    for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
         q.result = await q.result
       }
-      const updatedDoc = q.result.find(p => p._id === tx.objectId)
+      const updatedDoc = q.result.find((p) => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
-        await this.updateDoc(updatedDoc, tx)
+        await this.doUpdateDoc(updatedDoc, tx)
         this.sort(q, tx)
         await this.callback(updatedDoc, q)
       }
@@ -93,7 +123,7 @@ export class LiveQuery extends TxProcessor implements Client {
   }
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    for (const q of this.queries) {
+    for (const q of this.queries.values()) {
       const doc = TxProcessor.createDoc2Doc(tx)
       if (this.match(q, doc)) {
         if (q.result instanceof Promise) {
@@ -116,11 +146,11 @@ export class LiveQuery extends TxProcessor implements Client {
   }
 
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
-    for (const q of this.queries) {
+    for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
         q.result = await q.result
       }
-      const index = q.result.findIndex(p => p._id === tx.objectId)
+      const index = q.result.findIndex((p) => p._id === tx.objectId)
       if (index > -1) {
         q.result.splice(index, 1)
         q.callback(Object.assign(q.result, { total: --q.total }))
@@ -133,14 +163,14 @@ export class LiveQuery extends TxProcessor implements Client {
     await super.tx(tx)
   }
 
-  async updateDoc (updatedDoc: Doc, tx: TxUpdateDoc<Doc>): Promise<void> {
+  async doUpdateDoc (updatedDoc: Doc, tx: TxUpdateDoc<Doc>): Promise<void> {
     const ops = tx.operations as any
     for (const key in ops) {
       if (key.startsWith('$')) {
         const operator = getOperator(key)
         operator(updatedDoc, ops[key])
       } else {
-        (updatedDoc as any)[key] = ops[key]
+        ;(updatedDoc as any)[key] = ops[key]
       }
     }
     updatedDoc.modifiedBy = tx.modifiedBy
