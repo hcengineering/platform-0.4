@@ -20,9 +20,9 @@
   import kathryn from '../../img/kathryn.png'
 
   export let users: Object[] = [{ avatar: chen, name: 'chen', title: 'Rosamund Chen' },
-                                    { avatar: tim, name: 'tim', title: 'Tim Ferris' },
-                                    { avatar: elon, name: 'elon', title: 'Elon Musk' },
-                                    { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }]
+                                { avatar: tim, name: 'tim', title: 'Tim Ferris' },
+                                { avatar: elon, name: 'elon', title: 'Elon Musk' },
+                                { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }]
   export let user: string = 'chen'
   export let suptitle: string | undefined
   export let size: 24 | 32 = 24
@@ -50,14 +50,19 @@
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      margin-left: 12px;
+      margin-left: 8px;
       color: var(--theme-caption-color);
 
       .suptitle {
         opacity: .4;
       }
       .title {
+        max-width: 150px;
         font-weight: 500;
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
   }

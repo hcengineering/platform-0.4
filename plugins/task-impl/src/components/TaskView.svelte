@@ -20,11 +20,10 @@
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
-  import { Tabs, ScrollBox } from '@anticrm/ui'
+  import { Tabs, ScrollBox, UserInfo } from '@anticrm/ui'
   import Label from '@anticrm/ui/src/components/Label.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import task from '../plugin'
-  import UserInfo from './UserInfo.svelte';
 
   export let view: string = 'list'
   export let currentSpace: Ref<Space>
