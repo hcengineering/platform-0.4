@@ -16,7 +16,11 @@
   import { store as modal } from '@anticrm/workbench'
   import Component from '@anticrm/ui/src/components/Component.svelte'
 
+  let modalHTML: HTMLElement
+
   function close () {
+    modalHTML.style.animationDirection = 'reverse'
+    modalHTML.style.animationDuration = '.2s'
     modal.set({ is: undefined, props: {}, element: undefined })
   }
 
@@ -39,7 +43,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if $modal.is}
-  <div class="modal" class:top-arrow={$modal.element} style={getStyle($modal.element)}>
+  <div class="modal" class:top-arrow={$modal.element} bind:this={modalHTML} style={getStyle($modal.element)}>
     {#if typeof($modal.is) === 'string'}
       <Component is={$modal.is} props={$modal.props} on:close={close}/>
     {:else}
@@ -50,10 +54,24 @@
 {/if}
 
 <style lang="scss">
+  @keyframes show {
+    from {
+      opacity: 0;
+      filter: blur(3px);
+    }
+    99% {
+      opacity: 1;
+      filter: blur(0px);
+    }
+    to {
+      filter: none;
+    }
+  }
   .modal {
     position: fixed;
     background: transparent;
     z-index: 1001;
+    animation: show .2s ease-in-out forwards;
   }
   .modal-overlay {
     z-index: 1000;
