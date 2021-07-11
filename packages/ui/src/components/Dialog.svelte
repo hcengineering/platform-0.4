@@ -20,6 +20,7 @@
   import { createEventDispatcher } from 'svelte'
 
   import Close from './internal/icons/Close.svelte'
+  import ScrollBox from './ScrollBox.svelte'
   import Button from './Button.svelte'
   import Label from './Label.svelte'
 
@@ -30,58 +31,84 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<div class="dialog">
-  <div class="header">
-    <div class="title"><Label {label}/></div>
-    <div class="tool" on:click={() => { dispatch('close') }}><Close size={16}/></div>
-  </div>
-  <slot/>
-  <div class="footer">
-    <Button label={okLabel} primary on:click={() => { okAction(); dispatch('close') }}/>
+<div class="container">
+  <div class="null"/>
+  <div class="dialog">
+    <div class="header">
+      <div class="title"><Label {label}/></div>
+      <div class="tool" on:click={() => { dispatch('close') }}><Close size={16}/></div>
+    </div>
+    <div class="content">
+      <ScrollBox vertical><slot/></ScrollBox>
+    </div>
+    <div class="footer">
+      <Button label={okLabel} primary on:click={() => { okAction(); dispatch('close') }}/>
+      <Button label={okLabel} on:click={() => { okAction(); dispatch('close') }}/>
+    </div>
   </div>
 </div>
 
 <style lang="scss">
-  .dialog {
+  .container {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    padding: 48px 40px;
-    background-color: var(--theme-bg-modal);
-    border: 1px solid var(--theme-border-modal);
-    border-radius: 20px;
-    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
 
-    .header {
+    .dialog {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 26px;
-      margin-bottom: 40px;
+      flex-direction: column;
+      min-width: 40%;
+      max-width: 80%;
+      width: auto;
+      height: 100vh;
+      background-color: var(--theme-bg-color);
+      border-radius: 30px;
+      box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
-      .title {
-        flex-grow: 1;
-        font-weight: 500;
-        font-size: 20px;
-        line-height: 26px;
-        color: var(--theme-caption-color);
-        user-select: none;
-      }
-      .tool {
-        width: 16px;
-        height: 16px;
-        margin-left: 12px;
-        opacity: .4;
-        cursor: pointer;
-        &:hover {
-          opacity: 1;
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        padding: 0 32px 0 40px;
+        height: 72px;
+
+        .title {
+          flex-grow: 1;
+          font-weight: 500;
+          font-size: 20px;
+          line-height: 26px;
+          color: var(--theme-caption-color);
+          user-select: none;
+        }
+        .tool {
+          width: 16px;
+          height: 16px;
+          margin-left: 12px;
+          opacity: .4;
+          cursor: pointer;
+          &:hover {
+            opacity: 1;
+          }
         }
       }
-    }
 
-    .footer {
-      display: flex;
-      flex-direction: row-reverse;
-      margin-top: 56px;
+      .content {
+        margin: 24px 40px 0;
+        height: 100%;
+      }
+
+      .footer {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        gap: 12px;
+        padding: 0 40px;
+        height: 96px;
+      }
     }
   }
 </style>

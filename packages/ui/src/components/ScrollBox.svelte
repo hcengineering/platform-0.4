@@ -41,7 +41,7 @@
       display: grid;
       grid-auto-flow: column;
       padding: 0 0 5px 0;
-      gap: 12px;
+      gap: 24px;
       top: 0;
       left: 0;
       width: auto;

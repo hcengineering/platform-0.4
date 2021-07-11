@@ -16,7 +16,12 @@
   import { store as modal } from '@anticrm/workbench'
   import Component from '@anticrm/ui/src/components/Component.svelte'
 
+  let modalHTML: HTMLElement
+  let modalOHTML: HTMLElement
+
   function close () {
+    modalHTML.style.animationDirection = modalOHTML.style.animationDirection = 'reverse'
+    modalHTML.style.animationDuration = modalOHTML.style.animationDuration = '.2s'
     modal.set({ is: undefined, props: {}, element: undefined })
   }
 
@@ -39,21 +44,31 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if $modal.is}
-  <div class="modal" class:top-arrow={$modal.element} style={getStyle($modal.element)}>
+  <div class="modal" class:top-arrow={$modal.element} bind:this={modalHTML} style={getStyle($modal.element)}>
     {#if typeof($modal.is) === 'string'}
       <Component is={$modal.is} props={$modal.props} on:close={close}/>
     {:else}
       <svelte:component this={$modal.is} {...$modal.props} on:close={close} />
     {/if}
   </div>
-  <div class="modal-overlay" />
+  <div bind:this={modalOHTML} class="modal-overlay" />
 {/if}
 
 <style lang="scss">
+  @keyframes show {
+    from { opacity: 0; filter: blur(3px); }
+    99% { opacity: 1; filter: blur(0px); }
+    to { filter: none; }
+  }
+  @keyframes showOverlay {
+    from { backdrop-filter: blur(0px); }
+    to { backdrop-filter: blur(3px); }
+  }
   .modal {
     position: fixed;
     background: transparent;
     z-index: 1001;
+    animation: show .2s ease-in-out forwards;
   }
   .modal-overlay {
     z-index: 1000;
@@ -63,6 +78,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(3px);
+    animation: showOverlay .2s ease-in-out forwards;
   }
 </style>
