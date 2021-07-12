@@ -35,7 +35,6 @@
 </script>
 
 <div class="container">
-  <Tabs/>
   <div class="tab">
     <div class="toolbar">
       <div style="flex-grow: 1"></div>
@@ -43,7 +42,7 @@
     </div>
     {#if view === 'kanban'}
       <ScrollBox>
-        <KanbanView/>
+        <KanbanView {_class} {currentSpace}/>
       </ScrollBox>
     {:else if view === 'card'}
       <ScrollBox vertical>

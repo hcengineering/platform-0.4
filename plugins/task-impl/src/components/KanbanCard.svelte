@@ -16,22 +16,30 @@
 <script lang="ts">
   import { ActionIcon, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
+  import Chat from './icons/Chat.svelte'
 
+  export let commentsCount = 0
+  export let title: string
   export let user: string
-  export let onDrag: boolean = false
   export let draggable: boolean = false
 </script>
 
-<div class="card-container" class:drag={onDrag}
+<div class="card-container"
   draggable={draggable}
   on:dragstart
   on:dragend
 >
-  <div class="header">
-    <UserInfo {user} suptitle={'Candidate'} size={32}/>
-    <ActionIcon icon={MoreH} direction={'left'} label={'More...'}/>
+  <div class="header">{title}</div>
+  <div class="footer">
+    <div><UserInfo {user} avatarOnly={true}/></div>
+    <div class="action">
+      {#if commentsCount > 0}
+      <ActionIcon size={24} icon={Chat}/>
+      {commentsCount}
+      {/if}
+      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'}/>
+    </div>
   </div>
-  <slot/>
 </div>
 
 <style lang="scss">
@@ -52,8 +60,31 @@
       min-height: 72px;
       background-color: var(--theme-button-bg-focused);
       border-radius: 11px 11px 0 0;
-      cursor: pointer;
     }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0;
+      padding: 16px;
+      height: 72px;
+      min-height: 72px;
+      background-color: var(--theme-button-bg-focused);
+      border-radius: 11px 11px 0 0;
+
+      .action {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+      div + div {
+        margin-left: 16px;
+      }
+    }
+
 
     &.drag {
       opacity: .5;

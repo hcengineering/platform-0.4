@@ -37,6 +37,7 @@
     value?: any
   }
 
+  export let showHeader: false
   export let _class: Ref<Class<Doc>>
   export let currentSpace: Ref<Space> | undefined
   export let fields: Field[]
@@ -59,11 +60,13 @@
 </script>
 
   <table class="table-body">
-    <tr class="tr-head">
-      {#each fields as field}
-        <th><Label label = {field.label}/></th>
-      {/each}
-    </tr>
+    {#if showHeader}
+      <tr class="tr-head">
+        {#each fields as field}
+          <th><Label label = {field.label}/></th>
+        {/each}
+      </tr>
+    {/if}
     {#each data as object (object._id)}
       <tr class="tr-body">
       {#each getCells(object) as cell}

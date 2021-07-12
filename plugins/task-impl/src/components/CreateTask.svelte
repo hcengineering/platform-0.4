@@ -19,8 +19,8 @@
 
   import { getClient } from '@anticrm/workbench'
 
-  import task, { TaskStatus } from '../plugin'
-  import core, { Account, Ref, Space } from '@anticrm/core'
+  import task, { TaskStatuses } from '../plugin'
+  import { Account, Ref, Space } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
@@ -36,7 +36,7 @@
       name,
       assignee,
       description,
-      status: TaskStatus.Open
+      status: TaskStatuses.Open
     })
   }
 </script>

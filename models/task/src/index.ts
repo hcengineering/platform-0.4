@@ -16,8 +16,7 @@
 import { Builder, Model } from '@anticrm/model'
 
 import { TDoc, TSpace } from '@anticrm/model-core'
-import type { Project } from '@anticrm/task'
-import { Task, TaskStatus } from '@anticrm/task-impl'
+import { Project, Task, TaskStatus } from '@anticrm/task'
 import { Account, Domain, Ref } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
