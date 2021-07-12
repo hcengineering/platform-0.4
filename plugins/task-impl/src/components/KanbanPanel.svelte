@@ -26,7 +26,7 @@
 <section class="panel" on:dragover on:drop class:collapsed={collapsed}>
   <div class="header" style="background-color: {color}" on:click={() => collapsed = !collapsed}>
     {#if collapsed !== true}<div class="title"><Label label={title}/></div>{/if}
-    {#if counter}<div class="counter">{counter}</div>{/if}
+    <div class="counter">{counter}</div>
   </div>
   {#if collapsed !== true}
   <div class="scroll">

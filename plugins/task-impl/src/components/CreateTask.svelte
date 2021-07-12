@@ -18,8 +18,8 @@
   import { EditBox, Dialog } from '@anticrm/ui'
 
   import { getClient } from '@anticrm/workbench'
-
-  import task, { TaskStatuses } from '../plugin'
+  import { TaskStatuses } from '@anticrm/task'
+  import task from '../plugin'
   import { Account, Ref, Space } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()

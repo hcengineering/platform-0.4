@@ -19,7 +19,7 @@
   import KanbanPanel from './KanbanPanel.svelte'
   import KanbanCard from './KanbanCard.svelte'
 
-  import { Task, TaskStatuses } from '../plugin'
+  import { Task, TaskStatuses } from '@anticrm/task'
   import { Class, Ref, Space } from '@anticrm/core';
   import { getClient } from '@anticrm/workbench';
 
@@ -37,12 +37,12 @@
   export let _class: Ref<Class<Task>>
   export let currentSpace: Ref<Space> | undefined
   const client = getClient()
-  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => data = result.map(item => Object.assign(item, {onDrag: false})))
+  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => {
+      data = result.map(item => Object.assign(item, {onDrag: false}))
+    })
 
   let data: ICard[] = []
   let dragId: Ref<Task> | undefined
-
-  let dragStatus: IStatus | undefined
 
   const getCount = (status: IntlString): number => {
     return data.filter(card => card.status == status).length
@@ -68,16 +68,14 @@
   counter={getCount(status.title)} color={status.color}
   on:dragover={(event) => {
     event.preventDefault()
-    dragStatus = status
   }}
   on:drop={(event) => {
     event.preventDefault()
     const dragCard = data.find(p => p._id === dragId)
-    if (dragStatus !== undefined
-      && dragCard !== undefined
-      && dragStatus.title !== dragCard.status) {
+    if (dragCard !== undefined
+      && status.title !== dragCard.status) {
       client.updateDoc(_class, currentSpace, dragCard._id, {
-        status: dragStatus.title
+        status: status.title
       })
     }
   }}
