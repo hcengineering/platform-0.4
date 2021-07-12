@@ -42,7 +42,11 @@ describe('client', () => {
     const result3 = await client.findAll(klass, {})
     expect(result3).toHaveLength(++expectedCount)
 
-    await client.createDoc(core.class.Reference, result3[0]._id, { objectClass: core.class.Reference, objectId: '' as Ref<Doc>, descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>> })
+    await client.createDoc(core.class.Reference, result3[0]._id, {
+      objectClass: core.class.Reference,
+      objectId: '' as Ref<Doc>,
+      descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>>
+    })
     const res = await client.findAll(core.class.Reference, {})
     expect(res).toHaveLength(1)
   })

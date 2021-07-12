@@ -30,7 +30,6 @@
     unsubscribe()
     unsubscribe = client.query(chunter.class.Message, { space }, (result) => {
       messages = result
-      console.log(space)
     })
   }
 

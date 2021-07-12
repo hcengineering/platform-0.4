@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
+import type { Doc, Ref, Space } from '@anticrm/core'
+import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset } from '@anticrm/status'
-import type { Plugin, Service } from '@anticrm/platform'
-import type { Ref, Doc, Space, Account } from '@anticrm/core'
 
 export interface Channel extends Space {}
 

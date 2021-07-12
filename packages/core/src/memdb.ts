@@ -68,7 +68,6 @@ class MemDb extends TxProcessor {
   getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
-      console.log(_id)
       throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
     }
     return doc as T

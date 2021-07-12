@@ -13,10 +13,9 @@
 // limitations under the License.
 //
 
-import type { Ref, Doc, Type, PropertyType, Attribute, Tx, Class, Obj, Data, TxCreateDoc, Domain } from '@anticrm/core'
-import { ClassifierKind, generateId, Hierarchy, DOMAIN_MODEL } from '@anticrm/core'
+import type { Attribute, Class, Data, Doc, Domain, Obj, PropertyType, Ref, Tx, TxCreateDoc, Type } from '@anticrm/core'
+import { ClassifierKind, DOMAIN_MODEL, generateId, Hierarchy } from '@anticrm/core'
 import toposort from 'toposort'
-
 import core from './component'
 
 type NoIDs<T extends Tx> = Omit<T, '_id' | 'objectId'>
@@ -60,11 +59,7 @@ export function Prop (type: Type<PropertyType>) {
   }
 }
 
-export function Model<T extends Obj> (
-  _class: Ref<Class<T>>,
-  _extends: Ref<Class<Obj>>,
-  domain?: Domain
-) {
+export function Model<T extends Obj> (_class: Ref<Class<T>>, _extends: Ref<Class<Obj>>, domain?: Domain) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
     txes._id = _class
@@ -85,17 +80,18 @@ function txCreateDoc<T extends Doc> (
   _class: Ref<Class<T>>,
   domain: Domain,
   attributes: Data<T>,
-  objectId?: Ref<T>
+  objectId?: Ref<T>,
+  docOptions?: Partial<Doc>
 ): TxCreateDoc<T> {
   return {
     _id: generateId<TxCreateDoc<T>>(),
     _class: core.class.TxCreateDoc,
     space: core.space.Tx,
-    modifiedBy: core.account.System,
-    modifiedOn: 0,
+    modifiedBy: docOptions?.modifiedBy ?? core.account.System,
+    modifiedOn: docOptions?.modifiedOn ?? 0,
     objectId: objectId ?? generateId(),
     objectClass: _class,
-    objectSpace: core.space.Model,
+    objectSpace: docOptions?.space ?? core.space.Model,
     attributes
   }
 }
@@ -147,8 +143,13 @@ export class Builder {
     return txes.map((tx) => [tx._id, tx.extends] as [string, string | undefined])
   }
 
-  createDoc<T extends Doc>(_class: Ref<Class<T>>, attributes: Data<T>, objectId?: Ref<T>): void {
-    this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId))
+  createDoc<T extends Doc>(
+    _class: Ref<Class<T>>,
+    attributes: Data<T>,
+    objectId?: Ref<T>,
+    docOptions?: Partial<Doc>
+  ): void {
+    this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId, docOptions))
   }
 
   getTxes (): Tx[] {
