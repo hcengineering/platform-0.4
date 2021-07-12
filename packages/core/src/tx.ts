@@ -17,6 +17,8 @@ import type { KeysByType } from 'simplytyped'
 import type { Class, Data, Doc, Domain, Ref, Account, Space, Arr } from './classes'
 import core from './component'
 import { generateId } from './utils'
+import { createShortRef } from './shortref'
+import { Storage } from './storage'
 
 export interface Tx<T extends Doc = Doc> extends Doc {
   objectId: Ref<T>
@@ -51,11 +53,7 @@ export interface TxRemoveDoc<T extends Doc> extends Tx<T> {
 
 export const DOMAIN_TX = 'tx' as Domain
 
-interface WithTx {
-  tx: (tx: Tx) => Promise<void>
-}
-
-export class TxProcessor implements WithTx {
+export class TxProcessor {
   async tx (tx: Tx): Promise<void> {
     switch (tx._class) {
       case core.class.TxCreateDoc:
@@ -84,7 +82,8 @@ export class TxProcessor implements WithTx {
 }
 
 export interface TxOperations {
-  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
+  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>) => Promise<T>
+  createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
@@ -94,13 +93,14 @@ export interface TxOperations {
   removeDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
 }
 
-export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T): T & TxOperations {
+export function withOperations<T extends Storage> (user: Ref<Account>, storage: T): T & TxOperations {
   const result = storage as T & TxOperations
 
   result.createDoc = async <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
-    attributes: Data<T>
+    attributes: Data<T>,
+    objectId?: Ref<T>
   ): Promise<T> => {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
@@ -108,13 +108,23 @@ export function withOperations<T extends WithTx> (user: Ref<Account>, storage: T
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
-      objectId: generateId(),
+      objectId: objectId ?? generateId(),
       objectClass: _class,
       objectSpace: space,
       attributes
     }
     await storage.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
+  }
+
+  result.createShortRef = async <T extends Doc>(
+    _id: Ref<T>,
+    _class: Ref<Class<T>>,
+    space: Ref<Space>
+  ): Promise<string | undefined> => {
+    const objectSpace = (await storage.findAll(core.class.Space, { _id: space }, { limit: 1 }))[0]
+    const workspace = objectSpace.name.trim().toUpperCase().replace(/[^a-z0-9]/gim, '_').replace(/[_]/g, '_')
+    return await createShortRef(storage, user, space, _id, _class, workspace)
   }
 
   result.updateDoc = async <T extends Doc>(

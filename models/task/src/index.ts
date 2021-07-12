@@ -30,6 +30,7 @@ export class TProject extends TSpace implements Project {}
 
 @Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
 export class TTask extends TDoc implements Task {
+  shortRefId!: string
   name!: string
   description!: string
   assignee!: Ref<Account>

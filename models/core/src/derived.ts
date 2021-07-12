@@ -25,6 +25,7 @@ import type {
   MappingRule,
   Ref,
   Reference,
+  ShortRef,
   Title
 } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
@@ -68,4 +69,12 @@ export class TReference extends TDerivedData implements Reference {}
 export class TBackReference extends TDerivedData implements BackReference {
   sourceObjectId!: Ref<Doc>
   sourceObjectClass!: Ref<Class<Doc>>
+}
+
+@Model(core.class.ShortRef, core.class.Title, DOMAIN_REFERENCE)
+export class TShortRef extends TTitle implements ShortRef {
+  objectId!: Ref<Doc>
+  objectClass!: Ref<Class<Doc>>
+  namespace!: string
+  counter!: number
 }

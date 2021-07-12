@@ -16,11 +16,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog } from '@anticrm/ui'
-
   import { getClient } from '@anticrm/workbench'
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import { Account, Ref, Space } from '@anticrm/core'
+  import { Account, Ref, Space, generateId } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
@@ -31,13 +30,16 @@
 
   const client = getClient()
 
-  function create() {
-    client.createDoc(task.class.Task, space, {
+  async function create() {
+    const id = generateId()
+    const shortRefId = await client.createShortRef(id, task.class.Task, space)
+    const doc = await client.createDoc(task.class.Task, space, {
       name,
       assignee,
       description,
-      status: TaskStatuses.Open
-    })
+      status: TaskStatuses.Open,
+      shortRefId: shortRefId 
+    }, id)
   }
 </script>
 
