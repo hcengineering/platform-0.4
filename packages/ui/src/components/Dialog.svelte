@@ -55,6 +55,7 @@
     justify-content: space-between;
     flex-direction: row;
     width: 100vw;
+    max-height: 100vh;
     height: 100vh;
 
     .dialog {
@@ -63,6 +64,7 @@
       min-width: 40%;
       max-width: 80%;
       width: auto;
+      max-height: 100vh;
       height: 100vh;
       background-color: var(--theme-bg-color);
       border-radius: 30px;
@@ -72,6 +74,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-shrink: 0;
         margin-top: 12px;
         padding: 0 32px 0 40px;
         height: 72px;
@@ -97,17 +100,21 @@
       }
 
       .content {
+        flex-shrink: 0;
         margin: 24px 40px 0;
-        height: 100%;
+        height: calc(100vh - 204px);
       }
 
       .footer {
         display: flex;
+        overflow: hidden;
         flex-direction: row-reverse;
         align-items: center;
+        flex-shrink: 0;
         gap: 12px;
         padding: 0 40px;
         height: 96px;
+        mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 40px);
       }
     }
   }
