@@ -16,7 +16,7 @@
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Account, Doc, Ref, Space } from '@anticrm/core'
+import type { Account, Doc, Ref, ShortRef, Space } from '@anticrm/core'
 
 export interface Project extends Space {}
 
@@ -31,6 +31,7 @@ export const TaskStatuses = {
 export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses];
 
 export interface Task extends Doc {
+  shortRefId: Ref<ShortRef>,
   name: string,
   description: string,
   assignee?: Ref<Account>,

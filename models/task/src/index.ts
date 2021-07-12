@@ -17,7 +17,7 @@ import { Builder, Model } from '@anticrm/model'
 
 import { TDoc, TSpace } from '@anticrm/model-core'
 import { Project, Task, TaskStatus } from '@anticrm/task'
-import { Account, Domain, Ref } from '@anticrm/core'
+import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
 import core from '@anticrm/model-core'
@@ -30,7 +30,7 @@ export class TProject extends TSpace implements Project {}
 
 @Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
 export class TTask extends TDoc implements Task {
-  shortRefId!: string
+  shortRefId!: Ref<ShortRef>
   name!: string
   description!: string
   assignee!: Ref<Account>
