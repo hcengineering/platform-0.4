@@ -22,6 +22,7 @@ specifiers:
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
+  '@rush-temp/model-dev': file:./projects/model-dev.tgz
   '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
@@ -52,6 +53,7 @@ specifiers:
   '@rush-temp/workspace': file:./projects/workspace.tgz
   '@rush-temp/workspaces': file:./projects/workspaces.tgz
   '@testing-library/svelte': ^3.0.3
+  '@types/faker': ~5.5.7
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
   '@types/kurento-client': ~6.14.4
@@ -156,6 +158,7 @@ dependencies:
   '@rush-temp/model-all': file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-core': file:projects/model-core.tgz_1cb27354e0b191fb8b28e4e6b0306c2b
+  '@rush-temp/model-dev': file:projects/model-dev.tgz_@types+node@14.17.0
   '@rush-temp/model-fsm': file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-meeting': file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
@@ -186,6 +189,7 @@ dependencies:
   '@rush-temp/workspace': file:projects/workspace.tgz
   '@rush-temp/workspaces': file:projects/workspaces.tgz
   '@testing-library/svelte': 3.0.3_svelte@3.38.2
+  '@types/faker': 5.5.7
   '@types/jest': 26.0.23
   '@types/jwt-simple': 0.5.33
   '@types/kurento-client': 6.14.4
@@ -1173,6 +1177,10 @@ packages:
 
   /@types/estree/0.0.47:
     resolution: {integrity: sha512-c5ciR06jK8u9BstrmJyO97m+klJrrhCf9u3rLu3DEAJBirxRqSCvDQoYKmxuYwQI5SZChAWu+tq9oVlGRuzPAg==}
+    dev: false
+
+  /@types/faker/5.5.7:
+    resolution: {integrity: sha512-ejzb61Q5zQTtS0ZIafgQ7ahO5ACzmGhG5PfX2hxWyth3k0/aysb4ZOxKQB8DbzwSPppA5jmFBwqnBxjv5hqI5Q==}
     dev: false
 
   /@types/glob/7.1.3:
@@ -4042,6 +4050,10 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    dev: false
+
+  /faker/5.5.3:
+    resolution: {integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==}
     dev: false
 
   /fast-deep-equal/3.1.3:
@@ -9512,7 +9524,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_dbf4af031ea72cadd58e9967f1c25279:
-    resolution: {integrity: sha512-jNqb+JPd/p80BpAru0d3kz6qHaPtJRL8kH17hMN8t9VRW44DT+E+DhPCY/sb7LFlqR2CKWDnFHl8jX3SJYXUgg==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-7B6t/2NnP17J2OHZloLN8ic7OT3lV4gePZrD6yLaqkFfq5NSvS8DbostJgEr+D5aOkMOmroFb9bwImpmDgVB5Q==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -9871,6 +9883,40 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/model-dev.tgz_@types+node@14.17.0:
+    resolution: {integrity: sha512-ojf9kTrr4eUsXu0xaG8J4//8iVp0Vj04R+/GmzQUMJudPqkqMYxwGLFf3ITpYq41RuScZd70xQ/Pq9eT2l2/Qg==, tarball: file:projects/model-dev.tgz}
+    id: file:projects/model-dev.tgz
+    name: '@rush-temp/model-dev'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/faker': 5.5.7
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      faker: 5.5.3
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-node: 10.0.0_b3612b1039858dac119be4b1760c4359
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0:
     resolution: {integrity: sha512-IxJi7ar0AB8hh2PcW4qcDNNF9MpbfY9EidbrnzbdDaSQmF7cTOuCr3OMUhq8oguy3UcPLgIDljFuNe384op5yA==, tarball: file:projects/model-fsm.tgz}
     id: file:projects/model-fsm.tgz
@@ -10076,7 +10122,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-QoMXSfKLq1KChA0Jk6GmaIhOmMiMXoegMPTFUZk7axALsWpFGKPZIIRdR/axGemTWI1P3bmSyt+TgJOXaylpKg==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-roCMGjbOoTXpcfirEcQhTA59k0Ty4dd6Z8oB4+GtV3/R6BIiw3QnMBI3k8WQRR9PQiI11YfPXFtW8/JwhMXZDQ==, tarball: file:projects/plugin-core-dev.tgz}
     id: file:projects/plugin-core-dev.tgz
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0

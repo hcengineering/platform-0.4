@@ -15,7 +15,7 @@
 
 import { connect } from '../connection'
 import core, { createClient } from '@anticrm/core'
-import builder from '@anticrm/model-all'
+import builder from '@anticrm/model-dev'
 
 describe('client', () => {
   it('should create connection', async () => {
@@ -29,7 +29,7 @@ describe('client', () => {
     const client = await createClient(connect)
     const txes = builder.getTxes()
     const result = await client.findAll(core.class.Class, {})
-    const expectedLength = txes.filter(tx => client.isDerived((tx as any).objectClass, core.class.Class)).length
+    const expectedLength = txes.filter((tx) => client.isDerived((tx as any).objectClass, core.class.Class)).length
     expect(result).toHaveLength(expectedLength)
   })
 })
