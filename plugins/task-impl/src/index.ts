@@ -20,7 +20,6 @@ import task from './plugin'
 import CreateTask from './components/CreateTask.svelte'
 import TaskView from './components/TaskView.svelte'
 import CreateProject from './components/CreateProject.svelte'
-export { Task, TaskStatus } from './plugin'
 
 export default async (): Promise<TaskService> => {
 

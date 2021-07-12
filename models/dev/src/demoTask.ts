@@ -1,8 +1,8 @@
 import core, { DerivedDataDescriptor, Doc, generateId, Ref, Title, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import { Project } from '@anticrm/task'
-import task, { Task, TaskStatus } from '@anticrm/task-impl/src/plugin'
+import { Project, Task, TaskStatuses } from '@anticrm/task'
+import task from '@anticrm/task-impl/src/plugin'
 import faker from 'faker'
 
 const demoIds = component('demo-task' as Component, {
@@ -62,10 +62,9 @@ export function demoTask (builder: Builder): void {
         name: `Do ${faker.commerce.productName()}`,
         description: `do ${faker.commerce.productDescription()}`,
         status: faker.random.arrayElement([
-          TaskStatus.Open,
-          TaskStatus.InProgress,
-          TaskStatus.Closed,
-          TaskStatus.Resolved
+          TaskStatuses.Open,
+          TaskStatuses.InProgress,
+          TaskStatuses.Closed
         ]),
         shortRefId: shortRefId
       },

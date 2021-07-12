@@ -42,7 +42,7 @@
     </div>
     {#if view === 'kanban'}
       <ScrollBox>
-        <KanbanView/>
+        <KanbanView {_class} {currentSpace}/>
       </ScrollBox>
     {:else if view === 'card'}
       <ScrollBox vertical>

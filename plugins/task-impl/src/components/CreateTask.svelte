@@ -16,10 +16,9 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog } from '@anticrm/ui'
-
   import { getClient } from '@anticrm/workbench'
-
-  import task, { TaskStatus } from '../plugin'
+  import { TaskStatuses } from '@anticrm/task'
+  import task from '../plugin'
   import { Account, Ref, Space, generateId } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
@@ -38,7 +37,7 @@
       name,
       assignee,
       description,
-      status: TaskStatus.Open,
+      status: TaskStatuses.Open,
       shortRefId: shortRefId 
     }, id)
   }

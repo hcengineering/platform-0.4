@@ -14,128 +14,81 @@
 -->
 
 <script lang="ts">
-  import type { Asset } from '@anticrm/status'
-  import type { AnySvelteComponent } from '@anticrm/ui'
+  import type { IntlString } from '@anticrm/status'
 
   import KanbanPanel from './KanbanPanel.svelte'
   import KanbanCard from './KanbanCard.svelte'
-  import KanbanTask from './KanbanTask.svelte'
 
-  import Calendar from './icons/Calendar.svelte'
-  import Call from './icons/Call.svelte'
-  import Document from './icons/Document.svelte'
-  import Task from './icons/Task.svelte'
+  import { Task, TaskStatuses } from '@anticrm/task'
+  import { Class, Ref, Space } from '@anticrm/core';
+  import { getClient } from '@anticrm/workbench';
 
-  interface ITask {
-    icon: Asset | AnySvelteComponent
-    title: string
-    text: string
+  type ICard = Task & Draggable
+
+  interface Draggable {
+    onDrag: boolean
   }
 
-  interface ICard {
-    _id: number
-    user: string
-    category: number
-    tasks?: Array<ITask>
-    onDrag?: boolean
-  }
-
-  interface ICategory {
-    _id: number
-    title: string
-    counter?: number
+  interface IStatus {
+    title: IntlString
     color?: string
   }
 
-  export let categories: Array<ICategory> = [{ _id: 1, title: 'Introduction', counter: 4 },
-                                             { _id: 2, title: 'Interview', counter: 16, color: '#9D92C4' },
-                                             { _id: 3, title: 'Submissions', counter: 4, color: '#61A6AF' },
-                                             { _id: 4, title: 'On Site', counter: 8, color: '#73A6CD' }]
-  export let cards: Array<ICard> = [{ _id: 1, user: 'elon', category: 1, tasks:
-                                        [{ icon: Document, title: 'Offer sent', text: '8:30AM, July 12 Voltron, San Francisco' },
-                                         { icon: Task, title: 'Discuss offer details', text: 'This is a small description for this application and great.' }]},
-                                    { _id: 2, user: 'tim', category: 1, tasks:
-                                        [{ icon: Document, title: 'Send offer', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 3, user: 'chen', category: 2, tasks:
-                                        [{ icon: Calendar, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 4, user: 'kathryn', category: 2, tasks:
-                                        [{ icon: Call, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 5, user: 'elon', category: 3, tasks:
-                                        [{ icon: Document, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' },
-                                         { icon: Task, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' },
-                                         { icon: Call, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' },
-                                         { icon: Calendar, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 6, user: 'tim', category: 4, tasks:
-                                        [{ icon: Document, title: 'Send offer', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 7, user: 'chen', category: 4, tasks:
-                                        [{ icon: Calendar, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' }] },
-                                    { _id: 8, user: 'kathryn', category: 4, tasks:
-                                        [{ icon: Call, title: 'Team Interview', text: '8:30AM, July 12 Voltron, San Francisco' }] }]
+  export let _class: Ref<Class<Task>>
+  export let currentSpace: Ref<Space> | undefined
+  const client = getClient()
+  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => {
+      data = result.map(item => Object.assign(item, {onDrag: false}))
+    })
 
-  let dragCard: ICard
-  let onDrag: boolean = false
-  let enterID: number = 0
-  let dragID: number = 0
+  let data: ICard[] = []
+  let dragId: Ref<Task> | undefined
 
-  const getCount = (id: number): number => {
-    return cards.filter(card => card.category == id).length
+  const getCount = (status: IntlString): number => {
+    return data.filter(card => card.status == status).length
   }
-  const calculateAll = (): void => {
-    categories.forEach(cat => cat.counter = getCount(cat._id))
+
+  function getNextColor(i: number): string {
+    const colors = ['#9D92C4', '#61A6AF', '#73A6CD']
+    return colors[i % colors.length]
   }
-  calculateAll()
+
+  function getStatuses(): IStatus[] {
+    const result: IStatus[] = []
+    let i = 0
+    for (const key in TaskStatuses) {
+      result.push({ title: TaskStatuses[key], color: getNextColor(i++) })
+    }
+    return result
+  }
 </script>
 
-{#each categories as kbItem (kbItem._id)}
-  <KanbanPanel title={kbItem.title} bind:counter={kbItem.counter} color={kbItem.color}
-    on:dragover={(event) => {
-      event.preventDefault()
-      if (dragID > 0 && dragID !== kbItem._id) {
-        cards.pop()
-        dragID = 0
-      }
-      if (enterID !== kbItem._id && kbItem._id !== dragCard.category) {
-        dragID = kbItem._id
-        cards.push({ _id: 0, user: dragCard.user, category: dragID, tasks: dragCard.tasks, onDrag: true })
-      }
-      enterID = kbItem._id
-    }}
-    on:drop={(event) => {
-      event.preventDefault()
-      dragCard.category = kbItem._id
-      dragCard.onDrag = false
-      if (dragID > 0) {
-        cards.pop()
-        dragID = 0
-      }
-      kbItem.counter = getCount(kbItem._id)
-      calculateAll()
-    }}
+{#each getStatuses() as status (status)}
+  <KanbanPanel title={status.title} 
+  counter={getCount(status.title)} color={status.color}
+  on:dragover={(event) => {
+    event.preventDefault()
+  }}
+  on:drop={(event) => {
+    event.preventDefault()
+    const dragCard = data.find(p => p._id === dragId)
+    if (dragCard !== undefined
+      && status.title !== dragCard.status) {
+      client.updateDoc(_class, currentSpace, dragCard._id, {
+        status: status.title
+      })
+    }
+  }}
   >
-    {#each cards as card}
-      {#if card.category === kbItem._id }
-        <KanbanCard user={card.user} bind:onDrag={card.onDrag}
+    {#each data as card}
+      {#if card.status === status.title }
+        <KanbanCard title={card.name}
+          commentsCount={2} user={'chen'}
           draggable={true}
           on:dragstart={() => {
-            kbItem.counter = getCount(kbItem._id)
-            onDrag = true
-            card.onDrag = true
-            dragCard = card
-            dragID = 0
-            enterID = kbItem._id
-          }}
-          on:dragend={() => {
-            if (dragID > 0) {
-              cards.pop()
-              dragID = 0
-            }
-            card.onDrag = false
-            onDrag = false
+            dragId = card._id
           }}
         >
-          {#each card.tasks as task}
-            <KanbanTask icon={task.icon} title={task.title} text={task.text}/>
-          {/each}
         </KanbanCard>
       {/if}
     {/each}

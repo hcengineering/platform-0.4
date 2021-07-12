@@ -16,25 +16,10 @@
 import { mergeIds } from '@anticrm/status'
 import type { IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
-import type { Ref, Class, Doc, Account } from '@anticrm/core'
-import type { Project } from '@anticrm/task'
+import type { Ref, Class } from '@anticrm/core'
+import type { Project, Task } from '@anticrm/task'
 
 import task from '@anticrm/task'
-
-export enum TaskStatus {
-  Open,
-  InProgress,
-  Resolved,
-  Closed
-}
-
-export interface Task extends Doc {
-  shortRefId?: string,
-  name: string,
-  description: string,
-  assignee?: Ref<Account>,
-  status: TaskStatus,
-}
 
 export default mergeIds(task, {
   component: {

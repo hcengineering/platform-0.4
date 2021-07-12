@@ -20,18 +20,21 @@
   export let title: IntlString
   export let counter: number | undefined
   export let color: string = '#F28469'
+  let collapsed: boolean = false
 </script>
 
-<section class="panel" on:dragover on:drop>
-  <div class="header" style="background-color: {color}">
-    <div class="title"><Label label={title}/></div>
-    {#if counter}<div class="counter">{counter}</div>{/if}
+<section class="panel" on:dragover on:drop class:collapsed={collapsed}>
+  <div class="header" style="background-color: {color}" on:click={() => collapsed = !collapsed}>
+    {#if collapsed !== true}<div class="title"><Label label={title}/></div>{/if}
+    <div class="counter">{counter}</div>
   </div>
+  {#if collapsed !== true}
   <div class="scroll">
     <ScrollBox vertical>
       <slot/>
     </ScrollBox>
   </div>
+  {/if}
 </section>
 
 <style lang="scss">
@@ -44,6 +47,10 @@
     background-color: var(--theme-button-bg-enabled);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
+
+    &.collapsed {
+      min-width: 80px;
+    }
 
     .header {
       display: flex;

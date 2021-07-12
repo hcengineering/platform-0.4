@@ -14,13 +14,29 @@
 //
 
 import { plugin } from '@anticrm/platform'
-import type { Asset } from '@anticrm/status'
+import type { Asset, IntlString } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Space } from '@anticrm/core'
+import type { Account, Doc, Ref, ShortRef, Space } from '@anticrm/core'
 
 export interface Project extends Space {}
 
 export interface TaskService extends Service {}
+
+export const TaskStatuses = {
+  Open: 'Open' as IntlString,
+  InProgress: 'InProgress' as IntlString,
+  Closed: 'Closed' as IntlString
+} as const
+
+export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses];
+
+export interface Task extends Doc {
+  shortRefId: Ref<ShortRef>,
+  name: string,
+  description: string,
+  assignee?: Ref<Account>,
+  status: TaskStatus
+}
 
 const PluginTask = 'task' as Plugin<TaskService>
 
