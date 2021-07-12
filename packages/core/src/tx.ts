@@ -83,7 +83,7 @@ export class TxProcessor {
 
 export interface TxOperations {
   createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
-  createDocWithShortRef: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
+  createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
@@ -116,28 +116,14 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     return TxProcessor.createDoc2Doc(tx) as T
   }
 
-  result.createDocWithShortRef = async <T extends Doc>(
+  result.createShortRef = async <T extends Doc>(
+    _id: Ref<T>,
     _class: Ref<Class<T>>,
-    space: Ref<Space>,
-    attributes: Data<T>
-  ): Promise<T> => {
-    const tx: TxCreateDoc<T> = {
-      _id: generateId(),
-      _class: core.class.TxCreateDoc,
-      space: core.space.Tx,
-      modifiedBy: user,
-      modifiedOn: Date.now(),
-      objectId: generateId(),
-      objectClass: _class,
-      objectSpace: space,
-      attributes
-    }
-    await storage.tx(tx)
-    const result = TxProcessor.createDoc2Doc(tx) as T
-    const objectSpace = (await storage.findAll(core.class.Space, { _id: result.space }, { limit: 1 }))[0]
+    space: Ref<Space>
+  ): Promise<string | undefined> => {
+    const objectSpace = (await storage.findAll(core.class.Space, { _id: space }, { limit: 1 }))[0]
     const workspace = objectSpace.name.trim().toUpperCase().replace(/[^a-z0-9]/gim, '_').replace(/[_]/g, '_')
-    await createShortRef(storage, user, result, workspace)
-    return result
+    return await createShortRef(storage, user, space, _id, _class, workspace)
   }
 
   result.updateDoc = async <T extends Doc>(

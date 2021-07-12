@@ -33,7 +33,9 @@ const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortR
 export async function createShortRef<T extends Doc> (
   storage: Storage,
   user: Ref<Account>,
-  doc: T,
+  space: Ref<Space>,
+  objectId: Ref<T>,
+  objectClass: Ref<Class<T>>,
   namespace: string
 ): Promise<string | undefined> {
   let extraAdd = 0
@@ -67,7 +69,7 @@ export async function createShortRef<T extends Doc> (
       modifiedOn: Date.now(),
       objectId: shortId,
       objectClass: core.class.ShortRef,
-      objectSpace: doc.space,
+      objectSpace: space,
       attributes: {
         descriptorId: DESCRIPTOR_SHORTREF,
         objectId,
