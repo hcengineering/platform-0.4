@@ -1,6 +1,8 @@
+import { DerivedDataDescriptor } from '.'
 import { Account, Class, Doc, Ref, Space } from './classes'
 import core from './component'
 import { Storage } from './storage'
+import { Title } from './title'
 import { TxCreateDoc } from './tx'
 import { generateId } from './utils'
 
@@ -19,7 +21,7 @@ import { generateId } from './utils'
  * To create a new reference, we should create a document with _id={namespace}-{max(counter)+1}
  * If we failed we need to retry.
  */
-export interface ShortRef extends Doc {
+export interface ShortRef extends Title {
   // _id - is an uniq short reference identifier.
   objectId: Ref<Doc> // <-- reference to source document.
   objectClass: Ref<Class<Doc>> // <-- source object class.
@@ -27,6 +29,7 @@ export interface ShortRef extends Doc {
   counter: number // An Id counter.
 }
 
+const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
 export async function createShortRef<T extends Doc> (
   storage: Storage,
   user: Ref<Account>,
@@ -68,10 +71,12 @@ export async function createShortRef<T extends Doc> (
       objectClass: core.class.ShortRef,
       objectSpace: space,
       attributes: {
+        descriptorId: DESCRIPTOR_SHORTREF,
         objectId,
         objectClass,
         namespace,
-        counter
+        counter,
+        title: shortId
       }
     }
     try {
