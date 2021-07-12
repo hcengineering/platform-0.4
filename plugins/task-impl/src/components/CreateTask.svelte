@@ -20,8 +20,7 @@
   import { getClient } from '@anticrm/workbench'
 
   import task, { TaskStatus } from '../plugin'
-  import { Account, Ref, Space } from '@anticrm/core'
-import { debug } from 'svelte/internal';
+  import { Account, Ref, Space, generateId } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
@@ -33,15 +32,15 @@ import { debug } from 'svelte/internal';
   const client = getClient()
 
   async function create() {
+    const id = generateId()
+    const shortRefId = await client.createShortRef(id, task.class.Task, space)
     const doc = await client.createDoc(task.class.Task, space, {
       name,
       assignee,
       description,
-      status: TaskStatus.Open
-    })
-    const shortRefId = await client.createShortRef(doc._id, doc._class, doc.space)
-    if (shortRefId !== undefined)
-      await client.updateDoc(doc._class, doc._space, doc._id, { shortRefId: shortRefId })
+      status: TaskStatus.Open,
+      shortRefId: shortRefId 
+    }, id)
   }
 </script>
 

@@ -82,7 +82,7 @@ export class TxProcessor {
 }
 
 export interface TxOperations {
-  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>) => Promise<T>
+  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>) => Promise<T>
   createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
@@ -99,7 +99,8 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
   result.createDoc = async <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
-    attributes: Data<T>
+    attributes: Data<T>,
+    objectId?: Ref<T>
   ): Promise<T> => {
     const tx: TxCreateDoc<T> = {
       _id: generateId(),
@@ -107,7 +108,7 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
-      objectId: generateId(),
+      objectId: objectId ?? generateId(),
       objectClass: _class,
       objectSpace: space,
       attributes
