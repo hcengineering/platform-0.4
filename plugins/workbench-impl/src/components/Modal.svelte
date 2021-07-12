@@ -21,7 +21,7 @@
 
   function close () {
     modalHTML.style.animationDirection = modalOHTML.style.animationDirection = 'reverse'
-    modalHTML.style.animationDuration = modalOHTML.style.animationDuration = '.2s'
+    modalHTML.style.animationDuration = modalOHTML.style.animationDuration = '.6s'
     modal.set({ is: undefined, props: {}, element: undefined })
   }
 

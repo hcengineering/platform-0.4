@@ -41,6 +41,7 @@ export { default as PopupItem } from './components/PopupItem.svelte'
 export { default as SelectBox } from './components/SelectBox.svelte'
 export { default as SelectItem } from './components/SelectItem.svelte'
 export { default as UserInfo } from './components/UserInfo.svelte'
+export { default as TextArea } from './components/TextArea.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
