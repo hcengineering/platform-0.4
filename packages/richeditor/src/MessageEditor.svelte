@@ -12,6 +12,7 @@ import { Commands } from './internal/commands'
 import { buildInputRules } from './internal/input_rules'
 import { buildKeymap } from './internal/keymap'
 import { schema } from './internal/schema'
+import { StateTransformer } from './transform'
 
 const dispatch = createEventDispatcher()
 
@@ -21,9 +22,7 @@ const dispatch = createEventDispatcher()
 export let content: MessageNode
 export let hoverMessage = 'Placeholder...'
 export let triggers: string[] = []
-export let transformInjections:
-  | ((state: EditorState) => Promise<Transaction | null>)
-  | undefined = undefined
+export let transformInjections: StateTransformer | undefined = undefined
 
 // ********************************
 // Functionality

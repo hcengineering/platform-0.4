@@ -49,3 +49,4 @@ export interface EditorActions {
 }
 
 export { default as MessageEditor } from './MessageEditor.svelte'
+export * from './transform'

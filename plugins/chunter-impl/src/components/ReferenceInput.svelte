@@ -21,8 +21,14 @@
   import GIF from './icons/GIF.svelte'
   import TextStyle from './icons/TextStyle.svelte'
 
-  import { EditorActions, EditorContentEvent, MessageEditor } from '@anticrm/richeditor'
+  import { createTextTransform, EditorActions, EditorContentEvent, MessageEditor } from '@anticrm/richeditor'
   import { MessageNode, newMessageDocument, serializeMessage } from '@anticrm/text'
+  import { schema } from '@anticrm/richeditor/src/internal/schema'
+
+  import CompletionPopup from './refinput/CompletionPopup.svelte'
+  import type { CompletionItem, CompletionPopupActions } from './refinput/CompletionPopupHelper'
+  import core, { DocumentQuery, Title } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
 
   export let thread: boolean = false
 
@@ -59,26 +65,142 @@
 
   let currentPrefix = ''
 
+  interface ItemRefefence {
+    id: string
+    class: string
+  }
+
+  interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
+  let completions: CompletionItem[] = []
+  let completionControl: CompletionPopup & CompletionPopupActions
+
+  let popupVisible = false
+
+  let titleSearch = () => {}
+
+  const client = getClient()
+
+  function query (prefix: string): DocumentQuery<Title> {
+    return {
+      title: { $like: prefix + '%' }
+    }
+  }
+
+  $: if (currentPrefix !== '') {
+    titleSearch()
+    titleSearch = client.query(
+      core.class.Title,
+      query(currentPrefix),
+      (docs) => {
+        completions = updateTitles(docs)
+      },
+      { limit: 50 }
+    )
+  }
+
+  function updateTitles (docs: Title[]): CompletionItem[] {
+    const items: CompletionItem[] = []
+    for (const value of docs) {
+      // if (startsWith(value.title.toString(), currentPrefix)) {
+      const kk = value.title
+      items.push({
+        key: `${value.objectId}${value.title}`,
+        completion: value.objectId,
+        label: kk,
+        title: `${kk} - ${value.objectClass}`,
+        class: value.objectClass,
+        id: value.objectId
+      } as ExtendedCompletionItem)
+      // }
+    }
+    return items
+  }
+
+  async function findTitle (title: string): Promise<ItemRefefence[]> {
+    const docs = await client.findAll<Title>(core.class.Title, {
+      title: title
+    })
+
+    for (const value of docs) {
+      if (value.title === title) {
+        return [
+          {
+            id: value.objectId,
+            class: value.objectClass
+          } as ItemRefefence
+        ]
+      }
+    }
+    return []
+  }
+
   function updateStyle (event: EditorContentEvent) {
     styleState = event
 
     if (event.completionWord.length === 0) {
       currentPrefix = ''
+      popupVisible = false
       return
     }
     if (event.completionWord.startsWith('[[')) {
       if (event.completionWord.endsWith(']')) {
+        popupVisible = false
         currentPrefix = ''
       } else {
         currentPrefix = event.completionWord.substring(2)
+        if (currentPrefix.length > 0) {
+          popupVisible = true
+        }
       }
     } else {
       currentPrefix = ''
+      popupVisible = false
     }
     dispatch('update', editorContent)
   }
 
+  function handlePopupSelected (value: CompletionItem) {
+    let extra = 0
+    if (styleState.completionEnd !== null && styleState.completionEnd.endsWith(']]')) {
+      extra = styleState.completionEnd.length
+    }
+    const vv = value as ExtendedCompletionItem
+    htmlEditor.insertMark(
+      '[[' + value.label + ']]',
+      styleState.selection.from - styleState.completionWord.length,
+      styleState.selection.to + extra,
+      schema.marks.reference,
+      {
+        id: vv.id,
+        class: vv.class
+      }
+    )
+    htmlEditor.focus()
+  }
+
   function onKeyDown (event: any): void {
+    if (popupVisible) {
+      if (event.key === 'ArrowUp') {
+        completionControl.handleUp()
+        event.preventDefault()
+        return
+      }
+      if (event.key === 'ArrowDown') {
+        completionControl.handleDown()
+        event.preventDefault()
+        return
+      }
+      if (event.key === 'Enter') {
+        completionControl.handleSubmit()
+        event.preventDefault()
+        return
+      }
+      if (event.key === 'Escape') {
+        completions = []
+        popupVisible = false
+        return
+      }
+    }
     if (event.key === 'Enter' && !event.shiftKey) {
       handleSubmit()
       event.preventDefault()
@@ -91,6 +213,8 @@
     }
     editorContent = newMessageDocument()
   }
+
+  const transformFunction = createTextTransform(findTitle)
 </script>
 
 <div class="ref-container">
@@ -106,11 +230,28 @@
         bind:this={htmlEditor}
         bind:content={editorContent}
         {triggers}
+        transformInjections={transformFunction}
         on:content={(event) => {
           editorContent = event.detail
         }}
         on:styleEvent={(e) => updateStyle(e.detail)}
-      />
+      >
+        {#if popupVisible && completions.length > 0}
+          <CompletionPopup
+            bind:this={completionControl}
+            on:blur={(e) => (completions = [])}
+            ontop={true}
+            items={completions}
+            pos={{
+              left: styleState.cursor.left + 15,
+              top: styleState.cursor.top - styleState.inputHeight,
+              right: styleState.cursor.right + 15,
+              bottom: styleState.cursor.bottom - styleState.inputHeight
+            }}
+            on:select={(e) => handlePopupSelected(e.detail)}
+          />
+        {/if}
+      </MessageEditor>
     </div>
     {#if submitEnabled}
       <button class="sendButton" on:click={() => handleSubmit()}><div class="icon"><Send /></div></button>
