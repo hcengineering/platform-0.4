@@ -458,6 +458,11 @@
       "shouldPublish": false
     },
     {
+      "packageName": "@anticrm/model-dev",
+      "projectFolder": "models/dev",
+      "shouldPublish": false
+    },
+    {
       "packageName": "@anticrm/login",
       "projectFolder": "plugins/login",
       "shouldPublish": true

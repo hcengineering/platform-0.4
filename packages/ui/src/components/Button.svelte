@@ -49,7 +49,6 @@
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
-    backdrop-filter: blur(12px);
     &:hover {
       background-color: var(--theme-button-bg-hovered);
       border-color: var(--theme-button-border-hovered);

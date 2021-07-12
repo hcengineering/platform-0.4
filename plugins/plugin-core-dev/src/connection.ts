@@ -15,7 +15,7 @@
 
 import type { Tx, Storage, Ref, Doc, Class, DocumentQuery, FindResult } from '@anticrm/core'
 import core, { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
-import builder from '@anticrm/model-all'
+import builder from '@anticrm/model-dev'
 
 export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
   const txes = builder.getTxes()
@@ -28,6 +28,8 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
   for (const tx of txes) {
     await Promise.all([transactions.tx(tx), model.tx(tx)])
   }
+
+  console.info('Model Build complete', model)
 
   async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = hierarchy.getClass(_class).domain

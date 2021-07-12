@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": "Random Dev Data generation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "haiodo@gmail.com"
+}

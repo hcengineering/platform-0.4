@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Add postcss.config.js",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor",
+  "email": "sas_lord@mail.ru"
+}

@@ -85,6 +85,7 @@
       }
       &.top {
         bottom: 100%;
+        box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
         &::after {
           bottom: -5px;
           transform: rotate(45deg);

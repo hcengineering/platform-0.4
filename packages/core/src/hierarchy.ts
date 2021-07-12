@@ -13,10 +13,9 @@
 // limitations under the License.
 //
 
-import type { Ref, Class, Obj, Data, Domain } from './classes'
-import type { Tx, TxCreateDoc } from './tx'
-
+import type { Class, Data, Domain, Obj, Ref } from './classes'
 import core from './component'
+import type { Tx, TxCreateDoc } from './tx'
 
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()

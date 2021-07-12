@@ -71,7 +71,9 @@ export async function createClient (
       txBuffer?.push(tx)
     } else {
       hierarchy.tx(tx)
-      void model.tx(tx)
+      if (tx.objectSpace === core.space.Model) {
+        void model.tx(tx)
+      }
       notify?.(tx)
     }
   }

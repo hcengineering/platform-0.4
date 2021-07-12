@@ -32,6 +32,27 @@
   
   import { Component, location } from '@anticrm/ui'
 
+  import { SelectBox, UserInfo } from '@anticrm/ui'
+  import type { IntlString } from '@anticrm/platform'
+  import type { AnySvelteComponent, IPopupItem } from '../types'
+
+  let items: Array<IPopupItem> = [{ selected: false, props: { user: 'chen' } },
+                                  { selected: false, props: { user: 'tim' } },
+                                  { selected: false, props: { user: 'elon' } },
+                                  { selected: false, props: { user: 'kathryn' } },
+                                  { selected: false, props: { user: 'chen' } },
+                                  { selected: false, props: { user: 'tim' } },
+                                  { selected: false, props: { user: 'elon' } },
+                                  { selected: false, props: { user: 'kathryn' } }]
+  let itemsStr: Array<IPopupItem> = [{ selected: false, title: 'chen' },
+                                     { selected: false, title: 'tim' },
+                                     { selected: false, title: 'elon' },
+                                     { selected: false, title: 'kathryn' },
+                                     { selected: false, title: 'chen' },
+                                     { selected: false, title: 'tim' },
+                                     { selected: false, title: 'elon' },
+                                     { selected: false, title: 'kathryn' }]
+
   export let client: Client
 
   setContext(workbench.context.Client, client)
@@ -73,7 +94,11 @@
       }}/>
     {/if}
   </div>
-  <!-- <div class="aside"><Chat thread/></div> -->
+  <div class="aside">
+    <SelectBox title={'PROJECT MEMBERS'} component={UserInfo} items={items} hAlign={'left'} vAlign={'bottom'}/>
+    <div style="height: 20px;"></div>
+    <SelectBox items={itemsStr} hAlign={'left'} vAlign={'bottom'}/>
+  </div>
 </div>
 <Modal />
 
@@ -139,6 +164,7 @@
       min-width: 400px;
       max-width: 400px;
       margin-right: 20px;
+      padding: 20px;
     }
   }
 </style>
