@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Add component TextArea, fix scrolling Dialog.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "sas_lord@mail.ru"
+}
