@@ -292,12 +292,12 @@ describe('workspace', () => {
     const sp = (await workspace.findAll(taskIds.class.MyTask, {}))[0]
 
     const initial = (await workspace.findAll(core.class.Tx, {})).length
-    const t1 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t1 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t1).toBe('TASK-1')
 
     expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(1)
 
-    const t2 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t2 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t2).toBe('TASK-2')
 
     expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(2)
@@ -317,7 +317,7 @@ describe('workspace', () => {
     }
     await workspace.tx(tx)
 
-    const t4 = await createShortRef(workspace, '' as Ref<Account>, '' as Ref<Space>, sp._id, sp._class, 'TASK')
+    const t4 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t4).toBe('TASK-4')
 
     const lastTx = await workspace.findAll(core.class.Tx, {})

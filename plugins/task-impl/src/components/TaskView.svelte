@@ -35,7 +35,6 @@
 </script>
 
 <div class="container">
-  <Tabs/>
   <div class="tab">
     <div class="toolbar">
       <div style="flex-grow: 1"></div>

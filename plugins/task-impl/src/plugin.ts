@@ -29,6 +29,7 @@ export enum TaskStatus {
 }
 
 export interface Task extends Doc {
+  shortRefId?: string,
   name: string,
   description: string,
   assignee?: Ref<Account>,

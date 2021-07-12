@@ -20,7 +20,7 @@
   import { getClient } from '@anticrm/workbench'
 
   import task, { TaskStatus } from '../plugin'
-  import core, { Account, Ref, Space } from '@anticrm/core'
+  import { Account, Ref, Space, generateId } from '@anticrm/core'
 
   const dispatch = createEventDispatcher()
 
@@ -31,13 +31,16 @@
 
   const client = getClient()
 
-  function create() {
-    client.createDoc(task.class.Task, space, {
+  async function create() {
+    const id = generateId()
+    const shortRefId = await client.createShortRef(id, task.class.Task, space)
+    const doc = await client.createDoc(task.class.Task, space, {
       name,
       assignee,
       description,
-      status: TaskStatus.Open
-    })
+      status: TaskStatus.Open,
+      shortRefId: shortRefId 
+    }, id)
   }
 </script>
 
