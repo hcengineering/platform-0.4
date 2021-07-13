@@ -15,7 +15,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
+  import { EditBox, Dialog, ToggleWithLabel, UserBox } from '@anticrm/ui'
 
   import { getClient } from '@anticrm/workbench'
 
@@ -46,6 +46,8 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.ProjectName} bind:value={name}/></div>
     <div class="row"><EditBox label={task.string.ProjectDescription} bind:value={description}/></div>
+    <UserBox hAlign={'right'} showSearch />
+    <UserBox hAlign={'right'} />
     <div class="row"><ToggleWithLabel label={task.string.MakePrivate} description={task.string.MakePrivateDescription} bind:on={isPrivate}/></div>
   </div>
 </Dialog>

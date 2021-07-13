@@ -14,9 +14,17 @@
 -->
 
 <script lang="ts">
+  import type { IntlString } from '@anticrm/platform'
+  import EditBox from './EditBox.svelte'
+
+  export let title: IntlString | undefined = undefined
+  export let caption: IntlString | undefined = undefined
+  export let search: string
+  export let value: string
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'right'
   export let margin: number = 16
+  export let showSearch: boolean = false
   export let show: boolean
 
   let style: string = ''
@@ -44,7 +52,14 @@
   <div class="trigger"><slot name="trigger"/></div>
   {#if show}
     <div class="popup {vAlign} {hAlign}" style={style}>
-      <slot/>
+      {#if showSearch}
+        <div class="header">
+          <div class="title">{title}</div>
+          <EditBox label={'Search'} bind:value={search} />
+          <div class="caption">{caption}</div>
+        </div>
+      {/if}
+      <div class="content"><slot/></div>
     </div>
   {/if}
 </div>
@@ -61,7 +76,7 @@
       position: absolute;
       display: flex;
       flex-direction: column;
-      padding: 8px;
+      padding: 24px 20px;
       color: var(--theme-caption-color);
       background-color: var(--theme-button-bg-hovered);
       border: 1px solid var(--theme-button-border-enabled);
@@ -96,6 +111,29 @@
       }
       &.bottom {
         top: 100%;
+      }
+
+      .header {  
+        text-align-last: left;
+        .title {
+          margin-bottom: 16px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--theme-caption-color);
+        }
+        .caption {
+          margin: 24px 0 16px;
+          font-size: 12px;
+          font-weight: 600;
+          line-height: 0.5px;
+          text-transform: uppercase;
+          color: var(--theme-content-color);
+        }
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
       }
     }
   }

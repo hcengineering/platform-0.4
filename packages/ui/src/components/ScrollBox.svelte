@@ -52,12 +52,11 @@
     }
 
     &.vertical {
-      margin-right: -5px;
-      margin-bottom: 0;
+      margin: 0 -10px 0 -10px;
       overflow-x: hidden;
       overflow-y: auto;
       .box {
-        padding: 0 5px 0 0;
+        padding: 0 10px 0 10px;
         width: 100%;
         height: auto;
         grid-auto-flow: row;

@@ -101,7 +101,8 @@
 
       .content {
         flex-shrink: 0;
-        margin: 24px 40px 0;
+        margin: 24px 20px 0;
+        padding: 0 20px;
         height: calc(100vh - 204px);
       }
 
