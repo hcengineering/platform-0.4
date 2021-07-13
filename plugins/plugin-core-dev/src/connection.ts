@@ -13,11 +13,46 @@
 // limitations under the License.
 //
 
-import type { Tx, Storage, Ref, Doc, Class, DocumentQuery, FindResult } from '@anticrm/core'
-import core, { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
+import type { Account, AccountProvider, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
+import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 
-export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
+class ClientImpl implements Storage, AccountProvider {
+  constructor (
+    readonly hierarchy: Hierarchy,
+    readonly model: ModelDb,
+    readonly transactions: TxDb,
+    readonly handler: (tx: Tx) => void
+  ) {}
+
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+    const domain = this.hierarchy.getClass(_class).domain
+    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
+    return await this.model.findAll(_class, query)
+  }
+
+  async tx (tx: Tx): Promise<void> {
+    // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
+    await this.model.tx(tx)
+
+    // 2. update hierarchy
+    if (tx.objectSpace === core.space.Model) {
+      this.hierarchy.tx(tx)
+    }
+
+    // 3. update transactions
+    await this.transactions.tx(tx)
+
+    // 4. process client handlers
+    this.handler(tx)
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return core.account.System
+  }
+}
+
+export async function connect (handler: (tx: Tx) => void): Promise<Storage & AccountProvider> {
   const txes = builder.getTxes()
 
   const hierarchy = new Hierarchy()
@@ -29,30 +64,8 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
     await Promise.all([transactions.tx(tx), model.tx(tx)])
   }
 
+  // This is for debug, to check for current model inside browser.
   console.info('Model Build complete', model)
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    const domain = hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-    return await model.findAll(_class, query)
-  }
-
-  return {
-    findAll,
-    tx: async (tx: Tx): Promise<void> => {
-      // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
-      await model.tx(tx)
-
-      // 2. update hierarchy
-      if (tx.objectSpace === core.space.Model) {
-        hierarchy.tx(tx)
-      }
-
-      // 3. update transactions
-      await transactions.tx(tx)
-
-      // 4. process client handlers
-      handler(tx)
-    }
-  }
+  return new ClientImpl(hierarchy, model, transactions, handler)
 }

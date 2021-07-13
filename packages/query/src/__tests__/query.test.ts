@@ -14,6 +14,7 @@
 //
 
 import type {
+  Account,
   Class,
   Client,
   Doc,
@@ -275,6 +276,10 @@ class ClientImpl implements Client {
     const domain = this.hierarchy.getClass(_class).domain
     if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
     return await this.model.findAll(_class, query, options)
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return core.account.System
   }
 }
 

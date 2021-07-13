@@ -15,11 +15,9 @@
 //
 import core, {
   Account,
+  AccountProvider,
   Client,
   createClient,
-  createShortRef,
-  DerivedData,
-  DerivedDataDescriptor,
   Doc,
   DocumentUpdate,
   generateId,
@@ -28,8 +26,6 @@ import core, {
   SortingOrder,
   Space,
   Storage,
-  Title,
-  TxCreateDoc,
   TxOperations,
   TxUpdateDoc,
   withOperations
@@ -117,10 +113,15 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
+    const clientStorage = docStorage as unknown as Storage & AccountProvider
+    clientStorage.accountId = async (): Promise<Ref<Account>> => {
+      return core.account.System
+    }
+
     client = withOperations(
       core.account.System,
       await createClient(async (handler) => {
-        return await Promise.resolve(docStorage)
+        return await Promise.resolve(clientStorage)
       })
     )
   }

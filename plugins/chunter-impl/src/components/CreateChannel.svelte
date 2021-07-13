@@ -33,7 +33,7 @@
       name,
       description,
       private: false,
-      members: []
+      members: [client.accountId()]
     })
   }
 </script>

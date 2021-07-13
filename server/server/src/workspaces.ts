@@ -1,4 +1,4 @@
-import { Storage } from '@anticrm/core'
+import { AccountProvider, Storage } from '@anticrm/core'
 import { Workspace } from '@anticrm/workspace'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
@@ -15,14 +15,18 @@ const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
 
 async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   let security!: SecurityModel
-  const workspace = await Workspace.create(workspaceId, { mongoDBUri: MONGO_URI }, async (hierarchy, storage, model) => {
-    security = await SecurityModel.create(hierarchy, model)
-    return [
-      security
-      // <<---- Placeholder: Add triggers here
-      // hierarchy and storage are available
-    ]
-  })
+  const workspace = await Workspace.create(
+    workspaceId,
+    { mongoDBUri: MONGO_URI },
+    async (hierarchy, storage, model) => {
+      security = await SecurityModel.create(hierarchy, model)
+      return [
+        security
+        // <<---- Placeholder: Add triggers here
+        // hierarchy and storage are available
+      ]
+    }
+  )
 
   return {
     workspace,
@@ -48,7 +52,7 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
  * Assign client to workspace, construct workspace if it is not yet started.
  * @param client
  */
-export async function assignWorkspace (client: ClientInfo): Promise<Storage> {
+export async function assignWorkspace (client: ClientInfo): Promise<Storage & AccountProvider> {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
   return new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client, ws.clients)

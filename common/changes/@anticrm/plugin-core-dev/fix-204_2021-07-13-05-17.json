@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": " Introduce accountId() to client",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "haiodo@gmail.com"
+}

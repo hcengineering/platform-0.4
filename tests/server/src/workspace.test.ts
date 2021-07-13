@@ -104,7 +104,8 @@ describe('workspace', () => {
             tx: async (tx) => {
               // console.log('tx', tx)
               await storage.tx(tx)
-            }
+            },
+            accountId: async () => { await Promise.resolve(core.account.System) }
           }
         } catch (err) {
           console.error(err)
@@ -118,7 +119,7 @@ describe('workspace', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = withOperations(core.account.System, 
+      const client = withOperations(core.account.System,
         await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
       )
 

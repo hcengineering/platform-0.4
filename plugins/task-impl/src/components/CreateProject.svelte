@@ -34,7 +34,8 @@
     client.createDoc(task.class.Project, core.space.Model, {
       name,
       description,
-      private: isPrivate
+      private: isPrivate,
+      members: [client.accountId()]
     })
   }
 </script>

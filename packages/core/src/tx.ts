@@ -82,7 +82,13 @@ export class TxProcessor {
 }
 
 export interface TxOperations {
-  createDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>) => Promise<T>
+  accountId: () => Ref<Account>
+  createDoc: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    attributes: Data<T>,
+    objectId?: Ref<T>
+  ) => Promise<T>
   createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
@@ -95,6 +101,8 @@ export interface TxOperations {
 
 export function withOperations<T extends Storage> (user: Ref<Account>, storage: T): T & TxOperations {
   const result = storage as T & TxOperations
+
+  result.accountId = () => user
 
   result.createDoc = async <T extends Doc>(
     _class: Ref<Class<T>>,
@@ -123,7 +131,11 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     space: Ref<Space>
   ): Promise<string | undefined> => {
     const objectSpace = (await storage.findAll(core.class.Space, { _id: space }, { limit: 1 }))[0]
-    const workspace = objectSpace.name.trim().toUpperCase().replace(/[^a-z0-9]/gim, '_').replace(/[_]/g, '_')
+    const workspace = objectSpace.name
+      .trim()
+      .toUpperCase()
+      .replace(/[^a-z0-9]/gim, '_')
+      .replace(/[_]/g, '_')
     return await createShortRef(storage, user, space, _id, _class, workspace)
   }
 

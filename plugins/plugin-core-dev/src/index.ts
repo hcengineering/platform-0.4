@@ -26,7 +26,7 @@ import { connect } from './connection'
  * Licensed under the Eclipse Public License, Version 2.0
  */
 export default async (): Promise<CoreService> => {
-  let client: (Client & TxOperations) | undefined
+  let client: Client | undefined
 
   async function getClient (): Promise<Client & TxOperations> {
     if (client === undefined) {

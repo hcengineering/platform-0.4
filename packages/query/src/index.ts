@@ -14,23 +14,24 @@
 //
 
 import {
-  Ref,
   Class,
-  Doc,
-  Tx,
-  DocumentQuery,
-  TxCreateDoc,
-  TxRemoveDoc,
   Client,
-  Obj,
+  Doc,
+  DocumentQuery,
   FindOptions,
-  TxUpdateDoc,
+  FindResult,
+  generateId,
   getOperator,
-  TxProcessor,
+  Obj,
+  Ref,
   resultSort,
   SortingQuery,
-  FindResult,
-  generateId
+  Storage,
+  Tx,
+  TxCreateDoc,
+  TxProcessor,
+  TxRemoveDoc,
+  TxUpdateDoc
 } from '@anticrm/core'
 
 interface Query {
@@ -43,14 +44,21 @@ interface Query {
   callback: (result: FindResult<Doc>) => void
 }
 
-export class LiveQuery extends TxProcessor implements Client {
-  private readonly client: Client
+export interface Queriable {
+  query: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    callback: (result: T[]) => void,
+    options?: FindOptions<T>
+  ) => () => void
+}
+
+export class LiveQuery extends TxProcessor implements Storage, Queriable {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
   private readonly qid = generateId()
 
-  constructor (client: Client) {
+  constructor (readonly client: Client) {
     super()
-    this.client = client
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {

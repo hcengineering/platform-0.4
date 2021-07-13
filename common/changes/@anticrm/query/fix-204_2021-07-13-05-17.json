@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "Instroduce Queriable interface",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query",
+  "email": "haiodo@gmail.com"
+}

@@ -17,7 +17,8 @@ import core, {
   Tx,
   TxCreateDoc,
   TxProcessor,
-  TxUpdateDoc
+  TxUpdateDoc,
+  AccountProvider
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
@@ -96,19 +97,19 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
   if (typeof querySpace === 'string') {
     if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
   } else {
-    if ((querySpace.$in?.every((space) => spaces.has(space))) === false) {
+    if (querySpace.$in?.every((space) => spaces.has(space)) === false) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
     if (querySpace.$like !== undefined) {
       const query = querySpace.$like
       const querySpaces = querySpace.$in ?? [...spaces.values()]
-      return { $in: querySpaces.filter(p => checkLikeQuery(p, query)) }
+      return { $in: querySpaces.filter((p) => checkLikeQuery(p, query)) }
     }
   }
   return querySpace
 }
 
-export class SecurityClientStorage implements Storage {
+export class SecurityClientStorage implements Storage, AccountProvider {
   constructor (
     readonly security: SecurityModel,
     readonly workspace: Storage,
@@ -117,7 +118,11 @@ export class SecurityClientStorage implements Storage {
     readonly clients: Map<string, ClientInfo>
   ) {}
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query, options)
@@ -126,7 +131,10 @@ export class SecurityClientStorage implements Storage {
     if (spaces === undefined || spaces.size === 0) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
-    query.space = querySpace !== undefined ? query.space = checkQuerySpaces(spaces, querySpace) : query.space = { $in: [...spaces.values()] }
+    query.space =
+      querySpace !== undefined
+        ? (query.space = checkQuerySpaces(spaces, querySpace))
+        : (query.space = { $in: [...spaces.values()] })
     return await this.workspace.findAll(_class, query, options)
   }
 
@@ -143,6 +151,10 @@ export class SecurityClientStorage implements Storage {
         cl[1].tx(tx)
       }
     }
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return this.user.accountId
   }
 }
 
