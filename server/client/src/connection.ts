@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import type { Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
+import { Account, AccountProvider, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
 
+type TxHandler = (tx: Tx) => void
+
 export class WebSocketConnection extends RequestProcessor implements Storage {
   socket: WebSocket
-  handler: (tx: Tx) => void
+  handler: TxHandler
 
-  constructor (socket: WebSocket, handler: (tx: Tx) => void) {
+  constructor (socket: WebSocket, handler: TxHandler) {
     super()
     this.socket = socket
     this.handler = handler
@@ -46,7 +48,11 @@ export class WebSocketConnection extends RequestProcessor implements Storage {
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    return await this.request('findAll', _class, query) as FindResult<T>
+    return (await this.request('findAll', _class, query)) as FindResult<T>
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return (await this.request('accountId')) as Ref<Account>
   }
 
   async tx (tx: Tx): Promise<void> {
@@ -56,11 +62,11 @@ export class WebSocketConnection extends RequestProcessor implements Storage {
   }
 }
 
-export async function connect (clientUrl: string, handler: (tx: Tx) => void): Promise<Storage> {
+export async function connect (clientUrl: string, handler: TxHandler): Promise<Storage & AccountProvider> {
   const socket = new WebSocket(`ws://${clientUrl}`)
 
   // Wait for connection to be established.
-  await new Promise<any>((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     socket.onopen = resolve
     socket.onerror = (reason) => {
       reject(new Error(`Failed to connect to ${clientUrl}: reason: ${reason.message}`))

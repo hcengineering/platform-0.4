@@ -13,12 +13,11 @@
 // limitations under the License.
 //
 
-import type { Tx, Storage, Ref, Doc, Class, DocumentQuery, FindResult } from '@anticrm/core'
-import core, { ModelDb, TxDb, Hierarchy, DOMAIN_TX } from '@anticrm/core'
-
+import type { AccountProvider, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
+import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
 
-export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
+export async function connect (handler: (tx: Tx) => void): Promise<Storage & AccountProvider> {
   const txes = genMinModel()
 
   const hierarchy = new Hierarchy()
@@ -45,6 +44,7 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
       }
       await Promise.all([model.tx(tx), transactions.tx(tx)])
       handler(tx)
-    }
+    },
+    accountId: async () => await Promise.resolve(core.account.System)
   }
 }

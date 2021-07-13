@@ -71,7 +71,7 @@ export class TBackReference extends TDerivedData implements BackReference {
   sourceObjectClass!: Ref<Class<Doc>>
 }
 
-@Model(core.class.ShortRef, core.class.Title, DOMAIN_REFERENCE)
+@Model(core.class.ShortRef, core.class.Title, DOMAIN_TITLE)
 export class TShortRef extends TTitle implements ShortRef {
   objectId!: Ref<Doc>
   objectClass!: Ref<Class<Doc>>

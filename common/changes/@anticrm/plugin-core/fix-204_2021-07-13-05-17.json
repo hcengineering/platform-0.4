@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core",
+      "comment": "Use Queriable insead of LiveQuery",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core",
+  "email": "haiodo@gmail.com"
+}

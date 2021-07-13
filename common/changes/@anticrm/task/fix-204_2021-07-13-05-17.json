@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task",
+      "comment": "Create project with current user",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task",
+  "email": "haiodo@gmail.com"
+}

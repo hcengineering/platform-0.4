@@ -25,13 +25,11 @@ export default async (): Promise<CoreService> => {
   async function getClient (): Promise<Client> {
     if (client === undefined) {
       const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
-      const accountId = getMetadata(pluginCore.metadata.AccountId)
-      if (accountId === undefined) {
-        throw Error('Unauthorized')
-      }
-      const storage = await createClient(async tx => {
+      const storage = await createClient(async (tx) => {
         return await connectBrowser(clientUrl, tx)
       })
+
+      const accountId = await storage.accountId()
       client = withOperations(accountId, new LiveQuery(storage))
     }
     return client

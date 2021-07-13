@@ -16,9 +16,9 @@
 import { plugin } from '@anticrm/platform'
 import type { Metadata, Service, Plugin } from '@anticrm/platform'
 import type { Account, Ref, Storage, TxOperations } from '@anticrm/core'
-import type { LiveQuery } from '@anticrm/query'
+import type { Queriable } from '@anticrm/query'
 
-export interface Client extends Storage, TxOperations, LiveQuery {}
+export interface Client extends Storage, TxOperations, Queriable {}
 
 export interface CoreService extends Service {
   getClient: () => Promise<Client>

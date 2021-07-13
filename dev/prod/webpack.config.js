@@ -17,6 +17,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const Dotenv = require('dotenv-webpack')
 const path = require('path')
 const autoprefixer = require('autoprefixer')
+const DefinePlugin = require('webpack').DefinePlugin
 
 const mode = process.env.NODE_ENV || 'development'
 const prod = mode === 'production'
@@ -53,7 +54,7 @@ module.exports = {
         test: /\.svelte$/,
         use: {
           loader: 'svelte-loader',
-          options: { 
+          options: {
             emitCss: true,
             preprocess: require('svelte-preprocess')({ postcss: true })
           }
@@ -98,8 +99,8 @@ module.exports = {
           prod ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
           'postcss-loader',
-          'sass-loader',
-        ],
+          'sass-loader'
+        ]
       },
 
       {
@@ -151,7 +152,10 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),
-    new Dotenv()
+    new Dotenv(),
+    new DefinePlugin({
+      'process.env.CLIENT': JSON.stringify(process.env.CLIENT)
+    })
   ],
   devtool: prod ? false : 'source-map',
   devServer: {

@@ -13,25 +13,31 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Class, Obj } from './classes'
-import type { Storage, DocumentQuery, FindOptions, FindResult } from './storage'
-import type { Tx } from './tx'
-
+import type { Account, Class, Doc, Obj, Ref } from './classes'
+import { DOMAIN_MODEL } from './classes'
+import core from './component'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
-import { DOMAIN_MODEL } from './classes'
-import { TxProcessor } from './tx'
-
-import core from './component'
+import type { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
+import { Tx, TxProcessor } from './tx'
 
 type TxHander = (tx: Tx) => void
 
-export interface Client extends Storage {
+export interface AccountProvider {
+  accountId: () => Promise<Ref<Account>>
+}
+
+export interface Client extends Storage, AccountProvider {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
 
-class ClientImpl extends TxProcessor implements Storage {
-  constructor (private readonly hierarchy: Hierarchy, private readonly model: ModelDb, private readonly conn: Storage) {
+class ClientImpl extends TxProcessor implements Client {
+  constructor (
+    private readonly userAccount: Ref<Account>,
+    private readonly hierarchy: Hierarchy,
+    private readonly model: ModelDb,
+    private readonly conn: Storage
+  ) {
     super()
   }
 
@@ -54,10 +60,14 @@ class ClientImpl extends TxProcessor implements Storage {
   async tx (tx: Tx): Promise<void> {
     await this.conn.tx(tx)
   }
+
+  async accountId (): Promise<Ref<Account>> {
+    return await Promise.resolve(this.userAccount)
+  }
 }
 
 export async function createClient (
-  connect: (txHandler: TxHander) => Promise<Storage>,
+  connect: (txHandler: TxHander) => Promise<Storage & AccountProvider>,
   notify?: (tx: Tx) => void
 ): Promise<Client> {
   let client: Client | null = null
@@ -88,7 +98,8 @@ export async function createClient (
 
   txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
 
-  client = new ClientImpl(hierarchy, model, conn)
+  const accountId = await conn.accountId()
+  client = new ClientImpl(accountId, hierarchy, model, conn)
 
   for (const tx of txBuffer) txHander(tx)
   txBuffer = undefined

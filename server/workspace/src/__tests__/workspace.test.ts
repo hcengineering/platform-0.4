@@ -15,7 +15,9 @@
 
 import core, {
   Account,
+  AccountProvider,
   Class,
+  Client,
   createClient,
   createShortRef,
   Doc,
@@ -26,8 +28,10 @@ import core, {
   generateId,
   Ref,
   Space,
+  Storage,
   Tx,
   TxCreateDoc,
+  TxOperations,
   TxUpdateDoc,
   withOperations
 } from '@anticrm/core'
@@ -145,13 +149,7 @@ describe('workspace', () => {
     const q1 = await workspace.findAll(taskIds.class.MyTask, {})
     expect(q1.length).toEqual(0)
 
-    // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(
-      core.account.System,
-      await createClient(async () => {
-        return await Promise.resolve(workspace)
-      })
-    )
+    const client = await newWorkspaceClient(workspace)
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -172,13 +170,7 @@ describe('workspace', () => {
     const q1 = await workspace.findAll(taskIds.class.MyTask, {})
     expect(q1.length).toEqual(0)
 
-    // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(
-      core.account.System,
-      await createClient(async () => {
-        return await Promise.resolve(workspace)
-      })
-    )
+    const client = await newWorkspaceClient(workspace)
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -202,9 +194,7 @@ describe('workspace', () => {
     await workspace.tx(myTx)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = await createClient(async () => {
-      return await Promise.resolve(workspace)
-    })
+    const client = await newWorkspaceClient(workspace)
 
     const mytxOp: MyTx = {
       _id: generateId(),
@@ -236,12 +226,7 @@ describe('workspace', () => {
     expect(q1.length).toEqual(0)
 
     // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(
-      core.account.System,
-      await createClient(async () => {
-        return await Promise.resolve(workspace)
-      })
-    )
+    const client = await newWorkspaceClient(workspace)
 
     const d1 = await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -278,12 +263,7 @@ describe('workspace', () => {
     await workspace.tx(createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
 
     // Let's create a client instance, since it has usefull functions.
-    const client = withOperations(
-      core.account.System,
-      await createClient(async () => {
-        return await Promise.resolve(workspace)
-      })
-    )
+    const client = await newWorkspaceClient(workspace)
 
     await client.createDoc(taskIds.class.MyTask, 'sp1' as Ref<Space>, {
       name: 'my-task'
@@ -324,3 +304,17 @@ describe('workspace', () => {
     expect(lastTx.length - initial).toEqual(4)
   })
 })
+
+async function newWorkspaceClient (workspace: Workspace): Promise<Client & TxOperations> {
+  const clientStorage = workspace as unknown as Storage & AccountProvider
+  clientStorage.accountId = async (): Promise<Ref<Account>> => {
+    return core.account.System
+  }
+  // Let's create a client instance, since it has usefull functions.
+  return withOperations(
+    await clientStorage.accountId(),
+    await createClient(async () => {
+      return await Promise.resolve(clientStorage)
+    })
+  )
+}

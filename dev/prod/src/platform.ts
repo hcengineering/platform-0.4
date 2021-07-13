@@ -48,10 +48,14 @@ export function configurePlatform() {
 // platform.setMetadata(ui.metadata.LoginApplication, 'login')
 // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
-  if (process.env.CLIENT === 'dev')
+  if (process.env.CLIENT !== 'server') {
+    console.info('use in memory DB')
     addLocation(core, () => import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
-  else
+  }
+  else {
+    console.info('use server DB')
     addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
+  }
 
   addLocation(login, () => import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
   addLocation(workbench, () => import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))

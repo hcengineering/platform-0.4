@@ -13,16 +13,17 @@
 // limitations under the License.
 //
 
-import type { Storage, DocumentQuery, FindResult } from '../storage'
 import type { Class, Doc, Ref } from '../classes'
+import { AccountProvider } from '../client'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
+import type { DocumentQuery, FindResult, Storage } from '../storage'
 import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { genMinModel } from './minmodel'
 
-export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
+export async function connect (handler: (tx: Tx) => void): Promise<Storage & AccountProvider> {
   const txes = genMinModel()
 
   const hierarchy = new Hierarchy()
@@ -49,6 +50,7 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage> {
       }
       await Promise.all([model.tx(tx), transactions.tx(tx)])
       handler(tx)
-    }
+    },
+    accountId: async () => await Promise.resolve(core.account.System)
   }
 }

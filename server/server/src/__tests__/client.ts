@@ -1,9 +1,21 @@
-import { Class, Client, createClient as createCoreClient, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
+import core, {
+  Account,
+  AccountProvider,
+  Class,
+  Client,
+  createClient as createCoreClient,
+  Doc,
+  DocumentQuery,
+  FindResult,
+  Ref,
+  Storage,
+  Tx
+} from '@anticrm/core'
 import { readResponse, Request, RequestProcessor, Response, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
 
-export class TestConnection extends RequestProcessor implements Storage {
+export class TestConnection extends RequestProcessor implements Storage, AccountProvider {
   socket: WebSocket
   handler: (tx: Tx) => void
 
@@ -31,12 +43,16 @@ export class TestConnection extends RequestProcessor implements Storage {
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    return await this.request('findAll', _class, query) as FindResult<T>
+    return (await this.request('findAll', _class, query)) as FindResult<T>
   }
 
   async tx (tx: Tx): Promise<void> {
     await this.request('tx', tx)
     this.handler(tx)
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return core.account.System
   }
 }
 
