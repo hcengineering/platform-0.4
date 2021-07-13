@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Channel autoscrolling.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "sas_lord@mail.ru"
+}
