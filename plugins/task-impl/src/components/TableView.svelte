@@ -99,8 +99,9 @@
         position: sticky;
         top: 0;
         background-color: var(--theme-bg-color);
+        border-bottom: 1px solid var(--theme-bg-focused-color);
         box-shadow: 0 1px 0 var(--theme-bg-focused-color);
-        z-index: 10;
+        z-index: 5;
       }
       .tr-body {
         position: relative;

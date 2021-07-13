@@ -25,7 +25,7 @@
                                 { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }]
   export let user: string = 'chen'
   export let suptitle: string | undefined
-  export let size: 24 | 32 = 24
+  export let size: 24 | 32 | 36 = 24
   export let avatarOnly: boolean = false
 </script>
 
