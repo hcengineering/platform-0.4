@@ -27,7 +27,8 @@
     title: string
   }
 
-  export let title: IntlString | undefined = 'Assign task'
+  export let title: IntlString
+  export let label: IntlString
   export let caption: IntlString | undefined = 'PROJECT MEMBERS'
   export let selected: IUser | undefined = undefined
   export let users: IUser[] = [{ name: 'chen', title: 'Rosamund Chen' },
@@ -46,7 +47,7 @@
 
 <div class="userBox">
   <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed}
-    bind:title={title} bind:caption={caption} bind:search={search} bind:showSearch={showSearch}
+    bind:title={label} bind:caption={caption} bind:search={search} bind:showSearch={showSearch}
   >
     <button slot="trigger" class="btn" class:selected={pressed}
       on:click={(event) => {
@@ -74,8 +75,8 @@
     {/each}
   </PopupMenu>
   <div class="selectUser">
-    <div class="title">{title}</div>
-    <div class="user">{#if selected}{selected.title}{:else}{title}{/if}</div>
+    <div class="title"><Label label={title}/></div>
+    <div class="user">{#if selected}{selected.title}{:else}<Label {label}/>{/if}</div>
   </div>
 </div>
 

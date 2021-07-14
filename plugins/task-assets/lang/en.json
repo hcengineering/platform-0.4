@@ -1,5 +1,17 @@
 {
   "string": {
-    "Projects": "Projects"
+    "Projects": "Projects",
+    "ProjectName": "Project name",
+    "ProjectDescription": "Project description",
+    "MakePrivate": "Make private",
+    "MakePrivateDescription": "Make project private",
+    "TaskName": "Task name",
+    "TaskDescription": "Task description",
+    "CreateTask": "Create task",
+    "Cancel": "Cancel",
+    "Assignee": "Assignee",
+    "AssignTask": "Assign task",
+    "CreateProject": "Create project",
+    "ApplicationLabelTask": "Tasks"
   }
 }

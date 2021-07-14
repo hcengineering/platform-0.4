@@ -16,6 +16,7 @@
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import EditBox from './EditBox.svelte'
+  import Label from './Label.svelte'
 
   export let title: IntlString | undefined = undefined
   export let caption: IntlString | undefined = undefined
@@ -54,7 +55,7 @@
     <div class="popup {vAlign} {hAlign}" style={style}>
       {#if showSearch}
         <div class="header">
-          <div class="title">{title}</div>
+          <div class="title"><Label label={title}/></div>
           <EditBox label={'Search'} bind:value={search} />
           <div class="caption">{caption}</div>
         </div>
