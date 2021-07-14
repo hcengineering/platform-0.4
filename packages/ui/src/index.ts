@@ -17,7 +17,15 @@ import { SvelteComponent } from 'svelte'
 
 import Root from './components/internal/Root.svelte'
 
-export type { AnyComponent, AnySvelteComponent, Action } from './types'
+export type {
+  AnyComponent,
+  AnySvelteComponent,
+  Action,
+  CompletionPopupActions,
+  CompletionItem,
+  ExtendedCompletionItem,
+  ItemRefefence
+} from './types'
 export { applicationShortcutKey } from './utils'
 export { getCurrentLocation, navigate, location } from './location'
 
@@ -43,11 +51,14 @@ export { default as SelectItem } from './components/SelectItem.svelte'
 export { default as UserInfo } from './components/UserInfo.svelte'
 export { default as UserBox } from './components/UserBox.svelte'
 export { default as TextArea } from './components/TextArea.svelte'
+export { default as CompletionPopup } from './components/CompletionPopup.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
 export { default as MessageViewer } from './components/text/MessageViewer.svelte'
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
+
+export { default as MDRefEditor } from './components/MDRefEditor.svelte'
 
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })

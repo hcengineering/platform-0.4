@@ -10,7 +10,7 @@
     "test": "jest",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src",
+    "format": "prettier --write --plugin-search-dir=. 'src/**/*.{ts*,js*,yml,svelte}' && eslint --fix src",
     "svelte-check": "svelte-check"
   },
   "devDependencies": {
@@ -43,6 +43,7 @@
     "@anticrm/status": "~0.4.2",
     "@anticrm/theme": "~0.4.1",
     "svelte": "^3.37.0",
-    "@anticrm/text": "~0.4.0"
+    "@anticrm/text": "~0.4.0",
+    "@anticrm/richeditor": "~0.4.0"
   }
 }

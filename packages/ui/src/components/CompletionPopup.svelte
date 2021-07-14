@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { ScrollBox } from '@anticrm/ui'
+  import ScrollBox from './ScrollBox.svelte'
 
   import { createEventDispatcher } from 'svelte'
 
-  import type { CompletionItem, Position } from './CompletionPopupHelper'
-  import { calcOffset, getFirst } from './CompletionPopupHelper'
+  import type { CompletionItem } from '../types'
 
   const dispatch = createEventDispatcher()
 
@@ -23,6 +22,25 @@
 
   function selectItem (item: CompletionItem) {
     dispatch('select', item)
+  }
+
+  interface Position {
+    left: number
+    right: number
+    top: number
+    bottom: number
+  }
+
+  function getFirst (items: CompletionItem[]): CompletionItem {
+    return (items.length > 0 ? items[0] : { key: '' }) as CompletionItem
+  }
+
+  function calcOffset (element?: HTMLElement): number {
+    if (element?.parentElement !== undefined) {
+      const pp = element.parentElement
+      return pp !== null ? pp.offsetTop : -1
+    }
+    return -1
   }
 
   $: {
@@ -62,7 +80,7 @@
 
 <div class="presentation-completion-popup" style={popupStyle} bind:clientHeight bind:clientWidth on:blur>
   <div class="separator" />
-  <ScrollBox vertical stretch>
+  <ScrollBox vertical>
     <!-- scrollPosition={selOffset} -->
     <div bind:this={listElement}>
       {#each items as item (item.key)}
@@ -90,7 +108,7 @@
     border-radius: 4px;
     height: 150px;
     width: 300px;
-    padding: 1em;
+    // padding: 1em;
     background-color: var(--theme-bg-color);
     color: var(--theme-content-color);
     border: 1px solid var(--theme-bg-dark-color);

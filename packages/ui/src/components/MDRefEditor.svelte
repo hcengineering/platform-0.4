@@ -13,28 +13,25 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import {
+    createTextTransform,
+    EditorActions,
+    EditorContentEvent,
+    MessageEditor,
+    FindFunction
+  } from '@anticrm/richeditor'
+  import { schema } from '@anticrm/richeditor/src/internal/schema'
+  import { IntlString } from '@anticrm/status'
+  import { MessageNode, newMessageDocument, parseMessage, serializeMessage } from '@anticrm/text'
+  import { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
+  import CompletionPopup from './CompletionPopup.svelte'
   import { createEventDispatcher } from 'svelte'
 
-  import Send from './icons/Send.svelte'
-  import Attach from './icons/Attach.svelte'
-  import Emoji from './icons/Emoji.svelte'
-  import GIF from './icons/GIF.svelte'
-  import TextStyle from './icons/TextStyle.svelte'
-
-  import { createTextTransform, EditorActions, EditorContentEvent, MessageEditor } from '@anticrm/richeditor'
-  import { MessageNode, newMessageDocument, serializeMessage } from '@anticrm/text'
-  import { schema } from '@anticrm/richeditor/src/internal/schema'
-
-  import { CompletionPopup, CompletionItem, CompletionPopupActions } from '@anticrm/ui'
-  import core, { DocumentQuery, Title } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-
-  export let thread: boolean = false
-
-  export let stylesEnabled = false
-  // If specified, submit button will be enabled, message will be send on any modify operation
-  export let submitEnabled = true
-  export let lines = 1
+  export let lines = 10
+  export let value: string = ''
+  export let label: IntlString | undefined
+  export let findFunction: FindFunction
+  export let completions: CompletionItem[] = []
 
   const dispatch = createEventDispatcher()
 
@@ -58,80 +55,22 @@
   }
   let editorContent: MessageNode = newMessageDocument()
 
+  $: {
+    const v = serializeMessage(editorContent)
+    if (v !== value) {
+      editorContent = parseMessage(value)
+    }
+  }
+
   let htmlEditor: MessageEditor & EditorActions
 
   const triggers = ['@', '#', '[[']
 
   let currentPrefix = ''
 
-  interface ItemRefefence {
-    id: string
-    class: string
-  }
-
-  interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
-  let completions: CompletionItem[] = []
   let completionControl: CompletionPopup & CompletionPopupActions
 
   let popupVisible = false
-
-  let titleSearch = () => {}
-
-  const client = getClient()
-
-  function query (prefix: string): DocumentQuery<Title> {
-    return {
-      title: { $like: prefix + '%' }
-    }
-  }
-
-  $: if (currentPrefix !== '') {
-    titleSearch()
-    titleSearch = client.query(
-      core.class.Title,
-      query(currentPrefix),
-      (docs) => {
-        completions = updateTitles(docs)
-      },
-      { limit: 50 }
-    )
-  }
-
-  function updateTitles (docs: Title[]): CompletionItem[] {
-    const items: CompletionItem[] = []
-    for (const value of docs) {
-      // if (startsWith(value.title.toString(), currentPrefix)) {
-      const kk = value.title
-      items.push({
-        key: `${value.objectId}${value.title}`,
-        completion: value.objectId,
-        label: kk,
-        title: `${kk} - ${value.objectClass}`,
-        class: value.objectClass,
-        id: value.objectId
-      } as ExtendedCompletionItem)
-      // }
-    }
-    return items
-  }
-
-  async function findTitle (title: string): Promise<ItemRefefence[]> {
-    const docs = await client.findAll<Title>(core.class.Title, {
-      title: title
-    })
-
-    for (const value of docs) {
-      if (value.title === title) {
-        return [
-          {
-            id: value.objectId,
-            class: value.objectClass
-          } as ItemRefefence
-        ]
-      }
-    }
-    return []
-  }
 
   function updateStyle (event: EditorContentEvent) {
     styleState = event
@@ -155,7 +94,7 @@
       currentPrefix = ''
       popupVisible = false
     }
-    dispatch('update', editorContent)
+    dispatch('prefix', currentPrefix)
   }
 
   function handlePopupSelected (value: CompletionItem) {
@@ -197,49 +136,32 @@
       if (event.key === 'Escape') {
         completions = []
         popupVisible = false
-        return
       }
     }
-    if (event.key === 'Enter' && !event.shiftKey) {
-      handleSubmit()
-      event.preventDefault()
-    }
   }
-
-  function handleSubmit (): void {
-    if (!styleState.isEmpty) {
-      dispatch('message', serializeMessage(editorContent))
-    }
-    editorContent = newMessageDocument()
-  }
-
-  const transformFunction = createTextTransform(findTitle)
+  $: transformFunction = createTextTransform(findFunction)
 </script>
 
 <div class="ref-container">
-  <div class="textInput" style={`height: ${lines + 1}em;`}>
-    <div
-      class="inputMsg"
-      class:thread
-      class:edit-box-vertical={stylesEnabled}
-      class:edit-box-horizontal={!stylesEnabled}
-      on:keydown={onKeyDown}
-    >
+  <div class="textInput" style={`height: ${lines * 1.5 + 1}em;`}>
+    <div class="inputMsg" on:keydown={onKeyDown}>
       <MessageEditor
         bind:this={htmlEditor}
         bind:content={editorContent}
+        enterNewLine
         {triggers}
         transformInjections={transformFunction}
         on:content={(event) => {
           editorContent = event.detail
+          value = serializeMessage(editorContent)
+          dispatch('value', value)
         }}
         on:styleEvent={(e) => updateStyle(e.detail)}
       >
-        <div class="label" slot="hoverMessage" let:empty={isEmpty}>
-          {#if isEmpty}
-            Placeholder...
-          {/if}
+        <div class="label" slot="hoverMessage" let:empty let:hasFocus class:label-placeholder={!empty || hasFocus}>
+          {label}
         </div>
+
         {#if popupVisible && completions.length > 0}
           <CompletionPopup
             bind:this={completionControl}
@@ -257,15 +179,6 @@
         {/if}
       </MessageEditor>
     </div>
-    {#if submitEnabled}
-      <button class="sendButton" on:click={() => handleSubmit()}><div class="icon"><Send /></div></button>
-    {/if}
-  </div>
-  <div class="buttons">
-    <div class="tool"><Attach /></div>
-    <div class="tool"><TextStyle /></div>
-    <div class="tool"><Emoji /></div>
-    <div class="tool"><GIF /></div>
   </div>
 </div>
 
@@ -274,7 +187,6 @@
     display: flex;
     flex-direction: column;
     min-height: 74px;
-    margin: 20px 40px;
 
     .textInput {
       display: flex;
@@ -289,6 +201,7 @@
       .inputMsg {
         width: 100%;
         height: 100%;
+        padding: 10px 0px;
         color: var(--theme-content-color);
         background-color: transparent;
         border: none;
@@ -309,70 +222,27 @@
           align-items: flex-end;
         }
 
-        .edit-box-horizontal {
-          width: 100%;
-          height: 100%;
-          margin-top: 7px;
-          align-self: center;
-        }
-
         .edit-box-vertical {
           width: 100%;
           height: 100%;
           margin: 4px;
         }
       }
-      .sendButton {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 8px;
-        padding: 0;
-        width: 20px;
-        height: 20px;
-        background-color: transparent;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        outline: none;
-        cursor: pointer;
-
-        .icon {
-          width: 20px;
-          height: 20px;
-          opacity: 0.3;
-          cursor: pointer;
-          &:hover {
-            opacity: 1;
-          }
-        }
-        &:focus {
-          border: 1px solid var(--primary-button-focused-border);
-          box-shadow: 0 0 0 3px var(--primary-button-outline);
-          & > .icon {
-            opacity: 1;
-          }
-        }
-      }
     }
-    .buttons {
-      margin: 10px 0 0 8px;
-      display: flex;
 
-      .tool {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 20px;
-        height: 20px;
-        opacity: 0.3;
-        cursor: pointer;
-        &:hover {
-          opacity: 1;
-        }
-      }
-      .tool + .tool {
-        margin-left: 16px;
-      }
+    .label {
+      position: absolute;
+      top: 10px;
+      font-size: 12px;
+      line-height: 14px;
+      color: var(--theme-caption-color);
+      pointer-events: none;
+      opacity: 0.3;
+      transition: all 200ms;
+      user-select: none;
+    }
+    .label-placeholder {
+      top: -18px;
     }
   }
 </style>

@@ -29,6 +29,8 @@
     "@anticrm/ui":"~0.4.1",
     "@anticrm/task":"~0.4.0",
     "@anticrm/workbench":"~0.4.0",
-    "svelte":"^3.37.0"
+    "svelte":"^3.37.0",
+    "@anticrm/richeditor":"~0.4.0",
+    "@anticrm/text":"~0.4.0"
   }
 }
