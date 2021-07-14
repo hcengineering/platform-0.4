@@ -16,9 +16,10 @@
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
   import { Label } from '@anticrm/ui'
+  import { getStatusColor } from '../plugin'
 
   export let title: IntlString
-  export let color: string = '#22CC62'
+  let color: string = getStatusColor(title)
 </script>
 
 <div class="taskstatus-container" style="background-color: {color}">

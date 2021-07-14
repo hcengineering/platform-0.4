@@ -17,9 +17,22 @@ import { mergeIds } from '@anticrm/status'
 import type { IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 import type { Ref, Class } from '@anticrm/core'
-import type { Project, Task } from '@anticrm/task'
+import type { Project, Task, TaskStatus } from '@anticrm/task'
 
 import task from '@anticrm/task'
+
+export function getStatusColor(status: TaskStatus): string {
+  switch (status) {
+    case 'Open':
+      return '#9D92C4'
+    case 'InProgress':
+      return '#61A6AF'
+    case 'Closed':
+      return '#73A6CD'
+    default:
+      return '#F28469'
+  }
+}
 
 export default mergeIds(task, {
   component: {
@@ -39,6 +52,7 @@ export default mergeIds(task, {
     MakePrivateDescription: '' as IntlString,
     TaskName: '' as IntlString,
     TaskDescription: '' as IntlString,
-    CreateTask: '' as IntlString
+    CreateTask: '' as IntlString,
+    Assignee: '' as IntlString
   }
 })

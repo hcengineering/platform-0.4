@@ -1,8 +1,9 @@
-import core, { DerivedDataDescriptor, Doc, generateId, Ref, Title, ShortRef } from '@anticrm/core'
+import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, Title, ShortRef, Space } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import { Project, Task, TaskStatuses } from '@anticrm/task'
+import { Project, Subtask, Task, TaskStatuses } from '@anticrm/task'
 import task from '@anticrm/task-impl/src/plugin'
+import chunter from '@anticrm/chunter-impl/src/plugin'
 import faker from 'faker'
 
 const demoIds = component('demo-task' as Component, {
@@ -56,6 +57,40 @@ export function demoTask (builder: Builder): void {
       { space: demoIds.project.DemoProject }
     )
 
+    const subtasks: Subtask [] = []
+    for (let i = 0; i < faker.datatype.number(10); i++) {
+      subtasks.push({
+        description: `do ${faker.commerce.productDescription()}`,
+        done: faker.datatype.boolean()
+      })
+    }
+
+    const commentSpaceId: Ref<Space> = generateId()
+    builder.createDoc(
+      core.class.Space,
+      {
+        name: `${shortRefId} comments`,
+        description: `${shortRefId} comments`,
+        members: [],
+        private: false
+      },
+      commentSpaceId)
+
+    for (let i = 0; i < faker.datatype.number(10); i++) {
+      builder.createDoc(
+        chunter.class.Message,
+        {
+          message: faker.lorem.paragraphs(3),
+          replyCount: 0
+        },
+        undefined,
+        {
+          space: commentSpaceId,
+          modifiedBy: faker.internet.exampleEmail() as Ref<Account>
+        }
+      )
+    }
+
     builder.createDoc(
       task.class.Task,
       {
@@ -66,7 +101,9 @@ export function demoTask (builder: Builder): void {
           TaskStatuses.InProgress,
           TaskStatuses.Closed
         ]),
-        shortRefId: shortRefId
+        shortRefId: shortRefId,
+        subtasks: subtasks,
+        commentSpace: commentSpaceId
       },
       id,
       { space: demoIds.project.DemoProject }

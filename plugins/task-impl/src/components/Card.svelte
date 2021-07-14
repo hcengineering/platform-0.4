@@ -14,24 +14,42 @@
 -->
 
 <script lang="ts">
-  import { Progress, UserInfo } from '@anticrm/ui'
-  import Reactions from './Reactions.svelte'
+  import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
+  import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
-  import Attach from './icons/Attach.svelte'
+  import { Task } from '@anticrm/task'
+  import { getClient } from '@anticrm/workbench'
+  import chunter from '@anticrm/chunter-impl/src/plugin'
+  import { onDestroy } from 'svelte'
 
-  export let user: string
-  export let title: string
-  export let description: string
-  export let progress: object
-  export let discussion: number = 0
-  export let attach: number = 0
+  export let card: Task
+  export let user: string = 'chen'
+  let discussion: number = 0
+  export let attach: number = 3
+  let progress = {
+    max: card.subtasks.length,
+    value: card.subtasks.filter(p => p.done).length
+  }
+  let unsubscribe = () => {}
+  const client = getClient()
+
+  $: {
+    unsubscribe()
+    unsubscribe = client.query(chunter.class.Message, { space: card.commentSpace }, (result) => {
+      discussion = result.length
+    })
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
 <div class="card-container">
   <div class="content">
-    <div class="title">{title}</div>
-    <div class="description">{description}</div>
-    {#if progress}
+    <div class="title">{card.name}</div>
+    <div class="description">{card.description}</div>
+    {#if progress.max > 0}
       <div class="progress">
         <span>Progress</span>
         <Progress {...progress}/>
@@ -40,7 +58,11 @@
   </div>
   <div class="footer">
     <UserInfo {user} size={24} avatarOnly/>
-    <Reactions reactions={[{ icon: Chat, count: discussion }, { icon: Attach, count: attach }]}/>
+      <div class="action">
+        <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'}/>
+        <div class="counter">{discussion}</div>
+        <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'}/>
+      </div>
   </div>
 </div>
 
@@ -91,6 +113,18 @@
       // background-color: var(--theme-button-bg-focused);
       border-top: 1px solid var(--theme-bg-accent-hover);
       border-radius: 0 0 11px 11px;
+
+      .action {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+
+        .counter {
+          margin-left: 4px;
+          color: var(--theme-caption-color);
+        }
+      }
     }
 
     &:hover {
