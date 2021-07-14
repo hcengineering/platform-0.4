@@ -42,7 +42,6 @@
 <Dialog label={task.string.CreateProject} 
         okLabel={task.string.CreateProject} 
         okAction={createProject}
-        cancelLabel={task.string.Cancel}
         on:close={() => { dispatch('close') }}>
   <div class="content">
     <div class="row"><EditBox label={task.string.ProjectName} bind:value={name}/></div>

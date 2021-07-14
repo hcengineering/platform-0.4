@@ -14,6 +14,12 @@
 //
 
 import task from '@anticrm/task-impl/src/plugin'
+import type { IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status' 
 
-export default mergeIds(task, {})
+export default mergeIds(task, {
+  string: { 
+    ApplicationLabelTask: '' as IntlString,
+    CreateProject: '' as IntlString
+  }
+})

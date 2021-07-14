@@ -26,9 +26,7 @@
 
   export let label: IntlString
   export let okLabel: IntlString
-  export let cancelLabel: IntlString
   export let okAction: () => void
-  export let cancelAction: () => void = () => {}
 
   const dispatch = createEventDispatcher()
 </script>
@@ -45,7 +43,7 @@
     </div>
     <div class="footer">
       <Button label={okLabel} primary on:click={() => { okAction(); dispatch('close') }}/>
-      <Button label={cancelLabel} on:click={() => { cancelAction(); dispatch('close') }}/>
+      <Button label={okLabel} on:click={() => { okAction(); dispatch('close') }}/>
     </div>
   </div>
 </div>

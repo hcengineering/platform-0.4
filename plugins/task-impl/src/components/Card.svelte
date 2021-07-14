@@ -21,7 +21,6 @@
   import { getClient } from '@anticrm/workbench'
   import chunter from '@anticrm/chunter-impl/src/plugin'
   import { onDestroy } from 'svelte'
-  import { getStatusColor } from '../plugin'
 
   export let card: Task
   export let user: string = 'chen'
@@ -29,8 +28,7 @@
   export let attach: number = 3
   let progress = {
     max: card.checkItems.length,
-    value: card.checkItems.filter(p => p.done).length,
-    color: getStatusColor(card.status)
+    value: card.checkItems.filter(p => p.done).length
   }
   let unsubscribe = () => {}
   const client = getClient()
