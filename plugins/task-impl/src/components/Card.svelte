@@ -27,8 +27,8 @@
   let discussion: number = 0
   export let attach: number = 3
   let progress = {
-    max: card.subtasks.length,
-    value: card.subtasks.filter(p => p.done).length
+    max: card.checkItems.length,
+    value: card.checkItems.filter(p => p.done).length
   }
   let unsubscribe = () => {}
   const client = getClient()

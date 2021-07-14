@@ -1,7 +1,7 @@
 import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, Title, ShortRef, Space } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import { Project, Subtask, Task, TaskStatuses } from '@anticrm/task'
+import { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
 import task from '@anticrm/task-impl/src/plugin'
 import chunter from '@anticrm/chunter-impl/src/plugin'
 import faker from 'faker'
@@ -57,9 +57,9 @@ export function demoTask (builder: Builder): void {
       { space: demoIds.project.DemoProject }
     )
 
-    const subtasks: Subtask [] = []
+    const checkItems: CheckListItem [] = []
     for (let i = 0; i < faker.datatype.number(10); i++) {
-      subtasks.push({
+      checkItems.push({
         description: `do ${faker.commerce.productDescription()}`,
         done: faker.datatype.boolean()
       })
@@ -102,7 +102,7 @@ export function demoTask (builder: Builder): void {
           TaskStatuses.Closed
         ]),
         shortRefId: shortRefId,
-        subtasks: subtasks,
+        checkItems: checkItems,
         commentSpace: commentSpaceId
       },
       id,

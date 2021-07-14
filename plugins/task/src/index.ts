@@ -36,11 +36,11 @@ export interface Task extends Doc {
   description: string,
   assignee?: Ref<Account>,
   status: TaskStatus,
-  subtasks: Array<Subtask>,
+  checkItems: Array<CheckListItem>,
   commentSpace: Ref<Space>
 }
 
-export interface Subtask {
+export interface CheckListItem {
   description: string,
   done: boolean
 }

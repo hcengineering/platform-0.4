@@ -17,7 +17,7 @@
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, TextArea, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { Subtask, TaskStatuses } from '@anticrm/task'
+  import { CheckListItem, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
   import core, { Account, Ref, Space, generateId } from '@anticrm/core'
 
@@ -27,7 +27,7 @@
   let name: string = ''
   let description: string = ''
   let assignee: Ref<Account> | undefined
-  const subtasks: Subtask[] = []
+  const checkItems: CheckListItem[] = []
 
   const client = getClient()
 
@@ -46,7 +46,7 @@
       name,
       assignee,
       description,
-      subtasks,
+      checkItems,
       shortRefId,
       commentSpace,
       status: TaskStatuses.Open,
