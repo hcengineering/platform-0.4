@@ -88,6 +88,7 @@
 <MDRefEditor 
   bind:value={value} 
   {label} 
+  {lines}
   findFunction={findTitle} 
   completions={completions}
   on:prefix={(event) => {
