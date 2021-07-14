@@ -16,8 +16,8 @@
 import { Builder, Model } from '@anticrm/model'
 
 import { TDoc, TSpace } from '@anticrm/model-core'
-import { Project, Task, TaskStatus } from '@anticrm/task'
-import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
+import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
+import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
 import core from '@anticrm/model-core'
@@ -35,6 +35,8 @@ export class TTask extends TDoc implements Task {
   description!: string
   assignee!: Ref<Account>
   status!: TaskStatus
+  checkItems!: Array<CheckListItem>
+  commentSpace!: Ref<Space>
 }
 
 export function createModel(builder: Builder) {

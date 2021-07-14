@@ -20,7 +20,7 @@
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
-  import { Tabs, ScrollBox, UserInfo } from '@anticrm/ui'
+  import { ScrollBox, UserInfo } from '@anticrm/ui'
   import Label from '@anticrm/ui/src/components/Label.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import task from '../plugin'
@@ -46,7 +46,7 @@
       </ScrollBox>
     {:else if view === 'card'}
       <ScrollBox vertical>
-        <CardView/>
+        <CardView {_class} {currentSpace}/>
       </ScrollBox>
     {:else if view === 'list'}
       <ScrollBox vertical>

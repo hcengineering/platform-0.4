@@ -15,11 +15,11 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, Dialog } from '@anticrm/ui'
+  import { EditBox, Dialog, TextArea, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { TaskStatuses } from '@anticrm/task'
+  import { CheckListItem, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import { Account, Ref, Space, generateId } from '@anticrm/core'
+  import core, { Account, Ref, Space, generateId } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
 
   const dispatch = createEventDispatcher()
@@ -28,18 +28,29 @@
   let name: string = ''
   let description: string = ''
   let assignee: Ref<Account> | undefined
+  const checkItems: CheckListItem[] = []
 
   const client = getClient()
 
   async function create() {
     const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
+    let spaceMembers = (await client.findAll(core.class.Space, { _id: space}))[0].members
+    let commentSpace = (await client.createDoc(core.class.Space, core.space.Model, {
+        name: `${shortRefId} comments`,
+        description: `${shortRefId} comments`,
+        private: true,
+        members: spaceMembers
+      }))._id
+
     const doc = await client.createDoc(task.class.Task, space, {
       name,
       assignee,
       description,
+      checkItems,
+      shortRefId,
+      commentSpace,
       status: TaskStatuses.Open,
-      shortRefId: shortRefId 
     }, id)
   }
 </script>
@@ -51,6 +62,7 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name}/></div>
     <div class="row"><DescriptionEditor label={task.string.TaskDescription} bind:value={description}/></div>
+    <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} showSearch /></div>
   </div>
 </Dialog>
 

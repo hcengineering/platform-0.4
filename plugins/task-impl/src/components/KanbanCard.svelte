@@ -17,11 +17,30 @@
   import { ActionIcon, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
+  import { onDestroy } from 'svelte'
+  import { getClient } from '@anticrm/workbench'
+  import { Ref, Space } from '@anticrm/core'
+  import chunter from '@anticrm/chunter-impl/src/plugin'
 
-  export let commentsCount = 0
+  export let commentSpace: Ref<Space>
   export let title: string
   export let user: string
   export let draggable: boolean = false
+  
+  let discussion: number = 0
+  let unsubscribe = () => {}
+  const client = getClient()
+
+  $: {
+    unsubscribe()
+    unsubscribe = client.query(chunter.class.Message, { space: commentSpace }, (result) => {
+      discussion = result.length
+    })
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
 <div class="card-container"
@@ -33,10 +52,8 @@
   <div class="footer">
     <div><UserInfo {user} avatarOnly={true}/></div>
     <div class="action">
-      {#if commentsCount > 0}
-      <ActionIcon size={24} icon={Chat}/>
-      {commentsCount}
-      {/if}
+      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'}/>
+      <div class="counter">{discussion}</div>
       <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'}/>
     </div>
   </div>
@@ -78,7 +95,12 @@
       flex-direction: row;
       flex-wrap: nowrap;
       align-items: center;
-    }
+
+        .counter {
+          margin-left: 4px;
+          color: var(--theme-caption-color);
+        }
+      }
 
       div + div {
         margin-left: 16px;

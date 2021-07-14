@@ -31,11 +31,18 @@ export const TaskStatuses = {
 export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses]
 
 export interface Task extends Doc {
-  shortRefId: Ref<ShortRef>
-  name: string
-  description: string
-  assignee?: Ref<Account>
-  status: TaskStatus
+  shortRefId: Ref<ShortRef>,
+  name: string,
+  description: string,
+  assignee?: Ref<Account>,
+  status: TaskStatus,
+  checkItems: Array<CheckListItem>,
+  commentSpace: Ref<Space>
+}
+
+export interface CheckListItem {
+  description: string,
+  done: boolean
 }
 
 const PluginTask = 'task' as Plugin<TaskService>

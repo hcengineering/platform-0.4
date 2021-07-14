@@ -19,6 +19,7 @@
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
   import Label from '@anticrm/ui/src/components/Label.svelte'
+  import { onDestroy } from 'svelte'
 
   interface Cell {
     component: AnySvelteComponent
@@ -41,10 +42,19 @@
   export let _class: Ref<Class<Doc>>
   export let currentSpace: Ref<Space> | undefined
   export let fields: Field[]
-  const client = getClient()
-  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => data = result)
-
   let data: Doc[] = []
+  const client = getClient()
+  let unsubscribe = () => {}
+
+  $: if (currentSpace != undefined) {
+    unsubscribe()
+    unsubscribe = client.query(_class, { space: currentSpace }, (result) => data = result)
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
+
   function getCells (doc: Doc): Cell[] {
     const result: Cell[] = []
     for (const field of fields) {

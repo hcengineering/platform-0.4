@@ -20,8 +20,10 @@
   import KanbanCard from './KanbanCard.svelte'
 
   import { Task, TaskStatuses } from '@anticrm/task'
-  import { Class, Ref, Space } from '@anticrm/core';
-  import { getClient } from '@anticrm/workbench';
+  import { Class, Ref, Space } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
+  import { getStatusColor } from '../plugin'
+  import { onDestroy } from 'svelte'
 
   type ICard = Task & Draggable
 
@@ -37,9 +39,18 @@
   export let _class: Ref<Class<Task>>
   export let currentSpace: Ref<Space> | undefined
   const client = getClient()
-  $: if (currentSpace != undefined) client.query(_class, { space: currentSpace }, (result) => {
+  let unsubscribe = () => {}
+
+  $: if (currentSpace != undefined) {
+    unsubscribe()
+    unsubscribe = client.query(_class, { space: currentSpace }, (result) => {
       data = result.map(item => Object.assign(item, {onDrag: false}))
     })
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 
   let data: ICard[] = []
   let dragId: Ref<Task> | undefined
@@ -48,16 +59,10 @@
     return data.filter(card => card.status == status).length
   }
 
-  function getNextColor(i: number): string {
-    const colors = ['#9D92C4', '#61A6AF', '#73A6CD']
-    return colors[i % colors.length]
-  }
-
   function getStatuses(): IStatus[] {
     const result: IStatus[] = []
-    let i = 0
     for (const key in TaskStatuses) {
-      result.push({ title: TaskStatuses[key], color: getNextColor(i++) })
+      result.push({ title: TaskStatuses[key], color: getStatusColor(TaskStatuses[key]) })
     }
     return result
   }
@@ -83,7 +88,7 @@
     {#each data as card}
       {#if card.status === status.title }
         <KanbanCard title={card.name}
-          commentsCount={2} user={'chen'}
+          commentSpace={card.commentSpace} user={'chen'}
           draggable={true}
           on:dragstart={() => {
             dragId = card._id
