@@ -68,6 +68,26 @@ export interface IPopupItem {
   action?: Function
 }
 
+export interface CompletionItem {
+  key: string
+  completion: string
+  label: string
+  title?: string
+}
+
+export interface CompletionPopupActions {
+  handleUp: () => void
+  handleDown: () => void
+  handleSubmit: () => void
+}
+
+export interface ItemRefefence {
+  id: string
+  class: string
+}
+
+export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
+
 // export default plugin(
 //   'ui' as Plugin<UIService>,
 //   {},

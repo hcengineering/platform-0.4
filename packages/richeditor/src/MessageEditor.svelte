@@ -4,7 +4,7 @@ import { deepEqual } from 'fast-equals'
 import { history } from 'prosemirror-history'
 import { keymap } from 'prosemirror-keymap'
 import { MarkType } from 'prosemirror-model'
-import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { createEventDispatcher, onMount } from 'svelte'
 import type { EditorContentEvent } from './index'
@@ -20,9 +20,9 @@ const dispatch = createEventDispatcher()
 // Properties
 // ********************************
 export let content: MessageNode
-export let hoverMessage = 'Placeholder...'
 export let triggers: string[] = []
 export let transformInjections: StateTransformer | undefined = undefined
+export let enterNewLine: boolean = false
 
 // ********************************
 // Functionality
@@ -40,6 +40,7 @@ let rootElement: HTMLElement
 let inputHeight: number
 
 let isEmpty = true
+let hasFocus = false
 
 function checkEmpty (value: string): boolean {
   return value.length === 0 || value === '<p><br></p>' || value === '<p></p>'
@@ -130,11 +131,43 @@ export function emitStyleEvent () {
   dispatch('styleEvent', evt)
 }
 
+const key = new PluginKey('focusPlugin')
+
+const focusPlugin = new Plugin({
+  key,
+  state: {
+    init () {
+      return false // assume the view starts out without focus
+    },
+    apply (transaction, prevFocused) {
+      // update plugin state when transaction contains the meta property
+      // set by the focus/blur DOM event handlers
+      const focused = transaction.getMeta(key)
+      return typeof focused === 'boolean' ? focused : prevFocused
+    }
+  },
+  props: {
+    handleDOMEvents: {
+      blur: () => {
+        hasFocus = false
+      },
+      focus: () => {
+        hasFocus = true
+      }
+    }
+  }
+})
+
 function createState (doc: MessageNode): EditorState {
   return EditorState.fromJSON(
     {
       schema,
-      plugins: [history(), buildInputRules(), keymap(buildKeymap())]
+      plugins: [
+        history(),
+        buildInputRules(),
+        keymap(buildKeymap(!enterNewLine)),
+        focusPlugin
+      ]
     },
     {
       doc: doc,
@@ -246,6 +279,7 @@ export function focus (): void {
   class="edit-box"
   bind:this="{root}"
   bind:clientHeight="{inputHeight}"
+  on:click="{() => view.focus()}"
   data-testid="editor-root">
 </div>
 <div
@@ -255,7 +289,7 @@ export function focus (): void {
     `margin-bottom:${-1 * inputHeight}px;`,
     `height:${inputHeight}px`
   ].join('')}">
-  {#if isEmpty}{hoverMessage}{/if}
+  <slot name="hoverMessage" empty="{isEmpty}" hasFocus="{hasFocus}" />
 </div>
 <slot />
 
@@ -321,6 +355,7 @@ export function focus (): void {
   overflow: auto;
   height: 100%;
   width: 100%;
+  cursor: text;
   position: relative;
 
   :global {

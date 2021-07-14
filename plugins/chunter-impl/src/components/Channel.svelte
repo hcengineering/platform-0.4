@@ -16,7 +16,7 @@
   import { Message as MessageModel } from '@anticrm/chunter'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
+  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
 
@@ -24,6 +24,12 @@
 
   const client = getClient()
   let unsubscribe = () => {}
+
+  let div: HTMLElement
+  const dispatch = createEventDispatcher()
+  afterUpdate(async () => {
+    dispatch('update')
+  })
 
   let messages: MessageModel[] = []
   $: if (space !== undefined) {
@@ -38,7 +44,7 @@
   })
 </script>
 
-<div class="channel-container">
+<div class="channel-container" bind:this={div}>
   {#each messages as m (m._id)}
     <Message reactions replies name={m.modifiedBy} time={`${m.modifiedOn}`} message={m.message} />
   {/each}

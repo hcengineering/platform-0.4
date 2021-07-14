@@ -24,6 +24,4 @@
   export let refAction: (doc: DocRef) => void = () => {}
 </script>
 
-<MessageViewer message={parseMessage(message)} refAction={refAction} />
-
-
+<MessageViewer message={parseMessage(message)} {refAction} />
