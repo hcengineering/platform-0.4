@@ -19,7 +19,7 @@ import { schema } from './schema'
 const mac =
   typeof navigator !== 'undefined' ? navigator.platform.includes('Mac') : false
 
-export function buildKeymap (): { [key: string]: any } {
+export function buildKeymap (shiftNewLine: boolean): { [key: string]: any } {
   const keys: { [key: string]: any } = {}
 
   const bind = (key: string, cmd: any): void => {
@@ -63,9 +63,13 @@ export function buildKeymap (): { [key: string]: any } {
     dispatch(state.tr.replaceSelectionWith(br.create()).scrollIntoView())
     return true
   })
-  bind('Mod-Enter', cmd)
-  bind('Shift-Enter', cmd)
-  if (mac) bind('Ctrl-Enter', cmd)
+  if (shiftNewLine) {
+    bind('Mod-Enter', cmd)
+    bind('Shift-Enter', cmd)
+    if (mac) bind('Ctrl-Enter', cmd)
+  } else {
+    bind('Enter', cmd)
+  }
 
   // bind('Shift-Enter', splitListItem(schema.nodes.list_item))
   bind('Mod-[', liftListItem(schema.nodes.list_item))

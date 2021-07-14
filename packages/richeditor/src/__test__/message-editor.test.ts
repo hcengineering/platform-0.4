@@ -4,6 +4,7 @@ import { cleanup, render } from '@testing-library/svelte'
 import { EditorState, Transaction } from 'prosemirror-state'
 import { schema } from '../internal/schema'
 import MessageEditor from '../MessageEditor.svelte'
+import WithHover from './WithHover.svelte'
 import { createTextTransform, ItemRefefence } from '../transform'
 
 describe('message editor tests', () => {
@@ -13,8 +14,7 @@ describe('message editor tests', () => {
   it('test component show our message', () => {
     const doc = parseMessage('Hello World!')
     const result = render(MessageEditor, {
-      content: doc,
-      hoverMessage: 'my-hover'
+      content: doc
     })
     const e1 = result.getByTestId('editor-root')
 
@@ -22,7 +22,7 @@ describe('message editor tests', () => {
   })
 
   it('test component hover', async () => {
-    const result = render(MessageEditor, {
+    const result = render(WithHover, {
       content: parseMessage('qwe')
     })
     await result.component.$set({ hoverMessage: 'my-hover' })

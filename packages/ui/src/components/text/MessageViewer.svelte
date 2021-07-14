@@ -111,7 +111,9 @@
       <!-- TODO: Add a proper click handler here-->
       <a
         href={'javascript:void'}
-        on:click|preventDefault={() => { refAction(hrefVal) }}
+        on:click|preventDefault={() => {
+          refAction(hrefVal)
+        }}
       >
         {message.text || ''}
       </a>
@@ -140,7 +142,7 @@
   <!---->
 {:else if message.type === MessageNodeType.heading}
   <MessageHeading level={getHeadingLevel(message)}>
-    {#each messageContent(message) as c}    
+    {#each messageContent(message) as c}
       <svelte:self message={c} />
     {/each}
   </MessageHeading>
@@ -168,13 +170,12 @@
   }
 
   .code {
-    // border-radius: 5px; 
-    // -moz-border-radius: 5px; 
-    // -webkit-border-radius: 5px; 
+    // border-radius: 5px;
+    // -moz-border-radius: 5px;
+    // -webkit-border-radius: 5px;
     background-color: #444444;
     // padding: 2px;
-}
-
+  }
 
   .resolved_reference {
     color: lightblue;

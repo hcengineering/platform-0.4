@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Allow to configure how enter it work for rich editor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor",
+  "email": "haiodo@gmail.com"
+}
