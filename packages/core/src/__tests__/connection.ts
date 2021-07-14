@@ -13,17 +13,43 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref } from '../classes'
-import { AccountProvider } from '../client'
+import type { Account, Class, Doc, Ref } from '../classes'
+import { WithAccountId } from '../client'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import type { DocumentQuery, FindResult, Storage } from '../storage'
+import type { DocumentQuery, FindResult } from '../storage'
 import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { genMinModel } from './minmodel'
 
-export async function connect (handler: (tx: Tx) => void): Promise<Storage & AccountProvider> {
+class ClientImpl implements WithAccountId {
+  constructor (
+    private readonly hierarchy: Hierarchy,
+    private readonly model: ModelDb,
+    private readonly transactions: TxDb,
+    private readonly handler: (tx: Tx) => void
+  ) {}
+
+  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+    const domain = this.hierarchy.getClass(_class).domain
+    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
+    return await this.model.findAll(_class, query)
+  }
+
+  async tx (tx: Tx): Promise<void> {
+    if (tx.objectSpace === core.space.Model) {
+      this.hierarchy.tx(tx)
+    }
+    await Promise.all([this.model.tx(tx), this.transactions.tx(tx)])
+    this.handler(tx)
+  }
+
+  async accountId (): Promise<Ref<Account>> {
+    return core.account.System
+  }
+}
+export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
   const txes = genMinModel()
 
   const hierarchy = new Hierarchy()
@@ -36,21 +62,5 @@ export async function connect (handler: (tx: Tx) => void): Promise<Storage & Acc
     await model.tx(tx)
   }
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    const domain = hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-    return await model.findAll(_class, query)
-  }
-
-  return {
-    findAll,
-    tx: async (tx: Tx): Promise<void> => {
-      if (tx.objectSpace === core.space.Model) {
-        hierarchy.tx(tx)
-      }
-      await Promise.all([model.tx(tx), transactions.tx(tx)])
-      handler(tx)
-    },
-    accountId: async () => await Promise.resolve(core.account.System)
-  }
+  return new ClientImpl(hierarchy, model, transactions, handler)
 }

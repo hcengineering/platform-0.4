@@ -1,6 +1,5 @@
-import core, {
+import {
   Account,
-  AccountProvider,
   Class,
   Client,
   createClient as createCoreClient,
@@ -8,14 +7,16 @@ import core, {
   DocumentQuery,
   FindResult,
   Ref,
-  Storage,
-  Tx
+  Tx,
+  TxOperations,
+  WithAccountId,
+  withOperations
 } from '@anticrm/core'
 import { readResponse, Request, RequestProcessor, Response, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
 
-export class TestConnection extends RequestProcessor implements Storage, AccountProvider {
+export class TestConnection extends RequestProcessor implements WithAccountId {
   socket: WebSocket
   handler: (tx: Tx) => void
 
@@ -52,12 +53,12 @@ export class TestConnection extends RequestProcessor implements Storage, Account
   }
 
   async accountId (): Promise<Ref<Account>> {
-    return core.account.System
+    return await this.request('accountId')
   }
 }
 
-export async function createClient (clientUrl: string, notify?: (tx: Tx) => void): Promise<Client> {
-  return await createCoreClient(async (tx) => {
+export async function createClient (clientUrl: string, notify?: (tx: Tx) => void): Promise<Client & TxOperations> {
+  const client = await createCoreClient(async (tx) => {
     const socket = new WebSocket(`ws://${clientUrl}`)
 
     // Wait for connection to be established.
@@ -75,4 +76,6 @@ export async function createClient (clientUrl: string, notify?: (tx: Tx) => void
 
     return new TestConnection(socket, tx)
   }, notify)
+  const accountId = await client.accountId()
+  return withOperations(accountId, client)
 }

@@ -66,7 +66,8 @@ describe('server', () => {
       connect: async () => {
         return {
           findAll,
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {},
+          accountId: async () => await Promise.resolve(core.account.System)
         }
       },
       close: async () => {}
@@ -111,7 +112,8 @@ describe('server', () => {
             if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
             return await model.findAll(_class, query)
           },
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {},
+          accountId: async () => await Promise.resolve(core.account.System)
         }
       },
       close: async () => {}
@@ -143,7 +145,8 @@ describe('server', () => {
             if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
             return await model.findAll(_class, query)
           },
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {},
+          accountId: async () => await Promise.resolve(core.account.System)
         }
       },
       close: async () => {}
@@ -167,7 +170,8 @@ describe('server', () => {
         sendTx = clientSendTx
         return {
           findAll,
-          tx: async (tx: Tx): Promise<void> => {}
+          tx: async (tx: Tx): Promise<void> => {},
+          accountId: async () => await Promise.resolve(core.account.System)
         }
       },
       close: async () => {}

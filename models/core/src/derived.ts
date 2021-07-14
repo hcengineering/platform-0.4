@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-import type {
-  BackReference,
+import {
   Class,
   Data,
   DerivedData,
@@ -22,13 +21,14 @@ import type {
   Doc,
   DocumentMapper,
   Domain,
+  DOMAIN_MODEL,
+  DOMAIN_REFERENCES,
   MappingRule,
   Ref,
   Reference,
   ShortRef,
   Title
 } from '@anticrm/core'
-import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import { Resource } from '@anticrm/status'
 import core from './component'
@@ -37,7 +37,6 @@ import { TDoc } from './core'
 // D E R I V E D  D A T A
 
 const DOMAIN_TITLE = 'title' as Domain
-const DOMAIN_REFERENCE = 'references' as Domain
 
 @Model(core.class.DerivedData, core.class.Doc, DOMAIN_MODEL)
 export class TDerivedData extends TDoc implements DerivedData {
@@ -62,19 +61,15 @@ export class TTitle extends TDerivedData implements Title {
   title!: string
 }
 
-@Model(core.class.Reference, core.class.DerivedData, DOMAIN_REFERENCE)
-export class TReference extends TDerivedData implements Reference {}
+export const MARKDOWN_REFERENCE_PATTERN = /\[([a-zA-Z-\d]+)\]\(ref:\/\/([a-zA-Z.]+)#([a-zA-Z\d]+)\)/g
 
-@Model(core.class.BackReference, core.class.Reference, DOMAIN_REFERENCE)
-export class TBackReference extends TDerivedData implements BackReference {
-  sourceObjectId!: Ref<Doc>
-  sourceObjectClass!: Ref<Class<Doc>>
+@Model(core.class.Reference, core.class.DerivedData, DOMAIN_REFERENCES)
+export class TReference extends TDerivedData implements Reference {
+  link!: string
 }
 
 @Model(core.class.ShortRef, core.class.Title, DOMAIN_TITLE)
 export class TShortRef extends TTitle implements ShortRef {
-  objectId!: Ref<Doc>
-  objectClass!: Ref<Class<Doc>>
   namespace!: string
   counter!: number
 }

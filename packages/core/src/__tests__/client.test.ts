@@ -45,7 +45,8 @@ describe('client', () => {
     await client.createDoc(core.class.Reference, result3[0]._id, {
       objectClass: core.class.Reference,
       objectId: '' as Ref<Doc>,
-      descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>>
+      descriptorId: '' as Ref<DerivedDataDescriptor<Doc, DerivedData>>,
+      link: 'link-text'
     })
     const res = await client.findAll(core.class.Reference, {})
     expect(res).toHaveLength(1)

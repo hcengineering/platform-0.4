@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "comment": "Integrate Derived Data",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-impl",
+  "email": "haiodo@gmail.com"
+}

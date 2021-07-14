@@ -81,8 +81,7 @@ describe('security', () => {
         }
       },
       hierarchy,
-      user,
-      new Map<string, ClientInfo>()
+      user
     )
   }
 

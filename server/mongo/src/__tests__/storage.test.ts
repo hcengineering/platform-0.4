@@ -15,7 +15,7 @@
 //
 import core, {
   Account,
-  AccountProvider,
+  WithAccountId,
   Client,
   createClient,
   Doc,
@@ -113,7 +113,7 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
-    const clientStorage = docStorage as unknown as Storage & AccountProvider
+    const clientStorage = docStorage as unknown as WithAccountId
     clientStorage.accountId = async (): Promise<Ref<Account>> => {
       return core.account.System
     }

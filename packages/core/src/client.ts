@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { DerivedDataProcessor } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { DOMAIN_MODEL } from './classes'
 import core from './component'
@@ -21,24 +22,46 @@ import { ModelDb } from './memdb'
 import type { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxProcessor } from './tx'
 
-type TxHander = (tx: Tx) => void
+type TxHandler = (tx: Tx) => void
 
-export interface AccountProvider {
+export interface WithAccountId extends Storage {
   accountId: () => Promise<Ref<Account>>
 }
 
-export interface Client extends Storage, AccountProvider {
+/**
+ * Client with hierarchy and model inside. Allow fast search for model, without accesing server.
+ */
+export interface Client extends WithAccountId {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
-
+/**
+ * Implementaion of client with model and hirarchy support.
+ */
 class ClientImpl extends TxProcessor implements Client {
-  constructor (
-    private readonly userAccount: Ref<Account>,
-    private readonly hierarchy: Hierarchy,
-    private readonly model: ModelDb,
-    private readonly conn: Storage
-  ) {
+  readonly hierarchy = new Hierarchy()
+  readonly model = new ModelDb(this.hierarchy)
+  extraTx?: (tx: Tx) => Promise<void>
+
+  constructor (readonly conn: WithAccountId, private readonly notify?: TxHandler) {
     super()
+  }
+
+  /**
+   * Process notify events from connection, update model and hierarchy
+   */
+  txHandler (txs: Tx[], bootstrap: boolean): void {
+    for (const tx of txs) {
+      this.hierarchy.tx(tx)
+    }
+    for (const tx of txs) {
+      if (tx.objectSpace === core.space.Model) {
+        void this.model.tx(tx)
+      }
+      if (!bootstrap) {
+        // We do not need to notify about model bootstap transactions.
+        this.notify?.(tx)
+      }
+    }
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
@@ -59,50 +82,76 @@ class ClientImpl extends TxProcessor implements Client {
 
   async tx (tx: Tx): Promise<void> {
     await this.conn.tx(tx)
+    await this.extraTx?.(tx)
   }
 
   async accountId (): Promise<Ref<Account>> {
-    return await Promise.resolve(this.userAccount)
+    return await this.conn.accountId()
   }
 }
 
-export async function createClient (
-  connect: (txHandler: TxHander) => Promise<Storage & AccountProvider>,
-  notify?: (tx: Tx) => void
-): Promise<Client> {
-  let client: Client | null = null
-  let txBuffer: Tx[] | undefined = []
+/**
+ * Hold transactions untill they will be processed by model and hierarchy
+ */
+class TransactionBuffer {
+  txBuffer?: Tx[] = []
+  clientTx?: (tx: Tx[], bootstrap: boolean) => void
 
-  const hierarchy = new Hierarchy()
-  const model = new ModelDb(hierarchy)
-
-  function txHander (tx: Tx): void {
-    if (client === null) {
-      txBuffer?.push(tx)
+  tx (tx: Tx): void {
+    if (this.clientTx === undefined) {
+      this.txBuffer?.push(tx)
     } else {
-      hierarchy.tx(tx)
-      if (tx.objectSpace === core.space.Model) {
-        void model.tx(tx)
-      }
-      notify?.(tx)
+      this.clientTx?.([tx], false)
     }
   }
 
-  const conn = await connect(txHander)
-  const txes = await conn.findAll(core.class.Tx, { objectSpace: core.space.Model })
+  pretend (txes: Tx[]): void {
+    this.txBuffer = txes.concat(this.txBuffer ?? [])
+  }
 
-  const txMap = new Map<Ref<Tx>, Ref<Tx>>()
-  for (const tx of txes) txMap.set(tx._id, tx._id)
-  for (const tx of txes) hierarchy.tx(tx)
-  for (const tx of txes) await model.tx(tx)
+  flush (clientTx: (tx: Tx[], bootstap: boolean) => void): void {
+    this.clientTx = clientTx
+    this.clientTx(this.txBuffer ?? [], true)
+    this.txBuffer = undefined
+  }
+}
 
-  txBuffer = txBuffer.filter((tx) => txMap.get(tx._id) === undefined)
+/**
+ * Creates a client with hierarchy and model
+ */
+export async function createClient (
+  connect: (txHandler: TxHandler) => Promise<WithAccountId>,
+  notify?: TxHandler
+): Promise<Client> {
+  const buffer = new TransactionBuffer()
+  const connection = await connect((tx) => buffer.tx(tx)) // << --- new transactions go into buffer, until we process existing ones.
 
-  const accountId = await conn.accountId()
-  client = new ClientImpl(accountId, hierarchy, model, conn)
+  const txes = await connection.findAll(core.class.Tx, { objectSpace: core.space.Model })
 
-  for (const tx of txBuffer) txHander(tx)
-  txBuffer = undefined
+  // Put all transactions we recieve before out model transactions.
+  buffer.pretend(txes)
+
+  const client = new ClientImpl(connection, notify)
+
+  // Apply all model transactions, including ones arrived during findAll is executed.
+  buffer.flush((txs, bootstrap) => client.txHandler(txs, bootstrap))
+
+  return await withDerivedDataProcessor(client)
+}
+
+async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
+  // D E R I V E D   D A T A
+  const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
+  client.extraTx = async (tx: Tx) => await ddProcessor.tx(tx)
 
   return client
+}
+function newClientOnlyStorage (client: ClientImpl): Storage {
+  return {
+    findAll: async (_class, query) => await client.findAll(_class, query),
+    tx: async (tx) => {
+      // No operation to connection is required, it will be performed on server.
+      client.txHandler([tx], false)
+    }
+  }
 }

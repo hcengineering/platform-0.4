@@ -37,7 +37,7 @@ export function parseAddress (addr: string): net.AddressInfo {
   throw new PlatformError(unknownStatus(`Invalid address returned:${addr}`))
 }
 
-class Server {
+export class Server {
   connections = new Map<string /* clientId */, WebSocket>()
   server: WebSocketServer
   httpServer: HttpServer

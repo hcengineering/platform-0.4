@@ -1,4 +1,4 @@
-import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, Title, ShortRef, Space } from '@anticrm/core'
+import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, ShortRef, Space } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
@@ -24,19 +24,6 @@ export function demoTask (builder: Builder): void {
     demoIds.project.DemoProject
   )
 
-  // Create title derived data
-  const did: Ref<DerivedDataDescriptor<Doc, Title>> = generateId()
-  builder.createDoc(
-    core.class.DerivedDataDescriptor,
-    {
-      sourceClass: task.class.Task,
-      targetClass: core.class.Title,
-      initiValue: {},
-      rules: [{ sourceField: 'name', targetField: 'title' }]
-    },
-    did
-  )
-
   const taskCount = faker.datatype.number(20) + 10
   const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
   for (let i = 0; i < taskCount; i++) {
@@ -57,7 +44,7 @@ export function demoTask (builder: Builder): void {
       { space: demoIds.project.DemoProject }
     )
 
-    const checkItems: CheckListItem [] = []
+    const checkItems: CheckListItem[] = []
     for (let i = 0; i < faker.datatype.number(10); i++) {
       checkItems.push({
         description: `do ${faker.commerce.productDescription()}`,
@@ -74,7 +61,8 @@ export function demoTask (builder: Builder): void {
         members: [],
         private: false
       },
-      commentSpaceId)
+      commentSpaceId
+    )
 
     for (let i = 0; i < faker.datatype.number(10); i++) {
       builder.createDoc(
@@ -96,11 +84,7 @@ export function demoTask (builder: Builder): void {
       {
         name: `Do ${faker.commerce.productName()}`,
         description: `do ${faker.commerce.productDescription()}`,
-        status: faker.random.arrayElement([
-          TaskStatuses.Open,
-          TaskStatuses.InProgress,
-          TaskStatuses.Closed
-        ]),
+        status: faker.random.arrayElement([TaskStatuses.Open, TaskStatuses.InProgress, TaskStatuses.Closed]),
         shortRefId: shortRefId,
         checkItems: checkItems,
         commentSpace: commentSpaceId

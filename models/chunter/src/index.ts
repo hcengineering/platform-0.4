@@ -16,7 +16,7 @@
 import type { Channel, Comment, Message } from '@anticrm/chunter'
 import type { Domain, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-import core, { TDoc, TSpace } from '@anticrm/model-core'
+import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
 import chunter from './plugin'
 
@@ -66,5 +66,35 @@ export function createModel (builder: Builder): void {
     description: 'Random Talks',
     private: false,
     members: []
+  })
+
+  // D E R I V E D   D A T A
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Message,
+    targetClass: core.class.Reference,
+    rules: [
+      {
+        sourceField: 'message',
+        targetField: 'link',
+        pattern: {
+          pattern: MARKDOWN_REFERENCE_PATTERN.source,
+          multDoc: true
+        }
+      }
+    ]
+  })
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: core.class.Reference,
+    rules: [
+      {
+        sourceField: 'message',
+        targetField: 'link',
+        pattern: {
+          pattern: MARKDOWN_REFERENCE_PATTERN.source,
+          multDoc: true
+        }
+      }
+    ]
   })
 }
