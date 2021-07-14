@@ -35,13 +35,8 @@ export class TTask extends TDoc implements Task {
   description!: string
   assignee!: Ref<Account>
   status!: TaskStatus
-  checkItems!: Array<TCheckListItem>
+  checkItems!: Array<CheckListItem>
   commentSpace!: Ref<Space>
-}
-
-class TCheckListItem implements CheckListItem {
-  description!: string
-  done!: boolean
 }
 
 export function createModel(builder: Builder) {
