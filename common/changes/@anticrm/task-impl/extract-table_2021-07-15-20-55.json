@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Use extracted table component",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl",
+  "email": "ilya.sumb@gmail.com"
+}
