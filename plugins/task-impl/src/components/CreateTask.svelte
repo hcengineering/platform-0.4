@@ -58,11 +58,12 @@
 <Dialog label={task.string.CreateTask} 
         okLabel={task.string.CreateTask} 
         okAction={create}
+        cancelLabel={task.string.Cancel}
         on:close={() => { dispatch('close') }}>
   <div class="content">
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name}/></div>
-    <div class="row"><DescriptionEditor label={task.string.TaskDescription} bind:value={description}/></div>
-    <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} showSearch /></div>
+    <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description}/></div>
+    <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch /></div>
   </div>
 </Dialog>
 

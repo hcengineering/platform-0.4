@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "task 18n",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "bykhov.denis@gmail.com"
+}

@@ -26,6 +26,7 @@
   import { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
   import CompletionPopup from './CompletionPopup.svelte'
   import { createEventDispatcher } from 'svelte'
+  import Label from './Label.svelte'
 
   export let lines = 10
   export let value: string = ''
@@ -159,7 +160,7 @@
         on:styleEvent={(e) => updateStyle(e.detail)}
       >
         <div class="label" slot="hoverMessage" let:empty let:hasFocus class:label-placeholder={!empty || hasFocus}>
-          {label}
+          <Label {label} />
         </div>
 
         {#if popupVisible && completions.length > 0}
