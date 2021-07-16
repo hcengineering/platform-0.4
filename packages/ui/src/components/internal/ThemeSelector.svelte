@@ -15,7 +15,7 @@
 </script>
 
 <div class="container" on:click={changeTheme}>
-  <Mute size={16}/>
+  <Mute size={16} />
 </div>
 
 <style lang="scss">

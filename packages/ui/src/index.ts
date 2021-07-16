@@ -14,7 +14,6 @@
 //
 
 import { SvelteComponent } from 'svelte'
-
 import Root from './components/internal/Root.svelte'
 
 export type {
@@ -59,6 +58,8 @@ export { default as MessageViewer } from './components/text/MessageViewer.svelte
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
 
 export { default as MDRefEditor } from './components/MDRefEditor.svelte'
+
+export { default } from './component'
 
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })

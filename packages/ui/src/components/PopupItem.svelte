@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import type { AnySvelteComponent } from '../types'
@@ -32,15 +31,18 @@
   }
 </script>
 
-<button class="popup-item" on:click={() => {
-  if (selectable) selected = !selected
-  action()
-}}>
+<button
+  class="popup-item"
+  on:click={() => {
+    if (selectable) selected = !selected
+    action()
+  }}
+>
   <div class="title">
-    <svelte:component this={component} {...props}/>
+    <svelte:component this={component} {...props} />
   </div>
   {#if selectable}
-    <div class="check" class:selected={selected}><Check/></div>
+    <div class="check" class:selected><Check /></div>
   {/if}
 </button>
 
@@ -75,7 +77,7 @@
       opacity: 0;
 
       &.selected {
-        opacity: .8;
+        opacity: 0.8;
       }
     }
 
@@ -86,7 +88,7 @@
         color: var(--theme-caption-color);
       }
       .check {
-        opacity: .2;
+        opacity: 0.2;
         &.selected {
           opacity: 1;
         }
@@ -100,9 +102,9 @@
         color: var(--theme-caption-color);
       }
       .check {
-        opacity: .2;
+        opacity: 0.2;
         &.selected {
-          opacity: .8;
+          opacity: 0.8;
         }
       }
     }

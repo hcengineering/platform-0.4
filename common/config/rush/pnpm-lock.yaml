@@ -47,13 +47,14 @@ specifiers:
   '@rush-temp/text': file:./projects/text.tgz
   '@rush-temp/theme': file:./projects/theme.tgz
   '@rush-temp/ui': file:./projects/ui.tgz
+  '@rush-temp/ui-assets': file:./projects/ui-assets.tgz
   '@rush-temp/webrtc': file:./projects/webrtc.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
   '@rush-temp/workbench-impl': file:./projects/workbench-impl.tgz
   '@rush-temp/workspace': file:./projects/workspace.tgz
   '@rush-temp/workspaces': file:./projects/workspaces.tgz
   '@testing-library/svelte': ^3.0.3
-  '@types/faker': ~5.5.7
+  '@types/faker': ^5.5.7
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
   '@types/kurento-client': ~6.14.4
@@ -89,6 +90,7 @@ specifiers:
   eslint-plugin-standard: ^5.0.0
   eslint-plugin-svelte3: ^3.1.2
   eslint-svelte3-preprocess: ~0.0.5
+  faker: ^5.5.3
   fast-equals: ^2.0.1
   file-loader: ^6.2.0
   intl-messageformat: ^9.6.12
@@ -183,6 +185,7 @@ dependencies:
   '@rush-temp/text': file:projects/text.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4
   '@rush-temp/ui': file:projects/ui.tgz_dbf4af031ea72cadd58e9967f1c25279
+  '@rush-temp/ui-assets': file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/webrtc': file:projects/webrtc.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678
@@ -225,6 +228,7 @@ dependencies:
   eslint-plugin-standard: 5.0.0_eslint@7.28.0
   eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
   eslint-svelte3-preprocess: 0.0.5_svelte@3.38.2
+  faker: 5.5.3
   fast-equals: 2.0.3
   file-loader: 6.2.0_webpack@5.37.1
   intl-messageformat: 9.6.13
@@ -9884,7 +9888,7 @@ packages:
     dev: false
 
   file:projects/model-dev.tgz_@types+node@14.17.0:
-    resolution: {integrity: sha512-ojf9kTrr4eUsXu0xaG8J4//8iVp0Vj04R+/GmzQUMJudPqkqMYxwGLFf3ITpYq41RuScZd70xQ/Pq9eT2l2/Qg==, tarball: file:projects/model-dev.tgz}
+    resolution: {integrity: sha512-pTio4vJJwOdXMVYGVGhNgOZv78SZ4J97jgOVEQiguYJ9U+IR7TwQ5hwvacI+PXaREnrE2i9sFNjWaUTOCVOzxw==, tarball: file:projects/model-dev.tgz}
     id: file:projects/model-dev.tgz
     name: '@rush-temp/model-dev'
     version: 0.0.0
@@ -10465,7 +10469,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-UXW5Cd5quRdbFmlAXYNBhgr1eJ9ZcH/fHU5F2wvQaLStsSTep1rRbkN2b5OH2JyjtrwjVaDFd7isLCl747XKsg==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-a4l+jj1co4mNEA0AITuqMtqJp+hL4kxf8aXGhmGXufs+jo34Kh5B8YbwAEAhiYfvX1G4pG+QS7gIXZN6VtASeg==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
@@ -10618,8 +10622,31 @@ packages:
       - webpack
     dev: false
 
+  file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
+    resolution: {integrity: sha512-spXtOq6DRCqWWRrytDgOP+MALxiGbOAp8xr2Zf1HZz2aWu6G9O8hQI8ssJVGk8yMTIXTPJb2T6NNZrtpQzGUPw==, tarball: file:projects/ui-assets.tgz}
+    id: file:projects/ui-assets.tgz
+    name: '@rush-temp/ui-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/node': 14.17.0
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/ui.tgz_dbf4af031ea72cadd58e9967f1c25279:
-    resolution: {integrity: sha512-wnE5NPCtA0ip+YeFJ0LmbPM+wc4z7va9QHJxbaEci1uMyw2/qroWw7mTuw37y0/KRb/LCIhSBHk0kic2DCXn1g==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-MdKChJA1N0VS9GHqE/tUd/aR1FpnvXeP7ZlDneM+y5AvbPWy3Ki2dr4s/Rcaepcrz3bnQ4qzZAWMW4tZLlK5EA==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0

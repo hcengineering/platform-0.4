@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   export let value: number
   export let min: number = 0
@@ -25,7 +24,7 @@
 </script>
 
 <div class="progress-container">
-  <div class="bar" style="background-color: {color}; width: calc(100% * {Math.round((value - min) / proc)} / 100);"/>
+  <div class="bar" style="background-color: {color}; width: calc(100% * {Math.round((value - min) / proc)} / 100);" />
 </div>
 
 <style lang="scss">

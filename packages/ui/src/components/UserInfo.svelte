@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import chen from '../../img/chen.png'
   import tim from '../../img/tim.png'
   import elon from '../../img/elon.png'
   import kathryn from '../../img/kathryn.png'
 
-  export let users: Object[] = [{ avatar: chen, name: 'chen', title: 'Rosamund Chen' },
-                                { avatar: tim, name: 'tim', title: 'Tim Ferris' },
-                                { avatar: elon, name: 'elon', title: 'Elon Musk' },
-                                { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }]
+  export let users: Object[] = [
+    { avatar: chen, name: 'chen', title: 'Rosamund Chen' },
+    { avatar: tim, name: 'tim', title: 'Tim Ferris' },
+    { avatar: elon, name: 'elon', title: 'Elon Musk' },
+    { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }
+  ]
   export let user: string = 'chen'
   export let suptitle: string | undefined
   export let size: 24 | 32 | 36 = 24
@@ -30,11 +31,13 @@
 </script>
 
 <div class="user-container">
-  <div style="width: {size}px; height: {size}px;"><img style="width: {size}px; height: {size}px;" src={users.find(u => u.name === user).avatar} alt={20}/></div>
+  <div style="width: {size}px; height: {size}px;">
+    <img style="width: {size}px; height: {size}px;" src={users.find((u) => u.name === user).avatar} alt={20} />
+  </div>
   {#if !avatarOnly}
     <div class="caption">
       {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
-      <div class="title">{users.find(u => u.name === user).title}</div>
+      <div class="title">{users.find((u) => u.name === user).title}</div>
     </div>
   {/if}
 </div>
@@ -54,7 +57,7 @@
       color: var(--theme-caption-color);
 
       .suptitle {
-        opacity: .4;
+        opacity: 0.4;
       }
       .title {
         max-width: 150px;

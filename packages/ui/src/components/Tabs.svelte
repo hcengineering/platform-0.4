@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
   import Label from './Label.svelte'
@@ -21,18 +20,29 @@
     title: IntlString
   }
 
-  export let tabs: Array<Tab> = [{ title: 'Applications' }, { title: 'Interviews' }, { title: 'Activity' }, { title: 'Documents' }, { title: 'Details' }]
+  export let tabs: Array<Tab> = [
+    { title: 'Applications' },
+    { title: 'Interviews' },
+    { title: 'Activity' },
+    { title: 'Documents' },
+    { title: 'Details' }
+  ]
   export let selected: IntlString = 'Details'
 </script>
 
 <div class="tabs-container">
   {#each tabs as tab}
-    <div class="tab" class:selected={tab.title === selected}
-         on:click={() => { selected = tab.title }}>
-      <Label label={tab.title}/>
+    <div
+      class="tab"
+      class:selected={tab.title === selected}
+      on:click={() => {
+        selected = tab.title
+      }}
+    >
+      <Label label={tab.title} />
     </div>
   {/each}
-  <div class="grow"/>
+  <div class="grow" />
 </div>
 
 <style lang="scss">

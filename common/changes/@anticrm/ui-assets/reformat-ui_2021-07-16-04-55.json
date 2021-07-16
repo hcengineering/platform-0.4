@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Apply formatting",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets",
+  "email": "haiodo@gmail.com"
+}

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
+  import ui from '../component'
   import EditBox from './EditBox.svelte'
   import Label from './Label.svelte'
 
   export let title: IntlString | undefined = undefined
   export let caption: IntlString | undefined = undefined
-  export let search: string
-  export let value: string
+  export let search: string = ''
+  export let searchLabel: IntlString | undefined = undefined
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'right'
   export let margin: number = 16
@@ -30,12 +30,12 @@
 
   let style: string = ''
   $: {
-    if (vAlign == 'top') style = `transform: translateY(-${margin}px);`
-    if (vAlign == 'middle') {
-      if (hAlign == 'left') style = `transform: translateX(-${margin}px);`
-      if (hAlign == 'right') style = `transform: translateX(${margin}px);`
+    if (vAlign === 'top') style = `transform: translateY(-${margin}px);`
+    if (vAlign === 'middle') {
+      if (hAlign === 'left') style = `transform: translateX(-${margin}px);`
+      if (hAlign === 'right') style = `transform: translateX(${margin}px);`
     }
-    if (vAlign == 'bottom') style = `transform: translateY(${margin}px);`
+    if (vAlign === 'bottom') style = `transform: translateY(${margin}px);`
   }
   const waitClick = (event: any) => {
     let context: boolean = false
@@ -48,19 +48,19 @@
   }
 </script>
 
-<svelte:window on:mouseup={waitClick}/>
+<svelte:window on:mouseup={waitClick} />
 <div class="popup-menu">
-  <div class="trigger"><slot name="trigger"/></div>
+  <div class="trigger"><slot name="trigger" /></div>
   {#if show}
-    <div class="popup {vAlign} {hAlign}" style={style}>
+    <div class="popup {vAlign} {hAlign}" {style}>
       {#if showSearch}
         <div class="header">
-          <div class="title"><Label label={title}/></div>
-          <EditBox label={'Search'} bind:value={search} />
+          <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
+          <EditBox label={searchLabel ?? ui.string.Search} bind:value={search} />
           <div class="caption">{caption}</div>
         </div>
       {/if}
-      <div class="content"><slot/></div>
+      <div class="content"><slot /></div>
     </div>
   {/if}
 </div>
@@ -71,7 +71,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     .popup {
       box-sizing: border-box;
       position: absolute;
@@ -114,7 +114,7 @@
         top: 100%;
       }
 
-      .header {  
+      .header {
         text-align-last: left;
         .title {
           margin-bottom: 16px;

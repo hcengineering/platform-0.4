@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString, Asset } from '@anticrm/status'
   import type { AnySvelteComponent } from '../types'
@@ -28,13 +27,13 @@
   export let invisible: boolean = false
 </script>
 
-<Tooltip label={label} direction={direction}>
+<Tooltip {label} {direction}>
   <button class="button" style="width: {size}px; height: {size}px" on:click|stopPropagation={action}>
-    <div class="icon" style="width: {size}px; height: {size}px" class:invisible={invisible}>
-      {#if typeof (icon) === 'string'}
-        <Icon {icon} {size}/>
+    <div class="icon" style="width: {size}px; height: {size}px" class:invisible>
+      {#if typeof icon === 'string'}
+        <Icon {icon} {size} />
       {:else}
-        <svelte:component this={icon} size={size} />
+        <svelte:component this={icon} {size} />
       {/if}
     </div>
   </button>
@@ -53,7 +52,7 @@
     cursor: pointer;
 
     .icon {
-      opacity: .3;
+      opacity: 0.3;
       &.invisible {
         opacity: 0;
       }

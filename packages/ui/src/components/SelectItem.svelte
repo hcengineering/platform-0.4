@@ -12,61 +12,85 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import type { IntlString } from '@anticrm/platform'
+  import { IntlString } from '@anticrm/status'
+  import ui from '../component'
   import type { AnySvelteComponent, IPopupItem } from '../types'
-  import Label from './Label.svelte'
-  import PopupMenu from './PopupMenu.svelte'
-  import PopupItem from './PopupItem.svelte'
   import ActionIcon from './ActionIcon.svelte'
   import Close from './icons/Close.svelte'
+  import Label from './Label.svelte'
+  import PopupItem from './PopupItem.svelte'
+  import PopupMenu from './PopupMenu.svelte'
 
-  export let component: AnySvelteComponent | undefined = undefined
+  export let component: AnySvelteComponent | undefined
   export let items: Array<IPopupItem>
   export let item: IPopupItem
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let gap: number = 8
+  export let removeLabel: IntlString | undefined
 
-  let byTitle: boolean = (component) ? false : true
+  const byTitle: boolean = !component
   let pressed: boolean = false
-
 </script>
 
 <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed}>
-  <button class="btn" slot="trigger" style="margin: {gap/2}px;"
+  <button
+    class="btn"
+    slot="trigger"
+    style="margin: {gap / 2}px;"
     on:click={(event) => {
       pressed = !pressed
       event.stopPropagation()
     }}
   >
     <div class="title">
-      {#if byTitle }
-        <Label label={item.title}/>
+      {#if byTitle}
+        <Label label={item.title ?? ui.string.Undefined} />
       {:else}
-        <svelte:component this={component} {...item.props}/>
+        <svelte:component this={component} {...item.props} />
       {/if}
     </div>
-    <div class="icon"><ActionIcon label={'Remove'} direction={'top'} icon={Close} size={16} action={async () => { item.selected = false }}/></div>
+    <div class="icon">
+      <ActionIcon
+        label={removeLabel ?? ui.string.Remove}
+        direction={'top'}
+        icon={Close}
+        size={16}
+        action={async () => {
+          item.selected = false
+        }}
+      />
+    </div>
   </button>
-  {#if byTitle }
-    <PopupItem bind:title={item.title} selectable bind:selected={item.selected}/>
+  {#if byTitle}
+    <PopupItem bind:title={item.title} selectable bind:selected={item.selected} />
   {:else}
-    <PopupItem bind:component={component} bind:props={item.props} selectable bind:selected={item.selected}/>
+    <PopupItem bind:component bind:props={item.props} selectable bind:selected={item.selected} />
   {/if}
-  {#each items.filter(i => !i.selected) as noItem}
-    {#if byTitle }
-      <PopupItem title={noItem.title} selectable bind:selected={noItem.selected} action={async () => {
-        pressed = false
-        item.selected = false
-      }}/>
+  {#each items.filter((i) => !i.selected) as noItem}
+    {#if byTitle}
+      <PopupItem
+        title={noItem.title}
+        selectable
+        bind:selected={noItem.selected}
+        action={async () => {
+          pressed = false
+          item.selected = false
+        }}
+      />
     {:else}
-      <PopupItem component={component} props={noItem.props} selectable bind:selected={noItem.selected} action={async () => {
-        pressed = false
-        item.selected = false
-      }}/>
+      <PopupItem
+        {component}
+        props={noItem.props}
+        selectable
+        bind:selected={noItem.selected}
+        action={async () => {
+          pressed = false
+          item.selected = false
+        }}
+      />
     {/if}
   {/each}
 </PopupMenu>
@@ -97,7 +121,7 @@
       width: 16px;
       height: 16px;
       margin-left: 12px;
-      opacity: .8;
+      opacity: 0.8;
     }
 
     &:hover {

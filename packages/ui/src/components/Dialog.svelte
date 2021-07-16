@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
 
@@ -34,18 +33,38 @@
 </script>
 
 <div class="container">
-  <div class="null"/>
+  <div class="null" />
   <div class="dialog">
     <div class="header">
-      <div class="title"><Label {label}/></div>
-      <div class="tool" on:click={() => { dispatch('close') }}><Close size={16}/></div>
+      <div class="title"><Label {label} /></div>
+      <div
+        class="tool"
+        on:click={() => {
+          dispatch('close')
+        }}
+      >
+        <Close size={16} />
+      </div>
     </div>
     <div class="content">
-      <ScrollBox vertical><slot/></ScrollBox>
+      <ScrollBox vertical><slot /></ScrollBox>
     </div>
     <div class="footer">
-      <Button label={okLabel} primary on:click={() => { okAction(); dispatch('close') }}/>
-      <Button label={cancelLabel} on:click={() => { cancelAction(); dispatch('close') }}/>
+      <Button
+        label={okLabel}
+        primary
+        on:click={() => {
+          okAction()
+          dispatch('close')
+        }}
+      />
+      <Button
+        label={cancelLabel}
+        on:click={() => {
+          cancelAction()
+          dispatch('close')
+        }}
+      />
     </div>
   </div>
 </div>
@@ -93,7 +112,7 @@
           width: 16px;
           height: 16px;
           margin-left: 12px;
-          opacity: .4;
+          opacity: 0.4;
           cursor: pointer;
           &:hover {
             opacity: 1;

@@ -10,10 +10,10 @@
 
 <div class="status">
   {#if status.severity !== Severity.OK}
-    <Info size={14}/>
+    <Info size={14} />
   {/if}
   {#if status.severity !== Severity.OK}
-    <span><Label label={status.code} params={status.params}/></span>
+    <span><Label label={status.code} params={status.params} /></span>
   {/if}
 </div>
 
@@ -23,7 +23,7 @@
     justify-content: center;
     align-items: center;
     font-size: 11px;
-    opacity: .3;
+    opacity: 0.3;
     user-select: none;
 
     span {

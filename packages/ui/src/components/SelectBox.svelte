@@ -12,54 +12,71 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import type { IntlString } from '@anticrm/platform'
+  import { IntlString } from '@anticrm/status'
   import type { AnySvelteComponent, IPopupItem } from '../types'
-  import Label from './Label.svelte'
-  import PopupMenu from './PopupMenu.svelte'
-  import PopupItem from './PopupItem.svelte'
-  import SelectItem from './SelectItem.svelte'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
+  import PopupItem from './PopupItem.svelte'
+  import PopupMenu from './PopupMenu.svelte'
+  import SelectItem from './SelectItem.svelte'
 
   export let component: AnySvelteComponent | undefined = undefined
-  export let title: IntlString | undefined = undefined
   export let items: Array<IPopupItem>
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let gap: number = 8
+  export let removeLabel: IntlString | undefined = undefined
+  export let searchLabel: IntlString | undefined = undefined
 
-  let byTitle: boolean = (component) ? false : true
+  const byTitle: boolean = !component
   let pressed: boolean = false
   let count: number
 
-  $: count = items.filter(i => i.selected).length
-
+  $: count = items.filter((i) => i.selected).length
 </script>
 
-<div class="selectBox" style="padding: {gap/2}px;">
-  {#each items.filter(i => i.selected) as complate}
-    <SelectItem bind:item={complate} bind:component={component} bind:items={items} {vAlign} {hAlign} {margin} {gap}/>
+<div class="selectBox" style="padding: {gap / 2}px;">
+  {#each items.filter((i) => i.selected) as complate}
+    <SelectItem bind:item={complate} bind:component bind:items {vAlign} {hAlign} {margin} {gap} {removeLabel} />
   {/each}
-  {#if items.filter(i => !i.selected).length }
-    <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed}>
-      <button slot="trigger" class="btn" style="margin: {gap/2}px" class:selected={pressed}
+  {#if items.filter((i) => !i.selected).length}
+    <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} {searchLabel}>
+      <button
+        slot="trigger"
+        class="btn"
+        style="margin: {gap / 2}px"
+        class:selected={pressed}
         on:click={(event) => {
           pressed = !pressed
           event.stopPropagation()
         }}
       >
         <div class="icon">
-          {#if pressed}<Close/>{:else}<Add/>{/if}
+          {#if pressed}<Close />{:else}<Add />{/if}
         </div>
       </button>
-      {#each items.filter(i => !i.selected) as item}
-        {#if byTitle }
-          <PopupItem title={item.title} selectable bind:selected={item.selected} action={async () => { pressed = !pressed }}/>
+      {#each items.filter((i) => !i.selected) as item}
+        {#if byTitle}
+          <PopupItem
+            title={item.title}
+            selectable
+            bind:selected={item.selected}
+            action={async () => {
+              pressed = !pressed
+            }}
+          />
         {:else}
-          <PopupItem component={component} props={item.props} selectable bind:selected={item.selected} action={async () => { pressed = !pressed }}/>
+          <PopupItem
+            {component}
+            props={item.props}
+            selectable
+            bind:selected={item.selected}
+            action={async () => {
+              pressed = !pressed
+            }}
+          />
         {/if}
       {/each}
     </PopupMenu>
@@ -93,14 +110,14 @@
       .icon {
         width: 16px;
         height: 16px;
-        opacity: .3;
+        opacity: 0.3;
       }
 
       &.selected {
         background-color: var(--theme-button-bg-focused);
         border: 1px solid var(--theme-bg-accent-color);
         .icon {
-          opacity: .6;
+          opacity: 0.6;
         }
       }
 

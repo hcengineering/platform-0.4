@@ -12,27 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
-  export let label: IntlString | undefined
-  export let width: string | undefined
-  export let value: string | undefined
-  export let error: string | undefined
-  export let password: boolean | undefined
-  export let id: string | undefined
+  export let label: IntlString | undefined = undefined
+  export let width: string | undefined = undefined
+  export let value: string | undefined = undefined
+  export let error: string | undefined = undefined
+  export let password: boolean | undefined = undefined
+  export let id: string | undefined = undefined
 </script>
 
-<div class="editbox{error ? ' error' : ''}" style="{width ? 'width: ' + width : ''}">
+<div class="editbox{error ? ' error' : ''}" style={width ? 'width: ' + width : ''}>
   {#if password}
-    <input type="password" class:nolabel={!label} {id} bind:value on:keyup placeholder=" "/>
+    <input type="password" class:nolabel={!label} {id} bind:value on:keyup placeholder=" " />
   {:else}
-    <input type="text" class:nolabel={!label} {id} bind:value on:keyup placeholder=" "/>
+    <input type="text" class:nolabel={!label} {id} bind:value on:keyup placeholder=" " />
   {/if}
   {#if label}
-    <div class="label"><Label label={label}/></div>
+    <div class="label"><Label {label} /></div>
   {/if}
 </div>
 
@@ -67,7 +66,7 @@
     .nolabel {
       padding-top: 0;
     }
-    
+
     .label {
       position: absolute;
       top: 18px;

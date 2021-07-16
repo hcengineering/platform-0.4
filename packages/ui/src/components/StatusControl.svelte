@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { Status } from '@anticrm/status'
   import { Severity } from '@anticrm/status'
@@ -23,9 +22,9 @@
 </script>
 
 {#if status.severity !== Severity.OK}
-<div class="message-container" class:error={status.severity === Severity.ERROR}>
-  <StatusControl {status} />
-</div>
+  <div class="message-container" class:error={status.severity === Severity.ERROR}>
+    <StatusControl {status} />
+  </div>
 {/if}
 
 <style lang="scss">
