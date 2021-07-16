@@ -15,9 +15,8 @@
 
 // P L U G I N
 
-import type { Status } from '@anticrm/status'
 import type { Metadata, Plugin, Service } from '@anticrm/platform'
-import { plugin, setMetadata, addStringsLoader } from '@anticrm/platform'
+import { addStringsLoader, plugin, setMetadata } from '@anticrm/platform'
 import type { AnyComponent } from '@anticrm/ui'
 import { applicationShortcutKey } from '@anticrm/ui'
 
@@ -34,7 +33,7 @@ export const ACCOUNT_KEY = 'anticrm-account'
 
 export function currentAccount (): LoginInfo | null {
   const account = localStorage.getItem(ACCOUNT_KEY)
-  return account ? JSON.parse(account) : null
+  return account !== null ? JSON.parse(account) : null
 }
 
 export interface LoginService extends Service {
@@ -81,8 +80,8 @@ const login = plugin(PluginLogin, {}, {
 })
 
 setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
-addStringsLoader(PluginLogin, (lang: string) => {
-  return import('./lang/en.json')        
-})  
+addStringsLoader(PluginLogin, async (lang: string) => {
+  return await import('./lang/en.json')
+})
 
 export default login

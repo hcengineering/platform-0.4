@@ -16,10 +16,10 @@
 import { loadMetadata, addStringsLoader } from '@anticrm/platform'
 import meeting from '@anticrm/meeting'
 
-const icons = require('../assets/icons.svg')
+const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-eslint/no-var-requires
 loadMetadata(meeting.icon, {
-  Meeting: `${icons}#meeting`,
-  Hashtag: `${icons}#hashtag`
+  Meeting: `${icons}#meeting`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Hashtag: `${icons}#hashtag` // eslint-disable-line @typescript-eslint/restrict-template-expressions
 })
 
 addStringsLoader(meeting.id, async (lang: string) => {

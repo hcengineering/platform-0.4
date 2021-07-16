@@ -1,26 +1,26 @@
 //
 // Copyright © 2020, 2021 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
 import { Builder, Model } from '@anticrm/model'
 
-import { TDoc, TSpace } from '@anticrm/model-core'
+import core, { TDoc, TSpace } from '@anticrm/model-core'
 import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
 import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
-import core from '@anticrm/model-core'
+
 import task from './plugin'
 
 const DOMAIN_TASK = 'task' as Domain
@@ -35,11 +35,11 @@ export class TTask extends TDoc implements Task {
   description!: string
   assignee!: Ref<Account>
   status!: TaskStatus
-  checkItems!: Array<CheckListItem>
+  checkItems!: CheckListItem[]
   commentSpace!: Ref<Space>
 }
 
-export function createModel(builder: Builder) {
+export function createModel (builder: Builder): void {
   builder.createModel(TProject, TTask)
   builder.createDoc(workbench.class.Application, {
     label: task.string.ApplicationLabelTask,

@@ -21,13 +21,12 @@ import corePlugin from '@anticrm/plugin-core'
 
 import fsmPlugin from './plugin'
 
-
 export default async (): Promise<FSMService> => {
   const coreP = await getPlugin(corePlugin.id)
   const client = await coreP.getClient() as never as Client & TxOperations
 
   const getStates = async (fsm: Ref<FSM>): Promise<State[]> =>
-  await client.findAll(fsmPlugin.class.State, { fsm })
+    await client.findAll(fsmPlugin.class.State, { fsm })
 
   const getTransitions = async (fsm: Ref<FSM>): Promise<Transition[]> =>
     await client.findAll(fsmPlugin.class.Transition, { fsm })
@@ -53,18 +52,18 @@ export default async (): Promise<FSMService> => {
         return
       }
 
-      const state = item.obj.state ?? (await getStates(fsm._id as Ref<FSM>))[0]._id as Ref<State>
+      const state = item.obj.state ?? (await getStates(fsm._id))[0]._id
 
       return await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, core.space.Model, {
         ...item.obj,
-        fsm: fsmOwner._id as Ref<WithFSM>,
+        fsm: fsmOwner._id,
         state
       })
     },
     removeItem: async (item: Ref<Doc>, fsmOwner: WithFSM) => {
-      const docs = await client.findAll(fsmPlugin.class.FSMItem, { item, fsm: fsmOwner._id as Ref<WithFSM> })
+      const docs = await client.findAll(fsmPlugin.class.FSMItem, { item, fsm: fsmOwner._id })
 
-      await Promise.all(docs.map(x => client.removeDoc(x._class, core.space.Model, x._id)))
+      await Promise.all(docs.map(async x => await client.removeDoc(x._class, core.space.Model, x._id)))
     },
     duplicateFSM: async (fsmRef: Ref<FSM>) => {
       const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmRef }))[0]
@@ -73,8 +72,8 @@ export default async (): Promise<FSMService> => {
         return undefined
       }
 
-      const transitions = await getTransitions(fsm._id as Ref<FSM>)
-      const states = await getStates(fsm._id as Ref<FSM>)
+      const transitions = await getTransitions(fsm._id)
+      const states = await getStates(fsm._id)
 
       const newFSM = await client.createDoc(
         fsmPlugin.class.FSM,
@@ -93,7 +92,7 @@ export default async (): Promise<FSMService> => {
             core.space.Model,
             {
               ...state,
-              fsm: newFSM._id as Ref<FSM>
+              fsm: newFSM._id
             }
           )
         ] as [State, State]))
@@ -104,7 +103,7 @@ export default async (): Promise<FSMService> => {
         core.space.Model,
         {
           ...transition,
-          fsm: newFSM._id as Ref<FSM>,
+          fsm: newFSM._id,
           from: stateMap.get(transition.from) ?? '' as Ref<State>,
           to: stateMap.get(transition.to) ?? '' as Ref<State>
         }

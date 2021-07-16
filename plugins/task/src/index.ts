@@ -31,17 +31,17 @@ export const TaskStatuses = {
 export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses]
 
 export interface Task extends Doc {
-  shortRefId: Ref<ShortRef>,
-  name: string,
-  description: string,
-  assignee?: Ref<Account>,
-  status: TaskStatus,
-  checkItems: Array<CheckListItem>,
+  shortRefId: Ref<ShortRef>
+  name: string
+  description: string
+  assignee?: Ref<Account>
+  status: TaskStatus
+  checkItems: CheckListItem[]
   commentSpace: Ref<Space>
 }
 
 export interface CheckListItem {
-  description: string,
+  description: string
   done: boolean
 }
 

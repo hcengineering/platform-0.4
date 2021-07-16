@@ -74,11 +74,10 @@ describe('status', () => {
   })
 
   it('should parse id', () => {
-    expect(parseId('res:comp.X' as Id)).toEqual({kind: 'res', component: 'comp', name: 'X'})
+    expect(parseId('res:comp.X' as Id)).toEqual({ kind: 'res', component: 'comp', name: 'X' })
   })
 
   it('should parse id without kind', () => {
-    expect(parseId('comp.X' as Id)).toEqual({component: 'comp', name: 'X'})
+    expect(parseId('comp.X' as Id)).toEqual({ component: 'comp', name: 'X' })
   })
-
 })

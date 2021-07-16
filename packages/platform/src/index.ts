@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
+import { addStringsLoader } from './i18n'
+import platform from './component'
+
 export * from './metadata'
 export * from './component'
 export * from './event'
 export * from './plugin'
 export * from './resource'
 export * from './i18n'
-
-import { addStringsLoader } from './i18n'
-import platform from './component'
 
 addStringsLoader(platform.id, async (lang: string) => {
   switch (lang) {

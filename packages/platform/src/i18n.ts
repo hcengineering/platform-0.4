@@ -39,14 +39,14 @@ async function loadTranslationsForComponent (component: Component): Promise<Mess
   const loader = loaders.get(component)
   if (loader === undefined) {
     const status = new Status(Severity.ERROR, platform.status.NoLoaderForStrings, { component })
-    setPlatformStatus(status)
+    await setPlatformStatus(status)
     return status
   }
   try {
     return await loader(locale) as Record<string, IntlString> | Status
   } catch (err) {
     const status = unknownError(err)
-    setPlatformStatus(status)
+    await setPlatformStatus(status)
     return status
   }
 }
@@ -62,10 +62,10 @@ async function getTranslation (message: IntlString): Promise<IntlString | Status
     if (messages instanceof Status) {
       return messages
     }
-    return (id.kind ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
+    return (id.kind !== undefined ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
   } catch (err) {
     const status = unknownError(err)
-    setPlatformStatus(status)
+    await setPlatformStatus(status)
     return status
   }
 }

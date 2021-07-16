@@ -72,7 +72,7 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 // I D E N T I T Y
 
 export type Namespace = Record<string, string | Record<string, string>>
-type ComponentDescriptor<C extends Component> = { id: C }
+type ComponentDescriptor<C extends Component> = { id: C } // eslint-disable-line
 
 function transform (
   result: Record<string, any>,
@@ -124,18 +124,18 @@ export function parseId (id: Id): IdInfo {
     throw new PlatformError(new Status(Severity.ERROR, status.status.InvalidId, { id }))
   }
   const kindAndComponent = prefix.split(':')
-  if (kindAndComponent.length === 1) 
+  if (kindAndComponent.length === 1) {
     return {
       component: kindAndComponent[0] as Component,
       name
     }
-  return { 
+  }
+  return {
     kind: kindAndComponent[0],
     component: kindAndComponent[1] as Component,
     name
   }
 }
-
 
 // S T A T U S  C O D E S
 
@@ -153,7 +153,7 @@ const status = component('status' as Component, {
  */
 export const OK = new Status(Severity.OK, status.status.OK, {})
 
-export function unknownStatus(message: string): Status<{}> {
+export function unknownStatus (message: string): Status<{}> {
   return new Status(Severity.ERROR, status.status.UnknownError, { message })
 }
 
@@ -215,4 +215,3 @@ type URL = string
 export type Asset = Metadata<URL>
 
 export { status as default }
-
