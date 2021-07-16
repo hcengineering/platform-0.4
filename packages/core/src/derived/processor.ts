@@ -213,9 +213,9 @@ export class DerivedDataProcessor extends TxProcessor {
     let matches: RegExpExecArray | null
     let needAdd = false
     while ((matches = reg.exec(sourceValue)) !== null) {
-      if (needAdd) {
+      if (needAdd && results.length > 0) {
         // We have multi doc, so produce document and wait for next match.
-        results.push(newDerivedData(lastOrAdd(results, d, doc), d))
+        results.push(newDerivedData(doc, d, results.length))
         needAdd = false
       }
       const lastResult = lastOrAdd(results, d, doc)

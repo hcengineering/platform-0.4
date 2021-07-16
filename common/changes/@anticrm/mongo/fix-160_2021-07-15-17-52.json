@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "Integrate Derived Data",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "haiodo@gmail.com"
+}

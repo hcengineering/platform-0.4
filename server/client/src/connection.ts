@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Account, AccountProvider, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
+import { Account, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx, WithAccountId } from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
@@ -62,7 +62,7 @@ export class WebSocketConnection extends RequestProcessor implements Storage {
   }
 }
 
-export async function connect (clientUrl: string, handler: TxHandler): Promise<Storage & AccountProvider> {
+export async function connect (clientUrl: string, handler: TxHandler): Promise<WithAccountId> {
   const socket = new WebSocket(`ws://${clientUrl}`)
 
   // Wait for connection to be established.

@@ -16,7 +16,8 @@
 import { Component, component, Resource } from '@anticrm/status'
 import { describe, it } from '@jest/globals'
 import { Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
-import { Class, Doc, Ref } from '../classes'
+import { Class, Doc, Ref, Space } from '../classes'
+import { createClient } from '../client'
 import core from '../component'
 import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMapper, registerMapper } from '../derived'
 import { newDerivedData } from '../derived/utils'
@@ -25,6 +26,7 @@ import { ModelDb } from '../memdb'
 import { Title } from '../title'
 import { Tx } from '../tx'
 import { createClass, createDoc, genMinModel } from './minmodel'
+import { connect } from './connection'
 
 const txes = genMinModel()
 
@@ -69,7 +71,7 @@ registerMapper(testIds.mapper.PageTitleMapper, {
         const ctx = tx as TxCreateDoc<Doc>
         if (ctx.objectClass === testIds.class.Page) {
           const doc = TxProcessor.createDoc2Doc(ctx) as Page
-          const data = newDerivedData<Title>(doc, options.descriptor)
+          const data = newDerivedData<Title>(doc, options.descriptor, 0)
           data.title = '#-' + doc.name
           return [data]
         }
@@ -79,7 +81,7 @@ registerMapper(testIds.mapper.PageTitleMapper, {
         const ctx = tx as TxUpdateDoc<Doc>
         if (ctx.objectClass === testIds.class.Page) {
           const doc = (await options.storage.findAll(ctx.objectClass, { _id: ctx.objectId }))[0] as Page
-          const data = newDerivedData<Title>(doc, options.descriptor)
+          const data = newDerivedData<Title>(doc, options.descriptor, 0)
           data.title = '#-' + doc.name
           return [data]
         }
@@ -379,5 +381,43 @@ describe('deried data', () => {
     const titles = await model.findAll(core.class.Title, {})
     expect(titles.length).toEqual(4)
     expect(titles.map((t) => t.title)).toEqual(['B', 'C', 'D', 'E'])
+  })
+
+  it('check dd transactions', async () => {
+    const transactions: Tx[] = []
+
+    const client = withOperations(
+      core.account.System,
+      await createClient(connect, (tx) => {
+        transactions.push(tx)
+      })
+    )
+
+    const result = await client.findAll(core.class.Space, {})
+    expect(result).toHaveLength(2)
+
+    await client.createDoc<DerivedDataDescriptor<Space, Title>>(core.class.DerivedDataDescriptor, core.space.Model, {
+      sourceClass: core.class.Space,
+      targetClass: core.class.Title,
+      rules: [
+        {
+          sourceField: 'name',
+          targetField: 'title'
+        }
+      ]
+    })
+    const count = transactions.length
+
+    await client.createDoc<Space>(core.class.Space, core.space.Model, {
+      private: false,
+      name: 'NewSpace',
+      description: '',
+      members: []
+    })
+
+    expect(transactions.length - count).toEqual(2) // 1 space + 1 title
+
+    const titles = await client.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(3)
   })
 })

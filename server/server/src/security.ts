@@ -18,7 +18,7 @@ import core, {
   TxCreateDoc,
   TxProcessor,
   TxUpdateDoc,
-  AccountProvider
+  WithAccountId
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
@@ -109,13 +109,12 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
   return querySpace
 }
 
-export class SecurityClientStorage implements Storage, AccountProvider {
+export class SecurityClientStorage implements WithAccountId {
   constructor (
     readonly security: SecurityModel,
     readonly workspace: Storage,
     readonly hierarchy: Hierarchy,
-    readonly user: ClientInfo,
-    readonly clients: Map<string, ClientInfo>
+    readonly user: ClientInfo
   ) {}
 
   async findAll<T extends Doc>(
@@ -144,13 +143,6 @@ export class SecurityClientStorage implements Storage, AccountProvider {
     }
     // Check if tx is allowed and process with workspace
     await this.workspace.tx(tx)
-
-    // Check security and send to other clients.
-    for (const cl of this.clients.entries()) {
-      if (cl[0] !== this.user.clientId && this.security.checkSecurity(cl[1].accountId, tx.objectSpace)) {
-        cl[1].tx(tx)
-      }
-    }
   }
 
   async accountId (): Promise<Ref<Account>> {

@@ -1,7 +1,6 @@
 import { deepEqual } from 'fast-equals'
 import { DerivedData, DerivedDataDescriptor, MappingRule, RuleExpresson } from '.'
 import { Data, Doc } from '../classes'
-import { generateId } from '../utils'
 
 type Descr = DerivedDataDescriptor<Doc, DerivedData>
 export interface DerivedDataOperations {
@@ -48,13 +47,13 @@ export function findExistingData (oldData: DerivedData[], newData: DerivedData[]
   return ops
 }
 
-export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr): T {
+export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr, len: number): T {
   const result = {
     _class: d.targetClass,
     objectId: doc._id,
     objectClass: doc._class,
     ...(d.initiValue ?? {}),
-    _id: generateId(),
+    _id: `dd-${doc._id}-${len}`,
     modifiedBy: doc.modifiedBy,
     modifiedOn: Date.now(),
     space: doc.space,
@@ -65,7 +64,7 @@ export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr): T {
 
 export function lastOrAdd (results: DerivedData[], d: Descr, doc: Doc): DerivedData {
   if (results.length === 0) {
-    results.push(newDerivedData(doc, d))
+    results.push(newDerivedData(doc, d, results.length))
   }
   return results[results.length - 1]
 }

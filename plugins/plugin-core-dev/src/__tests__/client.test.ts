@@ -13,23 +13,27 @@
 // limitations under the License.
 //
 
-import { connect } from '../connection'
-import core, { createClient } from '@anticrm/core'
+import core, { createClient, Doc, TxCreateDoc, TxProcessor } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
+import { connect } from '../connection'
 
 describe('client', () => {
   it('should create connection', async () => {
     const conn = await connect(() => {})
     const txes = builder.getTxes()
     const result = await conn.findAll(core.class.Tx, {})
-    expect(result).toHaveLength(txes.length)
+    expect(result.length).toEqual(txes.length)
   })
 
   it('should create client', async () => {
     const client = await createClient(connect)
     const txes = builder.getTxes()
     const result = await client.findAll(core.class.Class, {})
-    const expectedLength = txes.filter((tx) => client.isDerived((tx as any).objectClass, core.class.Class)).length
-    expect(result).toHaveLength(expectedLength)
+    const expected = txes
+      .filter(
+        (tx) => tx._class === core.class.TxCreateDoc && client.isDerived((tx as any).objectClass, core.class.Class)
+      )
+      .map((t) => TxProcessor.createDoc2Doc(t as TxCreateDoc<Doc>))
+    expect(result.length).toEqual(expected.length)
   })
 })

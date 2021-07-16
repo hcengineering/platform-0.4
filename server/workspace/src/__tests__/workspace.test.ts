@@ -15,7 +15,6 @@
 
 import core, {
   Account,
-  AccountProvider,
   Class,
   Client,
   createClient,
@@ -28,11 +27,11 @@ import core, {
   generateId,
   Ref,
   Space,
-  Storage,
   Tx,
   TxCreateDoc,
   TxOperations,
   TxUpdateDoc,
+  WithAccountId,
   withOperations
 } from '@anticrm/core'
 import { createClass, genMinModel } from '@anticrm/core/src/__tests__/minmodel'
@@ -306,7 +305,7 @@ describe('workspace', () => {
 })
 
 async function newWorkspaceClient (workspace: Workspace): Promise<Client & TxOperations> {
-  const clientStorage = workspace as unknown as Storage & AccountProvider
+  const clientStorage = workspace as unknown as WithAccountId
   clientStorage.accountId = async (): Promise<Ref<Account>> => {
     return core.account.System
   }

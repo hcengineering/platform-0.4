@@ -1,17 +1,17 @@
-import { Class, Doc, Domain, Ref } from './classes'
+import { Domain } from './classes'
 import { DerivedData } from './derived'
 
 /**
- * An generic reference from objecId, classId.
+ * An generic reference from objecId, classId to link.
+ *
+ * A `link` field value.
+ *
+ * Generic format is as in markdown:
+ *
+ * Example: [Text](ref://classId#objectId)
  */
-export interface Reference extends DerivedData {}
-
-/**
- * An back reference index.
- */
-export interface BackReference extends Reference {
-  sourceObjectId: Ref<Doc>
-  sourceObjectClass: Ref<Class<Doc>>
+export interface Reference extends DerivedData {
+  link: string
 }
 
-export const DOMAIN_REFERENCES = 'refs' as Domain
+export const DOMAIN_REFERENCES = 'references' as Domain

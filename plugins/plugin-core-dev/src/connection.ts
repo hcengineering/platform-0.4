@@ -13,17 +13,55 @@
 // limitations under the License.
 //
 
-import type { Account, AccountProvider, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx } from '@anticrm/core'
-import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
+import core, {
+  Account,
+  Class,
+  DerivedDataProcessor,
+  Doc,
+  DocumentQuery,
+  DOMAIN_TX,
+  FindResult,
+  Hierarchy,
+  ModelDb,
+  Ref,
+  Tx,
+  TxDb,
+  WithAccountId
+} from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 
-class ClientImpl implements Storage, AccountProvider {
+class ClientImpl implements WithAccountId {
   constructor (
     readonly hierarchy: Hierarchy,
     readonly model: ModelDb,
     readonly transactions: TxDb,
-    readonly handler: (tx: Tx) => void
+    readonly handler: (tx: Tx) => void,
+    readonly derivedData: DerivedDataProcessor
   ) {}
+
+  static async create (handler: (tx: Tx) => void): Promise<ClientImpl> {
+    const txes = builder.getTxes()
+
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+
+    const transactions = new TxDb(hierarchy)
+    const model = new ModelDb(hierarchy)
+    for (const tx of txes) {
+      await transactions.tx(tx)
+    }
+    for (const tx of txes) {
+      await model.tx(tx)
+    }
+
+    const ddp = await DerivedDataProcessor.create(model, hierarchy, model)
+    // This is for debug, to check for current model inside browser.
+    if (typeof window !== 'undefined') {
+      // Print model only from browser console.
+      console.info('Model Build complete', model)
+    }
+    return new ClientImpl(hierarchy, model, transactions, handler, ddp)
+  }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
@@ -43,7 +81,15 @@ class ClientImpl implements Storage, AccountProvider {
     // 3. update transactions
     await this.transactions.tx(tx)
 
-    // 4. process client handlers
+    // 4. Process derived data
+
+    await this.derivedData.tx(tx)
+
+    if (typeof window !== 'undefined') {
+      console.info('Model Build complete', this.model)
+    }
+
+    // 5. process client handlers
     this.handler(tx)
   }
 
@@ -52,20 +98,6 @@ class ClientImpl implements Storage, AccountProvider {
   }
 }
 
-export async function connect (handler: (tx: Tx) => void): Promise<Storage & AccountProvider> {
-  const txes = builder.getTxes()
-
-  const hierarchy = new Hierarchy()
-  for (const tx of txes) hierarchy.tx(tx)
-
-  const transactions = new TxDb(hierarchy)
-  const model = new ModelDb(hierarchy)
-  for (const tx of txes) {
-    await Promise.all([transactions.tx(tx), model.tx(tx)])
-  }
-
-  // This is for debug, to check for current model inside browser.
-  console.info('Model Build complete', model)
-
-  return new ClientImpl(hierarchy, model, transactions, handler)
+export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
+  return await ClientImpl.create(handler)
 }

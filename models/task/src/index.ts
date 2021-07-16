@@ -15,7 +15,7 @@
 
 import { Builder, Model } from '@anticrm/model'
 
-import core, { TDoc, TSpace } from '@anticrm/model-core'
+import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
 import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
 import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
 
@@ -63,5 +63,26 @@ export function createModel (builder: Builder): void {
     description: 'Default Project',
     private: false,
     members: []
+  })
+
+  // D E R I V E D   D A T A
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: task.class.Task,
+    targetClass: core.class.Title,
+    rules: [{ sourceField: 'name', targetField: 'title' }]
+  })
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: task.class.Task,
+    targetClass: core.class.Reference,
+    rules: [
+      {
+        sourceField: 'description',
+        targetField: 'link',
+        pattern: {
+          pattern: MARKDOWN_REFERENCE_PATTERN.source,
+          multDoc: true
+        }
+      }
+    ]
   })
 }

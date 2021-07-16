@@ -23,14 +23,14 @@ export function createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T>
   return result
 }
 
-export function createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>): Tx {
+export function createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, id?: Ref<T>): Tx {
   const tx: TxCreateDoc<T> = {
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     space: core.space.Tx,
     modifiedBy: core.account.System,
     modifiedOn: Date.now(),
-    objectId: generateId(),
+    objectId: id ?? generateId(),
     objectClass: _class,
     objectSpace: core.space.Model,
     attributes
