@@ -22,8 +22,8 @@ import platform from '../component'
 
 const TestComponent = 'test-strings' as Component
 
-const strings =  component(TestComponent, {
-  loadingPlugin: '' as IntlString<{ plugin: string }>,
+const strings = component(TestComponent, {
+  loadingPlugin: '' as IntlString<{ plugin: string }>
 })
 
 describe('i18n', () => {
@@ -112,7 +112,7 @@ describe('i18n', () => {
       done()
     }
     addEventListener(PlatformEvent, eventListener)
-    const translated = await translate(message as IntlString, {})
+    const translated = await translate(message, {})
     expect(translated).toBe(message)
     removeEventListener(PlatformEvent, eventListener)
   })

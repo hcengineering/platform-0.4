@@ -22,7 +22,7 @@ const Platform = 'platform' as Component
 export default component(Platform, {
   status: {
     LoadingPlugin: '' as StatusCode<{ plugin: string }>,
-    NoLoaderForStrings: '' as StatusCode<{ component: Component }>  
+    NoLoaderForStrings: '' as StatusCode<{ component: Component }>
   },
   metadata: {
     WhoAmI: '' as Metadata<string>,

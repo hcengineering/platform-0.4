@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Fix linging",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme",
+  "email": "haiodo@gmail.com"
+}

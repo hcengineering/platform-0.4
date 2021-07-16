@@ -21,7 +21,7 @@ import type { Project, Task, TaskStatus } from '@anticrm/task'
 
 import task from '@anticrm/task'
 
-export function getStatusColor(status: TaskStatus): string {
+export function getStatusColor (status: TaskStatus): string {
   switch (status) {
     case 'Open':
       return '#9D92C4'

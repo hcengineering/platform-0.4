@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/client",
+      "comment": "Fix linging",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/client",
+  "email": "haiodo@gmail.com"
+}

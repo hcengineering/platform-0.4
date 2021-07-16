@@ -13,13 +13,10 @@
 // limitations under the License.
 //
 
-import { Severity, Status } from '@anticrm/status'
-import platform, { getMetadata, setResource, setMetadata } from '@anticrm/platform'
-import { Request, Response, serialize } from '@anticrm/rpc'
-
-import login, { ACCOUNT_KEY, LoginInfo, LoginService } from '@anticrm/login'
-
+import login, { LoginService } from '@anticrm/login'
+import { setResource } from '@anticrm/platform'
 import LoginForm from './components/LoginApp.svelte'
+
 // import SettingForm from './components/SettingForm.svelte'
 // import MainLoginForm from './components/MainLoginForm.svelte'
 
@@ -29,7 +26,6 @@ import LoginForm from './components/LoginApp.svelte'
  * Licensed under the Eclipse Public License, Version 2.0
  */
 export default async (): Promise<LoginService> => {
-
   setResource(login.component.LoginForm, LoginForm)
 
   // const accountsUrl = getMetadata(login.metadata.AccountsUrl)

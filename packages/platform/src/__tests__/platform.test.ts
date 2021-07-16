@@ -15,39 +15,36 @@
 
 /* eslint-env jest */
 
-import { Status, Severity, OK, unknownError, component, Component } from '@anticrm/status'
-
-import { Metadata, getMetadata, loadMetadata, setMetadata } from '../metadata'
-import { Plugin, Service, getPlugin, addLocation } from '../plugin'
-import { Resource, getResource, peekResource, setResource } from '../resource'
+import { component, Component, OK, Severity, Status, unknownError } from '@anticrm/status'
 import {
   addEventListener,
-  removeEventListener,
   broadcastEvent,
-  setPlatformStatus,
   monitor,
-  PlatformEvent
+  PlatformEvent,
+  removeEventListener,
+  setPlatformStatus
 } from '../event'
-
+import { getMetadata, loadMetadata, Metadata, setMetadata } from '../metadata'
+import { addLocation, getPlugin } from '../plugin'
+import { getResource, peekResource, Resource, setResource } from '../resource'
 import {
+  descriptor1,
+  descriptor2,
+  descriptor3,
+  descriptorBad,
   plugin1,
   plugin1State,
-  descriptor1,
   plugin2State,
-  descriptor2,
-  plugin3,
-  descriptor3,
-  descriptorBad
+  plugin3
 } from './shared'
 
-type AnyPlugin = Plugin<Service>
+// type AnyPlugin = Plugin<Service>
 
 type ExtractType<T, X extends Record<string, Metadata<T>>> = {
   [P in keyof X]: X[P] extends Metadata<infer Z> ? Z : never
 }
 
 describe('platform', () => {
-
   it('should raise exception for unknown location', async () => {
     const p1 = getPlugin(plugin1)
     return await expect(p1).rejects.toThrowError('plugin1')
@@ -308,7 +305,7 @@ describe('platform', () => {
   })
 
   it('should create unknown error', () => {
-    const status = unknownError(new Error('something')) as Status<{message: string}>
+    const status = unknownError(new Error('something')) as Status<{ message: string }>
     expect(status.severity).toBe(Severity.ERROR)
     expect(status.params.message).toBe('something')
   })
