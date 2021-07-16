@@ -24,7 +24,7 @@
 </script>
 
 <section class="panel" on:dragover on:drop class:collapsed={collapsed}>
-  <div class="header" style="background-color: {color}" on:click={() => collapsed = !collapsed}>
+  <div class="header" style="border-left: 5px solid {color}" on:click={() => collapsed = !collapsed}>
     {#if collapsed !== true}<div class="title"><Label label={title}/></div>{/if}
     <div class="counter">{counter}</div>
   </div>
@@ -44,7 +44,7 @@
     align-items: stretch;
     min-width: 320px;
     height: 100%;
-    background-color: var(--theme-button-bg-enabled);
+    background-color: var(--theme-bg-bg-enabled);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
 
@@ -57,13 +57,11 @@
       justify-content: space-between;
       align-items: center;
       margin: 12px;
+      margin-left: 0px;
       padding: 0 8px 0 16px;
       height: 44px;
       min-height: 44px;
-      background-color: #F28469;
-      border: 1px solid rgba(0, 0, 0, .1);
-      border-radius: 8px;
-      color: #fff;
+      color: var(--theme-caption-color);
 
       .title {
         font-weight: 500;

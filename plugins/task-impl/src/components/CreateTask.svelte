@@ -21,6 +21,7 @@
   import task from '../plugin'
   import core, { Account, Ref, Space, generateId } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
+  import CheckList from './CheckList.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -28,7 +29,7 @@
   let name: string = ''
   let description: string = ''
   let assignee: Ref<Account> | undefined
-  const checkItems: CheckListItem[] = []
+  let checkItems: CheckListItem[] = []
 
   const client = getClient()
 
@@ -64,6 +65,7 @@
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name}/></div>
     <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description}/></div>
     <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch /></div>
+    <div class="row"><CheckList bind:items={checkItems} /></div>
   </div>
 </Dialog>
 

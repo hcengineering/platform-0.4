@@ -91,6 +91,7 @@
   {lines}
   findFunction={findTitle} 
   completions={completions}
+  on:blur
   on:prefix={(event) => {
     currentPrefix=event.detail
   }}

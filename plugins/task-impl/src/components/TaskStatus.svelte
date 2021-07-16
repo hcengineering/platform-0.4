@@ -19,10 +19,10 @@
   import { getStatusColor } from '../plugin'
 
   export let title: IntlString
-  let color: string = getStatusColor(title)
+  $: color = getStatusColor(title)
 </script>
 
-<div class="taskstatus-container" style="background-color: {color}">
+<div class="taskstatus-container" style="color: {color}">
   <Label label={title}/>
 </div>
 
@@ -39,7 +39,7 @@
     font-size: 10px;
     font-weight: 500;
     letter-spacing: .5;
-    color: #fff;
     border-radius: 8px;
+    background-color: var(--theme-bg-focused-color);
   }
 </style>

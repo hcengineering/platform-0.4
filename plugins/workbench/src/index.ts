@@ -43,6 +43,7 @@ export interface NavigatorModel {
   spaces: SpacesNavModel[]
   spaceView: AnyComponent
   createComponent?: AnyComponent
+  editComponent?: AnyComponent
 }
 
 export interface WorkbenchService extends Service {

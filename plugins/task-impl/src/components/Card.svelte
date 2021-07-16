@@ -27,7 +27,7 @@
   export let user: string = 'chen'
   let discussion: number = 0
   export let attach: number = 3
-  let progress = {
+  $: progress = {
     max: card.checkItems.length,
     value: card.checkItems.filter(p => p.done).length,
     color: getStatusColor(card.status)

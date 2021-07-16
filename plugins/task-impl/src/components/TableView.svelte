@@ -14,7 +14,7 @@
 -->
 
 <script lang="ts">
-  import type { AnySvelteComponent } from '@anticrm/ui'
+  import { AnySvelteComponent, getCurrentLocation, navigate } from '@anticrm/ui'
   import { Ref, Class, Doc, Space} from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
@@ -67,6 +67,13 @@
     return result
   }
 
+  function selectItem(id: Ref<Space>) {
+    const loc = getCurrentLocation()
+    loc.path[3] = id
+    loc.path.length = 4
+    navigate(loc)
+  }
+
 </script>
 
   <table class="table-body">
@@ -78,7 +85,7 @@
       </tr>
     {/if}
     {#each data as object (object._id)}
-      <tr class="tr-body">
+      <tr class="tr-body" on:click={() => { selectItem(object._id) }}>
       {#each getCells(object) as cell}
         <td><svelte:component this={cell.component} {...cell.props}/></td>
       {/each}

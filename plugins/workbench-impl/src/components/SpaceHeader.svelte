@@ -27,7 +27,7 @@
   export let model: NavigatorModel | undefined
 
   let data: Data<Space> | undefined
-  let addAction = async (): Promise<void> => {
+  const addAction = async (): Promise<void> => {
     if (model?.createComponent !== undefined) showModal(model.createComponent, {space})
   }
 

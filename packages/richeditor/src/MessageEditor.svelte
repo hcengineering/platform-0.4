@@ -149,6 +149,7 @@ const focusPlugin = new Plugin({
   props: {
     handleDOMEvents: {
       blur: () => {
+        dispatch('blur')
         hasFocus = false
       },
       focus: () => {

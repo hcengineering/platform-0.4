@@ -22,7 +22,7 @@
   import { setContext, onDestroy } from 'svelte'
   import type { Client } from '@anticrm/plugin-core'
 
-  import type { Ref, Space } from '@anticrm/core'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
 
@@ -32,27 +32,6 @@
   
   import { Component, location } from '@anticrm/ui'
 
-  import { SelectBox, UserInfo } from '@anticrm/ui'
-  import type { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent, IPopupItem } from '../types'
-
-  let items: Array<IPopupItem> = [{ selected: false, props: { user: 'chen' } },
-                                  { selected: false, props: { user: 'tim' } },
-                                  { selected: false, props: { user: 'elon' } },
-                                  { selected: false, props: { user: 'kathryn' } },
-                                  { selected: false, props: { user: 'chen' } },
-                                  { selected: false, props: { user: 'tim' } },
-                                  { selected: false, props: { user: 'elon' } },
-                                  { selected: false, props: { user: 'kathryn' } }]
-  let itemsStr: Array<IPopupItem> = [{ selected: false, title: 'chen' },
-                                     { selected: false, title: 'tim' },
-                                     { selected: false, title: 'elon' },
-                                     { selected: false, title: 'kathryn' },
-                                     { selected: false, title: 'chen' },
-                                     { selected: false, title: 'tim' },
-                                     { selected: false, title: 'elon' },
-                                     { selected: false, title: 'kathryn' }]
-
   export let client: Client
 
   setContext(workbench.context.Client, client)
@@ -60,10 +39,12 @@
   let currentApp: Ref<Application> | undefined
   let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
+  let itemId: Ref<Doc> | undefined
 
   onDestroy(location.subscribe(async (loc) => {
     currentApp = loc.path[1] as Ref<Application>
     currentSpace = loc.path[2] as Ref<Space>
+    itemId = loc.path[3] as Ref<Doc>
     navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
   }))
 </script>
@@ -90,15 +71,14 @@
   <div class="component">
     <SpaceHeader model={navigatorModel} space={currentSpace}/>
     {#if navigatorModel}
-      <Component is={navigatorModel.spaceView} props={{currentSpace: currentSpace
-      }}/>
+      <Component is={navigatorModel.spaceView} props={{currentSpace: currentSpace}}/>
     {/if}
   </div>
+  {#if navigatorModel && navigatorModel.editComponent && itemId}
   <div class="aside">
-    <SelectBox title={'PROJECT MEMBERS'} component={UserInfo} items={items} hAlign={'left'} vAlign={'bottom'}/>
-    <div style="height: 20px;"></div>
-    <SelectBox items={itemsStr} hAlign={'left'} vAlign={'bottom'}/>
+    <Component is={navigatorModel.editComponent} props={{id: itemId}}/>
   </div>
+  {/if}
 </div>
 <Modal />
 
