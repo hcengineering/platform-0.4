@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
-  import { Label, ScrollBox } from '@anticrm/ui'
+
+  import Label from '../Label.svelte'
+  import ScrollBox from '../ScrollBox.svelte'
 
   export let title: IntlString
   export let counter: number | undefined
@@ -23,17 +24,23 @@
   let collapsed: boolean = false
 </script>
 
-<section class="panel" on:dragover on:drop class:collapsed={collapsed}>
-  <div class="header" style="background-color: {color}" on:click={() => collapsed = !collapsed}>
-    {#if collapsed !== true}<div class="title"><Label label={title}/></div>{/if}
+<section class="panel" on:dragover on:drop class:collapsed>
+  <div
+    class="header"
+    style="background-color: {color}"
+    on:click={() => {
+      collapsed = !collapsed
+    }}
+  >
+    {#if collapsed !== true}<div class="title"><Label label={title} /></div>{/if}
     <div class="counter">{counter}</div>
   </div>
   {#if collapsed !== true}
-  <div class="scroll">
-    <ScrollBox vertical>
-      <slot/>
-    </ScrollBox>
-  </div>
+    <div class="scroll">
+      <ScrollBox vertical>
+        <slot />
+      </ScrollBox>
+    </div>
   {/if}
 </section>
 
@@ -47,11 +54,9 @@
     background-color: var(--theme-button-bg-enabled);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
-
     &.collapsed {
       min-width: 80px;
     }
-
     .header {
       display: flex;
       justify-content: space-between;
@@ -60,11 +65,10 @@
       padding: 0 8px 0 16px;
       height: 44px;
       min-height: 44px;
-      background-color: #F28469;
-      border: 1px solid rgba(0, 0, 0, .1);
+      background-color: #f28469;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       color: #fff;
-
       .title {
         font-weight: 500;
       }
@@ -78,11 +82,10 @@
         height: 28px;
         font-weight: 600;
         line-height: 150%;
-        background-color: rgba(47, 47, 52, .09);
+        background-color: rgba(47, 47, 52, 0.09);
         border-radius: 50%;
       }
     }
-
     .scroll {
       margin: 12px;
       height: 100%;
