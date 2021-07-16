@@ -33,6 +33,7 @@ import meeting from '@anticrm/meeting'
 // import personExtras from '@anticrm/person-extras'
 // import calendar from '@anticrm/calendar'
 
+import '@anticrm/ui-assets'
 import '@anticrm/chunter-assets'
 import '@anticrm/task-assets'
 import '@anticrm/meeting-assets'

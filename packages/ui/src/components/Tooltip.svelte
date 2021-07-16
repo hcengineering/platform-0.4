@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
@@ -22,9 +21,9 @@
 </script>
 
 <div class="container">
-  <div class="trigger"><slot/></div>
+  <div class="trigger"><slot /></div>
   <div class="tooltip {direction}">
-    <Label label={label}/>
+    <Label {label} />
   </div>
 </div>
 
@@ -34,7 +33,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     .trigger:hover + .tooltip {
       opacity: 1;
       &.top {
@@ -61,15 +60,15 @@
       border-radius: 8px;
       box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
       opacity: 0;
-      transition: transform .3s ease, opacity .2s ease-in-out;
+      transition: transform 0.3s ease, opacity 0.2s ease-in-out;
       pointer-events: none;
       user-select: none;
       text-align: center;
-      transition-delay: .2s;
+      transition-delay: 0.2s;
       z-index: 10;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         width: 14px;
         height: 14px;
@@ -79,7 +78,8 @@
         mask-image: linear-gradient(-45deg, rgba(0, 0, 0, 1) 9px, rgba(0, 0, 0, 0) 9.1px);
       }
 
-      &.top::after, &.bottom::after {
+      &.top::after,
+      &.bottom::after {
         left: 50%;
         margin-left: -8px;
       }
@@ -100,7 +100,8 @@
         }
       }
 
-      &.right::after, &.left::after {
+      &.right::after,
+      &.left::after {
         top: 50%;
         margin-top: -8px;
       }

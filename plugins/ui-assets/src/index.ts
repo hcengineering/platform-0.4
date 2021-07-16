@@ -1,5 +1,5 @@
-<!--
-// Copyright © 2020, 2021 Anticrm Platform Contributors.
+//
+// Copyright © 2020 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -11,19 +11,11 @@
 // 
 // See the License for the specific language governing permissions and
 // limitations under the License.
--->
-<script lang="ts">
-  import type { Asset } from '@anticrm/status'
-  import { getMetadata } from '@anticrm/platform'
+//
 
-  export let icon: Asset
-  export let size: 16 | 20 | 24 | 28
-  export let fill = 'var(--theme-caption-color)'
+import { addStringsLoader } from '@anticrm/platform'
+import ui from '@anticrm/ui'
 
-  let url: string
-  $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'
-</script>
-
-<svg width={size} height={size} {fill}>
-  <use href={url} />
-</svg>
+addStringsLoader(ui.id, (lang: string) => {
+  return import(`../lang/${lang}.json`)
+})

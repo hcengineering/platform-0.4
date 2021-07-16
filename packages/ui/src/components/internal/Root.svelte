@@ -14,16 +14,18 @@
   // import Mute from './icons/Mute.svelte'
   import WiFi from './icons/WiFi.svelte'
   import ThemeSelector from './ThemeSelector.svelte'
-  
+
   let application: AnyComponent | undefined
 
-  onDestroy(location.subscribe((loc) => {
-    if (loc.path[0]) {
-      const app = loc.path[0] as AnyComponent
-      const shortcut = getMetadata(applicationShortcutKey(app))
-      application = shortcut ?? app
-    }
-  }))
+  onDestroy(
+    location.subscribe((loc) => {
+      if (loc.path[0]) {
+        const app = loc.path[0] as AnyComponent
+        const shortcut = getMetadata(applicationShortcutKey(app))
+        application = shortcut ?? app
+      }
+    })
+  )
 
   let status = OK
 
@@ -47,7 +49,7 @@
             <ThemeSelector />
           </div>
           <div class="widget">
-            <WiFi size={16}/>
+            <WiFi size={16} />
           </div>
         </div>
       </div>

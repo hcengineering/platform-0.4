@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
-  import { onMount } from 'svelte'
   import Label from './Label.svelte'
 
   export let label: IntlString | undefined
@@ -33,10 +31,10 @@
   }
 </script>
 
-<div class="textArea" bind:this={divTA} style="{width ? 'width: ' + width : ''}">
-  <textarea class:nolabel={!label} {id} bind:value on:keyup placeholder=" " bind:this={textArea} on:scroll={scroll}/>
+<div class="textArea" bind:this={divTA} style={width ? 'width: ' + width : ''}>
+  <textarea class:nolabel={!label} {id} bind:value on:keyup placeholder=" " bind:this={textArea} on:scroll={scroll} />
   {#if label}
-    <div class="label"><Label label={label}/></div>
+    <div class="label"><Label {label} /></div>
   {/if}
 </div>
 
@@ -75,7 +73,7 @@
     .nolabel {
       padding-top: 0;
     }
-    
+
     .label {
       position: absolute;
       top: 18px;
@@ -94,8 +92,9 @@
     }
   }
 
-  :global(.topTAFade::before), :global(.bottomTAFade::after) {
-    content: "";
+  :global(.topTAFade::before),
+  :global(.bottomTAFade::after) {
+    content: '';
     position: absolute;
     left: 20px;
     width: calc(100% - 40px);
@@ -103,7 +102,8 @@
     background-color: var(--theme-button-bg-enabled);
     pointer-events: none;
   }
-  :global(.topTAFade:focus-within::before), :global(.bottomTAFade:focus-within::after) {
+  :global(.topTAFade:focus-within::before),
+  :global(.bottomTAFade:focus-within::after) {
     background-color: var(--theme-button-bg-focused);
   }
   :global(.topTAFade::before) {

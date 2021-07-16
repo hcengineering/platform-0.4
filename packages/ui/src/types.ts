@@ -61,8 +61,8 @@ export interface Action {
 
 export interface IPopupItem {
   _id?: number
-  title?: IntlString | undefined
-  component?: AnySvelteComponent | undefined
+  title?: IntlString
+  component?: AnySvelteComponent
   props?: Object
   selected?: boolean
   action?: Function
@@ -87,34 +87,3 @@ export interface ItemRefefence {
 }
 
 export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
-
-// export default plugin(
-//   'ui' as Plugin<UIService>,
-//   {},
-//   {
-//     metadata: {
-//       LoginApplication: '' as Metadata<string>,
-//       DefaultApplication: '' as Metadata<string>
-//     },
-//     icon: {
-//       Default: '' as Asset,
-//       Error: '' as Asset,
-//       Network: '' as Asset,
-//       Search: '' as Asset,
-//       Add: '' as Asset,
-//       ArrowDown: '' as Asset,
-//       Message: '' as Asset,
-//       Phone: '' as Asset,
-//       Mail: '' as Asset,
-//       More: '' as Asset
-//     },
-//     component: {
-//       Icon: '' as AnyComponent,
-//       Spinner: '' as AnyComponent,
-//       BadComponent: '' as AnyComponent
-//     },
-//     method: {
-//       AnAction: '' as Resource<(args: any) => void>
-//     }
-//   }
-// )

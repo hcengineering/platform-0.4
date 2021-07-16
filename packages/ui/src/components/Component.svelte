@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { getResource } from '@anticrm/platform'
   import type { AnyComponent } from '../types'
-  
+
   // import Icon from './Icon.svelte'
   import Spinner from './Spinner.svelte'
   import ErrorBoundary from './internal/ErrorBoundary'
@@ -41,27 +40,25 @@
 {/await}
 
 <style lang="scss">
+  .spinner-container {
+    display: flex;
+    height: 100%;
+  }
 
-.spinner-container {
-  display: flex;
-  height: 100%;
-}
+  @keyframes makeVisible {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 
-@keyframes makeVisible {
-  from {
+  .spinner-container .inner {
+    margin: auto;
     opacity: 0;
+    animation-name: makeVisible;
+    animation-duration: 0.25s;
+    animation-delay: 0.1s;
   }
-  to {
-    opacity: 1;
-  }
-}
-
-.spinner-container .inner {
-  margin: auto;
-  opacity: 0;
-  animation-name: makeVisible;
-  animation-duration: 0.25s;
-  animation-delay: 0.1s;
-}
-
 </style>

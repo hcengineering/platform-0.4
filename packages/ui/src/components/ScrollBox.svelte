@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   export let gap: number = 12
   export let vertical: boolean = false
@@ -20,9 +19,9 @@
   export let bothScroll: boolean = false
 </script>
 
-<div class="scroll" class:vertical={vertical} class:bothScroll={bothScroll}>
-  <div class="box" class:stretch={stretch} style="gap: {gap}px">
-    <slot/>
+<div class="scroll" class:vertical class:bothScroll>
+  <div class="box" class:stretch style="gap: {gap}px">
+    <slot />
   </div>
 </div>
 

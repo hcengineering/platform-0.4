@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   export let on: boolean = false
 </script>
 
 <label class="toggle">
-  <input class="chBox" type="checkbox" bind:checked={on}>
-  <span class="toggle-switch"></span>
+  <input class="chBox" type="checkbox" bind:checked={on} />
+  <span class="toggle-switch" />
 </label>
 
 <style lang="scss">
@@ -39,7 +38,7 @@
       padding: 0;
       clip: rect(0 0 0 0);
       overflow: hidden;
-      
+
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
@@ -70,7 +69,7 @@
       vertical-align: top;
       background-color: var(--theme-off-color);
       border: 1px solid transparent;
-      transition: .2s;
+      transition: 0.2s;
       &:before {
         content: '';
         position: absolute;
@@ -82,7 +81,7 @@
         border-radius: 50%;
         background: #fff;
         box-shadow: 1px 2px 7px rgba(119, 129, 142, 0.1);
-        transition: .15s;
+        transition: 0.15s;
       }
     }
   }
