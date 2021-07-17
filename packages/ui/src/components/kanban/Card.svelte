@@ -20,6 +20,12 @@
   export let doc: any
 </script>
 
-<div {draggable} on:dragstart on:dragend>
+<div class="root" {draggable} on:dragstart on:dragend>
   <svelte:component this={component} {doc} />
 </div>
+
+<style lang="scss">
+  .root {
+    cursor: grab;
+  }
+</style>

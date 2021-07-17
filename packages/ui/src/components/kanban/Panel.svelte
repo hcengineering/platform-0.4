@@ -21,12 +21,14 @@
   export let title: IntlString
   export let counter: number | undefined
   export let color: string = '#F28469'
+
   let collapsed: boolean = false
 </script>
 
 <section class="panel" on:dragover on:drop class:collapsed>
   <div
     class="header"
+    class:collapsed
     style="background-color: {color}"
     on:click={() => {
       collapsed = !collapsed
@@ -49,46 +51,57 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    min-width: 320px;
+
+    width: 320px;
     height: 100%;
-    background-color: var(--theme-button-bg-enabled);
+    background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
+
     &.collapsed {
-      min-width: 80px;
+      width: 80px;
     }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 12px;
-      padding: 0 8px 0 16px;
-      height: 44px;
-      min-height: 44px;
-      background-color: #f28469;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      color: #fff;
-      .title {
-        font-weight: 500;
-      }
-      .counter {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-width: 28px;
-        width: 28px;
-        height: 28px;
-        font-weight: 600;
-        line-height: 150%;
-        background-color: rgba(47, 47, 52, 0.09);
-        border-radius: 50%;
-      }
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 12px;
+    padding: 0 8px;
+    min-height: 44px;
+
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    &.collapsed {
+      justify-content: center;
     }
-    .scroll {
-      margin: 12px;
-      height: 100%;
-    }
+  }
+  .title {
+    padding-left: 8px;
+    font-weight: 500;
+  }
+  .counter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 28px;
+    height: 28px;
+
+    font-weight: 600;
+
+    background-color: rgba(47, 47, 52, 0.09);
+    border-radius: 50%;
+  }
+
+  .scroll {
+    margin: 12px;
+    height: 100%;
   }
 </style>
