@@ -10201,16 +10201,25 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-OVmKr+p05/avX1Y/SZ9a/qmwFLkDkvF5qqUS1ur265XBW+ygAnhuyW+iMrckUJ6BUKe7ZrzH2g/SjFMYzXDcuA==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-mbQAaxasNYAV01v2lTkak2A1INg6VYE7kuVJHEOwvNMZ7ATx3YOT99GOQnKBW9J95z30hqogBdTlHQQqvrgPOQ==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
     dependencies:
       '@types/node': 14.17.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
       autoprefixer: 10.2.6_postcss@8.3.4
       cross-env: 7.0.3
       css-loader: 5.2.4_webpack@5.37.1
       dotenv-webpack: 7.0.2_webpack@5.37.1
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       file-loader: 6.2.0_webpack@5.37.1
       mini-css-extract-plugin: 1.6.0_webpack@5.37.1
       postcss: 8.3.4
@@ -10234,6 +10243,7 @@ packages:
       - fibers
       - node-sass
       - sass
+      - supports-color
       - ts-node
       - typescript
       - utf-8-validate
@@ -10387,7 +10397,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-BMS/fAygDmn+qvXiHKKxBZYaJ7jR9iVWT/s6pj+DuGoe1AGpLYampU76yL3bY9CKwkqSkhRlDbbY75h/irJiag==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-ZUZOeAV4GAbFoTTeJolDKZgEFmdrnE/xGUGfdUBPerCDd/sY3qDoZXz9tU8Xr67xSp5gvxcu/9P35fdvDMjQJw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -10623,7 +10633,7 @@ packages:
     dev: false
 
   file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-spXtOq6DRCqWWRrytDgOP+MALxiGbOAp8xr2Zf1HZz2aWu6G9O8hQI8ssJVGk8yMTIXTPJb2T6NNZrtpQzGUPw==, tarball: file:projects/ui-assets.tgz}
+    resolution: {integrity: sha512-evAjfWslVHcROoLcDBkdYiFjnoevWnkWmdTKWLtJEGM7p8B08SP4HOgaLOswAPMKaq27I9eBjsjNobv+v3qBQw==, tarball: file:projects/ui-assets.tgz}
     id: file:projects/ui-assets.tgz
     name: '@rush-temp/ui-assets'
     version: 0.0.0

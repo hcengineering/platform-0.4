@@ -24,11 +24,11 @@ import { configurePlatform } from './platform'
 configurePlatform()
 
 const accountsUrl = process.env.APP_ACCOUNTS_URL
-const appHost = process.env.APP_WSHOST
-const appPort = process.env.APP_WSPORT
-const appToken = process.env.APP_TOKEN
-const meetingHost = process.env.MEETING_WSHOST
-const meetingPort = process.env.MEETING_WSPORT
+const appHost = process.env.APP_WSHOST ?? 'localhost'
+const appPort = process.env.APP_WSPORT ?? 18080
+const appToken = process.env.APP_TOKEN ?? ''
+const meetingHost = process.env.MEETING_WSHOST ?? 'localhost'
+const meetingPort = process.env.MEETING_WSPORT ?? 18081
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
 setMetadata(pluginCore.metadata.ClientUrl, `${appHost}:${appPort}/${appToken}`)
