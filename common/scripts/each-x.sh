@@ -25,7 +25,7 @@ for i in $roots
 do  
   pushd ${i}
 
-  node ${runScript} test --coverage
+  node ${runScript} $@
   
   retVal=$?  
   if [ $retVal -ne 0 ]; then

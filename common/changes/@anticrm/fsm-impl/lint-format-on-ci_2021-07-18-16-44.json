@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Linting fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl",
+  "email": "haiodo@gmail.com"
+}

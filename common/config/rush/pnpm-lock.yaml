@@ -150,7 +150,7 @@ dependencies:
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
   '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.23.0
-  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
   '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
@@ -9679,8 +9679,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/fsm-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-VA/OCIvs4Ge+cMXI9HEq22lA3CEp8dNOMO+rnm8hIlimJkvpt7TeJjikECY+DtcQvY4JFhPxUiqaTRChCD828Q==, tarball: file:projects/fsm-impl.tgz}
+  file:projects/fsm-impl.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-stKxvEqGwl7JNY43HCJCjFlR5lloiGCRDoTmiO/UTMVBMNjjSv1K1nwGk6Bq+9hJPvujOKGYH/8EpsJToZFlCg==, tarball: file:projects/fsm-impl.tgz}
     id: file:projects/fsm-impl.tgz
     name: '@rush-temp/fsm-impl'
     version: 0.0.0
@@ -9688,13 +9688,20 @@ packages:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/lodash.debounce': 4.0.6
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
-      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
       - bufferutil
       - canvas
       - supports-color
@@ -10148,7 +10155,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-impl.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-1ky8oiQ/PxTg4ITnrp8WkKtlJWRXHJ3woVO0LpXMF+/27TsG1mk0SmjBQdGRGjwrsGe8lUxzWJBIvrnj3sW+Cg==, tarball: file:projects/plugin-core-impl.tgz}
+    resolution: {integrity: sha512-b/mu2fb5WEc00Y6uzrIQ0ptnBAGtLGJMG0D8c1TWQs55Pqy+Hmd7VbNNbDpP5vkbtKeWPud/2rhME5QkBxYkvA==, tarball: file:projects/plugin-core-impl.tgz}
     id: file:projects/plugin-core-impl.tgz
     name: '@rush-temp/plugin-core-impl'
     version: 0.0.0
@@ -10168,6 +10175,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.28.0
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -10201,7 +10209,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-mbQAaxasNYAV01v2lTkak2A1INg6VYE7kuVJHEOwvNMZ7ATx3YOT99GOQnKBW9J95z30hqogBdTlHQQqvrgPOQ==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-L9OwgIdzBJ5+j8WJyQQwN8S/C4eD9ies+/07fox3BrLe7wpE/OFqYkbNslxl1em/Dv27MtlWt0Facf9r9uYbKg==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -10226,6 +10234,7 @@ packages:
       postcss-import: 14.0.2_postcss@8.3.4
       postcss-load-config: 3.1.0_ts-node@10.0.0
       postcss-loader: 6.1.0_postcss@8.3.4+webpack@5.37.1
+      prettier: 2.3.1
       sass-loader: 11.1.1_sass@1.32.13+webpack@5.37.1
       style-loader: 2.0.0_webpack@5.37.1
       svelte: 3.38.2
