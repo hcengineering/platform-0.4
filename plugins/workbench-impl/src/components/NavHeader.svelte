@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { ActionIcon } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
@@ -24,7 +23,7 @@
   <div class="title">
     <span>{title}</span>
     <div class="arrow">
-      <ActionIcon icon={MoreH} size={16}/>
+      <ActionIcon icon={MoreH} size={16} />
     </div>
   </div>
 </div>

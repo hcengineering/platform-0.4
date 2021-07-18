@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import Close from './icons/Close.svelte'
   import Add from './icons/Add.svelte'
@@ -22,10 +21,10 @@
 
 <div class="header">
   <div class="title"><span>{title}</span></div>
-  <div class="separator"/>
+  <div class="separator" />
   <div class="buttons">
-    <div class="button"><Close/></div>
-    <div class="button"><Add/></div>
+    <div class="button"><Close /></div>
+    <div class="button"><Add /></div>
   </div>
 </div>
 
@@ -50,7 +49,7 @@
         font-weight: 600;
         font-size: 12px;
         text-transform: uppercase;
-        color: #56A4FF;
+        color: #56a4ff;
       }
     }
     .separator {
@@ -63,7 +62,7 @@
       .button {
         width: 24px;
         height: 24px;
-        opacity: .4;
+        opacity: 0.4;
       }
       .button + .button {
         margin-right: 16px;

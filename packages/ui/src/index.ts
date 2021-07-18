@@ -16,15 +16,7 @@
 import { SvelteComponent } from 'svelte'
 import Root from './components/internal/Root.svelte'
 
-export type {
-  AnyComponent,
-  AnySvelteComponent,
-  Action,
-  CompletionPopupActions,
-  CompletionItem,
-  ExtendedCompletionItem,
-  ItemRefefence
-} from './types'
+export * from './types'
 export { applicationShortcutKey } from './utils'
 export { getCurrentLocation, navigate, location } from './location'
 

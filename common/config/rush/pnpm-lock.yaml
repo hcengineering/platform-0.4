@@ -188,7 +188,7 @@ dependencies:
   '@rush-temp/ui-assets': file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/webrtc': file:projects/webrtc.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678
+  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_07c573f4d671bf71ff87456011ae9f6b
   '@rush-temp/workspace': file:projects/workspace.tgz
   '@rush-temp/workspaces': file:projects/workspaces.tgz
   '@testing-library/svelte': 3.0.3_svelte@3.38.2
@@ -10723,24 +10723,33 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-sRPGBpP+Mw7UVIdotiXGttw0VSM7mCmmWRt0cw/Ry+lcr3vevFdSpmyF1NI9BrY/1MtJ6ZdTkjcb5s58tCRabA==, tarball: file:projects/workbench-impl.tgz}
+  file:projects/workbench-impl.tgz_07c573f4d671bf71ff87456011ae9f6b:
+    resolution: {integrity: sha512-nqNOqNqE0+xJw0/FWoIOtq7a4oGaGLOQa0uoNDkxgRv9cgFKZw/yljab7BoW7TQZQ4Xqx/39gRRJG3dbAl87dg==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
       prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
       sass: 1.32.13
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
       svelte-loader: 3.1.2_svelte@3.38.2
       svelte-preprocess: 4.7.3_4e2a6a97b7fbac24c9876bee9f9e1fa7
-      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
-      - '@typescript-eslint/parser'
       - coffeescript
       - less
       - node-sass

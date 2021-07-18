@@ -12,20 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
-  import type { Asset } from '@anticrm/status'
   import type { Ref, Space } from '@anticrm/core'
+  import { Action, getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
   import type { SpacesNavModel } from '@anticrm/workbench'
-  import { Action, navigate, getCurrentLocation } from '@anticrm/ui'
-
-  import { IconAdd } from '@anticrm/ui'
   import { getClient, showModal } from '@anticrm/workbench'
-
-  import TreeNode from './TreeNode.svelte'
+  import { onDestroy } from 'svelte'
   import TreeItem from './TreeItem.svelte'
+  import TreeNode from './TreeNode.svelte'
 
   export let model: SpacesNavModel
   export let space: Ref<Space>
@@ -35,7 +29,9 @@
 
   $: {
     unsubscribe()
-    unsubscribe = getClient().query(model.spaceClass, {}, result => { spaces = result })
+    unsubscribe = getClient().query(model.spaceClass, {}, (result) => {
+      spaces = result
+    })
   }
 
   onDestroy(unsubscribe)
@@ -48,7 +44,7 @@
     }
   }
 
-  function selectSpace(id: Ref<Space>) {
+  function selectSpace (id: Ref<Space>) {
     const loc = getCurrentLocation()
     loc.path[2] = id
     loc.path.length = 3
@@ -59,7 +55,13 @@
 <div>
   <TreeNode label={model.label} actions={[addSpace]}>
     {#each spaces as space}
-      <TreeItem title={space.name} icon={model.spaceIcon} on:click={() => { selectSpace(space._id) }}/>
+      <TreeItem
+        title={space.name}
+        icon={model.spaceIcon}
+        on:click={() => {
+          selectSpace(space._id)
+        }}
+      />
     {/each}
   </TreeNode>
 </div>
