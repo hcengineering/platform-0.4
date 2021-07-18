@@ -43,7 +43,7 @@ async function loadTranslationsForComponent (component: Component): Promise<Mess
     return status
   }
   try {
-    return await loader(locale) as Record<string, IntlString> | Status
+    return (await loader(locale)) as Record<string, IntlString> | Status
   } catch (err) {
     const status = unknownError(err)
     await setPlatformStatus(status)
@@ -62,7 +62,11 @@ async function getTranslation (message: IntlString): Promise<IntlString | Status
     if (messages instanceof Status) {
       return messages
     }
-    return (id.kind !== undefined ? (messages[id.kind] as Record<string, IntlString>)?.[id.name] : messages[id.name] as IntlString) ?? message
+    return (
+      (id.kind !== undefined
+        ? (messages[id.kind] as Record<string, IntlString>)?.[id.name]
+        : (messages[id.name] as IntlString)) ?? message
+    )
   } catch (err) {
     const status = unknownError(err)
     await setPlatformStatus(status)

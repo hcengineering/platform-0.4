@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Reformat",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl",
+  "email": "haiodo@gmail.com"
+}

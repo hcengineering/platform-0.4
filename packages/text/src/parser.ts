@@ -22,7 +22,7 @@ interface ParsingMarkRule {
 }
 
 type HandlerRecord = (state: MarkdownParseState, tok: Token) => void
-type HandlersRecord = Record<string, HandlerRecord >
+type HandlersRecord = Record<string, HandlerRecord>
 
 // ****************************************************************
 // Mark down parser
@@ -198,7 +198,12 @@ function withoutTrailingNewline (str: string): string {
   return str[str.length - 1] === '\n' ? str.slice(0, str.length - 1) : str
 }
 
-function addSpecBlock (handlers: HandlersRecord, spec: ParsingBlockRule, type: string, specBlock: MessageNodeType): void {
+function addSpecBlock (
+  handlers: HandlersRecord,
+  spec: ParsingBlockRule,
+  type: string,
+  specBlock: MessageNodeType
+): void {
   if (noCloseToken(spec, type)) {
     handlers[type] = newSimpleBlockHandler(specBlock, spec)
   } else {
@@ -230,7 +235,11 @@ function newSimpleMarkHandler (spec: ParsingMarkRule, specMark: MessageMarkType)
   }
 }
 
-function tokenHandlers (tokensBlock: {[key: string]: ParsingBlockRule}, tokensNode: {[key: string]: ParsingNodeRule}, tokensMark: {[key: string]: ParsingMarkRule}): HandlersRecord {
+function tokenHandlers (
+  tokensBlock: { [key: string]: ParsingBlockRule },
+  tokensNode: { [key: string]: ParsingNodeRule },
+  tokensMark: { [key: string]: ParsingMarkRule }
+): HandlersRecord {
   const handlers: HandlersRecord = {}
 
   Object.entries(tokensBlock).forEach(([type, spec]) => addSpecBlock(handlers, spec, type, spec.block))

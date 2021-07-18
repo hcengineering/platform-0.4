@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Reformat",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl",
+  "email": "haiodo@gmail.com"
+}

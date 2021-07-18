@@ -25,7 +25,8 @@ export * from './i18n'
 
 addStringsLoader(platform.id, async (lang: string) => {
   switch (lang) {
-    case 'en': return await import('./lang/en.json') as any
+    case 'en':
+      return (await import('./lang/en.json')) as any
   }
   throw new Error('unsupported language')
 })

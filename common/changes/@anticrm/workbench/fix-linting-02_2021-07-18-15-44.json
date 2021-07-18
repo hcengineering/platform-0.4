@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "Reformat",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench",
+  "email": "haiodo@gmail.com"
+}

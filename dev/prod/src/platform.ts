@@ -45,7 +45,7 @@ import '@anticrm/meeting-assets'
 // import dataGenMeta from '@anticrm/data-generator/src/__meta__'
 
 export function configurePlatform (): void {
-// platform.setMetadata(ui.metadata.LoginApplication, 'login')
+  // platform.setMetadata(ui.metadata.LoginApplication, 'login')
   // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
   if (process.env.CLIENT !== 'server') {

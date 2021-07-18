@@ -63,7 +63,7 @@ export function addLocation<P extends Service, X extends PluginDependencies> (
   plugin: PluginDescriptor<P, X>,
   module: PluginLoader<P, X>
 ): void {
-  locations.push([plugin, (module as unknown) as AnyPluginLoader])
+  locations.push([plugin, module as unknown as AnyPluginLoader])
 }
 
 export async function getPlugin<T extends Service> (id: Plugin<T>): Promise<T> {

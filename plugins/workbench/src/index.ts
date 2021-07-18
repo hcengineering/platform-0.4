@@ -45,20 +45,22 @@ export interface NavigatorModel {
   createComponent?: AnyComponent
 }
 
-export interface WorkbenchService extends Service {
-
-}
+export interface WorkbenchService extends Service {}
 
 const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 
-const workbench = plugin(PluginWorkbench, {}, {
-  context: {
-    Client: ''
-  },
-  class: {
-    Application: '' as Ref<Class<Application>>
+const workbench = plugin(
+  PluginWorkbench,
+  {},
+  {
+    context: {
+      Client: ''
+    },
+    class: {
+      Application: '' as Ref<Class<Application>>
+    }
   }
-})
+)
 
 export function getClient (): Client {
   return getContext<Client>(workbench.context.Client)
