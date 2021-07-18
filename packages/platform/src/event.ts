@@ -40,7 +40,7 @@ export async function broadcastEvent (event: string, data: any): Promise<void> {
   const listeners = eventListeners.get(event)
   if (listeners !== undefined) {
     const promises = listeners.map(async (listener) => await listener(event, data))
-    return await ((Promise.all(promises) as unknown) as Promise<void>)
+    return await (Promise.all(promises) as unknown as Promise<void>)
   }
 }
 

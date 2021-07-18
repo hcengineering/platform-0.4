@@ -32,7 +32,9 @@ describe('elastic search', () => {
     for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Doc>> })
     expect(first.length).toBe(1)
-    const second = await model.findAll(core.class.Class, { _id: { $in: [txes[0].objectId as Ref<Class<Doc>>, txes[5].objectId as Ref<Class<Doc>>] } })
+    const second = await model.findAll(core.class.Class, {
+      _id: { $in: [txes[0].objectId as Ref<Class<Doc>>, txes[5].objectId as Ref<Class<Doc>>] }
+    })
     expect(second.length).toBe(2)
     const third = await model.findAll(core.class.Space, { name: { $in: ['Sp1', 'Sp2'] } })
     expect(third.length).toBe(2)
@@ -53,16 +55,16 @@ describe('elastic search', () => {
     const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
     for (const tx of txes) await model.tx(tx)
 
-    const without = await model.findAll(core.class.Space, { })
+    const without = await model.findAll(core.class.Space, {})
     expect(without).toHaveLength(2)
 
-    const limit = await model.findAll(core.class.Space, { }, { limit: 1 })
+    const limit = await model.findAll(core.class.Space, {}, { limit: 1 })
     expect(limit).toHaveLength(1)
 
-    const sortAsc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Ascending } })
+    const sortAsc = await model.findAll(core.class.Space, {}, { sort: { name: SortingOrder.Ascending } })
     expect(sortAsc[0].name).toMatch('Sp1')
 
-    const sortDesc = await model.findAll(core.class.Space, { }, { sort: { name: SortingOrder.Descending } })
+    const sortDesc = await model.findAll(core.class.Space, {}, { sort: { name: SortingOrder.Descending } })
     expect(sortDesc[0].name).toMatch('Sp2')
   })
 

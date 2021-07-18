@@ -68,9 +68,7 @@ describe('status', () => {
   })
 
   it('should fail to parse id', () => {
-    expect(() => parseId('bad id' as Id)).toThrowError(
-      'ERROR: status:status.InvalidId'
-    )
+    expect(() => parseId('bad id' as Id)).toThrowError('ERROR: status:status.InvalidId')
   })
 
   it('should parse id', () => {

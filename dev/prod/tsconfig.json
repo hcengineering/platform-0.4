@@ -6,6 +6,7 @@
     "target": "es6",
     "allowJs": true,
     "sourceMap": true,
+    "strictNullChecks": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

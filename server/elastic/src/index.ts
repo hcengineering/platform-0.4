@@ -14,7 +14,23 @@
 // limitations under the License.
 //
 
-import { Class, Hierarchy, Doc, Ref, TxProcessor, TxCreateDoc, DocumentQuery, ObjQueryType, TxUpdateDoc, TxRemoveDoc, FindOptions, SortingQuery, SortingOrder, FindResult, likeSymbol } from '@anticrm/core'
+import {
+  Class,
+  Hierarchy,
+  Doc,
+  Ref,
+  TxProcessor,
+  TxCreateDoc,
+  DocumentQuery,
+  ObjQueryType,
+  TxUpdateDoc,
+  TxRemoveDoc,
+  FindOptions,
+  SortingQuery,
+  SortingOrder,
+  FindResult,
+  likeSymbol
+} from '@anticrm/core'
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
@@ -51,7 +67,11 @@ export class ElasticStorage extends TxProcessor implements Storage {
     })
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const result: T[] = []
 
     const criteries = []
@@ -131,9 +151,11 @@ export class ElasticStorage extends TxProcessor implements Storage {
     await this.client.indices.refresh({ index: this.workspace })
   }
 
-  private async createSort<T extends Doc> (sort: SortingQuery<T> | undefined): Promise<Array<Record<string, { order: string, mode: string}>> | undefined> {
+  private async createSort<T extends Doc>(
+    sort: SortingQuery<T> | undefined
+  ): Promise<Array<Record<string, { order: string, mode: string }>> | undefined> {
     if (sort !== undefined) {
-      const result: Array<Record<string, { order: string, mode: string}>> = []
+      const result: Array<Record<string, { order: string, mode: string }>> = []
       for (const key in sort) {
         const name = await this.getName(key)
         const direction = getSortingDirection(sort[key])

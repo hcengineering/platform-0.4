@@ -36,8 +36,19 @@
   }
 </script>
 
-<div class="msg-board" bind:this={div} on:scroll={() => { (div.scrollTop > div.scrollHeight - div.clientHeight - 20) ? autoscroll = true : autoscroll = false }}>
-  <Channel space={currentSpace} on:update={async () => { if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight) }} />
+<div
+  class="msg-board"
+  bind:this={div}
+  on:scroll={() => {
+    div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
+  }}
+>
+  <Channel
+    space={currentSpace}
+    on:update={async () => {
+      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
+    }}
+  />
 </div>
 <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
 

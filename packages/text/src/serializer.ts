@@ -39,10 +39,16 @@ function backticksFor (side: boolean): string {
 }
 
 const URIHelper = {
-  isNotText (parentContent: MessageNode[], attrs: { [key: string]: string }, index: number, side: number, link: MessageMark): boolean {
+  isNotText (
+    parentContent: MessageNode[],
+    attrs: { [key: string]: string },
+    index: number,
+    side: number,
+    link: MessageMark
+  ): boolean {
     const content = parentContent[index + (side < 0 ? -1 : 0)]
     const marks = [...(content?.marks ?? [])]
-    return (content?.type !== MessageNodeType.text || content?.text !== attrs.href || marks[marks.length - 1] !== link)
+    return content?.type !== MessageNodeType.text || content?.text !== attrs.href || marks[marks.length - 1] !== link
   },
 
   isNotURL (attrs: { [key: string]: string }): boolean {
@@ -62,7 +68,11 @@ function isPlainURL (link: MessageMark, parent: MessageNode, index: number, side
   const attrs = markAttrs(link)
   const parentContent = messageContent(parent)
   const invalid = URIHelper.isNotURL(attrs) || URIHelper.isNotText(parentContent, attrs, index, side, link)
-  return !invalid && (URIHelper.isLast(index, side, parentContent.length) || !isInSet(link, URIHelper.getURINext(parentContent, index, side).marks ?? []))
+  return (
+    !invalid &&
+    (URIHelper.isLast(index, side, parentContent.length) ||
+      !isInSet(link, URIHelper.getURINext(parentContent, index, side).marks ?? []))
+  )
 }
 
 // *************************************************************
@@ -250,8 +260,12 @@ export class MarkdownState implements IState {
   private addDelim (size: number): void {
     let delimMin = this.delim
     const trim = /\s+$/.exec(delimMin)
-    if (trim !== null) { delimMin = delimMin.slice(0, delimMin.length - trim[0].length) }
-    for (let i = 1; i < size; i++) { this.out += delimMin + '\n' }
+    if (trim !== null) {
+      delimMin = delimMin.slice(0, delimMin.length - trim[0].length)
+    }
+    for (let i = 1; i < size; i++) {
+      this.out += delimMin + '\n'
+    }
   }
 
   wrapBlock (delim: string, firstDelim: string | null, node: MessageNode, f: () => void): void {
@@ -341,7 +355,14 @@ export class MarkdownState implements IState {
     }
   }
 
-  private checkSwitchMarks (i: number, j: number, state: InlineState, mark: MessageMark, other: MessageMark, len: number): boolean {
+  private checkSwitchMarks (
+    i: number,
+    j: number,
+    state: InlineState,
+    mark: MessageMark,
+    other: MessageMark,
+    len: number
+  ): boolean {
     if (!markEq(mark, other) || i === j) {
       return false
     }
@@ -388,7 +409,13 @@ export class MarkdownState implements IState {
     this.checkOpenMarks(state, len, index, inner, noEsc)
   }
 
-  private checkOpenMarks (state: InlineState, len: number, index: number, inner: MessageMark | undefined, noEsc: boolean): void {
+  private checkOpenMarks (
+    state: InlineState,
+    len: number,
+    index: number,
+    inner: MessageMark | undefined,
+    noEsc: boolean
+  ): void {
     if (state.node !== undefined) {
       this.updateActiveMarks(state, len, index)
 
@@ -402,15 +429,20 @@ export class MarkdownState implements IState {
     }
   }
 
-  private isNoEscapeRequire (node: MessageNode, inner: MessageMark | undefined, noEsc: boolean, state: InlineState): boolean {
+  private isNoEscapeRequire (
+    node: MessageNode,
+    inner: MessageMark | undefined,
+    noEsc: boolean,
+    state: InlineState
+  ): boolean {
     return inner !== undefined && noEsc && node.type === MessageNodeType.text
   }
 
   private renderMarkText (inner: MessageMark, state: InlineState, index: number): void {
     this.text(
       this.markString(inner, true, state.parent, index) +
-      (state.node?.text as string) +
-      this.markString(inner, false, state.parent, index + 1),
+        (state.node?.text as string) +
+        this.markString(inner, false, state.parent, index + 1),
       false
     )
   }
@@ -460,10 +492,18 @@ export class MarkdownState implements IState {
     return state.marks.some((mark) => this.marks[mark.type]?.expelEnclosingWhitespace)
   }
 
-  private adjustLeadingTextNode (lead: string, trail: string, state: InlineState, inner: string, node: MessageNode): void {
+  private adjustLeadingTextNode (
+    lead: string,
+    trail: string,
+    state: InlineState,
+    inner: string,
+    node: MessageNode
+  ): void {
     if (lead !== '' || trail !== '') {
       state.node = inner !== undefined ? { ...node, text: inner } : undefined
-      if (state.node === undefined) { state.marks = state.active }
+      if (state.node === undefined) {
+        state.marks = state.active
+      }
     }
   }
 
@@ -483,7 +523,9 @@ export class MarkdownState implements IState {
   }
 
   private isHardbreakText (next?: MessageNode): boolean {
-    return next !== undefined && (next.type !== MessageNodeType.text || (next.text !== undefined && /\S/.test(next.text)))
+    return (
+      next !== undefined && (next.type !== MessageNodeType.text || (next.text !== undefined && /\S/.test(next.text)))
+    )
   }
 
   private isText (node?: MessageNode): boolean {
@@ -510,7 +552,9 @@ export class MarkdownState implements IState {
   renderList (node: MessageNode, delim: string, firstDelim: FirstDelim): void {
     this.flushListClose(node)
 
-    const isTight: boolean = node.attrs !== undefined && (typeof node.attrs.tight !== 'undefined' ? node.attrs.tight === 'true' : this.options.tightLists)
+    const isTight: boolean =
+      node.attrs !== undefined &&
+      (typeof node.attrs.tight !== 'undefined' ? node.attrs.tight === 'true' : this.options.tightLists)
     const prevTight = this.inTightList
     this.inTightList = isTight
 
@@ -518,7 +562,14 @@ export class MarkdownState implements IState {
     this.inTightList = prevTight
   }
 
-  renderListItem (node: MessageNode, child: MessageNode, i: number, isTight: boolean, delim: string, firstDelim: FirstDelim): void {
+  renderListItem (
+    node: MessageNode,
+    child: MessageNode,
+    i: number,
+    isTight: boolean,
+    delim: string,
+    firstDelim: FirstDelim
+  ): void {
     if (i > 0 && isTight) this.flushClose(1)
     this.wrapBlock(delim, firstDelim(i), node, () => this.render(child, node, i))
   }
@@ -526,7 +577,9 @@ export class MarkdownState implements IState {
   private flushListClose (node: MessageNode): void {
     if (this.closed && this.closedNode?.type === node.type) {
       this.flushClose(3)
-    } else if (this.inTightList) { this.flushClose(1) }
+    } else if (this.inTightList) {
+      this.flushClose(1)
+    }
   }
 
   // :: (string, ?bool) → string

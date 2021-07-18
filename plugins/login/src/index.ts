@@ -38,27 +38,22 @@ export function currentAccount (): LoginInfo | null {
 
 export interface LoginService extends Service {
   // doLogin (username: string, password: string, workspace: string, secondFactorCode: string): Promise<Status>
-
   // /**
   //  * Check and auto return login information if available.
   //  */
   // getLoginInfo (): Promise<LoginInfo | undefined>
-
   // /**
   //  * Do navigate to default application if defined.
   //  */
   // navigateApp (): void
-
   // /**
   // * Do navigate to login form
   // */
   // navigateLoginForm (): void
-
   // /**
   // * Save profile settings
   // */
   // saveSetting (password: string, newPassword: string, secondFactorEnabled: boolean, clientSecret: string, secondFactorCode: string): Promise<Status>
-
   // /**
   //  * Do logout from current logged in account
   //  */
@@ -67,17 +62,21 @@ export interface LoginService extends Service {
 
 const PluginLogin = 'login' as Plugin<LoginService>
 
-const login = plugin(PluginLogin, {}, {
-  component: {
-    LoginForm: '' as AnyComponent,
-    SettingForm: '' as AnyComponent,
-    MainLoginForm: '' as AnyComponent,
-    SignupForm: '' as AnyComponent
-  },
-  metadata: {
-    AccountsUrl: '' as Metadata<string>
+const login = plugin(
+  PluginLogin,
+  {},
+  {
+    component: {
+      LoginForm: '' as AnyComponent,
+      SettingForm: '' as AnyComponent,
+      MainLoginForm: '' as AnyComponent,
+      SignupForm: '' as AnyComponent
+    },
+    metadata: {
+      AccountsUrl: '' as Metadata<string>
+    }
   }
-})
+)
 
 setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
 addStringsLoader(PluginLogin, async (lang: string) => {

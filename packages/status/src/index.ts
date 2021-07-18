@@ -26,7 +26,7 @@ export enum Severity {
   OK = 'OK',
   INFO = 'INFO',
   WARNING = 'WARNING',
-  ERROR = 'ERROR',
+  ERROR = 'ERROR'
 }
 
 export type Id = string & { __id: true }
@@ -74,11 +74,7 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 export type Namespace = Record<string, string | Record<string, string>>
 type ComponentDescriptor<C extends Component> = { id: C } // eslint-disable-line
 
-function transform (
-  result: Record<string, any>,
-  prefix: string,
-  namespace: Record<string, any>
-): Namespace {
+function transform (result: Record<string, any>, prefix: string, namespace: Record<string, any>): Namespace {
   for (const key in namespace) {
     const value = namespace[key]
     if (typeof result[key] === 'string') {
@@ -89,11 +85,7 @@ function transform (
         ? value === ''
           ? prefix + '.' + key
           : value
-        : transform(
-          result[key] === undefined ? {} : result[key],
-          key + ':' + prefix,
-          value
-        )
+        : transform(result[key] === undefined ? {} : result[key], key + ':' + prefix, value)
   }
   return result
 }
@@ -102,13 +94,10 @@ export function component<C extends Component, N extends Namespace> (
   component: C,
   namespace: N
 ): ComponentDescriptor<C> & N {
-  return { id: component, ...transform({}, component, namespace) as N }
+  return { id: component, ...(transform({}, component, namespace) as N) }
 }
 
-export function mergeIds<C extends ComponentDescriptor<Component>, M extends Namespace> (
-  component: C,
-  merge: M
-): C & M {
+export function mergeIds<C extends ComponentDescriptor<Component>, M extends Namespace> (component: C, merge: M): C & M {
   return transform(Object.assign({}, component), component.id, merge) as C & M
 }
 

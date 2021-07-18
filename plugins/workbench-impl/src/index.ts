@@ -25,7 +25,6 @@ import workbench from './plugin'
  * Licensed under the Eclipse Public License, Version 2.0
  */
 export default async (): Promise<WorkbenchService> => {
-
   setResource(workbench.component.WorkbenchApp, WorkbenchApp)
 
   return {}

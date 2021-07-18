@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import Collapsed from '../icons/Collapsed.svelte'
   import Expanded from '../icons/Expanded.svelte'
@@ -35,22 +34,37 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<div class="container" on:mouseover={() => { toolInvisible = false }} on:mouseout={() => { toolInvisible = true }}
-                       on:click|stopPropagation={() => {if (node && !icon) collapsed = !collapsed; dispatch('click')}}>
+<div
+  class="container"
+  on:mouseover={() => {
+    toolInvisible = false
+  }}
+  on:mouseout={() => {
+    toolInvisible = true
+  }}
+  on:click|stopPropagation={() => {
+    if (node && !icon) collapsed = !collapsed
+    dispatch('click')
+  }}
+>
   <div class="title" class:sub={!node}>
     <div class="icon" class:sub={!node}>
       {#if icon}
-        <Icon {icon} size={16}/>
-      {:else}
-        {#if collapsed}<Collapsed/>{:else}<Expanded/>{/if}
-      {/if}
+        <Icon {icon} size={16} />
+      {:else if collapsed}<Collapsed />{:else}<Expanded />{/if}
     </div>
     <span>
-      {#if label}<Label {label}/>{:else}{title}{/if}
+      {#if label}<Label {label} />{:else}{title}{/if}
     </span>
     {#each actions as action}
       <div class="tool">
-        <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} invisible={toolInvisible}/>
+        <ActionIcon
+          label={action.label}
+          icon={action.icon}
+          size={16}
+          action={action.action}
+          invisible={toolInvisible}
+        />
       </div>
     {/each}
     {#if notifications > 0 && collapsed}
@@ -59,8 +73,8 @@
   </div>
 </div>
 {#if node && !icon}
-  <div class="dropdown" class:collapsed={collapsed}>
-    <slot/>
+  <div class="dropdown" class:collapsed>
+    <slot />
   </div>
 {/if}
 
@@ -87,7 +101,7 @@
         height: 16px;
         margin: 10px 16px 10px 18px;
         border-radius: 4px;
-        opacity: .3;
+        opacity: 0.3;
         &.sub {
           margin: 10px 16px 10px 50px;
         }
@@ -123,7 +137,7 @@
         height: 24px;
         border-radius: 50%;
         margin: 6px 10px;
-        background-color: #DA5F44;
+        background-color: #da5f44;
         font-size: 12px;
         font-weight: 600;
         color: #fff;
