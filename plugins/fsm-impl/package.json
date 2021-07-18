@@ -8,7 +8,7 @@
     "build": "echo 'source code'",
     "build:docs": "api-extractor run --local",
     "test": "echo 'no tests'",
-    "lint": "eslint src",
+    "lint": "tsc --version && eslint --version && eslint src",
     "lint:fix": "eslint --fix src",
     "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src"
   },
@@ -18,7 +18,6 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.25.0",
-    "eslint-config-standard": "^16.0.2",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",

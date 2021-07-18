@@ -81,6 +81,9 @@ jobs:
       
       - name: Installing...
         run: node common/scripts/install-run-rush.js install
+      
+      - name: Building...
+        run: node common/scripts/install-run-rush.js build
 
       - name: Run lint
         run: |
@@ -99,6 +102,9 @@ jobs:
 
       - name: Installing...
         run: node common/scripts/install-run-rush.js install
+      
+      - name: Building...
+        run: node common/scripts/install-run-rush.js build
 
       - name: Check files formatting
         run: |

@@ -13,17 +13,16 @@
 // limitations under the License.
 //
 
-import { getPlugin } from '@anticrm/platform'
-import type { Class, Client, Doc, Ref, TxOperations } from '@anticrm/core'
+import type { Class, Doc, Ref } from '@anticrm/core'
 import core from '@anticrm/core'
 import type { FSM, FSMItem, FSMService, State, Transition, WithFSM } from '@anticrm/fsm'
-import corePlugin from '@anticrm/plugin-core'
-
+import { getPlugin } from '@anticrm/platform'
+import corePlugin, { Client } from '@anticrm/plugin-core'
 import fsmPlugin from './plugin'
 
 export default async (): Promise<FSMService> => {
   const coreP = await getPlugin(corePlugin.id)
-  const client = (await coreP.getClient()) as never as Client & TxOperations
+  const client: Client = await coreP.getClient()
 
   const getStates = async (fsm: Ref<FSM>): Promise<State[]> => await client.findAll(fsmPlugin.class.State, { fsm })
 
