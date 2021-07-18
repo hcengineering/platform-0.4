@@ -10209,7 +10209,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-mbQAaxasNYAV01v2lTkak2A1INg6VYE7kuVJHEOwvNMZ7ATx3YOT99GOQnKBW9J95z30hqogBdTlHQQqvrgPOQ==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-L9OwgIdzBJ5+j8WJyQQwN8S/C4eD9ies+/07fox3BrLe7wpE/OFqYkbNslxl1em/Dv27MtlWt0Facf9r9uYbKg==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -10234,6 +10234,7 @@ packages:
       postcss-import: 14.0.2_postcss@8.3.4
       postcss-load-config: 3.1.0_ts-node@10.0.0
       postcss-loader: 6.1.0_postcss@8.3.4+webpack@5.37.1
+      prettier: 2.3.1
       sass-loader: 11.1.1_sass@1.32.13+webpack@5.37.1
       style-loader: 2.0.0_webpack@5.37.1
       svelte: 3.38.2
