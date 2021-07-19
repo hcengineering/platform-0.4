@@ -30,7 +30,7 @@
 
   const client = getClient()
 
-  function query(prefix: string): DocumentQuery<Title> {
+  function query (prefix: string): DocumentQuery<Title> {
     return {
       title: { $like: prefix + '%' }
     }
@@ -48,7 +48,7 @@
     )
   }
 
-  function updateTitles(docs: Title[]): CompletionItem[] {
+  function updateTitles (docs: Title[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
       // if (startsWith(value.title.toString(), currentPrefix)) {
@@ -66,7 +66,7 @@
     return items
   }
 
-  async function findTitle(title: string): Promise<ItemRefefence[]> {
+  async function findTitle (title: string): Promise<ItemRefefence[]> {
     const docs = await client.findAll<Title>(core.class.Title, {
       title: title
     })
@@ -83,7 +83,6 @@
     }
     return []
   }
-
 </script>
 
 <MDRefEditor

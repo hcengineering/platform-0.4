@@ -44,7 +44,7 @@
 
   let unsubscribe = () => {}
 
-  async function getItem(id: Ref<Task>) {
+  async function getItem (id: Ref<Task>) {
     unsubscribe()
     unsubscribe = client.query(task.class.Task, { _id: id }, (result) => {
       item = result[0]
@@ -58,20 +58,20 @@
     unsubscribe()
   })
 
-  function close() {
+  function close () {
     const loc = getCurrentLocation()
     loc.path.length = 3
     navigate(loc)
   }
 
-  async function updateCheckItem() {
+  async function updateCheckItem () {
     if (item === undefined) return
     await client.updateDoc(item._class, item.space, item._id, {
       checkItems: checkItems
     })
   }
 
-  async function updateDescription() {
+  async function updateDescription () {
     if (item === undefined) return
     if (item.description !== description) {
       await client.updateDoc(item._class, item.space, item._id, {
@@ -79,7 +79,6 @@
       })
     }
   }
-
 </script>
 
 {#await getItem(id) then value}
@@ -157,5 +156,4 @@
       }
     }
   }
-
 </style>

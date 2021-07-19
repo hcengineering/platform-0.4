@@ -20,18 +20,17 @@
   export let items: Array<CheckListItem>
   let newItem: CheckListItem | undefined
 
-  async function add() {
-    if (newItem != undefined) {
+  async function add () {
+    if (newItem !== undefined) {
       items.push(newItem)
       items = items
       newItem = undefined
     }
   }
 
-  async function change() {
+  async function change () {
     items = items.filter((item) => item.description)
   }
-
 </script>
 
 {#if items.length}
@@ -101,5 +100,4 @@
       }
     }
   }
-
 </style>

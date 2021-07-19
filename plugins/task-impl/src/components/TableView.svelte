@@ -45,7 +45,7 @@
   const client = getClient()
   let unsubscribe = () => {}
 
-  $: if (currentSpace != undefined) {
+  $: if (currentSpace !== undefined) {
     unsubscribe()
     unsubscribe = client.query(_class, { space: currentSpace }, (result) => (data = result))
   }
@@ -54,7 +54,7 @@
     unsubscribe()
   })
 
-  function getCells(doc: Doc): Cell[] {
+  function getCells (doc: Doc): Cell[] {
     const result: Cell[] = []
     for (const field of fields) {
       const props = new Object()
@@ -66,13 +66,12 @@
     return result
   }
 
-  function selectItem(id: Ref<Space>) {
+  function selectItem (id: Ref<Space>) {
     const loc = getCurrentLocation()
     loc.path[3] = id
     loc.path.length = 4
     navigate(loc)
   }
-
 </script>
 
 <table class="table-body">
@@ -148,5 +147,4 @@
       }
     }
   }
-
 </style>

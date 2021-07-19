@@ -19,7 +19,6 @@
 
   export let title: IntlString
   $: color = getStatusColor(title)
-
 </script>
 
 <div class="taskstatus-container" style="color: {color}">
@@ -42,5 +41,4 @@
     border-radius: 8px;
     background-color: var(--theme-bg-focused-color);
   }
-
 </style>

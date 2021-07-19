@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, Dialog, TextArea, UserBox } from '@anticrm/ui'
+  import { EditBox, Dialog, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
@@ -32,11 +32,11 @@
 
   const client = getClient()
 
-  async function create() {
+  async function create () {
     const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
-    let spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
-    let commentSpace = (
+    const spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
+    const commentSpace = (
       await client.createDoc(core.class.Space, core.space.Model, {
         name: `${shortRefId} comments`,
         description: `${shortRefId} comments`,
@@ -45,7 +45,7 @@
       })
     )._id
 
-    const doc = await client.createDoc(
+    await client.createDoc(
       task.class.Task,
       space,
       {
@@ -60,7 +60,6 @@
       id
     )
   }
-
 </script>
 
 <Dialog
@@ -93,5 +92,4 @@
       grid-column-end: 3;
     }
   }
-
 </style>

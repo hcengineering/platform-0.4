@@ -20,7 +20,6 @@
   export let counter: number | undefined
   export let color: string = '#F28469'
   let collapsed: boolean = false
-
 </script>
 
 <section class="panel" on:dragover on:drop class:collapsed>
@@ -86,5 +85,4 @@
       height: 100%;
     }
   }
-
 </style>

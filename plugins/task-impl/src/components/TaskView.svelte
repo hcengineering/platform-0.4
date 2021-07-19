@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Ref, Class, Doc, Space } from '@anticrm/core'
+  import { Ref, Class, Doc, Space } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import ViewSelection from './ViewSelection.svelte'
   import KanbanView from './KanbanView.svelte'
@@ -41,7 +41,6 @@
     },
     { label: 'Assignee' as IntlString, properties: [{ value: 'elon', property: 'user' }], component: UserInfo }
   ]
-
 </script>
 
 <div class="container">
@@ -88,5 +87,4 @@
       }
     }
   }
-
 </style>
