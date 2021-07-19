@@ -10488,7 +10488,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-a4l+jj1co4mNEA0AITuqMtqJp+hL4kxf8aXGhmGXufs+jo34Kh5B8YbwAEAhiYfvX1G4pG+QS7gIXZN6VtASeg==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-weqp0a5cvpy4tvO+KpVDVQ28LV+j1VOEwR2MKV+RvjIpRVCCzKReaAflzCqEZoesyUjHeQpOlmJ6O6OfX8VDcw==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
@@ -10497,6 +10497,7 @@ packages:
       '@types/jest': 26.0.23
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
       svelte: 3.38.2
       svelte-loader: 3.1.2_svelte@3.38.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
