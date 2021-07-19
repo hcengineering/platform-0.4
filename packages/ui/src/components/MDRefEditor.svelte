@@ -190,19 +190,25 @@
     min-height: 74px;
 
     .textInput {
+      position: relative;
       display: flex;
       justify-content: space-between;
       // align-items: center;
       min-height: 44px;
-      padding: 8px 16px;
+      // margin: 26px 20px 10px;
       background-color: var(--theme-bg-accent-color);
-      border: 1px solid var(--theme-bg-accent-color);
+      border: 1px solid var(--theme-bg-accent-hover);
       border-radius: 12px;
+
+      &:focus-within {
+        background-color: var(--theme-bg-focused-color);
+        border-color: var(--theme-bg-focused-border);
+      }
 
       .inputMsg {
         width: 100%;
         height: 100%;
-        padding: 10px 0px;
+        padding: 26px 20px 10px;
         color: var(--theme-content-color);
         background-color: transparent;
         border: none;
@@ -226,14 +232,14 @@
         .edit-box-vertical {
           width: 100%;
           height: 100%;
-          margin: 4px;
+          // margin: 4px;
         }
       }
     }
 
     .label {
       position: absolute;
-      top: 10px;
+      top: 18px;
       font-size: 12px;
       line-height: 14px;
       color: var(--theme-caption-color);
@@ -243,7 +249,7 @@
       user-select: none;
     }
     .label-placeholder {
-      top: -18px;
+      top: 10px;
     }
   }
 </style>

@@ -363,7 +363,8 @@ export function focus (): void {
       outline: none;
 
       p {
-        margin: 5px;
+        margin: 0px;
+        color: var(--theme-caption-color);
       }
     }
   }
@@ -374,11 +375,13 @@ export function focus (): void {
 }
 
 .hover-message {
-  position: relative;
-  top: 0px;
+  // position: relative;
+  // top: 0px;
   pointer-events: none;
-  padding-left: 5px;
-  padding-top: 5px;
-  color: #aaaaaa;
+  user-select: none;
+  // padding-left: 5px;
+  // padding-top: 5px;
+  color: var(--theme-content-trans-color);
+  // background-color: red;
 }
 </style>

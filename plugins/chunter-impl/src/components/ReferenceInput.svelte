@@ -277,14 +277,20 @@
     margin: 20px 40px;
 
     .textInput {
+      position: relative;
       display: flex;
       justify-content: space-between;
-      // align-items: center;
+      align-items: center;
       min-height: 44px;
-      padding: 8px 16px;
+      padding: 12px 16px;
       background-color: var(--theme-bg-accent-color);
-      border: 1px solid var(--theme-bg-accent-color);
+      border: 1px solid var(--theme-bg-accent-hover);
       border-radius: 12px;
+
+      &:focus-within {
+        background-color: var(--theme-bg-focused-color);
+        border-color: var(--theme-bg-focused-border);
+      }
 
       .inputMsg {
         width: 100%;
@@ -321,6 +327,18 @@
           height: 100%;
           margin: 4px;
         }
+
+        .label {
+          position: absolute;
+          top: 14px;
+          font-size: 14px;
+          line-height: 14px;
+          color: var(--theme-caption-color);
+          pointer-events: none;
+          opacity: 0.3;
+          transition: all 200ms;
+          user-select: none;
+        }        
       }
       .sendButton {
         display: flex;
