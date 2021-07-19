@@ -20,6 +20,7 @@
   export let width: string | undefined
   export let value: string | undefined
   export let id: string | undefined
+  export let lines: number = 5
 
   let divTA: HTMLElement
   let textArea: HTMLTextAreaElement
