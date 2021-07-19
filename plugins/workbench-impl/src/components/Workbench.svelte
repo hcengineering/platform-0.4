@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import type { Client } from '@anticrm/plugin-core'
   import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
@@ -26,7 +26,6 @@
   import NavHeader from './NavHeader.svelte'
   import Navigator from './Navigator.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
-  import { Component, location } from '@anticrm/ui'
 
   export let client: Client
 
