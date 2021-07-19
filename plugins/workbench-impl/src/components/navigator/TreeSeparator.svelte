@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 
-<div class="separator"/>
+<div class="separator" />
 
 <style lang="scss">
   .separator {

@@ -20,7 +20,7 @@ import login from '@anticrm/login'
 
 export default mergeIds(login, {
   status: {
-    RequiredField: '' as StatusCode<{field: string}>,
+    RequiredField: '' as StatusCode<{ field: string }>,
     ConnectingToServer: '' as StatusCode
   },
   string: {

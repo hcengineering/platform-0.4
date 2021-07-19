@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   // status: 'active', 'dnd', 'busy', 'away'
   export let status: string = 'away'
 </script>
 
 <div class="activity {status}">
-  <div class="status"></div>
+  <div class="status" />
 </div>
 
 <style lang="scss">

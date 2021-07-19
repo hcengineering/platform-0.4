@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString, Asset } from '@anticrm/status'
   import { Icon, Tooltip } from '@anticrm/ui'
@@ -24,13 +23,13 @@
   export let notify: boolean
 </script>
 
-<button class="app" class:selected={selected} on:click={action}>
+<button class="app" class:selected on:click={action}>
   {#if notify}
-    <div class="marker"/>
+    <div class="marker" />
   {/if}
-  <Tooltip label={label} direction="right">
+  <Tooltip {label} direction="right">
     <div class="container" class:noty={notify}>
-      <Icon icon={icon} size={28}/>
+      <Icon {icon} size={28} />
     </div>
   </Tooltip>
 </button>
@@ -64,7 +63,7 @@
       align-items: center;
       width: 48px;
       height: 48px;
-      opacity: .3;
+      opacity: 0.3;
       &.noty {
         clip-path: url(#notify);
       }

@@ -65,8 +65,49 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 146fae79fffee30a166379a8e5e97beb4582e67af958ae0315dcb538af56cbac
         with:
-          coverageCommand: common/scripts/coverage.sh
+          coverageCommand: common/scripts/each-x.sh test --coverage
           coverageLocations: |
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
             ${{github.workspace}}/server/*/coverage/lcov.info:lcov
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      
+      - name: Installing...
+        run: node common/scripts/install-run-rush.js install
+      
+      - name: Building...
+        run: node common/scripts/install-run-rush.js build
+
+      - name: Run lint
+        run: |
+          common/scripts/each-x.sh lint
+
+  formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+
+      - name: Installing...
+        run: node common/scripts/install-run-rush.js install
+      
+      - name: Building...
+        run: node common/scripts/install-run-rush.js build
+
+      - name: Check files formatting
+        run: |
+          common/scripts/each-x.sh format
+          [ -z "$(git diff --name-only '*.svelte')" ]
+

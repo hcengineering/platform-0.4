@@ -150,7 +150,7 @@ dependencies:
   '@rush-temp/core': file:projects/core.tgz_ts-node@10.0.0
   '@rush-temp/elastic': file:projects/elastic.tgz_ts-node@10.0.0
   '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.23.0
-  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_ts-node@10.0.0
   '@rush-temp/login': file:projects/login.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/login-impl': file:projects/login-impl.tgz_0197273999bdabbd0908f89676fc5678
   '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.23.0
@@ -188,7 +188,7 @@ dependencies:
   '@rush-temp/ui-assets': file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/webrtc': file:projects/webrtc.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678
+  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_07c573f4d671bf71ff87456011ae9f6b
   '@rush-temp/workspace': file:projects/workspace.tgz
   '@rush-temp/workspaces': file:projects/workspaces.tgz
   '@testing-library/svelte': 3.0.3_svelte@3.38.2
@@ -9679,8 +9679,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/fsm-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-VA/OCIvs4Ge+cMXI9HEq22lA3CEp8dNOMO+rnm8hIlimJkvpt7TeJjikECY+DtcQvY4JFhPxUiqaTRChCD828Q==, tarball: file:projects/fsm-impl.tgz}
+  file:projects/fsm-impl.tgz_ts-node@10.0.0:
+    resolution: {integrity: sha512-stKxvEqGwl7JNY43HCJCjFlR5lloiGCRDoTmiO/UTMVBMNjjSv1K1nwGk6Bq+9hJPvujOKGYH/8EpsJToZFlCg==, tarball: file:projects/fsm-impl.tgz}
     id: file:projects/fsm-impl.tgz
     name: '@rush-temp/fsm-impl'
     version: 0.0.0
@@ -9688,13 +9688,20 @@ packages:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
       '@types/lodash.debounce': 4.0.6
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
-      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
       - bufferutil
       - canvas
       - supports-color
@@ -10148,7 +10155,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-impl.tgz_ts-node@10.0.0:
-    resolution: {integrity: sha512-1ky8oiQ/PxTg4ITnrp8WkKtlJWRXHJ3woVO0LpXMF+/27TsG1mk0SmjBQdGRGjwrsGe8lUxzWJBIvrnj3sW+Cg==, tarball: file:projects/plugin-core-impl.tgz}
+    resolution: {integrity: sha512-b/mu2fb5WEc00Y6uzrIQ0ptnBAGtLGJMG0D8c1TWQs55Pqy+Hmd7VbNNbDpP5vkbtKeWPud/2rhME5QkBxYkvA==, tarball: file:projects/plugin-core-impl.tgz}
     id: file:projects/plugin-core-impl.tgz
     name: '@rush-temp/plugin-core-impl'
     version: 0.0.0
@@ -10168,6 +10175,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.28.0
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
       jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -10201,22 +10209,32 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-OVmKr+p05/avX1Y/SZ9a/qmwFLkDkvF5qqUS1ur265XBW+ygAnhuyW+iMrckUJ6BUKe7ZrzH2g/SjFMYzXDcuA==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-L9OwgIdzBJ5+j8WJyQQwN8S/C4eD9ies+/07fox3BrLe7wpE/OFqYkbNslxl1em/Dv27MtlWt0Facf9r9uYbKg==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
     dependencies:
       '@types/node': 14.17.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
       autoprefixer: 10.2.6_postcss@8.3.4
       cross-env: 7.0.3
       css-loader: 5.2.4_webpack@5.37.1
       dotenv-webpack: 7.0.2_webpack@5.37.1
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_6d17f20753d7b00dbc3a97016e3b0afb
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
       file-loader: 6.2.0_webpack@5.37.1
       mini-css-extract-plugin: 1.6.0_webpack@5.37.1
       postcss: 8.3.4
       postcss-import: 14.0.2_postcss@8.3.4
       postcss-load-config: 3.1.0_ts-node@10.0.0
       postcss-loader: 6.1.0_postcss@8.3.4+webpack@5.37.1
+      prettier: 2.3.1
       sass-loader: 11.1.1_sass@1.32.13+webpack@5.37.1
       style-loader: 2.0.0_webpack@5.37.1
       svelte: 3.38.2
@@ -10234,6 +10252,7 @@ packages:
       - fibers
       - node-sass
       - sass
+      - supports-color
       - ts-node
       - typescript
       - utf-8-validate
@@ -10387,7 +10406,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-BMS/fAygDmn+qvXiHKKxBZYaJ7jR9iVWT/s6pj+DuGoe1AGpLYampU76yL3bY9CKwkqSkhRlDbbY75h/irJiag==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-ZUZOeAV4GAbFoTTeJolDKZgEFmdrnE/xGUGfdUBPerCDd/sY3qDoZXz9tU8Xr67xSp5gvxcu/9P35fdvDMjQJw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -10623,7 +10642,7 @@ packages:
     dev: false
 
   file:projects/ui-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-spXtOq6DRCqWWRrytDgOP+MALxiGbOAp8xr2Zf1HZz2aWu6G9O8hQI8ssJVGk8yMTIXTPJb2T6NNZrtpQzGUPw==, tarball: file:projects/ui-assets.tgz}
+    resolution: {integrity: sha512-evAjfWslVHcROoLcDBkdYiFjnoevWnkWmdTKWLtJEGM7p8B08SP4HOgaLOswAPMKaq27I9eBjsjNobv+v3qBQw==, tarball: file:projects/ui-assets.tgz}
     id: file:projects/ui-assets.tgz
     name: '@rush-temp/ui-assets'
     version: 0.0.0
@@ -10713,24 +10732,33 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/workbench-impl.tgz_0197273999bdabbd0908f89676fc5678:
-    resolution: {integrity: sha512-sRPGBpP+Mw7UVIdotiXGttw0VSM7mCmmWRt0cw/Ry+lcr3vevFdSpmyF1NI9BrY/1MtJ6ZdTkjcb5s58tCRabA==, tarball: file:projects/workbench-impl.tgz}
+  file:projects/workbench-impl.tgz_07c573f4d671bf71ff87456011ae9f6b:
+    resolution: {integrity: sha512-nqNOqNqE0+xJw0/FWoIOtq7a4oGaGLOQa0uoNDkxgRv9cgFKZw/yljab7BoW7TQZQ4Xqx/39gRRJG3dbAl87dg==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
       prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
       sass: 1.32.13
       svelte: 3.38.2
       svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
       svelte-loader: 3.1.2_svelte@3.38.2
       svelte-preprocess: 4.7.3_4e2a6a97b7fbac24c9876bee9f9e1fa7
-      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
-      - '@typescript-eslint/parser'
       - coffeescript
       - less
       - node-sass

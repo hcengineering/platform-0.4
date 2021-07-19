@@ -12,27 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
+  import { getPlugin } from '@anticrm/platform'
+  import type { Client } from '@anticrm/plugin-core'
 
-import { getPlugin } from '@anticrm/platform'
-import type { Client } from '@anticrm/plugin-core'
+  import pluginCore from '@anticrm/plugin-core'
 
-import pluginCore from '@anticrm/plugin-core'
+  import Workbench from './Workbench.svelte'
 
-import Workbench from './Workbench.svelte'
-
-async function connect(): Promise<Client> {
-  const plugin = await getPlugin(pluginCore.id)
-  return plugin.getClient()
-}
-
+  async function connect (): Promise<Client> {
+    const plugin = await getPlugin(pluginCore.id)
+    return plugin.getClient()
+  }
 </script>
 
 {#await connect()}
-  <div></div>
+  <div />
 {:then client}
-  <Workbench {client}/>
+  <Workbench {client} />
 {:catch error}
   <div>{error}</div>
 {/await}

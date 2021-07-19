@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
@@ -20,7 +19,6 @@
   export let icon: Asset
   export let title: string
   export let notifications = 0
-
 </script>
 
-<TreeElement {icon} {title} {notifications} node/>
+<TreeElement {icon} {title} {notifications} node />

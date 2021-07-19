@@ -12,7 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import core, { Account, Class, ClassifierKind, Doc, Domain, generateId, Ref, Space, TxCreateDoc, withOperations } from '@anticrm/core'
+import core, {
+  Account,
+  Class,
+  ClassifierKind,
+  Doc,
+  Domain,
+  generateId,
+  Ref,
+  Space,
+  TxCreateDoc,
+  withOperations
+} from '@anticrm/core'
 import { createClient } from '@anticrm/node-client'
 import { start } from '@anticrm/server/src/server'
 import { decodeToken, generateToken } from '@anticrm/server/src/token'
@@ -105,7 +116,9 @@ describe('workspace', () => {
               // console.log('tx', tx)
               await storage.tx(tx)
             },
-            accountId: async () => { await Promise.resolve(core.account.System) }
+            accountId: async () => {
+              await Promise.resolve(core.account.System)
+            }
           }
         } catch (err) {
           console.error(err)
@@ -119,7 +132,8 @@ describe('workspace', () => {
 
     try {
       const addr = (await serverAt).address()
-      const client = withOperations(core.account.System,
+      const client = withOperations(
+        core.account.System,
         await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
       )
 

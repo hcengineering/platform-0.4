@@ -12,24 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import ActivityStatus from './ActivityStatus.svelte'
-  import Applications from './Applications.svelte'
-  import NavHeader from './NavHeader.svelte'
-  import avatar from '../../img/avatar.png'
-
-  import { setContext, onDestroy } from 'svelte'
+  import type { Ref, Space } from '@anticrm/core'
   import type { Client } from '@anticrm/plugin-core'
-
-  import type { Doc, Ref, Space } from '@anticrm/core'
+  import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
-
-  import Navigator from './Navigator.svelte'
+  import { onDestroy, setContext } from 'svelte'
+  import avatar from '../../img/avatar.png'
+  import ActivityStatus from './ActivityStatus.svelte'
+  import Applications from './Applications.svelte'
   import Modal from './Modal.svelte'
+  import NavHeader from './NavHeader.svelte'
+  import Navigator from './Navigator.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
-  
   import { Component, location } from '@anticrm/ui'
 
   export let client: Client
@@ -41,42 +37,43 @@
   let navigatorModel: NavigatorModel | undefined
   let itemId: Ref<Doc> | undefined
 
-  onDestroy(location.subscribe(async (loc) => {
-    currentApp = loc.path[1] as Ref<Application>
-    currentSpace = loc.path[2] as Ref<Space>
-    itemId = loc.path[3] as Ref<Doc>
-    navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
-  }))
+  onDestroy(
+    location.subscribe(async (loc) => {
+      currentApp = loc.path[1] as Ref<Application>
+      currentSpace = loc.path[2] as Ref<Space>
+      navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
+    })
+  )
 </script>
 
 <svg class="mask">
   <clipPath id="notify">
-    <path d="M0,0v48h48V0H0z M32,25c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S35.9,25,32,25z"/>
+    <path d="M0,0v48h48V0H0z M32,25c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S35.9,25,32,25z" />
   </clipPath>
 </svg>
 <div class="container">
   <div class="applications">
-    <ActivityStatus status="active"/>
-    <Applications active={currentApp}/>
+    <ActivityStatus status="active" />
+    <Applications active={currentApp} />
     <div class="profile">
-      <img class="avatar" src={avatar} alt="Profile"/>
+      <img class="avatar" src={avatar} alt="Profile" />
     </div>
   </div>
   {#if navigator}
-  <div class="navigator">
-    <NavHeader/>
-    <Navigator model={navigatorModel} space={currentSpace}/>
-  </div>
+    <div class="navigator">
+      <NavHeader />
+      <Navigator model={navigatorModel} space={currentSpace} />
+    </div>
   {/if}
   <div class="component">
-    <SpaceHeader model={navigatorModel} space={currentSpace}/>
+    <SpaceHeader model={navigatorModel} space={currentSpace} />
     {#if navigatorModel}
-      <Component is={navigatorModel.spaceView} props={{currentSpace: currentSpace}}/>
+      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpace }} />
     {/if}
   </div>
   {#if navigatorModel && navigatorModel.editComponent && itemId}
   <div class="aside">
-    <Component is={navigatorModel.editComponent} props={{id: itemId}}/>
+    <Component is={navigatorModel.editComponent} props={{ id: itemId }}/>
   </div>
   {/if}
 </div>

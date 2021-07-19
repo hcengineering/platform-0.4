@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { Ref, Space, Data } from '@anticrm/core'
   import { Icon, ActionIcon } from '@anticrm/ui'
@@ -28,28 +27,32 @@
 
   let data: Data<Space> | undefined
   const addAction = async (): Promise<void> => {
-    if (model?.createComponent !== undefined) showModal(model.createComponent, {space})
+    if (model?.createComponent !== undefined) showModal(model.createComponent, { space })
   }
 
   let unsubscribe = () => {}
   $: {
     unsubscribe()
-    unsubscribe = getClient().query(core.class.Space, { _id: space }, result => { data = result[0] })
+    unsubscribe = getClient().query(core.class.Space, { _id: space }, (result) => {
+      data = result[0]
+    })
   }
 </script>
 
 <div class="header">
   <div class="caption">
     <div class="title">
-      <span><Icon icon={'icon:chunter.Hashtag'} size={16}/></span>
+      <span><Icon icon={'icon:chunter.Hashtag'} size={16} /></span>
       {#if data}{data.name}{/if}
     </div>
-    <div class="subtitle">{#if data}{data.description}{/if}</div>
+    <div class="subtitle">
+      {#if data}{data.description}{/if}
+    </div>
   </div>
   <div class="buttons">
-    <div class="button"><ActionIcon icon={Star} size={16}/></div>
-    <div class="button"><ActionIcon icon={Add} size={16} action={addAction}/></div>
-    <div class="button"><ActionIcon icon={MoreH} size={16}/></div>
+    <div class="button"><ActionIcon icon={Star} size={16} /></div>
+    <div class="button"><ActionIcon icon={Add} size={16} action={addAction} /></div>
+    <div class="button"><ActionIcon icon={MoreH} size={16} /></div>
   </div>
 </div>
 
@@ -92,7 +95,7 @@
         text-overflow: ellipsis;
         font-size: 12px;
         font-weight: 400;
-        opacity: .3;
+        opacity: 0.3;
         user-select: none;
       }
     }

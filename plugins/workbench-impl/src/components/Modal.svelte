@@ -30,7 +30,7 @@
       close()
     }
   }
-  
+
   function getStyle (element: HTMLElement | undefined) {
     if (element) {
       const rect = element.getBoundingClientRect()
@@ -45,8 +45,8 @@
 
 {#if $modal.is}
   <div class="modal" class:top-arrow={$modal.element} bind:this={modalHTML} style={getStyle($modal.element)}>
-    {#if typeof($modal.is) === 'string'}
-      <Component is={$modal.is} props={$modal.props} on:close={close}/>
+    {#if typeof $modal.is === 'string'}
+      <Component is={$modal.is} props={$modal.props} on:close={close} />
     {:else}
       <svelte:component this={$modal.is} {...$modal.props} on:close={close} />
     {/if}
@@ -56,19 +56,31 @@
 
 <style lang="scss">
   @keyframes show {
-    from { opacity: 0; filter: blur(3px); }
-    99% { opacity: 1; filter: blur(0px); }
-    to { filter: none; }
+    from {
+      opacity: 0;
+      filter: blur(3px);
+    }
+    99% {
+      opacity: 1;
+      filter: blur(0px);
+    }
+    to {
+      filter: none;
+    }
   }
   @keyframes showOverlay {
-    from { backdrop-filter: blur(0px); }
-    to { backdrop-filter: blur(3px); }
+    from {
+      backdrop-filter: blur(0px);
+    }
+    to {
+      backdrop-filter: blur(3px);
+    }
   }
   .modal {
     position: fixed;
     background: transparent;
     z-index: 1001;
-    animation: show .2s ease-in-out forwards;
+    animation: show 0.2s ease-in-out forwards;
   }
   .modal-overlay {
     z-index: 1000;
@@ -78,6 +90,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    animation: showOverlay .2s ease-in-out forwards;
+    animation: showOverlay 0.2s ease-in-out forwards;
   }
 </style>

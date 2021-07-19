@@ -44,47 +44,44 @@ import '@anticrm/meeting-assets'
 // import presentationMeta from '@anticrm/presentation/src/__meta__'
 // import dataGenMeta from '@anticrm/data-generator/src/__meta__'
 
-export function configurePlatform() {
-
-// platform.setMetadata(ui.metadata.LoginApplication, 'login')
-// platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
+export function configurePlatform (): void {
+  // platform.setMetadata(ui.metadata.LoginApplication, 'login')
+  // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 
   if (process.env.CLIENT !== 'server') {
     console.info('use in memory DB')
-    addLocation(core, () => import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
-  }
-  else {
+    addLocation(core, async () => await import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
+  } else {
     console.info('use server DB')
-    addLocation(core, () => import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
+    addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
   }
 
-  addLocation(login, () => import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
-  addLocation(workbench, () => import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
-  addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
-  addLocation(task, () => import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
-  addLocation(meeting, () => import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
+  addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
+  addLocation(workbench, async () => await import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
+  addLocation(chunter, async () => await import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
+  addLocation(task, async () => await import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
+  addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   // platform.addLocation(i18n, () => import(/* webpackChunkName: "platform-i18n" */ '@anticrm/platform-i18n/src/plugin'))
-// platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
-// platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
-// platform.addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter/src/plugin'))
-// platform.addLocation(guidebook, () => import(/* webpackChunkName: "guidebook" */ '@anticrm/guidebook/src/plugin'))
-// platform.addLocation(recruiting, () => import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting/src/plugin'))
-// platform.addLocation(personExtras, () => import(/* webpackChunkName: "person-extras" */ '@anticrm/person-extras/src/plugin'))
-// platform.addLocation(calendar, () => import(/* webpackChunkName: "calendar" */ '@anticrm/calendar/src/plugin'))
-// platform.addLocation(activity, () => import(/* webpackChunkName: "activity" */ '@anticrm/activity/src/plugin'))
+  // platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
+  // platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
+  // platform.addLocation(chunter, () => import(/* webpackChunkName: "chunter" */ '@anticrm/chunter/src/plugin'))
+  // platform.addLocation(guidebook, () => import(/* webpackChunkName: "guidebook" */ '@anticrm/guidebook/src/plugin'))
+  // platform.addLocation(recruiting, () => import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting/src/plugin'))
+  // platform.addLocation(personExtras, () => import(/* webpackChunkName: "person-extras" */ '@anticrm/person-extras/src/plugin'))
+  // platform.addLocation(calendar, () => import(/* webpackChunkName: "calendar" */ '@anticrm/calendar/src/plugin'))
+  // platform.addLocation(activity, () => import(/* webpackChunkName: "activity" */ '@anticrm/activity/src/plugin'))
 
-// platform.addLocation(datagen, () => import(/* webpackChunkName: "datagen" */ '@anticrm/data-generator/src/plugin'))
+  // platform.addLocation(datagen, () => import(/* webpackChunkName: "datagen" */ '@anticrm/data-generator/src/plugin'))
 
-// uiMeta(platform)
-//  loginMeta()
-// workbenchMeta(platform)
-// activityMeta(platform)
-// chunterMeta(platform)
-// recruitmentMeta(platform)
-// recruitingMeta(platform)
-// taskMeta(platform)
-// presentationMeta(platform)
-// contactMeta(platform)
-// dataGenMeta(platform)
-
+  // uiMeta(platform)
+  //  loginMeta()
+  // workbenchMeta(platform)
+  // activityMeta(platform)
+  // chunterMeta(platform)
+  // recruitmentMeta(platform)
+  // recruitingMeta(platform)
+  // taskMeta(platform)
+  // presentationMeta(platform)
+  // contactMeta(platform)
+  // dataGenMeta(platform)
 }
