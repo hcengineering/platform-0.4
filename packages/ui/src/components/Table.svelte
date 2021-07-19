@@ -14,6 +14,8 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
+  import { getCurrentLocation, navigate } from '..'
+  import { Ref, Doc } from '@anticrm/core'
 
   import { AnySvelteComponent } from '../types'
   import Label from './Label.svelte'
@@ -50,6 +52,13 @@
         {}
       )
     }))
+
+  function selectItem (id: Ref<Doc>) {
+    const loc = getCurrentLocation()
+    loc.path[3] = id
+    loc.path.length = 4
+    navigate(loc)
+  }
 </script>
 
 <table class="table-body">
@@ -61,7 +70,12 @@
     </tr>
   {/if}
   {#each data as doc (doc._id)}
-    <tr class="tr-body">
+    <tr
+      class="tr-body"
+      on:click={() => {
+        selectItem(doc._id)
+      }}
+    >
       {#each docToRow(doc) as cell}
         <td><svelte:component this={cell.component} {...cell.props} /></td>
       {/each}

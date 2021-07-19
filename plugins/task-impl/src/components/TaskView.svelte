@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Class, Doc, Space} from '@anticrm/core'
+  import type { Ref, Class, Doc, Space } from '@anticrm/core'
   import ViewSelection from './ViewSelection.svelte'
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
@@ -34,7 +34,7 @@
     </div>
     {#if view === 'kanban'}
       <ScrollBox>
-        <KanbanView {currentSpace}/>
+        <KanbanView {currentSpace} />
       </ScrollBox>
     {:else if view === 'card'}
       <ScrollBox vertical>

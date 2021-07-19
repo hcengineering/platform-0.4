@@ -15,11 +15,11 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
   import { Table, Label, UserInfo } from '@anticrm/ui'
-  import type { Ref, Class, Doc, Space} from '@anticrm/core'
+  import type { Ref, Class, Doc, Space } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
 
-  import TaskStatus from './TaskStatus.svelte';
+  import TaskStatus from './TaskStatus.svelte'
 
   import task from '../plugin'
 
@@ -28,26 +28,33 @@
 
   const _class: Ref<Class<Doc>> = task.class.Task
   const columns = [
-    {label: 'Name' as IntlString, properties: [{key: 'name', property: 'label'}], component: Label},
-    {label: 'Description' as IntlString, properties: [{key: 'description', property: 'label'}], component: Label},
-    {label: 'Status' as IntlString, properties: [{key: 'status', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus},
-    {label: 'Assignee' as IntlString, properties: [{value:'elon', property: 'user'}], component: UserInfo}
+    { label: 'Name' as IntlString, properties: [{ key: 'name', property: 'label' }], component: Label },
+    { label: 'Description' as IntlString, properties: [{ key: 'description', property: 'label' }], component: Label },
+    {
+      label: 'Status' as IntlString,
+      properties: [
+        { key: 'status', property: 'title' },
+        { value: '#73A5C9', property: 'color' }
+      ],
+      component: TaskStatus
+    },
+    { label: 'Assignee' as IntlString, properties: [{ value: 'elon', property: 'user' }], component: UserInfo }
   ]
 
   const client = getClient()
   let data: Doc[] = []
   let unsub = () => {}
-  $: if (currentSpace != prevSpace) {
+  $: if (currentSpace !== prevSpace) {
     unsub()
     unsub = () => {}
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      unsub = client.query(_class, { space: currentSpace }, (result) => data = result)
+      unsub = client.query(_class, { space: currentSpace }, (result) => (data = result))
     }
   }
 
   onDestroy(unsub)
 </script>
 
-<Table {data} {columns}/>
+<Table {data} {columns} />

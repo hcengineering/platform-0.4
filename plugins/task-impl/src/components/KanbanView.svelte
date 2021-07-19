@@ -24,23 +24,18 @@
 
   import task, { getStatusColor } from '../plugin'
 
-
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
-  const statusByName = new Map(
-    Object.entries(TaskStatuses)
-      .map(([k, v]) => [v, k])
-  )
+  const statusByName = new Map(Object.entries(TaskStatuses).map(([k, v]) => [v, k]))
 
   const client = getClient()
   let unsub = () => {}
-  const states = Object.entries(TaskStatuses)
-    .map(([k, v]) => ({
-      _id: k,
-      name: v,
-      color: getStatusColor(v)
-    }))
+  const states = Object.entries(TaskStatuses).map(([k, v]) => ({
+    _id: k,
+    name: v,
+    color: getStatusColor(v)
+  }))
 
   $: if (currentSpace !== prevSpace) {
     unsub()
@@ -49,7 +44,7 @@
 
     if (currentSpace !== undefined) {
       unsub = client.query(task.class.Task, { space: currentSpace }, (result) => {
-        items = result.map(item => ({
+        items = result.map((item) => ({
           ...item,
           state: statusByName.get(item.status) ?? ''
         }))
@@ -62,7 +57,7 @@
       return
     }
 
-    const {item, state} = event.detail
+    const { item, state } = event.detail
     const tState = state as keyof typeof TaskStatuses
 
     await client.updateDoc(task.class.Task, currentSpace, item, {
@@ -77,4 +72,4 @@
   let items: (Task & { state: string })[] = []
 </script>
 
-<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop}/>
+<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop} />

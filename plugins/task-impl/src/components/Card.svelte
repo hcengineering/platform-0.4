@@ -25,7 +25,7 @@
   export let card: Task
   export let user: string = 'chen'
   let discussion: number = 0
-  export let attach: number = 3
+  export const attach: number = 3
   $: progress = {
     max: card.checkItems.length,
     value: card.checkItems.filter((p) => p.done).length,

@@ -12,24 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { Tooltip } from '@anticrm/ui'
   import VCard from './icons/VCard.svelte'
   import VList from './icons/VList.svelte'
   import VKanban from './icons/VKanban.svelte'
 
-  export let views: Array<Object> = [{ icon: VList, name: 'list' },
-                                     { icon: VCard, name: 'card' },
-                                     { icon: VKanban, name: 'kanban' }]
+  export let views: Array<Object> = [
+    { icon: VList, name: 'list' },
+    { icon: VCard, name: 'card' },
+    { icon: VKanban, name: 'kanban' }
+  ]
   export let selected: string = 'card'
 </script>
 
 <div class="viewSelection-container">
   {#each views as view}
     <Tooltip label={view.name}>
-      <div class="button" class:selected={selected === view.name} on:click={() => { selected = view.name }}>
-        <div class="icon"><svelte:component this={view.icon} size={16}/></div>
+      <div
+        class="button"
+        class:selected={selected === view.name}
+        on:click={() => {
+          selected = view.name
+        }}
+      >
+        <div class="icon"><svelte:component this={view.icon} size={16} /></div>
       </div>
     </Tooltip>
   {/each}
@@ -54,7 +61,7 @@
       .icon {
         width: 16px;
         height: 16px;
-        opacity: .2;
+        opacity: 0.2;
       }
 
       &:hover .icon {
@@ -65,7 +72,7 @@
         background-color: var(--theme-button-bg-enabled);
         cursor: default;
         .icon {
-          opacity: .8;
+          opacity: 0.8;
         }
       }
     }
