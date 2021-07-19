@@ -109,5 +109,6 @@ jobs:
       - name: Check files formatting
         run: |
           common/scripts/each-x.sh format
+          git diff --name-only | cat
           [ -z "$(git diff --name-only '*.svelte')" ]
 
