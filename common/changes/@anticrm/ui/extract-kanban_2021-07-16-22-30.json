@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Extract kanban view to ui package",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "ilya.sumb@gmail.com"
+}
