@@ -57,7 +57,7 @@
   function getCells (doc: Doc): Cell[] {
     const result: Cell[] = []
     for (const field of fields) {
-      const props = new Object()
+      const props = {}
       for (const prop of field.properties) {
         ;(props as any)[prop.property] = prop.key === undefined ? prop.value : (doc as any)[prop.key]
       }

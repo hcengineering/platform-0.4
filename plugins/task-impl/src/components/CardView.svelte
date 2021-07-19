@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { Class, Ref, Space } from '@anticrm/core'
   import { Task } from '@anticrm/task'
@@ -27,7 +26,7 @@
   const client = getClient()
   let cards: Task[] = []
 
-  $: if (currentSpace != undefined) {
+  $: if (currentSpace !== undefined) {
     unsubscribe()
     unsubscribe = client.query(_class, { space: currentSpace }, (result) => {
       cards = result
@@ -41,7 +40,7 @@
 
 <div class="cards-container">
   {#each cards as card}
-    <Card {card}/>
+    <Card {card} />
   {/each}
 </div>
 

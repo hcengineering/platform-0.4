@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
 
@@ -41,10 +40,10 @@
   const client = getClient()
   let unsubscribe = () => {}
 
-  $: if (currentSpace != undefined) {
+  $: if (currentSpace !== undefined) {
     unsubscribe()
     unsubscribe = client.query(_class, { space: currentSpace }, (result) => {
-      data = result.map(item => Object.assign(item, {onDrag: false}))
+      data = result.map((item) => Object.assign(item, { onDrag: false }))
     })
   }
 
@@ -56,10 +55,10 @@
   let dragId: Ref<Task> | undefined
 
   const getCount = (status: IntlString): number => {
-    return data.filter(card => card.status == status).length
+    return data.filter((card) => card.status === status).length
   }
 
-  function getStatuses(): IStatus[] {
+  function getStatuses (): IStatus[] {
     const result: IStatus[] = []
     for (const key in TaskStatuses) {
       result.push({ title: TaskStatuses[key], color: getStatusColor(TaskStatuses[key]) })
@@ -69,32 +68,34 @@
 </script>
 
 {#each getStatuses() as status (status)}
-  <KanbanPanel title={status.title} 
-  counter={getCount(status.title)} color={status.color}
-  on:dragover={(event) => {
-    event.preventDefault()
-  }}
-  on:drop={(event) => {
-    event.preventDefault()
-    const dragCard = data.find(p => p._id === dragId)
-    if (dragCard !== undefined
-      && status.title !== dragCard.status) {
-      client.updateDoc(_class, currentSpace, dragCard._id, {
-        status: status.title
-      })
-    }
-  }}
+  <KanbanPanel
+    title={status.title}
+    counter={getCount(status.title)}
+    color={status.color}
+    on:dragover={(event) => {
+      event.preventDefault()
+    }}
+    on:drop={(event) => {
+      event.preventDefault()
+      const dragCard = data.find((p) => p._id === dragId)
+      if (dragCard !== undefined && status.title !== dragCard.status) {
+        client.updateDoc(_class, currentSpace, dragCard._id, {
+          status: status.title
+        })
+      }
+    }}
   >
     {#each data as card}
-      {#if card.status === status.title }
-        <KanbanCard title={card.name}
-          commentSpace={card.commentSpace} user={'chen'}
+      {#if card.status === status.title}
+        <KanbanCard
+          title={card.name}
+          commentSpace={card.commentSpace}
+          user={'chen'}
           draggable={true}
           on:dragstart={() => {
             dragId = card._id
           }}
-        >
-        </KanbanCard>
+        />
       {/if}
     {/each}
   </KanbanPanel>
