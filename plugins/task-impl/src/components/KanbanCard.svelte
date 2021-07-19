@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -14,26 +14,25 @@
 -->
 
 <script lang="ts">
-  import { ActionIcon, UserInfo } from '@anticrm/ui'
-  import MoreH from './icons/MoreH.svelte'
-  import Chat from './icons/Chat.svelte'
   import { onDestroy } from 'svelte'
+
+  import { ActionIcon, UserInfo } from '@anticrm/ui'
+  import { Task } from '@anticrm/task';
   import { getClient } from '@anticrm/workbench'
-  import { Ref, Space } from '@anticrm/core'
   import chunter from '@anticrm/chunter-impl/src/plugin'
 
-  export let commentSpace: Ref<Space>
-  export let title: string
-  export let user: string
-  export let draggable: boolean = false
-  
+  import MoreH from './icons/MoreH.svelte'
+  import Chat from './icons/Chat.svelte'
+
+  export let doc: Task
+
   let discussion: number = 0
   let unsubscribe = () => {}
   const client = getClient()
 
   $: {
     unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space: commentSpace }, (result) => {
+    unsubscribe = client.query(chunter.class.Message, { space: doc.commentSpace }, (result) => {
       discussion = result.length
     })
   }
@@ -43,14 +42,10 @@
   })
 </script>
 
-<div class="card-container"
-  draggable={draggable}
-  on:dragstart
-  on:dragend
->
-  <div class="header">{title}</div>
+<div class="card-container">
+  <div class="header">{doc.name}</div>
   <div class="footer">
-    <div><UserInfo {user} avatarOnly={true}/></div>
+    <div><UserInfo user="chen" avatarOnly={true}/></div>
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'}/>
       <div class="counter">{discussion}</div>
@@ -106,7 +101,6 @@
         margin-left: 16px;
       }
     }
-
 
     &.drag {
       opacity: .5;

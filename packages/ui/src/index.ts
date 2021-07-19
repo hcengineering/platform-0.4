@@ -44,6 +44,7 @@ export { default as UserBox } from './components/UserBox.svelte'
 export { default as TextArea } from './components/TextArea.svelte'
 export { default as CompletionPopup } from './components/CompletionPopup.svelte'
 export { default as Table } from './components/Table.svelte'
+export { default as Kanban } from './components/kanban/Kanban.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 
