@@ -17,6 +17,7 @@
   import SpacesNav from './navigator/SpacesNav.svelte'
 
   export let model: NavigatorModel | undefined = undefined
+
 </script>
 
 {#if model}

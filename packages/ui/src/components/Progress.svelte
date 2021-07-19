@@ -24,7 +24,7 @@
 </script>
 
 <div class="progress-container">
-  <div class="bar" style="background-color: {color}; width: {Math.round((value - min) / proc)}%;"/>
+  <div class="bar" style="background-color: {color}; width: {Math.round((value - min) / proc)}%;" />
 </div>
 
 <style lang="scss">

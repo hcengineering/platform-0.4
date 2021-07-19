@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, TextArea, UserBox } from '@anticrm/ui'
@@ -36,47 +35,59 @@
   async function create() {
     const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
-    let spaceMembers = (await client.findAll(core.class.Space, { _id: space}))[0].members
-    let commentSpace = (await client.createDoc(core.class.Space, core.space.Model, {
+    let spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
+    let commentSpace = (
+      await client.createDoc(core.class.Space, core.space.Model, {
         name: `${shortRefId} comments`,
         description: `${shortRefId} comments`,
         private: true,
         members: spaceMembers
-      }))._id
+      })
+    )._id
 
-    const doc = await client.createDoc(task.class.Task, space, {
-      name,
-      assignee,
-      description,
-      checkItems,
-      shortRefId,
-      commentSpace,
-      status: TaskStatuses.Open,
-    }, id)
+    const doc = await client.createDoc(
+      task.class.Task,
+      space,
+      {
+        name,
+        assignee,
+        description,
+        checkItems,
+        shortRefId,
+        commentSpace,
+        status: TaskStatuses.Open
+      },
+      id
+    )
   }
+
 </script>
 
-<Dialog label={task.string.CreateTask} 
-        okLabel={task.string.CreateTask} 
-        okAction={create}
-        cancelLabel={task.string.Cancel}
-        on:close={() => { dispatch('close') }}>
+<Dialog
+  label={task.string.CreateTask}
+  okLabel={task.string.CreateTask}
+  okAction={create}
+  cancelLabel={task.string.Cancel}
+  on:close={() => {
+    dispatch('close')
+  }}
+>
   <div class="content">
-    <div class="row"><EditBox label={task.string.TaskName} bind:value={name}/></div>
-    <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description}/></div>
-    <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch /></div>
+    <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
+    <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></div>
+    <div class="row">
+      <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+    </div>
     <div class="row"><CheckList bind:items={checkItems} /></div>
   </div>
 </Dialog>
 
-
 <style lang="scss">
-
   .content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     row-gap: 20px;
-    
+
     .row {
       grid-column-start: 1;
       grid-column-end: 3;

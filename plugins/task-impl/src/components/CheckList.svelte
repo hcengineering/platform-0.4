@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { ActionIcon, CheckBox, EditBox, Label, IconAdd } from '@anticrm/ui'
   import { CheckListItem } from '@anticrm/task'
@@ -32,6 +31,7 @@
   async function change() {
     items = items.filter((item) => item.description)
   }
+
 </script>
 
 {#if items.length}
@@ -43,17 +43,26 @@
   {#each items as item}
     <div class="row">
       <div><CheckBox bind:checked={item.done} /></div>
-      <div><EditBox width={'100%'} bind:value={item.description} on:change={change}/></div>
+      <div><EditBox width={'100%'} bind:value={item.description} on:change={change} /></div>
     </div>
   {/each}
   {#if newItem}
-  <div class="row">
-    <div><CheckBox bind:checked={newItem.done} /></div>
-    <div><EditBox width={'100%'} bind:value={newItem.description} on:change={add} /></div>
-  </div>
+    <div class="row">
+      <div><CheckBox bind:checked={newItem.done} /></div>
+      <div><EditBox width={'100%'} bind:value={newItem.description} on:change={add} /></div>
+    </div>
   {/if}
   <div class="row">
-    <div><ActionIcon size={20} icon={IconAdd} label={task.string.AddCheckItem} action={() => {newItem = {description:'', done:false}}} /></div>
+    <div>
+      <ActionIcon
+        size={20}
+        icon={IconAdd}
+        label={task.string.AddCheckItem}
+        action={() => {
+          newItem = { description: '', done: false }
+        }}
+      />
+    </div>
     <div><Label label={task.string.AddCheckItem} /></div>
   </div>
 </div>
@@ -75,7 +84,7 @@
     margin-top: 10px;
     border: 1px solid var(--theme-bg-accent-hover);
     border-radius: 12px;
-    
+
     .row {
       padding: 5px;
       margin: 5px;
@@ -83,13 +92,14 @@
       align-items: center;
 
       div + div {
-          margin-left: 16px;
-          flex-grow: 1;
-        }
+        margin-left: 16px;
+        flex-grow: 1;
+      }
 
       .checkBox {
         margin-right: 5px;
       }
     }
   }
+
 </style>

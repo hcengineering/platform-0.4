@@ -44,6 +44,7 @@
       navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
     })
   )
+
 </script>
 
 <svg class="mask">
@@ -72,9 +73,9 @@
     {/if}
   </div>
   {#if navigatorModel && navigatorModel.editComponent && itemId}
-  <div class="aside">
-    <Component is={navigatorModel.editComponent} props={{ id: itemId }}/>
-  </div>
+    <div class="aside">
+      <Component is={navigatorModel.editComponent} props={{ id: itemId }} />
+    </div>
   {/if}
 </div>
 <Modal />
@@ -144,4 +145,5 @@
       padding: 20px;
     }
   }
+
 </style>

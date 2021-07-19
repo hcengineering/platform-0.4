@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
   import { Label, ScrollBox } from '@anticrm/ui'
@@ -21,19 +20,20 @@
   export let counter: number | undefined
   export let color: string = '#F28469'
   let collapsed: boolean = false
+
 </script>
 
-<section class="panel" on:dragover on:drop class:collapsed={collapsed}>
-  <div class="header" style="border-left: 5px solid {color}" on:click={() => collapsed = !collapsed}>
-    {#if collapsed !== true}<div class="title"><Label label={title}/></div>{/if}
+<section class="panel" on:dragover on:drop class:collapsed>
+  <div class="header" style="border-left: 5px solid {color}" on:click={() => (collapsed = !collapsed)}>
+    {#if collapsed !== true}<div class="title"><Label label={title} /></div>{/if}
     <div class="counter">{counter}</div>
   </div>
   {#if collapsed !== true}
-  <div class="scroll">
-    <ScrollBox vertical>
-      <slot/>
-    </ScrollBox>
-  </div>
+    <div class="scroll">
+      <ScrollBox vertical>
+        <slot />
+      </ScrollBox>
+    </div>
   {/if}
 </section>
 
@@ -76,7 +76,7 @@
         height: 28px;
         font-weight: 600;
         line-height: 150%;
-        background-color: rgba(47, 47, 52, .09);
+        background-color: rgba(47, 47, 52, 0.09);
         border-radius: 50%;
       }
     }
@@ -86,4 +86,5 @@
       height: 100%;
     }
   }
+
 </style>

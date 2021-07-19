@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core,{ DocumentQuery,Title } from '@anticrm/core'
+  import core, { DocumentQuery, Title } from '@anticrm/core'
   import { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
-  import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem  }  from '@anticrm/ui'
+  import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
 
   export let lines = 10
   export let value: string = ''
@@ -30,7 +30,7 @@
 
   const client = getClient()
 
-  function query (prefix: string): DocumentQuery<Title> {
+  function query(prefix: string): DocumentQuery<Title> {
     return {
       title: { $like: prefix + '%' }
     }
@@ -48,7 +48,7 @@
     )
   }
 
-  function updateTitles (docs: Title[]): CompletionItem[] {
+  function updateTitles(docs: Title[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
       // if (startsWith(value.title.toString(), currentPrefix)) {
@@ -66,7 +66,7 @@
     return items
   }
 
-  async function findTitle (title: string): Promise<ItemRefefence[]> {
+  async function findTitle(title: string): Promise<ItemRefefence[]> {
     const docs = await client.findAll<Title>(core.class.Title, {
       title: title
     })
@@ -83,16 +83,17 @@
     }
     return []
   }
+
 </script>
 
-<MDRefEditor 
-  bind:value={value} 
-  {label} 
+<MDRefEditor
+  bind:value
+  {label}
   {lines}
-  findFunction={findTitle} 
-  completions={completions}
+  findFunction={findTitle}
+  {completions}
   on:blur
   on:prefix={(event) => {
-    currentPrefix=event.detail
+    currentPrefix = event.detail
   }}
-  />
+/>

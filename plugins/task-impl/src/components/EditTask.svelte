@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { getCurrentLocation, Label, Progress, navigate, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
@@ -36,7 +35,7 @@
 
   $: progress = {
     max: checkItems.length,
-    value: checkItems.filter(p => p.done).length
+    value: checkItems.filter((p) => p.done).length
   }
 
   $: {
@@ -77,7 +76,7 @@
     if (item.description !== description) {
       await client.updateDoc(item._class, item.space, item._id, {
         description: description
-    })
+      })
     }
   }
 
@@ -87,18 +86,22 @@
   {#if item}
     <ScrollBox vertical>
       <div class="header">
-        <div class="title"><TaskStatus title={item.status}/></div>
-        <div class="tool" on:click={close}><Close size={16}/></div>
+        <div class="title"><TaskStatus title={item.status} /></div>
+        <div class="tool" on:click={close}><Close size={16} /></div>
       </div>
       <div class="content">
         <div class="row">{item.name}</div>
-        <div class="row"><DescriptionEditor label={task.string.TaskDescription} on:blur={updateDescription} bind:value={description} /></div>
-        <div class="row"><UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch /></div>
+        <div class="row">
+          <DescriptionEditor label={task.string.TaskDescription} on:blur={updateDescription} bind:value={description} />
+        </div>
+        <div class="row">
+          <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+        </div>
         {#if progress.max > 0}
           <div class="row progress">
             <Label label={task.string.Progress} />
-            <span>{(progress.value * 100 / progress.max).toFixed(0)}%</span>
-            <Progress {...progress}/>
+            <span>{((progress.value * 100) / progress.max).toFixed(0)}%</span>
+            <Progress {...progress} />
           </div>
         {/if}
         <CheckList bind:items={checkItems} on:change={updateCheckItem} />
@@ -126,7 +129,7 @@
       width: 16px;
       height: 16px;
       margin-left: 12px;
-      opacity: .4;
+      opacity: 0.4;
       cursor: pointer;
       &:hover {
         opacity: 1;
@@ -142,16 +145,17 @@
     }
 
     .progress {
-        margin-top: 24px;
-        span {
-          margin-bottom: 8px;
-          font-weight: 500;
-          font-size: 10px;
-          line-height: 13px;
-          letter-spacing: 0.5px;
-          text-transform: uppercase;
-          text-align: right;
-        }
+      margin-top: 24px;
+      span {
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 10px;
+        line-height: 13px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        text-align: right;
       }
+    }
   }
+
 </style>

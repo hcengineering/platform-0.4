@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { AnySvelteComponent, getCurrentLocation, navigate } from '@anticrm/ui'
-  import { Ref, Class, Doc, Space} from '@anticrm/core'
+  import { Ref, Class, Doc, Space } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
   import Label from '@anticrm/ui/src/components/Label.svelte'
@@ -27,14 +26,14 @@
   }
 
   interface Field {
-    properties: FieldProp[],
-    label: IntlString,
+    properties: FieldProp[]
+    label: IntlString
     component: AnySvelteComponent
   }
 
   interface FieldProp {
-    property: string,
-    key?: string,
+    property: string
+    key?: string
     value?: any
   }
 
@@ -48,21 +47,21 @@
 
   $: if (currentSpace != undefined) {
     unsubscribe()
-    unsubscribe = client.query(_class, { space: currentSpace }, (result) => data = result)
+    unsubscribe = client.query(_class, { space: currentSpace }, (result) => (data = result))
   }
 
   onDestroy(() => {
     unsubscribe()
   })
 
-  function getCells (doc: Doc): Cell[] {
+  function getCells(doc: Doc): Cell[] {
     const result: Cell[] = []
     for (const field of fields) {
       const props = new Object()
       for (const prop of field.properties) {
-        (props as any)[prop.property] = prop.key === undefined ? prop.value : (doc as any)[prop.key]
+        ;(props as any)[prop.property] = prop.key === undefined ? prop.value : (doc as any)[prop.key]
       }
-      result.push({component: field.component, props: props})
+      result.push({ component: field.component, props: props })
     }
     return result
   }
@@ -76,73 +75,78 @@
 
 </script>
 
-  <table class="table-body">
-    {#if showHeader}
-      <tr class="tr-head">
-        {#each fields as field}
-          <th><Label label = {field.label}/></th>
-        {/each}
-      </tr>
-    {/if}
-    {#each data as object (object._id)}
-      <tr class="tr-body" on:click={() => { selectItem(object._id) }}>
-      {#each getCells(object) as cell}
-        <td><svelte:component this={cell.component} {...cell.props}/></td>
+<table class="table-body">
+  {#if showHeader}
+    <tr class="tr-head">
+      {#each fields as field}
+        <th><Label label={field.label} /></th>
       {/each}
-      </tr>
-    {/each}
-  </table>
-  
-  <style lang="scss">
-    .table-body {
-      display: table;
-      border-collapse: collapse;
-  
-      td {
-        align-items: center;
-        height: 64px;
-        padding: 6px 20px;
-        color: var(--theme-content-accent-color);
+    </tr>
+  {/if}
+  {#each data as object (object._id)}
+    <tr
+      class="tr-body"
+      on:click={() => {
+        selectItem(object._id)
+      }}
+    >
+      {#each getCells(object) as cell}
+        <td><svelte:component this={cell.component} {...cell.props} /></td>
+      {/each}
+    </tr>
+  {/each}
+</table>
+
+<style lang="scss">
+  .table-body {
+    display: table;
+    border-collapse: collapse;
+
+    td {
+      align-items: center;
+      height: 64px;
+      padding: 6px 20px;
+      color: var(--theme-content-accent-color);
+    }
+    th {
+      align-items: center;
+      height: 50px;
+      padding: 0 20px;
+      font-weight: 500;
+      text-align: left;
+      color: var(--theme-content-trans-color);
+    }
+    .tr-head {
+      position: sticky;
+      top: 0;
+      background-color: var(--theme-bg-color);
+      border-bottom: 1px solid var(--theme-bg-focused-color);
+      box-shadow: 0 1px 0 var(--theme-bg-focused-color);
+      z-index: 5;
+    }
+    .tr-body {
+      position: relative;
+      border-top: 1px solid var(--theme-bg-accent-hover);
+      &:nth-child(2) {
+        border-top: 1px solid transparent;
       }
-      th {
-        align-items: center;
-        height: 50px;
-        padding: 0 20px;
-        font-weight: 500;
-        text-align: left;
-        color: var(--theme-content-trans-color);
+      &:last-child {
+        border-bottom: 1px solid transparent;
       }
-      .tr-head {
-        position: sticky;
-        top: 0;
-        background-color: var(--theme-bg-color);
-        border-bottom: 1px solid var(--theme-bg-focused-color);
-        box-shadow: 0 1px 0 var(--theme-bg-focused-color);
-        z-index: 5;
-      }
-      .tr-body {
-        position: relative;
-        border-top: 1px solid var(--theme-bg-accent-hover);
-        &:nth-child(2) {
-          border-top: 1px solid transparent;
+    }
+    .tr-body:hover {
+      & > td {
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        background-color: var(--theme-button-bg-enabled);
+        &:first-child {
+          border-radius: 12px 0 0 12px;
         }
         &:last-child {
-          border-bottom: 1px solid transparent;
-        }
-      }
-      .tr-body:hover {
-        & > td {
-          border-top: 1px solid transparent;
-          border-bottom: 1px solid transparent;
-          background-color: var(--theme-button-bg-enabled);
-          &:first-child {
-            border-radius: 12px 0 0 12px;
-          }
-          &:last-child {
-            border-radius: 0 12px 12px 0;
-          }
+          border-radius: 0 12px 12px 0;
         }
       }
     }
-  </style>
-  
+  }
+
+</style>
