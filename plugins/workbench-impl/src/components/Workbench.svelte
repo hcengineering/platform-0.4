@@ -40,6 +40,7 @@
     location.subscribe(async (loc) => {
       currentApp = loc.path[1] as Ref<Application>
       currentSpace = loc.path[2] as Ref<Space>
+      itemId = loc.path[3] as Ref<Doc>
       navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
     })
   )
@@ -61,7 +62,7 @@
   {#if navigator}
     <div class="navigator">
       <NavHeader />
-      <Navigator model={navigatorModel} space={currentSpace} />
+      <Navigator model={navigatorModel} />
     </div>
   {/if}
   <div class="component">
