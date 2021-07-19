@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Fix placeholder in ReferenceInput and MDRefEditor.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor",
+  "email": "sas_lord@mail.ru"
+}
