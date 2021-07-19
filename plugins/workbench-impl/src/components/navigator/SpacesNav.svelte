@@ -49,7 +49,6 @@
     loc.path.length = 3
     navigate(loc)
   }
-
 </script>
 
 <div>

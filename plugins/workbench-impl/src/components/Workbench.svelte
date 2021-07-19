@@ -44,7 +44,6 @@
       navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
     })
   )
-
 </script>
 
 <svg class="mask">
@@ -145,5 +144,4 @@
       padding: 20px;
     }
   }
-
 </style>
