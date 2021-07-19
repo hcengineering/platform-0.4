@@ -14,128 +14,41 @@
 -->
 
 <script lang="ts">
-  import type { AnySvelteComponent } from '@anticrm/ui'
-  import { Ref, Class, Doc, Space} from '@anticrm/core'
+  import { onDestroy } from 'svelte'
+  import { Table, Label, UserInfo } from '@anticrm/ui'
+  import type { Ref, Class, Doc, Space} from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
-  import Label from '@anticrm/ui/src/components/Label.svelte'
-  import { onDestroy } from 'svelte'
 
-  interface Cell {
-    component: AnySvelteComponent
-    props?: Object
-  }
+  import TaskStatus from './TaskStatus.svelte';
 
-  interface Field {
-    properties: FieldProp[],
-    label: IntlString,
-    component: AnySvelteComponent
-  }
+  import task from '../plugin'
 
-  interface FieldProp {
-    property: string,
-    key?: string,
-    value?: any
-  }
-
-  export let showHeader: false
-  export let _class: Ref<Class<Doc>>
   export let currentSpace: Ref<Space> | undefined
-  export let fields: Field[]
-  let data: Doc[] = []
+  let prevSpace: Ref<Space> | undefined
+
+  const _class: Ref<Class<Doc>> = task.class.Task
+  const columns = [
+    {label: 'Name' as IntlString, properties: [{key: 'name', property: 'label'}], component: Label},
+    {label: 'Description' as IntlString, properties: [{key: 'description', property: 'label'}], component: Label},
+    {label: 'Status' as IntlString, properties: [{key: 'status', property: 'title'}, {value: '#73A5C9', property: 'color'}], component: TaskStatus},
+    {label: 'Assignee' as IntlString, properties: [{value:'elon', property: 'user'}], component: UserInfo}
+  ]
+
   const client = getClient()
-  let unsubscribe = () => {}
+  let data: Doc[] = []
+  let unsub = () => {}
+  $: if (currentSpace != prevSpace) {
+    unsub()
+    unsub = () => {}
+    prevSpace = currentSpace
 
-  $: if (currentSpace != undefined) {
-    unsubscribe()
-    unsubscribe = client.query(_class, { space: currentSpace }, (result) => data = result)
-  }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
-
-  function getCells (doc: Doc): Cell[] {
-    const result: Cell[] = []
-    for (const field of fields) {
-      const props = new Object()
-      for (const prop of field.properties) {
-        (props as any)[prop.property] = prop.key === undefined ? prop.value : (doc as any)[prop.key]
-      }
-      result.push({component: field.component, props: props})
+    if (currentSpace !== undefined) {
+      unsub = client.query(_class, { space: currentSpace }, (result) => data = result)
     }
-    return result
   }
 
+  onDestroy(unsub)
 </script>
 
-  <table class="table-body">
-    {#if showHeader}
-      <tr class="tr-head">
-        {#each fields as field}
-          <th><Label label = {field.label}/></th>
-        {/each}
-      </tr>
-    {/if}
-    {#each data as object (object._id)}
-      <tr class="tr-body">
-      {#each getCells(object) as cell}
-        <td><svelte:component this={cell.component} {...cell.props}/></td>
-      {/each}
-      </tr>
-    {/each}
-  </table>
-  
-  <style lang="scss">
-    .table-body {
-      display: table;
-      border-collapse: collapse;
-  
-      td {
-        align-items: center;
-        height: 64px;
-        padding: 6px 20px;
-        color: var(--theme-content-accent-color);
-      }
-      th {
-        align-items: center;
-        height: 50px;
-        padding: 0 20px;
-        font-weight: 500;
-        text-align: left;
-        color: var(--theme-content-trans-color);
-      }
-      .tr-head {
-        position: sticky;
-        top: 0;
-        background-color: var(--theme-bg-color);
-        border-bottom: 1px solid var(--theme-bg-focused-color);
-        box-shadow: 0 1px 0 var(--theme-bg-focused-color);
-        z-index: 5;
-      }
-      .tr-body {
-        position: relative;
-        border-top: 1px solid var(--theme-bg-accent-hover);
-        &:nth-child(2) {
-          border-top: 1px solid transparent;
-        }
-        &:last-child {
-          border-bottom: 1px solid transparent;
-        }
-      }
-      .tr-body:hover {
-        & > td {
-          border-top: 1px solid transparent;
-          border-bottom: 1px solid transparent;
-          background-color: var(--theme-button-bg-enabled);
-          &:first-child {
-            border-radius: 12px 0 0 12px;
-          }
-          &:last-child {
-            border-radius: 0 12px 12px 0;
-          }
-        }
-      }
-    }
-  </style>
-  
+<Table {data} {columns}/>
