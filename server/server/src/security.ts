@@ -65,11 +65,12 @@ export class SecurityModel extends TxProcessor {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
       const spaceTx = tx as TxUpdateDoc<Space>
       this.changeSpacePrivate(spaceTx)
-      this.changeSpaceMembers(spaceTx)
+      this.pushSpaceMembers(spaceTx)
+      this.pullSpaceMembers(spaceTx)
     }
   }
 
-  changeSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
+  pushSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
     const member = spaceTx.operations?.$push?.members
     if (member !== undefined) {
       const accountSpaces = this.allowedSpaces.get(member)
@@ -77,6 +78,16 @@ export class SecurityModel extends TxProcessor {
         this.allowedSpaces.set(member, new Set<Ref<Space>>([spaceTx.objectId]))
       } else {
         accountSpaces.add(spaceTx.objectId)
+      }
+    }
+  }
+
+  pullSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
+    const member = spaceTx.operations?.$pull?.members
+    if (member !== undefined) {
+      const accountSpaces = this.allowedSpaces.get(member)
+      if (accountSpaces !== undefined) {
+        accountSpaces.delete(spaceTx.objectId)
       }
     }
   }
