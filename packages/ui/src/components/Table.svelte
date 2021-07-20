@@ -13,9 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import type { IntlString } from '@anticrm/status'
-  import { getCurrentLocation, navigate } from '..'
-  import { Ref, Doc } from '@anticrm/core'
 
   import { AnySvelteComponent } from '../types'
   import Label from './Label.svelte'
@@ -37,11 +36,17 @@
     value?: any
   }
 
+  type Data = any & {
+    _id: string
+  }
+
+  const dispatch = createEventDispatcher()
+
   export let showHeader: boolean = false
   export let columns: Column[]
-  export let data: any[]
+  export let data: Data[]
 
-  const docToRow = (doc: any): Cell[] =>
+  const docToRow = (doc: Data): Cell[] =>
     columns.map(({ component, properties }) => ({
       component,
       props: properties.reduce(
@@ -52,13 +57,6 @@
         {}
       )
     }))
-
-  function selectItem (id: Ref<Doc>) {
-    const loc = getCurrentLocation()
-    loc.path[3] = id
-    loc.path.length = 4
-    navigate(loc)
-  }
 </script>
 
 <table class="table-body">
@@ -70,12 +68,7 @@
     </tr>
   {/if}
   {#each data as doc (doc._id)}
-    <tr
-      class="tr-body"
-      on:click={() => {
-        selectItem(doc._id)
-      }}
-    >
+    <tr class="tr-body" on:click={() => dispatch('rowClick', { id: doc._id })}>
       {#each docToRow(doc) as cell}
         <td><svelte:component this={cell.component} {...cell.props} /></td>
       {/each}

@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { Table, Label, UserInfo } from '@anticrm/ui'
+  import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
   import type { Ref, Class, Doc, Space } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
@@ -55,6 +55,13 @@
   }
 
   onDestroy(unsub)
+
+  function onClick (event: any) {
+    const loc = getCurrentLocation()
+    loc.path[3] = event.detail.id
+    loc.path.length = 4
+    navigate(loc)
+  }
 </script>
 
-<Table {data} {columns} />
+<Table {data} {columns} on:rowClick={onClick} />
