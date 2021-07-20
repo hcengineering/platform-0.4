@@ -30,7 +30,7 @@
   let pressed: boolean = false
   let view: Date = selected
   const months: Array<string> = [
-    'Junary',
+    'January',
     'February',
     'March',
     'April',
@@ -56,8 +56,6 @@
     for (let i = 1; i <= daysInMonth(view); i++) {
       days.push(new Date(view.getFullYear(), view.getMonth(), i).getDay())
     }
-    console.log('View:', view)
-    console.log('Selected:', selected)
   }
 </script>
 
@@ -79,7 +77,7 @@
     <div slot="header" class="header">
       <button
         class="btn arrow"
-        on:click={() => {
+        on:click|preventDefault={() => {
           view.setMonth(view.getMonth() - 1)
           view = view
         }}><Back size={12} /></button
@@ -89,7 +87,7 @@
       </div>
       <button
         class="btn arrow"
-        on:click={() => {
+        on:click|preventDefault={() => {
           view.setMonth(view.getMonth() + 1)
           view = view
         }}><Forward size={12} /></button
