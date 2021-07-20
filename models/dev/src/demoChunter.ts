@@ -28,8 +28,7 @@ export function demoChunter (builder: Builder): void {
     builder.createDoc(
       chunter.class.Message,
       {
-        message: faker.lorem.paragraphs(3),
-        replyCount: faker.datatype.number(10)
+        message: faker.lorem.paragraphs(3)
       },
       undefined,
       {

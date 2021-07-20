@@ -36,11 +36,12 @@ type ArrayAsElement<T extends Doc> = {
 
 type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-interface PushOptions<T extends Doc> {
+interface DocOperation<T extends Doc> {
   $push?: Partial<OmitNever<ArrayAsElement<T>>>
+  $pull?: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
-export type DocumentUpdate<T extends Doc> = Partial<Data<T>> & PushOptions<T>
+export type DocumentUpdate<T extends Doc> = Partial<Data<T>> & DocOperation<T>
 
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>

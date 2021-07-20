@@ -33,6 +33,7 @@ import core, {
 import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
 import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
+import { mongoEscape, mongoUnescape } from '../escaping'
 import { DocStorage } from '../storage'
 import { TxStorage } from '../tx'
 import { createTask, createTaskModel, Task, taskIds } from './tasks'
@@ -232,6 +233,54 @@ describe('mongo operations', () => {
 
     const sortDesc = await client.findAll(taskIds.class.Task, {}, { sort: { name: SortingOrder.Descending } })
     expect(sortDesc[0].name).toMatch('my-task-4')
+  })
+
+  it('check mongo insert update tx', async () => {
+    const db = mongoClient.db(dbId)
+    const r = await db.collection('tx').insertOne(
+      mongoEscape({
+        _id: '60f58968abd82692921c51b4',
+        _class: 'class:core.TxUpdateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'john@appleseed.com',
+        modifiedOn: 1626704232444,
+        objectId: '60f58968abd82692921c51b1',
+        objectClass: 'class:test.Task',
+        objectSpace: '60f58968abd82692921c51af',
+        operations: {
+          $push: {
+            comments: '60f58968abd82692921c51b3'
+          }
+        }
+      })
+    )
+    expect(r.insertedCount).toEqual(1)
+
+    const v = await db.collection('tx').findOne({ 'operations.\\$push.comments': '60f58968abd82692921c51b3' })
+    const d1 = mongoUnescape(v)
+    expect(d1.operations.$push.comments).toEqual('60f58968abd82692921c51b3')
+  })
+  it('check dot fields tx', async () => {
+    const db = mongoClient.db(dbId)
+    const r = await db.collection('tx').insertOne(
+      mongoEscape({
+        _id: '60f58968abd82692921c51b4',
+        _class: 'class:core.TxUpdateDoc',
+        space: 'space:core.Tx',
+        modifiedBy: 'john@appleseed.com',
+        modifiedOn: 1626704232444,
+        objectId: '60f58968abd82692921c51b1',
+        objectClass: 'class:test.Task',
+        objectSpace: '60f58968abd82692921c51af',
+        operations: {
+          a: { b: 23 }
+        }
+      })
+    )
+    expect(r.insertedCount).toEqual(1)
+
+    const d1 = mongoUnescape(await db.collection('tx').findOne({ 'operations.a.b': 23 }))
+    expect(d1._id).toEqual('60f58968abd82692921c51b4')
   })
 })
 

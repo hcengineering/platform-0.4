@@ -49,6 +49,14 @@ export interface MappingRule {
 }
 
 /**
+ * An collection update rule, if defined, our document _id will be push/pull to/from objectId specified in our refField.
+ */
+export interface CollectionRule {
+  sourceField: string // A field reference to source object.
+  targetField: string // A source field collection we need to push our _id inside.
+}
+
+/**
  * Document describing derived data
  */
 export interface DerivedDataDescriptor<T extends Doc, D extends DerivedData> extends Doc {
@@ -70,6 +78,11 @@ export interface DerivedDataDescriptor<T extends Doc, D extends DerivedData> ext
    * If rule is matched multiple times, multiple derived data documents will be created.
    */
   rules?: MappingRule[]
+
+  /**
+   * An collection rules.
+   */
+  collections?: CollectionRule[]
 }
 
 /**

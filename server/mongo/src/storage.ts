@@ -18,18 +18,18 @@ import core, {
   Doc,
   DocumentQuery,
   FindOptions,
+  FindResult,
   Hierarchy,
   Ref,
   Storage,
   Tx,
   TxCreateDoc,
   TxProcessor,
-  TxUpdateDoc,
   TxRemoveDoc,
-  FindResult
+  TxUpdateDoc
 } from '@anticrm/core'
-import { Collection, Db, UpdateQuery, FilterQuery } from 'mongodb'
 import { PlatformError, Severity, Status } from '@anticrm/status'
+import { Collection, Db, FilterQuery, UpdateQuery } from 'mongodb'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
@@ -65,6 +65,7 @@ export class DocStorage extends TxProcessor implements Storage {
     } catch (err) {
       // Convert error to platform known ones.
       if (err.code === 11000) {
+        console.error(err)
         // Duplicate code error
         throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: tx.objectId }))
       }
@@ -72,7 +73,7 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
-    const { $push, ...leftAttrs } = tx.operations
+    const { $push, $pull, ...leftAttrs } = tx.operations
     const op: UpdateQuery<Doc> = {
       $set: {
         ...leftAttrs,
@@ -82,6 +83,9 @@ export class DocStorage extends TxProcessor implements Storage {
     }
     if ($push !== undefined) {
       op.$push = $push
+    }
+    if ($pull !== undefined) {
+      op.$pull = $pull
     }
     return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
   }

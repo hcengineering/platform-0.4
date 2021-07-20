@@ -96,6 +96,7 @@ export abstract class RequestProcessor {
       const req = this.requests.get(response.id)
       if (req !== undefined) {
         if (response.error !== undefined) {
+          console.error(response.error)
           req.reject(new PlatformError(response.error))
           return
         } else {
