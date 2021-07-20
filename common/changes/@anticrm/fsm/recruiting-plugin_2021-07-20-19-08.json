@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm",
+      "comment": "Adjust fsm api",
+      "type": "major"
+    }
+  ],
+  "packageName": "@anticrm/fsm",
+  "email": "ilya.sumb@gmail.com"
+}

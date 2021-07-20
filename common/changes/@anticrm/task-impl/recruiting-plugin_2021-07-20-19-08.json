@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Apply multiple fixes",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/task-impl",
+  "email": "ilya.sumb@gmail.com"
+}

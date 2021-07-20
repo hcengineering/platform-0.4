@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-fsm",
+      "comment": "Adjust fsm api & add fsm builder",
+      "type": "major"
+    }
+  ],
+  "packageName": "@anticrm/model-fsm",
+  "email": "ilya.sumb@gmail.com"
+}
