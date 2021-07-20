@@ -51,7 +51,11 @@
     <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name} /></div>
     <div class="row"><TextArea label={chunter.string.ChannelDescription} bind:value={description} /></div>
     <div class="row">
-      <ToggleWithLabel label={chunter.string.MakePrivate} description={chunter.string.MakePrivateDescription} bind:on={isPrivate}/>
+      <ToggleWithLabel
+        label={chunter.string.MakePrivate}
+        description={chunter.string.MakePrivateDescription}
+        bind:on={isPrivate}
+      />
     </div>
   </div>
 </Dialog>
