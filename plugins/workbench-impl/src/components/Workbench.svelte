@@ -13,41 +13,19 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import type { Client } from '@anticrm/plugin-core'
-  import { Component, location, SelectBox, UserInfo, DatePicker } from '@anticrm/ui'
+  import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'
   import avatar from '../../img/avatar.png'
-  import type { IPopupItem } from '@anticrm/ui'
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import Modal from './Modal.svelte'
   import NavHeader from './NavHeader.svelte'
   import Navigator from './Navigator.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
-
-  const items: Array<IPopupItem> = [
-    { selected: false, props: { user: 'chen' } },
-    { selected: false, props: { user: 'tim' } },
-    { selected: false, props: { user: 'elon' } },
-    { selected: false, props: { user: 'kathryn' } },
-    { selected: false, props: { user: 'chen' } },
-    { selected: false, props: { user: 'tim' } },
-    { selected: false, props: { user: 'elon' } },
-    { selected: false, props: { user: 'kathryn' } }
-  ]
-  const itemsStr: Array<IPopupItem> = [
-    { selected: false, title: 'chen' },
-    { selected: false, title: 'tim' },
-    { selected: false, title: 'elon' },
-    { selected: false, title: 'kathryn' },
-    { selected: false, title: 'chen' },
-    { selected: false, title: 'tim' },
-    { selected: false, title: 'elon' },
-    { selected: false, title: 'kathryn' }
-  ]
 
   export let client: Client
 
@@ -56,11 +34,13 @@
   let currentApp: Ref<Application> | undefined
   let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
+  let itemId: Ref<Doc> | undefined
 
   onDestroy(
     location.subscribe(async (loc) => {
       currentApp = loc.path[1] as Ref<Application>
       currentSpace = loc.path[2] as Ref<Space>
+      itemId = loc.path[3] as Ref<Doc>
       navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
     })
   )
@@ -82,7 +62,7 @@
   {#if navigator}
     <div class="navigator">
       <NavHeader />
-      <Navigator model={navigatorModel} space={currentSpace} />
+      <Navigator model={navigatorModel} />
     </div>
   {/if}
   <div class="component">
@@ -91,11 +71,11 @@
       <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpace }} />
     {/if}
   </div>
-  <div class="aside">
-    <SelectBox title={'PROJECT MEMBERS'} component={UserInfo} {items} hAlign={'left'} vAlign={'bottom'} />
-    <div style="height: 20px;" />
-    <SelectBox items={itemsStr} hAlign={'left'} vAlign={'bottom'} />
-  </div>
+  {#if navigatorModel && navigatorModel.editComponent && itemId}
+    <div class="aside">
+      <Component is={navigatorModel.editComponent} props={{ id: itemId }} />
+    </div>
+  {/if}
 </div>
 <Modal />
 

@@ -20,6 +20,7 @@
   export let width: string | undefined
   export let value: string | undefined
   export let id: string | undefined
+  export let lines: number = 5
 
   let divTA: HTMLElement
   let textArea: HTMLTextAreaElement
@@ -32,7 +33,16 @@
 </script>
 
 <div class="textArea" bind:this={divTA} style={width ? 'width: ' + width : ''}>
-  <textarea class:nolabel={!label} {id} bind:value on:keyup placeholder=" " bind:this={textArea} on:scroll={scroll} />
+  <textarea
+    class:nolabel={!label}
+    {id}
+    rows={lines}
+    bind:value
+    on:keyup
+    placeholder=" "
+    bind:this={textArea}
+    on:scroll={scroll}
+  />
   {#if label}
     <div class="label"><Label {label} /></div>
   {/if}

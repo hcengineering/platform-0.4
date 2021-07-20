@@ -28,7 +28,7 @@ export class TChannel extends TSpace implements Channel {}
 @Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
 export class TMessage extends TDoc implements Message {
   message!: string
-  replyCount!: number
+  comments!: Array<Ref<Comment>>
 }
 
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
@@ -94,6 +94,16 @@ export function createModel (builder: Builder): void {
           pattern: MARKDOWN_REFERENCE_PATTERN.source,
           multDoc: true
         }
+      }
+    ]
+  })
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: chunter.class.Message,
+    collections: [
+      {
+        sourceField: 'replyOf',
+        targetField: 'comments'
       }
     ]
   })

@@ -12,6 +12,9 @@
     "Assignee": "Assignee",
     "AssignTask": "Assign task",
     "CreateProject": "Create project",
-    "ApplicationLabelTask": "Tasks"
+    "ApplicationLabelTask": "Tasks",
+    "Progress": "Progress",
+    "AddCheckItem": "Add check item",
+    "CheckItems": "Check items"
   }
 }

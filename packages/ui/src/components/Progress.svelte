@@ -18,13 +18,13 @@
   export let max: number = 100
   export let color: string = '#50BCF9'
 
-  const proc: number = (max - min) / 100
+  $: proc = (max - min) / 100
   if (value > max) value = max
   if (value < min) value = min
 </script>
 
 <div class="progress-container">
-  <div class="bar" style="background-color: {color}; width: calc(100% * {Math.round((value - min) / proc)} / 100);" />
+  <div class="bar" style="background-color: {color}; width: {Math.round((value - min) / proc)}%;" />
 </div>
 
 <style lang="scss">

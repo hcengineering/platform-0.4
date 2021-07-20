@@ -68,8 +68,7 @@ export function demoTask (builder: Builder): void {
       builder.createDoc(
         chunter.class.Message,
         {
-          message: faker.lorem.paragraphs(3),
-          replyCount: 0
+          message: faker.lorem.paragraphs(3)
         },
         undefined,
         {

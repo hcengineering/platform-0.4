@@ -142,7 +142,9 @@ export async function createClient (
 async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
   // D E R I V E D   D A T A
   const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
-  client.extraTx = async (tx: Tx) => await ddProcessor.tx(tx)
+  client.extraTx = async (tx: Tx) => {
+    await ddProcessor.tx(tx)
+  }
 
   return client
 }

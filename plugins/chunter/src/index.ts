@@ -22,7 +22,7 @@ export interface Channel extends Space {}
 
 export interface Message extends Doc {
   message: string
-  replyCount: number
+  comments?: Array<Ref<Comment>>
 }
 
 export interface Comment extends Doc {
