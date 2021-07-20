@@ -15,7 +15,7 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import type { Client } from '@anticrm/plugin-core'
-  import { Component, location, SelectBox, UserInfo } from '@anticrm/ui'
+  import { Component, location, SelectBox, UserInfo, DatePicker } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'
