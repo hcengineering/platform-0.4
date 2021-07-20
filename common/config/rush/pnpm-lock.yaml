@@ -180,7 +180,7 @@ dependencies:
   '@rush-temp/status': file:projects/status.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task': file:projects/task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/task-assets': file:projects/task-assets.tgz_a1ef5cd65bd5afee7099301696a9e3c1
-  '@rush-temp/task-impl': file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1
+  '@rush-temp/task-impl': file:projects/task-impl.tgz_dbf4af031ea72cadd58e9967f1c25279
   '@rush-temp/tests-server': file:projects/tests-server.tgz_ts-node@10.0.0
   '@rush-temp/text': file:projects/text.tgz_ts-node@10.0.0
   '@rush-temp/theme': file:projects/theme.tgz_29b5792c516c436974ca1fcf79948eb4
@@ -10487,25 +10487,47 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/task-impl.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-a4l+jj1co4mNEA0AITuqMtqJp+hL4kxf8aXGhmGXufs+jo34Kh5B8YbwAEAhiYfvX1G4pG+QS7gIXZN6VtASeg==, tarball: file:projects/task-impl.tgz}
+  file:projects/task-impl.tgz_dbf4af031ea72cadd58e9967f1c25279:
+    resolution: {integrity: sha512-L+ZB0BeeUP1AfxH5Uv9DDSfsCIo0u+2bcDPwuKmtFgIYzBhIOnQvj/Q5hWrAiUS2Fh/D399moB2OU5Di8CDx8g==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
+      sass: 1.32.13
       svelte: 3.38.2
+      svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
       svelte-loader: 3.1.2_svelte@3.38.2
+      svelte-preprocess: 4.7.3_4e2a6a97b7fbac24c9876bee9f9e1fa7
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
       typescript: 4.3.5
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
+      - '@babel/core'
       - bufferutil
       - canvas
+      - coffeescript
+      - less
+      - node-sass
+      - postcss
+      - postcss-load-config
+      - pug
+      - stylus
+      - sugarss
       - supports-color
       - ts-node
       - utf-8-validate

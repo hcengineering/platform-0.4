@@ -22,11 +22,12 @@ import core from '../component'
 import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMapper, registerMapper } from '../derived'
 import { newDerivedData } from '../derived/utils'
 import { Hierarchy } from '../hierarchy'
-import { ModelDb } from '../memdb'
+import { ModelDb, TxDb } from '../memdb'
 import { Title } from '../title'
 import { Tx } from '../tx'
 import { createClass, createDoc, genMinModel } from './minmodel'
 import { connect } from './connection'
+import { TxModelStorage } from './txmodel'
 
 const txes = genMinModel()
 
@@ -34,22 +35,31 @@ interface Task extends Doc {
   shortId: string
   title: string
   description: string
+  comments?: Ref<Comment>[]
 }
 
 interface Message extends Doc {
+  message: string
+  comments?: Ref<Comment>[]
+}
+
+interface Comment extends Doc {
+  ofDoc: Ref<Doc>
   message: string
 }
 
 interface Page extends Doc {
   name: string
   description: string
+  comments?: Ref<Comment>[]
 }
 
 const testIds = component('test' as Component, {
   class: {
     Task: '' as Ref<Class<Task>>,
     Message: '' as Ref<Class<Message>>,
-    Page: '' as Ref<Class<Page>>
+    Page: '' as Ref<Class<Page>>,
+    Comment: '' as Ref<Class<Comment>>
   },
   mapper: {
     PageTitleMapper: '' as Resource<DocumentMapper>
@@ -61,7 +71,8 @@ const dtxes = [
   // Test ids
   createClass(testIds.class.Task, { extends: core.class.Doc }),
   createClass(testIds.class.Message, { extends: core.class.Doc }),
-  createClass(testIds.class.Page, { extends: core.class.Doc })
+  createClass(testIds.class.Page, { extends: core.class.Doc }),
+  createClass(testIds.class.Comment, { extends: core.class.Doc })
 ]
 
 registerMapper(testIds.mapper.PageTitleMapper, {
@@ -121,11 +132,15 @@ describe('deried data', () => {
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
+    const txDb = new TxDb(hierarchy)
+    for (const tx of txes) await txDb.tx(tx)
+
+    const storage = new TxModelStorage(hierarchy, txDb, model)
 
     const countModel: Storage = {
-      findAll: async (_class, query) => await model.findAll(_class, query),
+      findAll: async (_class, query) => await storage.findAll(_class, query),
       tx: async (tx) => {
-        await model.tx(tx)
+        await storage.tx(tx)
         counter.txes += 1
       }
     }
@@ -133,8 +148,8 @@ describe('deried data', () => {
     const processor = await DerivedDataProcessor.create(model, hierarchy, countModel)
 
     const counter = { txes: 0 }
-    const storage: Storage = {
-      findAll: async (_class, query) => await model.findAll(_class, query),
+    const countStorage: Storage = {
+      findAll: async (_class, query) => await storage.findAll(_class, query),
       tx: async (tx) => {
         hierarchy.tx(tx)
         await countModel.tx(tx)
@@ -142,8 +157,8 @@ describe('deried data', () => {
       }
     }
 
-    const operations = withOperations(core.account.System, storage)
-    return { hierarchy, model, processor, operations, storage, counter }
+    const operations = withOperations(core.account.System, countStorage)
+    return { hierarchy, model, processor, operations, storage: countStorage, counter }
   }
 
   it('check DD appear after being added', async () => {
@@ -419,5 +434,51 @@ describe('deried data', () => {
 
     const titles = await client.findAll(core.class.Title, {})
     expect(titles.length).toEqual(3)
+  })
+
+  it('check collection rule', async () => {
+    // We need few descriptors to be available
+
+    const { operations, model } = await prepare([
+      ...dtxes,
+      createDoc<DerivedDataDescriptor<Comment, any>>(core.class.DerivedDataDescriptor, {
+        sourceClass: testIds.class.Comment,
+        targetClass: testIds.class.Task,
+        collections: [
+          {
+            sourceField: 'ofDoc',
+            targetField: 'comments'
+          }
+        ]
+      })
+    ])
+
+    const doc1 = await operations.createDoc(testIds.class.Task, core.space.Model, {
+      title: 'my-task',
+      shortId: 'T-101',
+      description: ''
+    })
+
+    for (let i = 0; i < 10; i++) {
+      await operations.createDoc(testIds.class.Comment, core.space.Model, {
+        ofDoc: doc1._id,
+        message: `Comment of ${i}`
+      })
+    }
+
+    const comments = await operations.findAll(testIds.class.Comment, {})
+    expect(comments.length).toEqual(10)
+
+    const updD1 = await model.findAll(testIds.class.Task, { _id: doc1._id })
+    expect(updD1.length).toEqual(1)
+    expect(updD1[0].comments?.length).toEqual(10) // 1 - create Doc, 2 - create title
+
+    // Check remove
+
+    await operations.removeDoc(testIds.class.Comment, core.space.Model, comments[0]._id)
+
+    const updD2 = await model.findAll(testIds.class.Task, { _id: doc1._id })
+    expect(updD2.length).toEqual(1)
+    expect(updD2[0].comments?.length).toEqual(9) // 1 - create Doc, 2 - create title
   })
 })

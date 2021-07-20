@@ -55,7 +55,8 @@ export function createModel (builder: Builder): void {
         }
       ],
       spaceView: task.component.TaskView,
-      createComponent: task.component.CreateTask
+      createComponent: task.component.CreateTask,
+      editComponent: task.component.EditTask
     }
   })
   builder.createDoc(task.class.Project, {

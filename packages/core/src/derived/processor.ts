@@ -69,6 +69,44 @@ export class DerivedDataProcessor extends TxProcessor {
       let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       results = this.withDescrId(results, d._id, tx.objectId, tx.objectClass)
       await this.applyDerivedData([], results, ops)
+
+      await this.applyCollectionRules(d, tx, true, ops)
+    }
+  }
+
+  /*
+   * Will update collection back references.
+   */
+  async applyCollectionRules (d: Descr, tx: Tx, push: boolean, ops: Storage & TxOperations): Promise<void> {
+    for (const r of d.collections ?? []) {
+      if (push) {
+        const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
+        const parentDocRef = (doc as any)[r.sourceField] as Ref<Doc>
+        if (parentDocRef !== undefined) {
+          try {
+            await ops.updateDoc(d.targetClass, tx.objectSpace, parentDocRef, {
+              $push: { [r.targetField]: tx.objectId }
+            })
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      } else {
+        // Handle pull, since our document is already removed from storage, we need to search for transactions to update source doc.
+        const pushOps = await ops.findAll<TxUpdateDoc<Doc>>(core.class.TxUpdateDoc, {
+          objectClass: d.targetClass,
+          [`operations.\\$push.${r.targetField}`]: tx.objectId
+        })
+        // If it was in few fields at once, operation probable will be execured few times.
+        for (const op of pushOps) {
+          try {
+            await ops.updateDoc(d.targetClass, tx.objectSpace, op.objectId, { $pull: { [r.targetField]: tx.objectId } })
+          } catch (err) {
+            // Ignore exception.
+            console.log(err)
+          }
+        }
+      }
     }
   }
 
@@ -122,6 +160,7 @@ export class DerivedDataProcessor extends TxProcessor {
         descriptorId: d._id
       })
       await this.applyDerivedData(oldData, [], ops)
+      await this.applyCollectionRules(d, tx, false, ops)
     }
   }
 
@@ -165,7 +204,9 @@ export class DerivedDataProcessor extends TxProcessor {
     // Do diff from old refs to remove only missing.
     const { additions, updates, deletes } = findExistingData(oldData, newData)
 
-    const added = Promise.all(additions.map(async (add) => await storage.createDoc(add._class, add.space, add)))
+    const added = Promise.all(
+      additions.map(async (add) => await storage.createDoc(add._class, add.space, add, add._id))
+    )
     const updated = Promise.all(updates.map(async (up) => await storage.updateDoc(up._class, up.space, up._id, up)))
     const deleted = Promise.all(deletes.map(async (del) => await storage.removeDoc(del._class, del.space, del._id)))
 

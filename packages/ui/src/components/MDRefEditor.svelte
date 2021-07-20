@@ -157,6 +157,7 @@
           value = serializeMessage(editorContent)
           dispatch('value', value)
         }}
+        on:blur
         on:styleEvent={(e) => updateStyle(e.detail)}
       >
         <div class="label" slot="hoverMessage" let:empty let:hasFocus class:label-placeholder={!empty || hasFocus}>

@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
   import { Label } from '@anticrm/ui'
   import { getStatusColor } from '../plugin'
 
   export let title: IntlString
-  let color: string = getStatusColor(title)
+  $: color = getStatusColor(title)
 </script>
 
-<div class="taskstatus-container" style="background-color: {color}">
-  <Label label={title}/>
+<div class="taskstatus-container" style="color: {color}">
+  <Label label={title} />
 </div>
 
 <style lang="scss">
@@ -38,8 +37,8 @@
     padding: 6px 8px;
     font-size: 10px;
     font-weight: 500;
-    letter-spacing: .5;
-    color: #fff;
+    letter-spacing: 0.5;
     border-radius: 8px;
+    background-color: var(--theme-bg-focused-color);
   }
 </style>

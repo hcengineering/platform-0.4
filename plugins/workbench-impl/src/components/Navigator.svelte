@@ -13,16 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
   import type { NavigatorModel } from '@anticrm/workbench'
   import SpacesNav from './navigator/SpacesNav.svelte'
 
   export let model: NavigatorModel | undefined = undefined
-  export let space: Ref<Space> | undefined = undefined
 </script>
 
 {#if model}
   {#each model.spaces as space}
-    <SpacesNav model={space} {space} />
+    <SpacesNav model={space} />
   {/each}
 {/if}

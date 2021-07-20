@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "id routing",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench",
+  "email": "bykhov.denis@gmail.com"
+}

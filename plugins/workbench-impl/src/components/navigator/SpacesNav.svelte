@@ -22,7 +22,6 @@
   import TreeNode from './TreeNode.svelte'
 
   export let model: SpacesNavModel
-  export let space: Ref<Space>
 
   let spaces: Space[] = []
   let unsubscribe = () => {}

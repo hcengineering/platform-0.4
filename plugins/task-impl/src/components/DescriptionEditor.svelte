@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core,{ DocumentQuery,Title } from '@anticrm/core'
+  import core, { DocumentQuery, Title } from '@anticrm/core'
   import { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
-  import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem  }  from '@anticrm/ui'
+  import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
 
   export let lines = 10
   export let value: string = ''
@@ -85,13 +85,14 @@
   }
 </script>
 
-<MDRefEditor 
-  bind:value={value} 
-  {label} 
+<MDRefEditor
+  bind:value
+  {label}
   {lines}
-  findFunction={findTitle} 
-  completions={completions}
+  findFunction={findTitle}
+  {completions}
+  on:blur
   on:prefix={(event) => {
-    currentPrefix=event.detail
+    currentPrefix = event.detail
   }}
-  />
+/>

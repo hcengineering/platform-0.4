@@ -38,7 +38,7 @@ export function toMongoQuery<T extends Doc> (
   for (const key in query) {
     const value = query[key]
     if (typeof value !== 'object') continue
-    mongoQuery[key] = translateQuery(value as any)
+    mongoQuery[key] = translateQuery(value)
   }
 
   mongoQuery._class = objectClass
