@@ -47,7 +47,7 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.ProjectName} bind:value={name}/></div>
     <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description}/></div>
-    <div class="row"><ToggleWithLabel label={task.string.MakePrivate} description={task.string.MakePrivateDescription} bind:on={isPrivate}/></div>
+    <div class="row"><ToggleWithLabel label={task.string.MakePrivate} description={task.string.MakePrivateDescription} bind:on={isPrivate} /></div>
   </div>
 </Dialog>
 

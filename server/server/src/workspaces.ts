@@ -51,7 +51,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 function sendToClients (clients: Map<string, ClientInfo>, tx: Tx, security: SecurityModel): void {
   for (const cl of clients.entries()) {
     const differentAccount = cl[1].accountId !== tx.modifiedBy
-    const spaceOpAllowed = security.checkSecurity(cl[1].accountId, tx.objectSpace)
+    const spaceOpAllowed = security.checkSecurity(cl[1].accountId, tx)
     if (differentAccount && spaceOpAllowed) {
       cl[1].tx(tx)
     }
