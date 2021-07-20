@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Introduce table rowClick callback",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "ilya.sumb@gmail.com"
+}
