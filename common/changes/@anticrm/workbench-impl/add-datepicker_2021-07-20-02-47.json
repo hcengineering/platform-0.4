@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Add component DatePicker.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "sas_lord@mail.ru"
+}
