@@ -45,19 +45,19 @@
   }
 </script>
 
-<svelte:window on:mouseup={waitClick}/>
+<svelte:window on:mouseup={waitClick} />
 <div class="popup-menu">
-  <div class="trigger"><slot name="trigger"/></div>
+  <div class="trigger"><slot name="trigger" /></div>
   {#if show}
     <div class="popup {vAlign} {hAlign}" {style}>
       {#if showHeader}
         <div class="header">
-          <div class="title"><Label label={title ?? ui.string.Undefined}/></div>
-          <slot name="header"/>
+          <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
+          <slot name="header" />
           {#if caption}<div class="caption">{caption}</div>{/if}
         </div>
       {/if}
-      <div class="content"><slot/></div>
+      <div class="content"><slot /></div>
     </div>
   {/if}
 </div>

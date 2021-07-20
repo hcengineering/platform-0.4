@@ -59,14 +59,14 @@
       }}
     >
       {#if selected}
-        <div class="avatar"><UserInfo user={selected.name} size={36} avatarOnly/></div>
+        <div class="avatar"><UserInfo user={selected.name} size={36} avatarOnly /></div>
       {:else}
         <div class="icon">
-          {#if pressed}<Close/>{:else}<Add/>{/if}
+          {#if pressed}<Close />{:else}<Add />{/if}
         </div>
       {/if}
     </button>
-    <div slot="header" class="search"><EditBox label={ui.string.Search} bind:value={search}/></div>
+    <div slot="header" class="search"><EditBox label={ui.string.Search} bind:value={search} /></div>
     {#if selected}
       <PopupItem
         component={UserInfo}
@@ -92,9 +92,9 @@
     {/each}
   </PopupMenu>
   <div class="selectUser">
-    <div class="title"><Label label={title}/></div>
+    <div class="title"><Label label={title} /></div>
     <div class="user">
-      {#if selected}{selected.title}{:else}<Label {label}/>{/if}
+      {#if selected}{selected.title}{:else}<Label {label} />{/if}
     </div>
   </div>
 </div>

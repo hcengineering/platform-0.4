@@ -29,18 +29,31 @@
 
   let pressed: boolean = false
   let view: Date = selected
-  const months: Array<string> = ['Junary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const months: Array<string> = [
+    'Junary',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
   let monthYear: string
   let days: Array<number>
 
   const daysInMonth = (date: Date): number => {
-		return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
-	}
+    return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
+  }
 
   $: {
     monthYear = months[view.getMonth()] + ' ' + view.getFullYear()
     days = []
-    for(let i = 1; i <= daysInMonth(view); i++) {
+    for (let i = 1; i <= daysInMonth(view); i++) {
       days.push(new Date(view.getFullYear(), view.getMonth(), i).getDay())
     }
     console.log('View:', view)
@@ -49,7 +62,7 @@
 </script>
 
 <div class="userBox">
-  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title={title} showHeader>
+  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title showHeader>
     <button
       slot="trigger"
       class="btn"
@@ -60,21 +73,27 @@
       }}
     >
       <div class="icon">
-        {#if pressed}<Close/>{:else}<Calendar size={20}/>{/if}
+        {#if pressed}<Close />{:else}<Calendar size={20} />{/if}
       </div>
     </button>
     <div slot="header" class="header">
-      <button class="btn arrow" on:click={() => {
-        view.setMonth(view.getMonth() - 1)
-        view = view
-      }}><Back size={12}/></button>
+      <button
+        class="btn arrow"
+        on:click={() => {
+          view.setMonth(view.getMonth() - 1)
+          view = view
+        }}><Back size={12} /></button
+      >
       <div class="monthYear">
         {monthYear}
       </div>
-      <button class="btn arrow" on:click={() => {
-        view.setMonth(view.getMonth() + 1)
-        view = view
-      }}><Forward size={12}/></button>
+      <button
+        class="btn arrow"
+        on:click={() => {
+          view.setMonth(view.getMonth() + 1)
+          view = view
+        }}><Forward size={12} /></button
+      >
     </div>
     <div class="calendar">
       <div class="caption">Mo</div>
@@ -85,7 +104,11 @@
       <div class="caption">Sa</div>
       <div class="caption">Su</div>
       {#each days as day, i}
-        <div class="day" class:selected={i + 1 == selected.getDate() && view.getMonth() == selected.getMonth() && view.getFullYear() == selected.getFullYear()}
+        <div
+          class="day"
+          class:selected={i + 1 === selected.getDate() &&
+            view.getMonth() === selected.getMonth() &&
+            view.getFullYear() === selected.getFullYear()}
           style="grid-column: {day + 1}/{day + 2};"
           on:click={() => {
             selected = new Date(view.getFullYear(), view.getMonth(), i + 1)
@@ -98,7 +121,7 @@
     </div>
   </PopupMenu>
   <div class="selectDate">
-    <div class="title"><Label label={title}/></div>
+    <div class="title"><Label label={title} /></div>
     <div class="date">
       {selected.getMonth() + 1} / {selected.getDate()} / {selected.getFullYear()}
     </div>
