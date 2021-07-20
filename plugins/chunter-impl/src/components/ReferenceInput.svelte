@@ -338,7 +338,7 @@
           opacity: 0.3;
           transition: all 200ms;
           user-select: none;
-        }        
+        }
       }
       .sendButton {
         display: flex;
