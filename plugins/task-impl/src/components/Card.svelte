@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
@@ -26,10 +25,10 @@
   export let card: Task
   export let user: string = 'chen'
   let discussion: number = 0
-  export let attach: number = 3
-  let progress = {
+  export const attach: number = 3
+  $: progress = {
     max: card.checkItems.length,
-    value: card.checkItems.filter(p => p.done).length,
+    value: card.checkItems.filter((p) => p.done).length,
     color: getStatusColor(card.status)
   }
   let unsubscribe = () => {}
@@ -54,17 +53,17 @@
     {#if progress.max > 0}
       <div class="progress">
         <span>Progress</span>
-        <Progress {...progress}/>
+        <Progress {...progress} />
       </div>
     {/if}
   </div>
   <div class="footer">
-    <UserInfo {user} size={24} avatarOnly/>
-      <div class="action">
-        <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'}/>
-        <div class="counter">{discussion}</div>
-        <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'}/>
-      </div>
+    <UserInfo {user} size={24} avatarOnly />
+    <div class="action">
+      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
+      <div class="counter">{discussion}</div>
+      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
+    </div>
   </div>
 </div>
 
@@ -117,10 +116,10 @@
       border-radius: 0 0 11px 11px;
 
       .action {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
 
         .counter {
           margin-left: 4px;

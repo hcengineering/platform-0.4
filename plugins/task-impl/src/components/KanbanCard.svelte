@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { onDestroy } from 'svelte'
 
   import { ActionIcon, UserInfo } from '@anticrm/ui'
-  import { Task } from '@anticrm/task';
+  import { Task } from '@anticrm/task'
   import { getClient } from '@anticrm/workbench'
   import chunter from '@anticrm/chunter-impl/src/plugin'
 
@@ -45,11 +44,11 @@
 <div class="card-container">
   <div class="header">{doc.name}</div>
   <div class="footer">
-    <div><UserInfo user="chen" avatarOnly={true}/></div>
+    <div><UserInfo user="chen" avatarOnly={true} /></div>
     <div class="action">
-      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'}/>
+      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
       <div class="counter">{discussion}</div>
-      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'}/>
+      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
     </div>
   </div>
 </div>
@@ -86,10 +85,10 @@
       border-radius: 11px 11px 0 0;
 
       .action {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
 
         .counter {
           margin-left: 4px;
@@ -103,7 +102,7 @@
     }
 
     &.drag {
-      opacity: .5;
+      opacity: 0.5;
     }
   }
 </style>

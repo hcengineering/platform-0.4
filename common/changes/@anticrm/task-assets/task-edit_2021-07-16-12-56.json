@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "edit task",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets",
+  "email": "bykhov.denis@gmail.com"
+}

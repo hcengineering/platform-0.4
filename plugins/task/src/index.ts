@@ -23,9 +23,9 @@ export interface Project extends Space {}
 export interface TaskService extends Service {}
 
 export const TaskStatuses = {
-  Open: 'Open' as IntlString,
-  InProgress: 'InProgress' as IntlString,
-  Closed: 'Closed' as IntlString
+  Open: 'OPEN' as IntlString,
+  InProgress: 'IN PROGRESS' as IntlString,
+  Closed: 'CLOSED' as IntlString
 } as const
 
 export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses]
