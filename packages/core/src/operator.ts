@@ -21,7 +21,7 @@ type OperatorFunc = (doc: Doc, op: object) => void
 function $push (document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
   for (const key in keyval) {
-    const arr = doc[key]
+    const arr: Array<any> = doc[key]
     if (arr === undefined) {
       doc[key] = [keyval[key]]
     } else {
@@ -29,9 +29,19 @@ function $push (document: Doc, keyval: Record<string, PropertyType>): void {
     }
   }
 }
+function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
+  const doc = document as any
+  for (const key in keyval) {
+    const arr: Array<any> = doc[key]
+    if (arr !== undefined) {
+      doc[key] = arr.filter((k) => k !== keyval[key])
+    }
+  }
+}
 
 const operators: Record<string, OperatorFunc> = {
-  $push
+  $push,
+  $pull
 }
 
 export function getOperator (name: string): OperatorFunc {

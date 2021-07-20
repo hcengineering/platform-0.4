@@ -24,9 +24,16 @@ export type QuerySelector<T> = {
 
 export type ObjQueryType<T> = T | QuerySelector<T>
 
+export interface NestedDotQuery {
+  // support nested queries e.g. 'user.friends.name'
+  // this will mark all unrecognized properties as any (including nested queries)
+  [key: string]: any
+}
+
 export type DocumentQuery<T extends Doc> = {
   [P in keyof T]?: ObjQueryType<T[P]>
-}
+} &
+NestedDotQuery
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type FindOptions<T extends Doc> = {

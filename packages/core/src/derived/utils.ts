@@ -1,6 +1,7 @@
 import { deepEqual } from 'fast-equals'
 import { DerivedData, DerivedDataDescriptor, MappingRule, RuleExpresson } from '.'
 import { Data, Doc } from '../classes'
+import { generateId } from '../utils'
 
 type Descr = DerivedDataDescriptor<Doc, DerivedData>
 export interface DerivedDataOperations {
@@ -53,7 +54,7 @@ export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr, len: 
     objectId: doc._id,
     objectClass: doc._class,
     ...(d.initiValue ?? {}),
-    _id: `dd-${doc._id}-${len}`,
+    _id: `dd-${generateId()}`,
     modifiedBy: doc.modifiedBy,
     modifiedOn: Date.now(),
     space: doc.space,

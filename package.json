@@ -1,0 +1,13 @@
+{
+  "name": "@anticrm/platform-root",
+  "version": "0.4.0",
+  "scripts": {
+    "test-diff": "./common/scripts/each-diff.sh rushx test",
+    "lint-diff": "./common/scripts/each-diff.sh rushx lint",
+    "lint-diff:fix": "./common/scripts/each-diff.sh rushx lint:fix",
+    "format-diff": "./common/scripts/each-diff.sh rushx format",
+    "dev": "cd ./dev/prod/ && rushx dev"
+  },
+  "author": "Anticrm Platform Contributors",
+  "license": "EPL-2.0"
+}

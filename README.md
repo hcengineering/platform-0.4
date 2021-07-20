@@ -42,3 +42,19 @@ After server is started, it will accept any incoming request for existing worksp
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/
 elasticsearch/elasticsearch:7.13.1
 ```
+
+## Dev tasks
+
+All dev required tasks could be execured from root of project using rushx tool.
+
+### Format all changed files
+
+`rushx format-diff`
+
+### Lint all changed files
+
+`rushx lint-diff`
+
+### Execute tests on modified projects
+
+`rushx test-diff`

@@ -20,11 +20,30 @@ export function findProperty (objects: Doc[], propertyKey: string, value: any): 
   }
   const result: Doc[] = []
   for (const object of objects) {
-    if ((object as any)[propertyKey] === value) {
+    const val = (object as any)[propertyKey]
+    if (val === value || nestedDotQueryCheck(propertyKey, object, value)) {
       result.push(object)
     }
   }
   return result
+}
+
+function nestedDotQueryCheck (key: string, value: any, pattern: any): boolean {
+  // Check dot notation
+
+  // Replace escapting, since memdb is not escape keys
+  key = key.split('\\$').join('$')
+  const dots = key.split('.')
+  if (dots.length > 1) {
+    // We have dots, so iterate in depth
+    for (const d of dots) {
+      value = value?.[d]
+    }
+    if (value === pattern) {
+      return true
+    }
+  }
+  return false
 }
 
 export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuery<T>): void {
