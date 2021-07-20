@@ -23,11 +23,11 @@ import task from '@anticrm/task'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {
-    case 'Open':
+    case 'OPEN':
       return '#9D92C4'
-    case 'InProgress':
+    case 'IN PROGRESS':
       return '#61A6AF'
-    case 'Closed':
+    case 'CLOSED':
       return '#73A6CD'
     default:
       return '#F28469'
@@ -38,7 +38,8 @@ export default mergeIds(task, {
   component: {
     CreateProject: '' as AnyComponent,
     TaskView: '' as AnyComponent,
-    CreateTask: '' as AnyComponent
+    CreateTask: '' as AnyComponent,
+    EditTask: '' as AnyComponent
   },
   class: {
     Project: '' as Ref<Class<Project>>,
@@ -57,6 +58,9 @@ export default mergeIds(task, {
     Assignee: '' as IntlString,
     AssignTask: '' as IntlString,
     ApplicationLabelTask: '' as IntlString,
-    CreateProject: '' as IntlString
+    CreateProject: '' as IntlString,
+    Progress: '' as IntlString,
+    AddCheckItem: '' as IntlString,
+    CheckItems: '' as IntlString
   }
 })
