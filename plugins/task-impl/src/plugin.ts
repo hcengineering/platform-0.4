@@ -55,7 +55,6 @@ export default mergeIds(task, {
     TaskName: '' as IntlString,
     TaskDescription: '' as IntlString,
     CreateTask: '' as IntlString,
-    Cancel: '' as IntlString,
     Assignee: '' as IntlString,
     AssignTask: '' as IntlString,
     ApplicationLabelTask: '' as IntlString,

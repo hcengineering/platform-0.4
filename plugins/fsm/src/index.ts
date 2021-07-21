@@ -15,12 +15,11 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Doc, Ref, Class } from '@anticrm/core'
-import type { Application } from '@anticrm/workbench'
+import type { Doc, Ref, Class, Space } from '@anticrm/core'
 
 export interface FSM extends Doc {
   name: string
-  application: Ref<Application>
+  clazz: Ref<Class<Doc>>
   isTemplate: boolean
 }
 
@@ -30,7 +29,7 @@ export interface Transition extends Doc {
   fsm: Ref<FSM>
 }
 
-export interface WithFSM extends Doc {
+export interface WithFSM extends Space {
   fsm: Ref<FSM>
 }
 
@@ -43,6 +42,7 @@ export interface FSMItem extends Doc {
 
 export interface State extends Doc {
   name: string
+  color: string
   fsm: Ref<FSM>
 }
 

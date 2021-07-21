@@ -16,10 +16,10 @@
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
-  export let label: IntlString | undefined
-  export let width: string | undefined
-  export let value: string | undefined
-  export let id: string | undefined
+  export let label: IntlString | undefined = undefined
+  export let width: string | undefined = undefined
+  export let value: string | undefined = undefined
+  export let id: string | undefined = undefined
   export let lines: number = 5
 
   let divTA: HTMLElement

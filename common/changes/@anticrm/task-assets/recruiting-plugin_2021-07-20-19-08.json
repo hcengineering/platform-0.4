@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "Get rid of unnecessary label",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/task-assets",
+  "email": "ilya.sumb@gmail.com"
+}

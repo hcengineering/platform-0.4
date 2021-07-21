@@ -13,21 +13,28 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref, Space } from '@anticrm/core'
+import type { Account, Doc, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset } from '@anticrm/status'
 
 export interface Channel extends Space {}
 
-export interface Message extends Doc {
-  message: string
-  comments?: Array<Ref<Comment>>
+export interface CommentRef {
+  _id: Ref<Doc>
+  userId: Ref<Account>
 }
 
-export interface Comment extends Doc {
-  replyOf: Ref<Message>
+export interface WithMessage extends Doc {
   message: string
+}
+
+export interface Message extends WithMessage {
+  comments?: CommentRef[]
+}
+
+export interface Comment extends WithMessage {
+  replyOf: Ref<Doc>
 }
 
 export interface ChunterService extends Service {}

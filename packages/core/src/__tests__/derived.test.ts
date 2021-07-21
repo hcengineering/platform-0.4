@@ -16,7 +16,7 @@
 import { Component, component, Resource } from '@anticrm/status'
 import { describe, it } from '@jest/globals'
 import { Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
-import { Class, Doc, Ref, Space } from '../classes'
+import { Account, Class, Doc, Ref, Space } from '../classes'
 import { createClient } from '../client'
 import core from '../component'
 import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMapper, registerMapper } from '../derived'
@@ -30,6 +30,11 @@ import { connect } from './connection'
 import { TxModelStorage } from './txmodel'
 
 const txes = genMinModel()
+
+interface CommentRef {
+  _id: Ref<Comment>
+  userId: Ref<Account>
+}
 
 interface Task extends Doc {
   shortId: string
@@ -51,7 +56,7 @@ interface Comment extends Doc {
 interface Page extends Doc {
   name: string
   description: string
-  comments?: Ref<Comment>[]
+  comments?: CommentRef[]
 }
 
 const testIds = component('test' as Component, {
@@ -478,6 +483,53 @@ describe('deried data', () => {
     await operations.removeDoc(testIds.class.Comment, core.space.Model, comments[0]._id)
 
     const updD2 = await model.findAll(testIds.class.Task, { _id: doc1._id })
+    expect(updD2.length).toEqual(1)
+    expect(updD2[0].comments?.length).toEqual(9) // 1 - create Doc, 2 - create title
+  })
+
+  it('check collection rule - doc map', async () => {
+    // We need few descriptors to be available
+
+    const { operations, model } = await prepare([
+      ...dtxes,
+      createDoc<DerivedDataDescriptor<Comment, Page>>(core.class.DerivedDataDescriptor, {
+        sourceClass: testIds.class.Comment,
+        targetClass: testIds.class.Page,
+        collections: [
+          {
+            sourceField: 'ofDoc',
+            targetField: 'comments',
+            rules: [{ sourceField: 'modifiedBy', targetField: 'userId' }]
+          }
+        ]
+      })
+    ])
+
+    const doc1 = await operations.createDoc(testIds.class.Page, core.space.Model, {
+      name: 'my-page',
+      description: ''
+    })
+
+    for (let i = 0; i < 10; i++) {
+      await operations.createDoc(testIds.class.Comment, core.space.Model, {
+        ofDoc: doc1._id,
+        message: `Comment of ${i}`
+      })
+    }
+
+    const comments = await operations.findAll(testIds.class.Comment, {})
+    expect(comments.length).toEqual(10)
+
+    const updD1 = await model.findAll(testIds.class.Page, { _id: doc1._id })
+    expect(updD1.length).toEqual(1)
+    expect(updD1[0].comments?.length).toEqual(10) // 1 - create Doc, 2 - create title
+    expect(updD1[0].comments?.[0]?.userId).toEqual(core.account.System) // 1 - create Doc, 2 - create title
+
+    // Check remove
+
+    await operations.removeDoc(testIds.class.Comment, core.space.Model, comments[0]._id)
+
+    const updD2 = await model.findAll(testIds.class.Page, { _id: doc1._id })
     expect(updD2.length).toEqual(1)
     expect(updD2[0].comments?.length).toEqual(9) // 1 - create Doc, 2 - create title
   })

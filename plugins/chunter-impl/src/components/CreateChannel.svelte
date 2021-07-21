@@ -25,6 +25,7 @@
 
   let name: string = ''
   let description: string = ''
+  let isPrivate: boolean = false
 
   const client = getClient()
 
@@ -32,7 +33,7 @@
     client.createDoc(chunter.class.Channel, core.space.Model, {
       name,
       description,
-      private: false,
+      private: isPrivate,
       members: [client.accountId()]
     })
   }
@@ -50,7 +51,11 @@
     <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name} /></div>
     <div class="row"><TextArea label={chunter.string.ChannelDescription} bind:value={description} /></div>
     <div class="row">
-      <ToggleWithLabel label={chunter.string.MakePrivate} description={chunter.string.MakePrivateDescription} />
+      <ToggleWithLabel
+        label={chunter.string.MakePrivate}
+        description={chunter.string.MakePrivateDescription}
+        bind:on={isPrivate}
+      />
     </div>
   </div>
 </Dialog>
