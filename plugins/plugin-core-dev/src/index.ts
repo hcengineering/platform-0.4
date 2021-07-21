@@ -15,9 +15,8 @@
 
 import type { TxOperations } from '@anticrm/core'
 import core, { createClient, withOperations } from '@anticrm/core'
+import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
-import type { CoreService, Client } from '@anticrm/plugin-core'
-
 import { connect } from './connection'
 
 /*!
@@ -30,8 +29,15 @@ export default async (): Promise<CoreService> => {
 
   async function getClient (): Promise<Client & TxOperations> {
     if (client === undefined) {
-      const storage = await createClient(connect)
-      client = withOperations(core.account.System, new LiveQuery(storage))
+      // eslint-disable-next-line prefer-const
+      let liveQuery: LiveQuery | undefined
+
+      const storage = await createClient(connect, (tx) => {
+        liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+      })
+      liveQuery = new LiveQuery(storage)
+
+      client = withOperations(core.account.System, liveQuery)
     }
     return client
   }

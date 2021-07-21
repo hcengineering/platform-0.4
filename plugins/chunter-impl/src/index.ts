@@ -18,11 +18,13 @@ import { setResource } from '@anticrm/platform'
 
 import CreateChannel from './components/CreateChannel.svelte'
 import ChannelView from './components/ChannelView.svelte'
+import ThreadsView from './components/ThreadsView.svelte'
 import chunter from './plugin'
 
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
   setResource(chunter.component.ChannelView, ChannelView)
+  setResource(chunter.component.ThreadsView, ThreadsView)
 
   return {}
 }

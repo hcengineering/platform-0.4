@@ -13,38 +13,53 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { ActionIcon } from '@anticrm/ui'
-  import Emoji from './icons/Emoji.svelte'
-  import Share from './icons/Share.svelte'
+  import { CommentRef, WithMessage } from '@anticrm/chunter'
+  import { Account, Ref } from '@anticrm/core'
+  import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
+  import avatar from '../../img/avatar.png'
   import Bookmark from './icons/Bookmark.svelte'
+  import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
+  import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import avatar from '../../img/avatar.png'
-  import { MarkdownViewer } from '@anticrm/ui'
 
-  export let name: string
-  export let time: string
-  export let message: string
-  export let reactions: boolean = false
-  export let replies: boolean = false
+  export let message: WithMessage
   export let thread: boolean = false
+
+  let replies: number = 0
+  let replyIds: Ref<Account>[] = []
+  $: {
+    const comments: CommentRef[] = (message as any).comments ?? []
+    replies = comments.length
+    replyIds = comments.map((r) => r.userId)
+  }
+
+  function onClick () {
+    if (thread) {
+      return
+    }
+    const loc = getCurrentLocation()
+    loc.path[3] = message._id
+    loc.path.length = 4
+    navigate(loc)
+  }
 </script>
 
-<div class="message-container">
+<div class="message-container" on:click={onClick}>
   <div class="avatar"><img src={avatar} alt="Avatar" /></div>
   <div class="message">
-    <div class="header">{name}<span>{time}</span></div>
+    <div class="header">{message.modifiedBy}<span>{message.modifiedOn}</span></div>
     <div class="text">
-      <MarkdownViewer {message} />
+      <MarkdownViewer message={message.message} />
     </div>
-    {#if (reactions || replies) && !thread}
+    {#if replies > 0 && !thread}
       <div class="footer">
         <div>
-          {#if reactions}<Reactions />{/if}
+          <Reactions />
         </div>
         <div>
-          {#if replies}<Replies />{/if}
+          {#if replies > 0}<Replies replies={replyIds} />{/if}
         </div>
       </div>
     {/if}
