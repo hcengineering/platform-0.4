@@ -5,6 +5,7 @@ export default component('ui' as Component, {
     Search: '' as IntlString,
     Close: '' as IntlString,
     Undefined: '' as IntlString,
-    Remove: '' as IntlString
+    Remove: '' as IntlString,
+    Cancel: '' as IntlString
   }
 })

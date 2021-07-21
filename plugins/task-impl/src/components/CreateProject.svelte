@@ -13,14 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, TextArea, ToggleWithLabel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
   import core from '@anticrm/core'
-
-  const dispatch = createEventDispatcher()
 
   let name: string = ''
   let description: string = ''
@@ -38,15 +35,7 @@
   }
 </script>
 
-<Dialog
-  label={task.string.CreateProject}
-  okLabel={task.string.CreateProject}
-  okAction={createProject}
-  cancelLabel={task.string.Cancel}
-  on:close={() => {
-    dispatch('close')
-  }}
->
+<Dialog label={task.string.CreateProject} okLabel={task.string.CreateProject} okAction={createProject} on:close>
   <div class="content">
     <div class="row"><EditBox label={task.string.ProjectName} bind:value={name} /></div>
     <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description} /></div>

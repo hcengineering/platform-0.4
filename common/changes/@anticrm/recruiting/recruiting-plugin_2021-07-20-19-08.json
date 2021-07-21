@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting",
+      "comment": "Introduce recruiting plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting",
+  "email": "ilya.sumb@gmail.com"
+}

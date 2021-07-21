@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref } from '@anticrm/core'
+import type { Class, Doc, Ref, Space } from '@anticrm/core'
 import core from '@anticrm/core'
 import type { FSM, FSMItem, FSMService, State, Transition, WithFSM } from '@anticrm/fsm'
 import { getPlugin } from '@anticrm/platform'
@@ -43,7 +43,8 @@ export default async (): Promise<FSMService> => {
       item: {
         _class?: Ref<Class<T>>
         obj: Omit<T, keyof Doc | 'state' | 'fsm'> & { state?: Ref<State> }
-      }
+      },
+      space: Ref<Space> = fsmOwner._id
     ) => {
       const fsm = await getTargetFSM(fsmOwner)
 
@@ -53,7 +54,7 @@ export default async (): Promise<FSMService> => {
 
       const state = item.obj.state ?? (await getStates(fsm._id))[0]._id
 
-      return await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, core.space.Model, {
+      return await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space, {
         ...item.obj,
         fsm: fsmOwner._id,
         state
@@ -74,8 +75,13 @@ export default async (): Promise<FSMService> => {
       const transitions = await getTransitions(fsm._id)
       const states = await getStates(fsm._id)
 
+      const cleanupModel = <T extends Doc>(x: T): Omit<T, '_id' | 'modifiedBy' | 'modifiedOn'> =>
+        Object.entries(x)
+          .filter(([k]) => !['_id', 'modifiedBy', 'modifiedOn'].includes(k))
+          .reduce<any>((o, [k, v]) => ({ ...o, [k]: v }), {})
+
       const newFSM = await client.createDoc(fsmPlugin.class.FSM, core.space.Model, {
-        ...fsm,
+        ...cleanupModel(fsm),
         isTemplate: false
       })
 
@@ -85,7 +91,7 @@ export default async (): Promise<FSMService> => {
             [
               state,
               await client.createDoc(fsmPlugin.class.State, core.space.Model, {
-                ...state,
+                ...cleanupModel(state),
                 fsm: newFSM._id
               })
             ] as [State, State]
@@ -96,7 +102,7 @@ export default async (): Promise<FSMService> => {
         transitions.map(
           async (transition) =>
             await client.createDoc(fsmPlugin.class.Transition, core.space.Model, {
-              ...transition,
+              ...cleanupModel(transition),
               fsm: newFSM._id,
               from: stateMap.get(transition.from) ?? ('' as Ref<State>),
               to: stateMap.get(transition.to) ?? ('' as Ref<State>)

@@ -68,6 +68,11 @@
     "@anticrm/meeting": "~0.4.0",
     "@anticrm/meeting-impl": "~0.4.0",
     "@anticrm/meeting-assets": "~0.4.0",
-    "@anticrm/ui-assets": "~0.4.0"
+    "@anticrm/ui-assets": "~0.4.0",
+    "@anticrm/recruiting-assets": "~0.4.0",
+    "@anticrm/recruiting-impl": "~0.4.0",
+    "@anticrm/fsm-impl": "~0.4.0",
+    "@anticrm/recruiting": "~0.4.0",
+    "@anticrm/fsm": "~0.4.0"
   }
 }
