@@ -74,6 +74,29 @@ export class DerivedDataProcessor extends TxProcessor {
     }
   }
 
+  extractEmbeddedDoc (doc: Doc, rules?: MappingRule[]): any {
+    const ruleFields = getRuleFieldValues(sortRules(rules), doc)
+    if (ruleFields.length > 0) {
+      return this.extractRuleValues(doc, ruleFields)
+    }
+
+    return doc._id
+  }
+
+  private extractRuleValues (doc: Doc, ruleFields: { value: string, rule: MappingRule }[]): any {
+    const result = { _id: doc._id }
+    // Extract field values.
+    for (const { rule, value } of ruleFields) {
+      const newValue = this.matchRuleValue(rule, value)
+      this.assignValue(result, rule.targetField, newValue)
+    }
+    return result
+  }
+
+  private matchRuleValue (rule: MappingRule, value: string): any {
+    return rule.pattern !== undefined ? this.processRulePattern(rule.pattern, value)?.[0] : value
+  }
+
   /*
    * Will update collection back references.
    */
@@ -84,8 +107,9 @@ export class DerivedDataProcessor extends TxProcessor {
         const parentDocRef = (doc as any)[r.sourceField] as Ref<Doc>
         if (parentDocRef !== undefined) {
           try {
+            const obj = this.extractEmbeddedDoc(doc, r.rules)
             await ops.updateDoc(d.targetClass, tx.objectSpace, parentDocRef, {
-              $push: { [r.targetField]: tx.objectId }
+              $push: { [r.targetField]: obj }
             })
           } catch (err) {
             console.log(err)
@@ -93,14 +117,17 @@ export class DerivedDataProcessor extends TxProcessor {
         }
       } else {
         // Handle pull, since our document is already removed from storage, we need to search for transactions to update source doc.
+        const eid = (r.rules?.length ?? 0) > 0 ? '._id' : ''
         const pushOps = await ops.findAll<TxUpdateDoc<Doc>>(core.class.TxUpdateDoc, {
           objectClass: d.targetClass,
-          [`operations.\\$push.${r.targetField}`]: tx.objectId
+          [`operations.\\$push.${r.targetField}${eid}`]: tx.objectId
         })
         // If it was in few fields at once, operation probable will be execured few times.
         for (const op of pushOps) {
           try {
-            await ops.updateDoc(d.targetClass, tx.objectSpace, op.objectId, { $pull: { [r.targetField]: tx.objectId } })
+            await ops.updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
+              $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
+            })
           } catch (err) {
             // Ignore exception.
             console.log(err)
@@ -174,7 +201,7 @@ export class DerivedDataProcessor extends TxProcessor {
 
   async applyRule (d: Descr, tx: ObjTx, doc: CachedDoc): Promise<DerivedData[]> {
     doc.doc = doc.doc ?? (await doc.resolve())
-    const ruleFields = getRuleFieldValues(sortRules(d), doc.doc)
+    const ruleFields = getRuleFieldValues(sortRules(d.rules), doc.doc)
     if (ruleFields.length === 0) {
       return []
     }
@@ -231,7 +258,7 @@ export class DerivedDataProcessor extends TxProcessor {
 
     for (const { rule, value } of ruleFields) {
       if (rule.pattern !== undefined) {
-        this.processRulePattern(d, doc, rule.pattern, rule.targetField, value, results)
+        this.processRuleMatches(rule.pattern, rule.targetField, value, results, doc, d)
       } else {
         // Just copy of value
         this.assignValue(lastOrAdd(results, d, doc), rule.targetField, value)
@@ -240,37 +267,47 @@ export class DerivedDataProcessor extends TxProcessor {
     return results
   }
 
-  private processRulePattern (
-    d: Descr,
-    doc: Doc,
+  private processRuleMatches (
     pattern: RuleExpresson,
     targetField: string,
-    sourceValue: string,
-    results: DerivedData[]
-  ): DerivedData[] {
-    // Extract some data from value
-    const reg = new RegExp(pattern.pattern, 'g')
-
-    let matches: RegExpExecArray | null
+    value: string,
+    results: DerivedData[],
+    doc: Doc,
+    d: Descr
+  ): void {
+    const matches = this.processRulePattern(pattern, value)
     let needAdd = false
-    while ((matches = reg.exec(sourceValue)) !== null) {
+    for (const match of matches) {
       if (needAdd && results.length > 0) {
         // We have multi doc, so produce document and wait for next match.
         results.push(newDerivedData(doc, d, results.length))
         needAdd = false
       }
       const lastResult = lastOrAdd(results, d, doc)
-      this.assignValue(lastResult, targetField, groupOrValue(pattern, matches))
+      this.assignValue(lastResult, targetField, match)
 
       if (pattern.multDoc ?? false) {
         needAdd = true
       }
     }
-    return results
   }
 
-  private assignValue (lastResult: DerivedData, targetField: string, value: any): void {
-    ;(lastResult as any)[targetField] = value
+  private processRulePattern (pattern: RuleExpresson, sourceValue: string): any[] {
+    // Extract some data from value
+    const reg = new RegExp(pattern.pattern, 'g')
+
+    let matches: RegExpExecArray | null
+    const result = []
+    while ((matches = reg.exec(sourceValue)) !== null) {
+      result.push(groupOrValue(pattern, matches))
+    }
+    return result
+  }
+
+  private assignValue (lastResult: any, targetField: string, value?: any): void {
+    if (value !== undefined) {
+      lastResult[targetField] = value
+    }
   }
 
   private async refreshDerivedData (d: Descr, modifiedBy: Ref<Account>, apply: boolean): Promise<void> {

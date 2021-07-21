@@ -621,6 +621,26 @@
       "packageName": "@anticrm/fsm-impl",
       "projectFolder": "plugins/fsm-impl",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-recruiting",
+      "projectFolder": "models/recruiting",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/recruiting",
+      "projectFolder": "plugins/recruiting",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "projectFolder": "plugins/recruiting-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "projectFolder": "plugins/recruiting-assets",
+      "shouldPublish": true
     }
 
     // {

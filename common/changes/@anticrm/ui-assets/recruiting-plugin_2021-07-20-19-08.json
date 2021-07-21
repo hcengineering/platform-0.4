@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Add 'Cancel' locale string",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets",
+  "email": "ilya.sumb@gmail.com"
+}

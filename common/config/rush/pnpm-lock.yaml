@@ -25,6 +25,7 @@ specifiers:
   '@rush-temp/model-dev': file:./projects/model-dev.tgz
   '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
+  '@rush-temp/model-recruiting': file:./projects/model-recruiting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/mongo': file:./projects/mongo.tgz
@@ -35,6 +36,9 @@ specifiers:
   '@rush-temp/plugin-core-impl': file:./projects/plugin-core-impl.tgz
   '@rush-temp/prod': file:./projects/prod.tgz
   '@rush-temp/query': file:./projects/query.tgz
+  '@rush-temp/recruiting': file:./projects/recruiting.tgz
+  '@rush-temp/recruiting-assets': file:./projects/recruiting-assets.tgz
+  '@rush-temp/recruiting-impl': file:./projects/recruiting-impl.tgz
   '@rush-temp/richeditor': file:./projects/richeditor.tgz
   '@rush-temp/rpc': file:./projects/rpc.tgz
   '@rush-temp/server': file:./projects/server.tgz
@@ -163,6 +167,7 @@ dependencies:
   '@rush-temp/model-dev': file:projects/model-dev.tgz_@types+node@14.17.0
   '@rush-temp/model-fsm': file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0
   '@rush-temp/model-meeting': file:projects/model-meeting.tgz_@typescript-eslint+parser@4.23.0
+  '@rush-temp/model-recruiting': file:projects/model-recruiting.tgz
   '@rush-temp/model-task': file:projects/model-task.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.0
@@ -173,6 +178,9 @@ dependencies:
   '@rush-temp/plugin-core-impl': file:projects/plugin-core-impl.tgz_ts-node@10.0.0
   '@rush-temp/prod': file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5
   '@rush-temp/query': file:projects/query.tgz_ts-node@10.0.0
+  '@rush-temp/recruiting': file:projects/recruiting.tgz
+  '@rush-temp/recruiting-assets': file:projects/recruiting-assets.tgz
+  '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_a9d1549f7b8829616d529b1493310a6a
   '@rush-temp/richeditor': file:projects/richeditor.tgz_dbf4af031ea72cadd58e9967f1c25279
   '@rush-temp/rpc': file:projects/rpc.tgz
   '@rush-temp/server': file:projects/server.tgz
@@ -4058,6 +4066,10 @@ packages:
 
   /faker/5.5.3:
     resolution: {integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==}
+    dev: false
+
+  /fast-copy/2.1.1:
+    resolution: {integrity: sha512-Qod3DdRgFZ8GUIM6ygeoZYpQ0QLW9cf/FS9KhhjlYggcSZXWAemAw8BOCO5LuYCrR3Uj3qXDVTUzOUwG8C7beQ==}
     dev: false
 
   /fast-deep-equal/3.1.3:
@@ -9635,6 +9647,7 @@ packages:
       eslint-plugin-node: 11.1.0_eslint@7.28.0
       eslint-plugin-promise: 5.1.0_eslint@7.28.0
       eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      fast-copy: 2.1.1
       fast-equals: 2.0.3
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
@@ -9710,7 +9723,7 @@ packages:
     dev: false
 
   file:projects/fsm.tgz_@typescript-eslint+parser@4.23.0:
-    resolution: {integrity: sha512-xu8+z1FDm572G2XC5UhCMuax6MM8ewgRXTi21a4/IapaYQYNzfAUTWSjCo+wN2qcO8/S59Vo968WgOxTkpt+yw==, tarball: file:projects/fsm.tgz}
+    resolution: {integrity: sha512-7seDq3Hooq8DwgkHTsZmK9MmGnmOhtuYIyGE11JpvnqI5YLTUKJT9WGQDEZgUDYFQV+pUmU4Pg7p6Pm6IcgkuQ==, tarball: file:projects/fsm.tgz}
     id: file:projects/fsm.tgz
     name: '@rush-temp/fsm'
     version: 0.0.0
@@ -9823,7 +9836,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz_1cb27354e0b191fb8b28e4e6b0306c2b:
-    resolution: {integrity: sha512-7q4QgGLhtAhAgMeKtE+uYcqivVzSnNEoKWjcKUZonzUy0lS7eDqJwxtFbezf4d2dQFVQOvGRFm4cQd6RfO9ZJA==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-UVWsGHEgUvFTksXFaGYm5cbJOhoDQ/34ZHFtnemvsZWL+aFVHd9Xxcud9DseIzGLvGO/JQI9Unpmu1s/8QsBmQ==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -9929,7 +9942,7 @@ packages:
     dev: false
 
   file:projects/model-fsm.tgz_@typescript-eslint+parser@4.23.0:
-    resolution: {integrity: sha512-IxJi7ar0AB8hh2PcW4qcDNNF9MpbfY9EidbrnzbdDaSQmF7cTOuCr3OMUhq8oguy3UcPLgIDljFuNe384op5yA==, tarball: file:projects/model-fsm.tgz}
+    resolution: {integrity: sha512-Xk5z0iITRyi8Dg6tpOvWLpVZgMoE26rgl5FDNJYr4JwIBCYoODJjr508V/d60IhVXBA5zupiv/Ty9g0wu9Q75Q==, tarball: file:projects/model-fsm.tgz}
     id: file:projects/model-fsm.tgz
     name: '@rush-temp/model-fsm'
     version: 0.0.0
@@ -9953,6 +9966,27 @@ packages:
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
+  file:projects/model-recruiting.tgz:
+    resolution: {integrity: sha512-Q9IWKY8uvNWZIdBISnG5wPLdunchtCXJIPKFZh/fnod0nHFYF5fGHDNW+m7yZfXv7+0d2JuBNvc1vzO1xfyjYw==, tarball: file:projects/model-recruiting.tgz}
+    name: '@rush-temp/model-recruiting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      ts-standard: 10.0.0_717f9e40caef909fda28cf3ddf37ba31
+      typescript: 4.3.5
+    transitivePeerDependencies:
       - supports-color
     dev: false
 
@@ -10133,13 +10167,14 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1:
-    resolution: {integrity: sha512-roCMGjbOoTXpcfirEcQhTA59k0Ty4dd6Z8oB4+GtV3/R6BIiw3QnMBI3k8WQRR9PQiI11YfPXFtW8/JwhMXZDQ==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-l5qe1EmkXQuiDSwZ0G48SskhgfMDFe+ZPDMpZHxXPoWU7/WkVxxRvmyEf0KlMhFIoc9RIT8g3YLGLOBY1LheQA==, tarball: file:projects/plugin-core-dev.tgz}
     id: file:projects/plugin-core-dev.tgz
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.15.1
       '@types/jest': 26.0.23
+      fast-copy: 2.1.1
       jest: 26.6.3_ts-node@10.0.0
       prettier: 2.3.1
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
@@ -10209,7 +10244,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_8aad4d2e9d210ecfd4af5fcc913c62c5:
-    resolution: {integrity: sha512-L9OwgIdzBJ5+j8WJyQQwN8S/C4eD9ies+/07fox3BrLe7wpE/OFqYkbNslxl1em/Dv27MtlWt0Facf9r9uYbKg==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-OE3AmflRFPu4hJtOYF7W+rJiIQ4bhdTLzf2BhLekZX0RUaSwcP1DocS38K1G6M+DdtyTVzD0TWEKmKjzI8HlNA==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -10285,6 +10320,94 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
+    dev: false
+
+  file:projects/recruiting-assets.tgz:
+    resolution: {integrity: sha512-sxaBPk9Vu132GduBCzICIHwA1NR7/bYPmemKjDFS83YdnShBsfEY0acwWj8XiJEVVHb9iDfQAqKLj92l0LaSig==, tarball: file:projects/recruiting-assets.tgz}
+    name: '@rush-temp/recruiting-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/node': 14.17.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  file:projects/recruiting-impl.tgz_a9d1549f7b8829616d529b1493310a6a:
+    resolution: {integrity: sha512-BwPKjO+FCzuECRVCX/VkCIMWlzfPKnLmTbmpnEFJlDEQ97z0+FJUruucoHMDGE1MdO251fxU6FHZPWkA/8xWow==, tarball: file:projects/recruiting-impl.tgz}
+    id: file:projects/recruiting-impl.tgz
+    name: '@rush-temp/recruiting-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@types/jest': 26.0.23
+      '@types/lodash.debounce': 4.0.6
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.28.0+svelte@3.38.2
+      eslint-svelte3-preprocess: 0.0.5_svelte@3.38.2
+      jest: 26.6.3_ts-node@10.0.0
+      prettier: 2.3.1
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.1+svelte@3.38.2
+      svelte: 3.38.2
+      svelte-check: 2.1.0_ebbac85a73c03dd73ba9d30d47d5e67f
+      svelte-loader: 3.1.2_svelte@3.38.2
+      svelte-preprocess: 4.7.3_4e2a6a97b7fbac24c9876bee9f9e1fa7
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - bufferutil
+      - canvas
+      - coffeescript
+      - less
+      - node-sass
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/recruiting.tgz:
+    resolution: {integrity: sha512-3UyxDxTSthSKbZfshepGiDMh1xugGZADMYTT0XwMrnOnYH5PyqnuijzhgOU+lcCFVjpiZCyDFvm8oVs7oz1zyA==, tarball: file:projects/recruiting.tgz}
+    name: '@rush-temp/recruiting'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.15.1
+      '@typescript-eslint/eslint-plugin': 4.23.0_d1ed285b0467a2a392a881bd700bc913
+      '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.5
+      eslint: 7.28.0
+      eslint-config-standard: 16.0.3_ed9009294b90f85ab7221aa5194e0642
+      eslint-config-standard-with-typescript: 20.0.0_4a5b75f9a000bff632a33bf2b66dc924
+      eslint-plugin-import: 2.23.1_eslint@7.28.0
+      eslint-plugin-node: 11.1.0_eslint@7.28.0
+      eslint-plugin-promise: 5.1.0_eslint@7.28.0
+      eslint-plugin-standard: 5.0.0_eslint@7.28.0
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   file:projects/richeditor.tgz_dbf4af031ea72cadd58e9967f1c25279:
@@ -10687,7 +10810,7 @@ packages:
     dev: false
 
   file:projects/ui.tgz_dbf4af031ea72cadd58e9967f1c25279:
-    resolution: {integrity: sha512-MdKChJA1N0VS9GHqE/tUd/aR1FpnvXeP7ZlDneM+y5AvbPWy3Ki2dr4s/Rcaepcrz3bnQ4qzZAWMW4tZLlK5EA==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-MmrLbxphKuRFx+OAP1WHt/kzV/Err4+OGemk74UzeRa3m0h9ymDr/Ak4nQlQbfLVknpMOAbTBqevvVrKM3azPQ==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0

@@ -18,14 +18,16 @@
 
   import { createEventDispatcher } from 'svelte'
 
-  import Close from './internal/icons/Close.svelte'
+  import Close from './icons/Close.svelte'
   import ScrollBox from './ScrollBox.svelte'
   import Button from './Button.svelte'
   import Label from './Label.svelte'
 
+  import ui from '../component'
+
   export let label: IntlString
   export let okLabel: IntlString
-  export let cancelLabel: IntlString
+  export let cancelLabel: IntlString = ui.string.Cancel
   export let okAction: () => void
   export let cancelAction: () => void = () => {}
 

@@ -2,6 +2,7 @@
   "string": {
     "Close": "Close",
     "Search": "Search",
-    "Remove": "Remove"
+    "Remove": "Remove",
+    "Cancel": "Cancel"
   }
 }

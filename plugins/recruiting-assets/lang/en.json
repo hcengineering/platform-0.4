@@ -1,0 +1,17 @@
+{
+  "string": {
+    "Candidates": "Candidates",
+    "AddPoolSpace": "Add Candidate Pool",
+    "Vacancies": "Vacancies",
+    "AddVacancy": "Add Vacancy",
+    "Name": "Name",
+    "Description": "Description",
+    "Company": "Company",
+    "MakePrivate": "Make private",
+    "MakePrivateDescription": "Make private description",
+    "Bio": "Bio",
+    "Position": "Position",
+    "Location": "Location",
+    "AddCandidate": "Add candidate"
+  }
+}

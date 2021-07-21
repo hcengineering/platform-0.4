@@ -1,0 +1,161 @@
+<!--
+// Copyright © 2021 Anticrm Platform Contributors.
+// 
+// Licensed under the Eclipse Public License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License. You may
+// obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// 
+// See the License for the specific language governing permissions and
+// limitations under the License.
+-->
+<script lang="ts">
+  import { onDestroy } from 'svelte'
+  import { Ref } from '@anticrm/core'
+  import { Candidate, VacancySpace } from '@anticrm/recruiting'
+  import { getClient } from '@anticrm/workbench'
+  import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
+  import { WithFSM } from '@anticrm/fsm'
+  import { getPlugin } from '@anticrm/platform'
+  import { PopupItem, PopupMenu } from '@anticrm/ui'
+
+  import Float from '../common/Float.svelte'
+  import recruiting from '../../plugin'
+
+  export let id: Ref<Candidate>
+
+  const client = getClient()
+  let candidate: Candidate | undefined
+  let unsubCandidates = () => {}
+  $: unsubCandidates = client.query(recruiting.class.Candidate, { _id: id }, ([first]) => {
+    candidate = first
+  })
+
+  let applications: Set<Ref<WithFSM>> = new Set()
+  let unsubApplications = () => {}
+  $: unsubApplications = client.query(recruiting.class.Applicant, { item: id }, (result) => {
+    applications = new Set(result.map((x) => x.fsm))
+  })
+
+  let vacancies: VacancySpace[] = []
+  let unsubVacancies = () => {}
+  $: unsubVacancies = client.query(recruiting.class.VacancySpace, {}, (result) => {
+    vacancies = result
+  })
+
+  let appliedVacancies: VacancySpace[] = []
+  let availableVacancies: VacancySpace[] = []
+
+  $: {
+    appliedVacancies = vacancies.filter((x) => applications.has(x._id))
+    availableVacancies = vacancies.filter((x) => !applications.has(x._id))
+  }
+
+  async function assign (vacancy: VacancySpace) {
+    if (!candidate) {
+      return
+    }
+
+    const fsmP = await getPlugin(fsmPlugin.id)
+    await fsmP.addItem(vacancy, {
+      _class: recruiting.class.Applicant,
+      obj: {
+        item: candidate._id,
+        clazz: recruiting.class.Candidate
+      }
+    })
+  }
+
+  onDestroy(() => {
+    unsubCandidates()
+    unsubApplications()
+    unsubVacancies()
+  })
+</script>
+
+<Float title={candidate?.name ?? ''} on:close>
+  {#if candidate !== undefined}
+    <div class="root">
+      <div class="row">
+        <div class="label">Name:</div>
+        {candidate.name}
+      </div>
+      <div class="row">
+        <div class="label">Location:</div>
+        {candidate.location}
+      </div>
+      <div class="row">
+        <div class="label">Bio:</div>
+        {candidate.bio}
+      </div>
+      <div class="assignment">
+        <div class="assignment-content">
+          {#if appliedVacancies.length > 0}
+            <div>
+              <div class="application-label">Candidate is applied for:</div>
+              {#each appliedVacancies as vacancy}
+                <div class="vacancy">
+                  <div class="label">{vacancy.name}</div>
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <div class="application-label">Candidate is not assigned to any vacancy</div>
+          {/if}
+          {#if availableVacancies.length > 0}
+            <PopupMenu auto={true} hAlign="left">
+              <div class="assign-control" slot="trigger">Assign...</div>
+              {#each availableVacancies as v}
+                <PopupItem action={() => assign(v)} title={v.name} />
+              {/each}
+            </PopupMenu>
+          {/if}
+        </div>
+      </div>
+    </div>
+  {/if}
+</Float>
+
+<style lang="scss">
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .label {
+    font-weight: 500;
+  }
+
+  .assignment {
+    display: grid;
+    grid-template-columns: auto;
+    grid-gap: 10px;
+  }
+
+  .assignment-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .assign-control {
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .vacancy {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>

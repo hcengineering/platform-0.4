@@ -73,8 +73,8 @@ export function groupOrValue (pattern: RuleExpresson, matches: RegExpExecArray):
   return matches[pattern.group ?? 0]
 }
 
-export function sortRules (d: Descr): MappingRule[] {
-  return [...(d.rules ?? [])].sort(ruleCompare)
+export function sortRules (rules?: MappingRule[]): MappingRule[] {
+  return [...(rules ?? [])].sort(ruleCompare)
 }
 
 function ruleCompare (a: MappingRule, b: MappingRule): number {

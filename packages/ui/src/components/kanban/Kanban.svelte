@@ -23,7 +23,7 @@
 
   interface State {
     _id: string
-    name: IntlString
+    name: IntlString | string
     color?: string
   }
 

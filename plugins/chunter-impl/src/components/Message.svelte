@@ -13,49 +13,65 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { ActionIcon } from '@anticrm/ui'
-  import Emoji from './icons/Emoji.svelte'
-  import Share from './icons/Share.svelte'
+  import { CommentRef, WithMessage } from '@anticrm/chunter'
+  import { Account, Ref } from '@anticrm/core'
+  import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
+  import avatar from '../../img/avatar.png'
   import Bookmark from './icons/Bookmark.svelte'
+  import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
+  import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import { MarkdownViewer } from '@anticrm/ui'
   import core, { Account, Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
-  export let time: string
-  export let message: string
-  export let reactions: boolean = false
-  export let replies: boolean = false
+  export let message: WithMessage
   export let thread: boolean = false
-  export let userId: Ref<Account>
+
+  let replies: number = 0
+  let replyIds: Ref<Account>[] = []
+  $: {
+    const comments: CommentRef[] = (message as any).comments ?? []
+    replies = comments.length
+    replyIds = comments.map((r) => r.userId)
+  }
+
   const client = getClient()
 
   async function getUser (): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
+
+  function onClick () {
+    if (thread) {
+      return
+    }
+    const loc = getCurrentLocation()
+    loc.path[3] = message._id
+    loc.path.length = 4
+    navigate(loc)
+  }
 </script>
 
 {#await getUser() then user}
-  <div class="message-container">
-    <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
-    <div class="message">
-      <div class="header">{user.name}<span>{time}</span></div>
-      <div class="text">
-        <MarkdownViewer {message} />
-      </div>
-      {#if (reactions || replies) && !thread}
-        <div class="footer">
-          <div>
-            {#if reactions}<Reactions />{/if}
-          </div>
-          <div>
-            {#if replies}<Replies />{/if}
-          </div>
-        </div>
-      {/if}
+<div class="message-container" on:click={onClick}>
+  <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
+  <div class="message">
+    <div class="header">{user.name}<span>{message.modifiedOn}</span></div>
+    <div class="text">
+      <MarkdownViewer message={message.message} />
     </div>
+    {#if replies > 0 && !thread}
+      <div class="footer">
+        <div>
+          <Reactions />
+        </div>
+        <div>
+          {#if replies > 0}<Replies replies={replyIds} />{/if}
+        </div>
+      </div>
+    {/if}
     {#if !thread}
       <div class="buttons">
         <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
