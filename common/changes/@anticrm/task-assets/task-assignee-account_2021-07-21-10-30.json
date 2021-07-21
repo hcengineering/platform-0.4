@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "add `project members` IntlString",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets",
+  "email": "bykhov.denis@gmail.com"
+}
