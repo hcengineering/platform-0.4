@@ -17,7 +17,7 @@
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, Task } from '@anticrm/task'
   import task from '../plugin'
-  import { Ref } from '@anticrm/core'
+  import core, { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import Close from '@anticrm/ui/src/components/internal/icons/Close.svelte'
   import TaskStatus from './TaskStatus.svelte'
@@ -32,6 +32,7 @@
   let item: Task | undefined
   let description: string | undefined
   let checkItems: CheckListItem[] = []
+  let projectMembers: Account[] = []
 
   $: progress = {
     max: checkItems.length,
@@ -46,10 +47,16 @@
 
   async function getItem (id: Ref<Task>) {
     unsubscribe()
-    unsubscribe = client.query(task.class.Task, { _id: id }, (result) => {
+    unsubscribe = client.query(task.class.Task, { _id: id }, async (result) => {
       item = result[0]
       description = item.description
       checkItems = item.checkItems
+      const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
+      if (members !== undefined) {
+        projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
+      } else {
+        projectMembers = []
+      }
     })
     return item
   }
@@ -94,7 +101,15 @@
           <DescriptionEditor label={task.string.TaskDescription} on:blur={updateDescription} bind:value={description} />
         </div>
         <div class="row">
-          <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+          <UserBox
+            hAlign={'right'}
+            selected={item.assignee}
+            users={projectMembers}
+            title={task.string.Assignee}
+            caption={task.string.ProjectMembers}
+            label={task.string.AssignTask}
+            showSearch
+          />
         </div>
         {#if progress.max > 0}
           <div class="row progress">

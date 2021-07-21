@@ -15,6 +15,7 @@
     "ApplicationLabelTask": "Tasks",
     "Progress": "Progress",
     "AddCheckItem": "Add check item",
-    "CheckItems": "Check items"
+    "CheckItems": "Check items",
+    "ProjectMembers": "Project members"
   }
 }

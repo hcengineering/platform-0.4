@@ -100,4 +100,7 @@ export interface Space extends Doc {
   members: Arr<Ref<Account>>
 }
 
-export interface Account extends Doc {}
+export interface Account extends Doc {
+  name: string
+  avatar?: string
+}

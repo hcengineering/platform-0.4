@@ -15,7 +15,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
   import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
-  import type { Ref, Class, Doc, Space } from '@anticrm/core'
+  import core, { Ref, Doc, Space, Account } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
 
@@ -26,7 +26,6 @@
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
-  const _class: Ref<Class<Doc>> = task.class.Task
   const columns = [
     { label: 'Name' as IntlString, properties: [{ key: 'name', property: 'label' }], component: Label },
     { label: 'Description' as IntlString, properties: [{ key: 'description', property: 'label' }], component: Label },
@@ -38,7 +37,7 @@
       ],
       component: TaskStatus
     },
-    { label: 'Assignee' as IntlString, properties: [{ value: 'elon', property: 'user' }], component: UserInfo }
+    { label: 'Assignee' as IntlString, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo }
   ]
 
   const client = getClient()
@@ -50,7 +49,13 @@
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      unsub = client.query(_class, { space: currentSpace }, (result) => (data = result))
+      unsub = client.query(task.class.Task, { space: currentSpace }, async (result) => {
+        data = []
+        for (const item of result) {
+          data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
+        }
+        data = data
+      })
     }
   }
 
@@ -61,6 +66,11 @@
     loc.path[3] = event.detail.id
     loc.path.length = 4
     navigate(loc)
+  }
+
+  async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (user === undefined) return undefined
+    return (await client.findAll<Account>(core.class.Account, { _id: user })).pop()
   }
 </script>
 

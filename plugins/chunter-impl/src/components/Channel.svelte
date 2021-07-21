@@ -46,7 +46,7 @@
 
 <div class="channel-container" bind:this={div}>
   {#each messages as m (m._id)}
-    <Message reactions replies name={m.modifiedBy} time={`${m.modifiedOn}`} message={m.message} />
+    <Message reactions replies userId={m.modifiedBy} time={`${m.modifiedOn}`} message={m.message} />
   {/each}
 </div>
 

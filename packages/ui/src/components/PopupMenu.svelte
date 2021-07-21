@@ -57,7 +57,7 @@
         <div class="header">
           <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
           <EditBox label={searchLabel ?? ui.string.Search} bind:value={search} />
-          <div class="caption">{caption}</div>
+          <div class="caption"><Label label={caption ?? ui.string.Undefined} /></div>
         </div>
       {/if}
       <div class="content"><slot /></div>

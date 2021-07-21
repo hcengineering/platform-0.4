@@ -13,18 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import chen from '../../img/chen.png'
-  import tim from '../../img/tim.png'
-  import elon from '../../img/elon.png'
-  import kathryn from '../../img/kathryn.png'
+  import type { Account } from '@anticrm/core'
 
-  export let users: Object[] = [
-    { avatar: chen, name: 'chen', title: 'Rosamund Chen' },
-    { avatar: tim, name: 'tim', title: 'Tim Ferris' },
-    { avatar: elon, name: 'elon', title: 'Elon Musk' },
-    { avatar: kathryn, name: 'kathryn', title: 'Kathryn Minshew' }
-  ]
-  export let user: string = 'chen'
+  export let user: Account
   export let suptitle: string | undefined
   export let size: 24 | 32 | 36 = 24
   export let avatarOnly: boolean = false
@@ -32,12 +23,12 @@
 
 <div class="user-container">
   <div style="width: {size}px; height: {size}px;">
-    <img style="width: {size}px; height: {size}px;" src={users.find((u) => u.name === user).avatar} alt={20} />
+    <img class="img" style="width: {size}px; height: {size}px;" src={user.avatar} alt={'avatar'} />
   </div>
   {#if !avatarOnly}
     <div class="caption">
       {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
-      <div class="title">{users.find((u) => u.name === user).title}</div>
+      <div class="title">{user.name}</div>
     </div>
   {/if}
 </div>
@@ -48,6 +39,11 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: nowrap;
+
+    .img {
+      border-radius: 50%;
+      overflow: hidden;
+    }
 
     .caption {
       display: flex;

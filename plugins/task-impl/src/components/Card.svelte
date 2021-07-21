@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
+  import core, { Account } from '@anticrm/core'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import { Task } from '@anticrm/task'
@@ -23,7 +24,6 @@
   import { getStatusColor } from '../plugin'
 
   export let card: Task
-  export let user: string = 'chen'
   let discussion: number = 0
   export const attach: number = 3
   $: progress = {
@@ -31,6 +31,11 @@
     value: card.checkItems.filter((p) => p.done).length,
     color: getStatusColor(card.status)
   }
+
+  async function getUser (): Promise<Account> {
+    return (await client.findAll(core.class.Account, { _id: card.assignee }))[0]
+  }
+
   let unsubscribe = () => {}
   const client = getClient()
 
@@ -58,7 +63,9 @@
     {/if}
   </div>
   <div class="footer">
-    <UserInfo {user} size={24} avatarOnly />
+    {#await getUser() then user}
+      <UserInfo {user} size={24} avatarOnly />
+    {/await}
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
       <div class="counter">{discussion}</div>

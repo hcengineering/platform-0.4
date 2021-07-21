@@ -13,12 +13,26 @@ const demoIds = component('demo-task' as Component, {
 })
 
 export function demoTask (builder: Builder): void {
+  const members: Ref<Account>[] = []
+  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
+    const accountId: Ref<Account> = generateId()
+    builder.createDoc(
+      core.class.Account,
+      {
+        name: faker.internet.exampleEmail() as Ref<Account>,
+        avatar: faker.image.avatar()
+      },
+      accountId
+    )
+    members.push(accountId)
+  }
+
   builder.createDoc(
     task.class.Project,
     {
       name: 'PL-DEMO',
       description: 'Demo Task project',
-      members: [],
+      members: members,
       private: false
     },
     demoIds.project.DemoProject
@@ -58,7 +72,7 @@ export function demoTask (builder: Builder): void {
       {
         name: `${shortRefId} comments`,
         description: `${shortRefId} comments`,
-        members: [],
+        members: members,
         private: false
       },
       commentSpaceId
@@ -73,7 +87,7 @@ export function demoTask (builder: Builder): void {
         undefined,
         {
           space: commentSpaceId,
-          modifiedBy: faker.internet.exampleEmail() as Ref<Account>
+          modifiedBy: faker.random.arrayElement(members)
         }
       )
     }
@@ -86,7 +100,8 @@ export function demoTask (builder: Builder): void {
         status: faker.random.arrayElement([TaskStatuses.Open, TaskStatuses.InProgress, TaskStatuses.Closed]),
         shortRefId: shortRefId,
         checkItems: checkItems,
-        commentSpace: commentSpaceId
+        commentSpace: commentSpaceId,
+        assignee: faker.random.arrayElement(members)
       },
       id,
       { space: demoIds.project.DemoProject }

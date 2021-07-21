@@ -32,6 +32,15 @@
 
   const client = getClient()
 
+  async function getProjectMembers (): Promise<Array<Account>> {
+    const members = (await client.findAll(core.class.Space, { _id: space })).pop()?.members
+    if (members !== undefined) {
+      return await client.findAll(core.class.Account, { _id: { $in: members } })
+    } else {
+      return []
+    }
+  }
+
   async function create () {
     const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
@@ -74,9 +83,19 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
     <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></div>
-    <div class="row">
-      <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
-    </div>
+    {#await getProjectMembers() then users}
+      <div class="row">
+        <UserBox
+          hAlign={'right'}
+          bind:selected={assignee}
+          {users}
+          caption={task.string.ProjectMembers}
+          title={task.string.Assignee}
+          label={task.string.AssignTask}
+          showSearch
+        />
+      </div>
+    {/await}
     <div class="row"><CheckList bind:items={checkItems} /></div>
   </div>
 </Dialog>

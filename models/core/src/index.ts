@@ -43,4 +43,12 @@ export function createModel (builder: Builder): void {
     TReference,
     TShortRef
   )
+
+  builder.createDoc(
+    core.class.Account,
+    {
+      name: 'System user'
+    },
+    core.account.System
+  )
 }

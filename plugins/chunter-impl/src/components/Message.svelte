@@ -20,44 +20,52 @@
   import MoreH from './icons/MoreH.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import avatar from '../../img/avatar.png'
   import { MarkdownViewer } from '@anticrm/ui'
+  import core, { Account, Ref } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
 
-  export let name: string
   export let time: string
   export let message: string
   export let reactions: boolean = false
   export let replies: boolean = false
   export let thread: boolean = false
+  export let userId: Ref<Account>
+  const client = getClient()
+
+  async function getUser (): Promise<Account> {
+    return (await client.findAll(core.class.Account, { _id: userId }))[0]
+  }
 </script>
 
-<div class="message-container">
-  <div class="avatar"><img src={avatar} alt="Avatar" /></div>
-  <div class="message">
-    <div class="header">{name}<span>{time}</span></div>
-    <div class="text">
-      <MarkdownViewer {message} />
+{#await getUser() then user}
+  <div class="message-container">
+    <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
+    <div class="message">
+      <div class="header">{user.name}<span>{time}</span></div>
+      <div class="text">
+        <MarkdownViewer {message} />
+      </div>
+      {#if (reactions || replies) && !thread}
+        <div class="footer">
+          <div>
+            {#if reactions}<Reactions />{/if}
+          </div>
+          <div>
+            {#if replies}<Replies />{/if}
+          </div>
+        </div>
+      {/if}
     </div>
-    {#if (reactions || replies) && !thread}
-      <div class="footer">
-        <div>
-          {#if reactions}<Reactions />{/if}
-        </div>
-        <div>
-          {#if replies}<Replies />{/if}
-        </div>
+    {#if !thread}
+      <div class="buttons">
+        <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
       </div>
     {/if}
   </div>
-  {#if !thread}
-    <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
-    </div>
-  {/if}
-</div>
+{/await}
 
 <style lang="scss">
   .message-container {
@@ -73,6 +81,7 @@
       background-color: var(--theme-bg-accent-color);
       border-radius: 50%;
       user-select: none;
+      overflow: hidden;
     }
 
     .message {

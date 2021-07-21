@@ -79,8 +79,8 @@ async function prepareServer (): Promise<{ shutdown: () => Promise<void>, addres
   btx.push(
     createClass(testIds.class.Task, { extends: core.class.Doc, domain: 'task' as Domain }),
     createClass(testIds.class.Comment, { extends: core.class.Doc, domain: 'task' as Domain }),
-    createDoc(core.class.Account, {}, johnAccount),
-    createDoc(core.class.Account, {}, brianAccount),
+    createDoc(core.class.Account, { name: 'John Appleseed' }, johnAccount),
+    createDoc(core.class.Account, { name: 'Brian Appleseed' }, brianAccount),
     createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
       sourceClass: core.class.Title,
       targetClass: core.class.Reference,

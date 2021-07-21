@@ -22,6 +22,7 @@
 
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
+  import core, { Account } from '@anticrm/core'
 
   export let doc: Task
 
@@ -36,6 +37,10 @@
     })
   }
 
+  async function getUser (): Promise<Account> {
+    return (await client.findAll(core.class.Account, { _id: doc.assignee }))[0]
+  }
+
   onDestroy(() => {
     unsubscribe()
   })
@@ -44,7 +49,11 @@
 <div class="card-container">
   <div class="header">{doc.name}</div>
   <div class="footer">
-    <div><UserInfo user="chen" avatarOnly={true} /></div>
+    <div>
+      {#await getUser() then user}
+        <UserInfo {user} size={24} avatarOnly />
+      {/await}
+    </div>
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
       <div class="counter">{discussion}</div>
