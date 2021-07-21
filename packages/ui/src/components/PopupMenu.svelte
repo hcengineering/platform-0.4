@@ -15,18 +15,15 @@
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import ui from '../component'
-  import EditBox from './EditBox.svelte'
   import Label from './Label.svelte'
 
   export let title: IntlString | undefined = undefined
   export let caption: IntlString | undefined = undefined
-  export let search: string = ''
-  export let searchLabel: IntlString | undefined = undefined
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'right'
   export let margin: number = 16
-  export let showSearch: boolean = false
-  export let show: boolean = false
+  export let showHeader: boolean = false
+  export let show: boolean
   export let auto: boolean = false
 
   let style: string = ''
@@ -63,11 +60,11 @@
   </div>
   {#if show}
     <div class="popup {vAlign} {hAlign}" {style}>
-      {#if showSearch}
+      {#if showHeader}
         <div class="header">
           <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
-          <EditBox label={searchLabel ?? ui.string.Search} bind:value={search} />
-          <div class="caption">{caption}</div>
+          <slot name="header" />
+          {#if caption}<div class="caption">{caption}</div>{/if}
         </div>
       {/if}
       <div class="content"><slot /></div>
