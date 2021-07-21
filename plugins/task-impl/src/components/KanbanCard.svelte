@@ -22,7 +22,7 @@
 
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
-  import core, { Account } from '@anticrm/core'
+  import core, { Account, Ref } from '@anticrm/core'
 
   export let doc: Task
 
@@ -37,8 +37,9 @@
     })
   }
 
-  async function getUser (): Promise<Account> {
-    return (await client.findAll(core.class.Account, { _id: doc.assignee }))[0]
+  async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (assignee === undefined) return undefined
+    return (await client.findAll(core.class.Account, { _id: assignee })).pop()
   }
 
   onDestroy(() => {
@@ -50,7 +51,7 @@
   <div class="header">{doc.name}</div>
   <div class="footer">
     <div>
-      {#await getUser() then user}
+      {#await getUser(doc.assignee) then user}
         <UserInfo {user} size={24} avatarOnly />
       {/await}
     </div>

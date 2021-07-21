@@ -14,9 +14,7 @@
 -->
 <script lang="ts">
   import { CommentRef, WithMessage } from '@anticrm/chunter'
-  import { Account, Ref } from '@anticrm/core'
   import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
-  import avatar from '../../img/avatar.png'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
@@ -40,7 +38,7 @@
   const client = getClient()
 
   async function getUser (): Promise<Account> {
-    return (await client.findAll(core.class.Account, { _id: userId }))[0]
+    return (await client.findAll(core.class.Account, { _id: message.modifiedBy }))[0]
   }
 
   function onClick () {
@@ -81,6 +79,7 @@
       </div>
     {/if}
   </div>
+</div>
 {/await}
 
 <style lang="scss">

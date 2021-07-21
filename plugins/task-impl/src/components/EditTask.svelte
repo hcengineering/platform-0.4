@@ -31,6 +31,7 @@
   let description: string | undefined
   let checkItems: CheckListItem[] = []
   let projectMembers: Account[] = []
+  let assignee: Ref<Account> | undefined
 
   $: progress = {
     max: checkItems.length,
@@ -49,6 +50,7 @@
       item = result[0]
       description = item.description
       checkItems = item.checkItems
+      assignee = item.assignee
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
         projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
@@ -84,6 +86,15 @@
       })
     }
   }
+
+  async function updateAssignee () {
+    if (item === undefined) return
+    if (item.assignee !== assignee) {
+      await client.updateDoc(item._class, item.space, item._id, {
+        assignee: assignee
+      })
+    }
+  }
 </script>
 
 {#await getItem(id) then value}
@@ -101,11 +112,12 @@
         <div class="row">
           <UserBox
             hAlign={'right'}
-            selected={item.assignee}
+            bind:selected={assignee}
             users={projectMembers}
             title={task.string.Assignee}
             caption={task.string.ProjectMembers}
             label={task.string.AssignTask}
+            on:change={updateAssignee}
             showSearch
           />
         </div>

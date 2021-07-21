@@ -15,21 +15,23 @@
 <script lang="ts">
   import type { Account } from '@anticrm/core'
 
-  export let user: Account
+  export let user: Account | undefined
   export let suptitle: string | undefined
   export let size: 24 | 32 | 36 = 24
   export let avatarOnly: boolean = false
 </script>
 
 <div class="user-container">
-  <div style="width: {size}px; height: {size}px;">
-    <img class="img" style="width: {size}px; height: {size}px;" src={user.avatar} alt={'avatar'} />
-  </div>
-  {#if !avatarOnly}
-    <div class="caption">
-      {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
-      <div class="title">{user.name}</div>
+  {#if user}
+    <div style="width: {size}px; height: {size}px;">
+      <img class="img" style="width: {size}px; height: {size}px;" src={user.avatar} alt={'avatar'} />
     </div>
+    {#if !avatarOnly}
+      <div class="caption">
+        {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
+        <div class="title">{user.name}</div>
+      </div>
+    {/if}
   {/if}
 </div>
 

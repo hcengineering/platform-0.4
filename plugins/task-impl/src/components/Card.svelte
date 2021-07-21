@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
-  import core, { Account } from '@anticrm/core'
+  import core, { Account, Ref } from '@anticrm/core'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import { Task } from '@anticrm/task'
@@ -32,8 +32,9 @@
     color: getStatusColor(card.status)
   }
 
-  async function getUser (): Promise<Account> {
-    return (await client.findAll(core.class.Account, { _id: card.assignee }))[0]
+  async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (assignee === undefined) return undefined
+    return (await client.findAll(core.class.Account, { _id: assignee })).pop()
   }
 
   let unsubscribe = () => {}
@@ -63,7 +64,7 @@
     {/if}
   </div>
   <div class="footer">
-    {#await getUser() then user}
+    {#await getUser(card.assignee) then user}
       <UserInfo {user} size={24} avatarOnly />
     {/await}
     <div class="action">

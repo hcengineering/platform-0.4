@@ -21,6 +21,7 @@
   import UserInfo from './UserInfo.svelte'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
+  import { createEventDispatcher } from 'svelte'
 
   export let title: IntlString
   export let label: IntlString
@@ -32,6 +33,7 @@
   export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let showSearch: boolean = false
+  const dispatch = createEventDispatcher()
   $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
 
   let pressed: boolean = false
@@ -66,6 +68,7 @@
         action={async () => {
           selected = undefined
           pressed = !pressed
+          dispatch('change')
         }}
       />
     {/if}
@@ -77,6 +80,7 @@
         action={async () => {
           selected = user._id
           pressed = !pressed
+          dispatch('change')
         }}
       />
     {/each}
