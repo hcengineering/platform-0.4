@@ -16,7 +16,7 @@
 import { Builder, Model } from '@anticrm/model'
 
 import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
-import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
+import { Project, CheckListItem, Task, TaskStatus, TaskComment } from '@anticrm/task'
 import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
 
 import workbench from '@anticrm/model-workbench'
@@ -28,6 +28,12 @@ const DOMAIN_TASK = 'task' as Domain
 @Model(task.class.Project, core.class.Space)
 export class TProject extends TSpace implements Project {}
 
+@Model(task.class.TaskComment, core.class.Doc, DOMAIN_TASK)
+export class TTaskComment extends TDoc implements TaskComment {
+  task!: Ref<Task>
+  message!: string
+}
+
 @Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
 export class TTask extends TDoc implements Task {
   shortRefId!: Ref<ShortRef>
@@ -37,10 +43,11 @@ export class TTask extends TDoc implements Task {
   status!: TaskStatus
   checkItems!: CheckListItem[]
   commentSpace!: Ref<Space>
+  comments!: Array<Ref<TaskComment>>
 }
 
 export function createModel (builder: Builder): void {
-  builder.createModel(TProject, TTask)
+  builder.createModel(TProject, TTask, TTaskComment)
   builder.createDoc(workbench.class.Application, {
     label: task.string.ApplicationLabelTask,
     icon: task.icon.Task,
@@ -83,6 +90,16 @@ export function createModel (builder: Builder): void {
           pattern: MARKDOWN_REFERENCE_PATTERN.source,
           multDoc: true
         }
+      }
+    ]
+  })
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: task.class.TaskComment,
+    targetClass: task.class.Task,
+    collections: [
+      {
+        sourceField: 'task',
+        targetField: 'comments'
       }
     ]
   })

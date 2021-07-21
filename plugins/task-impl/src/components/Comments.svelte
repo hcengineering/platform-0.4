@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,31 +13,46 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Message as MessageModel } from '@anticrm/chunter'
+  import Channel from '@anticrm/chunter-impl/src/components/Channel.svelte'
+  import ReferenceInput from '@anticrm/chunter-impl/src/components/ReferenceInput.svelte'
   import { Account, Ref, Timestamp } from '@anticrm/core'
-  import Message from './Message.svelte'
+  import { Message as MessageModel } from '@anticrm/chunter'
 
-  export let messages: MessageData[] = []
-  let div: HTMLElement
+  export let messages: Message[] = []
 
-  interface MessageData {
+  interface Message {
     _id: Ref<MessageModel>
     message: string
     modifiedOn: Timestamp
     modifiedBy: Ref<Account>
   }
+
+  let div: HTMLElement
+  let autoscroll: boolean = true
 </script>
 
-<div class="channel-container" bind:this={div}>
-  {#each messages as m (m._id)}
-    <Message reactions replies name={m.modifiedBy} time={`${m.modifiedOn}`} message={m.message} />
-  {/each}
+<div
+  class="msg-board"
+  bind:this={div}
+  on:scroll={() => {
+    div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
+  }}
+>
+  <Channel
+    {messages}
+    on:update={async () => {
+      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
+    }}
+  />
 </div>
+<ReferenceInput withoutMargin={true} on:message />
 
 <style lang="scss">
-  .channel-container {
+  .msg-board {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
+    flex-grow: 1;
+    overflow: hidden;
+    margin-top: 20px;
   }
 </style>

@@ -13,32 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
   import { ActionIcon, UserInfo } from '@anticrm/ui'
   import { Task } from '@anticrm/task'
-  import { getClient } from '@anticrm/workbench'
-  import chunter from '@anticrm/chunter-impl/src/plugin'
 
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
 
   export let doc: Task
-
-  let discussion: number = 0
-  let unsubscribe = () => {}
-  const client = getClient()
-
-  $: {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space: doc.commentSpace }, (result) => {
-      discussion = result.length
-    })
-  }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div class="card-container">
@@ -47,7 +28,7 @@
     <div><UserInfo user="chen" avatarOnly={true} /></div>
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
-      <div class="counter">{discussion}</div>
+      <div class="counter">{doc.comments.length}</div>
       <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
     </div>
   </div>

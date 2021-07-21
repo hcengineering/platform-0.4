@@ -16,11 +16,12 @@
   import { createEventDispatcher } from 'svelte'
   import { EditBox, Dialog, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CheckListItem, TaskStatuses } from '@anticrm/task'
+  import { CheckListItem, Task, TaskComment, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Account, Ref, Space, generateId } from '@anticrm/core'
+  import core, { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
+  import Comments from './Comments.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -29,11 +30,29 @@
   let description: string = ''
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
+  let comments: Message[] = []
+  const id = generateId() as Ref<Task>
 
   const client = getClient()
 
+  interface Message {
+    _id: Ref<TaskComment>
+    message: string
+    modifiedOn: Timestamp
+    modifiedBy: Ref<Account>
+  }
+
+  function addMessage (message: string): void {
+    comments.push({
+      message: message,
+      modifiedBy: client.accountId(),
+      modifiedOn: Date.now(),
+      _id: generateId()
+    })
+    comments = comments
+  }
+
   async function create () {
-    const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
     const spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
     const commentSpace = (
@@ -55,10 +74,18 @@
         checkItems,
         shortRefId,
         commentSpace,
-        status: TaskStatuses.Open
+        status: TaskStatuses.Open,
+        comments: []
       },
       id
     )
+
+    for (const comment of comments) {
+      await client.createDoc(task.class.TaskComment, commentSpace, {
+        message: comment.message,
+        task: id
+      })
+    }
   }
 </script>
 
@@ -78,6 +105,7 @@
       <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
     </div>
     <div class="row"><CheckList bind:items={checkItems} /></div>
+    <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
   </div>
 </Dialog>
 

@@ -14,26 +14,38 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-
+  import { Message as MessageModel } from '@anticrm/chunter'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
-
   import chunter from '../plugin'
-
   import { getClient } from '@anticrm/workbench'
+  import { onDestroy } from 'svelte'
 
   export let currentSpace: Ref<Space>
 
   const client = getClient()
   let div: HTMLElement
   let autoscroll: boolean = true
+  let messages: MessageModel[] = []
 
   function addMessage (message: string): void {
     client.createDoc(chunter.class.Message, currentSpace, {
-      message,
-      replyCount: 0
+      message
     })
   }
+
+  let unsubscribe = () => {}
+
+  $: if (currentSpace !== undefined) {
+    unsubscribe()
+    unsubscribe = client.query(chunter.class.Message, { space: currentSpace }, (result) => {
+      messages = result
+    })
+  }
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
 <div
@@ -44,7 +56,7 @@
   }}
 >
   <Channel
-    space={currentSpace}
+    {messages}
     on:update={async () => {
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     }}
