@@ -53,33 +53,33 @@
 </script>
 
 {#await getUser() then user}
-<div class="message-container" on:click={onClick}>
-  <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
-  <div class="message">
-    <div class="header">{user.name}<span>{message.modifiedOn}</span></div>
-    <div class="text">
-      <MarkdownViewer message={message.message} />
+  <div class="message-container" on:click={onClick}>
+    <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
+    <div class="message">
+      <div class="header">{user.name}<span>{message.modifiedOn}</span></div>
+      <div class="text">
+        <MarkdownViewer message={message.message} />
+      </div>
+      {#if replies > 0 && !thread}
+        <div class="footer">
+          <div>
+            <Reactions />
+          </div>
+          <div>
+            {#if replies > 0}<Replies replies={replyIds} />{/if}
+          </div>
+        </div>
+      {/if}
+      {#if !thread}
+        <div class="buttons">
+          <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+        </div>
+      {/if}
     </div>
-    {#if replies > 0 && !thread}
-      <div class="footer">
-        <div>
-          <Reactions />
-        </div>
-        <div>
-          {#if replies > 0}<Replies replies={replyIds} />{/if}
-        </div>
-      </div>
-    {/if}
-    {#if !thread}
-      <div class="buttons">
-        <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
-      </div>
-    {/if}
   </div>
-</div>
 {/await}
 
 <style lang="scss">
