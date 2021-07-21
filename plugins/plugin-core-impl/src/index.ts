@@ -25,12 +25,23 @@ export default async (): Promise<CoreService> => {
   async function getClient (): Promise<Client> {
     if (client === undefined) {
       const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
-      const storage = await createClient(async (tx) => {
-        return await connectBrowser(clientUrl, tx)
-      })
+
+      // eslint-disable-next-line prefer-const
+      let liveQuery: LiveQuery | undefined
+
+      const storage = await createClient(
+        async (tx) => {
+          return await connectBrowser(clientUrl, tx)
+        },
+        (tx) => {
+          liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+        }
+      )
 
       const accountId = await storage.accountId()
-      client = withOperations(accountId, new LiveQuery(storage))
+
+      liveQuery = new LiveQuery(storage)
+      client = withOperations(accountId, liveQuery)
     }
     return client
   }

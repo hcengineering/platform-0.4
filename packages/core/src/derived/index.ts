@@ -54,12 +54,21 @@ export interface MappingRule {
 export interface CollectionRule {
   sourceField: string // A field reference to source object.
   targetField: string // A source field collection we need to push our _id inside.
+
+  /**
+   *  Allow to perform additional document mapping of source document fields to inserted embedded document fields.
+   *
+   * _id source field will automatically mapped to _id:Ref<Doc> field.
+   *
+   * Fields mapped only on document creation and not updated during updates, so they should be immutable.
+   */
+  rules?: MappingRule[]
 }
 
 /**
  * Document describing derived data
  */
-export interface DerivedDataDescriptor<T extends Doc, D extends DerivedData> extends Doc {
+export interface DerivedDataDescriptor<T extends Doc, D extends Doc> extends Doc {
   sourceClass: Ref<Class<T>> // Defined for instances of this class.
   targetClass: Ref<Class<D>> // A derived data class to produce.
 

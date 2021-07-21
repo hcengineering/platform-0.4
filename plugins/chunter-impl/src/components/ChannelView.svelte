@@ -30,8 +30,7 @@
 
   function addMessage (message: string): void {
     client.createDoc(chunter.class.Message, currentSpace, {
-      message,
-      replyCount: 0
+      message
     })
   }
 </script>

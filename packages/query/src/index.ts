@@ -51,6 +51,8 @@ export interface Queriable {
     callback: (result: T[]) => void,
     options?: FindOptions<T>
   ) => () => void
+
+  notifyTx: (tx: Tx) => Promise<void>
 }
 
 export class LiveQuery extends TxProcessor implements Storage, Queriable {
@@ -168,6 +170,10 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
   async tx (tx: Tx): Promise<void> {
     await this.client.tx(tx)
+    await this.notifyTx(tx)
+  }
+
+  async notifyTx (tx: Tx): Promise<void> {
     await super.tx(tx)
   }
 

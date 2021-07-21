@@ -13,14 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Message as MessageModel } from '@anticrm/chunter'
-  import type { Ref, Space } from '@anticrm/core'
+  import { Message as MessageModel, Comment } from '@anticrm/chunter'
   import { getClient } from '@anticrm/workbench'
   import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
 
-  export let space: Ref<Space>
+  export let message: MessageModel
 
   const client = getClient()
   let unsubscribe = () => {}
@@ -31,11 +30,11 @@
     dispatch('update')
   })
 
-  let messages: MessageModel[] = []
-  $: if (space !== undefined) {
+  let comments: Comment[] = []
+  $: {
     unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space }, (result) => {
-      messages = result
+    unsubscribe = client.query(chunter.class.Comment, { replyOf: message._id }, (result) => {
+      comments = result
     })
   }
 
@@ -45,8 +44,8 @@
 </script>
 
 <div class="channel-container" bind:this={div}>
-  {#each messages as m (m._id)}
-    <Message message={m} />
+  {#each comments as m (m._id)}
+    <Message thread message={m} />
   {/each}
 </div>
 
