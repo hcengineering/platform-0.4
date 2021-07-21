@@ -24,6 +24,7 @@
   export let margin: number = 16
   export let showHeader: boolean = false
   export let show: boolean
+  export let auto: boolean = false
 
   let style: string = ''
   $: {
@@ -47,7 +48,16 @@
 
 <svelte:window on:mouseup={waitClick} />
 <div class="popup-menu">
-  <div class="trigger"><slot name="trigger" /></div>
+  <div
+    class="trigger"
+    on:click={() => {
+      if (auto) {
+        show = !show
+      }
+    }}
+  >
+    <slot name="trigger" />
+  </div>
   {#if show}
     <div class="popup {vAlign} {hAlign}" {style}>
       {#if showHeader}

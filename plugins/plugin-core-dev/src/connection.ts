@@ -16,7 +16,6 @@
 import core, {
   Account,
   Class,
-  DerivedDataProcessor,
   Doc,
   DocumentQuery,
   DOMAIN_TX,
@@ -24,20 +23,34 @@ import core, {
   Hierarchy,
   ModelDb,
   Ref,
+  Storage,
   Tx,
   TxDb,
   WithAccountId
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
+import copy from 'fast-copy'
 
 class ClientImpl implements WithAccountId {
   constructor (
     readonly hierarchy: Hierarchy,
     readonly model: ModelDb,
     readonly transactions: TxDb,
-    readonly handler: (tx: Tx) => void,
-    readonly derivedData: DerivedDataProcessor
+    readonly handler: (tx: Tx) => void
   ) {}
+
+  static createDerivedDataStorage (storage: Storage, sendTo: (tx: Tx) => void): Storage {
+    // Send derived data produced objects to clients.
+    return {
+      findAll: async (_class, query) => await storage.findAll(_class, query),
+      tx: async (tx) => {
+        await storage.tx(tx)
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        sendTo(tx)
+      }
+    }
+  }
 
   static async create (handler: (tx: Tx) => void): Promise<ClientImpl> {
     const txes = builder.getTxes()
@@ -54,19 +67,18 @@ class ClientImpl implements WithAccountId {
       await model.tx(tx)
     }
 
-    const ddp = await DerivedDataProcessor.create(model, hierarchy, model)
     // This is for debug, to check for current model inside browser.
     if (typeof window !== 'undefined') {
       // Print model only from browser console.
       console.info('Model Build complete', model)
     }
-    return new ClientImpl(hierarchy, model, transactions, handler, ddp)
+    return new ClientImpl(hierarchy, model, transactions, handler)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
     if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
-    return await this.model.findAll(_class, query)
+    return copy(await this.model.findAll(_class, query))
   }
 
   async tx (tx: Tx): Promise<void> {
@@ -81,12 +93,8 @@ class ClientImpl implements WithAccountId {
     // 3. update transactions
     await this.transactions.tx(tx)
 
-    // 4. Process derived data
-
-    await this.derivedData.tx(tx)
-
     if (typeof window !== 'undefined') {
-      console.info('Model Build complete', this.model)
+      console.info('Model updated', this.model)
     }
 
     // 5. process client handlers

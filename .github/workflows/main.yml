@@ -70,26 +70,8 @@ jobs:
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
             ${{github.workspace}}/server/*/coverage/lcov.info:lcov
-  lint:
-    runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-      
-      - name: Installing...
-        run: node common/scripts/install-run-rush.js install
-      
-      - name: Building...
-        run: node common/scripts/install-run-rush.js build
-
-      - name: Run lint
-        run: |
-          common/scripts/each-x.sh lint
-
-  formatting:
+  lint_and_format:
     runs-on: ubuntu-latest
 
     steps:
@@ -109,6 +91,9 @@ jobs:
       - name: Check files formatting
         run: |
           common/scripts/each-x.sh format
-          git diff --name-only | cat
-          [ -z "$(git diff --name-only '*.svelte')" ]
+          echo '================================================================'
+          echo 'Checking for diff files'
+          echo '================================================================'
+          git diff --name-only '*.ts' '*.svelte' | cat
+          [ -z "$(git diff --name-only '*.ts' '*.svelte' | cat)" ]
 

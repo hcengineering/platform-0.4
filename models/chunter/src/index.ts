@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-import type { Channel, Comment, Message } from '@anticrm/chunter'
-import type { Domain, Ref } from '@anticrm/core'
+import type { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
+import type { Doc, Domain, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
+import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
 import chunter from './plugin'
 
@@ -28,12 +28,12 @@ export class TChannel extends TSpace implements Channel {}
 @Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
 export class TMessage extends TDoc implements Message {
   message!: string
-  comments!: Array<Ref<Comment>>
+  comments!: CommentRef[]
 }
 
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
 export class TComment extends TDoc implements Comment {
-  replyOf!: Ref<Message>
+  replyOf!: Ref<Doc>
   message!: string
 }
 
@@ -52,7 +52,8 @@ export function createModel (builder: Builder): void {
           createComponent: chunter.component.CreateChannel
         }
       ],
-      spaceView: chunter.component.ChannelView
+      spaceView: chunter.component.ChannelView,
+      editComponent: chunter.component.ThreadsView
     }
   })
   builder.createDoc(chunter.class.Channel, {
@@ -103,7 +104,13 @@ export function createModel (builder: Builder): void {
     collections: [
       {
         sourceField: 'replyOf',
-        targetField: 'comments'
+        targetField: 'comments',
+        rules: [
+          {
+            sourceField: 'modifiedBy',
+            targetField: 'userId'
+          }
+        ]
       }
     ]
   })

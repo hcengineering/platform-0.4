@@ -13,18 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getCurrentLocation, Label, Progress, navigate, UserBox } from '@anticrm/ui'
+  import { getCurrentLocation, Label, Progress, navigate, UserBox, ScrollBox, IconClose } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, Task } from '@anticrm/task'
   import task from '../plugin'
   import { Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import Close from '@anticrm/ui/src/components/internal/icons/Close.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import { onDestroy } from 'svelte'
   import ChannelView from '@anticrm/chunter-impl/src/components/ChannelView.svelte'
   import CheckList from './CheckList.svelte'
-  import ScrollBox from '@anticrm/ui/src/components/ScrollBox.svelte'
 
   const client = getClient()
 
@@ -86,7 +84,7 @@
     <ScrollBox vertical>
       <div class="header">
         <div class="title"><TaskStatus title={item.status} /></div>
-        <div class="tool" on:click={close}><Close size={16} /></div>
+        <div class="tool" on:click={close}><IconClose size={16} /></div>
       </div>
       <div class="content">
         <div class="row">{item.name}</div>

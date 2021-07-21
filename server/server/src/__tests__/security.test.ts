@@ -26,6 +26,7 @@ import core, {
   Storage,
   Tx,
   TxCreateDoc,
+  TxRemoveDoc,
   TxUpdateDoc
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
@@ -104,7 +105,7 @@ describe('security', () => {
       attributes: {
         name: 'test',
         description: 'test public Space',
-        private: true,
+        private: false,
         members: []
       }
     }
@@ -211,6 +212,106 @@ describe('security', () => {
 
     await securityStorage.tx(addMemberTx)
     await securityStorage.tx(objectTx)
+    expect(true).toBeTruthy()
+  })
+
+  it('spaceChange', async () => {
+    expect.assertions(3)
+
+    const privateSpaceTx: TxCreateDoc<Space> = {
+      objectId: generateId(),
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxCreateDoc,
+      objectClass: core.class.Space,
+      attributes: {
+        name: 'test',
+        description: 'test public Space',
+        private: true,
+        members: []
+      }
+    }
+    await securityStorage.tx(privateSpaceTx)
+
+    const addMembertoPrivateTx: TxUpdateDoc<Space> = {
+      objectId: privateSpaceTx.objectId,
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space,
+      operations: { $push: { members: user.accountId } }
+    }
+
+    await securityStorage.tx(addMembertoPrivateTx).catch((error: Error) => {
+      expect(error.message).toBe('ERROR: security.AccessDenied')
+    })
+
+    const removePrivateTx: TxRemoveDoc<Space> = {
+      objectId: privateSpaceTx.objectId,
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space
+    }
+
+    await securityStorage.tx(removePrivateTx).catch((error: Error) => {
+      expect(error.message).toBe('ERROR: security.AccessDenied')
+    })
+
+    const publicSpaceTx: TxCreateDoc<Space> = {
+      objectId: generateId(),
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxCreateDoc,
+      objectClass: core.class.Space,
+      attributes: {
+        name: 'test',
+        description: 'test public Space',
+        private: false,
+        members: []
+      }
+    }
+    await securityStorage.tx(publicSpaceTx)
+
+    const addMemberTx: TxUpdateDoc<Space> = {
+      objectId: publicSpaceTx.objectId,
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space,
+      operations: { $push: { members: user.accountId } }
+    }
+
+    await securityStorage.tx(addMemberTx)
+
+    const removePublicTx: TxRemoveDoc<Space> = {
+      objectId: publicSpaceTx.objectId,
+      objectSpace: core.space.Model,
+      _id: generateId(),
+      space: core.space.Tx,
+      modifiedBy: user.accountId,
+      modifiedOn: Date.now(),
+      _class: core.class.TxUpdateDoc,
+      objectClass: core.class.Space
+    }
+
+    await securityStorage.tx(removePublicTx)
+
     expect(true).toBeTruthy()
   })
 })
