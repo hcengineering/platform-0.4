@@ -19,7 +19,7 @@ export function demoTask (builder: Builder): void {
     {
       name: 'PL-DEMO',
       description: 'Demo Task project',
-      members: [],
+      members: [core.account.System],
       private: false
     },
     demoIds.project.DemoProject

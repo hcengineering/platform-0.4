@@ -28,6 +28,7 @@
   export let label: IntlString
   export let okLabel: IntlString
   export let cancelLabel: IntlString = ui.string.Cancel
+  export let withCancel = true
   export let okAction: () => void
   export let cancelAction: () => void = () => {}
 
@@ -59,13 +60,15 @@
           dispatch('close')
         }}
       />
-      <Button
-        label={cancelLabel}
-        on:click={() => {
-          cancelAction()
-          dispatch('close')
-        }}
-      />
+      {#if withCancel}
+        <Button
+          label={cancelLabel}
+          on:click={() => {
+            cancelAction()
+            dispatch('close')
+          }}
+        />
+      {/if}
     </div>
   </div>
 </div>
