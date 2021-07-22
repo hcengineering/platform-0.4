@@ -94,7 +94,7 @@ export function demoTask (builder: Builder): void {
         status: faker.random.arrayElement([TaskStatuses.Open, TaskStatuses.InProgress, TaskStatuses.Closed]),
         shortRefId: shortRefId,
         checkItems: checkItems,
-        assignee: faker.random.arrayElement(members)
+        assignee: faker.random.arrayElement(members),
         comments: comments
       },
       id,
