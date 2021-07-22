@@ -38,8 +38,6 @@
     { name: 'elon', title: 'Elon Musk' },
     { name: 'kathryn', title: 'Kathryn Minshew' }
   ]
-  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
-  export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let showSearch: boolean = false
 
@@ -48,7 +46,7 @@
 </script>
 
 <div class="userBox">
-  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
+  <PopupMenu {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
     <button
       slot="trigger"
       class="btn"
@@ -62,7 +60,7 @@
         <div class="avatar"><UserInfo user={selected.name} size={36} avatarOnly /></div>
       {:else}
         <div class="icon">
-          {#if pressed}<Close />{:else}<Add />{/if}
+          {#if pressed}<Close size={16} />{:else}<Add size={16} />{/if}
         </div>
       {/if}
     </button>

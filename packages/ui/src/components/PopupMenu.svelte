@@ -19,21 +19,37 @@
 
   export let title: IntlString | undefined = undefined
   export let caption: IntlString | undefined = undefined
-  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
-  export let hAlign: 'left' | 'center' | 'right' = 'right'
   export let margin: number = 16
   export let showHeader: boolean = false
   export let show: boolean
   export let auto: boolean = false
 
-  let style: string = ''
+  let trigger: HTMLElement
+  let popup: HTMLElement
+  let scrolling: boolean = false
   $: {
-    if (vAlign === 'top') style = `transform: translateY(-${margin}px);`
-    if (vAlign === 'middle') {
-      if (hAlign === 'left') style = `transform: translateX(-${margin}px);`
-      if (hAlign === 'right') style = `transform: translateX(${margin}px);`
+    if (show) {
+      const rectT = trigger.getBoundingClientRect()
+      const rectP = popup.getBoundingClientRect()
+      if (rectT.bottom > document.body.clientHeight * 0.7) { // Up
+        if (rectT.top - 20 - margin < rectP.height) {
+          scrolling = true
+          popup.style.maxHeight = `${rectT.top - margin - 20}px`
+          popup.style.top = '20px'
+        } else popup.style.top = `${rectT.top - rectP.height - margin}px`
+      } else { // Down
+        popup.style.top = `${rectT.bottom + margin}px`
+        if (rectT.bottom + rectP.height + 20 + margin > document.body.clientHeight) {
+          scrolling = true
+          popup.style.maxHeight = `${document.body.clientHeight - rectT.bottom - margin - 20}px`
+        }
+      }
+      if (rectT.left + rectP.width + 20 > document.body.clientWidth) popup.style.left = `${document.body.clientWidth - rectP.width - 20}px`
+      else popup.style.left = `${rectT.left}px`
+      popup.style.visibility = 'visible'
+    } else {
+      if (popup) popup.style.visibility = 'hidden'
     }
-    if (vAlign === 'bottom') style = `transform: translateY(${margin}px);`
   }
   const waitClick = (event: any) => {
     let context: boolean = false
@@ -49,6 +65,7 @@
 <svelte:window on:mouseup={waitClick} />
 <div class="popup-menu">
   <div
+    bind:this={trigger}
     class="trigger"
     on:click={() => {
       if (auto) {
@@ -58,18 +75,16 @@
   >
     <slot name="trigger" />
   </div>
-  {#if show}
-    <div class="popup {vAlign} {hAlign}" {style}>
-      {#if showHeader}
-        <div class="header">
-          <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
-          <slot name="header" />
-          {#if caption}<div class="caption">{caption}</div>{/if}
-        </div>
-      {/if}
-      <div class="content"><slot /></div>
-    </div>
-  {/if}
+  <div class="popup" bind:this={popup}>
+    {#if showHeader}
+      <div class="header">
+        <div class="title"><Label label={title ?? ui.string.Undefined} /></div>
+        <slot name="header" />
+        {#if caption}<div class="caption">{caption}</div>{/if}
+      </div>
+    {/if}
+    <div class="content" class:scrolling><slot /></div>
+  </div>
 </div>
 
 <style lang="scss">
@@ -81,7 +96,8 @@
 
     .popup {
       box-sizing: border-box;
-      position: absolute;
+      position: fixed;
+      visibility: hidden;
       display: flex;
       flex-direction: column;
       padding: 24px 20px;
@@ -93,33 +109,6 @@
       user-select: none;
       text-align: center;
       z-index: 10;
-
-      &.left {
-        right: 0;
-        box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
-      }
-      &.center {
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
-      }
-      &.right {
-        left: 0;
-        box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
-      }
-
-      &.top {
-        bottom: 100%;
-      }
-      &.middle {
-        &.left {
-          right: 100%;
-        }
-        &.right {
-          left: 100%;
-        }
-      }
-      &.bottom {
-        top: 100%;
-      }
 
       .header {
         text-align-last: left;
@@ -142,6 +131,10 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
+
+        &.scrolling {
+          overflow-y: auto;
+        }
       }
     }
   }

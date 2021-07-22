@@ -23,8 +23,6 @@
 
   export let title: IntlString
   export let selected: Date = new Date(Date.now())
-  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
-  export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
 
   let pressed: boolean = false
@@ -60,7 +58,7 @@
 </script>
 
 <div class="userBox">
-  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title showHeader>
+  <PopupMenu {margin} bind:show={pressed} bind:title showHeader>
     <button
       slot="trigger"
       class="btn"
@@ -71,7 +69,7 @@
       }}
     >
       <div class="icon">
-        {#if pressed}<Close />{:else}<Calendar size={20} />{/if}
+        {#if pressed}<Close size={16} />{:else}<Calendar size={20} />{/if}
       </div>
     </button>
     <div slot="header" class="header">
