@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,39 +13,22 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import Channel from '@anticrm/chunter-impl/src/components/Channel.svelte'
+  import ReferenceInput from '@anticrm/chunter-impl/src/components/ReferenceInput.svelte'
+  import { Account, Ref, Timestamp } from '@anticrm/core'
   import { Message as MessageModel } from '@anticrm/chunter'
-  import Channel from './Channel.svelte'
-  import ReferenceInput from './ReferenceInput.svelte'
-  import chunter from '../plugin'
-  import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
 
-  export let currentSpace: Ref<Space>
+  export let messages: Message[] = []
 
-  const client = getClient()
+  interface Message {
+    _id: Ref<MessageModel>
+    message: string
+    modifiedOn: Timestamp
+    modifiedBy: Ref<Account>
+  }
+
   let div: HTMLElement
   let autoscroll: boolean = true
-  let messages: MessageModel[] = []
-
-  function addMessage (message: string): void {
-    client.createDoc(chunter.class.Message, currentSpace, {
-      message
-    })
-  }
-
-  let unsubscribe = () => {}
-
-  $: if (currentSpace !== undefined) {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space: currentSpace }, (result) => {
-      messages = result
-    })
-  }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div
@@ -62,15 +45,14 @@
     }}
   />
 </div>
-<ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
+<ReferenceInput withoutMargin={true} on:message />
 
 <style lang="scss">
   .msg-board {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 15px 15px 0px;
-    padding: 25px 25px 0px;
-    overflow: auto;
+    overflow: hidden;
+    margin-top: 20px;
   }
 </style>
