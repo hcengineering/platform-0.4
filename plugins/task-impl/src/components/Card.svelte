@@ -18,14 +18,23 @@
   import Chat from './icons/Chat.svelte'
   import { Task } from '@anticrm/task'
   import { getStatusColor } from '../plugin'
+  import core, { Account, Ref } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
 
   export let card: Task
-  export let user: string = 'chen'
+
   export const attach: number = 3
   $: progress = {
     max: card.checkItems.length,
     value: card.checkItems.filter((p) => p.done).length,
     color: getStatusColor(card.status)
+  }
+
+  const client = getClient()
+
+  async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (assignee === undefined) return undefined
+    return (await client.findAll(core.class.Account, { _id: assignee })).pop()
   }
 </script>
 
