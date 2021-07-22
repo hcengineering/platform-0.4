@@ -31,21 +31,24 @@
     if (show) {
       const rectT = trigger.getBoundingClientRect()
       const rectP = popup.getBoundingClientRect()
-      if (rectT.bottom > document.body.clientHeight * 0.7) { // Up
+      if (rectT.bottom > document.body.clientHeight * 0.7) {
+        // Up
         if (rectT.top - 20 - margin < rectP.height) {
           scrolling = true
           popup.style.maxHeight = `${rectT.top - margin - 20}px`
           popup.style.top = '20px'
         } else popup.style.top = `${rectT.top - rectP.height - margin}px`
-      } else { // Down
+      } else {
+        // Down
         popup.style.top = `${rectT.bottom + margin}px`
         if (rectT.bottom + rectP.height + 20 + margin > document.body.clientHeight) {
           scrolling = true
           popup.style.maxHeight = `${document.body.clientHeight - rectT.bottom - margin - 20}px`
         }
       }
-      if (rectT.left + rectP.width + 20 > document.body.clientWidth) popup.style.left = `${document.body.clientWidth - rectP.width - 20}px`
-      else popup.style.left = `${rectT.left}px`
+      if (rectT.left + rectP.width + 20 > document.body.clientWidth) {
+        popup.style.left = `${document.body.clientWidth - rectP.width - 20}px`
+      } else popup.style.left = `${rectT.left}px`
       popup.style.visibility = 'visible'
     } else {
       if (popup) popup.style.visibility = 'hidden'
