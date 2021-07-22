@@ -30,6 +30,7 @@
   import { getClient } from '@anticrm/workbench'
 
   export let thread: boolean = false
+  export let withoutMargin: boolean = false
 
   export let stylesEnabled = false
   // If specified, submit button will be enabled, message will be send on any modify operation
@@ -216,7 +217,7 @@
   const transformFunction = createTextTransform(findTitle)
 </script>
 
-<div class="ref-container">
+<div class="ref-container" class:withoutMargin>
   <div class="textInput" style={`height: ${lines + 1}em;`}>
     <div
       class="inputMsg"
@@ -275,6 +276,10 @@
     flex-direction: column;
     min-height: 74px;
     margin: 20px 40px;
+
+    &.withoutMargin {
+      margin: 0px;
+    }
 
     .textInput {
       position: relative;

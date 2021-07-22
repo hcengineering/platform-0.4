@@ -14,13 +14,16 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, Dialog, UserBox, DatePicker } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox, DatePicker } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CheckListItem, TaskStatuses } from '@anticrm/task'
+  import { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Account, Ref, Space, generateId } from '@anticrm/core'
+  import core, { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
+  import Comments from './Comments.svelte'
+  import chunter from '@anticrm/chunter-impl/src/plugin'
+  import { Comment } from '@anticrm/chunter'
 
   const dispatch = createEventDispatcher()
 
@@ -29,6 +32,8 @@
   let description: string = ''
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
+  let comments: Message[] = []
+  const id = generateId() as Ref<Task>
 
   const client = getClient()
 
@@ -41,18 +46,25 @@
     }
   }
 
+  interface Message {
+    _id: Ref<Comment>
+    message: string
+    modifiedOn: Timestamp
+    modifiedBy: Ref<Account>
+  }
+
+  function addMessage (message: string): void {
+    comments.push({
+      message: message,
+      modifiedBy: client.accountId(),
+      modifiedOn: Date.now(),
+      _id: generateId()
+    })
+    comments = comments
+  }
+
   async function create () {
-    const id = generateId()
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
-    const spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
-    const commentSpace = (
-      await client.createDoc(core.class.Space, core.space.Model, {
-        name: `${shortRefId} comments`,
-        description: `${shortRefId} comments`,
-        private: true,
-        members: spaceMembers
-      })
-    )._id
 
     await client.createDoc(
       task.class.Task,
@@ -63,11 +75,18 @@
         description,
         checkItems,
         shortRefId,
-        commentSpace,
-        status: TaskStatuses.Open
+        status: TaskStatuses.Open,
+        comments: []
       },
       id
     )
+
+    for (const comment of comments) {
+      await client.createDoc(chunter.class.Comment, space, {
+        message: comment.message,
+        replyOf: id
+      })
+    }
   }
 </script>
 
@@ -75,7 +94,7 @@
   label={task.string.CreateTask}
   okLabel={task.string.CreateTask}
   okAction={create}
-  cancelLabel={task.string.Cancel}
+  cancelLabel={ui.string.Cancel}
   on:close={() => {
     dispatch('close')
   }}
@@ -98,6 +117,7 @@
     {/await}
     <DatePicker hAlign={'center'} title={'Pick due date'} />
     <div class="row"><CheckList bind:items={checkItems} /></div>
+    <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
   </div>
 </Dialog>
 

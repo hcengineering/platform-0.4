@@ -14,42 +14,19 @@
 -->
 <script lang="ts">
   import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
-  import core, { Account, Ref } from '@anticrm/core'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import { Task } from '@anticrm/task'
-  import { getClient } from '@anticrm/workbench'
-  import chunter from '@anticrm/chunter-impl/src/plugin'
-  import { onDestroy } from 'svelte'
   import { getStatusColor } from '../plugin'
 
   export let card: Task
-  let discussion: number = 0
+  export let user: string = 'chen'
   export const attach: number = 3
   $: progress = {
     max: card.checkItems.length,
     value: card.checkItems.filter((p) => p.done).length,
     color: getStatusColor(card.status)
   }
-
-  async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
-    if (assignee === undefined) return undefined
-    return (await client.findAll(core.class.Account, { _id: assignee })).pop()
-  }
-
-  let unsubscribe = () => {}
-  const client = getClient()
-
-  $: {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space: card.commentSpace }, (result) => {
-      discussion = result.length
-    })
-  }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div class="card-container">
@@ -69,7 +46,7 @@
     {/await}
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
-      <div class="counter">{discussion}</div>
+      <div class="counter">{card.comments.length}</div>
       <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
     </div>
   </div>

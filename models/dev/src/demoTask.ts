@@ -1,10 +1,11 @@
-import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, ShortRef, Space } from '@anticrm/core'
+import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
 import task from '@anticrm/task-impl/src/plugin'
-import chunter from '@anticrm/chunter-impl/src/plugin'
 import faker from 'faker'
+import chunter from '@anticrm/chunter-impl/src/plugin'
+import { Comment } from '@anticrm/chunter'
 
 const demoIds = component('demo-task' as Component, {
   project: {
@@ -66,30 +67,23 @@ export function demoTask (builder: Builder): void {
       })
     }
 
-    const commentSpaceId: Ref<Space> = generateId()
-    builder.createDoc(
-      core.class.Space,
-      {
-        name: `${shortRefId} comments`,
-        description: `${shortRefId} comments`,
-        members: members,
-        private: false
-      },
-      commentSpaceId
-    )
+    const comments: Ref<Comment>[] = []
 
     for (let i = 0; i < faker.datatype.number(10); i++) {
+      const commentId = generateId()
       builder.createDoc(
-        chunter.class.Message,
+        chunter.class.Comment,
         {
-          message: faker.lorem.paragraphs(3)
+          message: faker.lorem.paragraphs(3),
+          replyOf: id
         },
-        undefined,
+        commentId,
         {
-          space: commentSpaceId,
+          space: demoIds.project.DemoProject,
           modifiedBy: faker.random.arrayElement(members)
         }
       )
+      comments.push(commentId as Ref<Comment>)
     }
 
     builder.createDoc(
@@ -100,8 +94,8 @@ export function demoTask (builder: Builder): void {
         status: faker.random.arrayElement([TaskStatuses.Open, TaskStatuses.InProgress, TaskStatuses.Closed]),
         shortRefId: shortRefId,
         checkItems: checkItems,
-        commentSpace: commentSpaceId,
         assignee: faker.random.arrayElement(members)
+        comments: comments
       },
       id,
       { space: demoIds.project.DemoProject }
