@@ -6,6 +6,10 @@ export default component('ui' as Component, {
     Close: '' as IntlString,
     Undefined: '' as IntlString,
     Remove: '' as IntlString,
-    Cancel: '' as IntlString
+    Cancel: '' as IntlString,
+    Name: '' as IntlString,
+    Description: '' as IntlString,
+    Join: '' as IntlString,
+    Leave: '' as IntlString
   }
 })

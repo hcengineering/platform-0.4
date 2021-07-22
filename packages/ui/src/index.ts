@@ -14,6 +14,8 @@
 //
 
 import { SvelteComponent } from 'svelte'
+import { addStringsLoader } from '@anticrm/platform'
+import { Component } from '@anticrm/status'
 import Root from './components/internal/Root.svelte'
 
 export * from './types'
@@ -60,6 +62,10 @@ export { default } from './component'
 export function createApp (target: HTMLElement): SvelteComponent {
   return new Root({ target })
 }
+
+addStringsLoader('ui' as Component, async (lang: string) => {
+  return await import(`../lang/${lang}.json`)
+})
 
 // let documentProvider: DocumentProvider | undefined
 
