@@ -17,7 +17,9 @@ import { Builder, Model } from '@anticrm/model'
 
 import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
 import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
-import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
+import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
+import { Comment } from '@anticrm/chunter'
+import chunter from '@anticrm/chunter-impl/src/plugin'
 
 import workbench from '@anticrm/model-workbench'
 
@@ -36,7 +38,7 @@ export class TTask extends TDoc implements Task {
   assignee!: Ref<Account>
   status!: TaskStatus
   checkItems!: CheckListItem[]
-  commentSpace!: Ref<Space>
+  comments!: Array<Ref<Comment>>
 }
 
 export function createModel (builder: Builder): void {
@@ -83,6 +85,16 @@ export function createModel (builder: Builder): void {
           pattern: MARKDOWN_REFERENCE_PATTERN.source,
           multDoc: true
         }
+      }
+    ]
+  })
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: task.class.Task,
+    collections: [
+      {
+        sourceField: 'replyOf',
+        targetField: 'comments'
       }
     ]
   })

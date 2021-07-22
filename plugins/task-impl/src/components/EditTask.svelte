@@ -21,8 +21,8 @@
   import DescriptionEditor from './DescriptionEditor.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import { onDestroy } from 'svelte'
-  import ChannelView from '@anticrm/chunter-impl/src/components/ChannelView.svelte'
   import CheckList from './CheckList.svelte'
+  import CommentsView from './CommentsView.svelte'
 
   const client = getClient()
 
@@ -102,7 +102,7 @@
           </div>
         {/if}
         <CheckList bind:items={checkItems} on:change={updateCheckItem} />
-        <ChannelView currentSpace={item.commentSpace} />
+        <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
       </div>
     </ScrollBox>
   {/if}

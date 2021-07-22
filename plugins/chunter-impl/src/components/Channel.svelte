@@ -14,34 +14,18 @@
 -->
 <script lang="ts">
   import { Message as MessageModel } from '@anticrm/chunter'
-  import type { Ref, Space } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte'
-  import chunter from '../plugin'
+  import { Account, Ref, Timestamp } from '@anticrm/core'
   import Message from './Message.svelte'
 
-  export let space: Ref<Space>
-
-  const client = getClient()
-  let unsubscribe = () => {}
-
+  export let messages: MessageData[] = []
   let div: HTMLElement
-  const dispatch = createEventDispatcher()
-  afterUpdate(async () => {
-    dispatch('update')
-  })
 
-  let messages: MessageModel[] = []
-  $: if (space !== undefined) {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space }, (result) => {
-      messages = result
-    })
+  interface MessageData {
+    _id: Ref<MessageModel>
+    message: string
+    modifiedOn: Timestamp
+    modifiedBy: Ref<Account>
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div class="channel-container" bind:this={div}>

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "task comments use derived data",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl",
+  "email": "bykhov.denis@gmail.com"
+}
