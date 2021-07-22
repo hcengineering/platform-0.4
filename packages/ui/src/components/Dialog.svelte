@@ -35,7 +35,6 @@
 </script>
 
 <div class="container">
-  <div class="null" />
   <div class="dialog">
     <div class="header">
       <div class="title"><Label {label} /></div>
@@ -76,7 +75,7 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    flex-direction: row;
+    flex-direction: row-reverse;
     width: 100vw;
     max-height: 100vh;
     height: 100vh;

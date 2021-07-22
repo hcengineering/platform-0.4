@@ -15,9 +15,11 @@
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
+  import EditBox from './EditBox.svelte'
   import PopupMenu from './PopupMenu.svelte'
   import PopupItem from './PopupItem.svelte'
   import UserInfo from './UserInfo.svelte'
+  import ui from '../component'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
 
@@ -46,7 +48,7 @@
 </script>
 
 <div class="userBox">
-  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title={label} bind:caption bind:search bind:showSearch>
+  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
     <button
       slot="trigger"
       class="btn"
@@ -64,6 +66,7 @@
         </div>
       {/if}
     </button>
+    <div slot="header" class="search"><EditBox label={ui.string.Search} bind:value={search} /></div>
     {#if selected}
       <PopupItem
         component={UserInfo}

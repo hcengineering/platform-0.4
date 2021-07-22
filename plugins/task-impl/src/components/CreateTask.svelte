@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox, DatePicker } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
@@ -93,9 +93,8 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
     <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></div>
-    <div class="row">
-      <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
-    </div>
+    <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+    <DatePicker hAlign={'center'} title={'Pick due date'} />
     <div class="row"><CheckList bind:items={checkItems} /></div>
     <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
   </div>
