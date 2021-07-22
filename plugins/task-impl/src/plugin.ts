@@ -13,13 +13,10 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { IntlString } from '@anticrm/status'
+import task, { Project, Task, TaskStatus } from '@anticrm/task'
+import { mergeIds, IntlString } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 import type { Ref, Class } from '@anticrm/core'
-import type { Project, Task, TaskComment, TaskStatus } from '@anticrm/task'
-
-import task from '@anticrm/task'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {
@@ -43,8 +40,7 @@ export default mergeIds(task, {
   },
   class: {
     Project: '' as Ref<Class<Project>>,
-    Task: '' as Ref<Class<Task>>,
-    TaskComment: '' as Ref<Class<TaskComment>>
+    Task: '' as Ref<Class<Task>>
   },
   string: {
     Projects: '' as IntlString,

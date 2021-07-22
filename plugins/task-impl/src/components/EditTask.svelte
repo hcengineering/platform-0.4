@@ -102,7 +102,7 @@
           </div>
         {/if}
         <CheckList bind:items={checkItems} on:change={updateCheckItem} />
-        <div class="row"><CommentsView currentSpace={item.commentSpace} taskId={item._id} /></div>
+        <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
       </div>
     </ScrollBox>
   {/if}

@@ -16,8 +16,10 @@
 import { Builder, Model } from '@anticrm/model'
 
 import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
-import { Project, CheckListItem, Task, TaskStatus, TaskComment } from '@anticrm/task'
-import { Account, Domain, Ref, ShortRef, Space } from '@anticrm/core'
+import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
+import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
+import { Comment } from '@anticrm/chunter'
+import chunter from '@anticrm/chunter-impl/src/plugin'
 
 import workbench from '@anticrm/model-workbench'
 
@@ -28,12 +30,6 @@ const DOMAIN_TASK = 'task' as Domain
 @Model(task.class.Project, core.class.Space)
 export class TProject extends TSpace implements Project {}
 
-@Model(task.class.TaskComment, core.class.Doc, DOMAIN_TASK)
-export class TTaskComment extends TDoc implements TaskComment {
-  task!: Ref<Task>
-  message!: string
-}
-
 @Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
 export class TTask extends TDoc implements Task {
   shortRefId!: Ref<ShortRef>
@@ -42,12 +38,11 @@ export class TTask extends TDoc implements Task {
   assignee!: Ref<Account>
   status!: TaskStatus
   checkItems!: CheckListItem[]
-  commentSpace!: Ref<Space>
-  comments!: Array<Ref<TaskComment>>
+  comments!: Array<Ref<Comment>>
 }
 
 export function createModel (builder: Builder): void {
-  builder.createModel(TProject, TTask, TTaskComment)
+  builder.createModel(TProject, TTask)
   builder.createDoc(workbench.class.Application, {
     label: task.string.ApplicationLabelTask,
     icon: task.icon.Task,
@@ -94,11 +89,11 @@ export function createModel (builder: Builder): void {
     ]
   })
   builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: task.class.TaskComment,
+    sourceClass: chunter.class.Comment,
     targetClass: task.class.Task,
     collections: [
       {
-        sourceField: 'task',
+        sourceField: 'replyOf',
         targetField: 'comments'
       }
     ]

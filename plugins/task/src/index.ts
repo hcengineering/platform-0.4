@@ -17,7 +17,7 @@ import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
 import type { Account, Doc, Ref, ShortRef, Space } from '@anticrm/core'
-import type { Message } from '@anticrm/chunter'
+import type { Comment } from '@anticrm/chunter'
 
 export interface Project extends Space {}
 
@@ -38,17 +38,12 @@ export interface Task extends Doc {
   assignee?: Ref<Account>
   status: TaskStatus
   checkItems: CheckListItem[]
-  commentSpace: Ref<Space>
-  comments: Array<Ref<TaskComment>>
+  comments: Array<Ref<Comment>>
 }
 
 export interface CheckListItem {
   description: string
   done: boolean
-}
-
-export interface TaskComment extends Message {
-  task: Ref<Task>
 }
 
 const PluginTask = 'task' as Plugin<TaskService>

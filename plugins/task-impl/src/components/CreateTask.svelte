@@ -14,14 +14,16 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, Dialog, UserBox } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CheckListItem, Task, TaskComment, TaskStatuses } from '@anticrm/task'
+  import { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
+  import { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
+  import chunter from '@anticrm/chunter-impl/src/plugin'
+  import { Comment } from '@anticrm/chunter'
 
   const dispatch = createEventDispatcher()
 
@@ -36,7 +38,7 @@
   const client = getClient()
 
   interface Message {
-    _id: Ref<TaskComment>
+    _id: Ref<Comment>
     message: string
     modifiedOn: Timestamp
     modifiedBy: Ref<Account>
@@ -54,15 +56,6 @@
 
   async function create () {
     const shortRefId = await client.createShortRef(id, task.class.Task, space)
-    const spaceMembers = (await client.findAll(core.class.Space, { _id: space }))[0].members
-    const commentSpace = (
-      await client.createDoc(core.class.Space, core.space.Model, {
-        name: `${shortRefId} comments`,
-        description: `${shortRefId} comments`,
-        private: true,
-        members: spaceMembers
-      })
-    )._id
 
     await client.createDoc(
       task.class.Task,
@@ -73,7 +66,6 @@
         description,
         checkItems,
         shortRefId,
-        commentSpace,
         status: TaskStatuses.Open,
         comments: []
       },
@@ -81,9 +73,9 @@
     )
 
     for (const comment of comments) {
-      await client.createDoc(task.class.TaskComment, commentSpace, {
+      await client.createDoc(chunter.class.Comment, space, {
         message: comment.message,
-        task: id
+        replyOf: id
       })
     }
   }
@@ -93,7 +85,7 @@
   label={task.string.CreateTask}
   okLabel={task.string.CreateTask}
   okAction={create}
-  cancelLabel={task.string.Cancel}
+  cancelLabel={ui.string.Cancel}
   on:close={() => {
     dispatch('close')
   }}

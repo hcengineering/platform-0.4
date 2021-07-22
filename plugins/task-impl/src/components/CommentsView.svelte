@@ -14,22 +14,23 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import task from '../plugin'
   import { getClient } from '@anticrm/workbench'
   import { onDestroy } from 'svelte'
-  import { Task, TaskComment } from '@anticrm/task'
+  import { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
+  import chunter from '@anticrm/chunter-impl/src/plugin'
+  import { Comment } from '@anticrm/chunter'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
 
   const client = getClient()
-  let messages: TaskComment[] = []
+  let messages: Comment[] = []
 
   function addMessage (message: string): void {
-    client.createDoc(task.class.TaskComment, currentSpace, {
+    client.createDoc(chunter.class.Comment, currentSpace, {
       message,
-      task: taskId
+      replyOf: taskId
     })
   }
 
@@ -37,7 +38,7 @@
 
   $: if (currentSpace !== undefined) {
     unsubscribe()
-    unsubscribe = client.query(task.class.TaskComment, { space: currentSpace }, (result) => {
+    unsubscribe = client.query(chunter.class.Comment, { space: currentSpace, replyOf: taskId }, (result) => {
       messages = result
     })
   }
