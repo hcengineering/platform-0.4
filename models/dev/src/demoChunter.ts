@@ -1,6 +1,6 @@
 import { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
 import chunter from '@anticrm/chunter-impl/src/plugin'
-import { Account, generateId, Ref } from '@anticrm/core'
+import core, { Account, generateId, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import faker from 'faker'
@@ -16,7 +16,7 @@ export function demoChunter (builder: Builder): void {
     {
       name: 'PL-CHANNEL',
       description: 'Demo Channel',
-      members: [],
+      members: [core.account.System],
       private: false
     },
     demoIds.project.DemoChannel

@@ -13,33 +13,44 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import { Ref, Space } from '@anticrm/core'
   import { Action, getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
-  import type { SpacesNavModel } from '@anticrm/workbench'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient, showModal, SpacesNavModel } from '@anticrm/workbench'
+  import workbench from '../../plugin'
   import { onDestroy } from 'svelte'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
+  import Search from '../icons/Search.svelte'
 
   export let model: SpacesNavModel
 
   let spaces: Space[] = []
+  const client = getClient()
+  const accountId = client.accountId()
   let unsubscribe = () => {}
 
   $: {
     unsubscribe()
-    unsubscribe = getClient().query(model.spaceClass, {}, (result) => {
-      spaces = result
+    unsubscribe = client.query(model.spaceClass, {}, (result) => {
+      spaces = result.filter((space) => space.members.includes(accountId))
     })
   }
 
   onDestroy(unsubscribe)
 
-  const addSpace: Action = {
+  $: addSpace = {
     label: model.addSpaceLabel,
     icon: IconAdd,
     action: async (): Promise<void> => {
       showModal(model.createComponent, {})
+    }
+  }
+
+  const joinSpace: Action = {
+    label: model.label,
+    icon: Search,
+    action: async (): Promise<void> => {
+      showModal(workbench.component.Spaces, { _class: model.spaceClass, label: model.label })
     }
   }
 
@@ -52,7 +63,7 @@
 </script>
 
 <div>
-  <TreeNode label={model.label} actions={[addSpace]}>
+  <TreeNode label={model.label} actions={[addSpace, joinSpace]}>
     {#each spaces as space}
       <TreeItem
         title={space.name}

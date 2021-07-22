@@ -58,7 +58,7 @@ export function demoTask (builder: Builder): void {
       {
         name: `${shortRefId} comments`,
         description: `${shortRefId} comments`,
-        members: [],
+        members: [core.account.System],
         private: false
       },
       commentSpaceId
