@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "implemented spaces join/leave",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "bykhov.denis@gmail.com"
+}
