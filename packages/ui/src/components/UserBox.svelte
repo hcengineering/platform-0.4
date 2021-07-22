@@ -91,7 +91,7 @@
   <div class="selectUser">
     <div class="title"><Label label={title} /></div>
     <div class="user">
-      {#if selectedItem}{selectedItem.name}{:else}<Label {label} />{/if}
+      {#if selectedItem}{selectedItem._id}{:else}<Label {label} />{/if}
     </div>
   </div>
 </div>

@@ -14,9 +14,11 @@
 //
 
 import builder from '@anticrm/model-all'
+import { demoAccount } from './demoAccount'
 import { demoChunter } from './demoChunter'
 import { demoTask } from './demoTask'
 
+demoAccount(builder)
 demoChunter(builder)
 demoTask(builder)
 
