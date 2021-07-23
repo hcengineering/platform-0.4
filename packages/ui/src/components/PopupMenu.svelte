@@ -86,7 +86,9 @@
       if (!findNode(event.target, 'popup')) show = false
     }
   }
-  const startScroll = (): void => { show = false }
+  const startScroll = (): void => {
+    show = false
+  }
 
   onDestroy(() => {
     if (elScroll) elScroll.removeEventListener('scroll', startScroll)
