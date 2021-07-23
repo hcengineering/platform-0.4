@@ -46,6 +46,7 @@
     "@anticrm/workbench":"~0.4.0",
     "svelte":"^3.37.0",
     "@anticrm/fsm":"~0.4.0",
-    "@anticrm/fsm-impl":"~0.4.0"
+    "@anticrm/fsm-impl":"~0.4.0",
+    "@anticrm/presentation":"~0.4.0"
   }
 }

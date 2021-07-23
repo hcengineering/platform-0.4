@@ -20,9 +20,9 @@
   import { Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import TaskStatus from './TaskStatus.svelte'
-  import { onDestroy } from 'svelte'
   import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
 
@@ -40,21 +40,16 @@
     getItem(id)
   }
 
-  let unsubscribe = () => {}
+  let lq: QueryUpdater<Task> | undefined
 
   async function getItem (id: Ref<Task>) {
-    unsubscribe()
-    unsubscribe = client.query(task.class.Task, { _id: id }, (result) => {
+    lq = client.query(lq, task.class.Task, { _id: id }, (result) => {
       item = result[0]
       description = item.description
       checkItems = item.checkItems
     })
     return item
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 
   function close () {
     const loc = getCurrentLocation()

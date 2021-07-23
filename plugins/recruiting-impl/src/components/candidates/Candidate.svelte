@@ -13,9 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
   import { Ref } from '@anticrm/core'
-  import { Candidate, VacancySpace } from '@anticrm/recruiting'
+  import { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
   import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
   import { WithFSM } from '@anticrm/fsm'
@@ -24,25 +23,28 @@
 
   import Float from '../common/Float.svelte'
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let id: Ref<Candidate>
 
   const client = getClient()
   let candidate: Candidate | undefined
-  let unsubCandidates = () => {}
-  $: unsubCandidates = client.query(recruiting.class.Candidate, { _id: id }, ([first]) => {
+  let lqCandidates: QueryUpdater<Candidate> | undefined
+
+  $: lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: id }, ([first]) => {
     candidate = first
   })
 
   let applications: Set<Ref<WithFSM>> = new Set()
-  let unsubApplications = () => {}
-  $: unsubApplications = client.query(recruiting.class.Applicant, { item: id }, (result) => {
+  let lqApplications: QueryUpdater<Applicant> | undefined
+
+  $: lqApplications = client.query(lqApplications, recruiting.class.Applicant, { item: id }, (result) => {
     applications = new Set(result.map((x) => x.fsm))
   })
 
   let vacancies: VacancySpace[] = []
-  let unsubVacancies = () => {}
-  $: unsubVacancies = client.query(recruiting.class.VacancySpace, {}, (result) => {
+  let lqVacancies: QueryUpdater<VacancySpace> | undefined
+  $: lqVacancies = client.query(lqVacancies, recruiting.class.VacancySpace, {}, (result) => {
     vacancies = result
   })
 
@@ -68,12 +70,6 @@
       }
     })
   }
-
-  onDestroy(() => {
-    unsubCandidates()
-    unsubApplications()
-    unsubVacancies()
-  })
 </script>
 
 <Float title={candidate?.name ?? ''} on:close>

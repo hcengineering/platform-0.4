@@ -17,6 +17,7 @@
   import { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
   import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let lines = 10
   export let value: string = ''
@@ -26,8 +27,6 @@
 
   let completions: CompletionItem[] = []
 
-  let titleSearch = () => {}
-
   const client = getClient()
 
   function query (prefix: string): DocumentQuery<Title> {
@@ -36,9 +35,11 @@
     }
   }
 
+  let lq: QueryUpdater<Title> | undefined
+
   $: if (currentPrefix !== '') {
-    titleSearch()
-    titleSearch = client.query(
+    lq = client.query(
+      lq,
       core.class.Title,
       query(currentPrefix),
       (docs) => {

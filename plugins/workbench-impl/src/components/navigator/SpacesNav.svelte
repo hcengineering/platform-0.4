@@ -17,26 +17,23 @@
   import { Action, getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
   import { getClient, showModal, SpacesNavModel } from '@anticrm/workbench'
   import workbench from '../../plugin'
-  import { onDestroy } from 'svelte'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
   import Search from '../icons/Search.svelte'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let model: SpacesNavModel
 
   let spaces: Space[] = []
   const client = getClient()
   const accountId = client.accountId()
-  let unsubscribe = () => {}
+  let query: QueryUpdater<Space> | undefined
 
   $: {
-    unsubscribe()
-    unsubscribe = client.query(model.spaceClass, {}, (result) => {
+    query = client.query(query, model.spaceClass, {}, (result) => {
       spaces = result.filter((space) => space.members.includes(accountId))
     })
   }
-
-  onDestroy(unsubscribe)
 
   $: addSpace = {
     label: model.addSpaceLabel,

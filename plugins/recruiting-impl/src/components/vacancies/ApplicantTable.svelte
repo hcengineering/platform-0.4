@@ -13,13 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
@@ -46,14 +46,12 @@
 
   const client = getClient()
   let applicants: Applicant[] = []
-  let applicantsUnsub = () => {}
+  let lqApplicants: QueryUpdater<Applicant> | undefined
   $: if (space._id !== prevSpace) {
-    applicantsUnsub()
-    applicantsUnsub = () => {}
     prevSpace = space._id
 
     if (space !== undefined) {
-      applicantsUnsub = client.query(recruiting.class.Applicant, { space: space._id }, (result) => {
+      lqApplicants = client.query(lqApplicants, recruiting.class.Applicant, { space: space._id }, (result) => {
         applicants = result
       })
     }
@@ -62,20 +60,15 @@
   $: candidateIDs = applicants.map((a) => a.item as Ref<Candidate>)
 
   let candidates: Map<string, Candidate> = new Map()
-  let candidatesUnsub = () => {}
+  let lqCandidates: QueryUpdater<Candidate> | undefined
+
   $: {
-    candidatesUnsub()
-    candidatesUnsub = client.query(recruiting.class.Candidate, { _id: { $in: candidateIDs } }, (result) => {
+    lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: { $in: candidateIDs } }, (result) => {
       candidates = new Map(result.map((x) => [x._id, x]))
     })
   }
 
   $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
-
-  onDestroy(() => {
-    applicantsUnsub()
-    candidatesUnsub()
-  })
 </script>
 
 <Table {data} {columns} />
