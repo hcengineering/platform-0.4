@@ -51,7 +51,7 @@
       slot="trigger"
       class="btn"
       class:selected={pressed}
-      on:click={(event) => {
+      on:click|preventDefault={(event) => {
         pressed = !pressed
         event.stopPropagation()
       }}

@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
+  import { afterUpdate, onDestroy } from 'svelte/internal'
   import ui from '../component'
   import Label from './Label.svelte'
 
@@ -26,46 +27,73 @@
 
   let trigger: HTMLElement
   let popup: HTMLElement
-  let scrolling: boolean = false
-  $: {
-    if (show) {
-      const rectT = trigger.getBoundingClientRect()
-      const rectP = popup.getBoundingClientRect()
-      if (rectT.bottom > document.body.clientHeight * 0.7) {
-        // Up
-        if (rectT.top - 20 - margin < rectP.height) {
-          scrolling = true
-          popup.style.maxHeight = `${rectT.top - margin - 20}px`
-          popup.style.top = '20px'
-        } else popup.style.top = `${rectT.top - rectP.height - margin}px`
-      } else {
-        // Down
-        popup.style.top = `${rectT.bottom + margin}px`
-        if (rectT.bottom + rectP.height + 20 + margin > document.body.clientHeight) {
-          scrolling = true
-          popup.style.maxHeight = `${document.body.clientHeight - rectT.bottom - margin - 20}px`
-        }
-      }
-      if (rectT.left + rectP.width + 20 > document.body.clientWidth) {
-        popup.style.left = `${document.body.clientWidth - rectP.width - 20}px`
-      } else popup.style.left = `${rectT.left}px`
-      popup.style.visibility = 'visible'
+  let scrolling: boolean
+  let elScroll: Node
+
+  afterUpdate(() => {
+    if (show) showPopup()
+    else hidePopup()
+  })
+
+  const showPopup = (): void => {
+    fitPopup()
+    popup.style.visibility = 'visible'
+    elScroll = findNode(trigger, 'scrollBox')
+    if (elScroll) elScroll.addEventListener('scroll', startScroll)
+  }
+  const hidePopup = (): void => {
+    if (popup) {
+      popup.style.visibility = 'hidden'
+      popup.style.maxHeight = ''
+    }
+    if (elScroll) elScroll.removeEventListener('scroll', startScroll)
+  }
+
+  const fitPopup = (): void => {
+    const rectT = trigger.getBoundingClientRect()
+    const rectP = popup.getBoundingClientRect()
+    scrolling = false
+    if (rectT.top > document.body.clientHeight - rectT.bottom) {
+      // Up
+      if (rectT.top - 20 - margin < rectP.height) {
+        scrolling = true
+        popup.style.maxHeight = `${rectT.top - margin - 20}px`
+        popup.style.top = '20px'
+      } else popup.style.top = `${rectT.top - rectP.height - margin}px`
     } else {
-      if (popup) popup.style.visibility = 'hidden'
+      // Down
+      if (rectT.bottom + rectP.height + 20 + margin > document.body.clientHeight) {
+        scrolling = true
+        popup.style.maxHeight = `${document.body.clientHeight - rectT.bottom - margin - 20}px`
+      }
+      popup.style.top = `${rectT.bottom + margin}px`
+    }
+    if (rectT.left + rectP.width + 20 > document.body.clientWidth) {
+      popup.style.left = `${document.body.clientWidth - rectP.width - 20}px`
+    } else popup.style.left = `${rectT.left}px`
+  }
+
+  const findNode = (el: Node, name: string): any => {
+    while (el.parentNode !== null) {
+      if (el.classList.contains(name)) return el
+      el = el.parentNode
+    }
+    return false
+  }
+  const waitClick = (event: any): void => {
+    event.stopPropagation()
+    if (show) {
+      if (!findNode(event.target, 'popup')) show = false
     }
   }
-  const waitClick = (event: any) => {
-    let context: boolean = false
-    let startNode: Node = event.target
-    while (startNode.parentNode !== null) {
-      if (startNode.classList.contains('popup')) context = true
-      startNode = startNode.parentNode
-    }
-    if (!context) show = false
-  }
+  const startScroll = (): void => { show = false }
+
+  onDestroy(() => {
+    if (elScroll) elScroll.removeEventListener('scroll', startScroll)
+  })
 </script>
 
-<svelte:window on:mouseup={waitClick} />
+<svelte:window on:mouseup={waitClick} on:resize={startScroll} />
 <div class="popup-menu">
   <div
     bind:this={trigger}
@@ -86,7 +114,9 @@
         {#if caption}<div class="caption">{caption}</div>{/if}
       </div>
     {/if}
-    <div class="content" class:scrolling><slot /></div>
+    {#if show}
+      <div class="content" class:scrolling><slot /></div>
+    {/if}
   </div>
 </div>
 
@@ -114,7 +144,7 @@
       z-index: 10;
 
       .header {
-        text-align-last: left;
+        text-align: left;
         .title {
           margin-bottom: 16px;
           font-size: 14px;
