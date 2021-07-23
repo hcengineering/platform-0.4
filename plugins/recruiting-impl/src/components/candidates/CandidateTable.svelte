@@ -13,7 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, showModal } from '@anticrm/workbench'
@@ -22,6 +21,7 @@
   import CandidateCmp from './Candidate.svelte'
 
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -46,18 +46,14 @@
 
   const client = getClient()
   let data: Candidate[] = []
-  let unsub = () => {}
+  let lq: QueryUpdater<Candidate> | undefined
   $: if (currentSpace !== prevSpace) {
-    unsub()
-    unsub = () => {}
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      unsub = client.query(recruiting.class.Candidate, { space: currentSpace }, (result) => (data = result))
+      lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => (data = result))
     }
   }
-
-  onDestroy(unsub)
 </script>
 
 <Table {data} {columns} on:rowClick={(event) => showModal(CandidateCmp, { id: event.detail.id })} />

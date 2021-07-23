@@ -14,11 +14,11 @@
 -->
 <script lang="ts">
   import core, { Ref, Class, Space } from '@anticrm/core'
+  import { QueryUpdater } from '@anticrm/presentation'
   import { IntlString } from '@anticrm/status'
   import ui, { Dialog, EditBox } from '@anticrm/ui'
   import Button from '@anticrm/ui/src/components/Button.svelte'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
 
   export let _class: Ref<Class<Space>>
   export let label: IntlString
@@ -28,16 +28,13 @@
 
   const client = getClient()
   const accountId = client.accountId()
+  let query: QueryUpdater<Space> | undefined
 
-  let unsub = () => {}
   $: {
-    unsub()
-    unsub = client.query(_class, { name: { $like: '%' + search + '%' } }, (result) => {
+    query = client.query(query, _class, { name: { $like: '%' + search + '%' } }, (result) => {
       spaces = result
     })
   }
-
-  onDestroy(unsub)
 
   function join (id: Ref<Space>) {
     client.updateDoc(_class, core.space.Model, id, {

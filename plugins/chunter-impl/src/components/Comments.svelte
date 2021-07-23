@@ -14,15 +14,16 @@
 -->
 <script lang="ts">
   import { Message as MessageModel, Comment } from '@anticrm/chunter'
+  import { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy, afterUpdate, createEventDispatcher } from 'svelte'
+  import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
 
   export let message: MessageModel
 
   const client = getClient()
-  let unsubscribe = () => {}
+  let query: QueryUpdater<Comment> | undefined
 
   let div: HTMLElement
   const dispatch = createEventDispatcher()
@@ -32,15 +33,10 @@
 
   let comments: Comment[] = []
   $: {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Comment, { replyOf: message._id }, (result) => {
+    query = client.query(query, chunter.class.Comment, { replyOf: message._id }, (result) => {
       comments = result
     })
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div class="channel-container" bind:this={div}>

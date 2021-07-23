@@ -14,12 +14,12 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import { Message as MessageModel } from '@anticrm/chunter'
+  import { Message, Message as MessageModel } from '@anticrm/chunter'
+  import { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
 
   export let currentSpace: Ref<Space>
 
@@ -34,18 +34,13 @@
     })
   }
 
-  let unsubscribe = () => {}
+  let query: QueryUpdater<Message> | undefined
 
   $: if (currentSpace !== undefined) {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { space: currentSpace }, (result) => {
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
     })
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div

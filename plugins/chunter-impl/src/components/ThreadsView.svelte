@@ -19,29 +19,24 @@
   import { getCurrentLocation, navigate } from '@anticrm/ui'
   import ScrollBox from '@anticrm/ui/src/components/ScrollBox.svelte'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
   import chunter from '../plugin'
   import MsgView from './Message.svelte'
   import { IconClose } from '@anticrm/ui'
   import ReferenceInput from './ReferenceInput.svelte'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
 
   export let id: Ref<Message>
   let message: Message | undefined
 
-  let unsubscribe = () => {}
+  let lq: QueryUpdater<Message> | undefined
 
   $: {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Message, { _id: id }, (result) => {
+    lq = client.query(lq, chunter.class.Message, { _id: id }, (result) => {
       message = result[0]
     })
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 
   function close () {
     const loc = getCurrentLocation()
