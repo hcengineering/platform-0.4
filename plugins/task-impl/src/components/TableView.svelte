@@ -49,10 +49,10 @@
   $: if (currentSpace !== prevSpace) {
     query = client.query(query, task.class.Task, { space: currentSpace }, async (result) => {
       data = []
-        for (const item of result) {
-          data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
-        }
-        data = data
+      for (const item of result) {
+        data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
+      }
+      data = data
     })
   }
 
