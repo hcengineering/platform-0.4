@@ -13,7 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
   import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
   import core, { Ref, Doc, Space, Account } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
@@ -22,6 +21,8 @@
   import TaskStatus from './TaskStatus.svelte'
 
   import task from '../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
+  import { Task } from '@anticrm/task'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -42,24 +43,18 @@
 
   const client = getClient()
   let data: Doc[] = []
-  let unsub = () => {}
-  $: if (currentSpace !== prevSpace) {
-    unsub()
-    unsub = () => {}
-    prevSpace = currentSpace
 
-    if (currentSpace !== undefined) {
-      unsub = client.query(task.class.Task, { space: currentSpace }, async (result) => {
-        data = []
+  let query: QueryUpdater<Task> | undefined
+
+  $: if (currentSpace !== prevSpace) {
+    query = client.query(query, task.class.Task, { space: currentSpace }, async (result) => {
+      data = []
         for (const item of result) {
           data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
         }
         data = data
-      })
-    }
+    })
   }
-
-  onDestroy(unsub)
 
   function onClick (event: any) {
     const loc = getCurrentLocation()

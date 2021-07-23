@@ -13,8 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
   import core, { Doc } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
@@ -24,23 +22,17 @@
   import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
 
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
   let selectedFSM: FSM | undefined = undefined
   let fsmTmpls: FSM[] = []
-  const fsmUnsub = client.query(
-    fsmPlugin.class.FSM,
-    { clazz: recruiting.class.VacancySpace, isTemplate: true },
-    (result) => {
-      fsmTmpls = result
-      if (selectedFSM === undefined) {
-        selectedFSM = result[0]
-      }
+  let lq: QueryUpdater<FSM> | undefined
+  lq = client.query(lq, fsmPlugin.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
+    fsmTmpls = result
+    if (selectedFSM === undefined) {
+      selectedFSM = result[0]
     }
-  )
-
-  onDestroy(() => {
-    fsmUnsub()
   })
 
   const vacancy: Omit<VacancySpace, keyof Doc> = {

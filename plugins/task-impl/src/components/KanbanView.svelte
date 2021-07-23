@@ -13,8 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
   import { Task, TaskStatuses } from '@anticrm/task'
   import { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
@@ -23,6 +21,7 @@
   import KanbanCard from './KanbanCard.svelte'
 
   import task, { getStatusColor } from '../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -30,7 +29,8 @@
   const statusByName = new Map(Object.entries(TaskStatuses).map(([k, v]) => [v, k]))
 
   const client = getClient()
-  let unsub = () => {}
+  let lq: QueryUpdater<Task> | undefined
+
   const states = Object.entries(TaskStatuses).map(([k, v]) => ({
     _id: k,
     name: v,
@@ -38,12 +38,10 @@
   }))
 
   $: if (currentSpace !== prevSpace) {
-    unsub()
-    unsub = () => {}
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      unsub = client.query(task.class.Task, { space: currentSpace }, (result) => {
+      lq = client.query(lq, task.class.Task, { space: currentSpace }, (result) => {
         items = result.map((item) => ({
           ...item,
           state: statusByName.get(item.status) ?? ''
@@ -64,10 +62,6 @@
       status: TaskStatuses[tState]
     })
   }
-
-  onDestroy(() => {
-    unsub()
-  })
 
   let items: (Task & { state: string })[] = []
 </script>

@@ -15,11 +15,11 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
   import { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
   import chunter from '@anticrm/chunter-impl/src/plugin'
   import { Comment } from '@anticrm/chunter'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
@@ -34,18 +34,13 @@
     })
   }
 
-  let unsubscribe = () => {}
+  let query: QueryUpdater<Comment> | undefined
 
   $: if (currentSpace !== undefined) {
-    unsubscribe()
-    unsubscribe = client.query(chunter.class.Comment, { space: currentSpace, replyOf: taskId }, (result) => {
+    query = client.query(query, chunter.class.Comment, { space: currentSpace, replyOf: taskId }, (result) => {
       messages = result
     })
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <Comments {messages} on:message={(event) => addMessage(event.detail)} />

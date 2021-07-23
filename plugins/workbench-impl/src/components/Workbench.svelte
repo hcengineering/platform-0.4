@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Doc, Ref, Space } from '@anticrm/core'
-  import type { Client } from '@anticrm/plugin-core'
+  import { PresentationClient } from '@anticrm/presentation'
   import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
@@ -27,7 +27,7 @@
   import Navigator from './Navigator.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
 
-  export let client: Client
+  export let client: PresentationClient
 
   setContext(workbench.context.Client, client)
 

@@ -28,6 +28,7 @@
   import { CompletionPopup, CompletionItem, CompletionPopupActions } from '@anticrm/ui'
   import core, { DocumentQuery, Title } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let thread: boolean = false
   export let withoutMargin: boolean = false
@@ -76,7 +77,7 @@
 
   let popupVisible = false
 
-  let titleSearch = () => {}
+  let lq: QueryUpdater<Title> | undefined
 
   const client = getClient()
 
@@ -87,8 +88,8 @@
   }
 
   $: if (currentPrefix !== '') {
-    titleSearch()
-    titleSearch = client.query(
+    lq = client.query(
+      lq,
       core.class.Title,
       query(currentPrefix),
       (docs) => {

@@ -18,7 +18,7 @@ import { getContext } from 'svelte'
 import type { IntlString, Asset } from '@anticrm/status'
 import type { Ref, Class, Doc, Space } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
-import type { Client } from '@anticrm/plugin-core'
+import type { PresentationClient } from '@anticrm/presentation'
 import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
@@ -63,8 +63,8 @@ const workbench = plugin(
   }
 )
 
-export function getClient (): Client {
-  return getContext<Client>(workbench.context.Client)
+export function getClient (): PresentationClient {
+  return getContext<PresentationClient>(workbench.context.Client)
 }
 
 export function showModal (component: AnySvelteComponent | AnyComponent, props: any, element?: HTMLElement): void {

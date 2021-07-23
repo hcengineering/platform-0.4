@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "changed query to presentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl",
+  "email": "bykhov.denis@gmail.com"
+}

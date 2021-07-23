@@ -13,16 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getPlugin } from '@anticrm/platform'
-  import type { Client } from '@anticrm/plugin-core'
-
-  import pluginCore from '@anticrm/plugin-core'
+  import { PresentationClient } from '@anticrm/presentation'
 
   import Workbench from './Workbench.svelte'
 
-  async function connect (): Promise<Client> {
-    const plugin = await getPlugin(pluginCore.id)
-    return plugin.getClient()
+  async function connect (): Promise<PresentationClient> {
+    return await PresentationClient.create()
   }
 </script>
 

@@ -641,6 +641,11 @@
       "packageName": "@anticrm/recruiting-assets",
       "projectFolder": "plugins/recruiting-assets",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/presentation",
+      "projectFolder": "plugins/presentation",
+      "shouldPublish": true
     }
 
     // {

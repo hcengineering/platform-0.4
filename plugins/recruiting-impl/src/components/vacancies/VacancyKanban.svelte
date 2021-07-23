@@ -13,8 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
   import { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { State } from '@anticrm/fsm'
@@ -25,27 +23,25 @@
   import { Applicant, VacancySpace } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
 
   const client = getClient()
-  let unsubApplicants = () => {}
-  let unsubStates = () => {}
+
+  let lqApplicants: QueryUpdater<Applicant> | undefined
+  let lqStates: QueryUpdater<State> | undefined
 
   $: if (space._id !== prevSpace) {
-    unsubApplicants()
-    unsubApplicants = () => {}
-    unsubStates()
-    unsubStates = () => {}
     prevSpace = space._id
 
     if (space !== undefined) {
-      unsubApplicants = client.query(recruiting.class.Applicant, { space: space._id }, (result) => {
+      lqApplicants = client.query(lqApplicants, recruiting.class.Applicant, { space: space._id }, (result) => {
         items = result
       })
 
-      unsubStates = client.query(fsm.class.State, { fsm: space.fsm }, (result) => {
+      lqStates = client.query(lqStates, fsm.class.State, { fsm: space.fsm }, (result) => {
         states = result
       })
     }
@@ -60,11 +56,6 @@
 
     await client.updateDoc(recruiting.class.Applicant, space._id, item, { state })
   }
-
-  onDestroy(() => {
-    unsubApplicants()
-    unsubStates()
-  })
 
   let items: Applicant[] = []
   let states: State[] = []

@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-  import core, { Ref } from '@anticrm/core'
+  import core, { Ref, Space } from '@anticrm/core'
   import { CandidatePoolSpace, VacancySpace } from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   import plugin from '../plugin'
 
@@ -29,21 +29,17 @@
   let space: VacancySpace | CandidatePoolSpace | undefined
 
   const client = getClient()
-  let unsub = () => {}
+  let lq: QueryUpdater<Space> | undefined
 
   $: if (currentSpace !== prevSpace) {
-    unsub()
-    unsub = () => {}
     prevSpace = currentSpace
 
     if (currentSpace) {
-      unsub = client.query(core.class.Space, { _id: currentSpace }, (result) => {
+      lq = client.query(lq, core.class.Space, { _id: currentSpace }, (result) => {
         space = result[0]
       })
     }
   }
-
-  onDestroy(unsub)
 
   const isVacancySpace = (s: VacancySpace | CandidatePoolSpace): s is VacancySpace =>
     s._class === plugin.class.VacancySpace

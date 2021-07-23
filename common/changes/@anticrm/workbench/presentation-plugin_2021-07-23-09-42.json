@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "changed client to presentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench",
+  "email": "bykhov.denis@gmail.com"
+}

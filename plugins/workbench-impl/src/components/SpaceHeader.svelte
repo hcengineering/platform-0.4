@@ -21,6 +21,7 @@
 
   import { getClient, NavigatorModel, showModal } from '@anticrm/workbench'
   import core from '@anticrm/core'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let space: Ref<Space> | undefined
   export let model: NavigatorModel | undefined
@@ -30,10 +31,11 @@
     if (model?.createComponent !== undefined) showModal(model.createComponent, { space })
   }
 
-  let unsubscribe = () => {}
+  const client = getClient()
+  let query: QueryUpdater<Space> | undefined
+
   $: {
-    unsubscribe()
-    unsubscribe = getClient().query(core.class.Space, { _id: space }, (result) => {
+    query = client.query(query, core.class.Space, { _id: space }, (result) => {
       data = result[0]
     })
   }

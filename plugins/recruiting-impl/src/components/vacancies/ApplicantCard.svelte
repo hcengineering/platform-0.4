@@ -13,31 +13,25 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-
   import { Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
   import { Applicant, Candidate } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let doc: Applicant
   let candidate: Candidate | undefined
 
   const client = getClient()
-  let unsub = () => {}
+  let lq: QueryUpdater<Candidate> | undefined
 
   $: {
-    unsub()
-    unsub = client.query(recruiting.class.Candidate, { _id: doc.item as Ref<Candidate> }, ([first]) => {
+    lq = client.query(lq, recruiting.class.Candidate, { _id: doc.item as Ref<Candidate> }, ([first]) => {
       candidate = first
     })
   }
-
-  onDestroy(() => {
-    unsub()
-  })
 </script>
 
 {#if candidate}

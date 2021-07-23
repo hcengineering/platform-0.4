@@ -16,26 +16,21 @@
   import { Class, Ref, Space } from '@anticrm/core'
   import { Task } from '@anticrm/task'
   import { getClient } from '@anticrm/workbench'
-  import { onDestroy } from 'svelte'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   import Card from './Card.svelte'
 
   export let _class: Ref<Class<Task>>
   export let currentSpace: Ref<Space> | undefined
-  let unsubscribe = () => {}
   const client = getClient()
   let cards: Task[] = []
+  let query: QueryUpdater<Task> | undefined
 
   $: if (currentSpace !== undefined) {
-    unsubscribe()
-    unsubscribe = client.query(_class, { space: currentSpace }, (result) => {
+    query = client.query(query, _class, { space: currentSpace }, (result) => {
       cards = result
     })
   }
-
-  onDestroy(() => {
-    unsubscribe()
-  })
 </script>
 
 <div class="cards-container">
