@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "comment": "Add Recruiting icon.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-assets",
+  "email": "sas_lord@mail.ru"
+}
