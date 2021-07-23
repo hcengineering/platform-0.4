@@ -43,12 +43,12 @@
 </script>
 
 <div class="userBox">
-  <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
+  <PopupMenu {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
     <button
       slot="trigger"
       class="btn"
       class:selected={pressed}
-      on:click={(event) => {
+      on:click|preventDefault={(event) => {
         pressed = !pressed
         event.stopPropagation()
       }}
@@ -57,7 +57,7 @@
         <div class="avatar"><UserInfo user={selectedItem} size={36} avatarOnly /></div>
       {:else}
         <div class="icon">
-          {#if pressed}<Close />{:else}<Add />{/if}
+          {#if pressed}<Close size={16} />{:else}<Add size={16} />{/if}
         </div>
       {/if}
     </button>

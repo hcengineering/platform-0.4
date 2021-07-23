@@ -19,14 +19,14 @@
   export let bothScroll: boolean = false
 </script>
 
-<div class="scroll" class:vertical class:bothScroll>
+<div class="scrollBox" class:vertical class:bothScroll>
   <div class="box" class:stretch style="gap: {gap}px">
     <slot />
   </div>
 </div>
 
 <style lang="scss">
-  .scroll {
+  .scrollBox {
     position: relative;
     width: auto;
     height: 100%;

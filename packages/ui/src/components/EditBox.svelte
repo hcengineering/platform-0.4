@@ -41,7 +41,6 @@
     display: flex;
     flex-direction: column;
     padding: 0;
-    font-family: inherit;
     min-width: 50px;
     height: 52px;
     background-color: var(--theme-bg-accent-color);
@@ -55,6 +54,7 @@
       height: 52px;
       margin: 0;
       padding: 14px 20px 0px;
+      font-family: inherit;
       color: var(--theme-caption-color);
       background-color: transparent;
       outline: none;
@@ -76,7 +76,7 @@
       color: var(--theme-caption-color);
       pointer-events: none;
       opacity: 0.3;
-      transition: all 200ms;
+      transition: top 200ms;
       user-select: none;
     }
     input:focus + .label,
