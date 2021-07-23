@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "changed query to presentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl",
+  "email": "bykhov.denis@gmail.com"
+}

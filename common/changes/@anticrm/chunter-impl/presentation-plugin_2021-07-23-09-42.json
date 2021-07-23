@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "changed query to presentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "bykhov.denis@gmail.com"
+}
