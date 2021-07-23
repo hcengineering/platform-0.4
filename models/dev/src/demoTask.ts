@@ -13,6 +13,9 @@ const demoIds = component('demo-task' as Component, {
   }
 })
 
+/**
+ * @public
+ */
 export function demoTask (builder: Builder): void {
   builder.createDoc(
     task.class.Project,

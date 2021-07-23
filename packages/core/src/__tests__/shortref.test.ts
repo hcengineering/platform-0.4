@@ -13,16 +13,16 @@
 // limitations under the License.
 //
 
-import { describe, expect, it } from '@jest/globals'
 import type { Account, Doc, Ref, Space } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import { createShortRef } from '../shortref'
 import { Storage } from '../storage'
-import { genMinModel } from './minmodel'
+import { _genMinModel } from '../minmodel'
+import { Severity, PlatformError, Status } from '@anticrm/status'
 
-const txes = genMinModel()
+const txes = _genMinModel()
 
 describe('memdb.shortref', () => {
   it('check create ShortRef', async () => {
@@ -36,6 +36,9 @@ describe('memdb.shortref', () => {
     const storage: Storage = {
       findAll: async (_class, query) => await model.findAll(_class, query),
       tx: async (tx) => {
+        if (tx.objectId === 'TASK-2' as Ref<Doc>) {
+          throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: 'TASK-2' as Ref<Doc> }))
+        }
         await model.tx(tx)
         await txStore.tx(tx)
       }
@@ -49,12 +52,12 @@ describe('memdb.shortref', () => {
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(1)
 
     const t2 = await createShortRef(storage, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
-    expect(t2).toBe('TASK-2')
+    expect(t2).toBe('TASK-3')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(2)
 
     model.addDoc({
-      _id: 'TASK-3' as Ref<Doc>,
+      _id: 'TASK-4' as Ref<Doc>,
       _class: core.class.Title,
       space: '' as Ref<Space>,
       modifiedBy: '' as Ref<Account>,
@@ -62,7 +65,7 @@ describe('memdb.shortref', () => {
     })
 
     const t4 = await createShortRef(storage, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
-    expect(t4).toBe('TASK-4')
+    expect(t4).toBe('TASK-5')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(3)
   })

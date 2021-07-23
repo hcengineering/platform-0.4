@@ -13,28 +13,13 @@
 // limitations under the License.
 //
 
-import { start } from './server'
-import { decodeToken } from './token'
-import { assignWorkspace, closeWorkspace } from './workspaces'
+import { startServer } from './wsserver'
 
 const SERVER_SECRET = process.env.SERVER_SECRET ?? 'secret'
 const SERVER_HOST = process.env.SERVER_HOST ?? 'localhost'
 const SERVER_PORT = parseInt(process.env.SERVER_PORT ?? '18080')
 
 // eslint-disable-next-line
-start(SERVER_HOST, SERVER_PORT, {
-  connect: async (clientId, token, sendTx, close) => {
-    try {
-      const { accountId, workspaceId } = decodeToken(SERVER_SECRET, token)
-      console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
-      return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
-    } catch (err) {
-      throw new Error('invalid token')
-    }
-  },
-  close: async (clientId) => {
-    await closeWorkspace(clientId)
-  }
-}).then((s) => {
+startServer(SERVER_HOST, SERVER_PORT, SERVER_SECRET).then((s) => {
   console.log('server is active at:', s.address())
 })

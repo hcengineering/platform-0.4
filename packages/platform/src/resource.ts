@@ -18,16 +18,20 @@ import { getPlugin } from './plugin'
 import type { Resource } from '@anticrm/status'
 import { parseId } from '@anticrm/status'
 
-export type { Resource }
-
 const resources = new Map<Resource<any>, any>()
 const resolvingResources = new Map<Resource<any>, Promise<any>>()
 
-/** Peek does not resolve resource. Return resource if it's already loaded. */
+/**
+ * Peek does not resolve resource. Return resource if it's already loaded.
+ * @public
+ */
 export function peekResource<T> (resource: Resource<T>): T | undefined {
   return resources.get(resource)
 }
 
+/**
+ * @public
+ */
 export async function getResource<T> (resource: Resource<T>): Promise<T> {
   const resolved = resources.get(resource)
   if (resolved !== undefined) {
@@ -56,6 +60,9 @@ export async function getResource<T> (resource: Resource<T>): Promise<T> {
   }
 }
 
+/**
+ * @public
+ */
 export function setResource<T> (resource: Resource<T>, value: T): void {
   resources.set(resource, value)
 }

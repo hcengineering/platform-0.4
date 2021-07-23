@@ -16,7 +16,7 @@
    * path segment in the "$schema" field for all your Rush config files.  This will ensure
    * correct error-underlining and tab-completion for editors such as VS Code.
    */
-  "rushVersion": "5.47.0",
+  "rushVersion": "5.50.0",
 
   /**
    * The next field selects which package manager should be installed and determines its version.
@@ -381,7 +381,12 @@
    * 2. On a caching CI machine, scans can accidentally pick up files left behind from a previous build.
    * 3. It's useful to have a centralized inventory of all projects and their important metadata.
    */
-  "projects": [
+  "projects": [    
+    {
+      "packageName": "@anticrm/platform-rig",
+      "projectFolder": "dev/platform-rig",
+      "shouldPublish": true
+    },
     {
       "packageName": "@anticrm/status",
       "projectFolder": "packages/status",
@@ -396,12 +401,7 @@
       "packageName": "@anticrm/query",
       "projectFolder": "packages/query",
       "shouldPublish": true
-    },
-    {
-      "packageName": "@anticrm/client",
-      "projectFolder": "packages/client",
-      "shouldPublish": true
-    },
+    },    
     {
       "packageName": "@anticrm/platform",
       "projectFolder": "packages/platform",

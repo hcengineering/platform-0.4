@@ -5,26 +5,27 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "tsc",
-    "build:docs": "api-extractor run --local",
-    "test": "echo 'no tests'",
+    "build": "heft build",
+    "test": "heft test",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "format": "eslint --fix src"
+    "format": "prettier --write 'src/**/*.{ts*,js*,yml}' && eslint --fix src"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.13.4",
-    "ts-standard": "^10.0.0",
-    "typescript": "^4.2.4",
-    "eslint": "^7.25.0",
+    "@anticrm/platform-rig": "^0.4.0",
+    "@rushstack/heft-jest-plugin": "^0.1.14",
+    "@rushstack/heft": "^0.34.8",
+    "@types/heft-jest": "^1.0.2",
+    "@types/browser-or-node": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",  
-    "eslint-config-standard": "^16.0.2",
+    "@typescript-eslint/parser": "^4.22.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-standard": "^5.0.0"
+    "eslint": "^7.25.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.4"
   },
   "dependencies": {
     "@anticrm/model":"~0.4.0",
@@ -32,10 +33,8 @@
     "@anticrm/status":"~0.4.2",
     "@anticrm/recruiting":"~0.4.0",
     "@anticrm/model-workbench":"~0.4.0",
-    "@anticrm/recruiting-impl":"~0.4.0",
     "@anticrm/model-core":"~0.4.0",
     "@anticrm/model-fsm":"~0.4.0",
-    "@anticrm/fsm":"~0.4.0",
-    "@anticrm/fsm-impl":"~0.4.0"
+    "@anticrm/fsm":"~0.4.0"
   }
 }

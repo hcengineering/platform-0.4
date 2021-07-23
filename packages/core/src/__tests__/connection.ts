@@ -21,7 +21,7 @@ import { ModelDb, TxDb } from '../memdb'
 import type { DocumentQuery, FindResult } from '../storage'
 import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
-import { genMinModel } from './minmodel'
+import { _genMinModel } from '../minmodel'
 
 class ClientImpl implements WithAccountId {
   constructor (
@@ -50,7 +50,7 @@ class ClientImpl implements WithAccountId {
   }
 }
 export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
-  const txes = genMinModel()
+  const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)

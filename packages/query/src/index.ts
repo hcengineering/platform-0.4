@@ -44,6 +44,9 @@ interface Query {
   callback: (result: FindResult<Doc>) => void
 }
 
+/**
+ * @public
+ */
 export interface Queriable {
   query: <T extends Doc>(
     _class: Ref<Class<T>>,
@@ -55,6 +58,9 @@ export interface Queriable {
   notifyTx: (tx: Tx) => Promise<void>
 }
 
+/**
+ * @public
+ */
 export class LiveQuery extends TxProcessor implements Storage, Queriable {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
   private readonly qid = generateId()
@@ -214,7 +220,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     return false
   }
 
-  async callback (updatedDoc: Doc, q: Query): Promise<void> {
+  private async callback (updatedDoc: Doc, q: Query): Promise<void> {
     q.result = q.result as Doc[]
 
     if (q.options?.limit !== undefined && q.result.length > q.options.limit) {

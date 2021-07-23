@@ -13,23 +13,13 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { IntlString } from '@anticrm/status'
-import type { Ref, Class } from '@anticrm/core'
-import type { RoomSpace } from '@anticrm/meeting'
-import type { AnyComponent } from '@anticrm/ui'
-
 import meeting from '@anticrm/meeting'
+import { mergeIds } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/ui'
 
 export default mergeIds(meeting, {
   component: {
     CreateChannel: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent
-  },
-  class: {
-    RoomSpace: '' as Ref<Class<RoomSpace>>
-  },
-  string: {
-    Rooms: '' as IntlString
-  }
+  } 
 })

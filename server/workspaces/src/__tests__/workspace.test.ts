@@ -14,7 +14,6 @@
 //
 
 import { getMongoClient, shutdown } from '@anticrm/mongo'
-import { describe, it } from '@jest/globals'
 import { createWorkspace, deleteWorkspace, upgradeWorkspace } from '..'
 import { DOMAIN_TX } from '@anticrm/core'
 

@@ -19,11 +19,18 @@ import { Model } from '@anticrm/model'
 import core from './component'
 
 // C O R E
+
+/**
+ * @public
+ */
 @Model(core.class.Obj, core.class.Obj)
 export class TObj implements Obj {
   _class!: Ref<Class<this>>
 }
 
+/**
+ * @public
+ */
 @Model(core.class.Doc, core.class.Obj)
 export class TDoc extends TObj implements Doc {
   _id!: Ref<this>
@@ -32,6 +39,9 @@ export class TDoc extends TObj implements Doc {
   modifiedBy!: Ref<Account>
 }
 
+/**
+ * @public
+ */
 @Model(core.class.Class, core.class.Doc, DOMAIN_MODEL)
 export class TClass extends TDoc implements Class<Obj> {
   kind!: ClassifierKind
@@ -39,5 +49,8 @@ export class TClass extends TDoc implements Class<Obj> {
   domain!: Domain
 }
 
+/**
+ * @public
+ */
 @Model(core.class.Mixin, core.class.Class)
 export class TMixin extends TClass implements Mixin<Doc> {}

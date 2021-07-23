@@ -61,4 +61,12 @@ export interface FSMService extends Service {
 
 const PluginMeeting = 'fsm' as Plugin<FSMService>
 
-export default plugin(PluginMeeting, {}, {})
+export default plugin(PluginMeeting, {}, {
+  class: {
+    FSM: '' as Ref<Class<FSM>>,
+    WithFSM: '' as Ref<Class<WithFSM>>,
+    FSMItem: '' as Ref<Class<FSMItem>>,
+    Transition: '' as Ref<Class<Transition>>,
+    State: '' as Ref<Class<State>>
+  }
+})

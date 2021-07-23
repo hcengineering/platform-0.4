@@ -17,6 +17,10 @@ import type { Class, Data, Domain, Obj, Ref } from './classes'
 import core from './component'
 import type { Tx, TxCreateDoc } from './tx'
 
+/**
+ * A class hierarchy with usefull functions
+ * @public
+ */
 export class Hierarchy {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
   private readonly descendants = new Map<Ref<Class<Obj>>, Ref<Class<Obj>>[]>()

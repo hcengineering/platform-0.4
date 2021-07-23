@@ -13,11 +13,20 @@
 // limitations under the License.
 //
 
-import core, { Hierarchy, Domain, Class, Obj, Ref, withOperations, SortingOrder, Doc } from '@anticrm/core'
-import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
+import core, {
+  Class,
+  Doc,
+  Domain,
+  Hierarchy,
+  Obj,
+  Ref,
+  SortingOrder,
+  withOperations,
+  _genMinModel
+} from '@anticrm/core'
 import { ElasticStorage } from '../index'
 
-const txes = genMinModel()
+const txes = _genMinModel()
 
 describe('elastic search', () => {
   it('should query model with params', async () => {

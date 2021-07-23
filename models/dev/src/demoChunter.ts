@@ -10,6 +10,10 @@ const demoIds = component('demo-task' as Component, {
     DemoChannel: '' as Ref<Channel>
   }
 })
+
+/**
+ * @public
+ */
 export function demoChunter (builder: Builder): void {
   builder.createDoc(
     chunter.class.Channel,

@@ -13,11 +13,23 @@
 // limitations under the License.
 //
 
-import chunter from '@anticrm/chunter-impl/src/plugin'
-import type { IntlString } from '@anticrm/status'
+import chunter from '@anticrm/chunter'
+import type { IntlString, Resource } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
 
+/**
+ * NOTICE:
+ *
+ * Contain copy of identifiers from chunter-impl, required to be compiled well without source dependencies.
+ *
+ * @public
+ */
 export default mergeIds(chunter, {
+  component: {
+    CreateChannel: '' as Resource<any>,
+    ChannelView: '' as Resource<any>,
+    ThreadsView: '' as Resource<any>
+  },
   string: {
     ApplicationLabelChunter: '' as IntlString
   }

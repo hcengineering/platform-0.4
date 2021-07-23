@@ -34,6 +34,7 @@ import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
  * Document storage based on MongoDB
+ * @public
  */
 export class DocStorage extends TxProcessor implements Storage {
   txHandlers = {

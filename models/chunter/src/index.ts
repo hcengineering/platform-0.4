@@ -22,21 +22,33 @@ import chunter from './plugin'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
+/**
+ * @public
+ */
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {}
 
+/**
+ * @public
+ */
 @Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
 export class TMessage extends TDoc implements Message {
   message!: string
   comments!: CommentRef[]
 }
 
+/**
+ * @public
+ */
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
 export class TComment extends TDoc implements Comment {
   replyOf!: Ref<Doc>
   message!: string
 }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(TChannel, TMessage, TComment)
   builder.createDoc(workbench.class.Application, {

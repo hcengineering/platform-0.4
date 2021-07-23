@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { /* Metadata, Plugin, plugin, */ Resource /*, Service */ } from '@anticrm/platform'
+import { /* Metadata, Plugin, plugin, */ Resource /*, Service */ } from '@anticrm/status'
 import { /* getContext, */ SvelteComponent } from 'svelte'
 import type { Asset, IntlString } from '@anticrm/status'
 

@@ -1,6 +1,6 @@
+import { Resource } from '@anticrm/status'
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
 import core, { generateId, Storage, Tx, TxOperations, TxRemoveDoc, withOperations } from '..'
-import { Resource } from '../../../status/lib'
 import { Account, Class, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
@@ -22,17 +22,18 @@ interface ObjTx {
 }
 /**
  * Register derived data mapper globally.
+ * @public
  */
 export function registerMapper (id: Resource<DocumentMapper>, mapper: DocumentMapper): void {
   derivedDataMappers.set(id, mapper)
 }
 
 /**
-/**
  * Allow to generate derived data with rules and mappers.
+ * @public
  */
 export class DerivedDataProcessor extends TxProcessor {
-  descrs: DescriptorMap
+  private readonly descrs: DescriptorMap
 
   private constructor (readonly model: ModelDb, readonly hierarchy: Hierarchy, readonly storage: Storage) {
     super()
@@ -97,10 +98,10 @@ export class DerivedDataProcessor extends TxProcessor {
     return rule.pattern !== undefined ? this.processRulePattern(rule.pattern, value)?.[0] : value
   }
 
-  /*
+  /**
    * Will update collection back references.
    */
-  async applyCollectionRules (d: Descr, tx: Tx, push: boolean, ops: Storage & TxOperations): Promise<void> {
+  private async applyCollectionRules (d: Descr, tx: Tx, push: boolean, ops: Storage & TxOperations): Promise<void> {
     for (const r of d.collections ?? []) {
       if (push) {
         const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
@@ -199,7 +200,7 @@ export class DerivedDataProcessor extends TxProcessor {
     }
   }
 
-  async applyRule (d: Descr, tx: ObjTx, doc: CachedDoc): Promise<DerivedData[]> {
+  private async applyRule (d: Descr, tx: ObjTx, doc: CachedDoc): Promise<DerivedData[]> {
     doc.doc = doc.doc ?? (await doc.resolve())
     const ruleFields = getRuleFieldValues(sortRules(d.rules), doc.doc)
     if (ruleFields.length === 0) {

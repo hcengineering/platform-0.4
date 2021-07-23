@@ -70,6 +70,16 @@ export class SecurityModel extends TxProcessor {
     }
   }
 
+  protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
+    if (this.hierarchy.isDerived(tx.objectClass, core.class.Space)) {
+      this.publicSpaces.delete(tx.objectId as Ref<Space>)
+
+      for (const allowed of this.allowedSpaces) {
+        allowed[1].delete(tx.objectId as Ref<Space>)
+      }
+    }
+  }
+
   pushSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
     const member = spaceTx.operations?.$push?.members
     if (member !== undefined) {

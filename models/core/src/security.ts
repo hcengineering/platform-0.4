@@ -21,6 +21,9 @@ import { TDoc } from './core'
 
 // S E C U R I T Y
 
+/**
+ * @public
+ */
 @Model(core.class.Space, core.class.Doc, DOMAIN_MODEL)
 export class TSpace extends TDoc implements Space {
   name!: string
@@ -29,5 +32,8 @@ export class TSpace extends TDoc implements Space {
   members!: Arr<Ref<Account>>
 }
 
+/**
+ * @public
+ */
 @Model(core.class.Account, core.class.Doc, DOMAIN_MODEL)
 export class TAccount extends TDoc implements Account {}

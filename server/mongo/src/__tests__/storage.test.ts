@@ -14,8 +14,6 @@
 // limitations under the License.
 //
 import core, {
-  Account,
-  WithAccountId,
   Client,
   createClient,
   Doc,
@@ -28,17 +26,17 @@ import core, {
   Storage,
   TxOperations,
   TxUpdateDoc,
-  withOperations
+  withOperations,
+  _genMinModel, _createTestTxAndDocStorage
 } from '@anticrm/core'
-import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
-import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
+import { _dropAllDBWithPrefix, getMongoClient, shutdown } from '..'
 import { mongoEscape, mongoUnescape } from '../escaping'
 import { DocStorage } from '../storage'
 import { TxStorage } from '../tx'
 import { createTask, createTaskModel, Task, taskIds } from './tasks'
 
-const txes = genMinModel()
+const txes = _genMinModel()
 
 createTaskModel(txes)
 
@@ -57,18 +55,6 @@ async function updateDoc<T extends Doc> (storage: Storage, doc: T, operations: D
   await storage.tx(tx)
 }
 
-export async function dropAllDBWithPrefix (prefix: string, mongoClient: MongoClient): Promise<void> {
-  // Drop all existing test databases.
-
-  const dbs = await mongoClient.db().admin().listDatabases()
-  for (const db of dbs.databases) {
-    const dbName = db.name as string
-    if (dbName.startsWith(prefix)) {
-      await mongoClient.db(dbName).dropDatabase()
-    }
-  }
-}
-
 describe('mongo operations', () => {
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
   let mongoClient!: MongoClient
@@ -78,12 +64,12 @@ describe('mongo operations', () => {
   let client!: Client & TxOperations
 
   beforeAll(async () => {
-    mongoClient = await MongoClient.connect(mongodbUri, { useUnifiedTopology: true })
-    return await dropAllDBWithPrefix('mongo-testdb-', mongoClient)
+    mongoClient = await getMongoClient(mongodbUri)
+    await _dropAllDBWithPrefix('mongo-testdb-', mongoClient)
   })
 
   afterAll(async () => {
-    await mongoClient.close()
+    await shutdown()
   })
 
   beforeEach(async () => {
@@ -114,10 +100,7 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
-    const clientStorage = docStorage as unknown as WithAccountId
-    clientStorage.accountId = async (): Promise<Ref<Account>> => {
-      return core.account.System
-    }
+    const clientStorage = _createTestTxAndDocStorage(hierarchy, txStorage, docStorage)
 
     client = withOperations(
       core.account.System,
@@ -143,6 +126,9 @@ describe('mongo operations', () => {
 
     const r = await client.findAll<Task>(taskIds.class.Task, {})
     expect(r.length).toEqual(50)
+
+    const r2 = await client.findAll(core.class.Tx, {})
+    expect(r2.length).toBeGreaterThan(50)
   })
 
   it('check find by criteria', async () => {

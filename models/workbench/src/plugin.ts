@@ -18,4 +18,7 @@ import { mergeIds } from '@anticrm/status'
 
 import workbench from '@anticrm/workbench'
 
+/**
+ * @public
+ */
 export default mergeIds(workbench, {})

@@ -9,9 +9,14 @@ import { DerivedData } from './derived'
  * Generic format is as in markdown:
  *
  * Example: [Text](ref://classId#objectId)
+ *
+ * @public
  */
 export interface Reference extends DerivedData {
   link: string
 }
 
+/**
+ * @public
+ */
 export const DOMAIN_REFERENCES = 'references' as Domain

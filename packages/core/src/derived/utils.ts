@@ -4,6 +4,10 @@ import { Data, Doc } from '../classes'
 import { generateId } from '../utils'
 
 type Descr = DerivedDataDescriptor<Doc, DerivedData>
+
+/**
+ * @internal
+ */
 export interface DerivedDataOperations {
   additions: DerivedData[]
   updates: DerivedData[]
@@ -17,6 +21,7 @@ function dataEqual (a: DerivedData, b: DerivedData): boolean {
 }
 /**
  * Find same data with old Id.
+ * @internal
  */
 export function popSameValue (d: DerivedData, values: DerivedData[]): boolean {
   const di = values.findIndex((newValue) => dataEqual(newValue, d))
@@ -27,6 +32,9 @@ export function popSameValue (d: DerivedData, values: DerivedData[]): boolean {
   return false // Return new derived data if old one is found, without id matching.
 }
 
+/**
+ * @internal
+ */
 export function findExistingData (oldData: DerivedData[], newData: DerivedData[]): DerivedDataOperations {
   const ops: DerivedDataOperations = { additions: [], updates: [], deletes: [] }
 
@@ -48,6 +56,9 @@ export function findExistingData (oldData: DerivedData[], newData: DerivedData[]
   return ops
 }
 
+/**
+ * @internal
+ */
 export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr, len: number): T {
   const result = {
     _class: d.targetClass,

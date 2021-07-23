@@ -13,18 +13,8 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { Ref, Class } from '@anticrm/core'
-import type { FSM, WithFSM, FSMItem, Transition, State } from '@anticrm/fsm'
-
 import fsm from '@anticrm/fsm'
+import { mergeIds } from '@anticrm/status'
 
-export default mergeIds(fsm, {
-  class: {
-    FSM: '' as Ref<Class<FSM>>,
-    WithFSM: '' as Ref<Class<WithFSM>>,
-    FSMItem: '' as Ref<Class<FSMItem>>,
-    Transition: '' as Ref<Class<Transition>>,
-    State: '' as Ref<Class<State>>
-  }
+export default mergeIds(fsm, { 
 })

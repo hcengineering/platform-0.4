@@ -16,15 +16,20 @@ import { WorkspaceStorage } from './storage'
 
 /**
  * Some extra transaction processing operations.
+ * @public
  */
 export interface TxHandler {
   tx: (tx: Tx) => Promise<void>
 }
 
+/**
+ * @public
+ */
 export type TxHandlerFactory = (hierarchy: Hierarchy, storage: Storage, model: ModelDb) => Promise<TxHandler[]>
 
 /**
  * Workspace connection options.
+ * @public
  */
 export interface WorkspaceOptions {
   mongoDBUri: string // Mongo DB URI.
@@ -34,6 +39,7 @@ export interface WorkspaceOptions {
 /**
  * Represent a workspace.
  * Before find*, tx operations could be used, consider initialize Db with model transactions.
+ * @public
  */
 export class Workspace implements Storage {
   static async create (workspaceId: string, options: WorkspaceOptions, txh?: TxHandlerFactory): Promise<Workspace> {
@@ -73,7 +79,7 @@ export class Workspace implements Storage {
   private constructor (
     readonly workspaceId: string,
     readonly hierarchy: Hierarchy,
-    readonly storage: WorkspaceStorage,
+    private readonly storage: WorkspaceStorage,
     readonly txh: TxHandler[]
   ) {}
 
@@ -101,4 +107,7 @@ export class Workspace implements Storage {
 }
 
 // This need this export to not hang on jest tests
+/**
+ * @public
+ */
 export { shutdown } from '@anticrm/mongo'

@@ -21,14 +21,23 @@ import { Model, Builder } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
 import workbench from './plugin'
 
+/**
+ * @public
+ */
 @Model(workbench.class.Application, core.class.Doc, DOMAIN_MODEL)
 export class TApplication extends TDoc implements Doc {
   label!: IntlString
   icon!: Asset
 }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(TApplication)
 }
 
+/**
+ * @public
+ */
 export default workbench

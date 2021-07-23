@@ -13,13 +13,21 @@
 // limitations under the License.
 //
 
-import recruiting from '@anticrm/recruiting-impl/src/plugin'
-import type { IntlString } from '@anticrm/status'
+import recruiting from '@anticrm/recruiting'
+import type { IntlString, Resource } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
 
+/**
+ * @public
+ */
 export default mergeIds(recruiting, {
   string: {
     ApplicationLabelMeeting: '' as IntlString,
     CreateChannel: '' as IntlString
+  },
+  component: {
+    CreatePool: '' as Resource<any>,
+    CreateVacancy: '' as Resource<any>,
+    WorkspaceComponent: '' as Resource<any>
   }
 })

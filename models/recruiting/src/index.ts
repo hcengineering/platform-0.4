@@ -19,10 +19,13 @@ import core, { TDoc, TSpace } from '@anticrm/model-core'
 import { Ref } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
-import fsm from '@anticrm/fsm-impl/src/plugin'
+import fsm from '@anticrm/fsm'
 
 import recruiting from './plugin'
 
+/**
+ * @public
+ */
 @Model(recruiting.class.Candidate, core.class.Doc)
 class TCandidate extends TDoc implements Candidate {
   name!: string
@@ -33,17 +36,29 @@ class TCandidate extends TDoc implements Candidate {
   resume!: Ref<Resume>
 }
 
+/**
+ * @public
+ */
 @Model(recruiting.class.CandidatePoolSpace, core.class.Space)
 class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 
+/**
+ * @public
+ */
 @Model(recruiting.class.Resume, core.class.Doc)
 class TResume extends TDoc implements Resume {
   description!: string
 }
 
+/**
+ * @public
+ */
 @Model(recruiting.class.Applicant, fsm.class.FSMItem)
 class TApplicant extends TFSMItem implements Applicant {}
 
+/**
+ * @public
+ */
 @Model(recruiting.class.VacancySpace, fsm.class.WithFSM)
 class TVacancySpace extends TWithFSM implements VacancySpace {
   company!: string
@@ -54,6 +69,9 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
   salaryMax!: number
 }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(TApplicant, TResume, TCandidate, TCandidatePoolSpace, TVacancySpace)
 

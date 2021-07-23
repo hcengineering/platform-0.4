@@ -16,44 +16,69 @@
 import type { Class, Doc, Ref } from './classes'
 import type { Tx } from './tx'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type QuerySelector<T> = {
+/**
+ * @public
+ */
+export type QuerySelector<T> /* eslint-disable-line @typescript-eslint/consistent-type-definitions */ = {
   $in?: T[]
   $like?: string
 }
 
+/**
+ * @public
+ */
 export type ObjQueryType<T> = T | QuerySelector<T>
 
+/**
+ * @public
+ */
 export interface NestedDotQuery {
   // support nested queries e.g. 'user.friends.name'
   // this will mark all unrecognized properties as any (including nested queries)
   [key: string]: any
 }
 
+/**
+ * @public
+ */
 export type DocumentQuery<T extends Doc> = {
   [P in keyof T]?: ObjQueryType<T[P]>
 } &
 NestedDotQuery
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type FindOptions<T extends Doc> = {
+/**
+ * @public
+ */
+export type FindOptions<T extends Doc> /* eslint-disable-line @typescript-eslint/consistent-type-definitions */ = {
   limit?: number
   sort?: SortingQuery<T>
 }
 
+/**
+ * @public
+ */
 export type SortingQuery<T extends Doc> = {
   [P in keyof T]?: T[P] extends object ? never : SortingOrder
 }
 
+/**
+ * @public
+ */
 export enum SortingOrder {
   Ascending = 1,
   Descending = -1
 }
 
+/**
+ * @public
+ */
 export interface FindResult<T extends Doc> extends Array<T> {
   total: number
 }
 
+/**
+ * @public
+ */
 export interface Storage {
   findAll: <T extends Doc>(
     _class: Ref<Class<T>>,

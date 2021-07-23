@@ -4,6 +4,7 @@ import { getMongoClient } from '@anticrm/mongo'
 
 /**
  * Workspace connection options.
+ * @public
  */
 export interface WorkspaceOptions {
   mongoDBUri: string // Mongo DB URI.
@@ -12,6 +13,7 @@ export interface WorkspaceOptions {
 
 /**
  * Create workspace and put all model transactions inside it.
+ * @public
  */
 export async function createWorkspace (workspaceId: string, options: WorkspaceOptions): Promise<void> {
   const client = await getMongoClient(options.mongoDBUri, options.mongoOptions)
@@ -29,6 +31,7 @@ export async function createWorkspace (workspaceId: string, options: WorkspaceOp
 
 /**
  * Upgrade workspace and put all model transactions into it.
+ * @public
  */
 export async function upgradeWorkspace (workspaceId: string, options: WorkspaceOptions): Promise<void> {
   const client = await getMongoClient(options.mongoDBUri, options.mongoOptions)
@@ -45,6 +48,7 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
 
 /**
  * Completely remove workspace from DB.
+ * @public
  */
 export async function deleteWorkspace (workspaceId: string, options: WorkspaceOptions): Promise<void> {
   const client = await getMongoClient(options.mongoDBUri, options.mongoOptions)
@@ -54,4 +58,5 @@ export async function deleteWorkspace (workspaceId: string, options: WorkspaceOp
 }
 
 // This need this export to not hang on jest tests
+// @public
 export { shutdown } from '@anticrm/mongo'

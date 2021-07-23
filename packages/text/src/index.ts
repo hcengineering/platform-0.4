@@ -19,15 +19,24 @@ import { MarkdownState } from './serializer'
 
 export * from './model'
 
+/**
+ * @public
+ */
 export function parseMessage (message: string): MessageNode {
   return parseMessageMarkdown(message)
 }
 
+/**
+ * @public
+ */
 export function parseMessageMarkdown (message: string): MessageNode {
   const parser = new MarkdownParser()
   return parser.parse(message ?? '')
 }
 
+/**
+ * @public
+ */
 export function serializeMessage (node: MessageNode): string {
   const state = new MarkdownState()
   state.renderContent(node)

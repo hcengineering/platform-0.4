@@ -19,7 +19,7 @@ import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-c
 import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
 import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
 import { Comment } from '@anticrm/chunter'
-import chunter from '@anticrm/chunter-impl/src/plugin'
+import chunter from '@anticrm/chunter'
 
 import workbench from '@anticrm/model-workbench'
 
@@ -27,9 +27,15 @@ import task from './plugin'
 
 const DOMAIN_TASK = 'task' as Domain
 
+/**
+ * @public
+ */
 @Model(task.class.Project, core.class.Space)
 export class TProject extends TSpace implements Project {}
 
+/**
+ * @public
+ */
 @Model(task.class.Task, core.class.Doc, DOMAIN_TASK)
 export class TTask extends TDoc implements Task {
   shortRefId!: Ref<ShortRef>
@@ -41,6 +47,9 @@ export class TTask extends TDoc implements Task {
   comments!: Array<Ref<Comment>>
 }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(TProject, TTask)
   builder.createDoc(workbench.class.Application, {
