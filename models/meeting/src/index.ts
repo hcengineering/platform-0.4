@@ -21,9 +21,15 @@ import type { RoomSpace } from '@anticrm/meeting'
 import workbench from '@anticrm/model-workbench'
 import meeting from './plugin'
 
+/**
+ * @public
+ */
 @Model(meeting.class.RoomSpace, core.class.Space)
 export class TRoom extends TSpace implements RoomSpace {}
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(TRoom)
   builder.createDoc(workbench.class.Application, {

@@ -14,6 +14,7 @@
 //
 
 import core, {
+  Account,
   Class,
   ClassifierKind,
   Doc,
@@ -27,7 +28,8 @@ import core, {
   Tx,
   TxCreateDoc,
   TxRemoveDoc,
-  TxUpdateDoc
+  TxUpdateDoc,
+  _genMinModel
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from '../security'
@@ -46,6 +48,7 @@ describe('security', () => {
   let hierarchy: Hierarchy
   let securityStorage: SecurityClientStorage
   let security: SecurityModel
+
   async function initDb (): Promise<void> {
     const objectClassTx: TxCreateDoc<Doc> = {
       objectId: 'task' as Ref<Class<Doc>>,
@@ -313,5 +316,123 @@ describe('security', () => {
     await securityStorage.tx(removePublicTx)
 
     expect(true).toBeTruthy()
+  })
+  it('check security mode construction', async () => {
+    const txes = _genMinModel()
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const modelDb = new ModelDb(hierarchy)
+    for (const tx of txes) await modelDb.tx(tx)
+
+    const securityModel = await SecurityModel.create(hierarchy, modelDb)
+
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(2)
+  })
+
+  it('check security push/pull', async () => {
+    const txes = _genMinModel()
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const modelDb = new ModelDb(hierarchy)
+    for (const tx of txes) await modelDb.tx(tx)
+
+    const securityModel = await SecurityModel.create(hierarchy, modelDb)
+
+    const u1 = 'User1' as Ref<Account>
+    const spaces = await modelDb.findAll(core.class.Space, {})
+    expect(spaces.length).toEqual(2)
+
+    const tx: TxUpdateDoc<Space> = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: u1,
+      modifiedOn: Date.now(),
+      objectId: spaces[0]._id,
+      objectClass: core.class.Space,
+      objectSpace: core.space.Model,
+      operations: {
+        $pull: {
+          members: u1
+        }
+      }
+    }
+    await securityModel.tx(tx)
+
+    expect((await securityModel.getUserSpaces('User1' as Ref<Account>)).size).toEqual(1)
+  })
+
+  it('check change space private', async () => {
+    const txes = _genMinModel()
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const modelDb = new ModelDb(hierarchy)
+    for (const tx of txes) await modelDb.tx(tx)
+
+    const securityModel = await SecurityModel.create(hierarchy, modelDb)
+
+    const u1 = 'User1' as Ref<Account>
+    const spaces = await modelDb.findAll(core.class.Space, {})
+    expect(spaces.length).toEqual(2)
+
+    let tx: TxUpdateDoc<Space> = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: u1,
+      modifiedOn: Date.now(),
+      objectId: spaces[0]._id,
+      objectClass: core.class.Space,
+      objectSpace: core.space.Model,
+      operations: {
+        private: true
+      }
+    }
+    await securityModel.tx(tx)
+
+    tx = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: u1,
+      modifiedOn: Date.now(),
+      objectId: spaces[0]._id,
+      objectClass: core.class.Space,
+      objectSpace: core.space.Model,
+      operations: {
+        private: false
+      }
+    }
+    await securityModel.tx(tx)
+
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(2)
+  })
+  it('check remove space', async () => {
+    const txes = _genMinModel()
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const modelDb = new ModelDb(hierarchy)
+    for (const tx of txes) await modelDb.tx(tx)
+
+    const securityModel = await SecurityModel.create(hierarchy, modelDb)
+
+    const u1 = 'User1' as Ref<Account>
+    const spaces = await modelDb.findAll(core.class.Space, {})
+    expect(spaces.length).toEqual(2)
+
+    const tx: TxRemoveDoc<Space> = {
+      _id: generateId(),
+      _class: core.class.TxRemoveDoc,
+      space: core.space.Tx,
+      modifiedBy: u1,
+      modifiedOn: Date.now(),
+      objectId: spaces[0]._id,
+      objectClass: core.class.Space,
+      objectSpace: core.space.Model
+    }
+    expect(securityModel.checkSpaceTx(u1, tx)).toEqual(true)
+    await securityModel.tx(tx)
+
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(1)
   })
 })

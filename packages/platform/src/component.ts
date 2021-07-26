@@ -19,6 +19,9 @@ import type { Metadata } from './metadata'
 
 const Platform = 'platform' as Component
 
+/**
+ * @public
+ */
 export default component(Platform, {
   status: {
     LoadingPlugin: '' as StatusCode<{ plugin: string }>,

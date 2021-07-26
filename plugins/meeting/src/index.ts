@@ -14,9 +14,9 @@
 //
 
 import { plugin, Metadata } from '@anticrm/platform'
-import type { Asset } from '@anticrm/status'
+import type { Asset, IntlString } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Space } from '@anticrm/core'
+import type { Class, Ref, Space } from '@anticrm/core'
 
 export interface RoomSpace extends Space {}
 
@@ -31,5 +31,11 @@ export default plugin(PluginMeeting, {}, {
   icon: {
     Meeting: '' as Asset,
     Hashtag: '' as Asset
+  },
+  class: {
+    RoomSpace: '' as Ref<Class<RoomSpace>>
+  },
+  string: {
+    Rooms: '' as IntlString
   }
 })

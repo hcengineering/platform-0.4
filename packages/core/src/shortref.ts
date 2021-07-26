@@ -14,12 +14,14 @@ import { generateId } from './utils'
  * In case document is moved to separate space,
  * one more reference should be created for it.
  *
- * _id: is uniq short document reference in format '{namespace}-{counter}'
+ * _id: is uniq short document reference in format '\{namespace\}-\{counter\}'
  * objectId - objectId we rererence to.
  * objectClass - object class we reference to.
  *
- * To create a new reference, we should create a document with _id={namespace}-{max(counter)+1}
+ * To create a new reference, we should create a document with _id=\{namespace\}-\{max(counter)+1\}
  * If we failed we need to retry.
+ *
+ * @public
  */
 export interface ShortRef extends Title {
   // _id - is an uniq short reference identifier.
@@ -30,6 +32,10 @@ export interface ShortRef extends Title {
 }
 
 const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
+
+/**
+ * @public
+ */
 export async function createShortRef<T extends Doc> (
   storage: Storage,
   user: Ref<Account>,

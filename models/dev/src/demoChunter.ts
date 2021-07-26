@@ -10,6 +10,10 @@ const demoIds = component('demo-task' as Component, {
     DemoChannel: '' as Ref<Channel>
   }
 })
+
+/**
+ * @public
+ */
 export function demoChunter (builder: Builder): void {
   const members: Ref<Account>[] = []
   for (let i = 0; i < 2 + faker.datatype.number(8); i++) {

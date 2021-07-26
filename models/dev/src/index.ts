@@ -22,4 +22,7 @@ demoAccount(builder)
 demoChunter(builder)
 demoTask(builder)
 
+/**
+ * @public
+ */
 export default builder

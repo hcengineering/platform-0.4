@@ -17,6 +17,9 @@ import type { Class, Doc, Mixin, Ref } from '@anticrm/core'
 import core from '@anticrm/model'
 import { mergeIds } from '@anticrm/status'
 
+/**
+ * @public
+ */
 export default mergeIds(core, {
   class: {
     Mixin: '' as Ref<Class<Mixin<Doc>>>

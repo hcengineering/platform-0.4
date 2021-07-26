@@ -22,20 +22,28 @@ import { ModelDb } from './memdb'
 import type { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxProcessor } from './tx'
 
-type TxHandler = (tx: Tx) => void
+/**
+ * @public
+ */
+export type TxHandler = (tx: Tx) => void
 
+/**
+ * @public
+ */
 export interface WithAccountId extends Storage {
   accountId: () => Promise<Ref<Account>>
 }
 
 /**
  * Client with hierarchy and model inside. Allow fast search for model, without accesing server.
+ * @public
  */
 export interface Client extends WithAccountId {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
 /**
  * Implementaion of client with model and hirarchy support.
+ * @internal
  */
 class ClientImpl extends TxProcessor implements Client {
   readonly hierarchy = new Hierarchy()
@@ -118,6 +126,7 @@ class TransactionBuffer {
 
 /**
  * Creates a client with hierarchy and model
+ * @public
  */
 export async function createClient (
   connect: (txHandler: TxHandler) => Promise<WithAccountId>,
@@ -139,6 +148,9 @@ export async function createClient (
   return await withDerivedDataProcessor(client)
 }
 
+/**
+ * @public
+ */
 async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
   // D E R I V E D   D A T A
   const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
@@ -148,6 +160,9 @@ async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
 
   return client
 }
+/**
+ * @internal
+ */
 function newClientOnlyStorage (client: ClientImpl): Storage {
   return {
     findAll: async (_class, query) => await client.findAll(_class, query),

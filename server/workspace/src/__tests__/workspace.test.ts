@@ -32,17 +32,16 @@ import core, {
   TxOperations,
   TxUpdateDoc,
   WithAccountId,
-  withOperations
+  withOperations,
+  _createClass,
+  _genMinModel
 } from '@anticrm/core'
-import { createClass, genMinModel } from '@anticrm/core/src/__tests__/minmodel'
-import { getMongoClient, shutdown } from '@anticrm/mongo'
-import { dropAllDBWithPrefix } from '@anticrm/mongo/src/__tests__/storage.test'
+import { getMongoClient, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { Component, component } from '@anticrm/status'
-import { describe, expect, it } from '@jest/globals'
 import { MongoClient } from 'mongodb'
 import { Workspace } from '..'
 
-const txes: Tx[] = genMinModel()
+const txes: Tx[] = _genMinModel()
 
 interface MyTask extends Doc {
   name: string
@@ -60,9 +59,9 @@ const taskIds = component('my-task' as Component, {
   }
 })
 
-const myTx = createClass(taskIds.class.MyTx, { extends: core.class.TxCreateDoc }, DOMAIN_TX)
+const myTx = _createClass(taskIds.class.MyTx, { extends: core.class.TxCreateDoc }, DOMAIN_TX)
 
-const createMyTaskClass = createClass(taskIds.class.MyTask, { extends: core.class.Doc }, 'mytask' as Domain)
+const createMyTaskClass = _createClass(taskIds.class.MyTask, { extends: core.class.Doc }, 'mytask' as Domain)
 
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
@@ -73,7 +72,7 @@ describe('workspace', () => {
 
   beforeAll(async () => {
     mongoDbClient = await getMongoClient(mongoDBUri, {})
-    await dropAllDBWithPrefix('ws-test-', mongoDbClient)
+    await _dropAllDBWithPrefix('ws-test-', mongoDbClient)
   })
 
   beforeEach(async () => {
@@ -259,7 +258,7 @@ describe('workspace', () => {
 
     // Register a new class
     await workspace.tx(createMyTaskClass)
-    await workspace.tx(createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
+    await workspace.tx(_createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
 
     // Let's create a client instance, since it has usefull functions.
     const client = await newWorkspaceClient(workspace)

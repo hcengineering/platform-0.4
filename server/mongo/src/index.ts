@@ -25,6 +25,9 @@ process.on('exit', () => {
   shutdown().catch((err) => console.error(err))
 })
 
+/**
+ * @public
+ */
 export async function shutdown (): Promise<void> {
   for (const c of connections.values()) {
     await (await c).close()
@@ -33,6 +36,7 @@ export async function shutdown (): Promise<void> {
 }
 /**
  * Initialize a workspace connection to DB
+ * @public
  */
 export async function getMongoClient (uri: string, options?: MongoClientOptions): Promise<MongoClient> {
   let client = connections.get(uri)
@@ -42,4 +46,20 @@ export async function getMongoClient (uri: string, options?: MongoClientOptions)
     connections.set(uri, client)
   }
   return await client
+}
+
+/**
+ * Initialize a workspace connection to DB
+ * @internal
+ */
+export async function _dropAllDBWithPrefix (prefix: string, mongoClient: MongoClient): Promise<void> {
+  // Drop all existing test databases.
+
+  const dbs = await mongoClient.db().admin().listDatabases()
+  for (const db of dbs.databases) {
+    const dbName = db.name as string
+    if (dbName.startsWith(prefix)) {
+      await mongoClient.db(dbName).dropDatabase()
+    }
+  }
 }

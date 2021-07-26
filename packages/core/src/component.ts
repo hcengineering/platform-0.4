@@ -23,6 +23,9 @@ import type { Tx, TxCreateDoc, TxRemoveDoc, TxUpdateDoc } from './tx'
 
 const ComponentCore = 'core' as Component
 
+/**
+ * @public
+ */
 export default component(ComponentCore, {
   class: {
     Obj: '' as Ref<Class<Obj>>,

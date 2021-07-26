@@ -1,3 +1,6 @@
+/**
+ * @public
+ */
 export enum MessageNodeType {
   doc = 'doc',
   paragraph = 'paragraph',
@@ -12,7 +15,9 @@ export enum MessageNodeType {
   bullet_list = 'bullet_list',
   list_item = 'list_item'
 }
-
+/**
+ * @public
+ */
 export enum MessageMarkType {
   link = 'link',
   em = 'em',
@@ -20,12 +25,16 @@ export enum MessageMarkType {
   code = 'code',
   reference = 'reference'
 }
-
+/**
+ * @public
+ */
 export interface MessageMark {
   type: MessageMarkType
   attrs: { [key: string]: any } // A map of attributes
 }
-
+/**
+ * @public
+ */
 export interface MessageNode {
   type: MessageNodeType
   content?: MessageNode[] // A list of child nodes
@@ -33,19 +42,25 @@ export interface MessageNode {
   attrs?: { [key: string]: string }
   text?: string
 }
-
+/**
+ * @public
+ */
 export function newMessageDocument (): MessageNode {
   return {
     type: MessageNodeType.doc,
     content: [{ type: MessageNodeType.paragraph }]
   }
 }
-
+/**
+ * @public
+ */
 export interface LinkMark extends MessageMark {
   href: string
   title: string
 }
-
+/**
+ * @public
+ */
 export interface ReferenceMark extends MessageMark {
   attrs: { id: string, class: string }
 }

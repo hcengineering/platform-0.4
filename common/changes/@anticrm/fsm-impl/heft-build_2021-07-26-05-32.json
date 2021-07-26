@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Heft enabled Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl"
+}

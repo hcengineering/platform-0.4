@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import { Resource, setResource } from '../resource'
+import type { Resource } from '@anticrm/status'
+import { setResource } from '../resource'
 
 import { plugin2, plugin2State } from './shared'
 import { PluginDependencies } from '../index'

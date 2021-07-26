@@ -17,20 +17,32 @@ import type { Metadata } from '@anticrm/status'
 
 export type { Metadata }
 
-type ExtractType<T, X extends Record<string, Metadata<T>>> = {
+/**
+ * @public
+ */
+export type ExtractType<T, X extends Record<string, Metadata<T>>> = {
   [P in keyof X]: X[P] extends Metadata<infer Z> ? Z : never
 }
 
 const metadata = new Map<Metadata<any>, any>()
 
+/**
+ * @public
+ */
 export function getMetadata<T> (id: Metadata<T>): T | undefined {
   return metadata.get(id)
 }
 
+/**
+ * @public
+ */
 export function setMetadata<T> (id: Metadata<T>, value: T): void {
   metadata.set(id, value)
 }
 
+/**
+ * @public
+ */
 export function loadMetadata<T, X extends Record<string, Metadata<T>>> (ids: X, data: ExtractType<T, X>): void {
   for (const key in ids) {
     const id = ids[key]

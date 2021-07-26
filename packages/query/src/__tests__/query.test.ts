@@ -27,8 +27,16 @@ import type {
   Tx,
   TxCreateDoc
 } from '@anticrm/core'
-import core, { createClient, DOMAIN_TX, Hierarchy, ModelDb, TxDb, withOperations, SortingOrder } from '@anticrm/core'
-import { genMinModel as getModel } from '@anticrm/core/src/__tests__/minmodel'
+import core, {
+  createClient,
+  DOMAIN_TX,
+  Hierarchy,
+  ModelDb,
+  SortingOrder,
+  TxDb,
+  withOperations,
+  _genMinModel as getModel
+} from '@anticrm/core'
 import { LiveQuery } from '..'
 import { connect } from './connection'
 

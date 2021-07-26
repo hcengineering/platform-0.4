@@ -20,40 +20,70 @@ import { generateId } from './utils'
 import { createShortRef } from './shortref'
 import { Storage } from './storage'
 
+/**
+ * @public
+ */
 export interface Tx<T extends Doc = Doc> extends Doc {
   objectId: Ref<T>
   objectSpace: Ref<Space>
 }
 
+/**
+ * @public
+ */
 export interface TxCreateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
   attributes: Data<T>
 }
 
-type ArrayAsElement<T extends Doc> = {
+/**
+ * @public
+ */
+export type ArrayAsElement<T extends Doc> = {
   [P in keyof T]: T[P] extends Arr<infer X> ? X : never
 }
 
-type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
+/**
+ * @public
+ */
+export type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
-interface DocOperation<T extends Doc> {
+/**
+ * @public
+ */
+export interface DocOperation<T extends Doc> {
   $push?: Partial<OmitNever<ArrayAsElement<T>>>
   $pull?: Partial<OmitNever<ArrayAsElement<T>>>
 }
 
+/**
+ * @public
+ */
 export type DocumentUpdate<T extends Doc> = Partial<Data<T>> & DocOperation<T>
 
+/**
+ * @public
+ */
 export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
   operations: DocumentUpdate<T>
 }
 
+/**
+ * @public
+ */
 export interface TxRemoveDoc<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
 }
 
+/**
+ * @public
+ */
 export const DOMAIN_TX = 'tx' as Domain
 
+/**
+ * @public
+ */
 export class TxProcessor {
   async tx (tx: Tx): Promise<void> {
     switch (tx._class) {
@@ -82,6 +112,9 @@ export class TxProcessor {
   protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {}
 }
 
+/**
+ * @public
+ */
 export interface TxOperations {
   accountId: () => Ref<Account>
   createDoc: <T extends Doc>(
@@ -100,6 +133,9 @@ export interface TxOperations {
   removeDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
 }
 
+/**
+ * @public
+ */
 export function withOperations<T extends Storage> (user: Ref<Account>, storage: T): T & TxOperations {
   const result = storage as T & TxOperations
 

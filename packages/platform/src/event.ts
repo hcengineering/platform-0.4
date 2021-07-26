@@ -15,11 +15,21 @@
 
 import { Status, unknownError, OK } from '@anticrm/status'
 
-type EventListener = (event: string, data: any) => Promise<void>
+/**
+ * @public
+ */
+export type EventListener = (event: string, data: any) => Promise<void>
+
+/**
+ * @public
+ */
 export const PlatformEvent = 'platform-event'
 
 const eventListeners = new Map<string, EventListener[]>()
 
+/**
+ * @public
+ */
 export function addEventListener (event: string, listener: EventListener): void {
   const listeners = eventListeners.get(event)
   if (listeners !== undefined) {
@@ -29,6 +39,9 @@ export function addEventListener (event: string, listener: EventListener): void 
   }
 }
 
+/**
+ * @public
+ */
 export function removeEventListener (event: string, listener: EventListener): void {
   const listeners = eventListeners.get(event)
   if (listeners !== undefined) {
@@ -36,6 +49,9 @@ export function removeEventListener (event: string, listener: EventListener): vo
   }
 }
 
+/**
+ * @public
+ */
 export async function broadcastEvent (event: string, data: any): Promise<void> {
   const listeners = eventListeners.get(event)
   if (listeners !== undefined) {
@@ -44,6 +60,9 @@ export async function broadcastEvent (event: string, data: any): Promise<void> {
   }
 }
 
+/**
+ * @public
+ */
 export async function setPlatformStatus (status: Status | Error): Promise<void> {
   if (status instanceof Error) {
     return await broadcastEvent(PlatformEvent, unknownError(status))
@@ -52,6 +71,9 @@ export async function setPlatformStatus (status: Status | Error): Promise<void> 
   }
 }
 
+/**
+ * @public
+ */
 export async function monitor<T> (status: Status, promise: Promise<T>): Promise<T> {
   void setPlatformStatus(status) // eslint-disable-line no-void
   try {

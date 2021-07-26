@@ -46,11 +46,17 @@ const predicates: Record<string, PredicateFactory> = {
   }
 }
 
+/**
+ * @internal
+ */
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
   return keys.length > 0 && keys.every((key) => key.startsWith('$'))
 }
 
+/**
+ * @internal
+ */
 export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
   const keys = Object.keys(o)
   const result: Predicate[] = []

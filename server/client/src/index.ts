@@ -16,6 +16,9 @@
 import { Client, createClient as createCoreClient, Tx } from '@anticrm/core'
 import { connect as connectNode } from './connection'
 
+/**
+ * @public
+ */
 export async function createClient (clientUrl: string, tx?: (tx: Tx) => void): Promise<Client> {
   return await createCoreClient(async (tx) => {
     return await connectNode(clientUrl, tx)

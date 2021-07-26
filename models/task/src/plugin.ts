@@ -13,7 +13,14 @@
 // limitations under the License.
 //
 
-import task from '@anticrm/task-impl/src/plugin'
-import { mergeIds } from '@anticrm/status'
+import task from '@anticrm/task'
+import { mergeIds, Resource } from '@anticrm/status'
 
-export default mergeIds(task, {})
+export default mergeIds(task, {
+  component: {
+    CreateProject: '' as Resource<any>,
+    TaskView: '' as Resource<any>,
+    CreateTask: '' as Resource<any>,
+    EditTask: '' as Resource<any>
+  }
+})

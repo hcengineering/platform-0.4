@@ -21,6 +21,7 @@ import { toMongoQuery } from './query'
 
 /**
  * Transaction storage based on MongoDB
+ * @public
  */
 export class TxStorage implements Storage {
   constructor (readonly db: Collection, readonly hierarchy: Hierarchy) {

@@ -39,13 +39,6 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
 
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-
       - uses: getong/elasticsearch-action@v1.2
         with:
           elasticsearch version: '7.12.0'
@@ -65,7 +58,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 146fae79fffee30a166379a8e5e97beb4582e67af958ae0315dcb538af56cbac
         with:
-          coverageCommand: common/scripts/each-x.sh test --coverage
+          coverageCommand: common/scripts/each-x.sh test
           coverageLocations: |
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov

@@ -2,6 +2,29 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/5cb6d2d426619568816b/maintainability)](https://codeclimate.com/github/hardcoreeng/platform/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/5cb6d2d426619568816b/test_coverage)](https://codeclimate.com/github/hardcoreeng/platform/test_coverage)
 
+## Building project
+
+Use NVM tool to install required nodejs version.
+
+```bash
+nvm install
+nvm use
+```
+
+Install rush.js
+
+```bash
+npm install -g @microsoft/rush
+```
+
+Now we could do:
+
+```bash
+rush update
+```
+
+and we are ready.
+
 ## Server
 
 Hosting of platform as server is described in this section.
@@ -39,8 +62,7 @@ After server is started, it will accept any incoming request for existing worksp
 
 ```bash
 
-docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/
-elasticsearch/elasticsearch:7.13.1
+docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch/elasticsearch:7.13.1
 ```
 
 ## Dev tasks

@@ -44,22 +44,27 @@ describe('i18n', () => {
     expect(translated).toBe('Loading plugin <b>xxx</b>...')
   })
 
-  it('should emit status and return id when no loader', async (done) => {
+  it('should emit status and return id when no loader', async () => {
     const component = 'component-for-no-loader'
     const message = `${component}.id`
 
     const checkStatus = new Status(Severity.ERROR, platform.status.NoLoaderForStrings, { component })
-    const eventListener = async (event: string, data: any): Promise<void> => {
-      await expect(data).toEqual(checkStatus)
-      done()
-    }
+
+    let eventListener!: (event: string, data: any) => Promise<void>
+    const pp = new Promise((resolve) => {
+      eventListener = async (event, data) => {
+        await expect(data).toEqual(checkStatus)
+        resolve(null)
+      }
+    })
     addEventListener(PlatformEvent, eventListener)
     const translated = await translate(message as IntlString, {})
+    await pp
     expect(translated).toBe(message)
     removeEventListener(PlatformEvent, eventListener)
   })
 
-  it('should emit status and return id when bad loader', async (done) => {
+  it('should emit status and return id when bad loader', async () => {
     const component = 'component-for-bad-loader'
     const message = `${component}.id`
     const errorMessage = 'bad loader'
@@ -68,51 +73,64 @@ describe('i18n', () => {
     })
 
     const checkStatus = new Status(Severity.ERROR, status.status.UnknownError, { message: errorMessage })
-    const eventListener = async (event: string, data: any): Promise<void> => {
-      await expect(data).toEqual(checkStatus)
-      done()
-    }
+    let eventListener!: (event: string, data: any) => Promise<void>
+    const pp = new Promise((resolve) => {
+      eventListener = async (event, data) => {
+        await expect(data).toEqual(checkStatus)
+        resolve(null)
+      }
+    })
     addEventListener(PlatformEvent, eventListener)
     const translated = await translate(message as IntlString, {})
+    await pp
     expect(translated).toBe(message)
     removeEventListener(PlatformEvent, eventListener)
   })
 
-  it('should cache error', async (done) => {
+  it('should cache error', async () => {
     const component = 'component'
     const message = `${component}.id`
     let status: Status | undefined
-    const eventListener = async (event: string, data: any): Promise<void> => {
-      if (status === undefined) {
-        status = data
-        done()
-        return
+    let eventListener!: (event: string, data: any) => Promise<void>
+    const pp = new Promise((resolve) => {
+      eventListener = async (event, data): Promise<void> => {
+        if (status === undefined) {
+          status = data
+          resolve(null)
+          return
+        }
+
+        try {
+          expect(data).toBe(status)
+          resolve(null)
+        } catch (e) {
+          resolve(null)
+        }
       }
 
-      try {
-        expect(data).toBe(status)
-        done()
-      } catch (e) {
-        done(e)
-      }
-    }
-
-    addEventListener(PlatformEvent, eventListener)
+      addEventListener(PlatformEvent, eventListener)
+    })
     const t1 = await translate(message as IntlString, {})
     const t2 = await translate(message as IntlString, {})
+    await pp
     expect(t1).toBe(t2)
     removeEventListener(PlatformEvent, eventListener)
   })
 
-  it('should return message when message not IntlString', async (done) => {
+  it('should return message when message not IntlString', async () => {
     const message = 'testMessage' as IntlString
     const checkStatus = new Status(Severity.ERROR, status.status.InvalidId, { id: message })
-    const eventListener = async (event: string, data: any): Promise<void> => {
-      await expect(data).toEqual(checkStatus)
-      done()
-    }
-    addEventListener(PlatformEvent, eventListener)
+    let eventListener!: (event: string, data: any) => Promise<void>
+
+    const pp = new Promise((resolve) => {
+      eventListener = async (event: string, data: any): Promise<void> => {
+        await expect(data).toEqual(checkStatus)
+        resolve(null)
+      }
+      addEventListener(PlatformEvent, eventListener)
+    })
     const translated = await translate(message, {})
+    await pp
     expect(translated).toBe(message)
     removeEventListener(PlatformEvent, eventListener)
   })

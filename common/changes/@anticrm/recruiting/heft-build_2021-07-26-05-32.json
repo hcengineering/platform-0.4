@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting",
+      "comment": "Heft enabled Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting"
+}

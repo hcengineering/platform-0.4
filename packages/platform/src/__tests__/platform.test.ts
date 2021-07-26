@@ -14,7 +14,6 @@
 //
 
 /* eslint-env jest */
-
 import { component, Component, OK, Severity, Status, unknownError } from '@anticrm/status'
 import {
   addEventListener,
@@ -26,7 +25,8 @@ import {
 } from '../event'
 import { getMetadata, loadMetadata, Metadata, setMetadata } from '../metadata'
 import { addLocation, getPlugin } from '../plugin'
-import { getResource, peekResource, Resource, setResource } from '../resource'
+import type { Resource } from '@anticrm/status'
+import { getResource, peekResource, setResource } from '../resource'
 import {
   descriptor1,
   descriptor2,
@@ -55,7 +55,7 @@ describe('platform', () => {
     expect(plugin1State.parsed).toBe(false)
     expect(plugin1State.started).toBe(false)
     const p1 = getPlugin(plugin1)
-    expect(p1).toBeInstanceOf(Promise)
+    expect(p1).toBeInstanceOf(Promise) // eslint-disable-line @typescript-eslint/no-floating-promises
     expect(plugin1State.parsed).toBe(false)
     expect(plugin1State.started).toBe(false)
     await p1
@@ -73,7 +73,7 @@ describe('platform', () => {
     expect(plugin2State.parsed).toBe(false)
     expect(plugin2State.started).toBe(false)
     const resolved = getResource('resource2:plugin2.Resource' as Resource<string>)
-    expect(resolved).toBeInstanceOf(Promise)
+    expect(resolved).toBeInstanceOf(Promise) // eslint-disable-line @typescript-eslint/no-floating-promises
     // get again to check repeated getting
     const resource = await getResource('resource2:plugin2.Resource' as Resource<string>)
     expect(resource).toBe('hello resource2:My.Resource')
@@ -83,7 +83,7 @@ describe('platform', () => {
 
   it('should resolve resource second time', async () => {
     const resolved = getResource('resource2:plugin2.Resource' as Resource<string>)
-    expect(resolved).toBeInstanceOf(Promise)
+    expect(resolved).toBeInstanceOf(Promise) // eslint-disable-line @typescript-eslint/no-floating-promises
     const resource = await resolved
     expect(resource).toBe('hello resource2:My.Resource')
   })

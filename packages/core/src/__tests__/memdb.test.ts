@@ -13,16 +13,15 @@
 // limitations under the License.
 //
 
-import { describe, expect, it } from '@jest/globals'
 import type { Account, Class, Doc, Obj, Ref, Space } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import { SortingOrder } from '../storage'
 import { TxUpdateDoc, withOperations } from '../tx'
-import { genMinModel } from './minmodel'
+import { _genMinModel } from '../minmodel'
 
-const txes = genMinModel()
+const txes = _genMinModel()
 
 describe('memdb', () => {
   it('should save all tx', async () => {

@@ -13,6 +13,9 @@ const demoIds = component('demo-task' as Component, {
   }
 })
 
+/**
+ * @public
+ */
 export function demoTask (builder: Builder): void {
   const members: Ref<Account>[] = []
   for (let i = 0; i < 2 + faker.datatype.number(8); i++) {

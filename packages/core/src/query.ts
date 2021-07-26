@@ -2,14 +2,23 @@ import { Doc } from './classes'
 import { createPredicates, isPredicate } from './predicate'
 import { SortingQuery } from './storage'
 
+/**
+ * @public
+ */
 export const likeSymbol = '%'
 
+/**
+ * @public
+ */
 export function checkLikeQuery (value: string, query: string): boolean {
   const searchString = query.split(likeSymbol).join('.*')
   const regex = RegExp(`^${searchString}$`)
   return regex.test(value)
 }
 
+/**
+ * @public
+ */
 export function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
   if (isPredicate(value)) {
     const preds = createPredicates(value, propertyKey)
@@ -46,6 +55,9 @@ function nestedDotQueryCheck (key: string, value: any, pattern: any): boolean {
   return false
 }
 
+/**
+ * @public
+ */
 export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuery<T>): void {
   const sortFunc = (a: any, b: any): number => {
     for (const key in sortOptions) {

@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 import { Class, Doc, Obj, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { TxCreateDoc } from '../tx'
-import { genMinModel } from './minmodel'
+import { _genMinModel } from '../minmodel'
 
-const txes = genMinModel()
+const txes = _genMinModel()
 
 describe('hierarchy', () => {
   it('should build hierarchy', async () => {
