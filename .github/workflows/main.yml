@@ -39,13 +39,6 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild --verbose
 
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-
       - uses: getong/elasticsearch-action@v1.2
         with:
           elasticsearch version: '7.12.0'

@@ -27,7 +27,8 @@ import core, {
   TxOperations,
   TxUpdateDoc,
   withOperations,
-  _genMinModel, _createTestTxAndDocStorage
+  _genMinModel,
+  _createTestTxAndDocStorage
 } from '@anticrm/core'
 import { MongoClient } from 'mongodb'
 import { _dropAllDBWithPrefix, getMongoClient, shutdown } from '..'

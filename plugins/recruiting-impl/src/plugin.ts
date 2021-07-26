@@ -17,7 +17,6 @@ import recruiting from '@anticrm/recruiting'
 import { mergeIds } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 
-
 export default mergeIds(recruiting, {
   component: {
     CreatePool: '' as AnyComponent,

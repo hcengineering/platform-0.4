@@ -36,8 +36,10 @@ describe('memdb.shortref', () => {
     const storage: Storage = {
       findAll: async (_class, query) => await model.findAll(_class, query),
       tx: async (tx) => {
-        if (tx.objectId === 'TASK-2' as Ref<Doc>) {
-          throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: 'TASK-2' as Ref<Doc> }))
+        if (tx.objectId === ('TASK-2' as Ref<Doc>)) {
+          throw new PlatformError(
+            new Status(Severity.ERROR, core.status.ObjectAlreadyExists, { _id: 'TASK-2' as Ref<Doc> })
+          )
         }
         await model.tx(tx)
         await txStore.tx(tx)

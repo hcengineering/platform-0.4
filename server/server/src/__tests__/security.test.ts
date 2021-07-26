@@ -28,7 +28,8 @@ import core, {
   Tx,
   TxCreateDoc,
   TxRemoveDoc,
-  TxUpdateDoc, _genMinModel
+  TxUpdateDoc,
+  _genMinModel
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from '../security'
@@ -38,8 +39,7 @@ const user: ClientInfo = {
   clientId: '',
   accountId: core.account.System,
   workspaceId: 'string',
-  tx: (tx: Tx) => {
-  }
+  tx: (tx: Tx) => {}
 }
 
 describe('security', () => {

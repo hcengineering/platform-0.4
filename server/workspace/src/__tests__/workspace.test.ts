@@ -32,7 +32,9 @@ import core, {
   TxOperations,
   TxUpdateDoc,
   WithAccountId,
-  withOperations, _createClass, _genMinModel
+  withOperations,
+  _createClass,
+  _genMinModel
 } from '@anticrm/core'
 import { getMongoClient, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { Component, component } from '@anticrm/status'

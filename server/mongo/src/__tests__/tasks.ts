@@ -1,4 +1,17 @@
-import core, { Account, Class, ClassifierKind, Data, Doc, Domain, generateId, Obj, Ref, Space, Tx, TxCreateDoc } from '@anticrm/core'
+import core, {
+  Account,
+  Class,
+  ClassifierKind,
+  Data,
+  Doc,
+  Domain,
+  generateId,
+  Obj,
+  Ref,
+  Space,
+  Tx,
+  TxCreateDoc
+} from '@anticrm/core'
 import { Component, component } from '@anticrm/status'
 
 export interface TaskComment {

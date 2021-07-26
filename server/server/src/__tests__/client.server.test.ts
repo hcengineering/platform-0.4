@@ -61,7 +61,11 @@ const testIds = component('test' as Component, {
   }
 })
 
-async function prepareServer (): Promise<{ shutdown: () => Promise<void>, address: net.AddressInfo, workspaceId: string }> {
+async function prepareServer (): Promise<{
+  shutdown: () => Promise<void>
+  address: net.AddressInfo
+  workspaceId: string
+}> {
   const client = await getMongoClient(MONGO_URI)
 
   const workspaceId = 's-test' + generateId()

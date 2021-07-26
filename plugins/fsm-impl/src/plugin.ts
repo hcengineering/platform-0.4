@@ -16,5 +16,4 @@
 import fsm from '@anticrm/fsm'
 import { mergeIds } from '@anticrm/status'
 
-export default mergeIds(fsm, { 
-})
+export default mergeIds(fsm, {})

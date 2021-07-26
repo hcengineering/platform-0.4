@@ -16,7 +16,11 @@ class TxModelStorage implements WithAccountId {
     return this.txStore
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_TX) {
       return await this.txStore.findAll(_class, query, options)

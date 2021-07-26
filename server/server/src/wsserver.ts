@@ -30,7 +30,9 @@ export async function startServer (host: string, port: number, serverToken: stri
   })
   return instance
 }
-function connectClient (serverToken: string): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage> {
+function connectClient (
+  serverToken: string
+): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage> {
   return async (clientId, token, sendTx) => {
     try {
       const { accountId, workspaceId } = decodeToken(serverToken, token)
@@ -41,4 +43,3 @@ function connectClient (serverToken: string): (clientId: string, token: string, 
     }
   }
 }
-
