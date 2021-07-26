@@ -17,7 +17,7 @@
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, Task } from '@anticrm/task'
   import task from '../plugin'
-  import { Ref } from '@anticrm/core'
+  import core, { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import CheckList from './CheckList.svelte'
@@ -30,6 +30,8 @@
   let item: Task | undefined
   let description: string | undefined
   let checkItems: CheckListItem[] = []
+  let projectMembers: Account[] = []
+  let assignee: Ref<Account> | undefined
 
   $: progress = {
     max: checkItems.length,
@@ -43,10 +45,17 @@
   let lq: QueryUpdater<Task> | undefined
 
   async function getItem (id: Ref<Task>) {
-    lq = client.query(lq, task.class.Task, { _id: id }, (result) => {
+    lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       item = result[0]
       description = item.description
       checkItems = item.checkItems
+      assignee = item.assignee
+      const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
+      if (members !== undefined) {
+        projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
+      } else {
+        projectMembers = []
+      }
     })
     return item
   }
@@ -72,6 +81,15 @@
       })
     }
   }
+
+  async function updateAssignee () {
+    if (item === undefined) return
+    if (item.assignee !== assignee) {
+      await client.updateDoc(item._class, item.space, item._id, {
+        assignee: assignee
+      })
+    }
+  }
 </script>
 
 {#await getItem(id) then value}
@@ -87,7 +105,16 @@
           <DescriptionEditor label={task.string.TaskDescription} on:blur={updateDescription} bind:value={description} />
         </div>
         <div class="row">
-          <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+          <UserBox
+            hAlign={'right'}
+            bind:selected={assignee}
+            users={projectMembers}
+            title={task.string.Assignee}
+            caption={task.string.ProjectMembers}
+            label={task.string.AssignTask}
+            on:change={updateAssignee}
+            showSearch
+          />
         </div>
         {#if progress.max > 0}
           <div class="row progress">

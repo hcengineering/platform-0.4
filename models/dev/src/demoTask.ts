@@ -17,12 +17,26 @@ const demoIds = component('demo-task' as Component, {
  * @public
  */
 export function demoTask (builder: Builder): void {
+  const members: Ref<Account>[] = []
+  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
+    const accountId: Ref<Account> = generateId()
+    builder.createDoc(
+      core.class.Account,
+      {
+        name: faker.internet.exampleEmail() as Ref<Account>,
+        avatar: faker.image.avatar()
+      },
+      accountId
+    )
+    members.push(accountId)
+  }
+
   builder.createDoc(
     task.class.Project,
     {
       name: 'PL-DEMO',
       description: 'Demo Task project',
-      members: [core.account.System],
+      members: members,
       private: false
     },
     demoIds.project.DemoProject
@@ -69,7 +83,7 @@ export function demoTask (builder: Builder): void {
         commentId,
         {
           space: demoIds.project.DemoProject,
-          modifiedBy: faker.internet.exampleEmail() as Ref<Account>
+          modifiedBy: faker.random.arrayElement(members)
         }
       )
       comments.push(commentId as Ref<Comment>)
@@ -83,6 +97,7 @@ export function demoTask (builder: Builder): void {
         status: faker.random.arrayElement([TaskStatuses.Open, TaskStatuses.InProgress, TaskStatuses.Closed]),
         shortRefId: shortRefId,
         checkItems: checkItems,
+        assignee: faker.random.arrayElement(members),
         comments: comments
       },
       id,

@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
-  import type { Ref, Doc, Space } from '@anticrm/core'
+  import core, { Ref, Doc, Space, Account } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
 
@@ -38,7 +38,7 @@
       ],
       component: TaskStatus
     },
-    { label: 'Assignee' as IntlString, properties: [{ value: 'elon', property: 'user' }], component: UserInfo }
+    { label: 'Assignee' as IntlString, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo }
   ]
 
   const client = getClient()
@@ -47,8 +47,12 @@
   let query: QueryUpdater<Task> | undefined
 
   $: if (currentSpace !== prevSpace) {
-    query = client.query(query, task.class.Task, { space: currentSpace }, (result) => {
-      data = result
+    query = client.query(query, task.class.Task, { space: currentSpace }, async (result) => {
+      data = []
+      for (const item of result) {
+        data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
+      }
+      data = data
     })
   }
 
@@ -57,6 +61,11 @@
     loc.path[3] = event.detail.id
     loc.path.length = 4
     navigate(loc)
+  }
+
+  async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (user === undefined) return undefined
+    return (await client.findAll<Account>(core.class.Account, { _id: user })).pop()
   }
 </script>
 

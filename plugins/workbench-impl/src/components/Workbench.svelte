@@ -41,7 +41,7 @@
       currentApp = loc.path[1] as Ref<Application>
       currentSpace = loc.path[2] as Ref<Space>
       itemId = loc.path[3] as Ref<Doc>
-      navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp }))[0]?.navigatorModel
+      navigatorModel = (await client.findAll(workbench.class.Application, { _id: currentApp })).pop()?.navigatorModel
     })
   )
 </script>

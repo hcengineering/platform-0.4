@@ -18,7 +18,7 @@
   import { getClient } from '@anticrm/workbench'
   import { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
+  import core, { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
@@ -36,6 +36,15 @@
   const id = generateId() as Ref<Task>
 
   const client = getClient()
+
+  async function getProjectMembers (): Promise<Array<Account>> {
+    const members = (await client.findAll(core.class.Space, { _id: space })).pop()?.members
+    if (members !== undefined) {
+      return await client.findAll(core.class.Account, { _id: { $in: members } })
+    } else {
+      return []
+    }
+  }
 
   interface Message {
     _id: Ref<Comment>
@@ -93,7 +102,19 @@
   <div class="content">
     <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
     <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></div>
-    <UserBox hAlign={'right'} title={task.string.Assignee} label={task.string.AssignTask} showSearch />
+    {#await getProjectMembers() then users}
+      <div class="row">
+        <UserBox
+          hAlign={'right'}
+          bind:selected={assignee}
+          {users}
+          caption={task.string.ProjectMembers}
+          title={task.string.Assignee}
+          label={task.string.AssignTask}
+          showSearch
+        />
+      </div>
+    {/await}
     <DatePicker hAlign={'center'} title={'Pick due date'} />
     <div class="row"><CheckList bind:items={checkItems} /></div>
     <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>

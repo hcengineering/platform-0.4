@@ -71,8 +71,8 @@ export function _genMinModel (): Tx[] {
   const u1 = 'User1' as Ref<Account>
   const u2 = 'User2' as Ref<Account>
   txes.push(
-    _createDoc(core.class.Account, {}, u1),
-    _createDoc(core.class.Account, {}, u2),
+    _createDoc(core.class.Account, { name: 'User1' }, u1),
+    _createDoc(core.class.Account, { name: 'User2' }, u2),
     _createDoc(core.class.Space, {
       name: 'Sp1',
       description: '',

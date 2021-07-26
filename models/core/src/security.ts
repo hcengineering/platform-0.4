@@ -36,4 +36,7 @@ export class TSpace extends TDoc implements Space {
  * @public
  */
 @Model(core.class.Account, core.class.Doc, DOMAIN_MODEL)
-export class TAccount extends TDoc implements Account {}
+export class TAccount extends TDoc implements Account {
+  name!: string
+  avatar!: string
+}

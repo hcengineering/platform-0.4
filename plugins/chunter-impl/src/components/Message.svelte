@@ -14,15 +14,15 @@
 -->
 <script lang="ts">
   import { CommentRef, WithMessage } from '@anticrm/chunter'
-  import { Account, Ref } from '@anticrm/core'
   import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
-  import avatar from '../../img/avatar.png'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
+  import core, { Account, Ref } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
 
   export let message: WithMessage
   export let thread: boolean = false
@@ -33,6 +33,12 @@
     const comments: CommentRef[] = (message as any).comments ?? []
     replies = comments.length
     replyIds = comments.map((r) => r.userId)
+  }
+
+  const client = getClient()
+
+  async function getUser (): Promise<Account> {
+    return (await client.findAll(core.class.Account, { _id: message.modifiedBy }))[0]
   }
 
   function onClick () {
@@ -46,33 +52,35 @@
   }
 </script>
 
-<div class="message-container" on:click={onClick}>
-  <div class="avatar"><img src={avatar} alt="Avatar" /></div>
-  <div class="message">
-    <div class="header">{message.modifiedBy}<span>{message.modifiedOn}</span></div>
-    <div class="text">
-      <MarkdownViewer message={message.message} />
-    </div>
-    {#if replies > 0 && !thread}
-      <div class="footer">
-        <div>
-          <Reactions />
-        </div>
-        <div>
-          {#if replies > 0}<Replies replies={replyIds} />{/if}
-        </div>
+{#await getUser() then user}
+  <div class="message-container" on:click={onClick}>
+    <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
+    <div class="message">
+      <div class="header">{user.name}<span>{message.modifiedOn}</span></div>
+      <div class="text">
+        <MarkdownViewer message={message.message} />
       </div>
-    {/if}
-  </div>
-  {#if !thread}
-    <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+      {#if replies > 0 && !thread}
+        <div class="footer">
+          <div>
+            <Reactions />
+          </div>
+          <div>
+            {#if replies > 0}<Replies replies={replyIds} />{/if}
+          </div>
+        </div>
+      {/if}
+      {#if !thread}
+        <div class="buttons">
+          <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+          <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+        </div>
+      {/if}
     </div>
-  {/if}
-</div>
+  </div>
+{/await}
 
 <style lang="scss">
   .message-container {
@@ -88,6 +96,7 @@
       background-color: var(--theme-bg-accent-color);
       border-radius: 50%;
       user-select: none;
+      overflow: hidden;
     }
 
     .message {

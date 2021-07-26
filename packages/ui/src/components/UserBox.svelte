@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
+  import type { Account, Ref } from '@anticrm/core'
   import Label from './Label.svelte'
   import EditBox from './EditBox.svelte'
   import PopupMenu from './PopupMenu.svelte'
@@ -22,24 +23,20 @@
   import ui from '../component'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
-
-  interface IUser {
-    name: string
-    title: string
-  }
+  import { createEventDispatcher } from 'svelte'
 
   export let title: IntlString
   export let label: IntlString
-  export let caption: IntlString | undefined = 'PROJECT MEMBERS'
-  export let selected: IUser | undefined = undefined
-  export let users: IUser[] = [
-    { name: 'chen', title: 'Rosamund Chen' },
-    { name: 'tim', title: 'Tim Ferris' },
-    { name: 'elon', title: 'Elon Musk' },
-    { name: 'kathryn', title: 'Kathryn Minshew' }
-  ]
+  export let caption: IntlString | undefined
+  export let selected: Ref<Account> | undefined
+  export let users: Account[] = []
+
+  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
+  export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let showSearch: boolean = false
+  const dispatch = createEventDispatcher()
+  $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
 
   let pressed: boolean = false
   let search: string = ''
@@ -56,8 +53,8 @@
         event.stopPropagation()
       }}
     >
-      {#if selected}
-        <div class="avatar"><UserInfo user={selected.name} size={36} avatarOnly /></div>
+      {#if selectedItem}
+        <div class="avatar"><UserInfo user={selectedItem} size={36} avatarOnly /></div>
       {:else}
         <div class="icon">
           {#if pressed}<Close size={16} />{:else}<Add size={16} />{/if}
@@ -65,26 +62,28 @@
       {/if}
     </button>
     <div slot="header" class="search"><EditBox label={ui.string.Search} bind:value={search} /></div>
-    {#if selected}
+    {#if selectedItem}
       <PopupItem
         component={UserInfo}
-        props={{ user: selected.name }}
+        props={{ user: selectedItem }}
         selectable
         selected
         action={async () => {
           selected = undefined
           pressed = !pressed
+          dispatch('change')
         }}
       />
     {/if}
-    {#each users.filter((u) => u !== selected && u.title.toLowerCase().indexOf(search.toLowerCase()) !== -1) as user}
+    {#each users.filter((u) => u._id !== selected && u.name.toLowerCase().indexOf(search.toLowerCase()) !== -1) as user}
       <PopupItem
         component={UserInfo}
-        props={{ user: user.name }}
+        props={{ user: user }}
         selectable
         action={async () => {
-          selected = user
+          selected = user._id
           pressed = !pressed
+          dispatch('change')
         }}
       />
     {/each}
@@ -92,7 +91,7 @@
   <div class="selectUser">
     <div class="title"><Label label={title} /></div>
     <div class="user">
-      {#if selected}{selected.title}{:else}<Label {label} />{/if}
+      {#if selectedItem}{selectedItem._id}{:else}<Label {label} />{/if}
     </div>
   </div>
 </div>

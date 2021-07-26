@@ -74,7 +74,8 @@ export default plugin(
       CreateProject: '' as IntlString,
       Progress: '' as IntlString,
       AddCheckItem: '' as IntlString,
-      CheckItems: '' as IntlString
+      CheckItems: '' as IntlString,
+      ProjectMembers: '' as IntlString
     }
   }
 )

@@ -15,12 +15,26 @@ const demoIds = component('demo-task' as Component, {
  * @public
  */
 export function demoChunter (builder: Builder): void {
+  const members: Ref<Account>[] = []
+  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
+    const accountId: Ref<Account> = generateId()
+    builder.createDoc(
+      core.class.Account,
+      {
+        name: faker.internet.exampleEmail() as Ref<Account>,
+        avatar: faker.image.avatar()
+      },
+      accountId
+    )
+    members.push(accountId)
+  }
+
   builder.createDoc(
     chunter.class.Channel,
     {
       name: 'PL-CHANNEL',
       description: 'Demo Channel',
-      members: [core.account.System],
+      members: members,
       private: false
     },
     demoIds.project.DemoChannel
@@ -59,7 +73,7 @@ export function demoChunter (builder: Builder): void {
       msgId,
       {
         space: demoIds.project.DemoChannel,
-        modifiedBy: faker.internet.exampleEmail() as Ref<Account>
+        modifiedBy: faker.random.arrayElement(members)
       }
     )
   }

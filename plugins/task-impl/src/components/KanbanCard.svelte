@@ -15,17 +15,29 @@
 <script lang="ts">
   import { ActionIcon, UserInfo } from '@anticrm/ui'
   import { Task } from '@anticrm/task'
-
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
+  import core, { Account, Ref } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
 
   export let doc: Task
+
+  const client = getClient()
+
+  async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
+    if (assignee === undefined) return undefined
+    return (await client.findAll(core.class.Account, { _id: assignee })).pop()
+  }
 </script>
 
 <div class="card-container">
   <div class="header">{doc.name}</div>
   <div class="footer">
-    <div><UserInfo user="chen" avatarOnly={true} /></div>
+    <div>
+      {#await getUser(doc.assignee) then user}
+        <UserInfo {user} size={24} avatarOnly />
+      {/await}
+    </div>
     <div class="action">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
       <div class="counter">{doc.comments.length}</div>
