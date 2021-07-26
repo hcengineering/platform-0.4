@@ -65,3 +65,5 @@ common/autoinstallers/*/.npmrc
 **/.rush/temp/
 
 .idea
+
+.heft

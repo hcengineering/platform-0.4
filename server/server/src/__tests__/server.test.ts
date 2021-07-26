@@ -29,7 +29,6 @@ import core, {
   TxDb
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
-import { describe, it } from '@jest/globals'
 import { parseAddress, start } from '../server'
 import { createClient } from './client'
 

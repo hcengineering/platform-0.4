@@ -34,6 +34,9 @@ import {
 import type { Storage } from '@anticrm/core'
 import { Client, RequestParams } from '@elastic/elasticsearch'
 
+/**
+ * @public
+ */
 export interface ConnectionParams {
   url: string
   username: string
@@ -48,6 +51,9 @@ function toLowerCase (item: any): any {
   return typeof item === 'string' ? item.toLowerCase() : item
 }
 
+/**
+ * @public
+ */
 export class ElasticStorage extends TxProcessor implements Storage {
   private readonly hierarchy: Hierarchy
   private readonly client: Client

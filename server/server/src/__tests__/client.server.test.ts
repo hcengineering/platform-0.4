@@ -23,19 +23,17 @@ import core, {
   Ref,
   Reference,
   Title,
-  Tx
+  Tx,
+  _createClass as createClass,
+  _createDoc as createDoc
 } from '@anticrm/core'
 import { Domain } from '@anticrm/core/src/classes'
-import { createClass, createDoc } from '@anticrm/core/src/__tests__/minmodel'
 import builder from '@anticrm/model-all'
-import { getMongoClient, shutdown } from '@anticrm/mongo'
-import { dropAllDBWithPrefix } from '@anticrm/mongo/src/__tests__/storage.test'
+import { getMongoClient, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { component, Component } from '@anticrm/status'
-import { describe, it } from '@jest/globals'
 import * as net from 'net'
-import { start } from '../server'
-import { decodeToken, generateToken } from '../token'
-import { assignWorkspace, closeWorkspace } from '../workspaces'
+import { generateToken } from '../token'
+import { startServer } from '../wsserver'
 import { createClient } from './client'
 
 const SERVER_SECRET = 'secret'
@@ -63,7 +61,11 @@ const testIds = component('test' as Component, {
   }
 })
 
-async function prepareServer (): Promise<{ shutdown: () => Promise<void>, address: net.AddressInfo }> {
+async function prepareServer (): Promise<{
+  shutdown: () => Promise<void>
+  address: net.AddressInfo
+  workspaceId: string
+}> {
   const client = await getMongoClient(MONGO_URI)
 
   const workspaceId = 's-test' + generateId()
@@ -108,37 +110,26 @@ async function prepareServer (): Promise<{ shutdown: () => Promise<void>, addres
   }
 
   // eslint-disable-next-line
-  const server = await start('localhost', 0, {
-    connect: async (clientId, token, sendTx, close) => {
-      try {
-        const { accountId } = decodeToken(SERVER_SECRET, token)
-        console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
-        return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
-      } catch (err) {
-        throw new Error(`invalid token ${JSON.stringify(err, undefined, 2)}`)
-      }
-    },
-    close: async (clientId) => {
-      await closeWorkspace(clientId)
-    }
-  })
+  const server = await startServer('localhost', 0, SERVER_SECRET)
   console.log('server created')
   return {
     shutdown: async () => {
       server.shutdown()
     },
-    address: server.address()
+    address: server.address(),
+    workspaceId
   }
 }
 
 describe('real-server', () => {
   let serverShutdown: () => Promise<void>
   let address: net.AddressInfo
+  let workspaceId: string
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
   async function cleanDbs (): Promise<void> {
     const mongoClient = await getMongoClient(mongodbUri)
-    await dropAllDBWithPrefix('ws-s-test', mongoClient)
+    await _dropAllDBWithPrefix('ws-s-test', mongoClient)
   }
 
   beforeAll(async () => {
@@ -157,6 +148,7 @@ describe('real-server', () => {
     console.log('server ok')
     serverShutdown = s.shutdown
     address = s.address
+    workspaceId = s.workspaceId
   })
 
   afterEach(async () => {
@@ -167,7 +159,7 @@ describe('real-server', () => {
     console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, '')}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -175,7 +167,7 @@ describe('real-server', () => {
 
     const brainTxes: Tx[] = []
     const client2 = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, '')}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId)}`,
       (tx) => {
         brainTxes.push(tx)
       }
@@ -209,7 +201,7 @@ describe('real-server', () => {
     console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, '')}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -217,7 +209,7 @@ describe('real-server', () => {
 
     const brainTxes: Tx[] = []
     const client2 = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, '')}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId)}`,
       (tx) => {
         brainTxes.push(tx)
       }

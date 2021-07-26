@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
+import type { Comment } from '@anticrm/chunter'
+import type { Account, Class, Doc, Ref, ShortRef, Space } from '@anticrm/core'
+import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
-import type { Plugin, Service } from '@anticrm/platform'
-import type { Account, Doc, Ref, ShortRef, Space } from '@anticrm/core'
-import type { Comment } from '@anticrm/chunter'
 
 export interface Project extends Space {}
 
@@ -54,6 +54,27 @@ export default plugin(
   {
     icon: {
       Task: '' as Asset
+    },
+    class: {
+      Project: '' as Ref<Class<Project>>,
+      Task: '' as Ref<Class<Task>>
+    },
+    string: {
+      Projects: '' as IntlString,
+      ProjectName: '' as IntlString,
+      ProjectDescription: '' as IntlString,
+      MakePrivate: '' as IntlString,
+      MakePrivateDescription: '' as IntlString,
+      TaskName: '' as IntlString,
+      TaskDescription: '' as IntlString,
+      CreateTask: '' as IntlString,
+      Assignee: '' as IntlString,
+      AssignTask: '' as IntlString,
+      ApplicationLabelTask: '' as IntlString,
+      CreateProject: '' as IntlString,
+      Progress: '' as IntlString,
+      AddCheckItem: '' as IntlString,
+      CheckItems: '' as IntlString
     }
   }
 )

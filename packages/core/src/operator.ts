@@ -17,7 +17,10 @@
 import type { Doc, PropertyType } from './classes'
 import { deepEqual } from 'fast-equals'
 
-type OperatorFunc = (doc: Doc, op: object) => void
+/**
+ * @public
+ */
+export type OperatorFunc = (doc: Doc, op: object) => void
 
 function $push (document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
@@ -45,6 +48,9 @@ const operators: Record<string, OperatorFunc> = {
   $pull
 }
 
+/**
+ * @public
+ */
 export function getOperator (name: string): OperatorFunc {
   const operator = operators[name]
   if (operator === undefined) throw new Error('unknown operator: ' + name)

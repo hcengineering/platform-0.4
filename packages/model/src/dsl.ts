@@ -39,6 +39,9 @@ function getTxes (target: any): ClassTxes {
   return txes
 }
 
+/**
+ * @public
+ */
 export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
@@ -59,6 +62,9 @@ export function Prop (type: Type<PropertyType>) {
   }
 }
 
+/**
+ * @public
+ */
 export function Model<T extends Obj> (_class: Ref<Class<T>>, _extends: Ref<Class<Obj>>, domain?: Domain) {
   return function classDecorator<C extends new () => T> (constructor: C): void {
     const txes = getTxes(constructor.prototype)
@@ -111,6 +117,9 @@ function _generateTx (tx: ClassTxes): Tx[] {
   return [createTx, ...generateIds(objectId, tx.txes)]
 }
 
+/**
+ * @public
+ */
 export class Builder {
   private readonly txes: Tx[] = []
   private readonly hierarchy = new Hierarchy()
@@ -159,6 +168,9 @@ export class Builder {
 
 // T Y P E S
 
+/**
+ * @public
+ */
 export function TypeString (): Type<string> {
   return { _class: core.class.TypeString }
 }

@@ -20,4 +20,7 @@ import { demoTask } from './demoTask'
 demoChunter(builder)
 demoTask(builder)
 
+/**
+ * @public
+ */
 export default builder

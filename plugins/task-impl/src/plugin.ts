@@ -13,10 +13,9 @@
 // limitations under the License.
 //
 
-import task, { Project, Task, TaskStatus } from '@anticrm/task'
-import { mergeIds, IntlString } from '@anticrm/status'
+import { mergeIds } from '@anticrm/status'
+import task, { TaskStatus } from '@anticrm/task'
 import type { AnyComponent } from '@anticrm/ui'
-import type { Ref, Class } from '@anticrm/core'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {
@@ -37,26 +36,5 @@ export default mergeIds(task, {
     TaskView: '' as AnyComponent,
     CreateTask: '' as AnyComponent,
     EditTask: '' as AnyComponent
-  },
-  class: {
-    Project: '' as Ref<Class<Project>>,
-    Task: '' as Ref<Class<Task>>
-  },
-  string: {
-    Projects: '' as IntlString,
-    ProjectName: '' as IntlString,
-    ProjectDescription: '' as IntlString,
-    MakePrivate: '' as IntlString,
-    MakePrivateDescription: '' as IntlString,
-    TaskName: '' as IntlString,
-    TaskDescription: '' as IntlString,
-    CreateTask: '' as IntlString,
-    Assignee: '' as IntlString,
-    AssignTask: '' as IntlString,
-    ApplicationLabelTask: '' as IntlString,
-    CreateProject: '' as IntlString,
-    Progress: '' as IntlString,
-    AddCheckItem: '' as IntlString,
-    CheckItems: '' as IntlString
   }
 })

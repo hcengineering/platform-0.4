@@ -22,8 +22,15 @@ import platform from './component'
 
 export type { IntlString }
 
-type Loader = (locale: string) => Promise<Record<string, string | Record<string, string>>>
-type Messages = Record<string, IntlString | Record<string, IntlString>>
+/**
+ * @public
+ */
+export type Loader = (locale: string) => Promise<Record<string, string | Record<string, string>>>
+
+/**
+ * @public
+ */
+export type Messages = Record<string, IntlString | Record<string, IntlString>>
 
 const locale = 'en'
 
@@ -31,6 +38,9 @@ const loaders = new Map<Component, Loader>()
 const translations = new Map<Component, Messages | Status>()
 const cache = new Map<IntlString, IntlMessageFormat | Status>()
 
+/**
+ * @public
+ */
 export function addStringsLoader (component: Component, loader: Loader): void {
   loaders.set(component, loader)
 }
@@ -74,6 +84,9 @@ async function getTranslation (message: IntlString): Promise<IntlString | Status
   }
 }
 
+/**
+ * @public
+ */
 export async function translate<P extends Record<string, any>> (message: IntlString<P>, params: P): Promise<string> {
   const compiled = cache.get(message)
   if (compiled !== undefined) {

@@ -36,6 +36,9 @@ function count (): string {
   return toHex(val, 6)
 }
 
+/**
+ * @public
+ */
 export function generateId<T extends Doc> (): Ref<T> {
   return (timestamp() + random + count()) as Ref<T>
 }

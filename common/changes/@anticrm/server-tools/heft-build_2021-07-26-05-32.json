@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server-tools",
+      "comment": "Heft enabled Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server-tools"
+}

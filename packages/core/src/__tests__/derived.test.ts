@@ -14,7 +14,6 @@
 //
 
 import { Component, component, Resource } from '@anticrm/status'
-import { describe, it } from '@jest/globals'
 import { Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
 import { Account, Class, Doc, Ref, Space } from '../classes'
 import { createClient } from '../client'
@@ -25,11 +24,16 @@ import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
 import { Title } from '../title'
 import { Tx } from '../tx'
-import { createClass, createDoc, genMinModel } from './minmodel'
 import { connect } from './connection'
-import { TxModelStorage } from './txmodel'
+import { _createClass, _createDoc, _genMinModel } from '../minmodel'
+import { _createTestTxAndDocStorage } from '../minmodel'
 
-const txes = genMinModel()
+const txes = _genMinModel()
+
+interface CommentRef {
+  _id: Ref<Comment>
+  userId: Ref<Account>
+}
 
 interface CommentRef {
   _id: Ref<Comment>
@@ -74,10 +78,10 @@ const testIds = component('test' as Component, {
 const dtxes = [
   ...txes,
   // Test ids
-  createClass(testIds.class.Task, { extends: core.class.Doc }),
-  createClass(testIds.class.Message, { extends: core.class.Doc }),
-  createClass(testIds.class.Page, { extends: core.class.Doc }),
-  createClass(testIds.class.Comment, { extends: core.class.Doc })
+  _createClass(testIds.class.Task, { extends: core.class.Doc }),
+  _createClass(testIds.class.Message, { extends: core.class.Doc }),
+  _createClass(testIds.class.Page, { extends: core.class.Doc }),
+  _createClass(testIds.class.Comment, { extends: core.class.Doc })
 ]
 
 registerMapper(testIds.mapper.PageTitleMapper, {
@@ -112,13 +116,13 @@ interface Counter {
   txes: number
 }
 
-const taskTitleDD = createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
+const taskTitleDD = _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
   sourceClass: testIds.class.Task,
   targetClass: core.class.Title,
   initiValue: {},
   rules: [{ sourceField: 'shortId', targetField: 'title' }]
 })
-const pageTitleDD = createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
+const pageTitleDD = _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
   sourceClass: testIds.class.Page,
   targetClass: core.class.Title,
   mapper: testIds.mapper.PageTitleMapper
@@ -140,10 +144,12 @@ describe('deried data', () => {
     const txDb = new TxDb(hierarchy)
     for (const tx of txes) await txDb.tx(tx)
 
-    const storage = new TxModelStorage(hierarchy, txDb, model)
+    const storage = _createTestTxAndDocStorage(hierarchy, txDb, model)
 
     const countModel: Storage = {
-      findAll: async (_class, query) => await storage.findAll(_class, query),
+      findAll: async (_class, query) => {
+        return await storage.findAll(_class, query)
+      },
       tx: async (tx) => {
         await storage.tx(tx)
         counter.txes += 1
@@ -326,7 +332,7 @@ describe('deried data', () => {
 
     const { operations, model, counter } = await prepare([
       ...dtxes,
-      createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
+      _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
         sourceClass: testIds.class.Task,
         targetClass: core.class.Title,
         initiValue: {},
@@ -368,7 +374,7 @@ describe('deried data', () => {
 
     const { operations, model } = await prepare([
       ...dtxes,
-      createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
+      _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
         sourceClass: testIds.class.Task,
         targetClass: core.class.Title,
         initiValue: {},
@@ -446,7 +452,7 @@ describe('deried data', () => {
 
     const { operations, model } = await prepare([
       ...dtxes,
-      createDoc<DerivedDataDescriptor<Comment, any>>(core.class.DerivedDataDescriptor, {
+      _createDoc<DerivedDataDescriptor<Comment, any>>(core.class.DerivedDataDescriptor, {
         sourceClass: testIds.class.Comment,
         targetClass: testIds.class.Task,
         collections: [
@@ -492,7 +498,7 @@ describe('deried data', () => {
 
     const { operations, model } = await prepare([
       ...dtxes,
-      createDoc<DerivedDataDescriptor<Comment, Page>>(core.class.DerivedDataDescriptor, {
+      _createDoc<DerivedDataDescriptor<Comment, Page>>(core.class.DerivedDataDescriptor, {
         sourceClass: testIds.class.Comment,
         targetClass: testIds.class.Page,
         collections: [

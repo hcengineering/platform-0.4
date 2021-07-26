@@ -4,6 +4,9 @@ import { Class, Data, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { Tx } from '../tx'
 
+/**
+ * @public
+ */
 export interface MappingOptions {
   descriptor: DerivedDataDescriptor<Doc, DerivedData>
   hierarchy: Hierarchy
@@ -13,6 +16,7 @@ export interface MappingOptions {
  * Provide an maping function to transform
  * particular document transactions to derived
  * data object update transactions.
+ * @public
  */
 export interface DocumentMapper {
   /**
@@ -27,6 +31,7 @@ export interface DocumentMapper {
 
 /**
  * Define an expression to match for source field.
+ * @public
  */
 export interface RuleExpresson {
   pattern: string // Regular expression pattern
@@ -40,7 +45,8 @@ export interface RuleExpresson {
  * In case pattern is specified a reguler expression will be matched agains source field value,
  * and targetField will be filled with value of source field.
  *
- * in case {separate} is set to `true`, for every match individual document will be produced.
+ * in case pattern.multiDoc is set to `true`, for every match individual document will be produced.
+ * @public
  */
 export interface MappingRule {
   sourceField: string // If source field is not set, a value should be specified.
@@ -50,6 +56,7 @@ export interface MappingRule {
 
 /**
  * An collection update rule, if defined, our document _id will be push/pull to/from objectId specified in our refField.
+ * @public
  */
 export interface CollectionRule {
   sourceField: string // A field reference to source object.
@@ -67,6 +74,7 @@ export interface CollectionRule {
 
 /**
  * Document describing derived data
+ * @public
  */
 export interface DerivedDataDescriptor<T extends Doc, D extends Doc> extends Doc {
   sourceClass: Ref<Class<T>> // Defined for instances of this class.
@@ -96,6 +104,7 @@ export interface DerivedDataDescriptor<T extends Doc, D extends Doc> extends Doc
 
 /**
  * Define some detived data interfaces
+ * @public
  */
 export interface DerivedData extends Doc {
   descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>

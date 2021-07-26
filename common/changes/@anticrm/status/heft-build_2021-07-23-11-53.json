@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/status",
+      "comment": "Heft Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/status"
+}

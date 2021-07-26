@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "comment": "Heft Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-impl"
+}

@@ -13,13 +13,17 @@
 // limitations under the License.
 //
 
-import meeting from '@anticrm/meeting-impl/src/plugin'
-import type { IntlString } from '@anticrm/status'
+import meeting from '@anticrm/meeting'
+import type { IntlString, Resource } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
 
 export default mergeIds(meeting, {
   string: {
     ApplicationLabelMeeting: '' as IntlString,
     CreateChannel: '' as IntlString
+  },
+  component: {
+    CreateChannel: '' as Resource<any>,
+    WorkspaceComponent: '' as Resource<any>
   }
 })

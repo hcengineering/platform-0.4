@@ -38,6 +38,9 @@ import { TDoc } from './core'
 
 const DOMAIN_TITLE = 'title' as Domain
 
+/**
+ * @public
+ */
 @Model(core.class.DerivedData, core.class.Doc, DOMAIN_MODEL)
 export class TDerivedData extends TDoc implements DerivedData {
   descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
@@ -45,6 +48,9 @@ export class TDerivedData extends TDoc implements DerivedData {
   objectClass!: Ref<Class<Doc>>
 }
 
+/**
+ * @public
+ */
 @Model(core.class.DerivedDataDescriptor, core.class.Doc, DOMAIN_MODEL)
 export class TDerivedDataDescriptor<T extends Doc = Doc, D extends DerivedData = DerivedData>
   extends TDoc
@@ -56,18 +62,30 @@ export class TDerivedDataDescriptor<T extends Doc = Doc, D extends DerivedData =
   multiRule?: MappingRule
 }
 
+/**
+ * @public
+ */
 @Model(core.class.Title, core.class.DerivedData, DOMAIN_TITLE)
 export class TTitle extends TDerivedData implements Title {
   title!: string
 }
 
+/**
+ * @public
+ */
 export const MARKDOWN_REFERENCE_PATTERN = /\[([a-zA-Z-\d]+)\]\(ref:\/\/([a-zA-Z.]+)#([a-zA-Z\d]+)\)/g
 
+/**
+ * @public
+ */
 @Model(core.class.Reference, core.class.DerivedData, DOMAIN_REFERENCES)
 export class TReference extends TDerivedData implements Reference {
   link!: string
 }
 
+/**
+ * @public
+ */
 @Model(core.class.ShortRef, core.class.Title, DOMAIN_TITLE)
 export class TShortRef extends TTitle implements ShortRef {
   namespace!: string

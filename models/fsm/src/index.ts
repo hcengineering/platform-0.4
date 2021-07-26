@@ -15,20 +15,26 @@
 
 import { Builder, Model } from '@anticrm/model'
 import type { FSM, Transition, WithFSM, FSMItem, State } from '@anticrm/fsm'
-import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
+import fsmPlugin from '@anticrm/fsm'
 
 import core, { TDoc, TSpace } from '@anticrm/model-core'
 import { Class, Doc, Domain, DOMAIN_MODEL, generateId, Ref } from '@anticrm/core'
 
 const DOMAIN_FSM = 'fsm' as Domain
 
+/**
+ * @public
+ */
 @Model(fsmPlugin.class.FSM, core.class.Doc, DOMAIN_MODEL)
-class TFSM extends TDoc implements FSM {
+export class TFSM extends TDoc implements FSM {
   name!: string
   clazz!: Ref<Class<Doc>>
   isTemplate!: boolean
 }
 
+/**
+ * @public
+ */
 @Model(fsmPlugin.class.FSMItem, core.class.Doc, DOMAIN_FSM)
 export class TFSMItem extends TDoc implements FSMItem {
   fsm!: Ref<WithFSM>
@@ -37,40 +43,52 @@ export class TFSMItem extends TDoc implements FSMItem {
   clazz!: Ref<Class<Doc>>
 }
 
+/**
+ * @public
+ */
 @Model(fsmPlugin.class.State, core.class.Doc, DOMAIN_MODEL)
-class TState extends TDoc implements State {
+export class TState extends TDoc implements State {
   name!: string
   color!: string
   fsm!: Ref<FSM>
 }
 
+/**
+ * @public
+ */
 @Model(fsmPlugin.class.Transition, core.class.Doc, DOMAIN_MODEL)
-class TTransition extends TDoc implements Transition {
+export class TTransition extends TDoc implements Transition {
   from!: Ref<State>
   to!: Ref<State>
   fsm!: Ref<FSM>
 }
 
+/**
+ * @public
+ */
 @Model(fsmPlugin.class.WithFSM, core.class.Space)
 export class TWithFSM extends TSpace implements WithFSM {
   fsm!: Ref<FSM>
 }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
-  builder.createModel(
-    TFSM,
-    TState,
-    TTransition,
-    TFSMItem,
-    TWithFSM
-  )
+  builder.createModel(TFSM, TState, TTransition, TFSMItem, TWithFSM)
 }
 
-type PureState = Omit<State, keyof Doc | 'fsm' | 'color'> & {
+/**
+ * @public
+ */
+export type PureState = Omit<State, keyof Doc | 'fsm' | 'color'> & {
   color?: string
 }
 
-class FSMBuilder {
+/**
+ * @public
+ */
+export class FSMBuilder {
   private readonly name: string
   private readonly clazz: Ref<Class<Doc>>
   private readonly states = new Map<string, PureState>()
@@ -93,7 +111,7 @@ class FSMBuilder {
     const existingA = this.getState(a)
     const existingB = this.getState(b)
 
-    if ((existingA == null) || (existingB == null)) {
+    if (existingA == null || existingB == null) {
       return this
     }
 
@@ -103,8 +121,7 @@ class FSMBuilder {
   }
 
   transition (a: PureState, b: PureState | PureState[]): FSMBuilder {
-    (Array.isArray(b) ? b : [b])
-      .forEach(x => this._transition(a, x))
+    ;(Array.isArray(b) ? b : [b]).forEach((x) => this._transition(a, x))
 
     return this
   }
@@ -125,22 +142,30 @@ class FSMBuilder {
 
   build (S: Builder): Ref<FSM> {
     const id: Ref<FSM> = generateId()
-    S.createDoc(fsmPlugin.class.FSM, {
-      name: this.name,
-      clazz: this.clazz,
-      isTemplate: true
-    }, id)
+    S.createDoc(
+      fsmPlugin.class.FSM,
+      {
+        name: this.name,
+        clazz: this.clazz,
+        isTemplate: true
+      },
+      id
+    )
 
     const stateIDs = new Map<string, Ref<State>>()
 
     this.states.forEach((state) => {
       const color = state.color ?? this.genColor.next().value
       const sID: Ref<State> = generateId()
-      S.createDoc(fsmPlugin.class.State, {
-        ...state,
-        color,
-        fsm: id
-      }, sID)
+      S.createDoc(
+        fsmPlugin.class.State,
+        {
+          ...state,
+          color,
+          fsm: id
+        },
+        sID
+      )
 
       stateIDs.set(state.name, sID)
     })
@@ -151,16 +176,20 @@ class FSMBuilder {
       const from = stateIDs.get(fromName)
       const to = stateIDs.get(toName)
 
-      if ((from == null) || (to == null)) {
+      if (from == null || to == null) {
         return
       }
 
       const tID: Ref<Transition> = generateId()
-      S.createDoc(fsmPlugin.class.Transition, {
-        from,
-        to,
-        fsm: id
-      }, tID)
+      S.createDoc(
+        fsmPlugin.class.Transition,
+        {
+          from,
+          to,
+          fsm: id
+        },
+        tID
+      )
 
       transitions.push(tID)
     })
@@ -169,7 +198,7 @@ class FSMBuilder {
   }
 }
 
-export const templateFSM = (
-  name: string,
-  clazz: Ref<Class<Doc>>
-): FSMBuilder => new FSMBuilder(name, clazz)
+/**
+ * @public
+ */
+export const templateFSM = (name: string, clazz: Ref<Class<Doc>>): FSMBuilder => new FSMBuilder(name, clazz)

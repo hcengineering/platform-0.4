@@ -26,6 +26,9 @@ export * from './tx'
 export * from './derived'
 export { core as default }
 
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
   builder.createModel(
     TObj,

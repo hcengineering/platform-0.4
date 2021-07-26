@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Heft Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor"
+}

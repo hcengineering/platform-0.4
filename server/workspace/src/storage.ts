@@ -11,6 +11,9 @@ import core, {
   Tx
 } from '@anticrm/core'
 
+/**
+ * @public
+ */
 export class WorkspaceStorage implements Storage {
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {}
 

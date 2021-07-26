@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/platform-rig",
+      "comment": "Heft Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/platform-rig"
+}

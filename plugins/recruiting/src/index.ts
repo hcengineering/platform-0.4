@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import { plugin } from '@anticrm/platform'
-import type { Asset } from '@anticrm/status'
-import type { Plugin, Service } from '@anticrm/platform'
-import type { Doc, Ref, Space } from '@anticrm/core'
+import type { Class, Doc, Ref, Space } from '@anticrm/core'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
+import type { Plugin, Service } from '@anticrm/platform'
+import { plugin } from '@anticrm/platform'
+import type { Asset, IntlString } from '@anticrm/status'
 
 export interface Resume extends Doc {
   description: string
@@ -53,5 +53,33 @@ const PluginRecruiting = 'recruiting' as Plugin<RecruitingService>
 export default plugin(PluginRecruiting, {}, {
   icon: {
     Recruiting: '' as Asset
+  },
+  class: {
+    Candidate: '' as Ref<Class<Candidate>>,
+    CandidatePoolSpace: '' as Ref<Class<CandidatePoolSpace>>,
+    Resume: '' as Ref<Class<Resume>>,
+    Applicant: '' as Ref<Class<Applicant>>,
+    VacancySpace: '' as Ref<Class<VacancySpace>>
+  },
+  string: {
+    App: '' as IntlString,
+    Candidates: '' as IntlString,
+    Vacancies: '' as IntlString,
+
+    Name: '' as IntlString,
+    Description: '' as IntlString,
+    MakePrivate: '' as IntlString,
+    MakePrivateDescription: '' as IntlString,
+
+    AddPoolSpace: '' as IntlString,
+
+    AddVacancy: '' as IntlString,
+    Company: '' as IntlString,
+
+    Position: '' as IntlString,
+    Location: '' as IntlString,
+
+    AddCandidate: '' as IntlString,
+    Bio: '' as IntlString
   }
 })

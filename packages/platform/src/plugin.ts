@@ -18,14 +18,27 @@ import { monitor } from './event'
 
 import platform from './component'
 
-/** Base interface for a plugin or platform service. */
+/**
+ * Base interface for a plugin or platform service.
+ * @public
+ */
 export interface Service {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
-/** Plugin identifier. */
+/**
+ * Plugin identifier.
+ * @public
+ */
 export type Plugin<S extends Service> = Component & { __plugin: S }
-type AnyPlugin = Plugin<Service>
 
-/** A list of dependencies e.g. `{ core: core.id, ui: ui.id }`. */
+/**
+ * @public
+ */
+export type AnyPlugin = Plugin<Service>
+
+/**
+ * A list of dependencies e.g. `{ core: core.id, ui: ui.id }`.
+ * @public
+ */
 export interface PluginDependencies {
   [key: string]: AnyPlugin
 }
@@ -33,6 +46,8 @@ export interface PluginDependencies {
 /**
  * Convert list of dependencies to a list of provided services,
  * e.g. `PluginServices<{core: core.id}> === {core: CoreService}`
+ *
+ * @public
  */
 export type PluginServices<T extends PluginDependencies> = {
   [P in keyof T]: T[P] extends Plugin<infer Service> ? Service : T[P]
@@ -40,6 +55,8 @@ export type PluginServices<T extends PluginDependencies> = {
 
 /**
  * A Plugin Descriptor, literally plugin ID + dependencies.
+ *
+ * @public
  */
 export interface PluginDescriptor<S extends Service, D extends PluginDependencies> {
   id: Plugin<S>
@@ -47,18 +64,31 @@ export interface PluginDescriptor<S extends Service, D extends PluginDependencie
 }
 type AnyDescriptor = PluginDescriptor<Service, PluginDependencies>
 
-interface PluginModule<P extends Service, D extends PluginDependencies> {
+/**
+ * @public
+ */
+export interface PluginModule<P extends Service, D extends PluginDependencies> {
   default: (deps: PluginServices<D>) => Promise<P>
 }
 // type AnyPluginModule = PluginModule<Service, PluginDependencies>
 
-type PluginLoader<P extends Service, D extends PluginDependencies> = () => Promise<PluginModule<P, D>>
-type AnyPluginLoader = PluginLoader<Service, PluginDependencies>
+/**
+ * @public
+ */
+export type PluginLoader<P extends Service, D extends PluginDependencies> = () => Promise<PluginModule<P, D>>
+
+/**
+ * @public
+ */
+export type AnyPluginLoader = PluginLoader<Service, PluginDependencies>
 
 const services = new Map<AnyPlugin, Service>()
 const locations = [] as Array<[AnyDescriptor, AnyPluginLoader]>
 const running = new Map<AnyPlugin, Service>()
 
+/**
+ * @public
+ */
 export function addLocation<P extends Service, X extends PluginDependencies> (
   plugin: PluginDescriptor<P, X>,
   module: PluginLoader<P, X>
@@ -66,6 +96,9 @@ export function addLocation<P extends Service, X extends PluginDependencies> (
   locations.push([plugin, module as unknown as AnyPluginLoader])
 }
 
+/**
+ * @public
+ */
 export async function getPlugin<T extends Service> (id: Plugin<T>): Promise<T> {
   const service = services.get(id)
   if (service !== undefined) {
@@ -107,17 +140,6 @@ async function loadPlugin<T extends Service> (id: Plugin<T>): Promise<Service> {
   const deps = await resolveDependencies(location[0].deps)
 
   const loaderPromise = location[1]()
-
-  // if (id !== 'ui') {
-  //   loaderPromise = new Promise<AnyPluginModule>((resolve, reject) => {
-  //     setInterval(() => {
-  //       location[1]().then(result => resolve(result)).catch(err => reject(err))
-  //     }, 3000)
-  //   })
-  // } else {
-  // loaderPromise = location[1]()
-  // }
-
   const status = new Status(Severity.INFO, platform.status.LoadingPlugin, { plugin: id })
   const loadedPlugin = await monitor(status, loaderPromise)
   const f = loadedPlugin.default
@@ -126,6 +148,9 @@ async function loadPlugin<T extends Service> (id: Plugin<T>): Promise<Service> {
   return service
 }
 
+/**
+ * @public
+ */
 export function plugin<P extends Service, D extends PluginDependencies, N extends Namespace> (
   id: Plugin<P>,
   deps: D,

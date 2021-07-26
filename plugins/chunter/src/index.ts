@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-import type { Account, Doc, Ref, Space } from '@anticrm/core'
+import type { Account, Class, Doc, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Asset } from '@anticrm/status'
+import type { Asset, IntlString } from '@anticrm/status'
 
 export interface Channel extends Space {}
 
@@ -45,6 +45,19 @@ export default plugin(
   PluginChunter,
   {},
   {
+    class: {
+      Channel: '' as Ref<Class<Channel>>,
+      Message: '' as Ref<Class<Message>>,
+      Comment: '' as Ref<Class<Comment>>
+    },
+    string: {
+      Channels: '' as IntlString,
+      CreateChannel: '' as IntlString,
+      ChannelName: '' as IntlString,
+      ChannelDescription: '' as IntlString,
+      MakePrivate: '' as IntlString,
+      MakePrivateDescription: '' as IntlString
+    },
     icon: {
       Chunter: '' as Asset,
       Hashtag: '' as Asset,

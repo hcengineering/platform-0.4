@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/node-client",
+      "comment": "Heft Build",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/node-client"
+}

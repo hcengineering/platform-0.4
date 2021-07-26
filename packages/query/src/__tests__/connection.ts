@@ -15,10 +15,10 @@
 
 import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, WithAccountId } from '@anticrm/core'
 import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
-import { genMinModel } from '@anticrm/core/src/__tests__/minmodel'
+import { _genMinModel } from '@anticrm/core'
 
 export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
-  const txes = genMinModel()
+  const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()
   for (const tx of txes) hierarchy.tx(tx)

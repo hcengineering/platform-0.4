@@ -15,7 +15,14 @@
 
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
+/**
+ * @public
+ */
 export type ReqId = string | number
+
+/**
+ * @public
+ */
 export class Request<P extends any[], M extends string = string> {
   id?: ReqId
   method: M
@@ -31,6 +38,7 @@ export class Request<P extends any[], M extends string = string> {
  * Response object define a server response on transaction request.
  *
  * Also used to inform other clients about operations being performed by server.
+ * @public
  */
 export interface Response<R> {
   result?: R
@@ -38,14 +46,22 @@ export interface Response<R> {
   error?: Status
 }
 
+/**
+ * @public
+ */
 export function serialize (object: Request<any> | Response<any>): string {
   return JSON.stringify(object)
 }
-
+/**
+ * @public
+ */
 export function readResponse<D> (response: string): Response<D> {
   return JSON.parse(response)
 }
 
+/**
+ * @public
+ */
 export function readRequest<P extends any[]> (request: string): Request<P> {
   const result: Request<P> = JSON.parse(request)
   if (typeof result.method !== 'string') {
@@ -54,10 +70,16 @@ export function readRequest<P extends any[]> (request: string): Request<P> {
   return result
 }
 
+/**
+ * @public
+ */
 export function fromStatus (status: Status, id?: ReqId): Response<any> {
   return { id, error: status }
 }
 
+/**
+ * @public
+ */
 export const Code = component('rpc' as Component, {
   Unauthorized: '' as StatusCode,
   Forbidden: '' as StatusCode,
@@ -83,6 +105,8 @@ class DeferredPromise {
  * Also allow to handle non identified results passed from other side.
  *
  * Hold operations in progress and allow to retry them if required.
+ *
+ * @public
  */
 export abstract class RequestProcessor {
   private reqIndex: number = 0

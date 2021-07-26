@@ -29,6 +29,9 @@ export enum Severity {
   ERROR = 'ERROR'
 }
 
+/**
+ * @public
+ */
 export type Id = string & { __id: true }
 
 /**
@@ -38,6 +41,9 @@ export type Id = string & { __id: true }
 export type Component = string & { __component: true }
 
 // TODO: remove `StatusCode`?
+/**
+ * @public
+ */
 export type StatusCode<P extends Record<string, any> = {}> = IntlString<P>
 
 /**
@@ -71,8 +77,15 @@ export class PlatformError<P extends Record<string, any>> extends Error {
 
 // I D E N T I T Y
 
+/**
+ * @public
+ */
 export type Namespace = Record<string, string | Record<string, string>>
-type ComponentDescriptor<C extends Component> = { id: C } // eslint-disable-line
+
+/**
+ * @public
+ */
+export type ComponentDescriptor<C extends Component> = { id: C } // eslint-disable-line
 
 function transform (result: Record<string, any>, prefix: string, namespace: Record<string, any>): Namespace {
   for (const key in namespace) {
@@ -90,6 +103,9 @@ function transform (result: Record<string, any>, prefix: string, namespace: Reco
   return result
 }
 
+/**
+ * @public
+ */
 export function component<C extends Component, N extends Namespace> (
   component: C,
   namespace: N
@@ -97,16 +113,25 @@ export function component<C extends Component, N extends Namespace> (
   return { id: component, ...(transform({}, component, namespace) as N) }
 }
 
+/**
+ * @public
+ */
 export function mergeIds<C extends ComponentDescriptor<Component>, M extends Namespace> (component: C, merge: M): C & M {
   return transform(Object.assign({}, component), component.id, merge) as C & M
 }
 
+/**
+ * @public
+ */
 export interface IdInfo {
   kind?: string
   component: Component
   name: string
 }
 
+/**
+ * @public
+ */
 export function parseId (id: Id): IdInfo {
   const [prefix, name] = id.split('.')
   if (name === undefined) {
@@ -128,6 +153,9 @@ export function parseId (id: Id): IdInfo {
 
 // S T A T U S  C O D E S
 
+/**
+ * @public
+ */
 const status = component('status' as Component, {
   status: {
     OK: '' as StatusCode,
@@ -142,6 +170,9 @@ const status = component('status' as Component, {
  */
 export const OK = new Status(Severity.OK, status.status.OK, {})
 
+/**
+ * @public
+ */
 export function unknownStatus (message: string): Status<{}> {
   return new Status(Severity.ERROR, status.status.UnknownError, { message })
 }
@@ -156,6 +187,9 @@ export function unknownError (err: Error): Status {
 
 // R E S O U R C E S
 
+/**
+ * @public
+ */
 export type IntlString<T extends Record<string, any> = {}> = Id & {
   __intl_string: T
 }
@@ -166,6 +200,7 @@ export type IntlString<T extends Record<string, any> = {}> = Id & {
  * 'Metadata' is simply any JavaScript object, which is used to configure platform, e.g. IP addresses.
  * Another example of metadata is an asset URL. The logic behind providing asset URLs as metadata is
  * we know URL at compile time only and URLs vary depending on deployment options.
+ * @public
  */
 export type Metadata<T> = Id & { __metadata: T }
 
@@ -200,7 +235,17 @@ export type Resource<T> = Id & { __resource: T }
 
 // U I
 
-type URL = string
+/**
+ * @public
+ */
+export type URL = string
+
+/**
+ * @public
+ */
 export type Asset = Metadata<URL>
 
+/**
+ * @public
+ */
 export { status as default }

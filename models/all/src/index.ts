@@ -23,6 +23,9 @@ import { createModel as taskModel } from '@anticrm/model-task'
 import { createModel as meetingModel } from '@anticrm/model-meeting'
 import { createModel as recruitingModel } from '@anticrm/model-recruiting'
 
+/**
+ * @public
+ */
 const builder = new Builder()
 
 coreModel(builder)
@@ -33,4 +36,7 @@ recruitingModel(builder)
 taskModel(builder)
 meetingModel(builder)
 
+/**
+ * @public
+ */
 export default builder
