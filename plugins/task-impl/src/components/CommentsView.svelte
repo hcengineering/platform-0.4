@@ -13,13 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import { getFullRef, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
   import chunter from '@anticrm/chunter-impl/src/plugin'
   import { Comment } from '@anticrm/chunter'
   import { QueryUpdater } from '@anticrm/presentation'
+  import task from '../plugin'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
@@ -30,16 +31,21 @@
   function addMessage (message: string): void {
     client.createDoc(chunter.class.Comment, currentSpace, {
       message,
-      replyOf: taskId
+      replyOf: getFullRef(taskId, task.class.Task)
     })
   }
 
   let query: QueryUpdater<Comment> | undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Comment, { space: currentSpace, replyOf: taskId }, (result) => {
-      messages = result
-    })
+    query = client.query(
+      query,
+      chunter.class.Comment,
+      { space: currentSpace, replyOf: getFullRef(taskId, task.class.Task) },
+      (result) => {
+        messages = result
+      }
+    )
   }
 </script>
 

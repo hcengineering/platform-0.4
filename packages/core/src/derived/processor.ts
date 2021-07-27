@@ -1,10 +1,11 @@
 import { Resource } from '@anticrm/status'
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
 import core, { generateId, Storage, Tx, TxOperations, TxRemoveDoc, withOperations } from '..'
-import { Account, Class, Doc, Ref } from '../classes'
+import { Account, Class, Doc, FullRefString, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
 import { TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
+import { parseFullRef } from '../utils'
 import { DescriptorMap } from './descriptors'
 import { findExistingData, getRuleFieldValues, groupOrValue, lastOrAdd, newDerivedData, sortRules } from './utils'
 
@@ -105,13 +106,14 @@ export class DerivedDataProcessor extends TxProcessor {
     for (const r of d.collections ?? []) {
       if (push) {
         const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
-        const parentDocRef = (doc as any)[r.sourceField] as Ref<Doc>
-        if (parentDocRef !== undefined) {
+        const parentDocRefString = (doc as any)[r.sourceField] as FullRefString
+        const parentDocRef = parseFullRef(parentDocRefString)
+        if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
           try {
             const obj = this.extractEmbeddedDoc(doc, r.rules)
-            await ops.updateDoc(d.targetClass, tx.objectSpace, parentDocRef, {
+            await ops.updateDoc(d.targetClass, tx.objectSpace, parentDocRef._id, {
               $push: { [r.targetField]: obj }
-            })
+            }).catch((err) => console.log(err))
           } catch (err) {
             console.log(err)
           }
@@ -128,7 +130,7 @@ export class DerivedDataProcessor extends TxProcessor {
           try {
             await ops.updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
               $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-            })
+            }).catch((err) => console.log(err))
           } catch (err) {
             // Ignore exception.
             console.log(err)

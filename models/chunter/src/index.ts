@@ -14,7 +14,7 @@
 //
 
 import type { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
-import type { Doc, Domain, Ref } from '@anticrm/core'
+import type { Domain, FullRefString } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
@@ -42,7 +42,7 @@ export class TMessage extends TDoc implements Message {
  */
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
 export class TComment extends TDoc implements Comment {
-  replyOf!: Ref<Doc>
+  replyOf!: FullRefString
   message!: string
 }
 

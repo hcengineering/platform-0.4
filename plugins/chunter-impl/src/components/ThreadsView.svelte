@@ -15,7 +15,7 @@
 <script lang="ts">
   import { Message } from '@anticrm/chunter'
   import Comments from './Comments.svelte'
-  import { Ref } from '@anticrm/core'
+  import { getFullRef, Ref } from '@anticrm/core'
   import { getCurrentLocation, navigate } from '@anticrm/ui'
   import ScrollBox from '@anticrm/ui/src/components/ScrollBox.svelte'
   import { getClient } from '@anticrm/workbench'
@@ -46,7 +46,7 @@
 
   function addMessage (text: string): void {
     client.createDoc(chunter.class.Comment, message!.space, {
-      replyOf: message!._id,
+      replyOf: getFullRef(message!._id, message!._class),
       message: text
     })
   }

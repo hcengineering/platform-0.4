@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import { Message as MessageModel, Comment } from '@anticrm/chunter'
+  import { getFullRef } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, createEventDispatcher } from 'svelte'
@@ -33,9 +34,14 @@
 
   let comments: Comment[] = []
   $: {
-    query = client.query(query, chunter.class.Comment, { replyOf: message._id }, (result) => {
-      comments = result
-    })
+    query = client.query(
+      query,
+      chunter.class.Comment,
+      { replyOf: getFullRef(message._id, message._class) },
+      (result) => {
+        comments = result
+      }
+    )
   }
 </script>
 
