@@ -111,9 +111,11 @@ export class DerivedDataProcessor extends TxProcessor {
         if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
           try {
             const obj = this.extractEmbeddedDoc(doc, r.rules)
-            await ops.updateDoc(d.targetClass, tx.objectSpace, parentDocRef._id, {
-              $push: { [r.targetField]: obj }
-            }).catch((err) => console.log(err))
+            await ops
+              .updateDoc(d.targetClass, tx.objectSpace, parentDocRef._id, {
+                $push: { [r.targetField]: obj }
+              })
+              .catch((err) => console.log(err))
           } catch (err) {
             console.log(err)
           }
@@ -128,9 +130,11 @@ export class DerivedDataProcessor extends TxProcessor {
         // If it was in few fields at once, operation probable will be execured few times.
         for (const op of pushOps) {
           try {
-            await ops.updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
-              $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-            }).catch((err) => console.log(err))
+            await ops
+              .updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
+                $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
+              })
+              .catch((err) => console.log(err))
           } catch (err) {
             // Ignore exception.
             console.log(err)
