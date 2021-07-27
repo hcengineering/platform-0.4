@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Add component Section.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
