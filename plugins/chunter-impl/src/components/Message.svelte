@@ -37,8 +37,8 @@
 
   const client = getClient()
 
-  async function getUser (): Promise<Account> {
-    return (await client.findAll(core.class.Account, { _id: message.modifiedBy }))[0]
+  async function getUser (userId: Ref<Account>): Promise<Account> {
+    return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
 
   function onClick () {
@@ -52,7 +52,7 @@
   }
 </script>
 
-{#await getUser() then user}
+{#await getUser(message.modifiedBy) then user}
   <div class="message-container" on:click={onClick}>
     <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
     <div class="message">
