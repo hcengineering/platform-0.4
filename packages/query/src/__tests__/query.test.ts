@@ -14,40 +14,30 @@
 //
 
 import type {
-  Account,
-  Class,
-  Client,
   Doc,
-  DocumentQuery,
-  FindOptions,
-  FindResult,
-  Obj,
-  Ref,
   Space,
-  Tx,
-  TxCreateDoc
+  TxCreateDoc,
+  TxOperations
 } from '@anticrm/core'
 import core, {
+  Storage,
   createClient,
-  DOMAIN_TX,
-  Hierarchy,
-  ModelDb,
   SortingOrder,
-  TxDb,
   withOperations,
   _genMinModel as getModel
 } from '@anticrm/core'
 import { LiveQuery } from '..'
 import { connect } from './connection'
+export interface Client extends Storage, TxOperations, LiveQuery {
+}
 
 interface Channel extends Space {
   x: number
 }
 describe('query', () => {
   it('findAll', async () => {
-    const client = await getClient()
-    const query = withOperations(core.account.System, new LiveQuery(client))
-    const result = await query.findAll<Space>(core.class.Space, {})
+    const storage = await getClient()
+    const result = await storage.findAll<Space>(core.class.Space, {})
     expect(result).toHaveLength(2)
   })
 
@@ -62,8 +52,7 @@ describe('query', () => {
       }
     }
 
-    const query = new LiveQuery(storage)
-    query.query<Space>(core.class.Space, { private: false }, (result) => {
+    storage.query<Space>(core.class.Space, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength)
       done()
     })
@@ -81,8 +70,7 @@ describe('query', () => {
     }
 
     let attempt = 0
-    const query = withOperations(core.account.System, new LiveQuery(storage))
-    query.query<Space>(core.class.Space, { private: false }, (result) => {
+    storage.query<Space>(core.class.Space, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength + attempt)
       if (attempt > 0) {
         expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
@@ -99,21 +87,21 @@ describe('query', () => {
       }
     })
 
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await storage.createDoc<Channel>(core.class.Space, core.space.Model, {
       private: false,
       name: '#1',
       description: '',
       members: [],
       x: 1
     })
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await storage.createDoc<Channel>(core.class.Space, core.space.Model, {
       private: false,
       name: '#2',
       description: '',
       members: [],
       x: 2
     })
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await storage.createDoc<Channel>(core.class.Space, core.space.Model, {
       private: false,
       name: '#3',
       description: '',
@@ -133,26 +121,25 @@ describe('query', () => {
       }
     }
 
-    const query = withOperations(core.account.System, new LiveQuery(storage))
-    const unsubscribe = query.query<Space>(core.class.Space, { private: false }, (result) => {
+    const unsubscribe = storage.query<Space>(core.class.Space, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength)
     })
 
     unsubscribe()
 
-    await query.createDoc(core.class.Space, core.space.Model, {
+    await storage.createDoc(core.class.Space, core.space.Model, {
       private: false,
       name: '#1',
       description: '',
       members: []
     })
-    await query.createDoc(core.class.Space, core.space.Model, {
+    await storage.createDoc(core.class.Space, core.space.Model, {
       private: false,
       name: '#2',
       description: '',
       members: []
     })
-    await query.createDoc(core.class.Space, core.space.Model, {
+    await storage.createDoc(core.class.Space, core.space.Model, {
       private: false,
       name: '#3',
       description: '',
@@ -161,12 +148,11 @@ describe('query', () => {
   })
 
   it('query against core client', async (done) => {
-    const client = await createClient(connect)
+    const client = await getClient()
 
     const expectedLength = 2
     let attempt = 0
-    const query = withOperations(core.account.System, new LiveQuery(client))
-    query.query<Space>(core.class.Space, { private: false }, (result) => {
+    client.query<Space>(core.class.Space, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength + attempt)
       if (attempt > 0) {
         expect((result[expectedLength + attempt - 1] as any).x).toBe(attempt)
@@ -174,21 +160,21 @@ describe('query', () => {
       if (attempt++ === 1) done()
     })
 
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await client.createDoc<Channel>(core.class.Space, core.space.Model, {
       x: 1,
       private: false,
       name: '#1',
       description: '',
       members: []
     })
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await client.createDoc<Channel>(core.class.Space, core.space.Model, {
       x: 2,
       private: false,
       name: '#2',
       description: '',
       members: []
     })
-    await query.createDoc<Channel>(core.class.Space, core.space.Model, {
+    await client.createDoc<Channel>(core.class.Space, core.space.Model, {
       x: 3,
       private: false,
       name: '#3',
@@ -201,25 +187,24 @@ describe('query', () => {
     const storage = await getClient()
 
     const limit = 1
-    let attempt = 0
+    let attempt = -1
     let doneCount = 0
 
-    const query = withOperations(core.account.System, new LiveQuery(storage))
-    query.query<Space>(
+    storage.query<Space>(
       core.class.Space,
       { private: true },
       (result) => {
-        if (attempt > 0 && result.length > 0) {
+        if (attempt === 0 && result.length > 0) {
           expect(result.length).toEqual(limit)
           expect(result[0].name).toMatch('0')
         }
-        if (attempt === 1) doneCount++
+        if (attempt === 0) doneCount++
         if (doneCount === 2) done()
       },
       { limit: limit, sort: { name: SortingOrder.Ascending } }
     )
 
-    query.query<Space>(
+    storage.query<Space>(
       core.class.Space,
       { private: true },
       (result) => {
@@ -227,15 +212,15 @@ describe('query', () => {
           expect(result.length).toEqual(limit)
           expect(result[0].name).toMatch(attempt.toString())
         }
-        if (attempt === 10) doneCount++
+        if (attempt === 9) doneCount++
         if (doneCount === 2) done()
       },
       { limit: limit, sort: { name: SortingOrder.Descending } }
     )
 
     for (let i = 0; i < 10; i++) {
-      attempt++
-      await query.createDoc(core.class.Space, core.space.Model, {
+      attempt = i
+      await storage.createDoc(core.class.Space, core.space.Model, {
         private: true,
         name: i.toString(),
         description: '',
@@ -244,59 +229,50 @@ describe('query', () => {
     }
   })
   it('remove', async (done) => {
-    const client = await createClient(connect)
+    const client = await getClient()
 
     const expectedLength = 2
     let attempt = 0
-    const query = withOperations(core.account.System, new LiveQuery(client))
-    query.query<Space>(core.class.Space, { private: false }, (result) => {
+    client.query<Space>(core.class.Space, { private: false }, (result) => {
       expect(result).toHaveLength(expectedLength - attempt)
       if (attempt++ === expectedLength) done()
     })
 
-    const spaces = await query.findAll(core.class.Space, {})
+    const spaces = await client.findAll(core.class.Space, {})
     for (const space of spaces) {
-      await query.removeDoc(space._class, space.space, space._id)
+      await client.removeDoc(space._class, space.space, space._id)
+    }
+  })
+
+  it('update', async (done) => {
+    const client = await getClient()
+
+    const spaces = await client.findAll(core.class.Space, {})
+    let attempt = 0
+    client.query<Space>(core.class.Space, { private: false }, (result) => {
+      if (attempt > 0) {
+        expect(result[attempt - 1].name === attempt.toString())
+        expect(result[attempt - 1].members.length === 1)
+        if (attempt === spaces.length) done()
+      }
+    }, { sort: { private: SortingOrder.Ascending } })
+
+    for (const space of spaces) {
+      attempt++
+      await client.updateDoc(space._class, space.space, space._id, { name: attempt.toString(), $push: { members: core.account.System } })
     }
   })
 })
 
-class ClientImpl implements Client {
-  constructor (
-    private readonly hierarchy: Hierarchy,
-    private readonly model: ModelDb,
-    private readonly transactions: TxDb
-  ) {}
 
-  async tx (tx: Tx): Promise<void> {
-    await Promise.all([this.model.tx(tx), this.transactions.tx(tx)])
-  }
+async function getClient (): Promise<Client & TxOperations> {
+  // eslint-disable-next-line prefer-const
+  let liveQuery: LiveQuery | undefined
 
-  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
-    return this.hierarchy.isDerived(_class, from)
-  }
+  const storage = await createClient(connect, (tx) => {
+    liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+  })
+  liveQuery = new LiveQuery(storage)
 
-  async findAll<T extends Doc>(
-    _class: Ref<Class<T>>,
-    query: DocumentQuery<T>,
-    options?: FindOptions<T>
-  ): Promise<FindResult<T>> {
-    const domain = this.hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
-    return await this.model.findAll(_class, query, options)
-  }
-
-  async accountId (): Promise<Ref<Account>> {
-    return core.account.System
-  }
-}
-
-async function getClient (): Promise<Client> {
-  const hierarchy = new Hierarchy()
-  const transactions = new TxDb(hierarchy)
-  const model = new ModelDb(hierarchy)
-  const txes = await getModel()
-  for (const tx of txes) hierarchy.tx(tx)
-  for (const tx of txes) await model.tx(tx)
-  return new ClientImpl(hierarchy, model, transactions)
+  return withOperations(core.account.System, liveQuery)
 }
