@@ -14,7 +14,8 @@
 -->
 <script lang="ts">
   import type { Message } from '@anticrm/chunter'
-  import type { getFullRef, Ref } from '@anticrm/core'
+  import { getFullRef } from '@anticrm/core'
+  import type { Ref } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getCurrentLocation, IconClose, navigate, ScrollBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'

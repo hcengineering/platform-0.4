@@ -17,7 +17,6 @@ import core, {
   Account,
   Class,
   Client,
-  DerivedDataProcessor,
   Doc,
   DocumentQuery,
   DOMAIN_TX,
@@ -29,19 +28,17 @@ import core, {
   Storage,
   Tx,
   TxDb,
-  TxProcessor,
-  WithAccountId
+  TxProcessor
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import copy from 'fast-copy'
 
-class ClientImpl extends TxProcessor implements Client {
-  extraTx?: (tx: Tx) => Promise<void>
+export class ClientImpl extends TxProcessor implements Client {
+  handler: (tx: Tx) => void = () => {}
   constructor (
     readonly hierarchy: Hierarchy,
     readonly model: ModelDb,
-    readonly transactions: TxDb,
-    readonly handler: (tx: Tx) => void
+    readonly transactions: TxDb
   ) {
     super()
   }
@@ -63,7 +60,7 @@ class ClientImpl extends TxProcessor implements Client {
     }
   }
 
-  static async create (handler: (tx: Tx) => void): Promise<ClientImpl> {
+  static async create (): Promise<ClientImpl> {
     const txes = builder.getTxes()
 
     const hierarchy = new Hierarchy()
@@ -83,7 +80,7 @@ class ClientImpl extends TxProcessor implements Client {
       // Print model only from browser console.
       console.info('Model Build complete', model)
     }
-    return new ClientImpl(hierarchy, model, transactions, handler)
+    return new ClientImpl(hierarchy, model, transactions)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
@@ -93,9 +90,6 @@ class ClientImpl extends TxProcessor implements Client {
   }
 
   async tx (tx: Tx): Promise<void> {
-    // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
-    await this.model.tx(tx)
-
     // 2. update hierarchy
     if (tx.objectSpace === core.space.Model) {
       this.hierarchy.tx(tx)
@@ -110,29 +104,9 @@ class ClientImpl extends TxProcessor implements Client {
 
     // 5. process client handlers
     this.handler(tx)
-
-    this.extraTx?.(tx)
   }
 
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
-  }
-}
-
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
-  const client = await ClientImpl.create(handler)
-  const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
-  client.extraTx = async (tx: Tx) => {
-    await ddProcessor.tx(tx)
-  }
-  return client
-}
-
-function newClientOnlyStorage (client: ClientImpl): Storage {
-  return {
-    findAll: async (_class, query) => await client.findAll(_class, query),
-    tx: async (tx) => {
-      await client.model.tx(tx)
-    }
   }
 }

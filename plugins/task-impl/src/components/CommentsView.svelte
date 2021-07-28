@@ -13,7 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef, Ref, Space } from '@anticrm/core'
+  import { getFullRef } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'

@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { getFullRef } from '@anticrm/core'
+  import { getFullRef } from '@anticrm/core'
   import type { Message as MessageModel, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
