@@ -12,7 +12,7 @@ import { Commands } from './internal/commands'
 import { buildInputRules } from './internal/input_rules'
 import { buildKeymap } from './internal/keymap'
 import { schema } from './internal/schema'
-import { StateTransformer } from './transform'
+import type { StateTransformer } from './transform'
 
 const dispatch = createEventDispatcher()
 

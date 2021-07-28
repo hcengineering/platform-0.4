@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Message as MessageModel } from '@anticrm/chunter'
-  import { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { Message as MessageModel } from '@anticrm/chunter'
+  import type { Account, Ref, Timestamp } from '@anticrm/core'
   import Message from './Message.svelte'
 
   export let messages: MessageData[] = []

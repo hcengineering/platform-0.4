@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
 
   export let title: IntlString
   export let line: boolean = false

@@ -17,7 +17,7 @@
 
   import type { IntlString } from '@anticrm/status'
 
-  import { AnySvelteComponent } from '../../types'
+  import type { AnySvelteComponent } from '../../types'
   import Panel from './Panel.svelte'
   import Card from './Card.svelte'
 

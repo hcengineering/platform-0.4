@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { CandidatePoolSpace } from '@anticrm/recruiting'
+  import type { CandidatePoolSpace } from '@anticrm/recruiting'
   import { Button } from '@anticrm/ui'
   import { showModal } from '@anticrm/workbench'
 

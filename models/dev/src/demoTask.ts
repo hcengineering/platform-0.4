@@ -6,6 +6,7 @@ import task from '@anticrm/task-impl/src/plugin'
 import faker from 'faker'
 import chunter from '@anticrm/chunter-impl/src/plugin'
 import { Comment } from '@anticrm/chunter'
+import { accountIds } from './demoAccount'
 
 const demoIds = component('demo-task' as Component, {
   project: {
@@ -17,20 +18,7 @@ const demoIds = component('demo-task' as Component, {
  * @public
  */
 export function demoTask (builder: Builder): void {
-  const members: Ref<Account>[] = []
-  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
-    const accountId: Ref<Account> = generateId()
-    builder.createDoc(
-      core.class.Account,
-      {
-        name: faker.internet.exampleEmail() as Ref<Account>,
-        avatar: faker.image.avatar()
-      },
-      accountId
-    )
-    members.push(accountId)
-  }
-  members.push(core.account.System)
+  const members: Ref<Account>[] = [core.account.System, ...accountIds]
 
   builder.createDoc(
     task.class.Project,
@@ -60,7 +48,10 @@ export function demoTask (builder: Builder): void {
         counter: i
       },
       shortRefId,
-      { space: demoIds.project.DemoProject }
+      {
+        space: demoIds.project.DemoProject,
+        modifiedOn: Date.now()
+      }
     )
 
     const checkItems: CheckListItem[] = []
@@ -84,7 +75,8 @@ export function demoTask (builder: Builder): void {
         commentId,
         {
           space: demoIds.project.DemoProject,
-          modifiedBy: faker.random.arrayElement(members)
+          modifiedBy: faker.random.arrayElement(accountIds),
+          modifiedOn: Date.now()
         }
       )
       comments.push(commentId as Ref<Comment>)

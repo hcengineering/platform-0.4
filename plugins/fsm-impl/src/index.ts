@@ -20,6 +20,8 @@ import { getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
 import fsmPlugin from './plugin'
 
+export { fsmPlugin }
+
 export default async (): Promise<FSMService> => {
   const coreP = await getPlugin(corePlugin.id)
   const client: Client = await coreP.getClient()

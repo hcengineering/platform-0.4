@@ -14,15 +14,16 @@
 -->
 <script lang="ts">
   import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
-  import core, { Ref, Doc, Space, Account } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Ref, Doc, Space, Account } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
 
   import TaskStatus from './TaskStatus.svelte'
 
   import task from '../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
-  import { Task } from '@anticrm/task'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import type { Task } from '@anticrm/task'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined

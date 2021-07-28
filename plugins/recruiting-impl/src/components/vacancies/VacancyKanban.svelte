@@ -13,17 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Ref, Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-  import { State } from '@anticrm/fsm'
-  import fsm from '@anticrm/fsm-impl/src/plugin'
+  import type { State } from '@anticrm/fsm'
+  import { fsmPlugin as fsm } from '@anticrm/fsm-impl'
 
   import { Kanban } from '@anticrm/ui'
   import ApplicantCard from './ApplicantCard.svelte'
-  import { Applicant, VacancySpace } from '@anticrm/recruiting'
+  import type { Applicant, VacancySpace } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined

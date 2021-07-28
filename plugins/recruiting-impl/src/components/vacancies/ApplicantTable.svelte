@@ -16,10 +16,10 @@
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-  import { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
+  import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined

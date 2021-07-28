@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Correct imports",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl"
+}

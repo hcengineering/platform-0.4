@@ -13,22 +13,23 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import core from '@anticrm/core'
+  import type { DocumentQuery, Title } from '@anticrm/core'
+  import { QueryUpdater } from '@anticrm/presentation'
+  import type { EditorActions, EditorContentEvent } from '@anticrm/richeditor'
+  import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
+  import { schema } from '@anticrm/richeditor'
+  import type { MessageNode } from '@anticrm/text'
+  import { newMessageDocument, serializeMessage } from '@anticrm/text'
+  import type { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
+  import { CompletionPopup } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
-
-  import Send from './icons/Send.svelte'
   import Attach from './icons/Attach.svelte'
   import Emoji from './icons/Emoji.svelte'
   import GIF from './icons/GIF.svelte'
+  import Send from './icons/Send.svelte'
   import TextStyle from './icons/TextStyle.svelte'
-
-  import { createTextTransform, EditorActions, EditorContentEvent, MessageEditor } from '@anticrm/richeditor'
-  import { MessageNode, newMessageDocument, serializeMessage } from '@anticrm/text'
-  import { schema } from '@anticrm/richeditor/src/internal/schema'
-
-  import { CompletionPopup, CompletionItem, CompletionPopupActions } from '@anticrm/ui'
-  import core, { DocumentQuery, Title } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import { QueryUpdater } from '@anticrm/presentation'
 
   export let thread: boolean = false
   export let withoutMargin: boolean = false

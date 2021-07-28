@@ -13,10 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import Channel from '@anticrm/chunter-impl/src/components/Channel.svelte'
-  import ReferenceInput from '@anticrm/chunter-impl/src/components/ReferenceInput.svelte'
-  import { Account, Ref, Timestamp } from '@anticrm/core'
-  import { Message as MessageModel } from '@anticrm/chunter'
+  import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
+  import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { Message as MessageModel } from '@anticrm/chunter'
 
   export let messages: Message[] = []
 

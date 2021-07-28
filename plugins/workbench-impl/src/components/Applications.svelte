@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Ref } from '@anticrm/core'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import { getCurrentLocation, navigate } from '@anticrm/ui'
   import type { Application } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'

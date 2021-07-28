@@ -50,3 +50,4 @@ export interface EditorActions {
 
 export { default as MessageEditor } from './MessageEditor.svelte'
 export * from './transform'
+export { schema } from './internal/schema'

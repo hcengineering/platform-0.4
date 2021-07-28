@@ -14,10 +14,11 @@
 -->
 <script lang="ts">
   import { ActionIcon, UserInfo } from '@anticrm/ui'
-  import { Task } from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
-  import core, { Account, Ref } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Account, Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
   export let doc: Task

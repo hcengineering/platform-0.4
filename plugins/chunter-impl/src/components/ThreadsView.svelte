@@ -13,17 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Message } from '@anticrm/chunter'
-  import Comments from './Comments.svelte'
-  import { getFullRef, Ref } from '@anticrm/core'
-  import { getCurrentLocation, navigate } from '@anticrm/ui'
-  import ScrollBox from '@anticrm/ui/src/components/ScrollBox.svelte'
+  import type { Message } from '@anticrm/chunter'
+  import type { getFullRef, Ref } from '@anticrm/core'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import { getCurrentLocation, IconClose, navigate, ScrollBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
+  import Comments from './Comments.svelte'
   import MsgView from './Message.svelte'
-  import { IconClose } from '@anticrm/ui'
   import ReferenceInput from './ReferenceInput.svelte'
-  import { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
 

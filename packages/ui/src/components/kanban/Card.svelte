@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { AnySvelteComponent } from '../../types'
+  import type { AnySvelteComponent } from '../../types'
 
   export let draggable: boolean = false
   export let component: AnySvelteComponent

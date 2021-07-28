@@ -14,10 +14,10 @@
 -->
 <script lang="ts">
   import core, { Ref, Class, Space } from '@anticrm/core'
-  import { QueryUpdater } from '@anticrm/presentation'
-  import { IntlString } from '@anticrm/status'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import type { IntlString } from '@anticrm/status'
   import ui, { Dialog, EditBox } from '@anticrm/ui'
-  import Button from '@anticrm/ui/src/components/Button.svelte'
+  import { Button } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   export let _class: Ref<Class<Space>>

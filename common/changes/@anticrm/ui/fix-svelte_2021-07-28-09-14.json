@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Correct imports",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

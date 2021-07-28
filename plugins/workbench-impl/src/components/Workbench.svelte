@@ -15,7 +15,8 @@
 <script lang="ts">
   import type { Doc, Ref, Space } from '@anticrm/core'
   import { PresentationClient } from '@anticrm/presentation'
-  import { Component, location } from '@anticrm/ui'
+  import { location } from '@anticrm/ui'
+  import { Component } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'

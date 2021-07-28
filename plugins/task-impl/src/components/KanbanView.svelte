@@ -13,15 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Task, TaskStatuses } from '@anticrm/task'
-  import { Ref, Space } from '@anticrm/core'
+  import type { Task } from '@anticrm/task'
+  import { TaskStatuses } from '@anticrm/task'
+  import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
   import { Kanban } from '@anticrm/ui'
   import KanbanCard from './KanbanCard.svelte'
 
   import task, { getStatusColor } from '../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
