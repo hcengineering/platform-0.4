@@ -13,23 +13,11 @@
 // limitations under the License.
 //
 
-import type {
-  Doc,
-  Space,
-  TxCreateDoc,
-  TxOperations
-} from '@anticrm/core'
-import core, {
-  Storage,
-  createClient,
-  SortingOrder,
-  withOperations,
-  _genMinModel as getModel
-} from '@anticrm/core'
+import type { Doc, Space, TxCreateDoc, TxOperations } from '@anticrm/core'
+import core, { Storage, createClient, SortingOrder, withOperations, _genMinModel as getModel } from '@anticrm/core'
 import { LiveQuery } from '..'
 import { connect } from './connection'
-export interface Client extends Storage, TxOperations, LiveQuery {
-}
+export interface Client extends Storage, TxOperations, LiveQuery {}
 
 interface Channel extends Space {
   x: number
@@ -249,21 +237,28 @@ describe('query', () => {
 
     const spaces = await client.findAll(core.class.Space, {})
     let attempt = 0
-    client.query<Space>(core.class.Space, { private: false }, (result) => {
-      if (attempt > 0) {
-        expect(result[attempt - 1].name === attempt.toString())
-        expect(result[attempt - 1].members.length === 1)
-        if (attempt === spaces.length) done()
-      }
-    }, { sort: { private: SortingOrder.Ascending } })
+    client.query<Space>(
+      core.class.Space,
+      { private: false },
+      (result) => {
+        if (attempt > 0) {
+          expect(result[attempt - 1].name === attempt.toString())
+          expect(result[attempt - 1].members.length === 1)
+          if (attempt === spaces.length) done()
+        }
+      },
+      { sort: { private: SortingOrder.Ascending } }
+    )
 
     for (const space of spaces) {
       attempt++
-      await client.updateDoc(space._class, space.space, space._id, { name: attempt.toString(), $push: { members: core.account.System } })
+      await client.updateDoc(space._class, space.space, space._id, {
+        name: attempt.toString(),
+        $push: { members: core.account.System }
+      })
     }
   })
 })
-
 
 async function getClient (): Promise<Client & TxOperations> {
   // eslint-disable-next-line prefer-const

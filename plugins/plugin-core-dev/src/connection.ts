@@ -16,28 +16,39 @@
 import core, {
   Account,
   Class,
+  Client,
+  DerivedDataProcessor,
   Doc,
   DocumentQuery,
   DOMAIN_TX,
   FindResult,
   Hierarchy,
   ModelDb,
+  Obj,
   Ref,
   Storage,
   Tx,
   TxDb,
+  TxProcessor,
   WithAccountId
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import copy from 'fast-copy'
 
-class ClientImpl implements WithAccountId {
+class ClientImpl extends TxProcessor implements Client {
+  extraTx?: (tx: Tx) => Promise<void>
   constructor (
     readonly hierarchy: Hierarchy,
     readonly model: ModelDb,
     readonly transactions: TxDb,
     readonly handler: (tx: Tx) => void
-  ) {}
+  ) {
+    super()
+  }
+
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.hierarchy.isDerived(_class, from)
+  }
 
   static createDerivedDataStorage (storage: Storage, sendTo: (tx: Tx) => void): Storage {
     // Send derived data produced objects to clients.
@@ -99,6 +110,8 @@ class ClientImpl implements WithAccountId {
 
     // 5. process client handlers
     this.handler(tx)
+
+    this.extraTx?.(tx)
   }
 
   async accountId (): Promise<Ref<Account>> {
@@ -107,5 +120,19 @@ class ClientImpl implements WithAccountId {
 }
 
 export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
-  return await ClientImpl.create(handler)
+  const client = await ClientImpl.create(handler)
+  const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
+  client.extraTx = async (tx: Tx) => {
+    await ddProcessor.tx(tx)
+  }
+  return client
+}
+
+function newClientOnlyStorage (client: ClientImpl): Storage {
+  return {
+    findAll: async (_class, query) => await client.findAll(_class, query),
+    tx: async (tx) => {
+      await client.model.tx(tx)
+    }
+  }
 }

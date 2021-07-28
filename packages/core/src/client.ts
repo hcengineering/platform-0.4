@@ -167,7 +167,7 @@ function newClientOnlyStorage (client: ClientImpl): Storage {
   return {
     findAll: async (_class, query) => await client.findAll(_class, query),
     tx: async (tx) => {
-      await client.tx(tx)
+      client.txHandler([tx], false)
     }
   }
 }
