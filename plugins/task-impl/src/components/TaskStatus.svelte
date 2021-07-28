@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
   import { Label } from '@anticrm/ui'
   import { getStatusColor } from '../plugin'
 

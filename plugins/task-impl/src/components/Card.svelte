@@ -16,7 +16,7 @@
   import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
-  import { Task } from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import { getStatusColor } from '../plugin'
   import core, { Account, Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'

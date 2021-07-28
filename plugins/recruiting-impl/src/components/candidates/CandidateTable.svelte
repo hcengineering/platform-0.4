@@ -16,12 +16,12 @@
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, showModal } from '@anticrm/workbench'
-  import { Candidate } from '@anticrm/recruiting'
+  import type { Candidate } from '@anticrm/recruiting'
 
   import CandidateCmp from './Candidate.svelte'
 
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined

@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Message as MessageModel, Comment } from '@anticrm/chunter'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { Message as MessageModel, Comment } from '@anticrm/chunter'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'

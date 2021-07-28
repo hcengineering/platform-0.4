@@ -4,6 +4,7 @@ import core, { Account, generateId, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import faker from 'faker'
+import { accountIds } from './demoAccount'
 
 const demoIds = component('demo-task' as Component, {
   project: {
@@ -15,20 +16,7 @@ const demoIds = component('demo-task' as Component, {
  * @public
  */
 export function demoChunter (builder: Builder): void {
-  const members: Ref<Account>[] = []
-  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
-    const accountId: Ref<Account> = generateId()
-    builder.createDoc(
-      core.class.Account,
-      {
-        name: faker.internet.exampleEmail() as Ref<Account>,
-        avatar: faker.image.avatar()
-      },
-      accountId
-    )
-    members.push(accountId)
-  }
-
+  const members: Ref<Account>[] = [core.account.System, ...accountIds]
   builder.createDoc(
     chunter.class.Channel,
     {
@@ -47,7 +35,7 @@ export function demoChunter (builder: Builder): void {
     const comments: CommentRef[] = []
     const ci = faker.datatype.number(15)
     for (let j = 0; j < ci; j++) {
-      const userId = faker.internet.exampleEmail() as Ref<Account>
+      const userId = faker.random.arrayElement(accountIds)
       const cid: Ref<Comment> = generateId()
       comments.push({ _id: cid, userId })
       builder.createDoc(
@@ -59,6 +47,7 @@ export function demoChunter (builder: Builder): void {
         cid,
         {
           space: demoIds.project.DemoChannel,
+          modifiedOn: Date.now(),
           modifiedBy: userId
         }
       )
@@ -73,7 +62,8 @@ export function demoChunter (builder: Builder): void {
       msgId,
       {
         space: demoIds.project.DemoChannel,
-        modifiedBy: faker.random.arrayElement(members)
+        modifiedBy: faker.random.arrayElement(accountIds),
+        modifiedOn: Date.now()
       }
     )
   }

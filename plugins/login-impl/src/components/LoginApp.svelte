@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import LoginForm from './LoginForm.svelte'
   import SignupForm from './SignupForm.svelte'
@@ -22,19 +21,19 @@
 
 <div class="container">
   <div class="panel">
-    <div class="back-panel-dark"/>
+    <div class="back-panel-dark" />
     <div class="back-panel-light">
-      <div class="bg-noise opacity-3"/>
+      <div class="bg-noise opacity-3" />
     </div>
     {#if page === 'login'}
-      <LoginForm on:switch={(event) => page = event.detail}/>
+      <LoginForm on:switch={(event) => (page = event.detail)} />
     {:else if page === 'signup'}
-      <SignupForm on:switch={(event) => page = event.detail}/>
+      <SignupForm on:switch={(event) => (page = event.detail)} />
     {/if}
   </div>
   <div class="intro">
     <div class="content">
-      <div class="logo"> </div>
+      <div class="logo" />
     </div>
     <div class="slogan">
       <p>A unique place to manage all of your work</p>
@@ -44,7 +43,21 @@
 </div>
 
 <style lang="scss">
-  @import "@anticrm/theme/styles/mixins.scss";
+  /* @import "@anticrm/theme/styles/mixins.scss"; --> */
+
+  @mixin bg-fullsize {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    min-width: 100%;
+    min-height: 100%;
+  }
+
+  @mixin bg-layer($color, $opacity) {
+    @include bg-fullsize;
+    background: $color;
+    opacity: $opacity;
+  }
 
   .bg-noise {
     @include bg-fullsize;
@@ -70,11 +83,14 @@
       border-radius: 20px;
 
       .back-panel-light {
-        @include bg-layer(linear-gradient(158.74deg, rgba(205, 166, 255, 0.12) 5.62%, rgba(255, 255, 255, 0) 97.09%), 0.3);
+        @include bg-layer(
+          linear-gradient(158.74deg, rgba(205, 166, 255, 0.12) 5.62%, rgba(255, 255, 255, 0) 97.09%),
+          0.3
+        );
         z-index: -1;
       }
       .back-panel-dark {
-        @include bg-layer(#1D1D23, 0.5);
+        @include bg-layer(#1d1d23, 0.5);
         z-index: -1;
       }
     }
@@ -96,19 +112,19 @@
           position: relative;
           &:after {
             position: absolute;
-            content: "";
-            background: center url("../../img/logo.svg");
+            content: '';
+            background: center url('../../img/logo.svg');
             transform: translate(-50%, -50%);
             width: 63px;
             height: 79px;
           }
           &:before {
             position: absolute;
-            content: "";
+            content: '';
             transform: translate(-50%, -50%);
             width: 255px;
             height: 255px;
-            border: 1.8px solid #FFFFFF;
+            border: 1.8px solid #ffffff;
             border-radius: 50%;
             opacity: 0.08;
           }
@@ -122,7 +138,7 @@
           font-size: 13px;
           line-height: 19px;
           text-align: center;
-          color: #FFFFFF;
+          color: #ffffff;
           opacity: 0.8;
         }
       }

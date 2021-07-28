@@ -13,17 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Ref } from '@anticrm/core'
-  import { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
+  import type { Ref } from '@anticrm/core'
+  import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
-  import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
-  import { WithFSM } from '@anticrm/fsm'
+  import { fsmPlugin } from '@anticrm/fsm-impl'
+  import type { WithFSM } from '@anticrm/fsm'
   import { getPlugin } from '@anticrm/platform'
   import { PopupItem, PopupMenu } from '@anticrm/ui'
 
   import Float from '../common/Float.svelte'
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let id: Ref<Candidate>
 

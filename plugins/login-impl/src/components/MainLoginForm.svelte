@@ -13,10 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { AnyComponent,ApplicationRoute } from '@anticrm/ui'
+  import { Component,newRouter } from '@anticrm/ui'
   import login from '..'
-  import type { AnyComponent, ApplicationRoute } from '@anticrm/platform-ui'
-  import { newRouter } from '@anticrm/platform-ui'
-  import Component from '@anticrm/platform-ui/src/components/Component.svelte'
 
   let form: ApplicationRoute
   const forms: ApplicationRoute[] = [{ route: 'setting', component: login.component.SettingForm }]

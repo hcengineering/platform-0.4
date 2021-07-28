@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
   import type { AnySvelteComponent, IPopupItem } from '../types'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'

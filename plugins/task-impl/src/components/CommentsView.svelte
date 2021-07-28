@@ -15,11 +15,11 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-  import { Task } from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
-  import chunter from '@anticrm/chunter-impl/src/plugin'
-  import { Comment } from '@anticrm/chunter'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import { chunterIds as chunter } from '@anticrm/chunter-impl'
+  import type { Comment } from '@anticrm/chunter'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>

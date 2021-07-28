@@ -21,6 +21,11 @@ import ChannelView from './components/ChannelView.svelte'
 import ThreadsView from './components/ThreadsView.svelte'
 import chunter from './plugin'
 
+export { default as Channel } from './components/Channel.svelte'
+export { default as ReferenceInput } from './components/ReferenceInput.svelte'
+
+export { ThreadsView, ChannelView }
+
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
   setResource(chunter.component.ChannelView, ChannelView)
@@ -28,3 +33,5 @@ export default async (): Promise<ChunterService> => {
 
   return {}
 }
+
+export { chunter as chunterIds }

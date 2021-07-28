@@ -16,14 +16,15 @@
   import { createEventDispatcher } from 'svelte'
   import ui, { EditBox, Dialog, UserBox, DatePicker } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
+  import type { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Account, Ref, Space, generateId, Timestamp } from '@anticrm/core'
+  import core, { generateId } from '@anticrm/core'
+  import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
-  import chunter from '@anticrm/chunter-impl/src/plugin'
-  import { Comment } from '@anticrm/chunter'
+  import { chunterIds as chunter } from '@anticrm/chunter-impl'
+  import type { Comment } from '@anticrm/chunter'
 
   const dispatch = createEventDispatcher()
 

@@ -6,7 +6,8 @@
     "lint-diff": "./common/scripts/each-diff.sh rushx lint",
     "lint-diff:fix": "./common/scripts/each-diff.sh rushx lint:fix",
     "format-diff": "./common/scripts/each-diff.sh rushx format",
-    "dev": "cd ./dev/prod/ && rushx dev"
+    "dev": "cd ./dev/prod/ && rushx dev",
+    "clean-logs": "git status --ignored | grep build.log | xargs rm"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0"

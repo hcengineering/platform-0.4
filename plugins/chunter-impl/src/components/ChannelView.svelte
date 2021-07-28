@@ -14,8 +14,8 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import { Message, Message as MessageModel } from '@anticrm/chunter'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { Message, Message as MessageModel } from '@anticrm/chunter'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'

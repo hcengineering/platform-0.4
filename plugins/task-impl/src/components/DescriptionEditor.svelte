@@ -13,11 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { DocumentQuery, Title } from '@anticrm/core'
-  import { IntlString } from '@anticrm/status'
+  import core from '@anticrm/core'
+  import type { DocumentQuery, Title } from '@anticrm/core'
+  import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
-  import { CompletionItem, MDRefEditor, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import { MDRefEditor } from '@anticrm/ui'
+  import type { CompletionItem, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let lines = 10
   export let value: string = ''

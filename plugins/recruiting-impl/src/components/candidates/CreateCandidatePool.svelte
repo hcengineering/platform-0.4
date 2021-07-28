@@ -13,10 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Doc } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Doc } from '@anticrm/core'
   import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CandidatePoolSpace } from '@anticrm/recruiting'
+  import type { CandidatePoolSpace } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
 
