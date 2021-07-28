@@ -4,5 +4,5 @@
 </script>
 
 <svg width={size} height={size} {fill} xmlns="http://www.w3.org/2000/svg">
-  <path d="M7.8,7.2L4,11h7.7L7.8,7.2z"/>
+  <path d="M7.8,7.2L4,11h7.7L7.8,7.2z" />
 </svg>
