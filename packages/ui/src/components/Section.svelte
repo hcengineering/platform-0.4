@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/platform'
   import type { AnySvelteComponent } from '../types'
@@ -26,16 +25,20 @@
   export let closed: boolean = false
 </script>
 
-<div class="section-container" class:topLine={topLine}
+<div
+  class="section-container"
+  class:topLine
   on:click|preventDefault={() => {
     closed = !closed
   }}
 >
   <svelte:component this={icon} size={20} />
   <div class="title"><Label {label} /></div>
-  <div class="arrow">{#if closed}<ArrowUp />{:else}<ArrowDown />{/if}</div>
+  <div class="arrow">
+    {#if closed}<ArrowUp />{:else}<ArrowDown />{/if}
+  </div>
 </div>
-{#if !closed}<div class="section-content"><slot/></div>{/if}
+{#if !closed}<div class="section-content"><slot /></div>{/if}
 
 <style lang="scss">
   .section-container {
