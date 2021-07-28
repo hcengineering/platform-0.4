@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { VacancySpace } from '@anticrm/recruiting'
+  import type { VacancySpace } from '@anticrm/recruiting'
   import { ScrollBox } from '@anticrm/ui'
 
   import List from '../icons/List.svelte'

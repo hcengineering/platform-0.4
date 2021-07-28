@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { ActionIcon, CheckBox, EditBox, Label, IconAdd } from '@anticrm/ui'
-  import { CheckListItem } from '@anticrm/task'
+  import type { CheckListItem } from '@anticrm/task'
   import task from '../plugin'
 
   export let items: Array<CheckListItem>

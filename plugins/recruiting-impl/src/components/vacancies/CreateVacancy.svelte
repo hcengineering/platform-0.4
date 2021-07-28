@@ -13,16 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Doc } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Doc } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { VacancySpace } from '@anticrm/recruiting'
-  import { FSM } from '@anticrm/fsm'
-  import fsmPlugin from '@anticrm/fsm-impl/src/plugin'
+  import type { VacancySpace } from '@anticrm/recruiting'
+  import type { FSM } from '@anticrm/fsm'
+  import { fsmPlugin } from '@anticrm/fsm-impl'
 
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
   let selectedFSM: FSM | undefined = undefined

@@ -19,9 +19,10 @@
   import Add from './icons/Add.svelte'
   import Star from './icons/Star.svelte'
 
-  import { getClient, NavigatorModel, showModal } from '@anticrm/workbench'
+  import { getClient, showModal } from '@anticrm/workbench'
+  import type { NavigatorModel } from '@anticrm/workbench'
   import core from '@anticrm/core'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: Ref<Space> | undefined
   export let model: NavigatorModel | undefined

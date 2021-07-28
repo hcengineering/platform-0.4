@@ -14,10 +14,10 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { Doc, Ref, Space } from '@anticrm/core'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import { EditBox, Dialog, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { Candidate, Resume } from '@anticrm/recruiting'
+  import type { Candidate, Resume } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
 

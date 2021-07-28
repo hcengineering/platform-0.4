@@ -13,13 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Ref } from '@anticrm/core'
+  import type { Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
-  import { Applicant, Candidate } from '@anticrm/recruiting'
+  import type { Applicant, Candidate } from '@anticrm/recruiting'
 
   import recruiting from '../../plugin'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let doc: Applicant
   let candidate: Candidate | undefined

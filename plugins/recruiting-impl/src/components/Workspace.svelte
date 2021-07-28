@@ -13,10 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Ref, Space } from '@anticrm/core'
-  import { CandidatePoolSpace, VacancySpace } from '@anticrm/recruiting'
+  import core from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
+  import type { CandidatePoolSpace, VacancySpace } from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   import plugin from '../plugin'
 

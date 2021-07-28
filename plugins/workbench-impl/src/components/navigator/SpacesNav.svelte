@@ -13,14 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Ref, Space } from '@anticrm/core'
-  import { Action, getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
-  import { getClient, showModal, SpacesNavModel } from '@anticrm/workbench'
+  import type { Ref, Space } from '@anticrm/core'
+  import { getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
+  import type { Action } from '@anticrm/ui'
+  import { getClient, showModal } from '@anticrm/workbench'
+  import type { SpacesNavModel } from '@anticrm/workbench'
   import workbench from '../../plugin'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
   import Search from '../icons/Search.svelte'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let model: SpacesNavModel
 

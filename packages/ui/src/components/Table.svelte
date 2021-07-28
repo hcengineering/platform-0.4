@@ -16,7 +16,7 @@
   import { createEventDispatcher } from 'svelte'
   import type { IntlString } from '@anticrm/status'
 
-  import { AnySvelteComponent } from '../types'
+  import type { AnySvelteComponent } from '../types'
   import Label from './Label.svelte'
 
   interface Cell {

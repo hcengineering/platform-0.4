@@ -13,17 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import {
-    createTextTransform,
-    EditorActions,
-    EditorContentEvent,
-    MessageEditor,
-    FindFunction
-  } from '@anticrm/richeditor'
-  import { schema } from '@anticrm/richeditor/src/internal/schema'
-  import { IntlString } from '@anticrm/status'
-  import { MessageNode, newMessageDocument, parseMessage, serializeMessage } from '@anticrm/text'
-  import { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
+  import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
+  import type { EditorActions, EditorContentEvent, FindFunction } from '@anticrm/richeditor'
+  import { schema } from '@anticrm/richeditor'
+  import type { IntlString } from '@anticrm/status'
+  import type { MessageNode } from '@anticrm/text'
+  import { newMessageDocument, parseMessage, serializeMessage } from '@anticrm/text'
+  import type { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
   import CompletionPopup from './CompletionPopup.svelte'
   import { createEventDispatcher } from 'svelte'
   import Label from './Label.svelte'

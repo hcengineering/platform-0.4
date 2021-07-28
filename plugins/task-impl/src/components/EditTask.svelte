@@ -15,14 +15,15 @@
 <script lang="ts">
   import { getCurrentLocation, Label, Progress, navigate, UserBox, ScrollBox, IconClose } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { CheckListItem, Task } from '@anticrm/task'
+  import type { CheckListItem, Task } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Account, Ref } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import TaskStatus from './TaskStatus.svelte'
   import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { CommentRef, WithMessage } from '@anticrm/chunter'
+  import type { CommentRef, WithMessage } from '@anticrm/chunter'
   import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
@@ -21,10 +21,18 @@
   import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import core, { Account, Ref } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import type { Account, Ref, Timestamp } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
-  export let message: WithMessage
+  interface MessageData {
+    _id: Ref<WithMessage>
+    message: string
+    modifiedOn: Timestamp
+    modifiedBy: Ref<Account>
+  }
+
+  export let message: MessageData
   export let thread: boolean = false
 
   let replies: number = 0
@@ -54,9 +62,9 @@
 
 {#await getUser() then user}
   <div class="message-container" on:click={onClick}>
-    <div class="avatar"><img src={user.avatar} alt="Avatar" /></div>
+    <div class="avatar"><img src={user?.avatar ?? ''} alt="Avatar" /></div>
     <div class="message">
-      <div class="header">{user.name}<span>{message.modifiedOn}</span></div>
+      <div class="header">{user?.name ?? ''}<span>{message.modifiedOn}</span></div>
       <div class="text">
         <MarkdownViewer message={message.message} />
       </div>
@@ -97,6 +105,10 @@
       border-radius: 50%;
       user-select: none;
       overflow: hidden;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
     }
 
     .message {

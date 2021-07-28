@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Class, Ref, Space } from '@anticrm/core'
-  import { Task } from '@anticrm/task'
+  import type { Class, Ref, Space } from '@anticrm/core'
+  import type { Task } from '@anticrm/task'
   import { getClient } from '@anticrm/workbench'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   import Card from './Card.svelte'
 
