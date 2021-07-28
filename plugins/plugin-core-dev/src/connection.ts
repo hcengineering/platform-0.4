@@ -35,11 +35,7 @@ import copy from 'fast-copy'
 
 export class ClientImpl extends TxProcessor implements Client {
   handler: (tx: Tx) => void = () => {}
-  constructor (
-    readonly hierarchy: Hierarchy,
-    readonly model: ModelDb,
-    readonly transactions: TxDb
-  ) {
+  constructor (readonly hierarchy: Hierarchy, readonly model: ModelDb, readonly transactions: TxDb) {
     super()
   }
 

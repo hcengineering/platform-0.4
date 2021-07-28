@@ -34,13 +34,16 @@ export default async (): Promise<CoreService> => {
 
       const clientImpl = await ClientImpl.create()
 
-      const storage = await createClient(async (handler) => { 
-        clientImpl.handler = handler; 
-        return clientImpl 
-      }, (tx) => {
-        clientImpl.model.tx(tx)
-        liveQuery?.notifyTx(tx).catch((err) => console.error(err))
-      })
+      const storage = await createClient(
+        async (handler) => {
+          clientImpl.handler = handler
+          return clientImpl
+        },
+        (tx) => {
+          void clientImpl.model.tx(tx) // eslint-disable-line no-void
+          liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+        }
+      )
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)

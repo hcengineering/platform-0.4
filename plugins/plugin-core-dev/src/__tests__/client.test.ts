@@ -26,7 +26,7 @@ describe('client', () => {
   })
 
   it('should create client', async () => {
-    const client =  await ClientImpl.create()
+    const client = await ClientImpl.create()
     const txes = builder.getTxes()
     const result = await client.findAll(core.class.Class, {})
     const expected = txes
