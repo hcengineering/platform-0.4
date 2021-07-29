@@ -48,9 +48,12 @@ export { default as CompletionPopup } from './components/CompletionPopup.svelte'
 export { default as Table } from './components/Table.svelte'
 export { default as Kanban } from './components/kanban/Kanban.svelte'
 export { default as DatePicker } from './components/DatePicker.svelte'
+export { default as Section } from './components/Section.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconClose } from './components/icons/Close.svelte'
+export { default as IconFile } from './components/icons/File.svelte'
+export { default as IconComments } from './components/icons/Comments.svelte'
 
 export { default as MessageViewer } from './components/text/MessageViewer.svelte'
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
