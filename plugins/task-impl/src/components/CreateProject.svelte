@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Dialog, TextArea, ToggleWithLabel } from '@anticrm/ui'
+  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, Grid, Row } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
@@ -36,28 +36,17 @@
 </script>
 
 <Dialog label={task.string.CreateProject} okLabel={task.string.CreateProject} okAction={createProject} on:close>
-  <div class="content">
-    <div class="row"><EditBox label={task.string.ProjectName} bind:value={name} /></div>
-    <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description} /></div>
-    <div class="row">
-      <ToggleWithLabel
-        label={task.string.MakePrivate}
-        description={task.string.MakePrivateDescription}
-        bind:on={isPrivate}
-      />
-    </div>
-  </div>
+    <Section icon={IconFile} label={'General Information'}>
+      <Grid column={1}>
+        <EditBox label={task.string.ProjectName} bind:value={name} />
+        <TextArea label={task.string.ProjectDescription} bind:value={description} />
+        <ToggleWithLabel
+          label={task.string.MakePrivate}
+          description={task.string.MakePrivateDescription}
+          bind:on={isPrivate}
+        />
+      </Grid>
+    </Section>
+    <Section icon={IconComments} label={'Project Members'} closed>
+    </Section>
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-
-    .row {
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-  }
-</style>

@@ -12,118 +12,70 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
   export let label: IntlString | undefined = undefined
   export let width: string | undefined = undefined
+  export let height: string | undefined = undefined
   export let value: string | undefined = undefined
   export let id: string | undefined = undefined
   export let lines: number = 5
-
-  let divTA: HTMLElement
-  let textArea: HTMLTextAreaElement
-  const scroll = () => {
-    if (textArea.scrollTop < 1) divTA.classList.remove('topTAFade')
-    else divTA.classList.add('topTAFade')
-    if (textArea.scrollTop + textArea.clientHeight >= textArea.scrollHeight) divTA.classList.remove('bottomTAFade')
-    else divTA.classList.add('bottomTAFade')
-  }
+  export let placeholder: string | undefined = 'Start typing...'
 </script>
 
-<div class="textArea" bind:this={divTA} style={width ? 'width: ' + width : ''}>
+<div class="textarea" style="{width ? `width: ${width}px;` : ''} {height ? `height: ${height}px;` : ''}">
+  {#if label}<div class="label"><Label label={label} /></div>{/if}
   <textarea
-    class:nolabel={!label}
     {id}
     rows={lines}
     bind:value
     on:keyup
-    placeholder=" "
-    bind:this={textArea}
-    on:scroll={scroll}
+    {placeholder}
   />
-  {#if label}
-    <div class="label"><Label {label} /></div>
-  {/if}
 </div>
 
 <style lang="scss">
-  .textArea {
-    position: relative;
+  .textarea {
     display: flex;
     flex-direction: column;
-    padding: 0;
-    font-family: inherit;
     min-width: 50px;
-    min-height: 106px;
-    background-color: var(--theme-bg-accent-color);
-    border: 1px solid var(--theme-bg-accent-hover);
-    border-radius: 12px;
-    &:focus-within {
-      background-color: var(--theme-bg-focused-color);
-      border-color: var(--theme-bg-focused-border);
-    }
-    textarea {
-      overflow-y: scroll;
-      position: relative;
-      height: 70px;
-      margin: 0;
-      margin: 26px 20px 0;
-      padding: 0px;
-      font-family: inherit;
-      font-size: 14px;
-      line-height: 17px;
-      color: var(--theme-caption-color);
-      background-color: transparent;
-      outline: none;
-      border: none;
-      resize: none;
-    }
-    .nolabel {
-      padding-top: 0;
-    }
+    min-height: 36px;
 
     .label {
-      position: absolute;
-      top: 18px;
-      left: 20px;
+      margin-bottom: 4px;
       font-size: 12px;
-      line-height: 14px;
+      font-weight: 500;
       color: var(--theme-caption-color);
+      opacity: .8;
       pointer-events: none;
-      opacity: 0.3;
-      transition: all 200ms;
       user-select: none;
     }
-    textarea:focus + .label,
-    textarea:not(:placeholder-shown) + .label {
-      top: 10px;
-    }
-  }
 
-  :global(.topTAFade::before),
-  :global(.bottomTAFade::after) {
-    content: '';
-    position: absolute;
-    left: 20px;
-    width: calc(100% - 40px);
-    height: 20px;
-    background-color: var(--theme-button-bg-enabled);
-    pointer-events: none;
-  }
-  :global(.topTAFade:focus-within::before),
-  :global(.bottomTAFade:focus-within::after) {
-    background-color: var(--theme-button-bg-focused);
-  }
-  :global(.topTAFade::before) {
-    top: 24px;
-    z-index: 15;
-    mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-  }
-  :global(.bottomTAFade::after) {
-    bottom: 6px;
-    z-index: 15;
-    mask-image: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    textarea {
+      width: auto;
+      min-height: 70px;
+      margin: -3px;
+      padding: 2px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 150%;
+      color: var(--theme-caption-color);
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      outline: none;
+      overflow-y: scroll;
+      resize: none;
+
+      &:focus {
+        border-color: var(--primary-button-enabled);
+      }
+      &::placeholder {
+        color: var(--theme-content-dark-color);
+      }
+    }
   }
 </style>

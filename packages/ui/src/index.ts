@@ -49,6 +49,8 @@ export { default as Table } from './components/Table.svelte'
 export { default as Kanban } from './components/kanban/Kanban.svelte'
 export { default as DatePicker } from './components/DatePicker.svelte'
 export { default as Section } from './components/Section.svelte'
+export { default as Grid } from './components/Grid.svelte'
+export { default as Row } from './components/Row.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconClose } from './components/icons/Close.svelte'
