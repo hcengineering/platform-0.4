@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, Grid, Row } from '@anticrm/ui'
+  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, Grid } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
@@ -36,17 +36,16 @@
 </script>
 
 <Dialog label={task.string.CreateProject} okLabel={task.string.CreateProject} okAction={createProject} on:close>
-    <Section icon={IconFile} label={'General Information'}>
-      <Grid column={1}>
-        <EditBox label={task.string.ProjectName} bind:value={name} />
-        <TextArea label={task.string.ProjectDescription} bind:value={description} />
-        <ToggleWithLabel
-          label={task.string.MakePrivate}
-          description={task.string.MakePrivateDescription}
-          bind:on={isPrivate}
-        />
-      </Grid>
-    </Section>
-    <Section icon={IconComments} label={'Project Members'} closed>
-    </Section>
+  <Section icon={IconFile} label={'General Information'}>
+    <Grid column={1}>
+      <EditBox label={task.string.ProjectName} bind:value={name} />
+      <TextArea label={task.string.ProjectDescription} bind:value={description} />
+      <ToggleWithLabel
+        label={task.string.MakePrivate}
+        description={task.string.MakePrivateDescription}
+        bind:on={isPrivate}
+      />
+    </Grid>
+  </Section>
+  <Section icon={IconComments} label={'Project Members'} closed />
 </Dialog>
