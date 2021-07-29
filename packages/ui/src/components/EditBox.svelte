@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
@@ -28,28 +27,47 @@
   let text: HTMLElement
   let input: HTMLInputElement
 
-  function computeSize(t: EventTarget | null) {
+  function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
     const value = target.value
     text.innerHTML = (value === '' ? placeholder : value).replaceAll(' ', '&nbsp;')
     target.style.width = text.clientWidth + 6 + 'px'
   }
 
-  onMount(() => { computeSize(input) })
+  onMount(() => {
+    computeSize(input)
+  })
 </script>
 
-<div class="editbox" style="{width ? 'width: ' + width : ''}">
-  <div class="text" bind:this={text}></div>
-  {#if label}<div class="label"><Label label={label}/></div>{/if}
+<div class="editbox" style={width ? 'width: ' + width : ''}>
+  <div class="text" bind:this={text} />
+  {#if label}<div class="label"><Label {label} /></div>{/if}
   {#if password}
-    <input bind:this={input} type="password" {id} bind:value {placeholder} on:change on:keyup on:input={(ev) => ev.target && computeSize(ev.target)}/>
+    <input
+      bind:this={input}
+      type="password"
+      {id}
+      bind:value
+      {placeholder}
+      on:change
+      on:keyup
+      on:input={(ev) => ev.target && computeSize(ev.target)}
+    />
   {:else}
-    <input bind:this={input} type="text" {id} bind:value {placeholder} on:change on:keyup on:input={(ev) => ev.target && computeSize(ev.target)}/>
+    <input
+      bind:this={input}
+      type="text"
+      {id}
+      bind:value
+      {placeholder}
+      on:change
+      on:keyup
+      on:input={(ev) => ev.target && computeSize(ev.target)}
+    />
   {/if}
 </div>
 
 <style lang="scss">
-
   .text {
     position: absolute;
     visibility: hidden;
@@ -65,7 +83,7 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--theme-caption-color);
-      opacity: .8;
+      opacity: 0.8;
       pointer-events: none;
       user-select: none;
     }
@@ -100,7 +118,6 @@
         width: 0;
         margin: 0;
       }
-
     }
   }
 </style>

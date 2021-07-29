@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
@@ -27,14 +26,8 @@
 </script>
 
 <div class="textarea" style="{width ? `width: ${width}px;` : ''} {height ? `height: ${height}px;` : ''}">
-  {#if label}<div class="label"><Label label={label} /></div>{/if}
-  <textarea
-    {id}
-    rows={lines}
-    bind:value
-    on:keyup
-    {placeholder}
-  />
+  {#if label}<div class="label"><Label {label} /></div>{/if}
+  <textarea {id} rows={lines} bind:value on:keyup {placeholder} />
 </div>
 
 <style lang="scss">
@@ -49,7 +42,7 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--theme-caption-color);
-      opacity: .8;
+      opacity: 0.8;
       pointer-events: none;
       user-select: none;
     }
