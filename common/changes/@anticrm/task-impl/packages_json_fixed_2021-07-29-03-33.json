@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "remove ' from format script",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

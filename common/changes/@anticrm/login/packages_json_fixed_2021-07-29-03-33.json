@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login",
+      "comment": "remove ' from format script",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login"
+}

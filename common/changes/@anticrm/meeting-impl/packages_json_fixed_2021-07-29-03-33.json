@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting-impl",
+      "comment": "remove ' from format script",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting-impl"
+}
