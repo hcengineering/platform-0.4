@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "New layout, restyle EditBox and TextArea. Add Grid, Row.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
