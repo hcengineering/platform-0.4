@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, Ref, Space } from '@anticrm/core'
+import type { Account, Class, Doc, Ref, FullRefString, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
@@ -34,7 +34,7 @@ export interface Message extends WithMessage {
 }
 
 export interface Comment extends WithMessage {
-  replyOf: Ref<Doc>
+  replyOf: FullRefString
 }
 
 export interface ChunterService extends Service {}

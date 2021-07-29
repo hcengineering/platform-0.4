@@ -68,6 +68,14 @@ export class MemDb extends TxProcessor implements Storage {
     return result
   }
 
+  getObjectByIdAndClass<T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>): T {
+    const doc = this.getObject(_id)
+    if (!this.hierarchy.isDerived(doc._class, _class)) {
+      throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
+    }
+    return doc
+  }
+
   getObject<T extends Doc>(_id: Ref<T>): T {
     const doc = this.objectById.get(_id)
     if (doc === undefined) {
@@ -147,7 +155,7 @@ export class ModelDb extends MemDb implements Storage {
   }
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
-    const doc = this.getObject(tx.objectId) as any
+    const doc = this.getObjectByIdAndClass(tx.objectId, tx.objectClass) as any
     const ops = tx.operations as any
     for (const key in ops) {
       if (key.startsWith('$')) {

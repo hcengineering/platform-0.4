@@ -33,6 +33,7 @@ import {
   TxRemoveDoc,
   TxUpdateDoc
 } from '@anticrm/core'
+import copy from 'fast-copy'
 
 interface Query {
   _id: string
@@ -112,8 +113,9 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     }
     this.queries.set(q._id, q)
     result
-      .then((result) => {
-        q.callback(result)
+      .then((res) => {
+        q.result = copy(res)
+        q.callback(res)
       })
       .catch((err) => {
         console.log('failed to update Live Query: ', err)
@@ -127,7 +129,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
-        q.result = await q.result
+        q.result = copy(await q.result)
       }
       const updatedDoc = q.result.find((p) => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
@@ -143,7 +145,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       const doc = TxProcessor.createDoc2Doc(tx)
       if (this.match(q, doc)) {
         if (q.result instanceof Promise) {
-          q.result = await q.result
+          q.result = copy(await q.result)
         }
         q.result.push(doc)
         q.total++
@@ -164,7 +166,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
-        q.result = await q.result
+        q.result = copy(await q.result)
       }
       const index = q.result.findIndex((p) => p._id === tx.objectId)
       if (index > -1) {
@@ -176,7 +178,6 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
   async tx (tx: Tx): Promise<void> {
     await this.client.tx(tx)
-    await this.notifyTx(tx)
   }
 
   async notifyTx (tx: Tx): Promise<void> {
@@ -225,7 +226,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
     if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
       if (q.result[q.options?.limit]._id === updatedDoc._id) {
-        const res = await this.findAll(q._class, q.query, q.options)
+        const res = copy(await this.findAll(q._class, q.query, q.options))
         q.result = res
         q.total = res.total
         q.callback(res)

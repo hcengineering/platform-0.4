@@ -22,6 +22,14 @@ export type Ref<T extends Doc> = string & { __ref: T }
 /**
  * @public
  */
+export type FullRef<T extends Doc> = { _id: Ref<T> } & Obj
+/**
+ * @public
+ */
+export type FullRefString = string
+/**
+ * @public
+ */
 export type PrimitiveType = number | string | boolean | undefined | Ref<Doc>
 /**
  * @public

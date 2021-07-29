@@ -83,7 +83,6 @@ specifiers:
   '@types/prosemirror-state': ^1.2.6
   '@types/prosemirror-view': ^1.15.0
   '@types/toposort': ^2.0.3
-  '@types/webpack-env': 1.16.2
   '@types/ws': ^7.4.4
   '@typescript-eslint/eslint-plugin': ^4.22.0
   '@typescript-eslint/parser': ^4.22.0
@@ -179,7 +178,7 @@ dependencies:
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.0
   '@rush-temp/node-client': file:projects/node-client.tgz
   '@rush-temp/platform': file:projects/platform.tgz
-  '@rush-temp/platform-rig': file:projects/platform-rig.tgz_svelte@3.38.2+webpack-cli@4.7.0
+  '@rush-temp/platform-rig': file:projects/platform-rig.tgz_svelte@3.38.2
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz_a1ef5cd65bd5afee7099301696a9e3c1
   '@rush-temp/plugin-core-impl': file:projects/plugin-core-impl.tgz_ts-node@10.0.0
@@ -232,7 +231,6 @@ dependencies:
   '@types/prosemirror-state': 1.2.6
   '@types/prosemirror-view': 1.17.1
   '@types/toposort': 2.0.3
-  '@types/webpack-env': 1.16.2
   '@types/ws': 7.4.4
   '@typescript-eslint/eslint-plugin': 4.23.0_c719f97a60c87a6d25fa50062da69697
   '@typescript-eslint/parser': 4.23.0_eslint@7.28.0+typescript@4.3.2
@@ -1853,10 +1851,6 @@ packages:
 
   /@types/toposort/2.0.3:
     resolution: {integrity: sha512-jRtyvEu0Na/sy0oIxBW0f6wPQjidgVqlmCTJVHEGTNEUdL1f0YSvdPzHY7nX7MUWAZS6zcAa0KkqofHjy/xDZQ==}
-    dev: false
-
-  /@types/webpack-env/1.16.2:
-    resolution: {integrity: sha512-vKx7WNQNZDyJveYcHAm9ZxhqSGLYwoyLhrHjLBOkw3a7cT76sTdjgtwyijhk1MaHyRIuSztcVwrUOO/NEu68Dw==}
     dev: false
 
   /@types/ws/7.4.4:
@@ -12456,8 +12450,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/platform-rig.tgz_svelte@3.38.2+webpack-cli@4.7.0:
-    resolution: {integrity: sha512-wd1RtaGaUtgeE7uHy2B88XDohai06EI2Wfg2HcW2pHYJftzQcd5AgkjzHR2Ry5/DHEtI0tWmSxCsIEV/4DQFYQ==, tarball: file:projects/platform-rig.tgz}
+  file:projects/platform-rig.tgz_svelte@3.38.2:
+    resolution: {integrity: sha512-1b2yFNeVB6kypOG9+43vp7W7H+q9qCRCYNnbmIO4bo7LvucasLRBwrNMOaFRlfIP2NHTae2qnLU2RHrq1SpREw==, tarball: file:projects/platform-rig.tgz}
     id: file:projects/platform-rig.tgz
     name: '@rush-temp/platform-rig'
     version: 0.0.0
@@ -12466,8 +12460,6 @@ packages:
       '@rushstack/heft': 0.34.8
       '@rushstack/heft-jest-plugin': 0.1.14_@rushstack+heft@0.34.8
       '@rushstack/heft-node-rig': 1.1.13_@rushstack+heft@0.34.8
-      '@rushstack/heft-webpack5-plugin': 0.1.38_6a5411e336fbc7f6a8677e5762e38f3f
-      '@types/webpack-env': 1.16.2
       '@typescript-eslint/eslint-plugin': 4.23.0_3e59fa93946596f232b893f08bee57ea
       '@typescript-eslint/parser': 4.23.0_eslint@7.30.0+typescript@4.3.5
       eslint: 7.30.0
@@ -12484,7 +12476,6 @@ packages:
       - supports-color
       - svelte
       - utf-8-validate
-      - webpack-cli
     dev: false
 
   file:projects/platform.tgz:
@@ -12666,7 +12657,7 @@ packages:
     dev: false
 
   file:projects/query.tgz:
-    resolution: {integrity: sha512-gpLNdcYSDwrLozmODxMwZhrnRCIsoHVXa3i5rANmmS6BpfpQQr8Yi19si69HvkvZU8mpxQI8jWyLy/oy+Kgfwg==, tarball: file:projects/query.tgz}
+    resolution: {integrity: sha512-9vhRuzQwfT9/ArwQ/9XQyRW/efSaUFNK/kNQFsyoLVDdI8tIlC/cbSCFedj716lAJZ/6jM7IKeMDH7dHXI48ag==, tarball: file:projects/query.tgz}
     name: '@rush-temp/query'
     version: 0.0.0
     dependencies:
@@ -12681,6 +12672,7 @@ packages:
       eslint-plugin-import: 2.23.1_eslint@7.30.0
       eslint-plugin-node: 11.1.0_eslint@7.30.0
       eslint-plugin-promise: 5.1.0_eslint@7.30.0
+      fast-copy: 2.1.1
       prettier: 2.3.1
       typescript: 4.3.5
     transitivePeerDependencies:
