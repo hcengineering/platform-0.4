@@ -13,6 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { getFullRef } from '@anticrm/core'
   import type { Message as MessageModel, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
@@ -33,9 +34,14 @@
 
   let comments: Comment[] = []
   $: {
-    query = client.query(query, chunter.class.Comment, { replyOf: message._id }, (result) => {
-      comments = result
-    })
+    query = client.query(
+      query,
+      chunter.class.Comment,
+      { replyOf: getFullRef(message._id, message._class) },
+      (result) => {
+        comments = result
+      }
+    )
   }
 </script>
 

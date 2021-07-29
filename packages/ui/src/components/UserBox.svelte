@@ -31,8 +31,6 @@
   export let selected: Ref<Account> | undefined
   export let users: Account[] = []
 
-  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
-  export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let showSearch: boolean = false
   const dispatch = createEventDispatcher()

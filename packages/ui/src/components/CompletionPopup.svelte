@@ -84,6 +84,7 @@
     <!-- scrollPosition={selOffset} -->
     <div bind:this={listElement}>
       {#each items as item (item.key)}
+        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
         <div
           class="item"
           class:selected={item.key === selection.key}

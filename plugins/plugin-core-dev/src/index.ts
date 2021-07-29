@@ -17,7 +17,7 @@ import type { TxOperations } from '@anticrm/core'
 import core, { createClient, withOperations } from '@anticrm/core'
 import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
-import { connect } from './connection'
+import { ClientImpl } from './connection'
 
 /*!
  * Anticrm Platform™ Workbench Plugin
@@ -32,9 +32,18 @@ export default async (): Promise<CoreService> => {
       // eslint-disable-next-line prefer-const
       let liveQuery: LiveQuery | undefined
 
-      const storage = await createClient(connect, (tx) => {
-        liveQuery?.notifyTx(tx).catch((err) => console.error(err))
-      })
+      const clientImpl = await ClientImpl.create()
+
+      const storage = await createClient(
+        async (handler) => {
+          clientImpl.handler = handler
+          return clientImpl
+        },
+        (tx) => {
+          void clientImpl.model.tx(tx) // eslint-disable-line no-void
+          liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+        }
+      )
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)

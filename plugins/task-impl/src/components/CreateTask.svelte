@@ -18,7 +18,7 @@
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { generateId } from '@anticrm/core'
+  import core, { generateId, getFullRef } from '@anticrm/core'
   import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CheckList from './CheckList.svelte'
@@ -85,7 +85,7 @@
     for (const comment of comments) {
       await client.createDoc(chunter.class.Comment, space, {
         message: comment.message,
-        replyOf: id
+        replyOf: getFullRef(id, task.class.Task)
       })
     }
   }

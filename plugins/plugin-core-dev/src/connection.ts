@@ -16,28 +16,32 @@
 import core, {
   Account,
   Class,
+  Client,
   Doc,
   DocumentQuery,
   DOMAIN_TX,
   FindResult,
   Hierarchy,
   ModelDb,
+  Obj,
   Ref,
   Storage,
   Tx,
   TxDb,
-  WithAccountId
+  TxProcessor
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import copy from 'fast-copy'
 
-class ClientImpl implements WithAccountId {
-  constructor (
-    readonly hierarchy: Hierarchy,
-    readonly model: ModelDb,
-    readonly transactions: TxDb,
-    readonly handler: (tx: Tx) => void
-  ) {}
+export class ClientImpl extends TxProcessor implements Client {
+  handler: (tx: Tx) => void = () => {}
+  constructor (readonly hierarchy: Hierarchy, readonly model: ModelDb, readonly transactions: TxDb) {
+    super()
+  }
+
+  isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
+    return this.hierarchy.isDerived(_class, from)
+  }
 
   static createDerivedDataStorage (storage: Storage, sendTo: (tx: Tx) => void): Storage {
     // Send derived data produced objects to clients.
@@ -52,7 +56,7 @@ class ClientImpl implements WithAccountId {
     }
   }
 
-  static async create (handler: (tx: Tx) => void): Promise<ClientImpl> {
+  static async create (): Promise<ClientImpl> {
     const txes = builder.getTxes()
 
     const hierarchy = new Hierarchy()
@@ -72,7 +76,7 @@ class ClientImpl implements WithAccountId {
       // Print model only from browser console.
       console.info('Model Build complete', model)
     }
-    return new ClientImpl(hierarchy, model, transactions, handler)
+    return new ClientImpl(hierarchy, model, transactions)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
@@ -82,9 +86,6 @@ class ClientImpl implements WithAccountId {
   }
 
   async tx (tx: Tx): Promise<void> {
-    // 1. We go into model it will check for potential errors and will reject before transaction will be stored.
-    await this.model.tx(tx)
-
     // 2. update hierarchy
     if (tx.objectSpace === core.space.Model) {
       this.hierarchy.tx(tx)
@@ -104,8 +105,4 @@ class ClientImpl implements WithAccountId {
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
   }
-}
-
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
-  return await ClientImpl.create(handler)
 }

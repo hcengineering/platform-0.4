@@ -1,4 +1,4 @@
-import core, { Account, DerivedDataDescriptor, Doc, generateId, Ref, ShortRef } from '@anticrm/core'
+import core, { Account, DerivedDataDescriptor, Doc, generateId, getFullRef, Ref, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
@@ -70,7 +70,7 @@ export function demoTask (builder: Builder): void {
         chunter.class.Comment,
         {
           message: faker.lorem.paragraphs(3),
-          replyOf: id
+          replyOf: getFullRef(id, task.class.Task)
         },
         commentId,
         {
