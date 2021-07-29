@@ -15,6 +15,14 @@
     "Progress": "Progress",
     "AddCheckItem": "Add check item",
     "CheckItems": "Check items",
-    "ProjectMembers": "Project members"
+    "ProjectMembers": "Project members",
+    "GeneralInformation": "General Information",
+    "IviteMember": "Ivite a member",
+    "General": "General",
+    "Attachment": "Attachment",
+    "ToDos": "To Do's",
+    "Due": "Due",
+    "PickDue": "Pick due date",
+    "Comments": "Comments"
   }
 }

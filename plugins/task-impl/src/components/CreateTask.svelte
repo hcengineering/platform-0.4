@@ -14,9 +14,10 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox, DatePicker } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { CheckListItem, Task, TaskStatuses } from '@anticrm/task'
+  import type { CheckListItem, Task } from '@anticrm/task'
+  import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
   import core, { generateId } from '@anticrm/core'
   import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
@@ -25,6 +26,7 @@
   import Comments from './Comments.svelte'
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
+  import type { IntlString } from '@anticrm/status'
 
   const dispatch = createEventDispatcher()
 
@@ -34,6 +36,7 @@
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
   let comments: Message[] = []
+  let dueTo: Date
   const id = generateId() as Ref<Task>
 
   const client = getClient()
@@ -76,6 +79,7 @@
         description,
         checkItems,
         shortRefId,
+        dueTo,
         status: TaskStatuses.Open,
         comments: []
       },
@@ -89,6 +93,9 @@
       })
     }
   }
+
+  const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
+  let selectedTab: IntlString = task.string.General
 </script>
 
 <Dialog
@@ -100,26 +107,45 @@
     dispatch('close')
   }}
 >
-  <div class="content">
-    <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
-    <div class="row"><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></div>
-    {#await getProjectMembers() then users}
-      <div class="row">
-        <UserBox
-          hAlign={'right'}
-          bind:selected={assignee}
-          {users}
-          caption={task.string.ProjectMembers}
-          title={task.string.Assignee}
-          label={task.string.AssignTask}
-          showSearch
-        />
+  <Tabs {tabs} bind:selected={selectedTab} />
+  {#if selectedTab === task.string.General}
+    <Section label={task.string.GeneralInformation} icon={IconFile}>
+      <div class="content">
+        <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
+        <div class="row">
+          <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
+        </div>
+        <div class="row">
+          {#await getProjectMembers() then users}
+            <UserBox
+              bind:selected={assignee}
+              {users}
+              caption={task.string.ProjectMembers}
+              title={task.string.Assignee}
+              label={task.string.AssignTask}
+              showSearch
+            />
+          {/await}
+        </div>
+        <div class="row">
+          <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
+        </div>
       </div>
-    {/await}
-    <DatePicker hAlign={'center'} title={'Pick due date'} />
-    <div class="row"><CheckList bind:items={checkItems} /></div>
-    <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
-  </div>
+    </Section>
+    <Section label={task.string.Comments} icon={IconComments} topLine>
+      <div class="content">
+        <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
+      </div>
+    </Section>
+  {:else if selectedTab === task.string.Attachment}
+    <div class="content" />
+  {:else}
+    <Section label={task.string.ToDos} icon={IconComments} topLine>
+      <div class="content">
+        <div class="row"><CheckList bind:items={checkItems} /></div>
+      </div>
+    </Section>
+  {/if}
 </Dialog>
 
 <style lang="scss">

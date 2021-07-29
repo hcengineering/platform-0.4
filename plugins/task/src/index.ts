@@ -38,6 +38,7 @@ export interface Task extends Doc {
   assignee?: Ref<Account>
   status: TaskStatus
   checkItems: CheckListItem[]
+  dueTo: Date
   comments: Array<Ref<Comment>>
 }
 
@@ -75,7 +76,15 @@ export default plugin(
       Progress: '' as IntlString,
       AddCheckItem: '' as IntlString,
       CheckItems: '' as IntlString,
-      ProjectMembers: '' as IntlString
+      ProjectMembers: '' as IntlString,
+      GeneralInformation: '' as IntlString,
+      IviteMember: '' as IntlString,
+      General: '' as IntlString,
+      Attachment: '' as IntlString,
+      ToDos: '' as IntlString,
+      Due: '' as IntlString,
+      PickDue: '' as IntlString,
+      Comments: '' as IntlString
     }
   }
 )

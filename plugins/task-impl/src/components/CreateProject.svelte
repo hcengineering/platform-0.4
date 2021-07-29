@@ -13,15 +13,24 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Dialog, TextArea, ToggleWithLabel } from '@anticrm/ui'
+  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, UserBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
   import core from '@anticrm/core'
+  import type { Account, Ref } from '@anticrm/core'
 
   let name: string = ''
   let description: string = ''
   let isPrivate: boolean = false
+  let members: Ref<Account>[] = []
+  let users: Account[] = []
+  let newMember: Ref<Account> | undefined
+  $: if (newMember !== undefined) {
+    members.push(newMember)
+    members = members
+    newMember = undefined
+  }
 
   const client = getClient()
 
@@ -30,23 +39,70 @@
       name,
       description,
       private: isPrivate,
-      members: [client.accountId()]
+      members: members
     })
+  }
+
+  function filterMembers (): void {
+    members = members.filter((m) => m !== undefined)
+  }
+
+  function getAvaibleMembers (members: Ref<Account>[], member?: Ref<Account>): Account[] {
+    return member === undefined
+      ? users.filter((p) => !members.includes(p._id))
+      : users.filter((p) => !members.includes(p._id) || member === p._id)
+  }
+
+  async function getUsers (): Promise<void> {
+    users = await client.findAll(core.class.Account, {})
   }
 </script>
 
 <Dialog label={task.string.CreateProject} okLabel={task.string.CreateProject} okAction={createProject} on:close>
-  <div class="content">
-    <div class="row"><EditBox label={task.string.ProjectName} bind:value={name} /></div>
-    <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description} /></div>
-    <div class="row">
-      <ToggleWithLabel
-        label={task.string.MakePrivate}
-        description={task.string.MakePrivateDescription}
-        bind:on={isPrivate}
-      />
+  <Section label={task.string.GeneralInformation} icon={IconFile}>
+    <div class="content">
+      <div class="row"><EditBox label={task.string.ProjectName} bind:value={name} /></div>
+      <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description} /></div>
+      <div class="row">
+        <ToggleWithLabel
+          label={task.string.MakePrivate}
+          description={task.string.MakePrivateDescription}
+          bind:on={isPrivate}
+        />
+      </div>
     </div>
-  </div>
+  </Section>
+  <Section label={task.string.ProjectMembers} icon={IconComments} topLine>
+    {#await getUsers() then users}
+      <div class="content">
+        {#each members as member}
+          <div class="row">
+            <UserBox
+              bind:selected={member}
+              users={getAvaibleMembers(members, member)}
+              title={task.string.IviteMember}
+              label={task.string.IviteMember}
+              showSearch
+              on:change={() => {
+                filterMembers()
+              }}
+            />
+          </div>
+        {/each}
+        {#if getAvaibleMembers(members).length}
+          <div class="row">
+            <UserBox
+              bind:selected={newMember}
+              users={getAvaibleMembers(members)}
+              title={task.string.IviteMember}
+              label={task.string.IviteMember}
+              showSearch
+            />
+          </div>
+        {/if}
+      </div>
+    {/await}
+  </Section>
 </Dialog>
 
 <style lang="scss">
