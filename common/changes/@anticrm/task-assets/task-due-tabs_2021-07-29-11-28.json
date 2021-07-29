@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "add due to task",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets"
+}

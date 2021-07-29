@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "add due to task",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
