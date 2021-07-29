@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "remove ' from format script",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor"
+}

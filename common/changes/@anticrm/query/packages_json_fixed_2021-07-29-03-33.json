@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "remove ' from format script",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query"
+}
