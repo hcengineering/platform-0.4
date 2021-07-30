@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "export escaping",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo"
+}

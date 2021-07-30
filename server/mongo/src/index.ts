@@ -17,6 +17,7 @@ import { MongoClient, MongoClientOptions } from 'mongodb'
 
 export * from './storage'
 export * from './tx'
+export * from './escaping'
 
 const connections = new Map<string, Promise<MongoClient>>()
 

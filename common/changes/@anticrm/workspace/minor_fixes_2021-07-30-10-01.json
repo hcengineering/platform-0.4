@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Fixed init txes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace"
+}

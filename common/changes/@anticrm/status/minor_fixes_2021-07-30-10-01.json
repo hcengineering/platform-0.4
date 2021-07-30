@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/status",
+      "comment": "throw params to errors",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/status"
+}
