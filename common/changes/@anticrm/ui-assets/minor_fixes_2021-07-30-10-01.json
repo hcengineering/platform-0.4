@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Added intlStrings",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets"
+}
