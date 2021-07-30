@@ -1,8 +1,13 @@
 {
   "string": {
-    "Close": "Close",
     "Search": "Search",
+    "Close": "Close",
+    "Undefined": "Undefined",
     "Remove": "Remove",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "Name": "Name",
+    "Description": "Description",
+    "Join": "Join",
+    "Leave": "Leave"
   }
 }
