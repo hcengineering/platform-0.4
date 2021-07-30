@@ -13,20 +13,20 @@
 // limitations under the License.
 //
 
-import core, { createClient, Doc, TxCreateDoc, TxProcessor } from '@anticrm/core'
+import core, { Doc, TxCreateDoc, TxProcessor } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
-import { connect } from '../connection'
+import { ClientImpl } from '../connection'
 
 describe('client', () => {
   it('should create connection', async () => {
-    const conn = await connect(() => {})
+    const conn = await ClientImpl.create()
     const txes = builder.getTxes()
     const result = await conn.findAll(core.class.Tx, {})
     expect(result.length).toEqual(txes.length)
   })
 
   it('should create client', async () => {
-    const client = await createClient(connect)
+    const client = await ClientImpl.create()
     const txes = builder.getTxes()
     const result = await client.findAll(core.class.Class, {})
     const expected = txes

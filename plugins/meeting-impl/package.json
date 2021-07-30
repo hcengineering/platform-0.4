@@ -10,7 +10,7 @@
     "test": "jest --coverage",
     "lint": "echo 'Please enable ts-standard src'",
     "lint:fix": "echo 'Please enable ts-standard --fix src'",
-    "format": "echo 'Please enable prettier --write 'src/**/*.{ts*,js*,yml}' && ts-standard --fix src'"
+    "format": "echo 'Please enable prettier --write src/**/*.{ts*,js*,yml} && ts-standard --fix src'"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.13.4",

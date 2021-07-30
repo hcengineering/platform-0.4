@@ -20,6 +20,7 @@
   import Close from './icons/Close.svelte'
   import Back from './icons/Back.svelte'
   import Forward from './icons/Forward.svelte'
+  import { createEventDispatcher } from 'svelte'
 
   export let title: IntlString
   export let selected: Date = new Date(Date.now())
@@ -55,6 +56,8 @@
       days.push(new Date(view.getFullYear(), view.getMonth(), i).getDay())
     }
   }
+
+  const dispatch = createEventDispatcher()
 </script>
 
 <div class="userBox">
@@ -108,6 +111,7 @@
           style="grid-column: {day + 1}/{day + 2};"
           on:click={() => {
             selected = new Date(view.getFullYear(), view.getMonth(), i + 1)
+            dispatch('change')
             pressed = false
           }}
         >

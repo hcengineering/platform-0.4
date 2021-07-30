@@ -13,17 +13,28 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getCurrentLocation, Label, Progress, navigate, UserBox, ScrollBox, IconClose } from '@anticrm/ui'
+  import {
+    getCurrentLocation,
+    navigate,
+    UserBox,
+    ScrollBox,
+    IconClose,
+    DatePicker,
+    Tabs,
+    Section,
+    IconFile,
+    IconComments
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
   import task from '../plugin'
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import TaskStatus from './TaskStatus.svelte'
   import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import type { IntlString } from '@anticrm/status'
 
   const client = getClient()
 
@@ -33,11 +44,7 @@
   let checkItems: CheckListItem[] = []
   let projectMembers: Account[] = []
   let assignee: Ref<Account> | undefined
-
-  $: progress = {
-    max: checkItems.length,
-    value: checkItems.filter((p) => p.done).length
-  }
+  let dueTo: Date
 
   $: {
     getItem(id)
@@ -51,6 +58,7 @@
       description = item.description
       checkItems = item.checkItems
       assignee = item.assignee
+      dueTo = item.dueTo
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
         projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
@@ -91,42 +99,68 @@
       })
     }
   }
+
+  async function updateDue () {
+    if (item === undefined) return
+    if (item.dueTo !== dueTo) {
+      await client.updateDoc(item._class, item.space, item._id, {
+        dueTo: dueTo
+      })
+    }
+  }
+
+  const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
+  let selectedTab: IntlString = task.string.General
 </script>
 
 {#await getItem(id) then value}
   {#if item}
     <ScrollBox vertical>
       <div class="header">
-        <div class="title"><TaskStatus title={item.status} /></div>
+        <div class="title">{item.name}</div>
         <div class="tool" on:click={close}><IconClose size={16} /></div>
       </div>
-      <div class="content">
-        <div class="row">{item.name}</div>
-        <div class="row">
-          <DescriptionEditor label={task.string.TaskDescription} on:blur={updateDescription} bind:value={description} />
-        </div>
-        <div class="row">
-          <UserBox
-            hAlign={'right'}
-            bind:selected={assignee}
-            users={projectMembers}
-            title={task.string.Assignee}
-            caption={task.string.ProjectMembers}
-            label={task.string.AssignTask}
-            on:change={updateAssignee}
-            showSearch
-          />
-        </div>
-        {#if progress.max > 0}
-          <div class="row progress">
-            <Label label={task.string.Progress} />
-            <span>{((progress.value * 100) / progress.max).toFixed(0)}%</span>
-            <Progress {...progress} />
+      <Tabs {tabs} bind:selected={selectedTab} />
+      {#if selectedTab === task.string.General}
+        <Section label={task.string.GeneralInformation} icon={IconFile}>
+          <div class="content">
+            <div class="row">
+              <DescriptionEditor
+                label={task.string.TaskDescription}
+                on:blur={updateDescription}
+                bind:value={description}
+              />
+            </div>
+            <div class="row">
+              <UserBox
+                bind:selected={assignee}
+                users={projectMembers}
+                title={task.string.Assignee}
+                caption={task.string.ProjectMembers}
+                label={task.string.AssignTask}
+                on:change={updateAssignee}
+                showSearch
+              />
+            </div>
+            <div class="row">
+              <DatePicker bind:selected={dueTo} title={task.string.PickDue} on:change={updateDue} />
+            </div>
           </div>
-        {/if}
-        <CheckList bind:items={checkItems} on:change={updateCheckItem} />
-        <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
-      </div>
+        </Section>
+        <Section label={task.string.Comments} icon={IconComments} topLine>
+          <div class="content">
+            <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
+          </div>
+        </Section>
+      {:else if selectedTab === task.string.Attachment}
+        <div class="content" />
+      {:else}
+        <Section label={task.string.ToDos} icon={IconComments} topLine>
+          <div class="content">
+            <div class="row"><CheckList bind:items={checkItems} on:change={updateCheckItem} /></div>
+          </div>
+        </Section>
+      {/if}
     </ScrollBox>
   {/if}
 {/await}

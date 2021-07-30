@@ -19,7 +19,9 @@ import core, {
   DerivedDataDescriptor,
   Doc,
   DOMAIN_TX,
+  FullRefString,
   generateId,
+  getFullRef,
   Ref,
   Reference,
   Title,
@@ -50,7 +52,7 @@ interface Task extends Doc {
 }
 
 interface Comment extends Doc {
-  ofDoc: Ref<Doc>
+  ofDoc: FullRefString
   message: string
 }
 
@@ -93,7 +95,7 @@ async function prepareServer (): Promise<{
         }
       ]
     }),
-    createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
+    createDoc<DerivedDataDescriptor<Comment, Task>>(core.class.DerivedDataDescriptor, {
       sourceClass: testIds.class.Comment,
       targetClass: testIds.class.Task,
       collections: [
@@ -229,11 +231,11 @@ describe('real-server', () => {
     })
 
     await client.createDoc(testIds.class.Comment, sp1._id, {
-      ofDoc: t1._id,
+      ofDoc: getFullRef(t1._id, t1._class),
       message: 'Comment'
     })
     await client.createDoc(testIds.class.Comment, sp1._id, {
-      ofDoc: t1._id,
+      ofDoc: getFullRef(t1._id, t1._class),
       message: 'Comment 2'
     })
 

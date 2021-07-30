@@ -1,6 +1,6 @@
 import { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
 import chunter from '@anticrm/chunter-impl/src/plugin'
-import core, { Account, generateId, Ref } from '@anticrm/core'
+import core, { Account, generateId, getFullRef, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import faker from 'faker'
@@ -41,7 +41,7 @@ export function demoChunter (builder: Builder): void {
       builder.createDoc(
         chunter.class.Comment,
         {
-          replyOf: msgId,
+          replyOf: getFullRef(msgId, chunter.class.Message),
           message: faker.lorem.paragraphs(2)
         },
         cid,

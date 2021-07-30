@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-dev",
+      "comment": "fixed derived data",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev"
+}

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref } from './classes'
+import type { Class, Doc, FullRef, FullRefString, Ref } from './classes'
 
 function toHex (value: number, chars: number): string {
   const result = value.toString(16)
@@ -41,4 +41,18 @@ function count (): string {
  */
 export function generateId<T extends Doc> (): Ref<T> {
   return (timestamp() + random + count()) as Ref<T>
+}
+
+/**
+ * @public
+ */
+export function getFullRef<T extends Doc> (_id: Ref<T>, _class: Ref<Class<T>>): FullRefString {
+  return JSON.stringify({ _id, _class })
+}
+
+/**
+ * @public
+ */
+export function parseFullRef<T extends Doc> (fullRef: FullRefString): FullRef<T> {
+  return JSON.parse(fullRef)
 }

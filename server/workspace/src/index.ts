@@ -10,7 +10,7 @@ import core, {
   Storage,
   Tx
 } from '@anticrm/core'
-import { DocStorage, getMongoClient, TxStorage } from '@anticrm/mongo'
+import { DocStorage, getMongoClient, TxStorage, mongoUnescape } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
 
@@ -54,7 +54,8 @@ export class Workspace implements Storage {
 
     // Load hierarchy from transactions.
     const txCollection = db.collection(DOMAIN_TX as string)
-    const transactions: Tx[] = await txCollection.find({}).toArray()
+    const transactions: Tx[] = (await txCollection.find({}).toArray()).map((v) => mongoUnescape(v))
+
     for (const tx of transactions) {
       hierarchy.tx(tx)
     }

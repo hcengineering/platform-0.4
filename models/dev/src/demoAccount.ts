@@ -1,4 +1,4 @@
-import core, { Account, generateId, Ref } from '@anticrm/core'
+import core, { Account, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import faker from 'faker'
 
@@ -12,11 +12,11 @@ export function demoAccount (builder: Builder): void {
     core.account.System
   )
   for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
-    const accountId: Ref<Account> = generateId()
+    const accountId: Ref<Account> = faker.internet.exampleEmail() as Ref<Account>
     builder.createDoc(
       core.class.Account,
       {
-        name: faker.internet.exampleEmail() as Ref<Account>,
+        name: faker.internet.userName(),
         avatar: faker.image.avatar()
       },
       accountId

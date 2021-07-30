@@ -42,12 +42,14 @@ function escapeArray<T> (object: T & any[], reverse: boolean): T {
 
 /**
  * Return object with all keys started with $ escaped.
+ * @public
  */
 export function mongoEscape<T> (object: T): T {
   return escape(object, false)
 }
 /**
  * Return object with all keys started with $ un-escaped.
+ * @public
  */
 export function mongoUnescape<T> (object: T): T {
   return escape(object, true)

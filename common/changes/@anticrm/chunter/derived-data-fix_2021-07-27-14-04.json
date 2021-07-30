@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter",
+      "comment": "implemented fullref",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter"
+}

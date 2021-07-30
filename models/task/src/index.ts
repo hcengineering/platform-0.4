@@ -43,6 +43,7 @@ export class TTask extends TDoc implements Task {
   description!: string
   assignee!: Ref<Account>
   status!: TaskStatus
+  dueTo!: Date
   checkItems!: CheckListItem[]
   comments!: Array<Ref<Comment>>
 }

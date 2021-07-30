@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import type { Message } from '@anticrm/chunter'
+  import { getFullRef } from '@anticrm/core'
   import type { Ref } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getCurrentLocation, IconClose, navigate, ScrollBox } from '@anticrm/ui'
@@ -44,7 +45,7 @@
 
   function addMessage (text: string): void {
     client.createDoc(chunter.class.Comment, message!.space, {
-      replyOf: message!._id,
+      replyOf: getFullRef(message!._id, message!._class),
       message: text
     })
   }

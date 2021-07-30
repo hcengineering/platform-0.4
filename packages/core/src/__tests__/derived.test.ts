@@ -14,8 +14,8 @@
 //
 
 import { Component, component, Resource } from '@anticrm/status'
-import { Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
-import { Account, Class, Doc, Ref, Space } from '../classes'
+import { getFullRef, Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
+import { Account, Class, Doc, FullRefString, Ref, Space } from '../classes'
 import { createClient } from '../client'
 import core from '../component'
 import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMapper, registerMapper } from '../derived'
@@ -53,7 +53,7 @@ interface Message extends Doc {
 }
 
 interface Comment extends Doc {
-  ofDoc: Ref<Doc>
+  replyOf: FullRefString
   message: string
 }
 
@@ -457,7 +457,7 @@ describe('deried data', () => {
         targetClass: testIds.class.Task,
         collections: [
           {
-            sourceField: 'ofDoc',
+            sourceField: 'replyOf',
             targetField: 'comments'
           }
         ]
@@ -472,7 +472,7 @@ describe('deried data', () => {
 
     for (let i = 0; i < 10; i++) {
       await operations.createDoc(testIds.class.Comment, core.space.Model, {
-        ofDoc: doc1._id,
+        replyOf: getFullRef(doc1._id, doc1._class),
         message: `Comment of ${i}`
       })
     }
@@ -503,7 +503,7 @@ describe('deried data', () => {
         targetClass: testIds.class.Page,
         collections: [
           {
-            sourceField: 'ofDoc',
+            sourceField: 'replyOf',
             targetField: 'comments',
             rules: [{ sourceField: 'modifiedBy', targetField: 'userId' }]
           }
@@ -518,7 +518,7 @@ describe('deried data', () => {
 
     for (let i = 0; i < 10; i++) {
       await operations.createDoc(testIds.class.Comment, core.space.Model, {
-        ofDoc: doc1._id,
+        replyOf: getFullRef(doc1._id, doc1._class),
         message: `Comment of ${i}`
       })
     }

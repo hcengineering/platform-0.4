@@ -132,13 +132,13 @@ describe('security', () => {
     expect(first).toHaveLength(0)
 
     await securityStorage.findAll('task' as Ref<Class<Doc>>, { space: objectTx.objectSpace }).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: security.AccessDenied')
+      expect(error.message).toBe('ERROR: security.AccessDenied. {}')
     })
 
     await securityStorage
       .findAll('task' as Ref<Class<Doc>>, { space: { $in: [objectTx.objectSpace] } })
       .catch((error: Error) => {
-        expect(error.message).toBe('ERROR: security.AccessDenied')
+        expect(error.message).toBe('ERROR: security.AccessDenied. {}')
       })
 
     const addMemberTx: TxUpdateDoc<Space> = {
@@ -198,7 +198,7 @@ describe('security', () => {
     }
 
     await securityStorage.tx(objectTx).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: security.AccessDenied')
+      expect(error.message).toBe('ERROR: security.AccessDenied. {}')
     })
 
     const addMemberTx: TxUpdateDoc<Space> = {
@@ -252,7 +252,7 @@ describe('security', () => {
     }
 
     await securityStorage.tx(addMembertoPrivateTx).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: security.AccessDenied')
+      expect(error.message).toBe('ERROR: security.AccessDenied. {}')
     })
 
     const removePrivateTx: TxRemoveDoc<Space> = {
@@ -267,7 +267,7 @@ describe('security', () => {
     }
 
     await securityStorage.tx(removePrivateTx).catch((error: Error) => {
-      expect(error.message).toBe('ERROR: security.AccessDenied')
+      expect(error.message).toBe('ERROR: security.AccessDenied. {}')
     })
 
     const publicSpaceTx: TxCreateDoc<Space> = {

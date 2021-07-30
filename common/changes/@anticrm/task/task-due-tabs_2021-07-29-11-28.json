@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task",
+      "comment": "add due to task",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/task"
+}
