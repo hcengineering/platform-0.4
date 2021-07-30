@@ -13,7 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, UserBox, Grid } from '@anticrm/ui'
+  import {
+    EditBox,
+    Dialog,
+    TextArea,
+    ToggleWithLabel,
+    Section,
+    IconFile,
+    IconComments,
+    UserBox,
+    Grid
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
