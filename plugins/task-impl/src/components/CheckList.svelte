@@ -33,11 +33,6 @@
   }
 </script>
 
-{#if items.length}
-  <div class="title">
-    <Label label={task.string.CheckItems} />
-  </div>
-{/if}
 <div class="content" on:change>
   {#each items as item}
     <div class="row">

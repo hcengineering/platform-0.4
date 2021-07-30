@@ -16,7 +16,6 @@
   import type { Account } from '@anticrm/core'
 
   export let user: Account | undefined
-  export let suptitle: string | undefined
   export let size: 24 | 32 | 36 = 24
   export let avatarOnly: boolean = false
 </script>
@@ -28,8 +27,8 @@
     </div>
     {#if !avatarOnly}
       <div class="caption">
-        {#if suptitle}<div class="suptitle">{suptitle}</div>{/if}
         <div class="title">{user.name}</div>
+        <div class="suptitle">{user._id}</div>
       </div>
     {/if}
   {/if}

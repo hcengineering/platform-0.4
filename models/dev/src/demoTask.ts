@@ -91,7 +91,8 @@ export function demoTask (builder: Builder): void {
         shortRefId: shortRefId,
         checkItems: checkItems,
         assignee: faker.random.arrayElement(members),
-        comments: comments
+        comments: comments,
+        dueTo: faker.date.soon()
       },
       id,
       { space: demoIds.project.DemoProject }

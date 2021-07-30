@@ -47,8 +47,8 @@
     align-items: center;
     flex-wrap: nowrap;
     width: 100%;
-    height: 80px;
-    min-height: 80px;
+    height: 50px;
+    min-height: 50px;
     cursor: pointer;
     user-select: none;
 

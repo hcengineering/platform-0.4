@@ -16,30 +16,27 @@
   import type { IntlString } from '@anticrm/status'
   import Label from './Label.svelte'
 
-  interface Tab {
-    title: IntlString
-  }
-
-  export let tabs: Array<Tab> = [
-    { title: 'Applications' },
-    { title: 'Interviews' },
-    { title: 'Activity' },
-    { title: 'Documents' },
-    { title: 'Details' }
+  export let tabs: Array<IntlString> = [
+    'Applications' as IntlString,
+    'Interviews' as IntlString,
+    'Activity' as IntlString,
+    'Documents' as IntlString,
+    'Details' as IntlString
   ]
-  export let selected: IntlString = 'Details'
+
+  export let selected: IntlString = 'Details' as IntlString
 </script>
 
 <div class="tabs-container">
   {#each tabs as tab}
     <div
       class="tab"
-      class:selected={tab.title === selected}
+      class:selected={tab === selected}
       on:click={() => {
-        selected = tab.title
+        selected = tab
       }}
     >
-      <Label label={tab.title} />
+      <Label label={tab} />
     </div>
   {/each}
   <div class="grow" />
@@ -67,7 +64,7 @@
 
       &.selected {
         border-top: 2px solid transparent;
-        border-bottom: 2px solid var(--primary-button-enabled);
+        border-bottom: 2px solid var(--theme-caption-color);
         color: var(--theme-caption-color);
         cursor: default;
       }
