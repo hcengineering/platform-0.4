@@ -13,81 +13,111 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
   export let label: IntlString | undefined = undefined
   export let width: string | undefined = undefined
   export let value: string | undefined = undefined
-  export let error: string | undefined = undefined
   export let password: boolean | undefined = undefined
   export let id: string | undefined = undefined
+  export let placeholder: string = 'Start typing...'
+
+  let text: HTMLElement
+  let input: HTMLInputElement
+
+  function computeSize (t: EventTarget | null) {
+    const target = t as HTMLInputElement
+    const value = target.value
+    text.innerHTML = (value === '' ? placeholder : value).replaceAll(' ', '&nbsp;')
+    target.style.width = text.clientWidth + 6 + 'px'
+  }
+
+  onMount(() => {
+    computeSize(input)
+  })
 </script>
 
-<div class="editbox{error ? ' error' : ''}" style={width ? 'width: ' + width : ''}>
+<div class="editbox" style={width ? 'width: ' + width : ''}>
+  <div class="text" bind:this={text} />
+  {#if label}<div class="label"><Label {label} /></div>{/if}
   {#if password}
-    <input type="password" class:nolabel={!label} {id} bind:value on:change on:keyup placeholder=" " />
+    <input
+      bind:this={input}
+      type="password"
+      {id}
+      bind:value
+      {placeholder}
+      on:change
+      on:keyup
+      on:input={(ev) => ev.target && computeSize(ev.target)}
+    />
   {:else}
-    <input type="text" class:nolabel={!label} {id} bind:value on:change on:keyup placeholder=" " />
-  {/if}
-  {#if label}
-    <div class="label"><Label {label} /></div>
+    <input
+      bind:this={input}
+      type="text"
+      {id}
+      bind:value
+      {placeholder}
+      on:change
+      on:keyup
+      on:input={(ev) => ev.target && computeSize(ev.target)}
+    />
   {/if}
 </div>
 
 <style lang="scss">
+  .text {
+    position: absolute;
+    visibility: hidden;
+  }
   .editbox {
-    position: relative;
     display: flex;
     flex-direction: column;
-    padding: 0;
     min-width: 50px;
-    height: 52px;
-    background-color: var(--theme-bg-accent-color);
-    border: 1px solid var(--theme-bg-accent-hover);
-    border-radius: 12px;
-    &:focus-within {
-      background-color: var(--theme-bg-focused-color);
-      border-color: var(--theme-bg-focused-border);
-    }
-    input {
-      height: 52px;
-      margin: 0;
-      padding: 14px 20px 0px;
-      font-family: inherit;
-      color: var(--theme-caption-color);
-      background-color: transparent;
-      outline: none;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 17px;
-    }
-    .nolabel {
-      padding-top: 0;
-    }
+    height: 36px;
 
     .label {
-      position: absolute;
-      top: 18px;
-      left: 20px;
+      margin-bottom: 4px;
       font-size: 12px;
-      line-height: 14px;
+      font-weight: 500;
       color: var(--theme-caption-color);
+      opacity: 0.8;
       pointer-events: none;
-      opacity: 0.3;
-      transition: top 200ms;
       user-select: none;
     }
-    input:focus + .label,
-    input:not(:placeholder-shown) + .label {
-      top: 10px;
-    }
-  }
-  .error {
-    border: 1px solid var(--system-error-60-color);
-    &:focus-within {
-      border-color: var(--system-error-color);
+
+    input {
+      max-width: 100%;
+      height: 21px;
+      margin: -3px;
+      padding: 2px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 150%;
+      color: var(--theme-caption-color);
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      outline: none;
+
+      &:focus {
+        border-color: var(--primary-button-enabled);
+      }
+      &::placeholder {
+        color: var(--theme-content-dark-color);
+      }
+
+      &::-webkit-contacts-auto-fill-button,
+      &::-webkit-credentials-auto-fill-button {
+        visibility: hidden;
+        display: none !important;
+        pointer-events: none;
+        height: 0;
+        width: 0;
+        margin: 0;
+      }
     }
   }
 </style>

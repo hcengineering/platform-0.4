@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "New layout, restyle EditBox and TextArea. Add Grid, Row.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

@@ -13,7 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Dialog, TextArea, ToggleWithLabel, Section, IconFile, IconComments, UserBox } from '@anticrm/ui'
+  import {
+    EditBox,
+    Dialog,
+    TextArea,
+    ToggleWithLabel,
+    Section,
+    IconFile,
+    IconComments,
+    UserBox,
+    Grid
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import task from '../plugin'
@@ -60,47 +70,41 @@
 
 <Dialog label={task.string.CreateProject} okLabel={task.string.CreateProject} okAction={createProject} on:close>
   <Section label={task.string.GeneralInformation} icon={IconFile}>
-    <div class="content">
-      <div class="row"><EditBox label={task.string.ProjectName} bind:value={name} /></div>
-      <div class="row"><TextArea label={task.string.ProjectDescription} bind:value={description} /></div>
-      <div class="row">
-        <ToggleWithLabel
-          label={task.string.MakePrivate}
-          description={task.string.MakePrivateDescription}
-          bind:on={isPrivate}
-        />
-      </div>
-    </div>
+    <Grid column={1}>
+      <EditBox label={task.string.ProjectName} bind:value={name} />
+      <TextArea label={task.string.ProjectDescription} bind:value={description} />
+      <ToggleWithLabel
+        label={task.string.MakePrivate}
+        description={task.string.MakePrivateDescription}
+        bind:on={isPrivate}
+      />
+    </Grid>
   </Section>
   <Section label={task.string.ProjectMembers} icon={IconComments} topLine>
     {#await getUsers() then users}
-      <div class="content">
+      <Grid column={1}>
         {#each members as member}
-          <div class="row">
-            <UserBox
-              bind:selected={member}
-              users={getAvaibleMembers(members, member)}
-              title={task.string.IviteMember}
-              label={task.string.IviteMember}
-              showSearch
-              on:change={() => {
-                filterMembers()
-              }}
-            />
-          </div>
+          <UserBox
+            bind:selected={member}
+            users={getAvaibleMembers(members, member)}
+            title={task.string.IviteMember}
+            label={task.string.IviteMember}
+            showSearch
+            on:change={() => {
+              filterMembers()
+            }}
+          />
         {/each}
         {#if getAvaibleMembers(members).length}
-          <div class="row">
-            <UserBox
-              bind:selected={newMember}
-              users={getAvaibleMembers(members)}
-              title={task.string.IviteMember}
-              label={task.string.IviteMember}
-              showSearch
-            />
-          </div>
+          <UserBox
+            bind:selected={newMember}
+            users={getAvaibleMembers(members)}
+            title={task.string.IviteMember}
+            label={task.string.IviteMember}
+            showSearch
+          />
         {/if}
-      </div>
+      </Grid>
     {/await}
   </Section>
 </Dialog>

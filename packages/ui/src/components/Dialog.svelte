@@ -92,7 +92,7 @@
       max-height: 100vh;
       height: 100vh;
       background-color: var(--theme-bg-color);
-      border-radius: 30px;
+      border-radius: 30px 0 0 30px;
       box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
       .header {
@@ -100,18 +100,17 @@
         justify-content: space-between;
         align-items: center;
         flex-shrink: 0;
-        margin-top: 12px;
         padding: 0 32px 0 40px;
         height: 72px;
 
         .title {
           flex-grow: 1;
           font-weight: 500;
-          font-size: 20px;
-          line-height: 26px;
+          font-size: 18px;
           color: var(--theme-caption-color);
           user-select: none;
         }
+
         .tool {
           width: 16px;
           height: 16px;
@@ -126,9 +125,9 @@
 
       .content {
         flex-shrink: 0;
-        margin: 24px 20px 0;
-        padding: 0 20px;
-        height: calc(100vh - 204px);
+        width: 640px;
+        margin: 0 40px;
+        height: calc(100vh - 168px);
       }
 
       .footer {
