@@ -12,27 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { EditBox, Dialog, ToggleWithLabel } from '@anticrm/ui'
-
 </script>
 
 <Dialog label="Create Channel">
   <div class="content">
-    <EditBox label="Name" value="Channel Name"/>
-    <EditBox label="Description" value="This is a little description"/>
-    <ToggleWithLabel label="Make channel private" description="Lorem ipsum dolor sit amet quantum nunca sic"/>
+    <EditBox label="Name" value="Channel Name" />
+    <EditBox label="Description" value="This is a little description" />
+    <ToggleWithLabel label="Make channel private" description="Lorem ipsum dolor sit amet quantum nunca sic" />
   </div>
 </Dialog>
 
-
 <style lang="scss">
-
-.content {
+  .content {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
+  }
 </style>

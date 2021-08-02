@@ -16,7 +16,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const Dotenv = require('dotenv-webpack')
 const path = require('path')
-const autoprefixer = require('autoprefixer')
 const DefinePlugin = require('webpack').DefinePlugin
 
 const mode = process.env.NODE_ENV || 'development'
@@ -38,7 +37,7 @@ module.exports = {
     mainFields: ['svelte', 'browser', 'module', 'main']
   },
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
     publicPath: '/'
@@ -58,29 +57,6 @@ module.exports = {
             emitCss: true,
             preprocess: require('svelte-preprocess')({ postcss: true })
           }
-          // options: {
-          //   dev: !prod,
-          //   emitCss: true,
-          //   hotReload: !prod,
-          //   preprocess: require('svelte-preprocess')({
-          //     babel: {
-          //       presets: [
-          //         [
-          //           '@babel/preset-env',
-          //           {
-          //             loose: true,
-          //             modules: false,
-          //             targets: {
-          //               esmodules: true
-          //             }
-          //           }
-          //         ],
-          //         '@babel/typescript'
-          //       ],
-          //       plugins: ['@babel/plugin-proposal-optional-chaining']
-          //     }
-          //   })
-          // }
         }
       },
 
@@ -157,7 +133,7 @@ module.exports = {
       'process.env.CLIENT': JSON.stringify(process.env.CLIENT)
     })
   ],
-  devtool: prod ? false : 'source-map',
+  devtool: prod ? false : 'eval-source-map',
   devServer: {
     publicPath: '/',
     historyApiFallback: {

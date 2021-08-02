@@ -66,7 +66,7 @@
         props={{ user: selectedItem }}
         selectable
         selected
-        action={async () => {
+        action={() => {
           selected = undefined
           pressed = !pressed
           dispatch('change')
@@ -78,7 +78,7 @@
         component={UserInfo}
         props={{ user: user }}
         selectable
-        action={async () => {
+        action={() => {
           selected = user._id
           pressed = !pressed
           dispatch('change')

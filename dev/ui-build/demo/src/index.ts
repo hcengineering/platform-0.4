@@ -1,0 +1,8 @@
+export { default as Component } from './components/Component.svelte'
+export { default as WithSlot } from './components/WithSlot.svelte'
+export { default as WithSlot2 } from './components/WithSlot2.svelte'
+export { default as Button } from './components/Button.svelte'
+export { default as Button2 } from './components/Button2.svelte'
+export { default as Button3 } from './components/Button3.svelte'
+export { default as Button4 } from './components/Button4.svelte'
+export { default as EditBox } from './components/EditBox.svelte'

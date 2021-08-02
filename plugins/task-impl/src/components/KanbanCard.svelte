@@ -94,9 +94,5 @@
         margin-left: 16px;
       }
     }
-
-    &.drag {
-      opacity: 0.5;
-    }
   }
 </style>

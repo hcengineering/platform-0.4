@@ -17,7 +17,7 @@
 
   interface DocRef {
     _class: string
-    id: String
+    id: string
   }
 
   export let message: string

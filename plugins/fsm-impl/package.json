@@ -1,32 +1,44 @@
 {
   "name": "@anticrm/fsm-impl",
   "version": "0.4.0",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "echo 'source code'",
-    "build:docs": "api-extractor run --local",
+    "build": "tsc",
     "test": "echo 'no tests'",
-    "lint": "tsc --version && eslint --version && eslint src",
+    "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.{ts*,js*,yml} && eslint --fix src"
+    "format": "prettier --write --plugin-search-dir=. 'src/**/*.{ts*,svelte}' && eslint --fix src",
+    "svelte-check": "svelte-check"
+  },
+  "peerDependencies": {
+    "svelte": "3.x"
   },
   "devDependencies": {
+    "@anticrm/platform-rig": "^0.4.0",
+    "@types/browser-or-node": "^1.3.0",
+
+    "typescript": "^4.2.4",
     "@microsoft/api-extractor": "^7.13.4",
-    "prettier": "^2.2.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",    
     "eslint": "^7.25.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "typescript": "^4.2.4",
-    "@types/lodash.debounce": "~4.0.6",
-    "ts-jest": "^26.5.6",
+    "eslint-plugin-svelte3": "^3.1.2",
+    "prettier-plugin-svelte": "^2.2.0",
+    "@types/jest": "^26.0.23",
     "jest": "^26.6.3",
-    "@types/jest": "^26.0.23"
+    "prettier": "^2.2.1",
+    "core-js": "^3.10.1",
+    "svelte-check": "^2.1.0",
+    "eslint-svelte3-preprocess": "~0.0.5",
+
+    "svelte-preprocess": "^4.7.0"
   },
   "dependencies": {
     "@anticrm/core":"~0.4.0",

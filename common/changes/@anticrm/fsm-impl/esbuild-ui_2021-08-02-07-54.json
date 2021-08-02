@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "UI build",
+      "type": "patch",
+      "packageName": "@anticrm/fsm-impl"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl",
+  "email": "haiodo@gmail.com"
+}

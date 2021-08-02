@@ -34,6 +34,7 @@
   const dispatch = createEventDispatcher()
 </script>
 
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
   class="container"
   on:mouseover={() => {

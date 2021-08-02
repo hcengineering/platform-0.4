@@ -198,17 +198,17 @@
       margin-top: 10px;
     }
 
-    .progress {
-      margin-top: 24px;
-      span {
-        margin-bottom: 8px;
-        font-weight: 500;
-        font-size: 10px;
-        line-height: 13px;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        text-align: right;
-      }
-    }
+    // .progress {
+    //   margin-top: 24px;
+    //   span {
+    //     margin-bottom: 8px;
+    //     font-weight: 500;
+    //     font-size: 10px;
+    //     line-height: 13px;
+    //     letter-spacing: 0.5px;
+    //     text-transform: uppercase;
+    //     text-align: right;
+    //   }
+    // }
   }
 </style>

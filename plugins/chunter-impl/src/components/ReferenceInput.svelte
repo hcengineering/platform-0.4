@@ -310,18 +310,6 @@
           width: auto;
         }
 
-        .flex-column {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .flex-row {
-          display: flex;
-          flex-direction: row;
-          align-items: flex-end;
-        }
-
         .edit-box-horizontal {
           width: 100%;
           height: 100%;

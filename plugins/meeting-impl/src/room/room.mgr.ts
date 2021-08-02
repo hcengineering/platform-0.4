@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 // Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -67,11 +69,10 @@ const extWritable = <T>(
 }
 
 const releaseMedia = (p: Peer): Peer => {
-  p.media.getTracks()
-    .forEach(track => {
-      track.stop()
-      p.media.removeTrack(track)
-    })
+  p.media.getTracks().forEach((track) => {
+    track.stop()
+    p.media.removeTrack(track)
+  })
 
   return {
     ...p,
@@ -79,11 +80,10 @@ const releaseMedia = (p: Peer): Peer => {
   }
 }
 
-const makeWebRTCPeer = (): RTCPeerConnection => new RTCPeerConnection({
-  iceServers: [
-    { urls: ['stun:stun.l.google.com:19302'] }
-  ]
-})
+const makeWebRTCPeer = (): RTCPeerConnection =>
+  new RTCPeerConnection({
+    iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
+  })
 
 export class RoomMgr {
   private readonly _peers = extWritable(new Map<string, Peer>())
@@ -92,17 +92,14 @@ export class RoomMgr {
     return this._peers
   }
 
-  private readonly _user = extWritable(
-    makePeer({ internalID: '', muted: false, camEnabled: true }, false),
-    () => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.queue.add(() => this.initMedia())
+  private readonly _user = extWritable(makePeer({ internalID: '', muted: false, camEnabled: true }, false), () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    this.queue.add(async () => await this.initMedia())
 
-      return () => {
-        this.queue.add(async () => this.releaseMedia())
-      }
+    return () => {
+      this.queue.add(async () => this.releaseMedia())
     }
-  )
+  })
 
   get user (): Readable<Peer> {
     return this._user
@@ -129,10 +126,13 @@ export class RoomMgr {
   private readonly client: Client
 
   private readonly queue = new TaskQueue()
-  private readonly gainMeters = new Map<string, {
+  private readonly gainMeters = new Map<
+  string,
+  {
     timeoutHandler: any
     meter: GainMeter
-  }>()
+  }
+  >()
 
   constructor (client: Client) {
     this.client = client
@@ -155,7 +155,7 @@ export class RoomMgr {
       }
     })
 
-    this._user.update(u => ({
+    this._user.update((u) => ({
       ...u,
       media,
       isMediaReady: true
@@ -172,18 +172,20 @@ export class RoomMgr {
     }
   }
 
-  async toggleMute() {
+  async toggleMute () {
     const user = this._user.get()
 
     if (this._status.get() !== 'left') {
-      const {peer} = await this.client.sendRequest({
+      const { peer } = await this.client.sendRequest({
         method: ReqMethod.PeerUpdate,
-        params: [{
-          muted: !user.muted
-        }]
+        params: [
+          {
+            muted: !user.muted
+          }
+        ]
       })
 
-      this._user.update(u => ({
+      this._user.update((u) => ({
         ...u,
         ...peer
       }))
@@ -195,22 +197,23 @@ export class RoomMgr {
     }
 
     const updatedUser = this._user.get()
-    updatedUser.media.getAudioTracks()
-      .forEach((track) => track.enabled = !updatedUser.muted)
+    updatedUser.media.getAudioTracks().forEach((track) => (track.enabled = !updatedUser.muted))
   }
 
-  async toggleCam() {
+  async toggleCam () {
     const user = this._user.get()
 
     if (this._status.get() !== 'left') {
-      const {peer} = await this.client.sendRequest({
+      const { peer } = await this.client.sendRequest({
         method: ReqMethod.PeerUpdate,
-        params: [{
-          camEnabled: !user.camEnabled
-        }]
+        params: [
+          {
+            camEnabled: !user.camEnabled
+          }
+        ]
       })
 
-      this._user.update(u => ({
+      this._user.update((u) => ({
         ...u,
         ...peer
       }))
@@ -222,17 +225,14 @@ export class RoomMgr {
     }
 
     const updatedUser = this._user.get()
-    updatedUser.media.getVideoTracks()
-      .forEach((track) => track.enabled = updatedUser.camEnabled)
+    updatedUser.media.getVideoTracks().forEach((track) => (track.enabled = updatedUser.camEnabled))
   }
 
   private readonly pollPeerGain = (id: string) => (track: MediaStreamTrack) => {
     const meter = new GainMeter(track)
     const handler = setInterval(() => {
       const curLevel = this._gains.get().get(id)
-      const level = meter.getValue() > GainThreshold
-        ? 1
-        : 0
+      const level = meter.getValue() > GainThreshold ? 1 : 0
 
       if (level !== curLevel) {
         this._gains.update((gains) => {
@@ -263,21 +263,16 @@ export class RoomMgr {
 
     this._user.update((user) => ({
       ...user,
-      ...result.me ?? {},
+      ...(result.me ?? {}),
       peer: makeWebRTCPeer()
     }))
 
     await this.setupPeer(this._user.get(), this.pollPeerGain('user'))
 
-    this._peers.set(new Map(result.peers.map(x => [x.internalID, makePeer(x, true)])))
+    this._peers.set(new Map(result.peers.map((x) => [x.internalID, makePeer(x, true)])))
 
     await Promise.all(
-      [...this._peers.get().values()]
-        .map(async p => await this.setupPeer(
-          p,
-          this.pollPeerGain(p.internalID),
-          true
-        ))
+      [...this._peers.get().values()].map(async (p) => await this.setupPeer(p, this.pollPeerGain(p.internalID), true))
     )
 
     if (result.screen !== undefined) {
@@ -307,13 +302,15 @@ export class RoomMgr {
     try {
       const resp: JoinResp['result'] = await this.client.sendRequest({
         method: ReqMethod.Join,
-        params: [{
-          room,
-          peer: {
-            camEnabled: user.camEnabled,
-            muted: user.muted
+        params: [
+          {
+            room,
+            peer: {
+              camEnabled: user.camEnabled,
+              muted: user.muted
+            }
           }
-        }]
+        ]
       })
 
       await this.queue.add(async () => await this.init(resp))
@@ -324,23 +321,21 @@ export class RoomMgr {
   }
 
   async leave (): Promise<void> {
-    this._user.run(u => {
+    this._user.run((u) => {
       u.peer.close()
     })
 
-    this._peers.run(ps => {
-      ps.forEach(p => {
+    this._peers.run((ps) => {
+      ps.forEach((p) => {
         p.peer.close()
         releaseMedia(p)
       })
     })
     this._peers.set(new Map())
-
-    ;([...this.gainMeters.values()])
-      .forEach(({timeoutHandler, meter}) => {
-        clearInterval(timeoutHandler)
-        meter.close()
-      })
+    ;[...this.gainMeters.values()].forEach(({ timeoutHandler, meter }) => {
+      clearInterval(timeoutHandler)
+      meter.close()
+    })
 
     this.gainMeters.clear()
     this._gains.set(new Map())
@@ -350,7 +345,6 @@ export class RoomMgr {
     if (screen.owner === user.internalID) {
       await this.handleScreenSharingFinished()
     }
-
 
     this._status.set('left')
 
@@ -373,12 +367,12 @@ export class RoomMgr {
 
     // https://github.com/microsoft/TypeScript/issues/33232
     // @ts-expect-error
-    const media = await navigator.mediaDevices.getDisplayMedia({
+    const media = (await navigator.mediaDevices.getDisplayMedia({
       audio: false,
       video: {
         frameRate: { ideal: 30 }
       }
-    }) as MediaStream
+    })) as MediaStream
 
     media.getTracks()[0]?.addEventListener('ended', () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -391,7 +385,7 @@ export class RoomMgr {
       isMediaReady: true
     }))
 
-    const {peerID} = await this.client.sendRequest({
+    const { peerID } = await this.client.sendRequest({
       method: ReqMethod.InitScreenSharing,
       params: []
     })
@@ -407,7 +401,7 @@ export class RoomMgr {
       return
     }
 
-    await this.queue.add(async () => this.handleScreenSharingFinished())
+    await this.queue.add(async () => await this.handleScreenSharingFinished())
   }
 
   private async handle (msg: OutgoingNotifications): Promise<void> {
@@ -416,7 +410,7 @@ export class RoomMgr {
     }
 
     await this.queue.add(async () => {
-      const {result} = msg
+      const { result } = msg
       if (result === undefined) {
         return
       }
@@ -440,11 +434,7 @@ export class RoomMgr {
             return peers
           })
 
-          await this.setupPeer(
-            peer,
-            this.pollPeerGain(peer.internalID),
-            true
-          )
+          await this.setupPeer(peer, this.pollPeerGain(peer.internalID), true)
 
           return
         }
@@ -564,13 +554,12 @@ export class RoomMgr {
         peer.media.addTrack(track)
       })
     } else {
-      peer.media.getTracks()
-        .forEach((track) => {
-          if (track.kind === 'audio') {
-            onAudioTrack(track)
-          }
-          peer.peer.addTrack(track)
-        })
+      peer.media.getTracks().forEach((track) => {
+        if (track.kind === 'audio') {
+          onAudioTrack(track)
+        }
+        peer.peer.addTrack(track)
+      })
     }
 
     peer.peer.addEventListener('icecandidate', ({ candidate }) => {
@@ -581,25 +570,28 @@ export class RoomMgr {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.client.sendNotification({
         method: NotificationMethod.ICECandidate,
-        params: [{
-          candidate: candidate as any,
-          peerID: peer.internalID
-        }]
+        params: [
+          {
+            candidate: candidate as any,
+            peerID: peer.internalID
+          }
+        ]
       })
     })
 
-    await peer.peer.createOffer()
-      .then(async (offer) => {
-        await peer.peer.setLocalDescription(offer)
-        const resp: TransmitResp['result'] = await this.client.sendRequest({
-          method: ReqMethod.Transmit,
-          params: [{
+    await peer.peer.createOffer().then(async (offer) => {
+      await peer.peer.setLocalDescription(offer)
+      const resp: TransmitResp['result'] = await this.client.sendRequest({
+        method: ReqMethod.Transmit,
+        params: [
+          {
             peerID: peer.internalID,
             sdp: offer.sdp ?? ''
-          }]
-        })
-
-        await peer.peer.setRemoteDescription({ type: 'answer', sdp: resp?.sdp })
+          }
+        ]
       })
+
+      await peer.peer.setRemoteDescription({ type: 'answer', sdp: resp?.sdp })
+    })
   }
 }

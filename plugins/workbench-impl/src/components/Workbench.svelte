@@ -125,12 +125,6 @@
       margin-right: 20px;
     }
 
-    .externalComponent {
-      @include panel(var(--theme-bg-color));
-      width: 100%;
-      margin-right: 20px;
-    }
-
     .component {
       @include panel(var(--theme-bg-color));
       flex-grow: 1;

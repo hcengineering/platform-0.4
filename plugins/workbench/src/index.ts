@@ -22,14 +22,20 @@ import type { PresentationClient } from '@anticrm/presentation'
 import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
 
 import { plugin } from '@anticrm/platform'
-import { store } from './stores'
+import { CompAndProps, store } from './stores'
 
+/**
+ * @public
+ */
 export interface Application extends Doc {
   label: IntlString
   icon: Asset
   navigatorModel?: NavigatorModel
 }
 
+/**
+ * @public
+ */
 export interface SpacesNavModel {
   label: IntlString
   spaceIcon: Asset
@@ -39,6 +45,9 @@ export interface SpacesNavModel {
   component?: AnyComponent
 }
 
+/**
+ * @public
+ */
 export interface NavigatorModel {
   spaces: SpacesNavModel[]
   spaceView: AnyComponent
@@ -46,10 +55,16 @@ export interface NavigatorModel {
   editComponent?: AnyComponent
 }
 
+/**
+ * @public
+ */
 export interface WorkbenchService extends Service {}
 
 const PluginWorkbench = 'workbench' as Plugin<WorkbenchService>
 
+/**
+ * @public
+ */
 const workbench = plugin(
   PluginWorkbench,
   {},
@@ -63,17 +78,33 @@ const workbench = plugin(
   }
 )
 
+/**
+ * @public
+ */
 export function getClient (): PresentationClient {
   return getContext<PresentationClient>(workbench.context.Client)
 }
 
+/**
+ * @public
+ */
 export function showModal (component: AnySvelteComponent | AnyComponent, props: any, element?: HTMLElement): void {
   store.set({ is: component, props, element: element })
 }
 
+/**
+ * @public
+ */
 export function closeModal (): void {
   store.set({ is: undefined, props: {}, element: undefined })
 }
 
-export { store }
+/**
+ * @public
+ */
+export { store, CompAndProps }
+
+/**
+ * @public
+ */
 export default workbench

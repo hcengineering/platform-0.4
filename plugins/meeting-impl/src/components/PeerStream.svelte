@@ -25,7 +25,15 @@ limitations under the License.
   }
 </script>
 
-<video class="video" class:mVideoSpeaking={level > 0} class:mVideoFull={full} autoplay muted={isLocal} controls={false} bind:this={videoContainer} />
+<video
+  class="video"
+  class:mVideoSpeaking={level > 0}
+  class:mVideoFull={full}
+  autoplay
+  muted={isLocal}
+  controls={false}
+  bind:this={videoContainer}
+/>
 
 <style lang="scss">
   .video {

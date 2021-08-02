@@ -23,7 +23,7 @@
   export let props: Object = {}
   export let selectable: boolean = false
   export let selected: boolean = false
-  export let action: () => Promise<void> = async () => {}
+  export let action: () => void = () => {}
 
   if (title) {
     component = Label
@@ -35,7 +35,7 @@
   class="popup-item"
   on:click={() => {
     if (selectable) selected = !selected
-    action()
+    action?.()
   }}
 >
   <div class="title">

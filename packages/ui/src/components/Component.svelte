@@ -21,7 +21,7 @@
   import ErrorBoundary from './internal/ErrorBoundary'
 
   export let is: AnyComponent
-  export let props = {}
+  export let props: any = {}
 
   $: component = getResource(is)
 </script>

@@ -14,7 +14,7 @@
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
     "deploy": "cp -p public/* dist && aws s3 sync dist s3://anticrm-platform --delete --acl public-read",
-    "format": "prettier --write --plugin-search-dir=. src/**/*.{ts*,js*,yml,html} && eslint --fix src"
+    "format": "prettier --write --plugin-search-dir=. src/**/*.ts && eslint --fix src"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

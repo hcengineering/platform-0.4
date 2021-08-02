@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2019",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
@@ -9,6 +9,7 @@
     "sourceMap": true,
     "declarationMap": true,
     "resolveJsonModule": true,
-    "types": ["browser-or-node", "heft-jest"]
-  }
+    "lib": ["es2019", "dom"],
+    "types": ["browser-or-node", "heft-jest"],
+  }  
 }

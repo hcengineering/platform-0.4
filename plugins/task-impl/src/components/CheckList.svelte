@@ -62,16 +62,16 @@
 </div>
 
 <style lang="scss">
-  .title {
-    color: var(--theme-caption-color);
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    user-select: none;
-    font-size: 16px;
-    font-weight: 500;
-    margin: 10px;
-  }
+  // .title {
+  //   color: var(--theme-caption-color);
+  //   display: flex;
+  //   align-items: center;
+  //   white-space: nowrap;
+  //   user-select: none;
+  //   font-size: 16px;
+  //   font-weight: 500;
+  //   margin: 10px;
+  // }
 
   .content {
     background-color: var(--theme-bg-accent-color);
@@ -88,10 +88,6 @@
       div + div {
         margin-left: 16px;
         flex-grow: 1;
-      }
-
-      .checkBox {
-        margin-right: 5px;
       }
     }
   }
