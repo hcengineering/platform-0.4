@@ -171,9 +171,9 @@
       }
     }
 
-    &:hover > .buttons {
-      visibility: visible;
-    }
+    // &:hover > .buttons {
+    //   visibility: visible;
+    // }
     &:hover::before {
       content: '';
     }

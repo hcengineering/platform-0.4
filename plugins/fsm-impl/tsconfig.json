@@ -1,16 +1,7 @@
 {
+  "extends": "./node_modules/@anticrm/platform-rig/profiles/ui/tsconfig-base.json",
   "compilerOptions": {
-    "moduleResolution": "node",
-    "target": "es6",
-    "module": "esnext",
-    "declaration": true,
-    "declarationMap": true,
     "outDir": "./lib",
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "rootDir": "./src"
   }
 }

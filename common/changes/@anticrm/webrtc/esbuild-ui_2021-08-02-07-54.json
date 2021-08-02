@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "UI build",
+      "type": "patch",
+      "packageName": "@anticrm/webrtc"
+    }
+  ],
+  "packageName": "@anticrm/webrtc",
+  "email": "haiodo@gmail.com"
+}

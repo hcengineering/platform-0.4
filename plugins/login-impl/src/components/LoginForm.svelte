@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { OK, Status, Severity } from '@anticrm/status'
@@ -37,32 +36,37 @@
   const object = {
     workspace: '',
     username: '',
-    password: '',
+    password: ''
   }
 
   let status = OK
 
-  const action = { 
+  const action = {
     i18n: login.string.LogIn,
-    func: async () => { 
+    func: async () => {
       status = new Status(Severity.INFO, login.status.ConnectingToServer, {})
 
-      const [loginStatus, result] = await doLogin(object.username, object.password, object.workspace)
+      const [loginStatus] = await doLogin(object.username, object.password, object.workspace)
 
       return new Promise<void>((resolve, reject) => {
-        setTimeout(() => { 
+        setTimeout(() => {
           status = loginStatus
-          resolve() 
+          resolve()
         }, 1000)
       })
     }
   }
-
-
 </script>
 
-<Form caption={login.string.LogIn} {status} {fields} {object} {action}
+<Form
+  caption={login.string.LogIn}
+  {status}
+  {fields}
+  {object}
+  {action}
   bottomCaption={login.string.DoNotHaveAnAccount}
   bottomActionLabel={login.string.SignUp}
-  bottomActionFunc={() => { dispatch('switch', 'signup') }}
+  bottomActionFunc={() => {
+    dispatch('switch', 'signup')
+  }}
 />

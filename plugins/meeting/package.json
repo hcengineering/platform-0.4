@@ -2,6 +2,7 @@
   "name": "@anticrm/meeting",
   "version": "0.4.0",
   "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {

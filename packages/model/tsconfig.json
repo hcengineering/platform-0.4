@@ -4,7 +4,6 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "lib": ["es2019"]
+    "esModuleInterop": true
   }
 }

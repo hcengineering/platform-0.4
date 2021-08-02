@@ -23,7 +23,7 @@
   export let direction: string = 'top'
   export let icon: Asset | AnySvelteComponent
   export let size: 16 | 20 | 24
-  export let action: () => Promise<void>
+  export let action: () => void = () => {}
   export let invisible: boolean = false
 </script>
 

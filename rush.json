@@ -385,7 +385,12 @@
     {
       "packageName": "@anticrm/platform-rig",
       "projectFolder": "dev/platform-rig",
-      "shouldPublish": true
+      "shouldPublish": false
+    },
+    {
+      "packageName": "@anticrm/ui-build",
+      "projectFolder": "dev/ui-build",
+      "shouldPublish": false
     },
     {
       "packageName": "@anticrm/status",

@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import { getContext, createEventDispatcher } from 'svelte'
-  import { Status, Severity } from '@anticrm/status'
-
-  import Form from './Form.svelte'
+  import statusCode, { OK, Severity, Status } from '@anticrm/status'
+  import { createEventDispatcher } from 'svelte'
   import { doLogin } from '../utils'
+  import Form from './Form.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -28,7 +26,7 @@
     { name: 'username', i18n: 'Email' },
     { name: 'workspace', i18n: 'Workspace' },
     { name: 'password', i18n: 'Password', password: true },
-    { name: 'password2', i18n: 'Repeat password', password: true },
+    { name: 'password2', i18n: 'Repeat password', password: true }
   ]
 
   const object = {
@@ -37,32 +35,37 @@
     workspace: '',
     username: '',
     password: '',
-    password2: '',
+    password2: ''
   }
 
-  let status = new Status(Severity.OK, 0, '')
+  let status = OK
 
-  const action = { 
+  const action = {
     i18n: 'Sign Up',
-    func: async () => { 
-      status = new Status(Severity.INFO, 0, 'Соединяюсь с сервером...')
+    func: async () => {
+      status = new Status(Severity.INFO, statusCode.status.OK, 'Соединяюсь с сервером...')
 
-      const [loginStatus, result] = await doLogin(object.username, object.password, object.workspace)
+      const [loginStatus] = await doLogin(object.username, object.password, object.workspace)
 
       return new Promise<void>((resolve, reject) => {
-        setTimeout(() => { 
+        setTimeout(() => {
           status = loginStatus
-          resolve() 
+          resolve()
         }, 1000)
       })
     }
   }
-
-
 </script>
 
-<Form caption="Sign Up" {status} {fields} {object} {action}
+<Form
+  caption={'Sign Up'}
+  {status}
+  {fields}
+  {object}
+  {action}
   bottomCaption="Already have an account?"
   bottomActionLabel="Log In"
-  bottomActionFunc={() => { dispatch('switch', 'login') }}
+  bottomActionFunc={() => {
+    dispatch('switch', 'login')
+  }}
 />

@@ -89,6 +89,7 @@
           class="item"
           class:selected={item.key === selection.key}
           on:click|preventDefault={() => selectItem(item)}
+          on:focus={() => (selection = item)}
           on:mouseover={() => (selection = item)}
         >
           {#if item.key === selection.key}
@@ -109,11 +110,12 @@
     border-radius: 4px;
     height: 150px;
     width: 300px;
-    // padding: 1em;
+
     background-color: var(--theme-bg-color);
     color: var(--theme-content-color);
     border: 1px solid var(--theme-bg-dark-color);
     box-shadow: var(--theme-shadow);
+
     .item {
       font-size: 15px;
       white-space: no-wrap;
@@ -123,10 +125,12 @@
       cursor: pointer;
       color: var(--theme-content-dark-color);
       transition: background-color 0.2s;
+
       &.selected {
         position: sticky;
         background-color: var(--theme-bg-accent-hover);
       }
+
       &:focus {
         outline: none;
         border-color: var(--theme-doclink-color);

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "UI build",
+      "type": "patch",
+      "packageName": "@anticrm/chunter-assets"
+    }
+  ],
+  "packageName": "@anticrm/chunter-assets",
+  "email": "haiodo@gmail.com"
+}

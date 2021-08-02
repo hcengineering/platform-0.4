@@ -63,7 +63,7 @@
             title={item.title}
             selectable
             bind:selected={item.selected}
-            action={async () => {
+            action={() => {
               pressed = !pressed
             }}
           />
@@ -73,7 +73,7 @@
             props={item.props}
             selectable
             bind:selected={item.selected}
-            action={async () => {
+            action={() => {
               pressed = !pressed
             }}
           />

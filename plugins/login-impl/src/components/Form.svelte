@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { EditBox, Label, Button, StatusControl } from '@anticrm/ui'
   import { OK, Status, Severity } from '@anticrm/status'
@@ -48,7 +47,7 @@
       const v = object[field.name]
       const f = field
       if (!f.optional && (!v || v === '')) {
-        status = new Status(Severity.INFO, login.status.RequiredField, {field: await translate(field.i18n, {})})
+        status = new Status(Severity.INFO, login.status.RequiredField, { field: await translate(field.i18n, {}) })
         return
       }
     }
@@ -58,31 +57,44 @@
 
   let inAction = false
 
-  function performAction(action: Action) {
+  function performAction (action: Action) {
     inAction = true
-    action.func().finally(() => {inAction = false})
+    action.func().finally(() => {
+      inAction = false
+    })
   }
-
 </script>
 
 <form class="form-container">
-  <div class="grow-separator"/>
-  <div class="title"><Label label={caption}/></div>
+  <div class="grow-separator" />
+  <div class="title"><Label label={caption} /></div>
   <div class="status">
-    <StatusControl {status} width="100%"/>
+    <StatusControl {status} width="100%" />
   </div>
   <div class="form">
-
     {#each fields as field (field.name)}
-    <div class={field.short ? 'form-col' : 'form-row'}>
-      <EditBox label={field.i18n} password={field.password} bind:value={object[field.name]} on:keyup={validate} on:focus={validate}/>
-    </div>
+      <div class={field.short ? 'form-col' : 'form-row'}>
+        <EditBox
+          label={field.i18n}
+          password={field.password}
+          bind:value={object[field.name]}
+          on:keyup={validate}
+          on:focus={validate}
+        />
+      </div>
     {/each}
 
     <div class="form-row send">
-      <Button label={action.i18n} primary width="100%" loading={inAction} 
-        disabled={status.severity !== Severity.OK && status.severity !== Severity.ERROR} 
-        on:click={() => {performAction(action)}}/>
+      <Button
+        label={action.i18n}
+        primary
+        width="100%"
+        loading={inAction}
+        disabled={status.severity !== Severity.OK && status.severity !== Severity.ERROR}
+        on:click={() => {
+          performAction(action)
+        }}
+      />
     </div>
 
     <!-- <div class="form-col"><EditBox label="First Name" bind:value={fname}/></div>
@@ -90,23 +102,20 @@
     <div class="form-row"><EditBox label="E-mail"/></div>
     <div class="form-row"><EditBox label="Password" password/></div>
     <div class="form-row"><EditBox label="Repeat password" password/></div> -->
-
   </div>
-  <div class="grow-separator"/>
+  <div class="grow-separator" />
   <div class="footer">
-    <span><Label label={bottomCaption}/></span>
-    <a href="." on:click|preventDefault={bottomActionFunc}><Label label={bottomActionLabel}/></a>
+    <span><Label label={bottomCaption} /></span>
+    <a href="." on:click|preventDefault={bottomActionFunc}><Label label={bottomActionLabel} /></a>
   </div>
 </form>
 
-  <!-- <div class="actions">
+<!-- <div class="actions">
     {#each actions as action, i}
       <button class="button" class:separator={i !== 0} on:click|preventDefault={action.func}> {action.i18n} </button>
     {/each}
   </div> -->
-
 <style lang="scss">
-
   .form-container {
     display: flex;
     flex-direction: column;
@@ -119,14 +128,14 @@
       font-weight: 600;
       font-size: 24px;
       line-height: 29px;
-      color: #FFFFFF;
+      color: #ffffff;
     }
     .status {
       min-height: 120px;
       max-height: 120px;
       padding-top: 20px;
     }
-    
+
     .form {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -154,7 +163,7 @@
       margin-top: 56px;
       font-size: 13px;
       line-height: 16px;
-      color: #FFFFFF;
+      color: #ffffff;
       span {
         opacity: 0.3;
       }
@@ -168,5 +177,4 @@
       }
     }
   }
-
 </style>

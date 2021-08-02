@@ -21,5 +21,5 @@ export default mergeIds(meeting, {
   component: {
     CreateChannel: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent
-  } 
+  }
 })

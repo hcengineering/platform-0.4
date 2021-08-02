@@ -34,10 +34,14 @@ export function initGridStore (): GridProps {
 }
 
 export function makeGridSizeStore (container: Element, initAmount: number): GridProps {
-  const containerSize = readable<Size>({ width: 0, height: 0 }, set => {
+  const containerSize = readable<Size>({ width: 0, height: 0 }, (set) => {
     const debouncedSet = debounce(set, 150)
     const observer = new ResizeObserver(
-      ([{ contentRect: { width, height } }]) => debouncedSet({ width, height })
+      ([
+        {
+          contentRect: { width, height }
+        }
+      ]) => debouncedSet({ width, height })
     )
 
     observer.observe(container)
@@ -49,20 +53,20 @@ export function makeGridSizeStore (container: Element, initAmount: number): Grid
 
   return {
     size: derived([amountStore, containerSize], ([amount, size]) => {
-      return Array(amount).fill(0).map((_, i) => i + 1)
-        .map(rowSize => {
+      return Array(amount)
+        .fill(0)
+        .map((_, i) => i + 1)
+        .map((rowSize) => {
           const columnsAmount = Math.ceil(amount / rowSize)
           const possibleWidth = size.width / rowSize
-          const possibleHeight = possibleWidth * 3 / 4
+          const possibleHeight = (possibleWidth * 3) / 4
 
-          const height = possibleHeight * columnsAmount > size.height
-            ? size.height / columnsAmount
-            : possibleHeight
-          const width = height * 4 / 3
+          const height = possibleHeight * columnsAmount > size.height ? size.height / columnsAmount : possibleHeight
+          const width = (height * 4) / 3
 
           return { height, width }
         })
-        .reduce((r, x) => r.width * r.height > x.width * x.height ? r : x)
+        .reduce((r, x) => (r.width * r.height > x.width * x.height ? r : x))
     }),
     amount: amountStore,
     containerSize

@@ -15,14 +15,12 @@
 <script lang="ts">
   import type { Platform } from '@anticrm/plugin'
   import { AuthStatusCodes } from '@anticrm/plugin'
-  import { Severity, Status } from '@anticrm/status'
-  import { getContext, onDestroy } from 'svelte'
   import type { LoginService } from '@anticrm/plugin-login'
   import login from '@anticrm/plugin-login'
-  import Form from './Form.svelte'
+  import { Severity, Status } from '@anticrm/status'
   import { Button } from '@anticrm/ui'
-  import type { ApplicationRouter } from '@anticrm/plugin-ui'
-  // import { PlatformStatusCodes } from '@anticrm/foundation'
+  import { getContext, onDestroy } from 'svelte'
+  import Form from './Form.svelte'
 
   // export let router: ApplicationRouter<ApplicationRoute>
   const object = { username: '', password: '', workspace: '', secondFactorCode: '' }
@@ -44,17 +42,14 @@
   $: fields = needSecondFactor ? baseFields.concat({ name: 'secondFactorCode', i18n: 'Confirm code' }) : baseFields
 
   const platform = getContext('platform') as Platform
-  const loginService = platform.getPlugin(login.id)
+  const loginService = platform.getPlugin(login.id) as LoginService
 
   async function doLogin () {
     status = new Status(Severity.INFO, 0, 'Соединяюсь с сервером...')
 
-    status = await (await loginService).doLogin(
-      object.username,
-      object.password,
-      object.workspace,
-      object.secondFactorCode
-    )
+    status = await (
+      await loginService
+    ).doLogin(object.username, object.password, object.workspace, object.secondFactorCode)
 
     if (status.code === AuthStatusCodes.CLIENT_VALIDATE_REQUIRED) {
       needSecondFactor = true
@@ -90,11 +85,11 @@
   })
 
   async function navigateApp (): Promise<void> {
-    (await loginService).navigateApp()
+    ;(await loginService).navigateApp()
   }
 
   async function logout (): Promise<void> {
-    (await loginService).doLogout()
+    ;(await loginService).doLogout()
     loginActive = false
   }
 
@@ -127,7 +122,8 @@
       {fields}
       {object}
       caption="Login into system"
-      {status} />
+      {status}
+    />
   {/if}
 {/await}
 

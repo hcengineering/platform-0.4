@@ -1,28 +1,4 @@
 module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    es6: true,
-    node: true
-  },
-  extends: [
-    'standard-with-typescript'
-  ],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
-  },
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    project: [
-      '**/tsconfig.json'
-    ]
-  },
-  plugins: ['@typescript-eslint', 'import'],
-  rules: {
-    '@typescript-eslint/array-type': 'off',
-    'no-void': 'off'
-  }
-}
+  extends: ['./node_modules/@anticrm/platform-rig/profiles/ui/config/eslint.config.json'],
+  parserOptions: { tsconfigRootDir: __dirname }
+};

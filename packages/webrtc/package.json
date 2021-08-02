@@ -2,6 +2,7 @@
   "name": "@anticrm/webrtc",
   "version": "0.4.1",
   "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "build:docs": "echo 'no docs yet'",

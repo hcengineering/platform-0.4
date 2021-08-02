@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-
 <script type="ts">
   import { onDestroy } from 'svelte'
 
@@ -86,40 +85,39 @@ limitations under the License.
   $: videosStyle = isScreenShared ? '' : `width: ${$cSize.width}px`
 </script>
 
-
 <div class="root" bind:this={container}>
-{#if isScreenShared}
+  {#if isScreenShared}
     <div class="video" class:mVideoFull={isScreenShared}>
-    <PeerStream media={$screen.media} full={true} />
+      <PeerStream media={$screen.media} full={true} />
     </div>
-{/if}
-<div class="videos" class:mVideosCompact={isScreenShared} style={videosStyle}>
+  {/if}
+  <div class="videos" class:mVideosCompact={isScreenShared} style={videosStyle}>
     <div class="video" class:mVideoCompact={isScreenShared} style={videoStyle}>
-    <PeerStream media={$user.media} level={$gains.get('user')} isLocal={true} />
+      <PeerStream media={$user.media} level={$gains.get('user')} isLocal={true} />
     </div>
     {#each peersArray as peer (peer.internalID)}
-    <div class="video" class:mVideoCompact={isScreenShared} style={videoStyle}>
+      <div class="video" class:mVideoCompact={isScreenShared} style={videoStyle}>
         <PeerStream media={peer.media} level={$gains.get(peer.internalID)} />
-    </div>
+      </div>
     {/each}
-</div>
-<div class="controls">
+  </div>
+  <div class="controls">
     {#if $status === 'left'}
-    {#if $user.isMediaReady}
+      {#if $user.isMediaReady}
         <Button on:click={join} label="Join" />
-    {/if}
+      {/if}
     {:else}
-    <Button on:click={leave} label="Leave" />
-    {#if !isScreenShared}
+      <Button on:click={leave} label="Leave" />
+      {#if !isScreenShared}
         <Button on:click={shareScreen} label="Share screen" />
-    {:else if getScreenOwner($screen.internalID) === $user.internalID}
+      {:else if getScreenOwner($screen.internalID) === $user.internalID}
         <Button on:click={stopSharing} label="Stop sharing" />
-    {/if}
+      {/if}
     {/if}
     <Button on:click={toggleMute} label={$user.muted ? 'Unmute' : 'Mute'} />
     <Button on:click={toggleCam} label={$user.camEnabled ? 'Disable cam' : 'Enable cam'} />
     <Button on:click={requestFullscreen} label="Fullscreen" />
-</div>
+  </div>
 </div>
 
 <style lang="scss">

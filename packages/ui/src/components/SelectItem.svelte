@@ -58,7 +58,7 @@
         direction={'top'}
         icon={Close}
         size={16}
-        action={async () => {
+        action={() => {
           item.selected = false
         }}
       />
@@ -75,7 +75,7 @@
         title={noItem.title}
         selectable
         bind:selected={noItem.selected}
-        action={async () => {
+        action={() => {
           pressed = false
           item.selected = false
         }}
@@ -86,7 +86,7 @@
         props={noItem.props}
         selectable
         bind:selected={noItem.selected}
-        action={async () => {
+        action={() => {
           pressed = false
           item.selected = false
         }}

@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { AnyComponent,ApplicationRoute } from '@anticrm/ui'
-  import { Component,newRouter } from '@anticrm/ui'
+  import type { AnyComponent, ApplicationRoute } from '@anticrm/ui'
+  import { Component, newRouter } from '@anticrm/ui'
   import login from '..'
 
   let form: ApplicationRoute

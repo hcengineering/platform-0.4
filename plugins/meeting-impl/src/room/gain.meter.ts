@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 // Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -18,22 +19,24 @@ export class GainMeter {
     fftSize: this.FFT_SIZE,
     smoothingTimeConstant: 0.01
   })
+
   private readonly src: MediaStreamAudioSourceNode
 
-  constructor(track: MediaStreamTrack) {
+  constructor (track: MediaStreamTrack) {
     const stream = new MediaStream([track])
     this.src = this.ctx.createMediaStreamSource(stream)
 
     this.src.connect(this.analyzer)
   }
 
-  close() {
+  close () {
     this.analyzer.disconnect()
     this.src.disconnect()
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.ctx.close()
   }
 
-  getValue() {
+  getValue () {
     const buffer = new Float32Array(this.FFT_SIZE)
     this.analyzer.getFloatTimeDomainData(buffer)
 

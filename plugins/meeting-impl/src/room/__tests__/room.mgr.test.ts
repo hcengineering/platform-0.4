@@ -1,3 +1,10 @@
+/* eslint-disable no-new */
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
 // Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -11,11 +18,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { get, Readable, Unsubscriber } from 'svelte/store';
+import { get, Readable, Unsubscriber } from 'svelte/store'
 
 import { NotificationMethod, ReqMethod } from '@anticrm/webrtc'
 import { RoomMgr } from '../room.mgr'
-import { Peer } from '../..';
+import { Peer } from '../..'
 
 jest.mock('../gain.meter')
 jest.useFakeTimers()
@@ -24,7 +31,7 @@ const mediaStreamConstructor = jest.fn()
 Object.defineProperty(global, 'MediaStream', {
   writable: true,
   value: mediaStreamConstructor
-});
+})
 
 const getUserMediaMock = jest.fn()
 const getDisplayMediaMock = jest.fn()
@@ -59,7 +66,7 @@ const mockMedia = () => {
     removeTrack: jest.fn()
   }
 
-  return {tracks, media}
+  return { tracks, media }
 }
 
 const mockClient = () => ({
@@ -73,7 +80,7 @@ const mockWebRTCEndpoint = (offer: string) => ({
   addEventListener: jest.fn(),
   addTrack: jest.fn(),
   addTransceiver: jest.fn(),
-  createOffer: jest.fn().mockResolvedValue({sdp: offer}),
+  createOffer: jest.fn().mockResolvedValue({ sdp: offer }),
   setLocalDescription: jest.fn(),
   setRemoteDescription: jest.fn(),
   close: jest.fn()
@@ -81,7 +88,7 @@ const mockWebRTCEndpoint = (offer: string) => ({
 
 const checkStore = <T>(
   store: Readable<T>,
-  values: Partial<T>[],
+  values: Array<Partial<T>>,
   check: (a: T, b: Partial<T>) => void = (a: T, b: Partial<T>) => expect(a).toEqual(b)
 ): Unsubscriber => {
   let idx = 0
@@ -98,40 +105,42 @@ const checkStore = <T>(
   }
 }
 
-const waitForMediaReady = (store: Readable<Peer>) => new Promise((resolve) => {
-  const uns = store.subscribe(val => {
-    if (val.isMediaReady) {
-      uns()
-      resolve(undefined)
-    }
+const waitForMediaReady = async (store: Readable<Peer>) =>
+  await new Promise((resolve) => {
+    const uns = store.subscribe((val) => {
+      if (val.isMediaReady) {
+        uns()
+        resolve(undefined)
+      }
+    })
   })
-})
 
-const waitForMediaReleased = (store: Readable<Peer>) => new Promise((resolve, reject) => {
-  let count = 0
+const waitForMediaReleased = async (store: Readable<Peer>) =>
+  await new Promise((resolve, reject) => {
+    let count = 0
 
-  const checker = () => {
-    count++
-    if (count === 3) {
-      reject('Release timeout')
-      return
+    const checker = () => {
+      count++
+      if (count === 3) {
+        reject('Release timeout')
+        return
+      }
+
+      if ((store as any).get().isMediaReady === false) {
+        resolve(undefined)
+        return
+      }
+
+      awaiter()
+    }
+    const awaiter = () => {
+      jest.useRealTimers()
+      setTimeout(checker, 100)
+      jest.useFakeTimers()
     }
 
-    if ((store as any).get().isMediaReady === false) {
-      resolve(undefined)
-      return
-    }
-
-    awaiter()
-  }
-  const awaiter = () => {
-    jest.useRealTimers()
-    setTimeout(checker, 100)
-    jest.useFakeTimers()
-  }
-
-  checker()
-})
+    checker()
+  })
 
 describe('room manager', () => {
   beforeEach(() => {
@@ -143,12 +152,12 @@ describe('room manager', () => {
   })
 
   it('constructs properly', () => {
-    (global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest.fn()
     const client = mockClient()
 
     new RoomMgr(client as any)
 
-    const notifications = client.subscribe.mock.calls.map(x => x[0])
+    const notifications = client.subscribe.mock.calls.map((x) => x[0])
 
     expect(notifications).toHaveLength(6)
     expect(notifications).toContainEqual(NotificationMethod.PeerJoined)
@@ -160,8 +169,8 @@ describe('room manager', () => {
   })
 
   it('initializes and releases media when gets user subscriber', async () => {
-    (global as any).RTCPeerConnection = jest.fn()
-    const {media, tracks} = mockMedia()
+    ;(global as any).RTCPeerConnection = jest.fn()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValue(media)
     const client = mockClient()
 
@@ -174,13 +183,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         }
       ],
       (a, b) => expect(a).toEqual(expect.objectContaining(b))
@@ -199,14 +208,14 @@ describe('room manager', () => {
     await waitForMediaReleased(mgr.user)
 
     expect(media.getTracks).toBeCalledTimes(1)
-    tracks.forEach(track => {
+    tracks.forEach((track) => {
       expect(track.stop).toBeCalledTimes(1)
       expect(media.removeTrack).toBeCalledWith(track)
     })
   })
   it('toggles cam when not joined', async () => {
-    (global as any).RTCPeerConnection = jest.fn()
-    const {media, tracks} = mockMedia()
+    ;(global as any).RTCPeerConnection = jest.fn()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValue(media)
     const client = mockClient()
 
@@ -219,13 +228,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
@@ -256,10 +265,10 @@ describe('room manager', () => {
     unsub()
   })
   it('toggles mic when not joined', async () => {
-    (global as any).RTCPeerConnection = jest.fn().mockReturnValue({
+    ;(global as any).RTCPeerConnection = jest.fn().mockReturnValue({
       addTrack: jest.fn()
     })
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValue(media)
     const client = mockClient()
 
@@ -272,13 +281,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
@@ -310,9 +319,8 @@ describe('room manager', () => {
   })
 
   it('toggles cam when joined', async () => {
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValue(media)
-
     ;(global as any).RTCPeerConnection = jest.fn().mockImplementation(() => mockWebRTCEndpoint(''))
     const client = mockClient()
 
@@ -335,19 +343,19 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: joinResp.me.internalID,
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: joinResp.me.internalID,
@@ -366,7 +374,7 @@ describe('room manager', () => {
     )
 
     await waitForMediaReady(mgr.user)
-  
+
     client.sendRequest.mockImplementation((request: any) => {
       if (request.method === ReqMethod.Join) {
         return joinResp
@@ -396,9 +404,11 @@ describe('room manager', () => {
     expect(tracks[1].enabled).toBe(false)
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.PeerUpdate,
-      params: [{
-        camEnabled: false
-      }]
+      params: [
+        {
+          camEnabled: false
+        }
+      ]
     })
 
     client.sendRequest.mockClear()
@@ -408,19 +418,22 @@ describe('room manager', () => {
     expect(tracks[1].enabled).toBe(true)
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.PeerUpdate,
-      params: [{
-        camEnabled: true
-      }]
+      params: [
+        {
+          camEnabled: true
+        }
+      ]
     })
 
     unsub()
   })
   it('toggles mic when joined', async () => {
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValue(media)
     const userEndpoint = mockWebRTCEndpoint('')
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
@@ -445,19 +458,19 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: joinResp.me.internalID,
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: joinResp.me.internalID,
@@ -476,7 +489,7 @@ describe('room manager', () => {
     )
 
     await waitForMediaReady(mgr.user)
-  
+
     client.sendRequest.mockImplementation((request: any) => {
       if (request.method === ReqMethod.Join) {
         return joinResp
@@ -506,9 +519,11 @@ describe('room manager', () => {
     expect(tracks[1].enabled).toBe(true)
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.PeerUpdate,
-      params: [{
-        muted: true
-      }]
+      params: [
+        {
+          muted: true
+        }
+      ]
     })
 
     client.sendRequest.mockClear()
@@ -518,9 +533,11 @@ describe('room manager', () => {
     expect(tracks[1].enabled).toBe(true)
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.PeerUpdate,
-      params: [{
-        muted: false
-      }]
+      params: [
+        {
+          muted: false
+        }
+      ]
     })
 
     unsub()
@@ -531,12 +548,13 @@ describe('room manager', () => {
     const answer = 'super answer'
     const userEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
 
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getUserMediaMock.mockResolvedValueOnce(media)
     const client = mockClient()
 
@@ -558,13 +576,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -576,21 +594,8 @@ describe('room manager', () => {
 
     await waitForMediaReady(mgr.user)
 
-    const unsubPeers = checkStore(
-      mgr.peers,
-      [
-        new Map(),
-        new Map()
-      ]
-    )
-    const unsubStatus = checkStore(
-      mgr.status,
-      [
-        'left',
-        'joining',
-        'joined'
-      ]
-    )
+    const unsubPeers = checkStore(mgr.peers, [new Map(), new Map()])
+    const unsubStatus = checkStore(mgr.status, ['left', 'joining', 'joined'])
     client.sendRequest.mockImplementation((request: any) => {
       if (request.method === ReqMethod.Join) {
         return joinResp
@@ -620,15 +625,17 @@ describe('room manager', () => {
     })
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.Transmit,
-      params: [{
-        peerID: joinResp.me.internalID,
-        sdp: offer
-      }]
+      params: [
+        {
+          peerID: joinResp.me.internalID,
+          sdp: offer
+        }
+      ]
     })
     expect(userEndpoint.setLocalDescription).toBeCalledTimes(1)
-    expect(userEndpoint.setLocalDescription).toBeCalledWith({sdp: offer})
+    expect(userEndpoint.setLocalDescription).toBeCalledWith({ sdp: offer })
     expect(userEndpoint.setRemoteDescription).toBeCalledTimes(1)
-    expect(userEndpoint.setRemoteDescription).toBeCalledWith({ type: 'answer', sdp: answer})
+    expect(userEndpoint.setRemoteDescription).toBeCalledWith({ type: 'answer', sdp: answer })
     expect(userEndpoint.addEventListener).toBeCalledTimes(1)
     expect(userEndpoint.addEventListener.mock.calls[0][0]).toBe('icecandidate')
 
@@ -641,12 +648,13 @@ describe('room manager', () => {
     const answer = 'super answer'
     const userEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
 
-    const {media} = mockMedia()
+    const { media } = mockMedia()
     getUserMediaMock.mockResolvedValueOnce(media)
     const client = mockClient()
 
@@ -668,13 +676,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -710,10 +718,12 @@ describe('room manager', () => {
     expect(client.sendNotification).toBeCalledTimes(1)
     expect(client.sendNotification).toBeCalledWith({
       method: NotificationMethod.ICECandidate,
-      params: [{
-        candidate,
-        peerID: joinResp.me.internalID
-      }]
+      params: [
+        {
+          candidate,
+          peerID: joinResp.me.internalID
+        }
+      ]
     })
 
     client.sendNotification.mockClear()
@@ -723,9 +733,7 @@ describe('room manager', () => {
 
     expect(client.sendNotification).not.toBeCalled()
 
-    const handler = client.subscribe.mock.calls
-      .find(x => x[0] === NotificationMethod.ICECandidate)
-      ?.[1]
+    const handler = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.ICECandidate)?.[1]
 
     expect(handler).toBeDefined()
 
@@ -763,13 +771,14 @@ describe('room manager', () => {
     const userEndpoint = mockWebRTCEndpoint(offer)
     const screenEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
       .mockReturnValueOnce(screenEndpoint) // actual screen endpoint
 
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getDisplayMediaMock.mockResolvedValueOnce(media)
     getUserMediaMock.mockResolvedValueOnce(mockMedia().media)
 
@@ -795,13 +804,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -856,7 +865,7 @@ describe('room manager', () => {
     })
 
     await mgr.shareScreen()
-    
+
     expect(client.sendRequest).not.toBeCalled()
 
     await mgr.join('test-room')
@@ -887,14 +896,16 @@ describe('room manager', () => {
     expect(screenEndpoint.setLocalDescription).toBeCalledWith({ sdp: offer })
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.Transmit,
-      params: [{
-        peerID: screenID,
-        sdp: offer
-      }]
+      params: [
+        {
+          peerID: screenID,
+          sdp: offer
+        }
+      ]
     })
     expect(screenEndpoint.setRemoteDescription).toBeCalledTimes(1)
     expect(screenEndpoint.setRemoteDescription).toBeCalledWith({ type: 'answer', sdp: answer })
-  
+
     // @ts-expect-error
     expect(navigator.mediaDevices.getDisplayMedia).toBeCalledTimes(1)
 
@@ -929,13 +940,14 @@ describe('room manager', () => {
     const userEndpoint = mockWebRTCEndpoint(offer)
     const screenEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
       .mockReturnValueOnce(screenEndpoint) // actual screen endpoint
 
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getDisplayMediaMock.mockResolvedValueOnce(media)
     getUserMediaMock.mockResolvedValueOnce(mockMedia().media)
 
@@ -960,13 +972,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -1021,7 +1033,7 @@ describe('room manager', () => {
     })
 
     await mgr.shareScreen()
-    
+
     expect(client.sendRequest).not.toBeCalled()
 
     await mgr.join('test-room')
@@ -1065,13 +1077,14 @@ describe('room manager', () => {
     const userEndpoint = mockWebRTCEndpoint(offer)
     const screenEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(userEndpoint) // actual user endpoint
       .mockReturnValueOnce(screenEndpoint) // actual screen endpoint
 
-    const {media, tracks} = mockMedia()
+    const { media, tracks } = mockMedia()
     getDisplayMediaMock.mockResolvedValueOnce(media)
     getUserMediaMock.mockResolvedValueOnce(mockMedia().media)
 
@@ -1096,13 +1109,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -1202,16 +1215,16 @@ describe('room manager', () => {
     const answer = 'super answer'
     const peerEndpoint = mockWebRTCEndpoint(offer)
 
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // actual user endpoint
       .mockReturnValueOnce(peerEndpoint) // peer endpoint
 
-    const {media, tracks} = mockMedia()
-    getDisplayMediaMock
-      .mockResolvedValueOnce(mockMedia().media) // user media
-    
+    const { media, tracks } = mockMedia()
+    getDisplayMediaMock.mockResolvedValueOnce(mockMedia().media) // user media
+
     mediaStreamConstructor
       .mockReturnValueOnce(mockMedia().media) // user media
       .mockReturnValueOnce(mockMedia().media) // screen media
@@ -1239,13 +1252,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -1260,20 +1273,22 @@ describe('room manager', () => {
         new Map(),
         new Map(),
         new Map([
-          [peerID, {
-            internalID: peerID,
-            isMediaReady: true,
-            muted: false,
-            camEnabled: false,
-            media
-          }]
+          [
+            peerID,
+            {
+              internalID: peerID,
+              isMediaReady: true,
+              muted: false,
+              camEnabled: false,
+              media
+            }
+          ]
         ]),
         new Map()
       ],
       (a, b) => {
         expect([...a.keys()]).toEqual(b && [...b.keys!()])
-        ;([...a.keys()])
-          .forEach(k => expect(a.get(k)).toEqual(expect.objectContaining(b.get!(k))))
+        ;[...a.keys()].forEach((k) => expect(a.get(k)).toEqual(expect.objectContaining(b.get!(k))))
       }
     )
 
@@ -1302,7 +1317,7 @@ describe('room manager', () => {
       }
     }
 
-    const peerJoinedSub = client.subscribe.mock.calls.find(x => x[0] === NotificationMethod.PeerJoined)[1]
+    const peerJoinedSub = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.PeerJoined)[1]
     await peerJoinedSub(peerJoinedNotif)
     expect(client.sendRequest).not.toBeCalled()
 
@@ -1323,17 +1338,19 @@ describe('room manager', () => {
     expect(peerEndpoint.setRemoteDescription).toBeCalledWith({ type: 'answer', sdp: answer })
     expect(client.sendRequest).toBeCalledWith({
       method: ReqMethod.Transmit,
-      params: [{
-        peerID,
-        sdp: offer
-      }]
+      params: [
+        {
+          peerID,
+          sdp: offer
+        }
+      ]
     })
 
     expect(peerEndpoint.addTransceiver).toBeCalledTimes(2)
     expect(peerEndpoint.addTransceiver).toBeCalledWith('audio', { direction: 'recvonly' })
     expect(peerEndpoint.addTransceiver).toBeCalledWith('video', { direction: 'recvonly' })
     expect(peerEndpoint.addEventListener).toBeCalledTimes(2)
-    const trackCb = peerEndpoint.addEventListener.mock.calls.find(x => x[0] === 'track')[1]
+    const trackCb = peerEndpoint.addEventListener.mock.calls.find((x) => x[0] === 'track')[1]
 
     trackCb({ track: tracks[0] })
     trackCb({ track: tracks[1] })
@@ -1342,7 +1359,7 @@ describe('room manager', () => {
     expect(media.addTrack).toBeCalledWith(tracks[0])
     expect(media.addTrack).toBeCalledWith(tracks[1])
 
-    const icecandidateCb = client.subscribe.mock.calls.find(x => x[0] === NotificationMethod.ICECandidate)[1]
+    const icecandidateCb = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.ICECandidate)[1]
 
     await icecandidateCb({
       result: {
@@ -1357,7 +1374,7 @@ describe('room manager', () => {
     expect(peerEndpoint.addIceCandidate).toBeCalledTimes(1)
     expect(peerEndpoint.addIceCandidate).toBeCalledWith('candidate')
 
-    const leftCb = client.subscribe.mock.calls.find(x => x[0] === NotificationMethod.PeerLeft)[1]
+    const leftCb = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.PeerLeft)[1]
     await leftCb({
       result: {
         notification: NotificationMethod.PeerLeft,
@@ -1380,16 +1397,16 @@ describe('room manager', () => {
   })
 
   it('handles peer update', async () => {
-    ;(global as any).RTCPeerConnection = jest.fn()
+    ;(global as any).RTCPeerConnection = jest
+      .fn()
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // init screen endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // actual user endpoint
       .mockReturnValueOnce(mockWebRTCEndpoint('')) // peer endpoint
 
-    const {media, tracks} = mockMedia()
-    getDisplayMediaMock
-      .mockResolvedValueOnce(mockMedia().media) // user media
-    
+    const { media, tracks } = mockMedia()
+    getDisplayMediaMock.mockResolvedValueOnce(mockMedia().media) // user media
+
     mediaStreamConstructor
       .mockReturnValueOnce(mockMedia().media) // user media
       .mockReturnValueOnce(mockMedia().media) // screen media
@@ -1417,13 +1434,13 @@ describe('room manager', () => {
           internalID: '',
           isMediaReady: false,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           internalID: '',
           isMediaReady: true,
           muted: false,
-          camEnabled: true 
+          camEnabled: true
         },
         {
           ...joinResp.me,
@@ -1438,28 +1455,33 @@ describe('room manager', () => {
         new Map(),
         new Map(),
         new Map([
-          [peerID, {
-            internalID: peerID,
-            isMediaReady: true,
-            muted: false,
-            camEnabled: false,
-            media
-          }]
+          [
+            peerID,
+            {
+              internalID: peerID,
+              isMediaReady: true,
+              muted: false,
+              camEnabled: false,
+              media
+            }
+          ]
         ]),
         new Map([
-          [peerID, {
-            internalID: peerID,
-            isMediaReady: true,
-            muted: true,
-            camEnabled: true,
-            media
-          }]
-        ]),
+          [
+            peerID,
+            {
+              internalID: peerID,
+              isMediaReady: true,
+              muted: true,
+              camEnabled: true,
+              media
+            }
+          ]
+        ])
       ],
       (a, b) => {
         expect([...a.keys()]).toEqual(b && [...b.keys!()])
-        ;([...a.keys()])
-          .forEach(k => expect(a.get(k)).toEqual(expect.objectContaining(b.get!(k))))
+        ;[...a.keys()].forEach((k) => expect(a.get(k)).toEqual(expect.objectContaining(b.get!(k))))
       }
     )
 
@@ -1488,13 +1510,13 @@ describe('room manager', () => {
       }
     }
 
-    const peerJoinedSub = client.subscribe.mock.calls.find(x => x[0] === NotificationMethod.PeerJoined)[1]
+    const peerJoinedSub = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.PeerJoined)[1]
 
     await mgr.join('test-room')
 
     await peerJoinedSub(peerJoinedNotif)
 
-    const peerUpdatedCb = client.subscribe.mock.calls.find(x => x[0] === NotificationMethod.PeerUpdated)[1]
+    const peerUpdatedCb = client.subscribe.mock.calls.find((x) => x[0] === NotificationMethod.PeerUpdated)[1]
     await peerUpdatedCb({
       result: {
         notification: NotificationMethod.PeerUpdated,
