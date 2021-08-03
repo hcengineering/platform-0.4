@@ -69,7 +69,7 @@
         action={() => {
           selected = undefined
           pressed = !pressed
-          dispatch('change')
+          dispatch('change', selected)
         }}
       />
     {/if}
@@ -81,7 +81,7 @@
         action={() => {
           selected = user._id
           pressed = !pressed
-          dispatch('change')
+          dispatch('change', selected)
         }}
       />
     {/each}

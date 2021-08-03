@@ -23,10 +23,11 @@
     Tabs,
     Section,
     IconFile,
-    IconComments
+    IconComments,
+    Grid
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { CheckListItem, Task } from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import task from '../plugin'
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
@@ -40,11 +41,7 @@
 
   export let id: Ref<Task>
   let item: Task | undefined
-  let description: string | undefined
-  let checkItems: CheckListItem[] = []
   let projectMembers: Account[] = []
-  let assignee: Ref<Account> | undefined
-  let dueTo: Date
 
   $: {
     getItem(id)
@@ -55,10 +52,6 @@
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       item = result[0]
-      description = item.description
-      checkItems = item.checkItems
-      assignee = item.assignee
-      dueTo = item.dueTo
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
         projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
@@ -75,42 +68,17 @@
     navigate(loc)
   }
 
-  async function updateCheckItem () {
-    if (item === undefined) return
-    await client.updateDoc(item._class, item.space, item._id, {
-      checkItems: checkItems
-    })
-  }
-
-  async function updateDescription () {
-    if (item === undefined) return
-    if (item.description !== description) {
-      await client.updateDoc(item._class, item.space, item._id, {
-        description: description
-      })
-    }
-  }
-
-  async function updateAssignee () {
-    if (item === undefined) return
-    if (item.assignee !== assignee) {
-      await client.updateDoc(item._class, item.space, item._id, {
-        assignee: assignee
-      })
-    }
-  }
-
-  async function updateDue () {
-    if (item === undefined) return
-    if (item.dueTo !== dueTo) {
-      await client.updateDoc(item._class, item.space, item._id, {
-        dueTo: dueTo
-      })
-    }
-  }
-
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
   let selectedTab: IntlString = task.string.General
+
+  async function update (key: string, value: any): Promise<void> {
+    if (item !== undefined) {
+      const operations = {
+        [key]: value
+      }
+      client.updateDoc(item._class, item.space, item._id, operations)
+    }
+  }
 </script>
 
 {#await getItem(id) then value}
@@ -123,42 +91,51 @@
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
-          <div class="content">
-            <div class="row">
-              <DescriptionEditor
-                label={task.string.TaskDescription}
-                on:blur={updateDescription}
-                bind:value={description}
-              />
-            </div>
-            <div class="row">
-              <UserBox
-                bind:selected={assignee}
-                users={projectMembers}
-                title={task.string.Assignee}
-                caption={task.string.ProjectMembers}
-                label={task.string.AssignTask}
-                on:change={updateAssignee}
-                showSearch
-              />
-            </div>
-            <div class="row">
-              <DatePicker bind:selected={dueTo} title={task.string.PickDue} on:change={updateDue} />
-            </div>
-          </div>
+          <Grid column={1}>
+            <DescriptionEditor
+              label={task.string.TaskDescription}
+              on:blur={(e) => {
+                update('description', item?.description)
+              }}
+              bind:value={item.description}
+            />
+            <UserBox
+              selected={item.assignee}
+              users={projectMembers}
+              title={task.string.Assignee}
+              caption={task.string.ProjectMembers}
+              label={task.string.AssignTask}
+              on:change={(e) => {
+                update('assignee', e.detail)
+              }}
+              showSearch
+            />
+            <DatePicker
+              selected={item.dueTo}
+              title={task.string.PickDue}
+              on:change={(e) => {
+                update('dueTo', e.detail)
+              }}
+            />
+          </Grid>
         </Section>
-        <Section label={task.string.Comments} icon={IconComments} topLine>
-          <div class="content">
-            <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
-          </div>
+        <Section label={task.string.Comments} icon={IconComments}>
+          <Grid column={1}>
+            <CommentsView currentSpace={item.space} taskId={item._id} />
+          </Grid>
         </Section>
       {:else if selectedTab === task.string.Attachment}
-        <div class="content" />
+      <Grid column={1}></Grid>
       {:else}
-        <Section label={task.string.ToDos} icon={IconComments} topLine>
-          <div class="content">
-            <div class="row"><CheckList bind:items={checkItems} on:change={updateCheckItem} /></div>
-          </div>
+        <Section label={task.string.ToDos} icon={IconComments}>
+          <Grid column={1}>
+            <CheckList
+              bind:items={item.checkItems}
+              on:change={(e) => {
+                update('checkItems', item?.checkItems)
+              }}
+            />
+          </Grid>
         </Section>
       {/if}
     </ScrollBox>
@@ -189,26 +166,5 @@
         opacity: 1;
       }
     }
-  }
-
-  .content {
-    height: calc(100vh - 204px);
-
-    .row {
-      margin-top: 10px;
-    }
-
-    // .progress {
-    //   margin-top: 24px;
-    //   span {
-    //     margin-bottom: 8px;
-    //     font-weight: 500;
-    //     font-size: 10px;
-    //     line-height: 13px;
-    //     letter-spacing: 0.5px;
-    //     text-transform: uppercase;
-    //     text-align: right;
-    //   }
-    // }
   }
 </style>

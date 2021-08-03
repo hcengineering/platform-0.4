@@ -30,10 +30,12 @@
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
 
+  const client = getClient()
+
   let name: string = ''
   let description: string = ''
   let isPrivate: boolean = false
-  let members: Ref<Account>[] = []
+  let members: Ref<Account>[] = [client.accountId()]
   let users: Account[] = []
   let newMember: Ref<Account> | undefined
   $: if (newMember !== undefined) {
@@ -41,8 +43,6 @@
     members = members
     newMember = undefined
   }
-
-  const client = getClient()
 
   function createProject () {
     client.createDoc(task.class.Project, core.space.Model, {
@@ -80,7 +80,7 @@
       />
     </Grid>
   </Section>
-  <Section label={task.string.ProjectMembers} icon={IconComments} topLine>
+  <Section label={task.string.ProjectMembers} icon={IconComments}>
     {#await getUsers() then users}
       <Grid column={1}>
         {#each members as member}
@@ -108,16 +108,3 @@
     {/await}
   </Section>
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-
-    .row {
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-  }
-</style>

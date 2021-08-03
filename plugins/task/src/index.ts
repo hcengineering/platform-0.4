@@ -84,7 +84,8 @@ export default plugin(
       ToDos: '' as IntlString,
       Due: '' as IntlString,
       PickDue: '' as IntlString,
-      Comments: '' as IntlString
+      Comments: '' as IntlString,
+      Status: '' as IntlString
     }
   }
 )

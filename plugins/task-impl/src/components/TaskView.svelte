@@ -18,10 +18,11 @@
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
-  import { ScrollBox } from '@anticrm/ui'
-  import task from '../plugin'
+  import ui, { ScrollBox } from '@anticrm/ui'
+  import task from '@anticrm/task'
+  import type { IntlString } from '@anticrm/status'
 
-  export let view: string = 'list'
+  export let view: IntlString = ui.string.List
   export let currentSpace: Ref<Space>
   const _class: Ref<Class<Doc>> = task.class.Task
 </script>
@@ -32,15 +33,15 @@
       <div style="flex-grow: 1" />
       <ViewSelection bind:selected={view} />
     </div>
-    {#if view === 'kanban'}
+    {#if view === ui.string.Kanban}
       <ScrollBox>
         <KanbanView {currentSpace} />
       </ScrollBox>
-    {:else if view === 'card'}
+    {:else if view === ui.string.Cards}
       <ScrollBox vertical>
         <CardView {_class} {currentSpace} />
       </ScrollBox>
-    {:else if view === 'list'}
+    {:else if view === ui.string.List}
       <ScrollBox vertical>
         <TableView {currentSpace} />
       </ScrollBox>
