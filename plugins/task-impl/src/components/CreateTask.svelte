@@ -132,8 +132,7 @@
       </Grid>
     </Section>
   {:else if selectedTab === task.string.Attachment}
-    <Grid column={1}>
-    </Grid>
+    <Grid column={1} />
   {:else}
     <Section label={task.string.ToDos} icon={IconComments}>
       <Grid column={1}>
