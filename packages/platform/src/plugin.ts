@@ -132,7 +132,7 @@ async function resolveDependencies (deps: PluginDependencies): Promise<{ [key: s
       })
     )
   }
-  return Promise.all(plugins).then(() => result)
+  return await Promise.all(plugins).then(() => result)
 }
 
 async function loadPlugin<T extends Service> (id: Plugin<T>): Promise<Service> {

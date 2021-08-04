@@ -62,13 +62,23 @@ class WebSocketConnection extends RequestProcessor implements Storage {
 
 export async function connect (clientUrl: string, handler: TxHandler): Promise<WithAccountId> {
   const socket = new WebSocket(`ws://${clientUrl}`)
-
+  let isResolved = false
   // Wait for connection to be established.
   await new Promise((resolve, reject) => {
-    socket.onopen = resolve
+    socket.onopen = () => {
+      isResolved = true
+      resolve(null)
+    }
     socket.onerror = () => {
+      isResolved = true
       reject(new Error(`Failed to connect to ${clientUrl}`))
     }
+    setTimeout(function () {
+      if (!isResolved) {
+        console.info('Failed to connect to' + clientUrl)
+        reject(new Error(`Failed to connect to ${clientUrl}`))
+      }
+    }, 5000)
   })
 
   return new WebSocketConnection(socket, handler)

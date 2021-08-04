@@ -7,7 +7,7 @@
     "lint-diff:fix": "./common/scripts/each-diff.sh rushx lint:fix",
     "format-diff": "./common/scripts/each-diff.sh rushx format",
     "dev": "cd ./dev/prod/ && rushx dev",
-    "clean-logs": "git status --ignored | grep build.log | xargs rm",
+    "clean-logs": "git status --ignored | grep build*.log | xargs rm",
     "do-changes": "rush change --bulk --bump-type patch --message"
   },
   "author": "Anticrm Platform Contributors",

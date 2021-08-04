@@ -15,18 +15,23 @@
 <script lang="ts">
   import statusCode, { OK, Severity, Status } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
-  import { doLogin } from '../utils'
   import Form from './Form.svelte'
 
   const dispatch = createEventDispatcher()
 
+  import { getPlugin } from '@anticrm/platform'
+  import login from '@anticrm/login'
+  const loginPlugin = getPlugin(login.id)
+
+  import loginImpl from '../plugin'
+
   const fields = [
-    { name: 'first', i18n: 'First name', short: true },
-    { name: 'last', i18n: 'Last name', short: true },
-    { name: 'username', i18n: 'Email' },
-    { name: 'workspace', i18n: 'Workspace' },
-    { name: 'password', i18n: 'Password', password: true },
-    { name: 'password2', i18n: 'Repeat password', password: true }
+    { name: 'first', i18n: loginImpl.string.FirstName, short: true },
+    { name: 'last', i18n: loginImpl.string.LastName, short: true },
+    { name: 'username', i18n: loginImpl.string.Email },
+    { name: 'workspace', i18n: loginImpl.string.Workspace },
+    { name: 'password', i18n: loginImpl.string.Password, password: true },
+    { name: 'password2', i18n: loginImpl.string.Password2, password: true }
   ]
 
   const object = {
@@ -41,11 +46,11 @@
   let status = OK
 
   const action = {
-    i18n: 'Sign Up',
+    i18n: loginImpl.string.SignUp,
     func: async () => {
       status = new Status(Severity.INFO, statusCode.status.OK, 'Соединяюсь с сервером...')
 
-      const [loginStatus] = await doLogin(object.username, object.password, object.workspace)
+      const loginStatus = await (await loginPlugin).doLogin(object.username, object.password, object.workspace)
 
       return new Promise<void>((resolve, reject) => {
         setTimeout(() => {
@@ -58,13 +63,13 @@
 </script>
 
 <Form
-  caption={'Sign Up'}
+  caption={loginImpl.string.SignUp}
   {status}
   {fields}
   {object}
   {action}
-  bottomCaption="Already have an account?"
-  bottomActionLabel="Log In"
+  bottomCaption={loginImpl.string.HaveAccount}
+  bottomActionLabel={loginImpl.string.LogIn}
   bottomActionFunc={() => {
     dispatch('switch', 'login')
   }}

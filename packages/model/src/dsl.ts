@@ -71,7 +71,7 @@ export function Model<T extends Obj> (_class: Ref<Class<T>>, _extends: Ref<Class
     const txes = getTxes(constructor.prototype)
     txes._id = _class
     txes.extends = _class !== core.class.Obj ? _extends : undefined
-    txes.domain = domain
+    txes.domain = domain ?? DOMAIN_MODEL
   }
 }
 

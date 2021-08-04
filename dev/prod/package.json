@@ -71,6 +71,7 @@
     "@anticrm/recruiting-impl": "~0.4.0",
     "@anticrm/fsm-impl": "~0.4.0",
     "@anticrm/recruiting": "~0.4.0",
-    "@anticrm/fsm": "~0.4.0"
+    "@anticrm/fsm": "~0.4.0",
+    "@anticrm/login-assets": "~0.4.0"
   }
 }

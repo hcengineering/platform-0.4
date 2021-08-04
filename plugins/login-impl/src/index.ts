@@ -13,124 +13,117 @@
 // limitations under the License.
 //
 
-import login, { LoginService } from '@anticrm/login'
-import { setResource } from '@anticrm/platform'
-import LoginForm from './components/LoginApp.svelte'
+import login, { ACCOUNT_KEY, LoginInfo, LoginService } from '@anticrm/login'
+import { getMetadata, setMetadata, setResource } from '@anticrm/platform'
+import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
+import LoginApp from './components/LoginApp.svelte'
 
-// import SettingForm from './components/SettingForm.svelte'
-// import MainLoginForm from './components/MainLoginForm.svelte'
+import SettingForm from './components/SettingForm.svelte'
+import { Request, Response, serialize } from '../../../packages/rpc/lib'
 
-/*!
- * Anticrm Platform™ Login Plugin
- * © 2020 Anticrm Platform Contributors. All Rights Reserved.
- * Licensed under the Eclipse Public License, Version 2.0
- */
+import pluginCore from '@anticrm/plugin-core'
+
 export default async (): Promise<LoginService> => {
-  setResource(login.component.LoginForm, LoginForm)
+  setResource(login.component.LoginForm, LoginApp)
 
-  // const accountsUrl = getMetadata(login.metadata.AccountsUrl)
-  // if (!accountsUrl) {
-  //   throw new Status(Severity.ERROR, 0, 'no accounts server metadata provided.')
-  // }
-  // // platform.setResource(login.component.MainLoginForm, MainLoginForm)
-  // // platform.setResource(login.component.SettingForm, SettingForm)
+  const accountsUrl = getMetadata(login.metadata.AccountsUrl)
+  if (accountsUrl === undefined) {
+    throw new PlatformError(new Status(Severity.ERROR, login.status.NoAccountUri, {}))
+  }
+  setResource(login.component.SettingForm, SettingForm)
 
-  // // platform.setResource(login.component.SignupForm, SignupForm)
+  function setLoginInfo (loginInfo: LoginInfo): void {
+    localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
 
-  // function setLoginInfo (loginInfo: LoginInfo) {
-  //   localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
+    setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
+  }
 
-  //   setMetadata(WHO_AM_I, loginInfo.email)
-  //   setMetadata(TOKEN, loginInfo.token)
+  function clearLoginInfo (): void {
+    localStorage.removeItem(ACCOUNT_KEY)
 
-  //   // TODO: It should be updated from here, but not working now.
-  //   // platform.setMetadata(platformIds.metadata.WSHost, loginInfo.server)
-  //   // platform.setMetadata(platformIds.metadata.WSPort, loginInfo.port)
-  // }
+    setMetadata(pluginCore.metadata.ClientUrl, undefined)
+    setMetadata(pluginCore.metadata.AccountId, undefined)
+  }
 
-  // function clearLoginInfo () {
-  //   localStorage.removeItem(ACCOUNT_KEY)
+  async function getLoginInfo (): Promise<LoginInfo | undefined> {
+    const account = localStorage.getItem(ACCOUNT_KEY)
+    if (account == null) {
+      return await Promise.resolve(undefined)
+    }
+    const loginInfo = JSON.parse(account) as LoginInfo
 
-  //   setMetadata(WHO_AM_I, undefined)
-  //   setMetadata(TOKEN, undefined)
-  // }
+    // Do some operation to check if token is expired or not.
+    return await Promise.resolve(loginInfo)
+  }
 
-  // function getLoginInfo (): Promise<LoginInfo | undefined> {
-  //   const account = localStorage.getItem(ACCOUNT_KEY)
-  //   if (!account) {
-  //     return Promise.resolve(undefined)
-  //   }
-  //   const loginInfo = JSON.parse(account) as LoginInfo
+  async function saveSetting (password: string, newPassword: string): Promise<Status> {
+    const loginInfo = await getLoginInfo()
+    if (loginInfo == null) return new Status(Severity.ERROR, login.status.UnAuthorized, {})
+    const request: Request<[string, string, string]> = {
+      method: 'updateAccount',
+      params: [loginInfo.email, password, newPassword]
+    }
 
-  //   const token = getMetadata(TOKEN)
-  //   if (!token) {
-  //     return Promise.resolve(undefined)
-  //   }
-  //   // Do some operation to check if token is expired or not.
-  //   return Promise.resolve(loginInfo)
-  // }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const response = await fetch(accountsUrl!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: serialize(request)
+      })
+      const result = (await response.json()) as Response<any>
+      if (result.error !== undefined) {
+        return result.error
+      }
+      if (result.result !== undefined) {
+        setLoginInfo(result.result)
+      }
+      return OK
+    } catch (err) {
+      return new Status(Severity.ERROR, login.status.ServerNotAvailable, {})
+    }
+  }
+  /**
+   * Perform a login operation to required workspace with user credentials.
+   */
+  async function doLogin (username: string, password: string, workspace: string): Promise<Status> {
+    const accountsUrl = getMetadata(login.metadata.AccountsUrl) ?? 'localhost:18080'
 
-  // function navigateApp (): Promise<void> {
-  //   // const defaultApp = getMetadata(uiPlugin.metadata.DefaultApplication)
-  //   // if (defaultApp) {
-  //   //   uiService.navigateJoin([defaultApp], undefined, undefined)
-  //   // }
-  //   return Promise.resolve()
-  // }
+    const request: Request<[string, string, string]> = {
+      method: 'login',
+      params: [username, password, workspace]
+    }
 
-  // function navigateLoginForm (): Promise<void> {
-  //   // const loginApp = platform.getMetadata(uiPlugin.metadata.LoginApplication)
-  //   // if (loginApp) {
-  //   //   uiService.navigateJoin([loginApp], undefined, undefined)
-  //   // }
-  //   return Promise.resolve()
-  // }
+    try {
+      const response = await fetch(accountsUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: serialize(request)
+      })
+      const result: Response<LoginInfo> = await response.json()
+      const status = result.error ?? OK
+      if (result.result !== undefined) {
+        setLoginInfo(result.result)
+      }
+      return status
+    } catch (err) {
+      return unknownError(err)
+    }
+  }
 
-  // async function saveSetting (password: string, newPassword: string, secondFactorEnabled: boolean, clientSecret: string, secondFactorCode: string): Promise<Status> {
-  //   const loginInfo = await getLoginInfo()
-  //   if (!loginInfo) return new Status(Severity.ERROR, 0, 'Необходимо авторизоваться')
-  //   const request: Request<[string, string, string, boolean, string, string]> = {
-  //     method: 'updateAccount',
-  //     params: [loginInfo.email, password, newPassword, secondFactorEnabled, clientSecret, secondFactorCode]
-  //   }
+  async function doLogout (): Promise<void> {
+    clearLoginInfo()
+    return await Promise.resolve()
+  }
 
-  //   try {
-  //     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //     const response = await fetch(accountsUrl!, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json;charset=utf-8'
-  //       },
-  //       body: serialize(request)
-  //     })
-  //     const result = (await response.json()) as Response<any>
-  //     if (result.error?.message) {
-  //       return toStatus(result)
-  //     }
-  //     if (result.result) {
-  //       setLoginInfo(result.result)
-  //     }
-  //     return new Status(Severity.OK, 0, '')
-  //   } catch (err) {
-  //     return new Status(Severity.ERROR, 0, 'Не могу соедениться с сервером.')
-  //   }
-  // }
-
-  // function doLogout (): Promise<void> {
-  //   const token = getMetadata(TOKEN)
-  //   if (token) {
-  //     clearLoginInfo()
-  //   }
-  //   return Promise.resolve()
-  // }
-
-  // return Promise.resolve({
-  //   doLogout,
-  //   getLoginInfo,
-  //   navigateApp,
-  //   navigateLoginForm,
-  //   saveSetting
-  // })
-
-  return {}
+  return {
+    doLogin,
+    doLogout,
+    getLoginInfo,
+    saveSetting
+  }
 }

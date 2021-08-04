@@ -3,6 +3,7 @@
   "version": "0.4.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "svelte": "src/index.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
@@ -39,7 +40,8 @@
     "svelte-check": "^2.1.0",
     "eslint-svelte3-preprocess": "~0.0.5",
 
-    "svelte-preprocess": "^4.7.0"
+    "svelte-preprocess": "^4.7.0",
+    "svelte-loader": "^3.1.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
@@ -48,6 +50,7 @@
     "@anticrm/workbench": "~0.4.0",
     "@anticrm/plugin-core": "~0.4.0",
     "@anticrm/core": "~0.4.0",
-    "@anticrm/presentation": "~0.4.0"
+    "@anticrm/presentation": "~0.4.0",
+    "@anticrm/login": "~0.4.0"
   }
 }
