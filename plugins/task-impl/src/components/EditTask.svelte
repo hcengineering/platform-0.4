@@ -24,7 +24,10 @@
     Section,
     IconFile,
     IconComments,
-    Grid
+    IconToDo,
+    Grid,
+    Row,
+    CheckBoxList
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
@@ -32,7 +35,7 @@
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
@@ -91,14 +94,14 @@
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
-          <Grid column={1}>
-            <DescriptionEditor
+          <Grid>
+            <Row><DescriptionEditor
               label={task.string.TaskDescription}
               on:blur={(e) => {
                 update('description', item?.description)
               }}
               bind:value={item.description}
-            />
+            /></Row>
             <UserBox
               selected={item.assignee}
               users={projectMembers}
@@ -120,22 +123,26 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <Grid column={1}>
-            <CommentsView currentSpace={item.space} taskId={item._id} />
-          </Grid>
+          <CommentsView currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />
       {:else}
-        <Section label={task.string.ToDos} icon={IconComments}>
-          <Grid column={1}>
-            <CheckList
-              bind:items={item.checkItems}
-              on:change={(e) => {
-                update('checkItems', item?.checkItems)
-              }}
-            />
-          </Grid>
+        <Section label={task.string.ToDos} icon={IconToDo}>
+          <!-- <CheckList
+            bind:items={item.checkItems}
+            on:change={(e) => {
+              update('checkItems', item?.checkItems)
+            }}
+          /> -->
+          <CheckBoxList
+            editable
+            label={'Add a To Do'}
+            bind:items={item.checkItems}
+            on:change={(e) => {
+              update('checkItems', item?.checkItems)
+            }}
+          />
         </Section>
       {/if}
     </ScrollBox>

@@ -36,7 +36,7 @@
     {#if closed}<ArrowUp />{:else}<ArrowDown />{/if}
   </div>
 </div>
-{#if !closed}<div class="section-content"><slot /></div>{/if}
+<div class="section-content" class:hidden={closed}><slot /></div>
 
 <style lang="scss">
   .section-container {
@@ -45,8 +45,8 @@
     align-items: center;
     flex-wrap: nowrap;
     width: 100%;
-    height: 50px;
-    min-height: 50px;
+    height: 80px;
+    min-height: 80px;
     cursor: pointer;
     user-select: none;
 
@@ -60,11 +60,17 @@
       margin: 8px;
     }
   }
-  :global(.section-container + .section-container),
-  :global(.section-content + .section-container) {
-    border-top: 1px solid var(--theme-menu-divider);
-  }
   .section-content {
     margin: 16px 0 54px;
+    height: auto;
+    visibility: visible;
+    &.hidden {
+      margin: 0;
+      height: 0;
+      visibility: hidden;
+    }
+  }
+  :global(.section-content + .section-container) {
+    border-top: 1px solid var(--theme-menu-divider);
   }
 </style>

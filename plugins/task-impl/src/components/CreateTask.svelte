@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments, Grid } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments, Grid, Row, CheckBoxList, IconToDo } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
@@ -22,7 +22,7 @@
   import core, { generateId, getFullRef } from '@anticrm/core'
   import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
@@ -112,9 +112,8 @@
   <Tabs {tabs} bind:selected={selectedTab} />
   {#if selectedTab === task.string.General}
     <Section label={task.string.GeneralInformation} icon={IconFile}>
-      <Grid column={1}>
-        <EditBox label={task.string.TaskName} bind:value={name} />
-        <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
+      <Grid>
+        <Row><EditBox label={task.string.TaskName} bind:value={name} /></Row>
         {#await getProjectMembers() then users}
           <UserBox
             bind:selected={assignee}
@@ -126,6 +125,7 @@
           />
         {/await}
         <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
+        <Row><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></Row>
       </Grid>
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
@@ -136,10 +136,9 @@
   {:else if selectedTab === task.string.Attachment}
     <Grid column={1} />
   {:else}
-    <Section label={task.string.ToDos} icon={IconComments}>
-      <Grid column={1}>
-        <CheckList bind:items={checkItems} />
-      </Grid>
+    <Section label={task.string.ToDos} icon={IconToDo}>
+        <!-- <CheckList bind:items={checkItems} /> -->
+        <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
     </Section>
   {/if}
 </Dialog>
