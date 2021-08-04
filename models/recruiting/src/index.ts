@@ -16,17 +16,19 @@
 import { Builder, Model } from '@anticrm/model'
 import type { Applicant, Candidate, CandidatePoolSpace, Resume, VacancySpace } from '@anticrm/recruiting'
 import core, { TDoc, TSpace } from '@anticrm/model-core'
-import { Ref } from '@anticrm/core'
+import { Domain, Ref } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
 
 import recruiting from './plugin'
 
+const DOMAIN_RECRUITING = 'recruiting' as Domain
+
 /**
  * @public
  */
-@Model(recruiting.class.Candidate, core.class.Doc)
+@Model(recruiting.class.Candidate, core.class.Doc, DOMAIN_RECRUITING)
 class TCandidate extends TDoc implements Candidate {
   name!: string
   bio!: string
@@ -45,7 +47,7 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 /**
  * @public
  */
-@Model(recruiting.class.Resume, core.class.Doc)
+@Model(recruiting.class.Resume, core.class.Doc, DOMAIN_RECRUITING)
 class TResume extends TDoc implements Resume {
   description!: string
 }
