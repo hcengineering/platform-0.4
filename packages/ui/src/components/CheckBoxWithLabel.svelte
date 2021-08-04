@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { onMount } from 'svelte'
@@ -53,9 +52,9 @@
     }
   }
 
-  function computeSize(t: EventTarget | null) {
+  function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
-    const value = target.value
+    // const value = target.value
     text.innerHTML = label.replaceAll(' ', '&nbsp;')
     target.style.width = text.clientWidth + 6 + 'px'
     target.style.height = text.clientHeight + 6 + 'px'
@@ -66,22 +65,26 @@
   })
 
   const dispatch = createEventDispatcher()
-  function changeItem() {
+  function changeItem () {
     dispatch('change', { checked, label })
   }
 </script>
 
 <svelte:window on:mousedown={waitClick} />
 <div class="checkBox-container">
-  <CheckBox bind:checked={checked} on:change={changeItem} />
-  <div class="label"
+  <CheckBox bind:checked on:change={changeItem} />
+  <div
+    class="label"
     on:click={() => {
       if (editable) {
         onEdit = true
       }
     }}
   >
-    <textarea bind:this={input} type="text" bind:value={label}
+    <textarea
+      bind:this={input}
+      type="text"
+      bind:value={label}
       class="edit-item"
       on:input={(ev) => ev.target && computeSize(ev.target)}
       on:change={changeItem}

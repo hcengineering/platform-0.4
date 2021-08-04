@@ -34,7 +34,7 @@
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
@@ -127,23 +127,23 @@
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
           <Grid>
-              <Row>
-                <DescriptionEditor
-                  label={task.string.TaskDescription}
-                  on:blur={updateDescription}
-                  bind:value={description}
-                />
-              </Row>
-              <UserBox
-                bind:selected={assignee}
-                users={projectMembers}
-                title={task.string.Assignee}
-                caption={task.string.ProjectMembers}
-                label={task.string.AssignTask}
-                on:change={updateAssignee}
-                showSearch
+            <Row>
+              <DescriptionEditor
+                label={task.string.TaskDescription}
+                on:blur={updateDescription}
+                bind:value={description}
               />
-              <DatePicker bind:selected={dueTo} title={task.string.PickDue} on:change={updateDue} />
+            </Row>
+            <UserBox
+              bind:selected={assignee}
+              users={projectMembers}
+              title={task.string.Assignee}
+              caption={task.string.ProjectMembers}
+              label={task.string.AssignTask}
+              on:change={updateAssignee}
+              showSearch
+            />
+            <DatePicker bind:selected={dueTo} title={task.string.PickDue} on:change={updateDue} />
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
@@ -189,16 +189,16 @@
     }
   }
 
-    // .progress {
-    //   margin-top: 24px;
-    //   span {
-    //     margin-bottom: 8px;
-    //     font-weight: 500;
-    //     font-size: 10px;
-    //     line-height: 13px;
-    //     letter-spacing: 0.5px;
-    //     text-transform: uppercase;
-    //     text-align: right;
-    //   }
-    // }
+  // .progress {
+  //   margin-top: 24px;
+  //   span {
+  //     margin-bottom: 8px;
+  //     font-weight: 500;
+  //     font-size: 10px;
+  //     line-height: 13px;
+  //     letter-spacing: 0.5px;
+  //     text-transform: uppercase;
+  //     text-align: right;
+  //   }
+  // }
 </style>

@@ -14,7 +14,19 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments, Grid, Row, CheckBoxList } from '@anticrm/ui'
+  import ui, {
+    EditBox,
+    Dialog,
+    UserBox,
+    DatePicker,
+    Tabs,
+    Section,
+    IconFile,
+    IconComments,
+    Grid,
+    Row,
+    CheckBoxList
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
@@ -22,7 +34,7 @@
   import core, { generateId, getFullRef } from '@anticrm/core'
   import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'

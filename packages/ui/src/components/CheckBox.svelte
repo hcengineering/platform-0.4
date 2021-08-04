@@ -19,7 +19,6 @@
 
   const dispatch = createEventDispatcher()
   $: dispatch('change', checked)
-
 </script>
 
 <label class="checkbox">

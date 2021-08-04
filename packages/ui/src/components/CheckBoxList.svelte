@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
@@ -37,9 +36,19 @@
 
 <div class="checkbox-list">
   {#each items as item}
-    <div class="list-item"><CheckBoxWithLabel bind:label={item.description} bind:checked={item.done} {editable} on:change={() => { dispatch('change', item) }} /></div>
+    <div class="list-item">
+      <CheckBoxWithLabel
+        bind:label={item.description}
+        bind:checked={item.done}
+        {editable}
+        on:change={() => {
+          dispatch('change', item)
+        }}
+      />
+    </div>
   {/each}
-  <div class="add-item"
+  <div
+    class="add-item"
     on:click={() => {
       items.push({ description: 'New item', done: false })
       items = items
@@ -73,7 +82,7 @@
       .icon {
         width: 16px;
         height: 16px;
-        opacity: .6;
+        opacity: 0.6;
       }
       .label {
         margin-left: 16px;
