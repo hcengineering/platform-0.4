@@ -46,6 +46,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectId: 'class:test.MyClass',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
@@ -60,6 +61,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
         attributes: {
@@ -89,6 +91,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectId: 'class:test.MyClass',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
@@ -103,6 +106,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
         attributes: {
@@ -117,6 +121,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectId: 'class:test.MyClass2',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
@@ -131,6 +136,7 @@ describe('dsl', () => {
         space: 'space:core.Tx',
         modifiedBy: 'account:core.System',
         modifiedOn: 0,
+        createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
         attributes: {

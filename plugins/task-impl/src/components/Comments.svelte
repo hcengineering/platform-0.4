@@ -23,6 +23,8 @@
     _id: Ref<MessageModel>
     message: string
     modifiedOn: Timestamp
+    createOn: Timestamp
+
     modifiedBy: Ref<Account>
   }
 

@@ -53,6 +53,7 @@ export interface Doc extends Obj {
   space: Ref<Space>
   modifiedOn: Timestamp
   modifiedBy: Ref<Account>
+  createOn: Timestamp
 }
 
 /**

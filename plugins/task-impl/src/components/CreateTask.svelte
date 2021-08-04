@@ -54,6 +54,7 @@
     _id: Ref<Comment>
     message: string
     modifiedOn: Timestamp
+    createOn: Timestamp
     modifiedBy: Ref<Account>
   }
 
@@ -62,6 +63,7 @@
       message: message,
       modifiedBy: client.accountId(),
       modifiedOn: Date.now(),
+      createOn: Date.now(),
       _id: generateId()
     })
     comments = comments

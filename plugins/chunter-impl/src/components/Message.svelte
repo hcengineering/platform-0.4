@@ -29,6 +29,7 @@
     _id: Ref<WithMessage>
     message: string
     modifiedOn: Timestamp
+    createOn: Timestamp
     modifiedBy: Ref<Account>
   }
 

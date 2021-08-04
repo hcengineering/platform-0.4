@@ -15,8 +15,8 @@ export interface DerivedDataOperations {
 }
 
 function dataEqual (a: DerivedData, b: DerivedData): boolean {
-  const { _id: aId, modifiedOn: mona, ...aData } = a
-  const { _id: bId, modifiedOn: monb, ...bData } = b
+  const { _id: aId, modifiedOn: mona, createOn: cona, ...aData } = a
+  const { _id: bId, modifiedOn: monb, createOn: conb, ...bData } = b
   return deepEqual(aData, bData)
 }
 /**
@@ -68,6 +68,7 @@ export function newDerivedData<T extends DerivedData> (doc: Doc, d: Descr, len: 
     _id: `dd-${generateId()}`,
     modifiedBy: doc.modifiedBy,
     modifiedOn: Date.now(),
+    createOn: Date.now(),
     space: doc.space,
     descriptorId: d._id
   }

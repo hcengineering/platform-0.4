@@ -56,6 +56,7 @@ const createMyTaskClass: TxCreateDoc<Class<MyTask>> = {
     extends: core.class.Doc
   },
   modifiedBy: 'model' as Ref<Account>,
+  createOn: Date.now(),
   modifiedOn: Date.now(),
   objectSpace: core.space.Model,
   space: core.space.Model
@@ -67,6 +68,7 @@ const createMyTaskSpace: TxCreateDoc<Space> = {
   objectId: 'sp1' as Ref<Space>,
   objectClass: core.class.Space,
   modifiedBy: 'model' as Ref<Account>,
+  createOn: Date.now(),
   modifiedOn: Date.now(),
   objectSpace: core.space.Model,
   space: core.space.Model,

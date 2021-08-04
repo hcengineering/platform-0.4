@@ -77,9 +77,9 @@ export default async (): Promise<FSMService> => {
       const transitions = await getTransitions(fsm._id)
       const states = await getStates(fsm._id)
 
-      const cleanupModel = <T extends Doc>(x: T): Omit<T, '_id' | 'modifiedBy' | 'modifiedOn'> =>
+      const cleanupModel = <T extends Doc>(x: T): Omit<T, '_id' | 'modifiedBy' | 'modifiedOn' | 'createOn'> =>
         Object.entries(x)
-          .filter(([k]) => !['_id', 'modifiedBy', 'modifiedOn'].includes(k))
+          .filter(([k]) => !['_id', 'modifiedBy', 'modifiedOn', 'createOn'].includes(k))
           .reduce<any>((o, [k, v]) => ({ ...o, [k]: v }), {})
 
       const newFSM = await client.createDoc(fsmPlugin.class.FSM, core.space.Model, {

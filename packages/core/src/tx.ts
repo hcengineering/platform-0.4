@@ -103,6 +103,7 @@ export class TxProcessor {
       space: tx.objectSpace,
       modifiedBy: tx.modifiedBy,
       modifiedOn: tx.modifiedOn,
+      createOn: tx.createOn,
       ...tx.attributes
     }
   }
@@ -153,6 +154,7 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
+      createOn: Date.now(),
       objectId: objectId ?? generateId(),
       objectClass: _class,
       objectSpace: space,
@@ -188,6 +190,7 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
+      createOn: Date.now(),
       objectId,
       objectClass: _class,
       objectSpace: space,
@@ -207,6 +210,7 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
+      createOn: Date.now(),
       objectId,
       objectClass: _class,
       objectSpace: space

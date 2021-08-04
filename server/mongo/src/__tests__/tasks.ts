@@ -95,6 +95,7 @@ export const doc1: Task = {
   rate: 20,
   modifiedBy: 'user' as Ref<Account>,
   modifiedOn: 10,
+  createOn: 10,
   space: '' as Ref<Space>,
   comments: []
 }
@@ -112,6 +113,7 @@ function addClass<T extends Doc> (txes: Tx[], _id: Ref<Class<T>>): void {
     },
     modifiedBy: 'model' as Ref<Account>,
     modifiedOn: Date.now(),
+    createOn: Date.now(),
     objectSpace: core.space.Model,
     space: core.space.Model
   }

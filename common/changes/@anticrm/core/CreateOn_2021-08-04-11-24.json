@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "added createOn in Doc",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
