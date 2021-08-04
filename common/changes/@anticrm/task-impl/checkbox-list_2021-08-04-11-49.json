@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Add component CheckBoxList. Fix dialogs.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
