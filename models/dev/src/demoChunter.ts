@@ -48,6 +48,7 @@ export function demoChunter (builder: Builder): void {
         {
           space: demoIds.project.DemoChannel,
           modifiedOn: Date.now(),
+          createOn: Date.now(),
           modifiedBy: userId
         }
       )
@@ -63,7 +64,8 @@ export function demoChunter (builder: Builder): void {
       {
         space: demoIds.project.DemoChannel,
         modifiedBy: faker.random.arrayElement(accountIds),
-        modifiedOn: Date.now()
+        modifiedOn: Date.now(),
+        createOn: Date.now()
       }
     )
   }

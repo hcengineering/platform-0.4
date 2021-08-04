@@ -182,6 +182,7 @@ describe('server', () => {
         _class: core.class.TxCreateDoc,
         space: core.space.Tx,
         modifiedBy: 'user' as Ref<Account>,
+        createOn: Date.now(),
         modifiedOn: Date.now(),
         objectId: generateId(),
         objectClass: core.class.Doc,

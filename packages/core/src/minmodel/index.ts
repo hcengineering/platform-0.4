@@ -20,6 +20,7 @@ export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T
     },
     modifiedBy: 'model' as Ref<Account>,
     modifiedOn: Date.now(),
+    createOn: Date.now(),
     objectSpace: core.space.Model,
     space: core.space.Model
   }
@@ -36,6 +37,7 @@ export function _createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Da
     space: core.space.Tx,
     modifiedBy: core.account.System,
     modifiedOn: Date.now(),
+    createOn: Date.now(),
     objectId: id ?? generateId(),
     objectClass: _class,
     objectSpace: core.space.Model,

@@ -73,6 +73,7 @@ export async function createShortRef<T extends Doc> (
       space: core.space.Tx,
       modifiedBy: user,
       modifiedOn: Date.now(),
+      createOn: Date.now(),
       objectId: shortId,
       objectClass: core.class.ShortRef,
       objectSpace: space,

@@ -197,6 +197,7 @@ describe('workspace', () => {
     const mytxOp: MyTx = {
       _id: generateId(),
       modifiedBy: 'my-task' as Ref<Account>,
+      createOn: Date.now(),
       modifiedOn: Date.now(),
       objectId: generateId(),
       _class: taskIds.class.MyTx,
@@ -236,6 +237,7 @@ describe('workspace', () => {
     const upd: TxUpdateDoc<MyTask> = {
       _id: generateId(),
       modifiedBy: 'my-task' as Ref<Account>,
+      createOn: Date.now(),
       modifiedOn: Date.now(),
       objectId: d1._id,
       _class: core.class.TxUpdateDoc,
@@ -285,6 +287,7 @@ describe('workspace', () => {
       _class: core.class.TxCreateDoc,
       space: core.space.Tx,
       modifiedBy: '' as Ref<Account>,
+      createOn: Date.now(),
       modifiedOn: Date.now(),
       objectId: 'TASK-3' as Ref<MyTask>,
       objectClass: taskIds.class.MyRef,

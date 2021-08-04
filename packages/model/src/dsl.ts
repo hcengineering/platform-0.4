@@ -50,6 +50,7 @@ export function Prop (type: Type<PropertyType>) {
       space: core.space.Tx,
       modifiedBy: core.account.System,
       modifiedOn: 0,
+      createOn: 0,
       objectSpace: core.space.Model,
       objectClass: core.class.Attribute,
       attributes: {
@@ -95,6 +96,7 @@ function txCreateDoc<T extends Doc> (
     space: core.space.Tx,
     modifiedBy: docOptions?.modifiedBy ?? core.account.System,
     modifiedOn: docOptions?.modifiedOn ?? 0,
+    createOn: docOptions?.createOn ?? 0,
     objectId: objectId ?? generateId(),
     objectClass: _class,
     objectSpace: docOptions?.space ?? core.space.Model,

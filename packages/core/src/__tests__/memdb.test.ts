@@ -137,6 +137,7 @@ describe('memdb', () => {
       space: core.space.Tx,
       modifiedBy: 'john@appleseed.com' as Ref<Account>,
       modifiedOn: 1626704232444,
+      createOn: 1626704232444,
       objectId: '60f58968abd82692921c51b1' as Ref<MyDoc>,
       objectClass: 'class:test.Task' as Ref<Class<Doc>>,
       objectSpace: '60f58968abd82692921c51af' as Ref<Space>,

@@ -37,6 +37,7 @@ export class TDoc extends TObj implements Doc {
   space!: Ref<Space>
   modifiedOn!: Timestamp
   modifiedBy!: Ref<Account>
+  createOn!: Timestamp
 }
 
 /**

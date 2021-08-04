@@ -63,7 +63,8 @@ describe('memdb.shortref', () => {
       _class: core.class.Title,
       space: '' as Ref<Space>,
       modifiedBy: '' as Ref<Account>,
-      modifiedOn: Date.now()
+      modifiedOn: Date.now(),
+      createOn: Date.now()
     })
 
     const t4 = await createShortRef(storage, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')

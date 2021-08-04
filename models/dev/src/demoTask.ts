@@ -50,7 +50,8 @@ export function demoTask (builder: Builder): void {
       shortRefId,
       {
         space: demoIds.project.DemoProject,
-        modifiedOn: Date.now()
+        modifiedOn: Date.now(),
+        createOn: Date.now()
       }
     )
 
@@ -76,7 +77,8 @@ export function demoTask (builder: Builder): void {
         {
           space: demoIds.project.DemoProject,
           modifiedBy: faker.random.arrayElement(accountIds),
-          modifiedOn: Date.now()
+          modifiedOn: Date.now(),
+          createOn: Date.now()
         }
       )
       comments.push(commentId as Ref<Comment>)

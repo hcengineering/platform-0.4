@@ -334,6 +334,7 @@ export class DerivedDataProcessor extends TxProcessor {
         _id: generateId(),
         modifiedBy: dbDoc.modifiedBy,
         modifiedOn: dbDoc.modifiedOn,
+        createOn: dbDoc.createOn,
         _class: core.class.TxCreateDoc,
         objectClass: dbDoc._class,
         objectId: dbDoc._id,
