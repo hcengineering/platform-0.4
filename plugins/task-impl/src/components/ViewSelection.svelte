@@ -13,17 +13,23 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Tooltip } from '@anticrm/ui'
+  import ui, { Tooltip } from '@anticrm/ui'
   import VCard from './icons/VCard.svelte'
   import VList from './icons/VList.svelte'
   import VKanban from './icons/VKanban.svelte'
+  import type { IntlString } from '@anticrm/status'
 
-  export let views: Array<Object> = [
-    { icon: VList, name: 'list' },
-    { icon: VCard, name: 'card' },
-    { icon: VKanban, name: 'kanban' }
+  interface View {
+    name: IntlString
+    icon: any
+  }
+
+  export let views: Array<View> = [
+    { icon: VList, name: ui.string.List },
+    { icon: VCard, name: ui.string.Cards },
+    { icon: VKanban, name: ui.string.Kanban }
   ]
-  export let selected: string = 'card'
+  export let selected: IntlString = ui.string.Cards
 </script>
 
 <div class="viewSelection-container">

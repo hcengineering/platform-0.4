@@ -16,30 +16,29 @@
   import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
   import core from '@anticrm/core'
   import type { Ref, Doc, Space, Account } from '@anticrm/core'
-  import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
 
   import TaskStatus from './TaskStatus.svelte'
 
-  import task from '../plugin'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Task } from '@anticrm/task'
+  import task from '@anticrm/task'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
   const columns = [
-    { label: 'Name' as IntlString, properties: [{ key: 'name', property: 'label' }], component: Label },
-    { label: 'Description' as IntlString, properties: [{ key: 'description', property: 'label' }], component: Label },
+    { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
+    { label: task.string.TaskDescription, properties: [{ key: 'description', property: 'label' }], component: Label },
     {
-      label: 'Status' as IntlString,
+      label: task.string.Status,
       properties: [
         { key: 'status', property: 'title' },
         { value: '#73A5C9', property: 'color' }
       ],
       component: TaskStatus
     },
-    { label: 'Assignee' as IntlString, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo }
+    { label: task.string.Assignee, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo }
   ]
 
   const client = getClient()

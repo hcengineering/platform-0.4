@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "added intlString",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

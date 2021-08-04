@@ -111,7 +111,7 @@
           style="grid-column: {day + 1}/{day + 2};"
           on:click={() => {
             selected = new Date(view.getFullYear(), view.getMonth(), i + 1)
-            dispatch('change')
+            dispatch('change', selected)
             pressed = false
           }}
         >

@@ -13,8 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { ActionIcon, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, UserInfo } from '@anticrm/ui'
   import type { Task } from '@anticrm/task'
+  import task from '@anticrm/task'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import core from '@anticrm/core'
@@ -40,9 +41,9 @@
       {/await}
     </div>
     <div class="action">
-      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
+      <ActionIcon size={24} icon={Chat} direction={'left'} label={task.string.Comments} />
       <div class="counter">{doc.comments.length}</div>
-      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
+      <ActionIcon size={24} icon={MoreH} direction={'left'} label={ui.string.More} />
     </div>
   </div>
 </div>

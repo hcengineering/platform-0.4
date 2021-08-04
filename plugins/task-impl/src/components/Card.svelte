@@ -13,10 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import type { Task } from '@anticrm/task'
+  import task from '@anticrm/task'
   import { getStatusColor } from '../plugin'
   import core, { Account, Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
@@ -54,9 +55,9 @@
       <UserInfo {user} size={24} avatarOnly />
     {/await}
     <div class="action">
-      <ActionIcon size={24} icon={Chat} direction={'left'} label={'Comments'} />
+      <ActionIcon size={24} icon={Chat} direction={'left'} label={task.string.Comments} />
       <div class="counter">{card.comments.length}</div>
-      <ActionIcon size={24} icon={MoreH} direction={'left'} label={'More...'} />
+      <ActionIcon size={24} icon={MoreH} direction={'left'} label={ui.string.More} />
     </div>
   </div>
 </div>
@@ -105,7 +106,6 @@
       padding: 20px;
       height: 64px;
       min-height: 64px;
-      // background-color: var(--theme-button-bg-focused);
       border-top: 1px solid var(--theme-bg-accent-hover);
       border-radius: 0 0 11px 11px;
 

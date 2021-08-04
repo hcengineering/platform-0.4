@@ -10,6 +10,10 @@ export default component('ui' as Component, {
     Name: '' as IntlString,
     Description: '' as IntlString,
     Join: '' as IntlString,
-    Leave: '' as IntlString
+    Leave: '' as IntlString,
+    More: '' as IntlString,
+    List: '' as IntlString,
+    Kanban: '' as IntlString,
+    Cards: '' as IntlString
   }
 })

@@ -8,6 +8,10 @@
     "Name": "Name",
     "Description": "Description",
     "Join": "Join",
-    "Leave": "Leave"
+    "Leave": "Leave",
+    "More": "More",
+    "List": "List",
+    "Kanban": "Kanban",
+    "Cards": "Cards"
   }
 }
