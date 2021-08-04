@@ -54,7 +54,7 @@
 
   function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
-    const value = target.value.charCodeAt(target.value.length - 1) == 10 ? 18 : 0
+    const value = target.value.charCodeAt(target.value.length - 1) === 10 ? 18 : 0
     text.innerHTML = label.replaceAll(' ', '&nbsp;')
     target.style.width = text.clientWidth + 6 + 'px'
     target.style.height = text.clientHeight + value + 6 + 'px'
