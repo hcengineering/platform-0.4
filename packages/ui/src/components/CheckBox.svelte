@@ -13,7 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
+
   export let checked: boolean = false
+
+  const dispatch = createEventDispatcher()
+  $: dispatch('change', checked)
+
 </script>
 
 <label class="checkbox">

@@ -23,7 +23,10 @@
     Tabs,
     Section,
     IconFile,
-    IconComments
+    IconComments,
+    CheckBoxList,
+    Grid,
+    Row
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
@@ -123,15 +126,14 @@
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
-          <div class="content">
-            <div class="row">
-              <DescriptionEditor
-                label={task.string.TaskDescription}
-                on:blur={updateDescription}
-                bind:value={description}
-              />
-            </div>
-            <div class="row">
+          <Grid>
+              <Row>
+                <DescriptionEditor
+                  label={task.string.TaskDescription}
+                  on:blur={updateDescription}
+                  bind:value={description}
+                />
+              </Row>
               <UserBox
                 bind:selected={assignee}
                 users={projectMembers}
@@ -141,24 +143,20 @@
                 on:change={updateAssignee}
                 showSearch
               />
-            </div>
-            <div class="row">
               <DatePicker bind:selected={dueTo} title={task.string.PickDue} on:change={updateDue} />
-            </div>
-          </div>
+          </Grid>
         </Section>
-        <Section label={task.string.Comments} icon={IconComments} topLine>
-          <div class="content">
-            <div class="row"><CommentsView currentSpace={item.space} taskId={item._id} /></div>
-          </div>
+        <Section label={task.string.Comments} icon={IconComments}>
+          <CommentsView currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
-        <div class="content" />
+        <div />
       {:else}
-        <Section label={task.string.ToDos} icon={IconComments} topLine>
-          <div class="content">
+        <Section label={task.string.ToDos} icon={IconComments}>
+          <!-- <div class="content">
             <div class="row"><CheckList bind:items={checkItems} on:change={updateCheckItem} /></div>
-          </div>
+          </div> -->
+          <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable on:change={updateCheckItem} />
         </Section>
       {/if}
     </ScrollBox>
@@ -191,13 +189,6 @@
     }
   }
 
-  .content {
-    height: calc(100vh - 204px);
-
-    .row {
-      margin-top: 10px;
-    }
-
     // .progress {
     //   margin-top: 24px;
     //   span {
@@ -210,5 +201,4 @@
     //     text-align: right;
     //   }
     // }
-  }
 </style>

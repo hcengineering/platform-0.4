@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments } from '@anticrm/ui'
+  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments, Grid, Row, CheckBoxList } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
@@ -110,53 +110,35 @@
   <Tabs {tabs} bind:selected={selectedTab} />
   {#if selectedTab === task.string.General}
     <Section label={task.string.GeneralInformation} icon={IconFile}>
-      <div class="content">
-        <div class="row"><EditBox label={task.string.TaskName} bind:value={name} /></div>
-        <div class="row">
-          <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
-        </div>
-        <div class="row">
-          {#await getProjectMembers() then users}
-            <UserBox
-              bind:selected={assignee}
-              {users}
-              caption={task.string.ProjectMembers}
-              title={task.string.Assignee}
-              label={task.string.AssignTask}
-              showSearch
-            />
-          {/await}
-        </div>
-        <div class="row">
-          <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
-        </div>
-      </div>
+      <Grid>
+        <Row><EditBox label={task.string.TaskName} bind:value={name} /></Row>
+        {#await getProjectMembers() then users}
+          <UserBox
+            bind:selected={assignee}
+            {users}
+            caption={task.string.ProjectMembers}
+            title={task.string.Assignee}
+            label={task.string.AssignTask}
+            showSearch
+          />
+        {/await}
+        <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
+        <Row><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></Row>
+      </Grid>
     </Section>
     <Section label={task.string.Comments} icon={IconComments} topLine>
-      <div class="content">
-        <div class="row"><Comments messages={comments} on:message={(event) => addMessage(event.detail)} /></div>
-      </div>
+      <Grid column={1} rowGap={24}>
+        <Comments messages={comments} on:message={(event) => addMessage(event.detail)} />
+      </Grid>
     </Section>
   {:else if selectedTab === task.string.Attachment}
-    <div class="content" />
+    <div />
   {:else}
     <Section label={task.string.ToDos} icon={IconComments} topLine>
-      <div class="content">
-        <div class="row"><CheckList bind:items={checkItems} /></div>
-      </div>
+      <Grid column={1}>
+        <!-- <CheckList bind:items={checkItems} /> -->
+        <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
+      </Grid>
     </Section>
   {/if}
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-
-    .row {
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-  }
-</style>

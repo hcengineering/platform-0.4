@@ -80,7 +80,7 @@
       />
     </Grid>
   </Section>
-  <Section label={task.string.ProjectMembers} icon={IconComments} topLine>
+  <Section label={task.string.ProjectMembers} icon={IconComments}>
     {#await getUsers() then users}
       <Grid column={1}>
         {#each members as member}
@@ -108,16 +108,3 @@
     {/await}
   </Section>
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-
-    .row {
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-  }
-</style>
