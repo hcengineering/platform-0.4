@@ -14,7 +14,20 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import ui, { EditBox, Dialog, UserBox, DatePicker, Tabs, Section, IconFile, IconComments, Grid, Row, CheckBoxList, IconToDo } from '@anticrm/ui'
+  import ui, {
+    EditBox,
+    Dialog,
+    UserBox,
+    DatePicker,
+    Tabs,
+    Section,
+    IconFile,
+    IconComments,
+    Grid,
+    Row,
+    CheckBoxList,
+    IconToDo
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
@@ -137,8 +150,8 @@
     <Grid column={1} />
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>
-        <!-- <CheckList bind:items={checkItems} /> -->
-        <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
+      <!-- <CheckList bind:items={checkItems} /> -->
+      <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
     </Section>
   {/if}
 </Dialog>

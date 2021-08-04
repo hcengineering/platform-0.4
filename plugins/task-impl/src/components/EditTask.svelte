@@ -95,13 +95,15 @@
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
           <Grid>
-            <Row><DescriptionEditor
-              label={task.string.TaskDescription}
-              on:blur={(e) => {
-                update('description', item?.description)
-              }}
-              bind:value={item.description}
-            /></Row>
+            <Row
+              ><DescriptionEditor
+                label={task.string.TaskDescription}
+                on:blur={(e) => {
+                  update('description', item?.description)
+                }}
+                bind:value={item.description}
+              /></Row
+            >
             <UserBox
               selected={item.assignee}
               users={projectMembers}
