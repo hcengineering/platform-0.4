@@ -155,14 +155,14 @@
 </form>
 
 <style lang="scss">
-  img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    border: 1px;
-    border-style: solid;
-  }
+  // img {
+  //   display: block;
+  //   margin-left: auto;
+  //   margin-right: auto;
+  //   width: 50%;
+  //   border: 1px;
+  //   border-style: solid;
+  // }
 
   form {
     margin: auto;
