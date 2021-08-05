@@ -54,3 +54,27 @@ export function mongoEscape<T> (object: T): T {
 export function mongoUnescape<T> (object: T): T {
   return escape(object, true)
 }
+
+/**
+ * Replaces nulls with undefined
+ * @public
+*/
+export function mongoReplaceNulls<T> (x: T): T | undefined {
+  if (Array.isArray(x)) {
+    return (x as any).map(mongoReplaceNulls)
+  }
+
+  if (isObject(x)) {
+    return Object.entries(x)
+      .map(([k, v]) => [k, mongoReplaceNulls(v)])
+      .reduce<any>(
+      (res, [k, v]) => {
+        res[k] = v
+        return res
+      }, {}) as T
+  }
+
+  return x === null
+    ? undefined
+    : x
+}

@@ -30,6 +30,7 @@ import core, {
 } from '@anticrm/core'
 import { PlatformError, Severity, Status } from '@anticrm/status'
 import { Collection, Db, FilterQuery, UpdateQuery } from 'mongodb'
+import { mongoReplaceNulls } from './escaping'
 import { toMongoIdQuery, toMongoQuery } from './query'
 
 /**
@@ -110,6 +111,6 @@ export class DocStorage extends TxProcessor implements Storage {
     if (options?.sort !== undefined) cursor = cursor.sort(options.sort)
     const total = await cursor.count()
     if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
-    return Object.assign(await cursor.toArray(), { total })
+    return Object.assign((await cursor.toArray()).map(mongoReplaceNulls), { total })
   }
 }
