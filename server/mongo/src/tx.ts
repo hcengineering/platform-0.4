@@ -16,7 +16,7 @@
 import { Class, DocumentQuery, FindOptions, FindResult, Hierarchy, Storage, Tx } from '@anticrm/core'
 import { Doc, Ref } from '@anticrm/core/src/classes'
 import { Collection } from 'mongodb'
-import { mongoEscape, mongoUnescape } from './escaping'
+import { mongoEscape, mongoReplaceNulls, mongoUnescape } from './escaping'
 import { toMongoQuery } from './query'
 
 /**
@@ -45,7 +45,9 @@ export class TxStorage implements Storage {
     if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
     const resultArray = await cursor.toArray()
     return Object.assign(
-      resultArray.map((v) => mongoUnescape(v)),
+      resultArray
+        .map(mongoUnescape)
+        .map(mongoReplaceNulls),
       { total }
     )
   }

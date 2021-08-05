@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Login and token support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl"
+}

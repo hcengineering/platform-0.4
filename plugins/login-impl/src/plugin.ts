@@ -26,9 +26,12 @@ export default mergeIds(login, {
   string: {
     Email: '' as IntlString,
     Password: '' as IntlString,
+    Password2: '' as IntlString,
     Workspace: '' as IntlString,
     LogIn: '' as IntlString,
+    HaveAccount: '' as IntlString,
     SignUp: '' as IntlString,
-    DoNotHaveAnAccount: '' as IntlString
+    FirstName: '' as IntlString,
+    LastName: '' as IntlString
   }
 })

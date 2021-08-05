@@ -1,14 +1,7 @@
 {
+  "extends": "./node_modules/@anticrm/platform-rig/profiles/default/tsconfig-base.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "declaration": true,
     "outDir": "./lib",
-    "strict": true,
-    "resolveJsonModule": true,
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "rootDir": "./src"
   }
 }

@@ -478,6 +478,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/login-assets",
+      "projectFolder": "plugins/login-assets",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/login-impl",
       "projectFolder": "plugins/login-impl",
       "shouldPublish": true
@@ -556,6 +561,17 @@
       "packageName": "@anticrm/server",
       "projectFolder": "server/server",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/accounts",
+      "projectFolder": "server/accounts",
+      "shouldPublish": true
+    },
+
+    {
+      "packageName": "@anticrm/dev-server",
+      "projectFolder": "dev/server",
+      "shouldPublish": false
     },
     {
       "packageName": "@anticrm/server-tools",

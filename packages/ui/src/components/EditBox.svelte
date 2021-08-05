@@ -30,7 +30,7 @@
   function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
     const value = target.value
-    text.innerHTML = (value === '' ? placeholder : value).replaceAll(' ', '&nbsp;')
+    text.innerHTML = (value === '' ? placeholder : value).split(' ').join('&nbsp;')
     target.style.width = text.clientWidth + 6 + 'px'
   }
 
@@ -51,6 +51,8 @@
       {placeholder}
       on:change
       on:keyup
+      on:blur
+      on:focus
       on:input={(ev) => ev.target && computeSize(ev.target)}
     />
   {:else}

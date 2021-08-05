@@ -13,11 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Label, Button, StatusControl } from '@anticrm/ui'
-  import { OK, Status, Severity } from '@anticrm/status'
   import type { IntlString } from '@anticrm/platform'
   import { translate } from '@anticrm/platform'
-
+  import { OK, Severity, Status } from '@anticrm/status'
+  import { Button, EditBox, Label, StatusControl } from '@anticrm/ui'
   import login from '../plugin'
 
   interface Field {
@@ -69,17 +68,19 @@
   <div class="grow-separator" />
   <div class="title"><Label label={caption} /></div>
   <div class="status">
-    <StatusControl {status} width="100%" />
+    <StatusControl {status} />
   </div>
   <div class="form">
     {#each fields as field (field.name)}
       <div class={field.short ? 'form-col' : 'form-row'}>
         <EditBox
+          width="100%"
           label={field.i18n}
           password={field.password}
           bind:value={object[field.name]}
           on:keyup={validate}
           on:focus={validate}
+          on:blur={validate}
         />
       </div>
     {/each}

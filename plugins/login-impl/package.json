@@ -2,6 +2,7 @@
   "name": "@anticrm/login-impl",
   "version": "0.4.0",
   "main": "lib/index.js",
+  "svelte": "src/index.ts",
   "typings": "lib/index.d.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -36,13 +37,15 @@
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
     "svelte-check": "^2.1.0",
-    "eslint-svelte3-preprocess": "~0.0.5"
+    "eslint-svelte3-preprocess": "~0.0.5",
+    "svelte-loader": "^3.1.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
     "@anticrm/status": "~0.4.2",
     "@anticrm/ui": "~0.4.1",
     "@anticrm/login": "~0.4.0",
-    "@anticrm/rpc": "~0.4.1"
+    "@anticrm/rpc": "~0.4.1",
+    "@anticrm/plugin-core": "~0.4.0"
   }
 }

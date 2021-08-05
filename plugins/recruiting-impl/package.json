@@ -2,6 +2,7 @@
   "name": "@anticrm/recruiting-impl",
   "version": "0.4.0",
   "main": "lib/index.js",
+  "svelte": "src/index.ts",
   "typings": "lib/index.d.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -40,6 +41,7 @@
     "eslint-svelte3-preprocess": "~0.0.5",
 
     "svelte-preprocess": "^4.7.0",
+    "svelte-loader": "^3.1.0",
     
     "@types/lodash.debounce": "~4.0.6"
   },

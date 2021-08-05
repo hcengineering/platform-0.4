@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Login and token support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

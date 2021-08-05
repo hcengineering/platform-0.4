@@ -13,26 +13,37 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import avatar from '../../img/avatar.png'
+  import type { Account, Ref } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
+  import core from '@anticrm/core'
+  import chunter from '../plugin'
+  import { Label } from '@anticrm/ui'
 
-  export let replies: string[] = ['Chen', 'Elon', 'Tim', 'Elon', 'Tim', 'Chen']
+  const client = getClient()
+
+  export let replies: Ref<Account>[] = []
 
   const shown: number = 4
-  const showReplies: Array<string> = []
-  for (let i = 0; i < shown; i++) {
-    showReplies.push(replies[i])
+  let showReplies: Array<Account> = []
+
+  async function getUsers (): Promise<Array<Account>> {
+    const users = await client.findAll(core.class.Account, { _id: { $in: replies } })
+    showReplies = users.slice(0, shown)
+    return users
   }
 </script>
 
 <div class="replies-container">
-  <div class="counter">{replies.length} Replies</div>
+  <div class="counter">{replies.length}<Label label={chunter.string.Replies} /></div>
   <div class="replies">
-    {#each showReplies as reply}
-      <div class="reply"><img class="circle" src={avatar} alt={reply} /></div>
-    {/each}
-    {#if replies.length > shown}
-      <div class="reply"><span>+{replies.length - shown}</span></div>
-    {/if}
+    {#await getUsers() then users}
+      {#each showReplies as reply}
+        <div class="reply"><img class="circle" src={reply.avatar} alt={reply.name} /></div>
+      {/each}
+      {#if users.length > shown}
+        <div class="reply"><span>+{users.length - shown}</span></div>
+      {/if}
+    {/await}
   </div>
 </div>
 

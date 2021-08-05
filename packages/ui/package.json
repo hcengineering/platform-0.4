@@ -2,6 +2,7 @@
   "name": "@anticrm/ui",
   "version": "0.4.1",
   "main": "lib/index.js",
+  "svelte": "src/index.ts",
   "typings": "lib/index.d.ts",
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -37,7 +38,8 @@
     "prettier": "^2.2.1",
     "svelte-check": "^2.1.0",
     "eslint-svelte3-preprocess": "~0.0.5",
-    "svelte-preprocess": "^4.7.0"
+    "svelte-preprocess": "^4.7.0",
+    "svelte-loader": "^3.1.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",

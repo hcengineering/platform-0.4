@@ -31,7 +31,7 @@ export default plugin(
   {},
   {
     metadata: {
-      ClientUrl: '' as Metadata<string>,
+      ClientUrl: '' as Metadata<string>, // A URI to connect to server.
       AccountId: '' as Metadata<Ref<Account>>
     }
   }

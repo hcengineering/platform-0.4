@@ -58,6 +58,16 @@ rushx dev
 
 After server is started, it will accept any incoming request for existing workspaces.
 
+### Running Dev server with auth/workspace
+
+It will create workspace 'workspace' users 'john.appleseed@gmail.com' and 'brian.appleseed@gmail.com' with passwords '123'. 
+So login functionality could be used to test with different accounts.
+
+```bash
+cd ./dev/server
+rushx dev
+```
+
 ### Running ElasticSearch in docker
 
 ```bash

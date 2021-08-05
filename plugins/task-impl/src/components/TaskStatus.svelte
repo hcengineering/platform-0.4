@@ -21,7 +21,7 @@
   $: color = getStatusColor(title)
 </script>
 
-<div class="taskstatus-container" style="color: {color}">
+<div class="taskstatus-container" style="background-color: {color}">
   <Label label={title} />
 </div>
 
@@ -39,6 +39,6 @@
     font-weight: 500;
     letter-spacing: 0.5;
     border-radius: 8px;
-    background-color: var(--theme-bg-focused-color);
+    color: var(--theme-caption-color);
   }
 </style>

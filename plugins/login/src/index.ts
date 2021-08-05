@@ -16,52 +16,57 @@
 // P L U G I N
 
 import type { Metadata, Plugin, Service } from '@anticrm/platform'
-import { addStringsLoader, plugin, setMetadata } from '@anticrm/platform'
+import { plugin, setMetadata } from '@anticrm/platform'
+import { Status, StatusCode } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
 import { applicationShortcutKey } from '@anticrm/ui'
 
+/**
+ * @public
+ */
 export interface LoginInfo {
   email: string
   workspace: string
-  server: string
-  port: string
-  token: string
-  secondFactorEnabled: boolean
+  clientUrl: string
 }
 
+/**
+ * @public
+ */
 export const ACCOUNT_KEY = 'anticrm-account'
 
-export function currentAccount (): LoginInfo | null {
+/**
+ * @public
+ */
+export function currentAccount (): LoginInfo | undefined {
   const account = localStorage.getItem(ACCOUNT_KEY)
-  return account !== null ? JSON.parse(account) : null
+  return account !== null ? JSON.parse(account) : undefined
 }
 
+/**
+ * @public
+ */
 export interface LoginService extends Service {
-  // doLogin (username: string, password: string, workspace: string, secondFactorCode: string): Promise<Status>
-  // /**
-  //  * Check and auto return login information if available.
-  //  */
-  // getLoginInfo (): Promise<LoginInfo | undefined>
-  // /**
-  //  * Do navigate to default application if defined.
-  //  */
-  // navigateApp (): void
-  // /**
-  // * Do navigate to login form
-  // */
-  // navigateLoginForm (): void
-  // /**
-  // * Save profile settings
-  // */
-  // saveSetting (password: string, newPassword: string, secondFactorEnabled: boolean, clientSecret: string, secondFactorCode: string): Promise<Status>
-  // /**
-  //  * Do logout from current logged in account
-  //  */
-  // doLogout (): Promise<void>
+  doLogin: (username: string, password: string, workspace: string) => Promise<Status>
+  /**
+   * Check and auto return login information if available.
+   */
+  getLoginInfo: () => Promise<LoginInfo | undefined>
+  /**
+   * Save profile settings
+   */
+  saveSetting: (password: string, newPassword: string) => Promise<Status>
+  /**
+   * Do logout from current logged in account
+   */
+  doLogout: () => Promise<void>
 }
 
 const PluginLogin = 'login' as Plugin<LoginService>
 
+/**
+ * @public
+ */
 const login = plugin(
   PluginLogin,
   {},
@@ -74,13 +79,17 @@ const login = plugin(
     },
     metadata: {
       AccountsUrl: '' as Metadata<string>
+    },
+    status: {
+      UnAuthorized: '' as StatusCode,
+      NoAccountUri: '' as StatusCode,
+      ServerNotAvailable: '' as StatusCode
     }
   }
 )
 
 setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
-addStringsLoader(PluginLogin, async (lang: string) => {
-  return await import('./lang/en.json')
-})
-
+/**
+ * @public
+ */
 export default login

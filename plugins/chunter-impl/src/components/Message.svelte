@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { CommentRef, WithMessage } from '@anticrm/chunter'
-  import { ActionIcon, getCurrentLocation, MarkdownViewer, navigate } from '@anticrm/ui'
+  import { ActionIcon, getCurrentLocation, DateTime, MarkdownViewer, navigate } from '@anticrm/ui'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
@@ -36,11 +36,9 @@
   export let message: MessageData
   export let thread: boolean = false
 
-  let replies: number = 0
   let replyIds: Ref<Account>[] = []
   $: {
     const comments: CommentRef[] = (message as any).comments ?? []
-    replies = comments.length
     replyIds = comments.map((r) => r.userId)
   }
 
@@ -59,23 +57,31 @@
     loc.path.length = 4
     navigate(loc)
   }
+
+  function isToday (value: Date | Timestamp): boolean {
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime()
+    const date = new Date(value).getTime()
+    return date - today > 0
+  }
 </script>
 
 {#await getUser(message.modifiedBy) then user}
   <div class="message-container" on:click={onClick}>
-    <div class="avatar"><img src={user?.avatar ?? ''} alt="Avatar" /></div>
+    <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     <div class="message">
-      <div class="header">{user?.name ?? ''}<span>{message.modifiedOn}</span></div>
+      <div class="header">
+        {user?.name ?? ''}<span><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span>
+      </div>
       <div class="text">
         <MarkdownViewer message={message.message} />
       </div>
-      {#if replies > 0 && !thread}
+      {#if replyIds.length > 0 && !thread}
         <div class="footer">
           <div>
             <Reactions />
           </div>
           <div>
-            {#if replies > 0}<Replies replies={replyIds} />{/if}
+            {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
           </div>
         </div>
       {/if}
