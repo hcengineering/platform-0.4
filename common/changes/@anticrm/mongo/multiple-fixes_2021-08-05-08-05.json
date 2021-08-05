@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/mongo",
+      "comment": "Replace nulls with undefined",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/mongo"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Replace nulls with undefined",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace"
+}
