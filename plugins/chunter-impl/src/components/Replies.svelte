@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Account, Ref } from '@anticrm/core'
+  import type { Account, Ref, FindResult } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import core from '@anticrm/core'
   import chunter from '../plugin'
@@ -24,12 +24,9 @@
   export let replies: Ref<Account>[] = []
 
   const shown: number = 4
-  let showReplies: Array<Account> = []
 
-  async function getUsers (): Promise<Array<Account>> {
-    const users = await client.findAll(core.class.Account, { _id: { $in: replies } })
-    showReplies = users.slice(0, shown)
-    return users
+  async function getUsers (): Promise<FindResult<Account>> {
+    return await client.findAll(core.class.Account, { _id: { $in: replies } }, { limit: shown })
   }
 </script>
 
@@ -37,10 +34,10 @@
   <div class="counter">{replies.length}<Label label={chunter.string.Replies} /></div>
   <div class="replies">
     {#await getUsers() then users}
-      {#each showReplies as reply}
+      {#each users as reply}
         <div class="reply"><img class="circle" src={reply.avatar} alt={reply.name} /></div>
       {/each}
-      {#if users.length > shown}
+      {#if users.total > shown}
         <div class="reply"><span>+{users.length - shown}</span></div>
       {/if}
     {/await}
