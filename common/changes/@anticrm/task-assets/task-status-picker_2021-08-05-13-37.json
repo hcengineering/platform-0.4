@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "added status selector",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets"
+}

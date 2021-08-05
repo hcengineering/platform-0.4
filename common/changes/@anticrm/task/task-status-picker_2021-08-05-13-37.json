@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task",
+      "comment": "added status selector",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task"
+}
