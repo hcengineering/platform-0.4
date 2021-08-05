@@ -56,7 +56,10 @@ export default plugin(
       ChannelName: '' as IntlString,
       ChannelDescription: '' as IntlString,
       MakePrivate: '' as IntlString,
-      MakePrivateDescription: '' as IntlString
+      MakePrivateDescription: '' as IntlString,
+      Thread: '' as IntlString,
+      Replies: '' as IntlString,
+      NewMessagePlaceholder: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,

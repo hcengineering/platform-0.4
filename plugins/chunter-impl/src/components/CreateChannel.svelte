@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { EditBox, TextArea, Dialog, ToggleWithLabel } from '@anticrm/ui'
+  import { EditBox, TextArea, Dialog, ToggleWithLabel, Grid, Row } from '@anticrm/ui'
 
   import { getClient } from '@anticrm/workbench'
 
@@ -47,30 +47,15 @@
     dispatch('close')
   }}
 >
-  <div class="content">
-    <div class="row"><EditBox label={chunter.string.ChannelName} bind:value={name} /></div>
-    <div class="row"><TextArea label={chunter.string.ChannelDescription} bind:value={description} /></div>
-    <div class="row">
+  <Grid>
+    <Row><EditBox width={'100%'} label={chunter.string.ChannelName} bind:value={name} /></Row>
+    <Row><TextArea label={chunter.string.ChannelDescription} bind:value={description} /></Row>
+    <Row>
       <ToggleWithLabel
         label={chunter.string.MakePrivate}
         description={chunter.string.MakePrivateDescription}
         bind:on={isPrivate}
       />
-    </div>
-  </div>
+    </Row>
+  </Grid>
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: grid;
-    overflow-y: auto;
-    height: 100%;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-
-    .row {
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-  }
-</style>

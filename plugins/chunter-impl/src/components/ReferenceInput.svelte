@@ -22,7 +22,7 @@
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
   import type { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
-  import { CompletionPopup } from '@anticrm/ui'
+  import { CompletionPopup, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
   import Attach from './icons/Attach.svelte'
@@ -30,6 +30,7 @@
   import GIF from './icons/GIF.svelte'
   import Send from './icons/Send.svelte'
   import TextStyle from './icons/TextStyle.svelte'
+  import chunter from '../plugin'
 
   export let thread: boolean = false
   export let withoutMargin: boolean = false
@@ -240,7 +241,7 @@
       >
         <div class="label" slot="hoverMessage" let:empty={isEmpty}>
           {#if isEmpty}
-            Placeholder...
+            <Label label={chunter.string.NewMessagePlaceholder} />
           {/if}
         </div>
         {#if popupVisible && completions.length > 0}

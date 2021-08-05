@@ -17,7 +17,7 @@
   import { getFullRef } from '@anticrm/core'
   import type { Ref } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getCurrentLocation, IconClose, navigate, ScrollBox } from '@anticrm/ui'
+  import { getCurrentLocation, IconClose, navigate, ScrollBox, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
   import Comments from './Comments.svelte'
@@ -52,7 +52,7 @@
 </script>
 
 <div class="header">
-  <div class="title">Thread</div>
+  <div class="title"><Label label={chunter.string.Thread} /></div>
   <div class="tool" on:click={close}><IconClose size={16} /></div>
 </div>
 <div class="content">
