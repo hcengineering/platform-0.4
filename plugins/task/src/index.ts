@@ -23,14 +23,6 @@ export interface Project extends Space {}
 
 export interface TaskService extends Service {}
 
-export const TaskStatuses = {
-  Open: 'OPEN' as IntlString,
-  InProgress: 'IN PROGRESS' as IntlString,
-  Closed: 'CLOSED' as IntlString
-} as const
-
-export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses]
-
 export interface Task extends Doc {
   shortRefId: Ref<ShortRef>
   name: string
@@ -49,7 +41,7 @@ export interface CheckListItem {
 
 const PluginTask = 'task' as Plugin<TaskService>
 
-export default plugin(
+const task = plugin(
   PluginTask,
   {},
   {
@@ -85,7 +77,20 @@ export default plugin(
       Due: '' as IntlString,
       PickDue: '' as IntlString,
       Comments: '' as IntlString,
-      Status: '' as IntlString
+      Status: '' as IntlString,
+      Open: '' as IntlString,
+      InProgress: '' as IntlString,
+      Closed: '' as IntlString
     }
   }
 )
+
+export const TaskStatuses = {
+  Open: task.string.Open,
+  InProgress: task.string.InProgress,
+  Closed: task.string.Closed
+} as const
+
+export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses]
+
+export default task

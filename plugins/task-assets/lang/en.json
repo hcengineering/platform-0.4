@@ -24,6 +24,9 @@
     "Due": "Due",
     "PickDue": "Pick due date",
     "Comments": "Comments",
-    "Status": "Status"
+    "Status": "Status",
+    "Open": "Open",
+    "InProgress": "In progress",
+    "Closed": "Closed"
   }
 }

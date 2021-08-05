@@ -19,11 +19,11 @@ import type { AnyComponent } from '@anticrm/ui'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {
-    case 'OPEN':
+    case task.string.Open:
       return '#9D92C4'
-    case 'IN PROGRESS':
+    case task.string.InProgress:
       return '#61A6AF'
-    case 'CLOSED':
+    case task.string.Closed:
       return '#73A6CD'
     default:
       return '#F28469'
