@@ -81,8 +81,8 @@ class ClientImpl extends TxProcessor implements Client {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    const clazz = this.hierarchy.getClass(_class)
-    if (clazz.domain === DOMAIN_MODEL) {
+    const domain = this.hierarchy.getDomain(_class)
+    if (domain === DOMAIN_MODEL) {
       return await this.model.findAll(_class, query, options)
     }
     return await this.conn.findAll(_class, query, options)

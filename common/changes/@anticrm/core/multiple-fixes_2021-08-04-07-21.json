@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Fix getting domain",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
