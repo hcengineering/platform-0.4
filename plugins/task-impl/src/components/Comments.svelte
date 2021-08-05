@@ -16,6 +16,7 @@
   import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import type { Message as MessageModel } from '@anticrm/chunter'
+  import { afterUpdate } from 'svelte'
 
   export let messages: Message[] = []
 
@@ -24,12 +25,15 @@
     message: string
     modifiedOn: Timestamp
     createOn: Timestamp
-
     modifiedBy: Ref<Account>
   }
 
   let div: HTMLElement
   let autoscroll: boolean = true
+
+  afterUpdate(() => {
+    if (autoscroll) div.scrollTo(0, div.scrollHeight)
+  })
 </script>
 
 <div
@@ -39,12 +43,7 @@
     div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
   }}
 >
-  <Channel
-    {messages}
-    on:update={async () => {
-      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
-    }}
-  />
+  <Channel {messages} />
 </div>
 <ReferenceInput withoutMargin={true} on:message />
 

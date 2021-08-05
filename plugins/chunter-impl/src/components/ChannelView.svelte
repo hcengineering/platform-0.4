@@ -39,6 +39,7 @@
   $: if (currentSpace !== undefined) {
     query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
+      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }
 </script>
@@ -50,12 +51,7 @@
     div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
   }}
 >
-  <Channel
-    {messages}
-    on:update={async () => {
-      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
-    }}
-  />
+  <Channel {messages} />
 </div>
 <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
 

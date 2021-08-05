@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, UserInfo, getCurrentLocation, navigate } from '@anticrm/ui'
+  import { Table, Label, UserInfo, DateTime, getCurrentLocation, navigate } from '@anticrm/ui'
   import core from '@anticrm/core'
   import type { Ref, Doc, Space, Account } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
@@ -29,16 +29,20 @@
 
   const columns = [
     { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
-    { label: task.string.TaskDescription, properties: [{ key: 'description', property: 'label' }], component: Label },
     {
       label: task.string.Status,
-      properties: [
-        { key: 'status', property: 'title' },
-        { value: '#73A5C9', property: 'color' }
-      ],
+      properties: [{ key: 'status', property: 'title' }],
       component: TaskStatus
     },
-    { label: task.string.Assignee, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo }
+    { label: task.string.Assignee, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo },
+    {
+      label: task.string.Due,
+      properties: [
+        { key: 'dueTo', property: 'value' },
+        { value: 'true', property: 'dateOnly' }
+      ],
+      component: DateTime
+    }
   ]
 
   const client = getClient()
@@ -69,4 +73,4 @@
   }
 </script>
 
-<Table {data} {columns} on:rowClick={onClick} />
+<Table {data} {columns} on:rowClick={onClick} showHeader />

@@ -1,5 +1,13 @@
 {
   "string": {
-    "Channels": "Channels"
+    "Channels": "Channels",
+    "CreateChannel": "Create channel",
+    "ChannelName": "Channel name",
+    "ChannelDescription": "Channel description",
+    "MakePrivate": "Make private",
+    "MakePrivateDescription": "Make channel private",
+    "Thread": "Thread",
+    "Replies": "Replies",
+    "NewMessagePlaceholder": "Type a new message"
   }
 }
