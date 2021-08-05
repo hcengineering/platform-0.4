@@ -56,7 +56,7 @@ export async function getResource<T> (resource: Resource<T>): Promise<T> {
       })
 
     resolvingResources.set(resource, resolving)
-    return resolving
+    return await resolving
   }
 }
 

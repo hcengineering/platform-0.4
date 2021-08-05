@@ -17,20 +17,24 @@
   import { OK, Status, Severity } from '@anticrm/status'
 
   import Form from './Form.svelte'
-  import { doLogin } from '../utils'
 
-  import login from '../plugin'
+  import loginImpl from '../plugin'
+
+  import { getPlugin } from '@anticrm/platform'
+
+  import login from '@anticrm/login'
+  const loginPlugin = getPlugin(login.id)
 
   const dispatch = createEventDispatcher()
 
   const fields = [
-    { name: 'username', i18n: login.string.Email },
+    { name: 'username', i18n: loginImpl.string.Email },
     {
       name: 'password',
-      i18n: login.string.Password,
+      i18n: loginImpl.string.Password,
       password: true
     },
-    { name: 'workspace', i18n: login.string.Workspace }
+    { name: 'workspace', i18n: loginImpl.string.Workspace }
   ]
 
   const object = {
@@ -42,11 +46,11 @@
   let status = OK
 
   const action = {
-    i18n: login.string.LogIn,
+    i18n: loginImpl.string.LogIn,
     func: async () => {
-      status = new Status(Severity.INFO, login.status.ConnectingToServer, {})
+      status = new Status(Severity.INFO, loginImpl.status.ConnectingToServer, {})
 
-      const [loginStatus] = await doLogin(object.username, object.password, object.workspace)
+      const loginStatus = await (await loginPlugin).doLogin(object.username, object.password, object.workspace)
 
       return new Promise<void>((resolve, reject) => {
         setTimeout(() => {
@@ -59,13 +63,13 @@
 </script>
 
 <Form
-  caption={login.string.LogIn}
+  caption={loginImpl.string.LogIn}
   {status}
   {fields}
   {object}
   {action}
-  bottomCaption={login.string.DoNotHaveAnAccount}
-  bottomActionLabel={login.string.SignUp}
+  bottomCaption={loginImpl.string.HaveAccount}
+  bottomActionLabel={loginImpl.string.SignUp}
   bottomActionFunc={() => {
     dispatch('switch', 'signup')
   }}

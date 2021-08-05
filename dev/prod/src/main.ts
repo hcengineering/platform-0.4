@@ -15,7 +15,7 @@
 
 import { setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
-import login from '@anticrm/login'
+import login, { currentAccount } from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
 import meetingPlugin from '@anticrm/meeting'
 
@@ -24,23 +24,16 @@ import { configurePlatform } from './platform'
 configurePlatform()
 
 const accountsUrl = process.env.APP_ACCOUNTS_URL
-const appHost = process.env.APP_WSHOST ?? 'localhost'
-const appPort = process.env.APP_WSPORT ?? 18080
-const appToken = process.env.APP_TOKEN ?? ''
 const meetingHost = process.env.MEETING_WSHOST ?? 'localhost'
 const meetingPort = process.env.MEETING_WSPORT ?? 18081
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
-setMetadata(pluginCore.metadata.ClientUrl, `${appHost}:${appPort}/${appToken}`)
 setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
-// platform.setMetadata(core.metadata.WSHost, host)
-// platform.setMetadata(core.metadata.WSPort, port)
 
-// const loginInfo = currentAccount()
-// if (loginInfo) {
-//   platform.setMetadata(core.metadata.WhoAmI, loginInfo.email)
-//   platform.setMetadata(core.metadata.Token, loginInfo.token)
-// }
+const loginInfo = currentAccount()
+if (loginInfo !== undefined) {
+  setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
+}
 
 // async function boot (): Promise<void> {
 //   uiService.createApp(document.body)

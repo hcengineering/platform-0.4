@@ -14,12 +14,17 @@
 -->
 <script lang="ts">
   import { PresentationClient } from '@anticrm/presentation'
+  import login, { currentAccount } from '@anticrm/login'
+  import { Component } from '@anticrm/ui'
 
   import Workbench from './Workbench.svelte'
 
   async function connect (): Promise<PresentationClient> {
     return await PresentationClient.create()
   }
+  let accountSet = false
+
+  $: accountSet = currentAccount()?.clientUrl !== undefined
 </script>
 
 {#await connect()}
@@ -27,5 +32,5 @@
 {:then client}
   <Workbench {client} />
 {:catch error}
-  <div>{error}</div>
+  <Component is={login.component.LoginForm} />
 {/await}

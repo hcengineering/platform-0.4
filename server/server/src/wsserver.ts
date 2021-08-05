@@ -39,6 +39,7 @@ function connectClient (
       console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
       return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
     } catch (err) {
+      console.log('FAILED to accept client:', err)
       throw new Error('invalid token')
     }
   }

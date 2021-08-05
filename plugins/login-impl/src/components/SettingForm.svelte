@@ -13,91 +13,80 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Platform } from '@anticrm/platform'
-  import { Severity, Status } from '@anticrm/platform'
-  import { getContext } from 'svelte'
-  import login from '..'
+  import login from '@anticrm/login'
+  import { getPlugin } from '@anticrm/platform'
+  import { OK } from '@anticrm/status'
   import { CheckBox } from '@anticrm/ui'
-  import type { ApplicationRoute, ApplicationRouter } from '@anticrm/platform-ui'
-  import twofactor from 'node-2fa'
-  import type { Options } from 'node-2fa/dist/interfaces'
+  // import twofactor from 'node-2fa'
+  // import type { Options } from 'node-2fa/dist/interfaces'
 
-  export let router: ApplicationRouter<ApplicationRoute>
   const object = { oldPassword: '', newPassword: '', newPasswordConfirm: '', clientSecret: '', secondFactorCode: '' }
   let changePassword = false
-  let status = new Status(Severity.OK, 0, '')
+  let status = OK
 
-  const platform = getContext('platform') as Platform
-  const loginService = platform.getPlugin(login.id)
+  const loginService = getPlugin(login.id)
 
-  let secondFactorInitEnabled = false
-  let secondFactorEnabled = false
-  let secondFactorCurrentEnabled = false
-  let newSecret:
-    | {
-        secret: string
-        uri: string
-        qr: string
-      }
-    | false
-  let src: string
+  // let secondFactorInitEnabled = false
+  // let secondFactorEnabled = false
+  // let secondFactorCurrentEnabled = false
+  // let newSecret:
+  //   | {
+  //       secret: string
+  //       uri: string
+  //       qr: string
+  //     }
+  //   | false
+  // let src: string
 
-  $: secondFactorCurrentEnabled = secondFactorEnabled && !secondFactorInitEnabled
-  $: newSecret = secondFactorCurrentEnabled && twofactor.generateSecret({ name: 'Anticrm' } as Options)
-  $: src = newSecret.qr
-  $: object.clientSecret = newSecret.secret
+  // $: secondFactorCurrentEnabled = secondFactorEnabled && !secondFactorInitEnabled
+  // $: newSecret = secondFactorCurrentEnabled && twofactor.generateSecret({ name: 'Anticrm' } as Options)
+  // $: src = newSecret.qr
+  // $: object.clientSecret = newSecret.secret
 
-  const secondFactorCheck = loginService.then((ls) => {
-    ls.getLoginInfo().then((li) => {
-      secondFactorInitEnabled = !!li?.secondFactorEnabled
-      secondFactorEnabled = secondFactorInitEnabled
-    })
-  })
-
-  function navigateLoginForm (): Promise<void> {
-    return Promise.resolve(router.navigate({ route: '' }))
-  }
+  // const secondFactorCheck = loginService.then((ls) => {
+  //   ls.getLoginInfo().then((li) => {
+  //     secondFactorInitEnabled = !!li?.secondFactorEnabled
+  //     secondFactorEnabled = secondFactorInitEnabled
+  //   })
+  // })
 
   let description: string
-  $: description = status.message
+  $: description = ''
 
   async function saveSetting (): Promise<void> {
-    if (!object.oldPassword) {
-      status = new Status(Severity.INFO, 0, 'Поле пароль обязательно к заполнению.')
-      return
-    }
+    // if (!object.oldPassword) {
+    //   status = new Status(Severity.INFO, login.status.FieldRequired, 'Поле пароль обязательно к заполнению.')
+    //   return
+    // }
 
-    if (changePassword && object.newPassword !== object.newPasswordConfirm) {
-      status = new Status(Severity.INFO, 0, 'Пароль и подтверждения пароля не совпадают')
-      return
-    }
+    // if (changePassword && object.newPassword !== object.newPasswordConfirm) {
+    //   status = new Status(Severity.INFO, 0, 'Пароль и подтверждения пароля не совпадают')
+    //   return
+    // }
 
-    if (secondFactorCurrentEnabled) {
-      if (object.clientSecret && !object.secondFactorCode) {
-        status = new Status(Severity.INFO, 0, 'Поле код подтверждения обязательно для заполнения')
-        return
-      }
+    //   if (secondFactorCurrentEnabled) {
+    //     if (object.clientSecret && !object.secondFactorCode) {
+    //       status = new Status(Severity.INFO, 0, 'Поле код подтверждения обязательно для заполнения')
+    //       return
+    //     }
 
-      if (!object.clientSecret && object.secondFactorCode) {
-        status = new Status(Severity.INFO, 0, 'Поле секретный код обязательно для заполнения')
-        return
-      }
-    }
+    //     if (!object.clientSecret && object.secondFactorCode) {
+    //       status = new Status(Severity.INFO, 0, 'Поле секретный код обязательно для заполнения')
+    //       return
+    //     }
+    //   }
 
-    status = new Status(Severity.INFO, 0, 'Соединяюсь с сервером...')
+    // status = new Status(Severity.INFO, 0, 'Соединяюсь с сервером...')
 
     status = await (
       await loginService
     ).saveSetting(
       object.oldPassword,
-      changePassword ? object.newPassword : '',
-      secondFactorEnabled,
-      secondFactorCurrentEnabled ? object.clientSecret : '',
-      secondFactorCurrentEnabled ? object.secondFactorCode : ''
+      changePassword ? object.newPassword : ''
+      // ,secondFactorEnabled,
+      // secondFactorCurrentEnabled ? object.clientSecret : '',
+      // secondFactorCurrentEnabled ? object.secondFactorCode : ''
     )
-    if (status.severity === Severity.OK) {
-      await navigateLoginForm()
-    }
   }
 </script>
 
@@ -129,7 +118,7 @@
       />
     </div>
   {/if}
-  {#await secondFactorCheck then value}
+  <!-- {#await secondFactorCheck then value}
     <div class="field">
       <CheckBox bind:checked={secondFactorEnabled}>Включить двухфакторную авторизацию</CheckBox>
     </div>
@@ -158,22 +147,22 @@
         />
       </div>
     {/if}
-  {/await}
+  {/await} -->
   <div class="buttons">
-    <button class="button" on:click|preventDefault={navigateLoginForm}> Отменить</button>
+    <!-- <button class="button" on:click|preventDefault={navigateLoginForm}> Отменить</button> -->
     <button class="button" on:click|preventDefault={saveSetting}> Сохранить</button>
   </div>
 </form>
 
 <style lang="scss">
-  img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    border: 1px;
-    border-style: solid;
-  }
+  // img {
+  //   display: block;
+  //   margin-left: auto;
+  //   margin-right: auto;
+  //   width: 50%;
+  //   border: 1px;
+  //   border-style: solid;
+  // }
 
   form {
     margin: auto;

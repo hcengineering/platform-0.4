@@ -15,6 +15,16 @@
       "protocol": "inspector"
     },
     {
+      "name": "Debug Dev server",
+      "type": "node",
+      "request": "launch",
+      "args": ["src/index.ts"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}/dev/server",
+      "protocol": "inspector"
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Debug Jest tests",

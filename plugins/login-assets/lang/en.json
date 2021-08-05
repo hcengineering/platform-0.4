@@ -1,0 +1,17 @@
+{
+  "status": {
+    "RequiredField": "Please fill `{field}` field.",
+    "ConnectingToServer": "Connecting to server"
+  },
+  "string": {
+    "Email": "Email",    
+    "Password": "Password",
+    "Password2": "Password(*)",
+    "Workspace": "Workspace",
+    "LogIn": "Log In",
+    "HaveAccount": "Have account?",
+    "SignUp": "Sign up",
+    "FirstName": "First Name",
+    "LastName": "Last Name"
+  }
+}
