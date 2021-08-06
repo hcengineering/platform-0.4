@@ -22,6 +22,7 @@ import type { Tx } from './tx'
 export type QuerySelector<T> /* eslint-disable-line @typescript-eslint/consistent-type-definitions */ = {
   $in?: T[]
   $like?: string
+  $gt?: number
 }
 
 /**

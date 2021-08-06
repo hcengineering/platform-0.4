@@ -109,6 +109,26 @@ describe('memdb', () => {
     expect(all).toHaveLength(expectedLength)
   })
 
+  it('should query model gt params', async () => {
+    const { model } = await prepareModel()
+    const client = withOperations(core.account.System, model)
+    const criteria = new Date().getTime()
+    const without = await client.findAll(core.class.Space, {
+      modifiedOn: { $gt: criteria }
+    })
+    expect(without).toHaveLength(0)
+    await client.createDoc(core.class.Space, core.space.Model, {
+      private: false,
+      members: [],
+      name: 'test',
+      description: ''
+    })
+    const first = await client.findAll(core.class.Space, {
+      modifiedOn: { $gt: criteria }
+    })
+    expect(first).toHaveLength(1)
+  })
+
   it('should push to array', async () => {
     const { model } = await prepareModel()
 

@@ -667,6 +667,16 @@
       "packageName": "@anticrm/presentation",
       "projectFolder": "plugins/presentation",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/notification",
+      "projectFolder": "plugins/notification",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-notification",
+      "projectFolder": "models/notification",
+      "shouldPublish": true
     }
 
     // {

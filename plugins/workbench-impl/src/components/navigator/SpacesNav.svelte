@@ -65,7 +65,8 @@
   <TreeNode label={model.label} actions={[addSpace, joinSpace]}>
     {#each spaces as space}
       <TreeItem
-        title={space.name}
+        notificationObjectClass={model.notificationObjectClass}
+        {space}
         icon={model.spaceIcon}
         on:click={() => {
           selectSpace(space._id)

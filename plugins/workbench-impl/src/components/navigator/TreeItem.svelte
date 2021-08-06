@@ -16,17 +16,47 @@
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import { getClient } from '@anticrm/workbench'
+  import type { Space, Doc, Ref, Class } from '@anticrm/core'
+  import type { LastView } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
+
+  const client = getClient()
+  const accountId = client.accountId()
 
   export let icon: Asset
-  export let title: string
-  export let notifications = 0
+  export let space: Space
+  export let notificationObjectClass: Ref<Class<Doc>> | undefined
+
+  let lastTimeQuery: QueryUpdater<LastView> | undefined
+  let notificationQuery: QueryUpdater<Doc> | undefined
+
+  $: if (notificationObjectClass) {
+    lastTimeQuery = client.query(lastTimeQuery, notification.class.LastView, {
+      objectClass: notificationObjectClass,
+      objectSpace: space._id,
+      client: accountId
+    }, (result) => {
+      const lastView = result.shift()
+      if (lastView === undefined) return
+      const time = lastView.lastTime
+      notificationQuery = client.query(notificationQuery, notificationObjectClass!, {
+      modifiedOn: { $gt: time }
+      }, (result) => {
+        notifications = result.length
+      })
+    })
+  }
+
+  let notifications = 0
 
   const dispatch = createEventDispatcher()
 </script>
 
 <TreeElement
   {icon}
-  {title}
+  title={space.name}
   {notifications}
   collapsed
   on:click={() => {

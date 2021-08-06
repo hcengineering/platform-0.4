@@ -137,7 +137,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
       if (key === '$push') {
         const keyval = attrs[key]
         for (const key in keyval) {
-          script += ` if (ctx._source.${key} == null) { ctx._source.${key} = ['${keyval[key]}'] } else { ctx._source.${key}.add('${keyval[key]}') }`
+          script += ` if (!(ctx._source.${key} instanceof ArrayList)) { ctx._source.${key} = new ArrayList(); } ctx._source.${key}.add("${keyval[key]}");`
+        }
+      } else if (key === '$pull') {
+        const keyval = attrs[key]
+        for (const key in keyval) {
+          script += ` if (ctx._source.${key}.contains("${keyval[key]}")) { ctx._source.${key}.remove(ctx._source.${key}.indexOf("${keyval[key]}")); }`
         }
       } else {
         script += ` ctx._source.${key} = '${attrs[key]}';`
@@ -241,6 +246,15 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
       criteria.wildcard[key] = {
         value: value.$like.split(likeSymbol).join('*'),
         case_insensitive: true
+      }
+      result.push(criteria)
+    }
+    if (value.$gt !== undefined) {
+      const criteria: any = {
+        range: {}
+      }
+      criteria.range[key] = {
+        gt: value.$gt
       }
       result.push(criteria)
     }

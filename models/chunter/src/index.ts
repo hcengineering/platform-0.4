@@ -60,6 +60,7 @@ export function createModel (builder: Builder): void {
           label: chunter.string.Channels,
           spaceIcon: chunter.icon.Hashtag,
           spaceClass: chunter.class.Channel,
+          notificationObjectClass: chunter.class.Message,
           addSpaceLabel: chunter.string.CreateChannel,
           createComponent: chunter.component.CreateChannel
         }

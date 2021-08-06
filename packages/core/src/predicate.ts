@@ -43,6 +43,17 @@ const predicates: Record<string, PredicateFactory> = {
       }
       return result
     }
+  },
+
+  $gt: (query: number, propertyKey: string): Predicate => {
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = (doc as any)[propertyKey]
+        if (value - query > 0) result.push(doc)
+      }
+      return result
+    }
   }
 }
 

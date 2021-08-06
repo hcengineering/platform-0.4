@@ -154,6 +154,9 @@ describe('mongo operations', () => {
 
     const third = await client.findAll<Task>(taskIds.class.Task, { rate: { $in: [25, 26, 27, 28] } })
     expect(third.length).toEqual(4)
+
+    const gt = await client.findAll<Task>(taskIds.class.Task, { rate: { $gt: 60 } })
+    expect(gt.length).toEqual(9)
   })
 
   it('check update', async () => {
