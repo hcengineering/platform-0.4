@@ -45,8 +45,8 @@
     align-items: center;
     flex-wrap: nowrap;
     width: 100%;
-    height: 50px;
-    min-height: 50px;
+    height: 80px;
+    min-height: 80px;
     cursor: pointer;
     user-select: none;
 
@@ -60,11 +60,12 @@
       margin: 8px;
     }
   }
+  .section-content {
+    margin: 16px 0 54px;
+    height: auto;
+  }
   :global(.section-container + .section-container),
   :global(.section-content + .section-container) {
     border-top: 1px solid var(--theme-menu-divider);
-  }
-  .section-content {
-    margin: 16px 0 54px;
   }
 </style>
