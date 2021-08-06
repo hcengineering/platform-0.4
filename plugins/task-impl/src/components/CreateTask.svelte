@@ -26,7 +26,7 @@
     Grid,
     Row,
     CheckBoxList,
-    IconToDo=
+    IconToDo
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
