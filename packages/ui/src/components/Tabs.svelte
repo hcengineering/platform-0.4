@@ -56,7 +56,6 @@
     .tab {
       display: flex;
       align-items: center;
-      margin-left: 40px;
       height: 54px;
       color: var(--theme-content-trans-color);
       cursor: pointer;
@@ -70,7 +69,7 @@
       }
     }
     .tab + .tab {
-      margin-left: 64px;
+      margin-left: 40px;
     }
     .grow {
       min-width: 40px;

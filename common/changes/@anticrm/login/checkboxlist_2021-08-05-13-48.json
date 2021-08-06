@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login",
+      "comment": "Update heft.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login"
+}

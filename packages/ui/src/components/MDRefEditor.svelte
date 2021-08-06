@@ -27,6 +27,7 @@
   export let lines = 10
   export let value: string = ''
   export let label: IntlString | undefined
+  export let placeholder: string = 'Start typing...'
   export let findFunction: FindFunction
   export let completions: CompletionItem[] = []
 
@@ -140,6 +141,7 @@
 </script>
 
 <div class="ref-container">
+  <div class="label"><Label {label} /></div>
   <div class="textInput" style={`height: ${lines * 1.5 + 1}em;`}>
     <div class="inputMsg" on:keydown={onKeyDown}>
       <MessageEditor
@@ -156,8 +158,8 @@
         on:blur
         on:styleEvent={(e) => updateStyle(e.detail)}
       >
-        <div class="label" slot="hoverMessage" let:empty let:hasFocus class:label-placeholder={!empty || hasFocus}>
-          <Label {label} />
+        <div class="placeholder" slot="hoverMessage" let:empty let:hasFocus class:placeholder-hidden={!empty}>
+          {placeholder}
         </div>
 
         {#if popupVisible && completions.length > 0}
@@ -186,26 +188,33 @@
     flex-direction: column;
     min-height: 74px;
 
+    .label {
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--theme-caption-color);
+      opacity: 0.8;
+      pointer-events: none;
+      user-select: none;
+    }
+
     .textInput {
       position: relative;
-      display: flex;
-      justify-content: space-between;
-      // align-items: center;
       min-height: 44px;
-      // margin: 26px 20px 10px;
-      background-color: var(--theme-bg-accent-color);
-      border: 1px solid var(--theme-bg-accent-hover);
-      border-radius: 12px;
+      margin: -3px;
+      padding: 2px;
+      color: var(--theme-caption-color);
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-radius: 2px;
 
       &:focus-within {
-        background-color: var(--theme-bg-focused-color);
-        border-color: var(--theme-bg-focused-border);
+        border-color: var(--primary-button-enabled);
       }
 
       .inputMsg {
         width: 100%;
         height: 100%;
-        padding: 26px 20px 10px;
         color: var(--theme-content-color);
         background-color: transparent;
         border: none;
@@ -213,19 +222,16 @@
       }
     }
 
-    .label {
+    .placeholder {
       position: absolute;
-      top: 18px;
-      font-size: 12px;
-      line-height: 14px;
-      color: var(--theme-caption-color);
+      top: 2px;
+      color: var(--theme-content-trans-color);
       pointer-events: none;
-      opacity: 0.3;
-      transition: all 200ms;
       user-select: none;
+      visibility: visible;
     }
-    .label-placeholder {
-      top: 10px;
+    .placeholder-hidden {
+      visibility: hidden;
     }
   }
 </style>
