@@ -37,6 +37,7 @@
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
+  import StatusPicker from './StatusPicker.svelte'
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
@@ -50,6 +51,7 @@
   let checkItems: CheckListItem[] = []
   let comments: Message[] = []
   let dueTo: Date
+  let status: IntlString = TaskStatuses.Open
   const id = generateId() as Ref<Task>
 
   const client = getClient()
@@ -95,7 +97,7 @@
         checkItems,
         shortRefId,
         dueTo,
-        status: TaskStatuses.Open,
+        status,
         comments: []
       },
       id
@@ -125,8 +127,9 @@
   <Tabs {tabs} bind:selected={selectedTab} />
   {#if selectedTab === task.string.General}
     <Section label={task.string.GeneralInformation} icon={IconFile}>
-      <Grid>
-        <Row><EditBox label={task.string.TaskName} bind:value={name} /></Row>
+      <Grid column={2}>
+        <EditBox label={task.string.TaskName} bind:value={name} />
+        <StatusPicker bind:selected={status} />
         {#await getProjectMembers() then users}
           <UserBox
             bind:selected={assignee}
@@ -138,7 +141,9 @@
           />
         {/await}
         <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
-        <Row><DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} /></Row>
+        <Row>
+          <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
+        </Row>
       </Grid>
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>

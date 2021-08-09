@@ -64,6 +64,8 @@
       {placeholder}
       on:change
       on:keyup
+      on:blur
+      on:focus
       on:input={(ev) => ev.target && computeSize(ev.target)}
     />
   {/if}

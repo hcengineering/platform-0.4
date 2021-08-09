@@ -16,6 +16,7 @@
   import {
     getCurrentLocation,
     navigate,
+    EditBox,
     UserBox,
     ScrollBox,
     IconClose,
@@ -37,6 +38,7 @@
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
+  import StatusPicker from './StatusPicker.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
 
@@ -94,16 +96,20 @@
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
-          <Grid>
-            <Row
-              ><DescriptionEditor
-                label={task.string.TaskDescription}
-                on:blur={(e) => {
-                  update('description', item?.description)
-                }}
-                bind:value={item.description}
-              /></Row
-            >
+          <Grid column={2}>
+            <EditBox
+              label={task.string.TaskName}
+              bind:value={item.name}
+              on:blur={(e) => {
+                update('name', item.name)
+              }}
+            />
+            <StatusPicker
+              selected={item.status}
+              on:change={(e) => {
+                update('status', e.detail)
+              }}
+            />
             <UserBox
               selected={item.assignee}
               users={projectMembers}
@@ -122,6 +128,15 @@
                 update('dueTo', e.detail)
               }}
             />
+            <Row>
+              <DescriptionEditor
+                label={task.string.TaskDescription}
+                on:blur={(e) => {
+                  update('description', item?.description)
+                }}
+                bind:value={item.description}
+              />
+            </Row>
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
