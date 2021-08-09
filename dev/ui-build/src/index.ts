@@ -12,33 +12,31 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
   const svelte = sveltePlugin({
     compileOptions: {
       // Styles with component
-      css: true,
+      css: false, // Will generate index.css
+      sourcemap: 'inline',
       dev: true,
       errorMode: 'throw'
     }
   })
   const svg = pluginSvg()
 
-  // Build ES-module
-  await build(
-    Object.assign(
-      {
-        format: 'esm',
-        bundle: true,
-        minify: false,
-        sourcemap: 'inline',
-        legalComments: 'inline',
-        color: true,
-        keepNames: true,
-        plugins: [svelte, sassPlugin(), svg, dtsPlugin()],
-        loader: { '.png': 'dataurl' },
+  const mainOptions: BuildOptions = {
+    format: 'esm',
+    bundle: true,
+    minify: false,
+    sourcemap: 'inline',
+    legalComments: 'inline',
+    color: true,
+    keepNames: true,
+    plugins: [svelte, sassPlugin(), svg, dtsPlugin()],
+    loader: { '.png': 'dataurl' },
 
-        // Ignore dependencies и peerDependencies from package.json
-        external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)]
-      },
-      extra
-    )
-  )
+    // Ignore dependencies и peerDependencies from package.json
+    external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)]
+  }
+
+  // Build ES-module
+  await build(Object.assign(mainOptions, extra))
 }
 
 /**
