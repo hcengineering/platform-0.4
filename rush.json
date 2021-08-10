@@ -677,6 +677,16 @@
       "packageName": "@anticrm/model-notification",
       "projectFolder": "models/notification",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/notification-assets",
+      "projectFolder": "plugins/notification-assets",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/notification-impl",
+      "projectFolder": "plugins/notification-impl",
+      "shouldPublish": true
     }
 
     // {

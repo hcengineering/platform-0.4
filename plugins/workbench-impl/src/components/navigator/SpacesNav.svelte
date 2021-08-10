@@ -63,7 +63,7 @@
 
 <div>
   <TreeNode label={model.label} actions={[addSpace, joinSpace]}>
-    {#each spaces as space}
+    {#each spaces as space (space._id)}
       <TreeItem
         notificationObjectClass={model.notificationObjectClass}
         {space}

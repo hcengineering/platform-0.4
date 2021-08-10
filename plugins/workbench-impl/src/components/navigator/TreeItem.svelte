@@ -15,51 +15,82 @@
 <script lang="ts">
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
-  import { createEventDispatcher } from 'svelte'
-  import type { QueryUpdater } from '@anticrm/presentation'
-  import { getClient } from '@anticrm/workbench'
+  import { createEventDispatcher, onDestroy, afterUpdate, onMount } from 'svelte'
   import type { Space, Doc, Ref, Class } from '@anticrm/core'
-  import type { LastView } from '@anticrm/notification'
+  import { notificationPlugin } from '@anticrm/notification-impl'
   import notification from '@anticrm/notification'
-
-  const client = getClient()
-  const accountId = client.accountId()
+  import type { Action } from '@anticrm/ui'
+  import Search from '../icons/Search.svelte'
+  import { getPlugin } from '@anticrm/platform'
 
   export let icon: Asset
   export let space: Space
   export let notificationObjectClass: Ref<Class<Doc>> | undefined
+  let actions: Array<Action> = []
 
-  let lastTimeQuery: QueryUpdater<LastView> | undefined
-  let notificationQuery: QueryUpdater<Doc> | undefined
+  let unsubscribeQuery = () => {}
 
-  $: if (notificationObjectClass) {
-    lastTimeQuery = client.query(lastTimeQuery, notification.class.LastView, {
-      objectClass: notificationObjectClass,
-      objectSpace: space._id,
-      client: accountId
-    }, (result) => {
-      const lastView = result.shift()
-      if (lastView === undefined) return
-      const time = lastView.lastTime
-      notificationQuery = client.query(notificationQuery, notificationObjectClass!, {
-      modifiedOn: { $gt: time }
-      }, (result) => {
-        notifications = result.length
-      })
-    })
-  }
+  afterUpdate(async () => {
+    if (notificationObjectClass) { 
+      const notificationP = await getPlugin(notificationPlugin.id)
+      unsubscribeQuery = notificationP.spaceNotifications(notificationObjectClass, space._id, (result) => { notifications = result.length })
+    } else {
+      unsubscribeQuery()
+      actions = []
+    }
+  })
+  
+  onDestroy(() => {
+    unsubscribeQuery()
+  })
 
   let notifications = 0
 
   const dispatch = createEventDispatcher()
+
+  const subscribe: Action = {
+    label: notification.string.Subscribe,
+    icon: Search,
+    action: async (): Promise<void> => {
+      if (!notificationObjectClass) return
+      const notificationP = await getPlugin(notificationPlugin.id)
+      await notificationP.subscribeSpace(notificationObjectClass, space._id)
+      await getAction(notificationObjectClass)
+    }
+  }
+
+  const unsubscribe: Action = {
+    label: notification.string.Unsubscribe,
+    icon: Search,
+    action: async (): Promise<void> => {
+      if (!notificationObjectClass) return
+      const notificationP = await getPlugin(notificationPlugin.id)
+
+      await notificationP.unsubscribeSpace(notificationObjectClass, space._id)
+      await getAction(notificationObjectClass)
+    }
+  }
+
+  async function getAction(notificationObjectClass: Ref<Class<Doc>> | undefined): Promise<void> {
+    if (!notificationObjectClass) {
+      actions = []
+      return
+    } 
+    const notificationP = await getPlugin(notificationPlugin.id)
+    const subscribed = await notificationP.getSubscibeStatus(notificationObjectClass, space._id)
+    actions = subscribed ? [unsubscribe] : [subscribe]
+  }
 </script>
 
-<TreeElement
-  {icon}
-  title={space.name}
-  {notifications}
-  collapsed
-  on:click={() => {
-    dispatch('click')
-  }}
-/>
+{#await getAction(notificationObjectClass) then value}
+  <TreeElement
+    {icon}
+    title={space.name}
+    {notifications}
+    collapsed
+    {actions}
+    on:click={() => {
+      dispatch('click')
+    }}
+  />
+{/await}

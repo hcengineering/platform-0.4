@@ -16,11 +16,10 @@
 import { Builder, Model } from '@anticrm/model'
 
 import core, { TDoc } from '@anticrm/model-core'
-import type { Account, Domain, Ref, Class, Doc, Timestamp, Space } from '@anticrm/core'
+import type { Account, Domain, Ref, Class, Doc, Timestamp } from '@anticrm/core'
 
-import notification from '@anticrm/notification'
+import notification, { ObjectLastViewed } from '@anticrm/notification'
 import type { Notification, LastViewed } from '@anticrm/notification'
-
 
 const DOMAIN_NOTIFICATION = 'notification' as Domain
 
@@ -28,9 +27,8 @@ const DOMAIN_NOTIFICATION = 'notification' as Domain
  * @public
  */
 @Model(notification.class.Notification, core.class.Doc, DOMAIN_NOTIFICATION)
-export class TNotification extends TDoc implements Notification {
+export class TNotification extends TDoc implements Notification<Doc> {
   objectClass!: Ref<Class<Doc>>
-  objectSpace!: Ref<Space>
   objectId!: Ref<Doc>
   client!: Ref<Account>
 }
@@ -39,17 +37,26 @@ export class TNotification extends TDoc implements Notification {
  * @public
  */
 @Model(notification.class.LastViewed, core.class.Doc, DOMAIN_NOTIFICATION)
-export class TLastViewed extends TDoc implements LastViewed {
+export class TLastViewed extends TDoc implements LastViewed<Doc> {
   objectClass!: Ref<Class<Doc>>
-  objectSpace!: Ref<Space>
   client!: Ref<Account>
   lastTime!: Timestamp
-  objectIDs?: Ref<Doc>[]
+}
+
+/**
+ * @public
+ */
+@Model(notification.class.ObjectLastViewed, core.class.Doc, DOMAIN_NOTIFICATION)
+export class TObjectLastViewed extends TDoc implements ObjectLastViewed<Doc> {
+  objectClass!: Ref<Class<Doc>>
+  client!: Ref<Account>
+  lastTime!: Timestamp
+  objectIDs!: Ref<Doc>[]
 }
 
 /**
  * @public
  */
 export function createModel (builder: Builder): void {
-  builder.createModel(TNotification, TLastViewed)
+  builder.createModel(TNotification, TLastViewed, TObjectLastViewed)
 }

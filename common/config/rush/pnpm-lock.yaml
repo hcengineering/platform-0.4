@@ -34,6 +34,8 @@ specifiers:
   '@rush-temp/mongo': file:./projects/mongo.tgz
   '@rush-temp/node-client': file:./projects/node-client.tgz
   '@rush-temp/notification': file:./projects/notification.tgz
+  '@rush-temp/notification-assets': file:./projects/notification-assets.tgz
+  '@rush-temp/notification-impl': file:./projects/notification-impl.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/platform-rig': file:./projects/platform-rig.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -204,6 +206,8 @@ dependencies:
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.8
   '@rush-temp/node-client': file:projects/node-client.tgz
   '@rush-temp/notification': file:projects/notification.tgz_c9dfc945e7b6b53a0d0187e006c2a218
+  '@rush-temp/notification-assets': file:projects/notification-assets.tgz_c9dfc945e7b6b53a0d0187e006c2a218
+  '@rush-temp/notification-impl': file:projects/notification-impl.tgz_c9dfc945e7b6b53a0d0187e006c2a218
   '@rush-temp/platform': file:projects/platform.tgz
   '@rush-temp/platform-rig': file:projects/platform-rig.tgz_d6c20bf9ab3c098d98791094c947e104
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_c9dfc945e7b6b53a0d0187e006c2a218
@@ -11418,7 +11422,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_31a9a36c12febab27be66838f0689686:
-    resolution: {integrity: sha512-3tA6BEGUJPS/bs3AZNPHhmMUV998HkWWhmMDVNMPueMML3sKctlb9kBYhysRg028SniEptw1yktiNVJuA9ABLQ==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-CmGXKMSZb51FbqyY5+98+eVgZ9YuN8GiwA7vJQ7UJK+jb8QZyneJvy1kkW5mEoMRnrJ42nvumx5WudsofUWknA==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -11810,7 +11814,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz_@types+node@14.17.8:
-    resolution: {integrity: sha512-LukcTnLFntaittDF1Rp2bFtCYl3Sy4nVHyqi4XZyQeu66HnNSSu6nsXdKy4Iid5DzjI9qmxl2Qck0pCQifuIvQ==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-rkKF3vKNpYqCYUb2xYCltcfcU/Af84XBDd5TCXYX7rpSI4H3bBOdzbL9Wm5Rh3LxVS5fxvV52LCwbWTKrv1Kaw==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -12164,6 +12168,51 @@ packages:
       - bufferutil
       - canvas
       - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification-assets.tgz_c9dfc945e7b6b53a0d0187e006c2a218:
+    resolution: {integrity: sha512-xnhDOuEatcnt+qEvoSUO9RuROzp/9aNTZaoGozKVKDTmBDXPrx+T5COx81MnhxHiltMgAJRoiVQKAggRrtaW+g==, tarball: file:projects/notification-assets.tgz}
+    id: file:projects/notification-assets.tgz
+    name: '@rush-temp/notification-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.4
+      '@types/jest': 26.0.24
+      '@types/node': 14.17.8
+      jest: 26.6.3_ts-node@10.1.0
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_cd11b4a429cd832492748f9cde04bf91
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification-impl.tgz_c9dfc945e7b6b53a0d0187e006c2a218:
+    resolution: {integrity: sha512-jBW/uw+yK9VRFouXQ68zCO7FiXtNXuKk1lSvmZyjWxfU/8JfcO+gAjvAdaSFPZMSEtRDZDUFxJQRH5b5WeHD5w==, tarball: file:projects/notification-impl.tgz}
+    id: file:projects/notification-impl.tgz
+    name: '@rush-temp/notification-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.4
+      '@types/jest': 26.0.24
+      jest: 26.6.3_ts-node@10.1.0
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_cd11b4a429cd832492748f9cde04bf91
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
       - utf-8-validate
     dev: false
 
@@ -13042,7 +13091,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_31a9a36c12febab27be66838f0689686:
-    resolution: {integrity: sha512-psSHFxTu2/jzxHS9mB7J0pD5TEoGFQ445N8QfiB6X2ywnp1tGHN04H8XgUi++BecAUCgFWoItT/rAJYCA1jNMQ==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-U8WrXlAXsHxbdsWC379lTzFyqCUaisk6knm7l3NQPosgHctPzU1MT1K43dQS5w6V2whhWfLCuCBvPCQ0W9cW/Q==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0

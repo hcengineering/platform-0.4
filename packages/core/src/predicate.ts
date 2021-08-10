@@ -54,6 +54,17 @@ const predicates: Record<string, PredicateFactory> = {
       }
       return result
     }
+  },
+
+  $ne: (query: any, propertyKey: string): Predicate => {
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = (doc as any)[propertyKey]
+        if (value !== query) result.push(doc)
+      }
+      return result
+    }
   }
 }
 

@@ -20,6 +20,8 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
+  import { notificationPlugin } from '@anticrm/notification-impl'
+  import { getPlugin } from '@anticrm/platform'
 
   export let currentSpace: Ref<Space>
 
@@ -37,8 +39,10 @@
   let query: QueryUpdater<Message> | undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
       messages = result
+      const notificationP = await getPlugin(notificationPlugin.id)
+      await notificationP.markAsRead(chunter.class.Message, currentSpace)
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }

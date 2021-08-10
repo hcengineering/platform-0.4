@@ -35,7 +35,7 @@
   const client = getClient()
   let query: QueryUpdater<Space> | undefined
 
-  $: {
+  $: if (space) {
     query = client.query(query, core.class.Space, { _id: space }, (result) => {
       data = result[0]
     })

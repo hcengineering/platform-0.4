@@ -23,6 +23,7 @@ import task from '@anticrm/task'
 import meeting from '@anticrm/meeting'
 import recruiting from '@anticrm/recruiting'
 import fsm from '@anticrm/fsm'
+import notification from '@anticrm/notification'
 // import i18n from '@anticrm/platform-i18n'
 // import activity from '@anticrm/activity'
 // import activityMeta from '@anticrm/activity/src/__meta__'
@@ -41,6 +42,7 @@ import '@anticrm/task-assets'
 import '@anticrm/login-assets'
 import '@anticrm/meeting-assets'
 import '@anticrm/recruiting-assets'
+import '@anticrm/notification-assets'
 // import uiMeta from '@anticrm/platform-ui/src/__meta__/meta'
 // import workbenchMeta from '@anticrm/workbench/src/__meta__'
 // import chunterMeta from '@anticrm/chunter/src/__meta__'
@@ -67,6 +69,7 @@ export function configurePlatform (): void {
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
   addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
+  addLocation(notification, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/notification-impl'))
   // platform.addLocation(i18n, () => import(/* webpackChunkName: "platform-i18n" */ '@anticrm/platform-i18n/src/plugin'))
   // platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
   // platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
