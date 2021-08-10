@@ -25,8 +25,10 @@
     Section,
     IconFile,
     IconComments,
+    IconToDo,
     Grid,
-    Row
+    Row,
+    CheckBoxList
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
@@ -34,7 +36,7 @@
   import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -138,22 +140,26 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <Grid column={1}>
-            <CommentsView currentSpace={item.space} taskId={item._id} />
-          </Grid>
+          <CommentsView currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />
       {:else}
-        <Section label={task.string.ToDos} icon={IconComments}>
-          <Grid column={1}>
-            <CheckList
-              bind:items={item.checkItems}
-              on:change={(e) => {
-                update('checkItems', item?.checkItems)
-              }}
-            />
-          </Grid>
+        <Section label={task.string.ToDos} icon={IconToDo}>
+          <!-- <CheckList
+            bind:items={item.checkItems}
+            on:change={(e) => {
+              update('checkItems', item?.checkItems)
+            }}
+          /> -->
+          <CheckBoxList
+            editable
+            label={'Add a To Do'}
+            bind:items={item.checkItems}
+            on:change={(e) => {
+              update('checkItems', item?.checkItems)
+            }}
+          />
         </Section>
       {/if}
     </ScrollBox>

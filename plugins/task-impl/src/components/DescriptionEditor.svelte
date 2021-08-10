@@ -24,6 +24,7 @@
   export let lines = 10
   export let value: string = ''
   export let label: IntlString | undefined
+  export let placeholder: IntlString | undefined
 
   let currentPrefix = ''
 
@@ -91,6 +92,7 @@
 <MDRefEditor
   bind:value
   {label}
+  {placeholder}
   {lines}
   findFunction={findTitle}
   {completions}

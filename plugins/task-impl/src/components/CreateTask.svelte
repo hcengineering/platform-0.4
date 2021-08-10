@@ -24,7 +24,9 @@
     IconFile,
     IconComments,
     Grid,
-    Row
+    Row,
+    CheckBoxList,
+    IconToDo
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
@@ -33,7 +35,7 @@
   import core, { generateId, getFullRef } from '@anticrm/core'
   import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  import CheckList from './CheckList.svelte'
+  // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
   import StatusPicker from './StatusPicker.svelte'
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
@@ -152,10 +154,9 @@
   {:else if selectedTab === task.string.Attachment}
     <Grid column={1} />
   {:else}
-    <Section label={task.string.ToDos} icon={IconComments}>
-      <Grid column={1}>
-        <CheckList bind:items={checkItems} />
-      </Grid>
+    <Section label={task.string.ToDos} icon={IconToDo}>
+      <!-- <CheckList bind:items={checkItems} /> -->
+      <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
     </Section>
   {/if}
 </Dialog>

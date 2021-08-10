@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "Update heft.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic"
+}

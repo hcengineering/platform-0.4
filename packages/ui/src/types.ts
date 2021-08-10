@@ -68,6 +68,11 @@ export interface IPopupItem {
   action?: Function
 }
 
+export interface CheckListItem {
+  description: string
+  done: boolean
+}
+
 export interface CompletionItem {
   key: string
   completion: string
