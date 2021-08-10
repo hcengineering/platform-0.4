@@ -31,15 +31,17 @@
   let unsubscribeQuery = () => {}
 
   afterUpdate(async () => {
-    if (notificationObjectClass) { 
+    if (notificationObjectClass) {
       const notificationP = await getPlugin(notificationPlugin.id)
-      unsubscribeQuery = notificationP.spaceNotifications(notificationObjectClass, space._id, (result) => { notifications = result.length })
+      unsubscribeQuery = notificationP.spaceNotifications(notificationObjectClass, space._id, (result) => {
+        notifications = result.length
+      })
     } else {
       unsubscribeQuery()
       actions = []
     }
   })
-  
+
   onDestroy(() => {
     unsubscribeQuery()
   })
@@ -71,11 +73,11 @@
     }
   }
 
-  async function getAction(notificationObjectClass: Ref<Class<Doc>> | undefined): Promise<void> {
+  async function getAction (notificationObjectClass: Ref<Class<Doc>> | undefined): Promise<void> {
     if (!notificationObjectClass) {
       actions = []
       return
-    } 
+    }
     const notificationP = await getPlugin(notificationPlugin.id)
     const subscribed = await notificationP.getSubscibeStatus(notificationObjectClass, space._id)
     actions = subscribed ? [unsubscribe] : [subscribe]
