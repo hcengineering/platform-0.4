@@ -22,9 +22,34 @@
 </script>
 
 <h1>
-  <slot {prop} doubled={prop * 2} />
+  <div class='logo'>
+    <slot {prop} doubled={prop * 2} />
+  </div>
 </h1>
 
 <p>
   <slot name="description" props={{ class: $$props.class }} />
 </p>
+<style lang='scss'>
+  .logo {
+          position: relative;
+          &:after {
+            position: absolute;
+            content: '';
+            background: center url('../../img/logo.svg');
+            transform: translate(-50%, -50%);
+            width: 63px;
+            height: 79px;
+          }
+          &:before {
+            position: absolute;
+            content: '';
+            transform: translate(-50%, -50%);
+            width: 255px;
+            height: 255px;
+            border: 1.8px solid #ffffff;
+            border-radius: 50%;
+            opacity: 0.08;
+          }
+        }
+</style>

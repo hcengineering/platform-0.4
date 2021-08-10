@@ -1,7 +1,6 @@
 import { build, BuildOptions } from 'esbuild'
 import sassPlugin from 'esbuild-plugin-sass'
 import sveltePlugin from './svelte'
-import { pluginSvg } from './svg'
 import { dtsPlugin } from 'esbuild-plugin-d.ts'
 
 /**
@@ -13,23 +12,22 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
     compileOptions: {
       // Styles with component
       css: false, // Will generate index.css
-      sourcemap: 'inline',
       dev: true,
       errorMode: 'throw'
     }
   })
-  const svg = pluginSvg()
 
   const mainOptions: BuildOptions = {
     format: 'esm',
     bundle: true,
     minify: false,
+    allowOverwrite: true,
     sourcemap: 'inline',
     legalComments: 'inline',
     color: true,
     keepNames: true,
-    plugins: [svelte, sassPlugin(), svg, dtsPlugin()],
-    loader: { '.png': 'dataurl' },
+    plugins: [sassPlugin(), svelte, dtsPlugin()],
+    loader: { '.png': 'dataurl', '.jpg': 'dataurl', '.svg': 'dataurl' },
 
     // Ignore dependencies и peerDependencies from package.json
     external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)]

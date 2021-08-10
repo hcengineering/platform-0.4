@@ -34,7 +34,7 @@ module.exports = {
       svelte: path.resolve('./node_modules', 'svelte')
     },
     extensions: ['.mjs', '.js', '.svelte', '.ts'],
-    mainFields: prod ? ['browser', 'module', 'main'] : ['browser', 'module', 'main']
+    mainFields: prod ? ['browser', 'module', 'main'] : ['svelte', 'browser', 'module', 'main']
   },
   output: {
     path: path.join(__dirname, 'dist'),

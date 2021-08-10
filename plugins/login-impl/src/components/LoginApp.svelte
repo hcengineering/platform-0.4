@@ -43,21 +43,7 @@
 </div>
 
 <style lang="scss">
-  /* @import "@anticrm/theme/styles/mixins.scss"; --> */
-
-  @mixin bg-fullsize {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    min-width: 100%;
-    min-height: 100%;
-  }
-
-  @mixin bg-layer($color, $opacity) {
-    @include bg-fullsize;
-    background: $color;
-    opacity: $opacity;
-  }
+  @import '../../../../packages/theme/styles/mixins.scss';
 
   .bg-noise {
     @include bg-fullsize;

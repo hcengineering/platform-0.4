@@ -56,7 +56,8 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
       const outDir = build.initialOptions.outdir ?? dirname(build.initialOptions.outfile ?? '.')
       const parser = new ComponentParser({ verbose: true })
 
-      const cssCode = new Map<string, string>()
+      // const cssFiles: string[] = []
+      const cssCode = new Map<string, { content: string, baseDir: string }>()
 
       build.onLoad({ filter: /\.svelte$/ }, async (args) => {
         const source = await promisify(readFile)(args.path, 'utf8')
@@ -84,7 +85,10 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
           // if svelte emits css seperately, then store it in a map and import it from the js
           if (!compileOptions.css && css.code != null) {
             const cssPath = args.path.replace('.svelte', '.esbuild-svelte-fake-css').replace(/\\/g, '/')
-            cssCode.set(cssPath, (css.code as string) + `/*# sourceMappingURL=${css.map.toUrl() as string}*/`)
+            cssCode.set(cssPath, {
+              content: (css.code as string) + `\n/*# sourceMappingURL=${css.map.toUrl() as string} */`,
+              baseDir: dirname(filename)
+            })
             contents = contents + `\nimport "${cssPath}";`
           }
           // Extract typescript code from svelte
@@ -109,28 +113,32 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
         }
       })
 
-      // if the css exists in our map, then output it with the css loader
+      //      if the css exists in our map, then output it with the css loader
       build.onResolve({ filter: /\.esbuild-svelte-fake-css$/ }, ({ path }) => {
         return { path, namespace: 'fakecss' }
       })
 
       build.onLoad({ filter: /\.esbuild-svelte-fake-css$/, namespace: 'fakecss' }, ({ path }) => {
         const css = cssCode.get(path)
-        return css !== undefined ? { contents: css, loader: 'css', resolveDir: dirname(path) } : null
+        return css !== undefined ? { contents: css.content, loader: 'css', resolveDir: css.baseDir } : null
       })
       build.onEnd(() => {
         // If bundled mode is selected, we
         if (build.initialOptions.outfile !== undefined) {
-          const outDir = dirname(build.initialOptions.outfile)
           let imports = ''
-          for (const o of readdirSync(outDir)) {
-            if (o.endsWith('.css')) {
-              // We have css file inside out folder, so let's add an import
-              imports += `\nimport './${o}'`
+          try {
+            const cssFiles = readdirSync(outDir)
+            for (const o of cssFiles) {
+              if (o.endsWith('.css')) {
+                // We have css file inside out folder, so let's add an import
+                imports += `\nimport './${o}'`
+              }
             }
-          }
-          if (imports !== '') {
-            appendFileSync(build.initialOptions.outfile, imports)
+            if (imports !== '') {
+              appendFileSync(build.initialOptions.outfile, imports)
+            }
+          } catch (err) {
+            console.error(err)
           }
         }
       })

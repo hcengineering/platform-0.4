@@ -164,7 +164,7 @@
   //   border-style: solid;
   // }
 
-  form {
+  .form {
     margin: auto;
     margin-top: 3vh;
     width: 30em;

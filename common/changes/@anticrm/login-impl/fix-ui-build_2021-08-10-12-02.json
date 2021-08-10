@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Ui build fix",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl"
+}

@@ -21,8 +21,6 @@ import { Request, Response, serialize } from '@anticrm/rpc'
 import LoginApp from './components/LoginApp.svelte'
 import SettingForm from './components/SettingForm.svelte'
 
-
-
 export default async (): Promise<LoginService> => {
   setResource(login.component.LoginForm, LoginApp)
 
