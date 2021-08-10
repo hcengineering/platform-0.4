@@ -18,8 +18,8 @@ import { Builder, Model } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
 import type { Account, Domain, Ref, Class, Doc, Timestamp } from '@anticrm/core'
 
-import notification, { ObjectLastViewed } from '@anticrm/notification'
-import type { Notification, LastViewed } from '@anticrm/notification'
+import notification from '@anticrm/notification'
+import type { Notification, LastViewed, ObjectLastViewed } from '@anticrm/notification'
 
 const DOMAIN_NOTIFICATION = 'notification' as Domain
 
