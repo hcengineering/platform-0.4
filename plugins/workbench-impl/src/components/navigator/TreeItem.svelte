@@ -15,7 +15,7 @@
 <script lang="ts">
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
-  import { createEventDispatcher, onDestroy, afterUpdate, onMount } from 'svelte'
+  import { createEventDispatcher, onDestroy, afterUpdate } from 'svelte'
   import type { Space, Doc, Ref, Class } from '@anticrm/core'
   import { notificationPlugin } from '@anticrm/notification-impl'
   import notification from '@anticrm/notification'
