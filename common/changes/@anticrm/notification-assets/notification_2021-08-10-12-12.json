@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/notification-assets",
+      "comment": "implement notification",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/notification-assets"
+}
