@@ -15,13 +15,11 @@
 
 import login, { ACCOUNT_KEY, LoginInfo, LoginService } from '@anticrm/login'
 import { getMetadata, setMetadata, setResource } from '@anticrm/platform'
-import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
-import LoginApp from './components/LoginApp.svelte'
-
-import SettingForm from './components/SettingForm.svelte'
-import { Request, Response, serialize } from '../../../packages/rpc/lib'
-
 import pluginCore from '@anticrm/plugin-core'
+import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
+import { Request, Response, serialize } from '@anticrm/rpc'
+import LoginApp from './components/LoginApp.svelte'
+import SettingForm from './components/SettingForm.svelte'
 
 export default async (): Promise<LoginService> => {
   setResource(login.component.LoginForm, LoginApp)

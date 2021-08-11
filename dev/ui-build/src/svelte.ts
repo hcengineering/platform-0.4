@@ -1,15 +1,15 @@
 // original version from https://github.com/evanw/esbuild/blob/plugins/docs/plugin-examples.md
 import type { OnLoadResult, PartialMessage, Plugin } from 'esbuild'
-import { readFile, statSync, existsSync, mkdirSync, writeFile } from 'fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFile, statSync, writeFile } from 'fs'
 import { basename, dirname, join, relative } from 'path'
-import { CompiledSvelteCode, ComponentParser } from './componentParser'
-import { writeTsDefinition } from './componentWriter'
-import sveltePreporocess from 'svelte-preprocess'
+import * as prettier from 'prettier'
+import sveltePreprocess from 'svelte-preprocess'
 import { compile, preprocess } from 'svelte/compiler'
 import type { CompileOptions, Warning } from 'svelte/types/compiler/interfaces'
 import { promisify } from 'util'
-import * as prettier from 'prettier'
 import { extractTypeInformation as extendTypeInformation } from './componentExtender'
+import { CompiledSvelteCode, ComponentParser } from './componentParser'
+import { writeTsDefinition } from './componentWriter'
 
 interface esbuildSvelteOptions {
   /**
@@ -56,6 +56,9 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
       const outDir = build.initialOptions.outdir ?? dirname(build.initialOptions.outfile ?? '.')
       const parser = new ComponentParser({ verbose: true })
 
+      // const cssFiles: string[] = []
+      const cssCode = new Map<string, { content: string, baseDir: string }>()
+
       build.onLoad({ filter: /\.svelte$/ }, async (args) => {
         const source = await promisify(readFile)(args.path, 'utf8')
         const filename = relative(process.cwd(), args.path)
@@ -69,15 +72,25 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
         // actually compile file
         try {
           // do preprocessor stuff if it exists
-          const preprocessResult = await preprocess(source, sveltePreporocess(), {
+          const preprocessResult = await preprocess(source, sveltePreprocess(), {
             filename
           })
+
           const jsSource = preprocessResult.code
 
-          const compileOptions = { css: true, ...options?.compileOptions }
-          const { js, warnings, ast, vars } = compile(jsSource, { ...compileOptions, filename })
-          const contents = (js.code as string) + '\n//# sourceMappingURL=' + (js.map.toUrl() as string)
+          const compileOptions = { css: false, ...options?.compileOptions }
+          const { js, css, warnings, ast, vars } = compile(jsSource, { ...compileOptions, filename })
+          let contents = (js.code as string) + '\n//# sourceMappingURL=' + (js.map.toUrl() as string)
 
+          // if svelte emits css seperately, then store it in a map and import it from the js
+          if (!compileOptions.css && css.code != null) {
+            const cssPath = args.path.replace('.svelte', '.esbuild-svelte-fake-css').replace(/\\/g, '/')
+            cssCode.set(cssPath, {
+              content: (css.code as string) + `\n/*# sourceMappingURL=${css.map.toUrl() as string} */`,
+              baseDir: dirname(filename)
+            })
+            contents = contents + `\nimport "${cssPath}";`
+          }
           // Extract typescript code from svelte
           const tsCode = extractTypescript(source)
 
@@ -97,6 +110,36 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
           return result
         } catch (e) {
           return { errors: [convertMessage(e)], loader: 'default' }
+        }
+      })
+
+      //      if the css exists in our map, then output it with the css loader
+      build.onResolve({ filter: /\.esbuild-svelte-fake-css$/ }, ({ path }) => {
+        return { path, namespace: 'fakecss' }
+      })
+
+      build.onLoad({ filter: /\.esbuild-svelte-fake-css$/, namespace: 'fakecss' }, ({ path }) => {
+        const css = cssCode.get(path)
+        return css !== undefined ? { contents: css.content, loader: 'css', resolveDir: css.baseDir } : null
+      })
+      build.onEnd(() => {
+        // If bundled mode is selected, we
+        if (build.initialOptions.outfile !== undefined) {
+          let imports = ''
+          try {
+            const cssFiles = readdirSync(outDir)
+            for (const o of cssFiles) {
+              if (o.endsWith('.css')) {
+                // We have css file inside out folder, so let's add an import
+                imports += `\nimport './${o}'`
+              }
+            }
+            if (imports !== '') {
+              appendFileSync(build.initialOptions.outfile, imports)
+            }
+          } catch (err) {
+            console.error(err)
+          }
         }
       })
     }
