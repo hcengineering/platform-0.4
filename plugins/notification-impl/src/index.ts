@@ -26,7 +26,7 @@ export default async (): Promise<NotificationService> => {
   const client: Client = await coreP.getClient()
   const accountId = client.accountId()
 
-  const markAsRead = async <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>): Promise<void> => {
+  const markAsRead = <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>): void => {
     const query = {
       objectClass: objectClass,
       space: space,
@@ -81,7 +81,7 @@ export default async (): Promise<NotificationService> => {
     })
     const subscribe = subscribes.shift()
     if (subscribe == null) return false
-    return subscribe.objectIDs.indexOf(objectId) !== -1
+    return subscribe.objectIDs.includes(objectId)
   }
 
   const subscribeSpace = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>): Promise<void> => {
@@ -123,7 +123,7 @@ export default async (): Promise<NotificationService> => {
       return
     }
 
-    if (subscribe.objectIDs.indexOf(objectId) === -1) {
+    if (!subscribe.objectIDs.includes(objectId)) {
       await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
         $push: { objectIDs: objectId }
       })
@@ -155,10 +155,14 @@ export default async (): Promise<NotificationService> => {
     const subscribe = subscribes.shift()
     if (subscribe == null) return
 
-    if (subscribe.objectIDs.indexOf(objectId) !== -1) {
-      await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
-        $pull: { objectIDs: objectId }
-      })
+    if (subscribe.objectIDs.includes(objectId)) {
+      if (subscribe.objectIDs.length === 1) {
+        await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
+      } else {
+        await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
+          $pull: { objectIDs: objectId }
+        })
+      }
     }
   }
 
@@ -182,7 +186,6 @@ export default async (): Promise<NotificationService> => {
           objectSubscribe = querySpace(lastViewed as LastViewed<T>, _class, space, callback)
         } else {
           objectSubscribe = queryObjects(_class, space, callback)
-          objectSubscribe = queryNotification(_class, space, callback)
         }
       }
     )
@@ -266,8 +269,7 @@ export default async (): Promise<NotificationService> => {
           }
           // eslint-disable-next-line no-void
           void client.findAll(_class, query).then((notifyObjects) => {
-            notifyObjects.concat(result.filter((p) => notifyObjects.find((n) => n._id === p._id) === undefined))
-            const res = notifyObjects as FindResult<T>
+            const res = notifyObjects.concat(result.filter((p) => notifyObjects.find((n) => n._id === p._id) === undefined)) as FindResult<T>
             callback(res)
           })
         })
@@ -276,8 +278,7 @@ export default async (): Promise<NotificationService> => {
     const notifyCallback = (result: T[]): void => {
       // eslint-disable-next-line no-void
       void client.findAll(_class, query).then((docs) => {
-        const res = docs as FindResult<T>
-        res.concat(result.filter((p) => res.find((n) => n._id === p._id) === undefined))
+        const res = docs.concat(result.filter((p) => docs.find((n) => n._id === p._id) === undefined)) as FindResult<T>
         callback(res)
       })
     }

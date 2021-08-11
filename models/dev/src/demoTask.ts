@@ -1,10 +1,9 @@
 import core, { Account, DerivedDataDescriptor, Doc, generateId, getFullRef, Ref, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
-import task from '@anticrm/task-impl/src/plugin'
+import task, { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
 import faker from 'faker'
-import chunter from '@anticrm/chunter-impl/src/plugin'
+import chunter from '@anticrm/chunter'
 import { Comment } from '@anticrm/chunter'
 import { accountIds } from './demoAccount'
 

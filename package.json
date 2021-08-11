@@ -2,7 +2,7 @@
   "name": "@anticrm/platform-root",
   "version": "0.4.0",
   "scripts": {
-    "test-diff": "./common/scripts/each-diff.sh rushx test",
+    "test-diff": "cd ./common/scripts/ && sh each-diff.sh rushx test",
     "lint-diff": "./common/scripts/each-diff.sh rushx lint",
     "lint-diff:fix": "./common/scripts/each-diff.sh rushx lint:fix",
     "format-diff": "./common/scripts/each-diff.sh rushx format",

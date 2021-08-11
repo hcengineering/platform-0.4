@@ -42,7 +42,7 @@
     query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
       messages = result
       const notificationP = await getPlugin(notificationPlugin.id)
-      await notificationP.markAsRead(chunter.class.Message, currentSpace)
+      notificationP.markAsRead(chunter.class.Message, currentSpace)
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }

@@ -36,7 +36,7 @@ export interface Notification<T extends Doc> extends Doc {
 }
 
 export interface NotificationService extends Service {
-  markAsRead: <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>) => Promise<void>
+  markAsRead: <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>) => void
 
   getSubscibeStatus: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>) => Promise<boolean>
 

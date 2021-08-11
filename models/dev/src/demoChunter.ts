@@ -1,5 +1,5 @@
 import { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
-import chunter from '@anticrm/chunter-impl/src/plugin'
+import chunter from '@anticrm/chunter'
 import core, { Account, generateId, getFullRef, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
