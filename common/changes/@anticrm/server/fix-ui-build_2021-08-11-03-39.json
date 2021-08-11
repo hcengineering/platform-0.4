@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Fix compile",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server"
+}
