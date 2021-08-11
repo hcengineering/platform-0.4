@@ -52,6 +52,8 @@ describe('elastic search', () => {
     expect(third.length).toBe(2)
     const like = await client.findAll(core.class.Space, { name: { $like: 'Sp%' } })
     expect(like.length).toBe(2)
+    const ne = await client.findAll(core.class.Space, { name: { $ne: 'Sp1' } })
+    expect(ne.length).toBe(1)
     const result = await client.findAll(core.class.Class, { domain: 'domain' as Domain })
     expect(result.length).toBe(0)
     const criteria = new Date().getTime()

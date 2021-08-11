@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "experimentalDecorators": true,
-    "lib": ["es2018", "dom"]
+    "experimentalDecorators": true
   }
 }

@@ -81,10 +81,14 @@ export class ElasticStorage extends TxProcessor implements Storage {
     const result: T[] = []
 
     const criteries = []
+    const neCriteries = []
     for (const key in query) {
       if (key === '_id') continue
       for (const criteria of getCriteria((query as any)[key], key)) {
         criteries.push(criteria)
+      }
+      for (const criteria of getNECritera((query as any)[key], key)) {
+        neCriteries.push(criteria)
       }
     }
 
@@ -101,6 +105,7 @@ export class ElasticStorage extends TxProcessor implements Storage {
         query: {
           bool: {
             must: criteries,
+            must_not: neCriteries,
             filter: filter
           }
         },
@@ -213,7 +218,8 @@ function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
           values: [query._id]
         }
       }
-    } else if ((query._id as any).$in !== undefined) {
+    }
+    if ((query._id as any).$in !== undefined) {
       return {
         ids: {
           values: (query._id as any).$in
@@ -233,15 +239,15 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
     result.push(criteria)
   } else {
     if (value.$in !== undefined) {
-      const criteria: any = {
-        terms: {}
+      const criteria = {
+        terms: Object()
       }
-      criteria.terms[key] = value.$in?.map((item) => toLowerCase(item))
+      criteria.terms[key] = value.$in.map((item) => toLowerCase(item))
       result.push(criteria)
     }
     if (value.$like !== undefined) {
-      const criteria: any = {
-        wildcard: {}
+      const criteria = {
+        wildcard: Object()
       }
       criteria.wildcard[key] = {
         value: value.$like.split(likeSymbol).join('*'),
@@ -250,14 +256,26 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
       result.push(criteria)
     }
     if (value.$gt !== undefined) {
-      const criteria: any = {
-        range: {}
+      const criteria = {
+        range: Object()
       }
       criteria.range[key] = {
         gt: value.$gt
       }
       result.push(criteria)
     }
+  }
+  return result
+}
+
+function getNECritera<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, key: string): any[] {
+  const result: any[] = []
+  if (typeof value === 'object' && value.$ne !== undefined) {
+    const criteria = {
+      term: Object()
+    }
+    criteria.term[key] = toLowerCase(value.$ne)
+    result.push(criteria)
   }
   return result
 }

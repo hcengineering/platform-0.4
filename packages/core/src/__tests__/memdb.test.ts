@@ -129,6 +129,16 @@ describe('memdb', () => {
     expect(first).toHaveLength(1)
   })
 
+  it('should query model ne params', async () => {
+    const { model } = await prepareModel()
+    const client = withOperations(core.account.System, model)
+    const without = await client.findAll(core.class.Space, {})
+    const result = await client.findAll(core.class.Space, {
+      name: { $ne: without[0].name }
+    })
+    expect(result).toHaveLength(without.length - 1)
+  })
+
   it('should push to array', async () => {
     const { model } = await prepareModel()
 
