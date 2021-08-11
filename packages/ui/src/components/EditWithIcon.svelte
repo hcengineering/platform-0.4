@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString, Asset } from '@anticrm/status'
+  import type { Asset } from '@anticrm/status'
   import type { AnySvelteComponent } from '../types'
   import Icon from './Icon.svelte'
 
@@ -25,16 +25,9 @@
 </script>
 
 <div class="editbox" style={width ? 'width: ' + width : ''}>
-  <input type="text"
-    {id}
-    bind:value {placeholder}
-    on:change
-    on:keyup
-    on:blur
-    on:focus
-  />
+  <input type="text" {id} bind:value {placeholder} on:change on:keyup on:blur on:focus />
   <div class="icon">
-    {#if typeof (icon) === 'string'}
+    {#if typeof icon === 'string'}
       <Icon {icon} size={16} />
     {:else}
       <svelte:component this={icon} size={16} />
@@ -78,7 +71,7 @@
       margin: 12px;
       width: 16px;
       height: 16px;
-      opacity: .3;
+      opacity: 0.3;
     }
   }
 </style>
