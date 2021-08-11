@@ -31,7 +31,7 @@
     const target = t as HTMLInputElement
     const value = target.value
     text.innerHTML = (value === '' ? placeholder : value).split(' ').join('&nbsp;')
-    target.style.width = text.clientWidth + 6 + 'px'
+    target.style.width = text.clientWidth + 8 + 'px'
   }
 
   onMount(() => {
@@ -86,7 +86,7 @@
       margin-bottom: 4px;
       font-size: 12px;
       font-weight: 500;
-      color: var(--theme-caption-color);
+      color: var(--theme-content-accent-color);
       opacity: 0.8;
       pointer-events: none;
       user-select: none;
@@ -95,14 +95,14 @@
     input {
       max-width: 100%;
       height: 21px;
-      margin: -3px;
+      margin: -4px;
       padding: 2px;
       font-family: inherit;
       font-size: 14px;
       line-height: 150%;
       color: var(--theme-caption-color);
       background-color: transparent;
-      border: 1px solid transparent;
+      border: 2px solid transparent;
       border-radius: 2px;
       outline: none;
 

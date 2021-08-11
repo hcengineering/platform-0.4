@@ -41,7 +41,7 @@
       margin-bottom: 4px;
       font-size: 12px;
       font-weight: 500;
-      color: var(--theme-caption-color);
+      color: var(--theme-content-accent-color);
       opacity: 0.8;
       pointer-events: none;
       user-select: none;
@@ -50,14 +50,14 @@
     textarea {
       width: auto;
       min-height: 70px;
-      margin: -3px;
+      margin: -4px;
       padding: 2px;
       font-family: inherit;
       font-size: 14px;
       line-height: 150%;
       color: var(--theme-caption-color);
       background-color: transparent;
-      border: 1px solid transparent;
+      border: 2px solid transparent;
       border-radius: 2px;
       outline: none;
       overflow-y: scroll;
