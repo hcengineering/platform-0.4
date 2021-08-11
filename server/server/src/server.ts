@@ -50,7 +50,7 @@ export class Server {
     })
   }
 
-  private upgradeHandler (request: IncomingMessage, socket: net.Socket, head: Buffer): void {
+  private upgradeHandler (request: IncomingMessage, socket: any, head: Buffer): void {
     const token = request.url?.substring(1) // remove leading '/'
     if (token === undefined || token.trim().length === 0) {
       socket.write('HTTP/1.1 400 Bad Request\r\n\r\n')
