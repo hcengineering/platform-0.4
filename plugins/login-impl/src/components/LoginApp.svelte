@@ -26,9 +26,9 @@
       <div class="bg-noise opacity-3" />
     </div>
     {#if page === 'login'}
-      <LoginForm on:switch={(event) => (page = event.detail)} />
+      <LoginForm on:switch={(event) => (page = event.detail)} on:open />
     {:else if page === 'signup'}
-      <SignupForm on:switch={(event) => (page = event.detail)} />
+      <SignupForm on:switch={(event) => (page = event.detail)} on:open />
     {/if}
   </div>
   <div class="intro">

@@ -22,15 +22,23 @@
   async function connect (): Promise<PresentationClient> {
     return await PresentationClient.create()
   }
+
+  let clientPromise = connect()
+
   let accountSet = false
 
   $: accountSet = currentAccount()?.clientUrl !== undefined
 </script>
 
-{#await connect()}
+{#await clientPromise}
   <div />
 {:then client}
   <Workbench {client} />
 {:catch error}
-  <Component is={login.component.LoginForm} />
+  <Component
+    is={login.component.LoginForm}
+    on:open={() => {
+      clientPromise = connect()
+    }}
+  />
 {/await}

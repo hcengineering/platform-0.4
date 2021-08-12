@@ -55,7 +55,7 @@ module.exports = {
           loader: 'svelte-loader',
           options: {
             emitCss: true,
-            preprocess: require('svelte-preprocess')({ postcss: true })
+            preprocess: require('svelte-preprocess')()
           }
         }
       },
@@ -64,8 +64,7 @@ module.exports = {
         test: /\.css$/,
         use: [
           prod ? MiniCssExtractPlugin.loader : 'style-loader',
-          'css-loader',
-          'postcss-loader'
+          'css-loader'
         ]
       },
 
@@ -74,7 +73,6 @@ module.exports = {
         use: [
           prod ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
-          'postcss-loader',
           'sass-loader'
         ]
       },

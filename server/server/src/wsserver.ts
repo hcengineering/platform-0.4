@@ -13,10 +13,11 @@
 // limitations under the License.
 //
 
-import { Storage, Tx } from '@anticrm/core'
+import core, { Account, newTxCreateDoc, Ref, Storage, Tx } from '@anticrm/core'
+import * as gravatar from 'gravatar'
 import { Server, start } from './server'
-import { decodeToken } from './token'
-import { assignWorkspace, closeWorkspace } from './workspaces'
+import { AccountDetails, decodeToken } from './token'
+import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
 
 /**
  * @public
@@ -35,12 +36,37 @@ function connectClient (
 ): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage> {
   return async (clientId, token, sendTx) => {
     try {
-      const { accountId, workspaceId } = decodeToken(serverToken, token)
+      const { accountId, workspaceId, details } = decodeToken(serverToken, token)
       console.log(`Connected Client ${clientId} with account: ${accountId} to ${workspaceId} `)
-      return await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
+
+      // eslint-disable-next-line
+      const { workspace, clientStorage } = await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
+
+      // We need to check if there is Account exists and if not create it.
+      await updateAccount(workspace, accountId, details)
+
+      return clientStorage
     } catch (err) {
       console.log('FAILED to accept client:', err)
       throw new Error('invalid token')
     }
   }
 }
+
+/**
+ * Will check and create Account for current log-in user if required.
+ */
+async function updateAccount (workspace: WorkspaceInfo, accountId: Ref<Account>, details: AccountDetails): Promise<void> {
+  const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId })
+  console.log(accountRef)
+  if (accountRef.length === 0) {
+    // We need to create an account entry.
+    await workspace.workspace.tx(newTxCreateDoc<Account>(accountId, core.class.Account, core.space.Model, {
+      name: details?.firstName ?? '' + details?.lastName ?? '',
+      firstName: details?.firstName ?? '',
+      lastName: details?.lastName ?? '',
+      avatar: gravatar.url(accountId) // TODO: Use platform plugin mechanism for this
+    }, accountId))
+  }
+}
+

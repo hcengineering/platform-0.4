@@ -148,18 +148,7 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     attributes: Data<T>,
     objectId?: Ref<T>
   ): Promise<T> => {
-    const tx: TxCreateDoc<T> = {
-      _id: generateId(),
-      _class: core.class.TxCreateDoc,
-      space: core.space.Tx,
-      modifiedBy: user,
-      modifiedOn: Date.now(),
-      createOn: Date.now(),
-      objectId: objectId ?? generateId(),
-      objectClass: _class,
-      objectSpace: space,
-      attributes
-    }
+    const tx: TxCreateDoc<T> = newTxCreateDoc<T>(user, _class, space, attributes, objectId)
     await storage.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
   }
@@ -220,3 +209,23 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
 
   return result
 }
+
+/**
+ * Will create a transaction to create a docuemnt.
+ * @public
+ */
+export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>): TxCreateDoc<T> {
+  return {
+    _id: generateId(),
+    _class: core.class.TxCreateDoc,
+    space: core.space.Tx,
+    modifiedBy: user,
+    modifiedOn: Date.now(),
+    createOn: Date.now(),
+    objectId: objectId ?? generateId(),
+    objectClass: _class,
+    objectSpace: space,
+    attributes
+  }
+}
+

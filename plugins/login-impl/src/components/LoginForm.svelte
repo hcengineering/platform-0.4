@@ -50,13 +50,19 @@
     func: async () => {
       status = new Status(Severity.INFO, loginImpl.status.ConnectingToServer, {})
 
-      const loginStatus = await (await loginPlugin).doLogin(object.username, object.password, object.workspace)
+      const loginStatus = (await loginPlugin).doLogin(object.username, object.password, object.workspace)
 
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          status = loginStatus
+      return new Promise<void>((resolve) => {
+        loginStatus.then((newStatus) => {
+          status = newStatus
+          console.log('login status', status.code, OK.code)
+          if (status.code === OK.code) {
+            // Login is sucess
+            console.log('dispatch open')
+            dispatch('open')
+          }
           resolve()
-        }, 1000)
+        })
       })
     }
   }

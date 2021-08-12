@@ -74,7 +74,7 @@
     {#each fields as field (field.name)}
       <div class={field.short ? 'form-col' : 'form-row'}>
         <EditBox
-          width="100%"
+          width="150px"
           label={field.i18n}
           password={field.password}
           bind:value={object[field.name]}
