@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Allow signup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

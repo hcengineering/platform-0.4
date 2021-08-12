@@ -33,6 +33,14 @@ export interface LoginInfo {
 /**
  * @public
  */
+export interface SignupDetails {
+  firstName: string
+  lastName: string
+}
+
+/**
+ * @public
+ */
 export const ACCOUNT_KEY = 'anticrm-account'
 
 /**
@@ -48,6 +56,8 @@ export function currentAccount (): LoginInfo | undefined {
  */
 export interface LoginService extends Service {
   doLogin: (username: string, password: string, workspace: string) => Promise<Status>
+  doSignup: (username: string, password: string, workspace: string, details: SignupDetails) => Promise<Status>
+
   /**
    * Check and auto return login information if available.
    */

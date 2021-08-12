@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Allow signup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

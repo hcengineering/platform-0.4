@@ -2,7 +2,7 @@ import { WithAccountId, DerivedDataProcessor, Storage, Tx } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
-interface WorkspaceInfo {
+export interface WorkspaceInfo {
   workspace: Workspace
   clients: Map<string, ClientInfo>
   security: SecurityModel
@@ -88,10 +88,10 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
  * Assign client to workspace, construct workspace if it is not yet started.
  * @param client
  */
-export async function assignWorkspace (client: ClientInfo): Promise<WithAccountId> {
+export async function assignWorkspace (client: ClientInfo): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo} > {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
-  return new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client)
+  return { clientStorage: new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client), workspace: ws }
 }
 
 export async function closeWorkspace (clientId: string): Promise<void> {

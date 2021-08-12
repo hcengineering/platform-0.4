@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Allow signup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl"
+}

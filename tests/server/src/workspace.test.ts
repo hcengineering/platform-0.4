@@ -105,7 +105,7 @@ describe('workspace', () => {
         console.log('server accepted client')
         try {
           const { accountId, workspaceId } = decodeToken(TEST_SECRET, token)
-          const storage = await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
+          const { clientStorage: storage } = await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
           console.log('workspace assigned')
           return {
             findAll: async (_class, query) => {
