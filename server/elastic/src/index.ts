@@ -137,7 +137,12 @@ export class ElasticStorage extends TxProcessor implements Storage {
       if (key === '$push') {
         const keyval = attrs[key]
         for (const key in keyval) {
-          script += ` if (ctx._source.${key} == null) { ctx._source.${key} = ['${keyval[key]}'] } else { ctx._source.${key}.add('${keyval[key]}') }`
+          script += ` if (!(ctx._source.${key} instanceof ArrayList)) { ctx._source.${key} = new ArrayList(); } ctx._source.${key}.add("${keyval[key]}");`
+        }
+      } else if (key === '$pull') {
+        const keyval = attrs[key]
+        for (const key in keyval) {
+          script += ` if (ctx._source.${key}.contains("${keyval[key]}")) { ctx._source.${key}.remove(ctx._source.${key}.indexOf("${keyval[key]}")); }`
         }
       } else {
         script += ` ctx._source.${key} = '${attrs[key]}';`
@@ -208,10 +213,11 @@ function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
           values: [query._id]
         }
       }
-    } else if ((query._id as any).$in !== undefined) {
+    }
+    if (query._id.$in !== undefined) {
       return {
         ids: {
-          values: (query._id as any).$in
+          values: query._id.$in
         }
       }
     }
@@ -228,15 +234,15 @@ function getCriteria<P extends keyof T, T extends Doc> (value: ObjQueryType<P>, 
     result.push(criteria)
   } else {
     if (value.$in !== undefined) {
-      const criteria: any = {
-        terms: {}
+      const criteria = {
+        terms: Object()
       }
-      criteria.terms[key] = value.$in?.map((item) => toLowerCase(item))
+      criteria.terms[key] = value.$in.map((item) => toLowerCase(item))
       result.push(criteria)
     }
     if (value.$like !== undefined) {
-      const criteria: any = {
-        wildcard: {}
+      const criteria = {
+        wildcard: Object()
       }
       criteria.wildcard[key] = {
         value: value.$like.split(likeSymbol).join('*'),
