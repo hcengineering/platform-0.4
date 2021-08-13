@@ -16,7 +16,7 @@
   import type { IntlString } from '@anticrm/platform'
   import { translate } from '@anticrm/platform'
   import { OK, Severity, Status } from '@anticrm/status'
-  import { Button, EditBox, Label, StatusControl } from '@anticrm/ui'
+  import { Button, StylishEdit, Label, StatusControl } from '@anticrm/ui'
   import login from '../plugin'
 
   interface Field {
@@ -73,8 +73,8 @@
   <div class="form">
     {#each fields as field (field.name)}
       <div class={field.short ? 'form-col' : 'form-row'}>
-        <EditBox
-          width="150px"
+        <StylishEdit
+          width="100%"
           label={field.i18n}
           password={field.password}
           bind:value={object[field.name]}

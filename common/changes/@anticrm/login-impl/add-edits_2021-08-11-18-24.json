@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "Add EditWithIcon, StylishEdit.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl"
+}
