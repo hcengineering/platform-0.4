@@ -113,13 +113,22 @@ export class DerivedDataProcessor extends TxProcessor {
               await this.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })
             ).shift()
             if (target !== undefined) {
-              const ops = withOperations(target.modifiedBy, this.storage)
               const obj = this.extractEmbeddedDoc(doc, r.rules)
-              await ops
-                .updateDoc(d.targetClass, tx.objectSpace, parentDocRef._id, {
+              const tx: TxUpdateDoc<Doc> = {
+                _id: generateId(),
+                _class: core.class.TxUpdateDoc,
+                space: core.space.Tx,
+                modifiedBy: target.modifiedBy,
+                modifiedOn: target.modifiedOn,
+                createOn: Date.now(),
+                objectId: target._id,
+                objectClass: target._class,
+                objectSpace: target.space,
+                operations: {
                   $push: { [r.targetField]: obj }
-                })
-                .catch((err) => console.log(err))
+                }
+              }
+              this.storage.tx(tx).catch((err) => console.log(err))
             }
           } catch (err) {
             console.log(err)
@@ -135,12 +144,21 @@ export class DerivedDataProcessor extends TxProcessor {
         // If it was in few fields at once, operation probable will be execured few times.
         for (const op of pushOps) {
           try {
-            const ops = withOperations(op.modifiedBy, this.storage)
-            await ops
-              .updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
+            const tx: TxUpdateDoc<Doc> = {
+              _id: generateId(),
+              _class: core.class.TxUpdateDoc,
+              space: core.space.Tx,
+              modifiedBy: op.modifiedBy,
+              modifiedOn: op.modifiedOn,
+              createOn: Date.now(),
+              objectId: op.objectId,
+              objectClass: op.objectClass,
+              objectSpace: op.objectSpace,
+              operations: {
                 $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-              })
-              .catch((err) => console.log(err))
+              }
+            }
+            this.storage.tx(tx).catch((err) => console.log(err))
           } catch (err) {
             // Ignore exception.
             console.log(err)
