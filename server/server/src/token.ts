@@ -13,8 +13,9 @@ export function generateToken (secret: string, accountId: string, workspaceId: s
 }
 
 export interface AccountDetails {
-  firstName: string
-  lastName: string
+  firstName?: string
+  lastName?: string
+  email: string
 }
 
 export function decodeToken (secret: string, token: string): { accountId: Ref<Account>, workspaceId: string, details: AccountDetails } {

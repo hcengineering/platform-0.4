@@ -127,7 +127,7 @@ describe('server', () => {
 
     const result = await wrapCall<any[], AccountInfo>(accounts, request)
     expect(result.result).toBeDefined()
-    expect(result.result?.email).toBe('andrey2')
+    expect(result.result?.details.email).toBe('andrey2')
   })
 
   it('should not login, wrong password', async () => {

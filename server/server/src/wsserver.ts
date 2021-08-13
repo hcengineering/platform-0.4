@@ -58,15 +58,16 @@ function connectClient (
  */
 async function updateAccount (workspace: WorkspaceInfo, accountId: Ref<Account>, details: AccountDetails): Promise<void> {
   const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId })
-  console.log(accountRef)
   if (accountRef.length === 0) {
     // We need to create an account entry.
-    await workspace.workspace.tx(newTxCreateDoc<Account>(accountId, core.class.Account, core.space.Model, {
-      name: details?.firstName ?? '' + details?.lastName ?? '',
-      firstName: details?.firstName ?? '',
-      lastName: details?.lastName ?? '',
-      avatar: gravatar.url(accountId) // TODO: Use platform plugin mechanism for this
-    }, accountId))
+    await workspace.workspace.tx(
+      newTxCreateDoc<Account>(accountId, core.class.Account, core.space.Model, {
+        email: details.email,
+        name: ((details?.firstName ?? '') + ' ' + (details?.lastName ?? '')).trim(),
+        firstName: details?.firstName ?? '',
+        lastName: details?.lastName ?? '',
+        avatar: gravatar.url(details.email) // TODO: Use platform plugin mechanism for this
+      }, accountId))
   }
 }
 
