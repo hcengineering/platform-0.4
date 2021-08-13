@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "update fix & add test",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic"
+}

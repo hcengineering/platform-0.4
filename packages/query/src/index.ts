@@ -19,6 +19,7 @@ import {
   Doc,
   DocumentQuery,
   FindOptions,
+  findProperty,
   FindResult,
   generateId,
   getOperator,
@@ -80,7 +81,8 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     }
     for (const key in q.query) {
       const value = (q.query as any)[key]
-      if ((doc as any)[key] !== value) {
+      const res = findProperty([doc], key, value)
+      if (res.length === 0) {
         return false
       }
     }
@@ -134,6 +136,10 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       const updatedDoc = q.result.find((p) => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
         await this.doUpdateDoc(updatedDoc, tx)
+        if (!this.match(q, updatedDoc)) {
+          q.result.splice(0, q.result.indexOf(updatedDoc))
+          q.total--
+        }
         this.sort(q, tx)
         await this.callback(updatedDoc, q)
       }

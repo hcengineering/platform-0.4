@@ -14,9 +14,11 @@
 //
 
 import core, {
+  Account,
   Class,
   Doc,
   Domain,
+  generateId,
   Hierarchy,
   Obj,
   Ref,
@@ -37,7 +39,7 @@ describe('elastic search', () => {
       username: process.env.ELASTIC_USERNAME ?? 'elastic',
       password: process.env.ELASTIC_PASSWORD ?? 'changeme'
     }
-    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
+    const model = new ElasticStorage(hierarchy, 'workspace-test' + generateId(), connectionParams)
     for (const tx of txes) await model.tx(tx)
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Doc>> })
     expect(first.length).toBe(1)
@@ -61,7 +63,7 @@ describe('elastic search', () => {
       username: process.env.ELASTIC_USERNAME ?? 'elastic',
       password: process.env.ELASTIC_PASSWORD ?? 'changeme'
     }
-    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
+    const model = new ElasticStorage(hierarchy, 'workspace-test' + generateId(), connectionParams)
     for (const tx of txes) await model.tx(tx)
 
     const without = await model.findAll(core.class.Space, {})
@@ -77,6 +79,38 @@ describe('elastic search', () => {
     expect(sortDesc[0].name).toMatch('Sp2')
   })
 
+  it('should update doc', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const connectionParams = {
+      url: process.env.ELASTIC_URL ?? 'http://localhost:9200',
+      username: process.env.ELASTIC_USERNAME ?? 'elastic',
+      password: process.env.ELASTIC_PASSWORD ?? 'changeme'
+    }
+    const model = new ElasticStorage(hierarchy, 'workspace-test' + generateId(), connectionParams)
+    const client = withOperations(core.account.System, model)
+    for (const tx of txes) await client.tx(tx)
+    const updatedDoc = (await client.findAll(core.class.Space, {}))[0]
+    const newName = 'space' + generateId()
+    await client.updateDoc(updatedDoc._class, updatedDoc.space, updatedDoc._id, {
+      name: newName,
+      members: []
+    })
+    const result = (await client.findAll(core.class.Space, { _id: updatedDoc._id }))[0]
+    expect(result.name).toEqual(newName)
+    expect(result.members).toHaveLength(0)
+    await client.updateDoc(updatedDoc._class, updatedDoc.space, updatedDoc._id, {
+      $push: { members: 'Test' as Ref<Account> }
+    })
+    const push = (await client.findAll(core.class.Space, { _id: updatedDoc._id }))[0]
+    expect(push.members).toHaveLength(1)
+    await client.updateDoc(updatedDoc._class, updatedDoc.space, updatedDoc._id, {
+      $pull: { members: 'Test' as Ref<Account> }
+    })
+    const pull = (await client.findAll(core.class.Space, { _id: updatedDoc._id }))[0]
+    expect(pull.members).toHaveLength(0)
+  })
+
   it('should allow delete', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
@@ -85,7 +119,7 @@ describe('elastic search', () => {
       username: process.env.ELASTIC_USERNAME ?? 'elastic',
       password: process.env.ELASTIC_PASSWORD ?? 'changeme'
     }
-    const model = new ElasticStorage(hierarchy, 'workspace', connectionParams)
+    const model = new ElasticStorage(hierarchy, 'workspace-test' + generateId(), connectionParams)
     for (const tx of txes) await model.tx(tx)
 
     const first = await model.findAll(core.class.Class, { _id: txes[0].objectId as Ref<Class<Obj>> })
