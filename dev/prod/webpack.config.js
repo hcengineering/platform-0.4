@@ -19,6 +19,7 @@ const path = require('path')
 const DefinePlugin = require('webpack').DefinePlugin
 
 const mode = process.env.NODE_ENV || 'development'
+const NO_SVELTE = process.env.NO_SVELTE ?? false
 const prod = mode === 'production'
 
 module.exports = {
@@ -34,7 +35,7 @@ module.exports = {
       svelte: path.resolve('./node_modules', 'svelte')
     },
     extensions: ['.mjs', '.js', '.svelte', '.ts'],
-    mainFields: prod ? ['browser', 'module', 'main'] : ['svelte', 'browser', 'module', 'main']
+    mainFields: (prod || NO_SVELTE) ? ['browser', 'module', 'main'] : ['svelte', 'browser', 'module', 'main']
   },
   output: {
     path: path.join(__dirname, 'dist'),
