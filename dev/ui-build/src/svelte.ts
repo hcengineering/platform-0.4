@@ -1,6 +1,16 @@
 // original version from https://github.com/evanw/esbuild/blob/plugins/docs/plugin-examples.md
 import type { OnLoadArgs, OnLoadResult, PartialMessage, Plugin, PluginBuild } from 'esbuild'
-import { appendFileSync, existsSync, mkdirSync, readdirSync, readFile, readFileSync, statSync, writeFile, writeFileSync } from 'fs'
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFile,
+  readFileSync,
+  statSync,
+  writeFile,
+  writeFileSync
+} from 'fs'
 import { basename, dirname, join, relative } from 'path'
 import * as prettier from 'prettier'
 import sveltePreprocess from 'svelte-preprocess'
@@ -63,16 +73,15 @@ class SveltePlugin {
   private readonly parser = new ComponentParser({ verbose: true })
   private readonly cssCode = new Map<string, { content: string, baseDir: string }>()
   private readonly cacheDir = './.ui-build/'
-  private cacheFile: Record<string, CacheEntry > = {}
+  private cacheFile: Record<string, CacheEntry> = {}
 
-  constructor (private readonly options?: esbuildSvelteOptions) {
-  }
+  constructor (private readonly options?: esbuildSvelteOptions) {}
 
   cacheFileName (): string {
     return join(this.cacheDir, 'build.cache')
   }
 
-  setup (build: PluginBuild): (void | Promise<void>) {
+  setup (build: PluginBuild): void | Promise<void> {
     // main loader
     this.outDir = build.initialOptions.outdir ?? dirname(build.initialOptions.outfile ?? '.')
 
@@ -160,10 +169,26 @@ class SveltePlugin {
     }
 
     // actually compile svelte file with preprocessing
-    return await this.compileSvelteFile(source, filename, compileOptions, args, build, dependencyModifcationTimes, sourceDigest)
+    return await this.compileSvelteFile(
+      source,
+      filename,
+      compileOptions,
+      args,
+      build,
+      dependencyModifcationTimes,
+      sourceDigest
+    )
   }
 
-  private async compileSvelteFile (source: string, filename: string, compileOptions: CompileOptions, args: OnLoadArgs, build: PluginBuild, dependencyModifcationTimes: Map<string, Date>, sourceDigest: string): Promise<OnLoadResult> {
+  private async compileSvelteFile (
+    source: string,
+    filename: string,
+    compileOptions: CompileOptions,
+    args: OnLoadArgs,
+    build: PluginBuild,
+    dependencyModifcationTimes: Map<string, Date>,
+    sourceDigest: string
+  ): Promise<OnLoadResult> {
     try {
       const { jsSource } = await this.doPreprocess(source, filename)
 
@@ -171,11 +196,26 @@ class SveltePlugin {
       const sourceContents = (js.code as string) + '\n//# sourceMappingURL=' + (js.map.toUrl() as string)
 
       // if svelte emits css seperately, then store it in a map and import it from the js
-      const { cssPath, cssContent, contents } = this.updateCss(compileOptions, css, filename, this.cssCode, sourceContents)
+      const { cssPath, cssContent, contents } = this.updateCss(
+        compileOptions,
+        css,
+        filename,
+        this.cssCode,
+        sourceContents
+      )
       // Extract typescript code from svelte
       const tsCode = extractTypescript(source)
 
-      const { defFile, defContent } = await generateDefinitions(filename, { vars, ast }, this.parser, tsCode, jsSource, this.outDir, args, build)
+      const { defFile, defContent } = await generateDefinitions(
+        filename,
+        { vars, ast },
+        this.parser,
+        tsCode,
+        jsSource,
+        this.outDir,
+        args,
+        build
+      )
 
       const result: OnLoadResult = {
         contents,
@@ -186,7 +226,17 @@ class SveltePlugin {
       this.updateResultWatch(build, result, dependencyModifcationTimes)
 
       if (result.warnings?.length === 0) {
-        await this.cacheResults(filename, this.cacheDir, sourceDigest, cssPath, defFile, defContent, contents, cssContent, this.cacheFile)
+        await this.cacheResults(
+          filename,
+          this.cacheDir,
+          sourceDigest,
+          cssPath,
+          defFile,
+          defContent,
+          contents,
+          cssContent,
+          this.cacheFile
+        )
       }
 
       return result
@@ -199,7 +249,11 @@ class SveltePlugin {
     return cacheEntry !== undefined && cacheEntry.digest === sourceDigest
   }
 
-  private updateResultWatch (build: PluginBuild, result: OnLoadResult, dependencyModifcationTimes: Map<string, Date>): void {
+  private updateResultWatch (
+    build: PluginBuild,
+    result: OnLoadResult,
+    dependencyModifcationTimes: Map<string, Date>
+  ): void {
     if (build.initialOptions.watch != null) {
       // this array does include the orignal file, but esbuild should be smart enough to ignore it
       result.watchFiles = Array.from(dependencyModifcationTimes.keys())
@@ -212,11 +266,17 @@ class SveltePlugin {
     }
   }
 
-  updateCss (compileOptions: CompileOptions, css: any, filename: string, cssCode: Map<string, { content: string, baseDir: string }>, contents: string): {
-    cssPath: string
-    cssContent: string
+  updateCss (
+    compileOptions: CompileOptions,
+    css: any,
+    filename: string,
+    cssCode: Map<string, { content: string, baseDir: string }>,
     contents: string
-  } {
+  ): {
+      cssPath: string
+      cssContent: string
+      contents: string
+    } {
     let cssPath = ''
     let cssContent = ''
     if (!(compileOptions?.css ?? false) && css.code != null) {
@@ -240,7 +300,17 @@ class SveltePlugin {
     return { jsSource, jsMap: preprocessResult.map }
   }
 
-  async cacheResults (filename: string, cacheDir: string, sourceDigest: string, cssPath: string, defFile: string, defContent: string, contents: string, cssContent: string, cacheFile: Record<string, CacheEntry>): Promise<void> {
+  async cacheResults (
+    filename: string,
+    cacheDir: string,
+    sourceDigest: string,
+    cssPath: string,
+    defFile: string,
+    defContent: string,
+    contents: string,
+    cssContent: string,
+    cacheFile: Record<string, CacheEntry>
+  ): Promise<void> {
     const fname = basename(filename)
     const outRelPath = join(cacheDir, dirname(filename))
     if (!existsSync(outRelPath)) {
@@ -267,7 +337,13 @@ class SveltePlugin {
     cacheFile[filename] = cacheEntry
   }
 
-  async getCachedResults (cacheEntry: CacheEntry, build: PluginBuild, dependencyModifcationTimes: Map<string, Date>, cssCode: Map<string, { content: string, baseDir: string }>, filename: string): Promise<OnLoadResult> {
+  async getCachedResults (
+    cacheEntry: CacheEntry,
+    build: PluginBuild,
+    dependencyModifcationTimes: Map<string, Date>,
+    cssCode: Map<string, { content: string, baseDir: string }>,
+    filename: string
+  ): Promise<OnLoadResult> {
     const result: OnLoadResult = {
       contents: await promisify(readFile)(cacheEntry.contentFile, 'utf-8'),
       warnings: []
@@ -302,7 +378,7 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
   const plugin = new SveltePlugin(options)
   return {
     name: 'esbuild-svelte',
-    setup (build): (void | Promise<void>) {
+    setup (build): void | Promise<void> {
       return plugin.setup(build)
     }
   }
@@ -316,7 +392,7 @@ async function generateDefinitions (
   outDir: string,
   args: any,
   build: any
-): Promise<{defContent: string, defFile: string}> {
+): Promise<{ defContent: string, defFile: string }> {
   let definition = ''
   try {
     const moduleName = basename(filename).replace('.svelte', '')
