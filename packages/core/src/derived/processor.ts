@@ -1,10 +1,10 @@
 import { Resource } from '@anticrm/status'
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
 import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
-import { Account, Class, Doc, FullRefString, Ref } from '../classes'
+import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
-import { TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
+import { DocumentUpdate, TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
 import { parseFullRef } from '../utils'
 import { DescriptorMap } from './descriptors'
 import { findExistingData, getRuleFieldValues, groupOrValue, lastOrAdd, newDerivedData, sortRules } from './utils'
@@ -114,21 +114,17 @@ export class DerivedDataProcessor extends TxProcessor {
             ).shift()
             if (target !== undefined) {
               const obj = this.extractEmbeddedDoc(doc, r.rules)
-              const tx: TxUpdateDoc<Doc> = {
-                _id: generateId(),
-                _class: core.class.TxUpdateDoc,
-                space: core.space.Tx,
-                modifiedBy: target.modifiedBy,
-                modifiedOn: target.modifiedOn,
-                createOn: Date.now(),
-                objectId: target._id,
-                objectClass: target._class,
-                objectSpace: target.space,
-                operations: {
-                  $push: { [r.targetField]: obj }
-                }
+              const operation = {
+                $push: { [r.targetField]: obj }
               }
-              this.storage.tx(tx).catch((err) => console.log(err))
+              await this.updateData(
+                operation,
+                target.modifiedBy,
+                target.modifiedOn,
+                target._id,
+                target._class,
+                target.space
+              )
             }
           } catch (err) {
             console.log(err)
@@ -144,21 +140,10 @@ export class DerivedDataProcessor extends TxProcessor {
         // If it was in few fields at once, operation probable will be execured few times.
         for (const op of pushOps) {
           try {
-            const tx: TxUpdateDoc<Doc> = {
-              _id: generateId(),
-              _class: core.class.TxUpdateDoc,
-              space: core.space.Tx,
-              modifiedBy: op.modifiedBy,
-              modifiedOn: op.modifiedOn,
-              createOn: Date.now(),
-              objectId: op.objectId,
-              objectClass: op.objectClass,
-              objectSpace: op.objectSpace,
-              operations: {
-                $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-              }
+            const operation = {
+              $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
             }
-            this.storage.tx(tx).catch((err) => console.log(err))
+            await this.updateData(operation, op.modifiedBy, op.modifiedOn, op.objectId, op.objectClass, op.objectSpace)
           } catch (err) {
             // Ignore exception.
             console.log(err)
@@ -175,6 +160,29 @@ export class DerivedDataProcessor extends TxProcessor {
     this.descrs.update(descr)
 
     await this.refreshDerivedData(descr, modifiedBy, true)
+  }
+
+  private async updateData<T extends Doc>(
+    operations: DocumentUpdate<T>,
+    modifiedBy: Ref<Account>,
+    modifiedOn: Timestamp,
+    objectId: Ref<T>,
+    objectClass: Ref<Class<T>>,
+    objectSpace: Ref<Space>
+  ): Promise<void> {
+    const tx: TxUpdateDoc<Doc> = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: modifiedBy,
+      modifiedOn: modifiedOn,
+      createOn: Date.now(),
+      objectId: objectId,
+      objectClass: objectClass,
+      objectSpace: objectSpace,
+      operations: operations
+    }
+    await this.storage.tx(tx).catch((err) => console.log(err))
   }
 
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
