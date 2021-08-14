@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting-impl",
+      "comment": "Ui build update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting-impl"
+}

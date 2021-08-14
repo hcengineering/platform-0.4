@@ -8,7 +8,8 @@
     "format-diff": "./common/scripts/each-diff.sh rushx format",
     "dev": "cd ./dev/prod/ && rushx dev",
     "clean-logs": "git status --ignored | grep build*.log | xargs rm",
-    "do-changes": "rush change --bulk --bump-type patch --message"
+    "do-changes": "rush change --bulk --bump-type patch --message",
+    "clean-ui-cache": "find . -name '.ui-build' | xargs rm -rf"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0"
