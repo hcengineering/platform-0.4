@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Proper AccountId",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
