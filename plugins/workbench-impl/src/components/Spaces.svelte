@@ -32,7 +32,7 @@
 
   $: {
     query = client.query(query, _class, { name: { $like: '%' + search + '%' } }, (result) => {
-      spaces = result
+      spaces = result.filter((space) => !space.private || space.members.includes(accountId))
     })
   }
 
