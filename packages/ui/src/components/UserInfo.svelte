@@ -28,7 +28,7 @@
     {#if !avatarOnly}
       <div class="caption">
         <div class="title">{user.name}</div>
-        <div class="suptitle">{user._id}</div>
+        <div class="suptitle">{user.email}</div>
       </div>
     {/if}
   {/if}

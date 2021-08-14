@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import core, { Account, newTxCreateDoc, Ref, Storage, Tx } from '@anticrm/core'
+import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
 import * as gravatar from 'gravatar'
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -22,9 +22,16 @@ import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
 /**
  * @public
  */
-export async function startServer (host: string, port: number, serverToken: string): Promise<Server> {
+export interface ServerOptions {
+  logTransactions?: boolean
+  logRequests?: boolean
+}
+/**
+ * @public
+ */
+export async function startServer (host: string, port: number, serverToken: string, options?: ServerOptions): Promise<Server> {
   const instance = await start(host, port, {
-    connect: connectClient(serverToken),
+    connect: connectClient(serverToken, options),
     close: async (clientId) => {
       await closeWorkspace(clientId)
     }
@@ -32,8 +39,8 @@ export async function startServer (host: string, port: number, serverToken: stri
   return instance
 }
 function connectClient (
-  serverToken: string
-): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage> {
+  serverToken: string, options?: ServerOptions
+): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<WithAccountId> {
   return async (clientId, token, sendTx) => {
     try {
       const { accountId, workspaceId, details } = decodeToken(serverToken, token)
@@ -44,6 +51,26 @@ function connectClient (
 
       // We need to check if there is Account exists and if not create it.
       await updateAccount(workspace, accountId, details)
+
+      if ((options?.logTransactions ?? false) || (options?.logRequests ?? false)) {
+        return {
+          findAll: async (_class, query) => {
+            const result = await clientStorage.findAll(_class, query)
+            if (options?.logRequests ?? false) {
+              console.info(`request from ${accountId}-${details.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+            }
+            return result
+          },
+          tx: async (tx) => {
+            const result = await clientStorage.tx(tx)
+            if (options?.logTransactions ?? false) {
+              console.info(`tx from ${accountId}-${details.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+            }
+            return result
+          },
+          accountId: async () => await clientStorage.accountId()
+        }
+      }
 
       return clientStorage
     } catch (err) {

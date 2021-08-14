@@ -20,6 +20,10 @@ export function checkLikeQuery (value: string, query: string): boolean {
  * @public
  */
 export function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
+  if (value === undefined) {
+    // Skip if value is undefined, we pass all objects.
+    return objects
+  }
   if (isPredicate(value)) {
     const preds = createPredicates(value, propertyKey)
     for (const pred of preds) {
