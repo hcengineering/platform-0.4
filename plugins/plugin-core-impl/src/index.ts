@@ -13,40 +13,44 @@
 // limitations under the License.
 //
 
-import { createClient, withOperations } from '@anticrm/core'
+import { createClient, TxHandler, WithAccountId, withOperations } from '@anticrm/core'
 import { getMetadata } from '@anticrm/platform'
 import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { connect as connectBrowser } from './connection'
 
-export default async (): Promise<CoreService> => {
-  let client: Client | undefined
+let client: Client | undefined
+let clientClose: (() => void) | undefined
+let liveQuery: LiveQuery | undefined
 
-  async function getClient (): Promise<Client> {
-    if (client === undefined) {
-      const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
+async function doConnect (tx: TxHandler): Promise<WithAccountId> {
+  const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
+  const { storage, close } = await connectBrowser(clientUrl, tx)
+  clientClose = close
+  return storage
+}
 
-      // eslint-disable-next-line prefer-const
-      let liveQuery: LiveQuery | undefined
+async function getClient (): Promise<Client> {
+  if (client === undefined) {
+    const storage = await createClient(doConnect, (tx) => {
+      liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+    })
 
-      const storage = await createClient(
-        async (tx) => {
-          return await connectBrowser(clientUrl, tx)
-        },
-        (tx) => {
-          liveQuery?.notifyTx(tx).catch((err) => console.error(err))
-        }
-      )
+    const accountId = await storage.accountId()
 
-      const accountId = await storage.accountId()
-
-      liveQuery = new LiveQuery(storage)
-      client = withOperations(accountId, liveQuery)
-    }
-    return client
+    liveQuery = new LiveQuery(storage)
+    client = withOperations(accountId, liveQuery)
   }
+  return client
+}
+async function disconnect (): Promise<void> {
+  clientClose?.()
+  client = undefined
+}
 
+export default async (): Promise<CoreService> => {
   return {
-    getClient
+    getClient,
+    disconnect
   }
 }

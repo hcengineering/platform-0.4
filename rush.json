@@ -493,6 +493,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/workbench-assets",
+      "projectFolder": "plugins/workbench-assets",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/workbench-impl",
       "projectFolder": "plugins/workbench-impl",
       "shouldPublish": true

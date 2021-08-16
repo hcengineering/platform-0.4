@@ -13,25 +13,64 @@
 // limitations under the License.
 //
 
-import { plugin, getPlugin, Plugin, Service } from '@anticrm/platform'
-import pluginCore, { Client } from '@anticrm/plugin-core'
 import {
-  Doc,
-  Ref,
-  Class,
-  Storage,
-  DocumentQuery,
-  FindOptions,
-  Tx,
-  TxOperations,
   Account,
-  Space,
+  Class,
   Data,
+  Doc,
+  DocumentQuery,
   DocumentUpdate,
-  FindResult
+  FindOptions,
+  FindResult,
+  Ref,
+  Space,
+  Storage,
+  Tx,
+  TxOperations
 } from '@anticrm/core'
-import { onDestroy } from 'svelte'
+import { plugin, Plugin, Service } from '@anticrm/platform'
+import { Client } from '@anticrm/plugin-core'
 import { deepEqual } from 'fast-equals'
+import { onDestroy } from 'svelte'
+
+class LiveQueryImpl<T extends Doc> {
+  oldQuery?: DocumentQuery<T>
+  oldClass?: Ref<Class<T>>
+  oldOptions: FindOptions<T> | undefined
+  unsubscribe?: UnsubscribeFunc
+
+  constructor (private readonly client: () => Promise<Client>, private readonly callback: (result: T[]) => void) {
+    onDestroy(() => {
+      this.unsubscribe?.()
+    })
+  }
+
+  update (newClass: Ref<Class<T>>, newQuery: DocumentQuery<T>, options?: FindOptions<T>): void {
+    if (this.checkParams(newQuery, newClass, options)) {
+      return
+    }
+
+    this.unsubscribe?.()
+    this.oldQuery = newQuery
+    this.oldClass = newClass
+    this.oldOptions = options
+    this.client()
+      .then((client) => {
+        this.unsubscribe = client.query(newClass, newQuery, this.callback, options)
+      })
+      .catch((reason) => {
+        console.error(reason)
+      })
+  }
+
+  private checkParams (
+    newQuery: DocumentQuery<T>,
+    newClass: Ref<Class<T>>,
+    options: FindOptions<T> | undefined
+  ): boolean {
+    return deepEqual(this.oldQuery, newQuery) && this.oldClass === newClass && deepEqual(this.oldOptions, options)
+  }
+}
 
 export type QueryUpdater<T extends Doc> = (
   _class: Ref<Class<T>>,
@@ -44,16 +83,10 @@ export interface PresentationService extends Service {}
 const PluginPresentation = 'presentation' as Plugin<PresentationService>
 
 export class PresentationClient implements Storage, TxOperations {
-  private readonly client: Client
+  constructor (private readonly client: () => Promise<Client>, private readonly accountIdValue: Ref<Account>) {}
 
-  constructor (client: Client) {
-    this.client = client
-  }
-
-  static async create (): Promise<PresentationClient> {
-    const plugin = await getPlugin(pluginCore.id)
-    const client = await plugin.getClient()
-    return new PresentationClient(client)
+  static async create (accountId: Ref<Account>, client: () => Promise<Client>): Promise<PresentationClient> {
+    return new PresentationClient(client, accountId)
   }
 
   async findAll<T extends Doc>(
@@ -61,15 +94,15 @@ export class PresentationClient implements Storage, TxOperations {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    return await this.client.findAll(_class, query, options)
+    return await (await this.client()).findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {
-    this.client.tx(tx).catch((error) => this.handleError(error))
+    return await (await this.client()).tx(tx).catch((error) => this.handleError(error))
   }
 
   async notifyTx (tx: Tx): Promise<void> {
-    await this.client.notifyTx(tx).catch((error) => this.handleError(error))
+    return await (await this.client()).notifyTx(tx).catch((error) => this.handleError(error))
   }
 
   query<T extends Doc>(
@@ -87,7 +120,7 @@ export class PresentationClient implements Storage, TxOperations {
   }
 
   accountId (): Ref<Account> {
-    return this.client.accountId()
+    return this.accountIdValue
   }
 
   async createDoc<T extends Doc>(
@@ -96,7 +129,7 @@ export class PresentationClient implements Storage, TxOperations {
     attributes: Data<T>,
     objectId?: Ref<T>
   ): Promise<T> {
-    return await this.client.createDoc(_class, space, attributes, objectId).catch((error) => {
+    return await (await this.client()).createDoc(_class, space, attributes, objectId).catch((error) => {
       this.handleError(error)
       throw error
     })
@@ -107,7 +140,7 @@ export class PresentationClient implements Storage, TxOperations {
     _class: Ref<Class<T>>,
     space: Ref<Space>
   ): Promise<string | undefined> {
-    return await this.client.createShortRef(_id, _class, space)
+    return await (await this.client()).createShortRef(_id, _class, space)
   }
 
   async updateDoc<T extends Doc>(
@@ -116,11 +149,13 @@ export class PresentationClient implements Storage, TxOperations {
     objectId: Ref<T>,
     operations: DocumentUpdate<T>
   ): Promise<void> {
-    return await this.client.updateDoc(_class, space, objectId, operations).catch((error) => this.handleError(error))
+    return await (await this.client())
+      .updateDoc(_class, space, objectId, operations)
+      .catch((error) => this.handleError(error))
   }
 
   async removeDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>): Promise<void> {
-    return await this.client.removeDoc(_class, space, objectId).catch((error) => this.handleError(error))
+    return await (await this.client()).removeDoc(_class, space, objectId).catch((error) => this.handleError(error))
   }
 
   private liveQuery<T extends Doc>(
@@ -129,27 +164,8 @@ export class PresentationClient implements Storage, TxOperations {
     callback: (result: T[]) => void,
     options?: FindOptions<T>
   ): QueryUpdater<T> {
-    let oldQuery: DocumentQuery<T>
-    let oldClass: Ref<Class<T>>
-    let oldOptions: FindOptions<T> | undefined
-    let unsubscribe: UnsubscribeFunc = () => {}
-
-    onDestroy(() => {
-      unsubscribe()
-    })
-
-    const updater = (newClass: Ref<Class<T>>, newQuery: DocumentQuery<T>, options?: FindOptions<T>): void => {
-      if (deepEqual(oldQuery, newQuery) && oldClass === newClass && deepEqual(oldOptions, options)) {
-        return
-      }
-
-      unsubscribe()
-      oldQuery = newQuery
-      oldClass = newClass
-      oldOptions = options
-      unsubscribe = this.client.query(newClass, newQuery, callback, options)
-    }
-
+    const lQuery = new LiveQueryImpl<T>(this.client, callback)
+    const updater = lQuery.update.bind(lQuery)
     updater(_class, query, options)
 
     return updater

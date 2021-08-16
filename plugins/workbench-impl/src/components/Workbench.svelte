@@ -15,17 +15,16 @@
 <script lang="ts">
   import type { Doc, Ref, Space } from '@anticrm/core'
   import { PresentationClient } from '@anticrm/presentation'
-  import { location } from '@anticrm/ui'
-  import { Component } from '@anticrm/ui'
+  import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'
-  import avatar from '../../img/avatar.png'
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import Modal from './Modal.svelte'
   import NavHeader from './NavHeader.svelte'
   import Navigator from './Navigator.svelte'
+  import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
 
   export let client: PresentationClient
@@ -59,7 +58,7 @@
     <ActivityStatus status="active" />
     <Applications active={currentApp} />
     <div class="profile">
-      <img class="avatar" src={avatar} alt="Profile" />
+      <Profile on:logout />
     </div>
   </div>
   {#if navigator}

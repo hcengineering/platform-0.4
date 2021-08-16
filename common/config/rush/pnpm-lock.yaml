@@ -59,6 +59,7 @@ specifiers:
   '@rush-temp/ui-build': file:./projects/ui-build.tgz
   '@rush-temp/webrtc': file:./projects/webrtc.tgz
   '@rush-temp/workbench': file:./projects/workbench.tgz
+  '@rush-temp/workbench-assets': file:./projects/workbench-assets.tgz
   '@rush-temp/workbench-impl': file:./projects/workbench-impl.tgz
   '@rush-temp/workspace': file:./projects/workspace.tgz
   '@rush-temp/workspaces': file:./projects/workspaces.tgz
@@ -69,6 +70,7 @@ specifiers:
   '@types/browser-or-node': ^1.3.0
   '@types/estree': ^0.0.50
   '@types/faker': ^5.5.7
+  '@types/gravatar': ~1.8.3
   '@types/heft-jest': ^1.0.2
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
@@ -133,9 +135,6 @@ specifiers:
   markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   mongodb: ^3.6.9
-  postcss: ~8.3.4
-  postcss-load-config: ~3.1.0
-  postcss-loader: ~6.1.0
   prettier: ^2.2.1
   prettier-plugin-svelte: ^2.2.0
   prosemirror-commands: ^1.1.4
@@ -177,18 +176,18 @@ dependencies:
   '@rush-temp/accounts': file:projects/accounts.tgz
   '@rush-temp/chunter': file:projects/chunter.tgz_3068b09fae44f96888f98f214e0f89ed
   '@rush-temp/chunter-assets': file:projects/chunter-assets.tgz_3068b09fae44f96888f98f214e0f89ed
-  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_ts-node@10.2.0
   '@rush-temp/core': file:projects/core.tgz
   '@rush-temp/dev-server': file:projects/dev-server.tgz_@types+node@14.17.9
   '@rush-temp/elastic': file:projects/elastic.tgz
   '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.29.1
-  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_ts-node@10.2.0
   '@rush-temp/login': file:projects/login.tgz
   '@rush-temp/login-assets': file:projects/login-assets.tgz_3068b09fae44f96888f98f214e0f89ed
-  '@rush-temp/login-impl': file:projects/login-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/login-impl': file:projects/login-impl.tgz_ts-node@10.2.0
   '@rush-temp/meeting': file:projects/meeting.tgz_@typescript-eslint+parser@4.29.1
   '@rush-temp/meeting-assets': file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.29.1
-  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_ts-node@10.2.0
   '@rush-temp/model': file:projects/model.tgz
   '@rush-temp/model-all': file:projects/model-all.tgz_@types+node@14.17.9
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz
@@ -202,33 +201,34 @@ dependencies:
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.9
   '@rush-temp/node-client': file:projects/node-client.tgz
   '@rush-temp/platform': file:projects/platform.tgz
-  '@rush-temp/platform-rig': file:projects/platform-rig.tgz_d6c20bf9ab3c098d98791094c947e104
+  '@rush-temp/platform-rig': file:projects/platform-rig.tgz
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_3068b09fae44f96888f98f214e0f89ed
   '@rush-temp/plugin-core-dev': file:projects/plugin-core-dev.tgz_3068b09fae44f96888f98f214e0f89ed
   '@rush-temp/plugin-core-impl': file:projects/plugin-core-impl.tgz_ts-node@10.2.0
   '@rush-temp/presentation': file:projects/presentation.tgz_3068b09fae44f96888f98f214e0f89ed
-  '@rush-temp/prod': file:projects/prod.tgz_ts-node@10.2.0+typescript@4.3.5
+  '@rush-temp/prod': file:projects/prod.tgz_typescript@4.3.5
   '@rush-temp/query': file:projects/query.tgz
   '@rush-temp/recruiting': file:projects/recruiting.tgz
   '@rush-temp/recruiting-assets': file:projects/recruiting-assets.tgz
-  '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
-  '@rush-temp/richeditor': file:projects/richeditor.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_ts-node@10.2.0
+  '@rush-temp/richeditor': file:projects/richeditor.tgz_ts-node@10.2.0
   '@rush-temp/rpc': file:projects/rpc.tgz
   '@rush-temp/server': file:projects/server.tgz
   '@rush-temp/server-tools': file:projects/server-tools.tgz_@types+node@14.17.9
   '@rush-temp/status': file:projects/status.tgz
   '@rush-temp/task': file:projects/task.tgz_3068b09fae44f96888f98f214e0f89ed
   '@rush-temp/task-assets': file:projects/task-assets.tgz_3068b09fae44f96888f98f214e0f89ed
-  '@rush-temp/task-impl': file:projects/task-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/task-impl': file:projects/task-impl.tgz_ts-node@10.2.0
   '@rush-temp/tests-server': file:projects/tests-server.tgz_ts-node@10.2.0
   '@rush-temp/text': file:projects/text.tgz
-  '@rush-temp/theme': file:projects/theme.tgz_a775bbe80d12f8f3ea336f6a878be852
-  '@rush-temp/ui': file:projects/ui.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/theme': file:projects/theme.tgz_ts-node@10.2.0
+  '@rush-temp/ui': file:projects/ui.tgz_ts-node@10.2.0
   '@rush-temp/ui-assets': file:projects/ui-assets.tgz_3068b09fae44f96888f98f214e0f89ed
-  '@rush-temp/ui-build': file:projects/ui-build.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/ui-build': file:projects/ui-build.tgz_ts-node@10.2.0
   '@rush-temp/webrtc': file:projects/webrtc.tgz
   '@rush-temp/workbench': file:projects/workbench.tgz
-  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_a775bbe80d12f8f3ea336f6a878be852
+  '@rush-temp/workbench-assets': file:projects/workbench-assets.tgz_3068b09fae44f96888f98f214e0f89ed
+  '@rush-temp/workbench-impl': file:projects/workbench-impl.tgz_ts-node@10.2.0
   '@rush-temp/workspace': file:projects/workspace.tgz
   '@rush-temp/workspaces': file:projects/workspaces.tgz
   '@rushstack/heft': 0.35.0
@@ -238,6 +238,7 @@ dependencies:
   '@types/browser-or-node': 1.3.0
   '@types/estree': 0.0.50
   '@types/faker': 5.5.7
+  '@types/gravatar': 1.8.3
   '@types/heft-jest': 1.0.2
   '@types/jest': 26.0.24
   '@types/jwt-simple': 0.5.33
@@ -265,7 +266,7 @@ dependencies:
   '@types/ws': 7.4.7
   '@typescript-eslint/eslint-plugin': 4.29.1_d4376362794b743c19f4cba25c7fc6f5
   '@typescript-eslint/parser': 4.29.1_eslint@7.32.0+typescript@4.3.5
-  autoprefixer: 10.2.6_postcss@8.3.6
+  autoprefixer: 10.2.6
   comment-parser: 1.2.3
   core-js: 3.16.1
   cross-env: 7.0.3
@@ -302,9 +303,6 @@ dependencies:
   markdown-it: 12.2.0
   mini-css-extract-plugin: 1.6.2_webpack@5.49.0
   mongodb: 3.6.11
-  postcss: 8.3.6
-  postcss-load-config: 3.1.0_ts-node@10.2.0
-  postcss-loader: 6.1.1_postcss@8.3.6+webpack@5.49.0
   prettier: 2.3.2
   prettier-plugin-svelte: 2.3.1_prettier@2.3.2
   prosemirror-commands: 1.1.10
@@ -319,10 +317,10 @@ dependencies:
   sass-loader: 11.1.1_webpack@5.49.0
   simplytyped: 3.3.0_typescript@4.3.5
   style-loader: 2.0.0_webpack@5.49.0
-  svelte-check: 2.2.4_d6c20bf9ab3c098d98791094c947e104
+  svelte-check: 2.2.4
   svelte-jester: 1.8.2_jest@26.6.3
   svelte-loader: 3.1.2
-  svelte-preprocess: 4.7.4_c38cf1a7a413db8918b0b4754c21e4c5
+  svelte-preprocess: 4.7.4_typescript@4.3.5
   svgo-loader: 3.0.0
   tmp: 0.2.1
   toposort: 2.0.2
@@ -1797,10 +1795,6 @@ packages:
     resolution: {integrity: sha512-dxKo80TqYx3YtBipHwA/SdFmMMyLCnP+5mkEqN0eMjcTBzHkiiX0ES118DsjDBjvD+zeSsSU9jULTZ+frog+Gw==}
     dev: false
 
-  /@types/parse-json/4.0.0:
-    resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
-    dev: false
-
   /@types/prettier/1.19.1:
     resolution: {integrity: sha512-5qOlnZscTn4xxM5MeGXAMOsIOIKIbh9e85zJWfBRVPlRMEVawzoPhINYbRGkBZCI8LxvBe7tJCdWiarA99OZfQ==}
     dev: false
@@ -2562,7 +2556,7 @@ packages:
     hasBin: true
     dev: false
 
-  /autoprefixer/10.2.6_postcss@8.3.6:
+  /autoprefixer/10.2.6:
     resolution: {integrity: sha512-8lChSmdU6dCNMCQopIf4Pe5kipkAGj/fvTMslCsih0uHpOrXOPUEVOmYMMqmw3cekQkSD7EhIeuYl5y0BLdKqg==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
@@ -2574,7 +2568,6 @@ packages:
       colorette: 1.3.0
       fraction.js: 4.1.1
       normalize-range: 0.1.2
-      postcss: 8.3.6
       postcss-value-parser: 4.1.0
     dev: false
 
@@ -3267,17 +3260,6 @@ packages:
 
   /core-util-is/1.0.2:
     resolution: {integrity: sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=}
-    dev: false
-
-  /cosmiconfig/7.0.0:
-    resolution: {integrity: sha512-pondGvTuVYDk++upghXJabWzL6Kxu6f26ljFw64Swq9v6sQPUL3EUlVDV56diOjpCayKihL6hVe8exIACU4XcA==}
-    engines: {node: '>=10'}
-    dependencies:
-      '@types/parse-json': 4.0.0
-      import-fresh: 3.3.0
-      parse-json: 5.2.0
-      path-type: 4.0.0
-      yaml: 1.10.2
     dev: false
 
   /create-require/1.1.1:
@@ -8090,20 +8072,6 @@ packages:
       yaml: 1.10.2
     dev: false
 
-  /postcss-loader/6.1.1_postcss@8.3.6+webpack@5.49.0:
-    resolution: {integrity: sha512-lBmJMvRh1D40dqpWKr9Rpygwxn8M74U9uaCSeYGNKLGInbk9mXBt1ultHf2dH9Ghk6Ue4UXlXWwGMH9QdUJ5ug==}
-    engines: {node: '>= 12.13.0'}
-    peerDependencies:
-      postcss: ^7.0.0 || ^8.0.1
-      webpack: ^5.0.0
-    dependencies:
-      cosmiconfig: 7.0.0
-      klona: 2.0.4
-      postcss: 8.3.6
-      semver: 7.3.5
-      webpack: 5.49.0_webpack-cli@4.7.2
-    dev: false
-
   /postcss-modules-extract-imports/3.0.0_postcss@8.3.6:
     resolution: {integrity: sha512-bdHleFnP3kZ4NYDhuGlVK+CMrQ/pqUm8bx/oGL93K6gVwiclvX5x0n76fYMKuIGKzlABOy13zsvqjb0f92TEXw==}
     engines: {node: ^10 || ^12 || >= 14}
@@ -9476,7 +9444,7 @@ packages:
       supports-color: 7.2.0
     dev: false
 
-  /svelte-check/2.2.4_37293621677b5d618de2277fe18a7b92:
+  /svelte-check/2.2.4:
     resolution: {integrity: sha512-eGEuZ3UEanOhlpQhICLjKejDxcZ9uYJlGnBGKAPW7uugolaBE6HpEBIiKFZN/TMRFFHQUURgGvsVn8/HJUBfeQ==}
     hasBin: true
     peerDependencies:
@@ -9489,8 +9457,7 @@ packages:
       minimist: 1.2.5
       sade: 1.7.4
       source-map: 0.7.3
-      svelte: 3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -9505,7 +9472,7 @@ packages:
       - sugarss
     dev: false
 
-  /svelte-check/2.2.4_d6c20bf9ab3c098d98791094c947e104:
+  /svelte-check/2.2.4_svelte@3.42.1:
     resolution: {integrity: sha512-eGEuZ3UEanOhlpQhICLjKejDxcZ9uYJlGnBGKAPW7uugolaBE6HpEBIiKFZN/TMRFFHQUURgGvsVn8/HJUBfeQ==}
     hasBin: true
     peerDependencies:
@@ -9518,7 +9485,8 @@ packages:
       minimist: 1.2.5
       sade: 1.7.4
       source-map: 0.7.3
-      svelte-preprocess: 4.7.4_c38cf1a7a413db8918b0b4754c21e4c5
+      svelte: 3.42.1
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -9593,7 +9561,7 @@ packages:
       svelte-hmr: 0.14.7_svelte@3.42.1
     dev: false
 
-  /svelte-preprocess/4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6:
+  /svelte-preprocess/4.7.4_svelte@3.42.1+typescript@4.3.5:
     resolution: {integrity: sha512-mDAmaltQl6e5zU2VEtoWEf7eLTfuOTGr9zt+BpA3AGHo8MIhKiNSPE9OLTCTOMgj0vj/uL9QBbaNmpG4G1CgIA==}
     engines: {node: '>= 9.11.2'}
     requiresBuild: true
@@ -9637,14 +9605,12 @@ packages:
       '@types/pug': 2.0.5
       '@types/sass': 1.16.1
       detect-indent: 6.1.0
-      postcss: 8.3.6
-      postcss-load-config: 3.1.0_ts-node@10.2.0
       strip-indent: 3.0.0
       svelte: 3.42.1
       typescript: 4.3.5
     dev: false
 
-  /svelte-preprocess/4.7.4_c38cf1a7a413db8918b0b4754c21e4c5:
+  /svelte-preprocess/4.7.4_typescript@4.3.5:
     resolution: {integrity: sha512-mDAmaltQl6e5zU2VEtoWEf7eLTfuOTGr9zt+BpA3AGHo8MIhKiNSPE9OLTCTOMgj0vj/uL9QBbaNmpG4G1CgIA==}
     engines: {node: '>= 9.11.2'}
     requiresBuild: true
@@ -9688,8 +9654,6 @@ packages:
       '@types/pug': 2.0.5
       '@types/sass': 1.16.1
       detect-indent: 6.1.0
-      postcss: 8.3.6
-      postcss-load-config: 3.1.0_ts-node@10.2.0
       strip-indent: 3.0.0
       typescript: 4.3.5
     dev: false
@@ -10911,7 +10875,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/chunter-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/chunter-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-3tA6BEGUJPS/bs3AZNPHhmMUV998HkWWhmMDVNMPueMML3sKctlb9kBYhysRg028SniEptw1yktiNVJuA9ABLQ==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
@@ -10933,9 +10897,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -11077,7 +11041,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/fsm-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/fsm-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-Id1jCFpCariuQucQVkDUJV53paeNTdN54KZ4p3S9YPieSeVldn49SP5hLRxv69VG5p9tEJqsMRTudVtehi5KGQ==, tarball: file:projects/fsm-impl.tgz}
     id: file:projects/fsm-impl.tgz
     name: '@rush-temp/fsm-impl'
@@ -11100,9 +11064,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -11159,7 +11123,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/login-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/login-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-Oezdly3ZbCFq1jgXZJnV+tOhBvb+6CWi74J+n89WZJo5x8P6nc6mI1osTPipDdlpyc3ZCtQGaShu/Ge3n7TqCg==, tarball: file:projects/login-impl.tgz}
     id: file:projects/login-impl.tgz
     name: '@rush-temp/login-impl'
@@ -11181,7 +11145,7 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -11242,7 +11206,7 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/meeting-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/meeting-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-rBzBJWYS5zVI/9aE/Y+LfJ4SWTxno4V4Idq/X9tJir6f/0HAKngplPIXGayVTBED4KHlJfGjMxT53VdM0ruwbw==, tarball: file:projects/meeting-impl.tgz}
     id: file:projects/meeting-impl.tgz
     name: '@rush-temp/meeting-impl'
@@ -11267,9 +11231,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -11636,9 +11600,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/platform-rig.tgz_d6c20bf9ab3c098d98791094c947e104:
+  file:projects/platform-rig.tgz:
     resolution: {integrity: sha512-zQwLU0/PsRRILCxoUsiNZkW4Nkt4s3efdsUFlKU1hiEuS6m5MTzDNjTK/J/aaZcZF85G49ItR2Pt/o2efr+whg==, tarball: file:projects/platform-rig.tgz}
-    id: file:projects/platform-rig.tgz
     name: '@rush-temp/platform-rig'
     version: 0.0.0
     dependencies:
@@ -11657,7 +11620,7 @@ packages:
       eslint-plugin-node: 11.1.0_eslint@7.32.0
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
-      svelte-preprocess: 4.7.4_c38cf1a7a413db8918b0b4754c21e4c5
+      svelte-preprocess: 4.7.4_typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -11802,8 +11765,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/prod.tgz_ts-node@10.2.0+typescript@4.3.5:
-    resolution: {integrity: sha512-/qLymS0LqSaMNXcTWWSecHz3FjE9ZimIBHoQyb2j233LHHkn0lbzo/bH8iue4vQESdffiXNbSWZS2heIuFhMCA==, tarball: file:projects/prod.tgz}
+  file:projects/prod.tgz_typescript@4.3.5:
+    resolution: {integrity: sha512-t+Xre8bvT+1ayU65gnxQWVxtUZYhYhKQx0BGPLt6MXYRn9FdyT1ytwp/52sovxpg+j8Na4HdtK8h40zy/lHt8A==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -11811,7 +11774,7 @@ packages:
       '@types/node': 14.17.9
       '@typescript-eslint/eslint-plugin': 4.29.1_d4376362794b743c19f4cba25c7fc6f5
       '@typescript-eslint/parser': 4.29.1_eslint@7.32.0+typescript@4.3.5
-      autoprefixer: 10.2.6_postcss@8.3.6
+      autoprefixer: 10.2.6
       cross-env: 7.0.3
       css-loader: 5.2.7_webpack@5.49.0
       dotenv-webpack: 7.0.3_webpack@5.49.0
@@ -11822,9 +11785,6 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       file-loader: 6.2.0_webpack@5.49.0
       mini-css-extract-plugin: 1.6.2_webpack@5.49.0
-      postcss: 8.3.6
-      postcss-load-config: 3.1.0_ts-node@10.2.0
-      postcss-loader: 6.1.1_postcss@8.3.6+webpack@5.49.0
       prettier: 2.3.2
       sass-loader: 11.1.1_webpack@5.49.0
       style-loader: 2.0.0_webpack@5.49.0
@@ -11842,9 +11802,9 @@ packages:
       - bufferutil
       - fibers
       - node-sass
+      - postcss
       - sass
       - supports-color
-      - ts-node
       - typescript
       - utf-8-validate
     dev: false
@@ -11894,7 +11854,7 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/recruiting-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/recruiting-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-dHJMXM20wyrmjg62NOtIFL/GyVuR3Wi8pMhQGuB9x3/3h+iuzjk9vU+cuHhvC5Pn2vs9aVthBQG53U8ysU/Mbg==, tarball: file:projects/recruiting-impl.tgz}
     id: file:projects/recruiting-impl.tgz
     name: '@rush-temp/recruiting-impl'
@@ -11918,9 +11878,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -11958,7 +11918,7 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/richeditor.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/richeditor.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-75TN2p9mZkPYD6jfM22HxtQb1VxUmWXblRFrixKp0SyiSRHibWwjeRcOnPVBdo58hkerUZ6fbZEoTc/tk0z3IA==, tarball: file:projects/richeditor.tgz}
     id: file:projects/richeditor.tgz
     name: '@rush-temp/richeditor'
@@ -11998,10 +11958,10 @@ packages:
       prosemirror-state: 1.3.4
       prosemirror-view: 1.18.11
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-jester: 1.8.2_jest@26.6.3+svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -12162,7 +12122,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/task-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/task-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-AG92avCH8a0KmOkv6UX40xfmqpdr4IJ/j8DnAO9TftMD7OnSfPK4p7gmXDQpVpUpQhitaSMYk1phqFdSHNtdXw==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
@@ -12185,9 +12145,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -12297,7 +12257,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/theme.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/theme.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-ahRHf+XSbj3DBpZ42bBUN7BLm9ua92xSQjOm3tGGbGAvWf9vk7FWPGFWHolRddJzQIUJYeLrv90moL/7z0++5w==, tarball: file:projects/theme.tgz}
     id: file:projects/theme.tgz
     name: '@rush-temp/theme'
@@ -12327,10 +12287,10 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-jester: 1.8.2_jest@26.6.3+svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -12374,7 +12334,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/ui-build.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/ui-build.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-eB1VTPYVcaMizfcfbYyCtN2cptuTy9D2swV5k4gLUXBEi5N5aVxzLL9Xcntpl183b7fhq/a6Kc9BFe5+8z5UxA==, tarball: file:projects/ui-build.tgz}
     id: file:projects/ui-build.tgz
     name: '@rush-temp/ui-build'
@@ -12404,7 +12364,7 @@ packages:
       magic-string: 0.25.7
       prettier: 2.3.2
       svelte: 3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       tmp: 0.2.1
       typescript: 4.3.5
     transitivePeerDependencies:
@@ -12425,7 +12385,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/ui.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/ui.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-63CoyNKWH1EmyKgGdRNlXs5hz1SpDZAda+04vnHVAsaXns6CVl8T8ulhuabrD45Hn5jPhG0DAdah46ejysGkyA==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
@@ -12448,9 +12408,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -12489,7 +12449,30 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/workbench-impl.tgz_a775bbe80d12f8f3ea336f6a878be852:
+  file:projects/workbench-assets.tgz_3068b09fae44f96888f98f214e0f89ed:
+    resolution: {integrity: sha512-rTpVANTWWiZxNt7zSryEmZJPg5vtl5R4q5+dLUcClvw8Ty4VQnZMEJ0P2VhUBPiY4JTczcylJ7HvoR5f/4qIcg==, tarball: file:projects/workbench-assets.tgz}
+    id: file:projects/workbench-assets.tgz
+    name: '@rush-temp/workbench-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.4
+      '@types/jest': 26.0.24
+      '@types/node': 14.17.9
+      jest: 26.6.3_ts-node@10.2.0
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_5294f47db1a9243b7c6be926de7c9aec
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/workbench-impl.tgz_ts-node@10.2.0:
     resolution: {integrity: sha512-psSHFxTu2/jzxHS9mB7J0pD5TEoGFQ445N8QfiB6X2ywnp1tGHN04H8XgUi++BecAUCgFWoItT/rAJYCA1jNMQ==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
@@ -12512,9 +12495,9 @@ packages:
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
       svelte: 3.42.1
-      svelte-check: 2.2.4_37293621677b5d618de2277fe18a7b92
+      svelte-check: 2.2.4_svelte@3.42.1
       svelte-loader: 3.1.2_svelte@3.42.1
-      svelte-preprocess: 4.7.4_0230e0d6e615847d9e5f4e7b2174f0e6
+      svelte-preprocess: 4.7.4_svelte@3.42.1+typescript@4.3.5
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'
