@@ -90,7 +90,10 @@ describe('server', () => {
 
   it('should signup', async () => {
     await workspace().insertOne({ workspace: 'workspace', organisation: 'Bull Inc', accounts: [] })
-    const request: Request<[string, string, string, AccountDetails]> = { method: 'signup', params: ['andrey2', '123', 'workspace', { firstName: 'N1', lastName: 'N2' }] }
+    const request: Request<[string, string, string, AccountDetails]> = {
+      method: 'signup',
+      params: ['andrey2', '123', 'workspace', { firstName: 'N1', lastName: 'N2' }]
+    }
 
     const result = await wrapCall(accounts, request)
     expect(result.result).toBeDefined()
