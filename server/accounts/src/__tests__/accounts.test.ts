@@ -17,7 +17,7 @@
 
 import { Request } from '@anticrm/rpc'
 import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb'
-import { AccountInfo, Accounts, Code, wrapCall } from '..'
+import { AccountDetails, AccountInfo, Accounts, Code, wrapCall } from '..'
 
 const DB_NAME = 'test_accounts'
 
@@ -88,6 +88,16 @@ describe('server', () => {
     expect(accounts.findAccount('andrey2')).toBeDefined()
   })
 
+  it('should signup', async () => {
+    await workspace().insertOne({ workspace: 'workspace', organisation: 'Bull Inc', accounts: [] })
+    const request: Request<[string, string, string, AccountDetails]> = { method: 'signup', params: ['andrey2', '123', 'workspace', { firstName: 'N1', lastName: 'N2' }] }
+
+    const result = await wrapCall(accounts, request)
+    expect(result.result).toBeDefined()
+
+    expect(accounts.findAccount('andrey2')).toBeDefined()
+  })
+
   it('should not create account', async () => {
     const request: Request<[string, string]> = { method: 'createAccount', params: ['', '123'] }
 
@@ -127,7 +137,7 @@ describe('server', () => {
 
     const result = await wrapCall<any[], AccountInfo>(accounts, request)
     expect(result.result).toBeDefined()
-    expect(result.result?.details.email).toBe('andrey2')
+    expect(result.result?.email).toBe('andrey2')
   })
 
   it('should not login, wrong password', async () => {

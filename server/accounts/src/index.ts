@@ -26,6 +26,7 @@ import { Binary, Collection, Db, ObjectId } from 'mongodb'
  */
 export interface Account {
   _id: Ref<CoreAccount>
+  email: string // It should be uniq
   details: AccountDetails
   hash: Binary
   salt: Binary
@@ -36,7 +37,6 @@ export interface Account {
  * @public
  */
 export interface AccountDetails {
-  email: string
   firstName?: string
   lastName?: string
 }
@@ -193,13 +193,13 @@ export class Accounts {
     const hash = hashWithSalt(password, salt)
 
     try {
-      const accountDetails = { firstName: '', lastName: '', ...details, email }
-      const result = await this.accounts().insertOne({ _id: generateId(), hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
+      const accountDetails = { firstName: '', lastName: '', ...details }
+      const result = await this.accounts().insertOne({ _id: generateId(), email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
 
       // We need to connect to server and create an Account entry with all required information for user.
 
 
-      return { _id: result.insertedId, workspaces: [], details: accountDetails }
+      return { _id: result.insertedId, email, workspaces: [], details: accountDetails }
     } catch (err) {
       throw this.wrapDuplicateError(err, Code.status.DuplicateAccount, { email })
     }
