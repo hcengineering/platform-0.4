@@ -42,13 +42,11 @@
         event.stopPropagation()
       }}
     >
-      <div class="profile">
-        {#await getUser()}
-          <img class="avatar" src={avatar} alt="Profile" />
-        {:then account}
-          <img class="avatar" src={account.avatar} alt="Profile" />
-        {/await}
-      </div>
+      {#await getUser()}
+        <img class="avatar" src={avatar} alt="Profile" />
+      {:then account}
+        <img class="avatar" src={account.avatar} alt="Profile" />
+      {/await}
     </button>
     <PopupItem
       component={Label}
@@ -82,12 +80,6 @@
       outline: none;
       cursor: pointer;
 
-      .icon {
-        width: 16px;
-        height: 16px;
-        opacity: 0.3;
-      }
-
       .avatar {
         width: 36px;
         height: 36px;
@@ -98,24 +90,15 @@
       &.selected {
         background-color: var(--theme-button-bg-focused);
         border: 1px solid var(--theme-bg-accent-color);
-        .icon {
-          opacity: 0.6;
-        }
       }
 
       &:hover {
         background-color: var(--theme-button-bg-pressed);
         border: 1px solid var(--theme-bg-accent-color);
-        .icon {
-          opacity: 1;
-        }
       }
       &:focus {
         border: 1px solid var(--primary-button-focused-border);
         box-shadow: 0 0 0 3px var(--primary-button-outline);
-        .icon {
-          opacity: 1;
-        }
       }
     }
   }

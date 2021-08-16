@@ -112,10 +112,6 @@
         align-items: center;
         height: 100px;
         min-height: 100px;
-        .avatar {
-          width: 36px;
-          height: 36px;
-        }
       }
     }
 
