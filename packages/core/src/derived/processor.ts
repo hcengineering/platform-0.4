@@ -1,10 +1,10 @@
 import { Resource } from '@anticrm/status'
 import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
-import core, { generateId, Storage, Tx, TxOperations, TxRemoveDoc, withOperations } from '..'
-import { Account, Class, Doc, FullRefString, Ref } from '../classes'
+import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
+import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
-import { TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
+import { DocumentUpdate, TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
 import { parseFullRef } from '../utils'
 import { DescriptorMap } from './descriptors'
 import { findExistingData, getRuleFieldValues, groupOrValue, lastOrAdd, newDerivedData, sortRules } from './utils'
@@ -62,7 +62,6 @@ export class DerivedDataProcessor extends TxProcessor {
 
     // Obtain descriptors an traverse build derived data
     const descriptors = this.descrs.getByClass(tx.objectClass)
-    const ops = withOperations(tx.modifiedBy, this.storage)
     const doc: CachedDoc = {
       resolve: async () => await Promise.resolve(TxProcessor.createDoc2Doc(tx))
     }
@@ -70,9 +69,9 @@ export class DerivedDataProcessor extends TxProcessor {
     for (const d of descriptors) {
       let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       results = this.withDescrId(results, d._id, tx.objectId, tx.objectClass)
-      await this.applyDerivedData([], results, ops)
+      await this.applyDerivedData([], results, tx.modifiedBy)
 
-      await this.applyCollectionRules(d, tx, true, ops)
+      await this.applyCollectionRules(d, tx, true)
     }
   }
 
@@ -102,7 +101,7 @@ export class DerivedDataProcessor extends TxProcessor {
   /**
    * Will update collection back references.
    */
-  private async applyCollectionRules (d: Descr, tx: Tx, push: boolean, ops: Storage & TxOperations): Promise<void> {
+  private async applyCollectionRules (d: Descr, tx: Tx, push: boolean): Promise<void> {
     for (const r of d.collections ?? []) {
       if (push) {
         const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
@@ -110,12 +109,23 @@ export class DerivedDataProcessor extends TxProcessor {
         const parentDocRef = parseFullRef(parentDocRefString)
         if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
           try {
-            const obj = this.extractEmbeddedDoc(doc, r.rules)
-            await ops
-              .updateDoc(d.targetClass, tx.objectSpace, parentDocRef._id, {
+            const target = (
+              await this.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })
+            ).shift()
+            if (target !== undefined) {
+              const obj = this.extractEmbeddedDoc(doc, r.rules)
+              const operation = {
                 $push: { [r.targetField]: obj }
-              })
-              .catch((err) => console.log(err))
+              }
+              await this.updateData(
+                operation,
+                target.modifiedBy,
+                target.modifiedOn,
+                target._id,
+                target._class,
+                target.space
+              )
+            }
           } catch (err) {
             console.log(err)
           }
@@ -123,18 +133,17 @@ export class DerivedDataProcessor extends TxProcessor {
       } else {
         // Handle pull, since our document is already removed from storage, we need to search for transactions to update source doc.
         const eid = (r.rules?.length ?? 0) > 0 ? '._id' : ''
-        const pushOps = await ops.findAll<TxUpdateDoc<Doc>>(core.class.TxUpdateDoc, {
+        const pushOps = await this.storage.findAll<TxUpdateDoc<Doc>>(core.class.TxUpdateDoc, {
           objectClass: d.targetClass,
           [`operations.\\$push.${r.targetField}${eid}`]: tx.objectId
         })
         // If it was in few fields at once, operation probable will be execured few times.
         for (const op of pushOps) {
           try {
-            await ops
-              .updateDoc(d.targetClass, tx.objectSpace, op.objectId, {
-                $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-              })
-              .catch((err) => console.log(err))
+            const operation = {
+              $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
+            }
+            await this.updateData(operation, op.modifiedBy, op.modifiedOn, op.objectId, op.objectClass, op.objectSpace)
           } catch (err) {
             // Ignore exception.
             console.log(err)
@@ -153,6 +162,29 @@ export class DerivedDataProcessor extends TxProcessor {
     await this.refreshDerivedData(descr, modifiedBy, true)
   }
 
+  private async updateData<T extends Doc>(
+    operations: DocumentUpdate<T>,
+    modifiedBy: Ref<Account>,
+    modifiedOn: Timestamp,
+    objectId: Ref<T>,
+    objectClass: Ref<Class<T>>,
+    objectSpace: Ref<Space>
+  ): Promise<void> {
+    const tx: TxUpdateDoc<Doc> = {
+      _id: generateId(),
+      _class: core.class.TxUpdateDoc,
+      space: core.space.Tx,
+      modifiedBy: modifiedBy,
+      modifiedOn: modifiedOn,
+      createOn: Date.now(),
+      objectId: objectId,
+      objectClass: objectClass,
+      objectSpace: objectSpace,
+      operations: operations
+    }
+    await this.storage.tx(tx).catch((err) => console.log(err))
+  }
+
   protected async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     if (this.hierarchy.isDerived(tx.objectClass, core.class.DerivedDataDescriptor)) {
       await this.updateDescriptor(tx.objectId as Ref<Descr>, tx.modifiedBy)
@@ -160,7 +192,6 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     const descriptors = this.descrs.getByClass(tx.objectClass)
-    const ops = withOperations(tx.modifiedBy, this.storage)
 
     // We expect storage is alrady updated before derived data is being processed.
     const doc: CachedDoc = {
@@ -174,7 +205,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectClass: tx.objectClass,
         descriptorId: d._id
       })
-      await this.applyDerivedData(oldData, results, ops)
+      await this.applyDerivedData(oldData, results, tx.modifiedBy)
     }
   }
 
@@ -185,7 +216,6 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     const descriptors = this.descrs.getByClass(tx.objectClass)
-    const ops = withOperations(tx.modifiedBy, this.storage)
 
     for (const d of descriptors) {
       const oldData = await this.storage.findAll(core.class.DerivedData, {
@@ -193,8 +223,8 @@ export class DerivedDataProcessor extends TxProcessor {
         objectClass: tx.objectClass,
         descriptorId: d._id
       })
-      await this.applyDerivedData(oldData, [], ops)
-      await this.applyCollectionRules(d, tx, false, ops)
+      await this.applyDerivedData(oldData, [], tx.modifiedBy)
+      await this.applyCollectionRules(d, tx, false)
     }
   }
 
@@ -233,8 +263,9 @@ export class DerivedDataProcessor extends TxProcessor {
   private async applyDerivedData (
     oldData: DerivedData[],
     newData: DerivedData[],
-    storage: Storage & TxOperations
+    modifiedBy: Ref<Account>
   ): Promise<void> {
+    const storage = withOperations(modifiedBy, this.storage)
     // Do diff from old refs to remove only missing.
     const { additions, updates, deletes } = findExistingData(oldData, newData)
 
@@ -319,8 +350,6 @@ export class DerivedDataProcessor extends TxProcessor {
 
   private async refreshDerivedData (d: Descr, modifiedBy: Ref<Account>, apply: boolean): Promise<void> {
     // Perform a full rebuild of derived data of required type.
-    const ops = withOperations(modifiedBy, this.storage)
-
     // we need to find all objects affected
 
     const allDD = await this.storage.findAll(d.sourceClass, {})
@@ -343,7 +372,7 @@ export class DerivedDataProcessor extends TxProcessor {
         attributes: dbDoc
       }
       const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
-      await this.applyDerivedData(Array.from(dbDD), results, ops)
+      await this.applyDerivedData(Array.from(dbDD), results, tx.modifiedBy)
     }
   }
 }
