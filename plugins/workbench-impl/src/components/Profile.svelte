@@ -39,8 +39,7 @@
       class:selected={showMenu}
       on:click|preventDefault={(event) => {
         showMenu = !showMenu
-        console.log('click', showMenu)
-        //   event.stopPropagation()
+        event.stopPropagation()
       }}
     >
       <div class="profile">
