@@ -63,6 +63,10 @@
       return new Promise<void>((resolve) => {
         signupResult.then((newStatus) => {
           status = newStatus
+          if (status.code === OK.code) {
+            // Login is success
+            dispatch('open')
+          }
           resolve()
         })
       })

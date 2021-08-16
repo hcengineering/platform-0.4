@@ -27,6 +27,8 @@
 
   const dispatch = createEventDispatcher()
 
+  export const LAST_WORKSPACE_KEY = 'anticrm-last-workspace'
+
   const fields = [
     { name: 'username', i18n: loginImpl.string.Email },
     {
@@ -38,7 +40,7 @@
   ]
 
   const object = {
-    workspace: '',
+    workspace: localStorage.getItem(LAST_WORKSPACE_KEY) ?? '',
     username: '',
     password: ''
   }
@@ -57,8 +59,8 @@
           status = newStatus
           console.log('login status', status.code, OK.code)
           if (status.code === OK.code) {
-            // Login is sucess
-            console.log('dispatch open')
+            localStorage.setItem(LAST_WORKSPACE_KEY, object.workspace)
+            // Login is success
             dispatch('open')
           }
           resolve()

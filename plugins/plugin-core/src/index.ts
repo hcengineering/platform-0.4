@@ -21,7 +21,15 @@ import type { Queriable } from '@anticrm/query'
 export interface Client extends Storage, TxOperations, Queriable {}
 
 export interface CoreService extends Service {
+  /**
+   * Return a working connection, make one if not pressent.
+   */
   getClient: () => Promise<Client>
+
+  /**
+   * Discard current active connection.
+   */
+  disconnect: () => Promise<void>
 }
 
 const PluginCore = 'plugin-core' as Plugin<CoreService>

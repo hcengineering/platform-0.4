@@ -74,6 +74,10 @@ const workbench = plugin(
     },
     class: {
       Application: '' as Ref<Class<Application>>
+    },
+    string: {
+      Logout: '' as IntlString,
+      Profile: '' as IntlString
     }
   }
 )

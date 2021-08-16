@@ -52,6 +52,7 @@ export default async (): Promise<CoreService> => {
   }
 
   return {
-    getClient
+    getClient,
+    disconnect: async () => await Promise.resolve()
   }
 }

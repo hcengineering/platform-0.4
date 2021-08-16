@@ -13,13 +13,9 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
-import type { AnyComponent } from '@anticrm/ui'
+import { addStringsLoader } from '@anticrm/platform'
 import workbench from '@anticrm/workbench'
 
-export default mergeIds(workbench, {
-  component: {
-    WorkbenchApp: '' as AnyComponent,
-    Spaces: '' as AnyComponent
-  }
+addStringsLoader(workbench.id, async (lang: string) => {
+  return await import(`../lang/${lang}.json`)
 })
