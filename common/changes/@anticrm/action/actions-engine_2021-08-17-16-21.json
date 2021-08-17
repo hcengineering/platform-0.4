@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/action",
+      "comment": "Introduce action package",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/action"
+}

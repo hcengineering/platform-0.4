@@ -649,6 +649,26 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/action",
+      "projectFolder": "packages/action",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/action-plugin",
+      "projectFolder": "plugins/action",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/action-impl",
+      "projectFolder": "plugins/action-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-action",
+      "projectFolder": "models/action",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/model-fsm",
       "projectFolder": "models/fsm",
       "shouldPublish": true
@@ -681,6 +701,11 @@
     {
       "packageName": "@anticrm/recruiting-assets",
       "projectFolder": "plugins/recruiting-assets",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/recruiting-action",
+      "projectFolder": "plugins/recruiting-action",
       "shouldPublish": true
     },
     {
@@ -740,6 +765,7 @@
       "projectFolder": "products/hr-build",
       "shouldPublish": false
     }
+
 
     // {
     //   /**

@@ -16,41 +16,63 @@
   import type { Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import recruiting from '@anticrm/recruiting'
-
+  import action from '@anticrm/action-plugin'
+  import type { Action } from '@anticrm/action-plugin'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import type { Applicant, Candidate } from '@anticrm/recruiting'
 
-  import type { QueryUpdater } from '@anticrm/presentation'
+  import ActionPresenter from './ActionPresenter.svelte'
 
   export let doc: Applicant
-  let candidate: Candidate | undefined
 
   const client = getClient()
-  let lq: QueryUpdater<Candidate> | undefined
 
-  $: {
-    lq = client.query(lq, recruiting.class.Candidate, { _id: doc.item as Ref<Candidate> }, ([first]) => {
+  let candidate: Candidate | undefined
+  let candidateQ: QueryUpdater<Candidate> | undefined
+  $: candidateQ = client.query(
+    candidateQ,
+    recruiting.class.Candidate,
+    { _id: doc.item as Ref<Candidate> },
+    ([first]) => {
       candidate = first
-    })
-  }
+    }
+  )
+
+  let actions: Action[] = []
+  let actionsQ: QueryUpdater<Action> | undefined
+  $: actionsQ = client.query(actionsQ, action.class.Action, {}, (res) => {
+    actions = res
+  })
 </script>
 
 {#if candidate}
   <div class="root">
-    {`${candidate.firstName} ${candidate.lastName}`}
+    <div class="header">
+      {`${candidate.firstName} ${candidate.lastName}`}
+    </div>
+    {#each actions as action (action._id)}
+      <ActionPresenter {action} target={candidate._id} />
+    {/each}
   </div>
 {/if}
 
 <style lang="scss">
   .root {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
 
-    height: 50px;
-    font-weight: 500;
+    gap: 10px;
+    min-height: 50px;
 
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
+  }
+  .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: 500;
   }
 </style>

@@ -16,9 +16,10 @@
 import type { Account, Class, Doc, DocumentPresenter, Ref, Space, Timestamp } from '@anticrm/core'
 import type { Person } from '@anticrm/contact'
 import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
+import { Action as ActionDef } from '@anticrm/action'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 
 export enum CandidateStatus {
@@ -139,5 +140,9 @@ export default plugin(PluginRecruiting, {}, {
   fsm: {
     DefaultVacancy: '' as Ref<FSM>,
     AnotherDefaultVacancy: '' as Ref<FSM>
+  },
+  action: {
+    Factorial: '' as Resource<ActionDef>,
+    RecurFactorial: '' as Resource<ActionDef>
   }
 })

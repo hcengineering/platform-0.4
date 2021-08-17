@@ -55,6 +55,7 @@
     "@anticrm/fsm":"~0.4.0",
     "@anticrm/fsm-impl":"~0.4.0",
     "@anticrm/presentation":"~0.4.0",
+    "@anticrm/action-plugin":"~0.4.0",
     "lodash.clonedeep":"~4.5.0",
     "fast-equals": "^2.0.1"
   }

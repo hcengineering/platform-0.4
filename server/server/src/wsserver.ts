@@ -17,6 +17,8 @@ import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
+import regRecruitingActions from '@anticrm/recruiting-action'
+
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
 import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
@@ -41,6 +43,8 @@ export async function startServer (
 ): Promise<Server> {
   regCalendarMappers()
   regNotificationMappers()
+
+  await regRecruitingActions()
 
   const instance = await start(
     host,

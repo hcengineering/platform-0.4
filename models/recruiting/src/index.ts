@@ -23,6 +23,7 @@ import { templateFSM, TFSMItem, TWithFSM } from '@anticrm/model-fsm'
 import workbench from '@anticrm/model-workbench'
 import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
 import recruiting from '@anticrm/recruiting'
+import action from '@anticrm/action-plugin'
 
 /**
  * @public
@@ -124,6 +125,8 @@ export function createModel (builder: Builder): void {
     recruiting.presenter.CandidatePresenter
   )
 
+  // FSM
+
   const states = {
     rejected: { name: 'Rejected' },
     applied: { name: 'Applied' },
@@ -147,4 +150,18 @@ export function createModel (builder: Builder): void {
     .transition(states.techInterview, [states.offer, states.rejected])
     .transition(states.offer, states.rejected)
     .build(builder)
+
+  // Actions
+
+  builder.createDoc(action.class.Action, {
+    name: 'Factorial',
+    description: 'Goto based factorial calculation',
+    resId: recruiting.action.Factorial
+  })
+
+  builder.createDoc(action.class.Action, {
+    name: 'Recursive Factorial',
+    description: 'Recur based factorial calculation',
+    resId: recruiting.action.RecurFactorial
+  })
 }
