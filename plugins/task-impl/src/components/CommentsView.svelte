@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef } from '@anticrm/core'
+  import { getFullRef, SortingOrder } from '@anticrm/core'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
@@ -45,6 +45,9 @@
       { space: currentSpace, replyOf: getFullRef(taskId, task.class.Task) },
       (result) => {
         messages = result
+      },
+      {
+        sort: { createOn: SortingOrder.Ascending }
       }
     )
   }

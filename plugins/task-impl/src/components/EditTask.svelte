@@ -88,7 +88,7 @@
 
 {#await getItem(id) then value}
   {#if item}
-    <ScrollBox vertical>
+    <ScrollBox autoscrollable={true} vertical>
       <div class="header">
         <div class="title">{item.name}</div>
         <div class="tool" on:click={close}><IconClose size={16} /></div>
@@ -146,15 +146,9 @@
         <Grid column={1} />
       {:else}
         <Section label={task.string.ToDos} icon={IconToDo}>
-          <!-- <CheckList
-            bind:items={item.checkItems}
-            on:change={(e) => {
-              update('checkItems', item?.checkItems)
-            }}
-          /> -->
           <CheckBoxList
             editable
-            label={'Add a To Do'}
+            label={task.string.AddCheckItem}
             bind:items={item.checkItems}
             on:change={(e) => {
               update('checkItems', item?.checkItems)
