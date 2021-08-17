@@ -120,7 +120,16 @@ export class Server {
       ws.send(
         serialize({
           id,
-          error: new Status(Severity.ERROR, Code.BadRequest, { message: error.message, stack: error.stack })
+          error: error instanceof PlatformError
+            ? new Status(error.status.severity, error.status.code, {
+              ...error.status.params,
+              message: error.message,
+              stack: error.stack
+            })
+            : new Status(Severity.ERROR, Code.BadRequest, {
+              message: error.message,
+              stack: error.stack
+            })
         })
       )
     }

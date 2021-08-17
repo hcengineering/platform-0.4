@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { generateId, Ref, Account as CoreAccount } from '@anticrm/core'
 import { ReqId, Request, Response } from '@anticrm/rpc'
 import { Component, component, PlatformError, Severity, Status, StatusCode, unknownError } from '@anticrm/status'
 import { Buffer } from 'buffer'
@@ -23,21 +24,21 @@ import { Binary, Collection, Db, ObjectId } from 'mongodb'
 /**
  * @public
  */
-export interface AccountDetails {
-  firstName?: string
-  lastName?: string
+export interface Account {
+  _id: Ref<CoreAccount>
+  email: string // It should be uniq
+  details: AccountDetails
+  hash: Binary
+  salt: Binary
+  workspaces: ObjectId[]
 }
 
 /**
  * @public
  */
-export interface Account {
-  _id: ObjectId
-  email: string
-  details: AccountDetails
-  hash: Binary
-  salt: Binary
-  workspaces: ObjectId[]
+export interface AccountDetails {
+  firstName?: string
+  lastName?: string
 }
 
 /**
@@ -52,7 +53,7 @@ export interface Workspace {
   _id: ObjectId
   workspace: string
   organisation: string
-  accounts: ObjectId[]
+  accounts: Ref<CoreAccount>[]
 }
 
 /**
@@ -192,8 +193,8 @@ export class Accounts {
     const hash = hashWithSalt(password, salt)
 
     try {
-      const accountDetails = details ?? { firstName: '', lastName: '' }
-      const result = await this.accounts().insertOne({ email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
+      const accountDetails = { firstName: '', lastName: '', ...details }
+      const result = await this.accounts().insertOne({ _id: generateId(), email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
 
       // We need to connect to server and create an Account entry with all required information for user.
 
@@ -233,7 +234,11 @@ export class Accounts {
 
     const ws = accountInfo.workspaces.find(w => w.equals(workspaceInfo._id))
     if (ws !== undefined) {
-      const token = encode({ accountId: email, workspaceId: workspace, details: accountInfo.details }, this.server.tokenSecret)
+      const token = encode({
+        accountId: accountInfo._id,
+        workspaceId: workspace,
+        details: { ...accountInfo.details, email }
+      }, this.server.tokenSecret)
       const result: LoginInfo = {
         workspace,
         clientUrl: `${this.server.server}:${this.server.port}/${token}`,

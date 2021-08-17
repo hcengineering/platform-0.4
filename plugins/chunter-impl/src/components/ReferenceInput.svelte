@@ -107,7 +107,7 @@
       // if (startsWith(value.title.toString(), currentPrefix)) {
       const kk = value.title
       items.push({
-        key: `${value.objectId}${value.title}`,
+        key: `${value._id}${value.title}`,
         completion: value.objectId,
         label: kk,
         title: `${kk} - ${value.objectClass}`,

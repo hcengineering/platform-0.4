@@ -187,7 +187,8 @@ export interface Space extends Doc {
  * @public
  */
 export interface Account extends Doc {
-  name: string // Account name, usually email field.
+  email: string
+  name: string // Account name
   firstName?: string
   lastName?: string
   avatar?: string
