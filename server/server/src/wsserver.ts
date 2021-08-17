@@ -23,8 +23,8 @@ import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
  * @public
  */
 export interface ServerOptions {
-  logTransactions?: boolean
-  logRequests?: boolean
+  logTransactions: boolean
+  logRequests: boolean
 }
 /**
  * @public
@@ -39,7 +39,7 @@ export async function startServer (host: string, port: number, serverToken: stri
   return instance
 }
 function connectClient (
-  serverToken: string, options?: ServerOptions
+  serverToken: string, options: ServerOptions = { logRequests: false, logTransactions: false }
 ): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<WithAccountId> {
   return async (clientId, token, sendTx) => {
     try {
@@ -52,7 +52,7 @@ function connectClient (
       // We need to check if there is Account exists and if not create it.
       await updateAccount(workspace, accountId, details)
 
-      if ((options?.logTransactions ?? false) || (options?.logRequests ?? false)) {
+      if (options.logTransactions || options.logRequests) {
         return {
           findAll: async (_class, query) => {
             const result = await clientStorage.findAll(_class, query)
@@ -63,7 +63,7 @@ function connectClient (
           },
           tx: async (tx) => {
             const result = await clientStorage.tx(tx)
-            if (options?.logTransactions ?? false) {
+            if (options.logTransactions) {
               console.info(`tx from ${accountId}-${details.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
             }
             return result
