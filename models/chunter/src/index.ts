@@ -14,10 +14,11 @@
 //
 
 import type { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
-import type { Domain, FullRefString } from '@anticrm/core'
+import type { Domain, FullRefString, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
+import { Application } from '../../../plugins/workbench/lib'
 import chunter from './plugin'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
@@ -26,7 +27,9 @@ const DOMAIN_CHUNTER = 'chunter' as Domain
  * @public
  */
 @Model(chunter.class.Channel, core.class.Space)
-export class TChannel extends TSpace implements Channel {}
+export class TChannel extends TSpace implements Channel {
+  direct!: boolean
+}
 
 /**
  * @public
@@ -51,34 +54,62 @@ export class TComment extends TDoc implements Comment {
  */
 export function createModel (builder: Builder): void {
   builder.createModel(TChannel, TMessage, TComment)
-  builder.createDoc(workbench.class.Application, {
-    label: chunter.string.ApplicationLabelChunter,
-    icon: chunter.icon.Chunter,
-    navigatorModel: {
-      spaces: [
-        {
-          label: chunter.string.Channels,
-          spaceIcon: chunter.icon.Hashtag,
-          spaceClass: chunter.class.Channel,
-          addSpaceLabel: chunter.string.CreateChannel,
-          createComponent: chunter.component.CreateChannel
-        }
-      ],
-      spaceView: chunter.component.ChannelView,
-      editComponent: chunter.component.ThreadsView
-    }
-  })
+  builder.createDoc<Application>(
+    workbench.class.Application,
+    {
+      label: chunter.string.ApplicationLabelChunter,
+      icon: chunter.icon.Chunter,
+      navigatorModel: {
+        specials: [
+          {
+            label: chunter.string.MessagesSpecial,
+            component: chunter.component.CreateMessage,
+            icon: chunter.icon.Chunter
+          },
+          {
+            label: chunter.string.ThreadsSpecial,
+            component: chunter.component.ThreadsView,
+            icon: chunter.icon.Hashtag
+          }
+        ],
+        spaces: [
+          {
+            label: chunter.string.Channels,
+            spaceIcon: chunter.icon.Hashtag,
+            spaceClass: chunter.class.Channel,
+            spaceQuery: { direct: false },
+            addSpaceLabel: chunter.string.CreateChannel,
+            createComponent: chunter.component.CreateChannel
+          },
+          {
+            label: chunter.string.DirectMessages,
+            spaceIcon: chunter.icon.Hashtag,
+            spaceClass: chunter.class.Channel,
+            spaceQuery: { direct: true },
+            showUsers: true,
+            addSpaceLabel: chunter.string.CreateDirectMessage,
+            createComponent: chunter.component.CreateMessage
+          }
+        ],
+        spaceView: chunter.component.ChannelView,
+        editComponent: chunter.component.ThreadsView
+      }
+    },
+    chunter.app.Chunter as Ref<Application>
+  )
   builder.createDoc(chunter.class.Channel, {
     name: 'general',
     description: 'General Channel',
     private: false,
-    members: []
+    members: [],
+    direct: false
   })
   builder.createDoc(chunter.class.Channel, {
     name: 'random',
     description: 'Random Talks',
     private: false,
-    members: []
+    members: [],
+    direct: false
   })
 
   // D E R I V E D   D A T A

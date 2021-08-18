@@ -17,6 +17,7 @@ import type { ChunterService } from '@anticrm/chunter'
 import { setResource } from '@anticrm/platform'
 
 import CreateChannel from './components/CreateChannel.svelte'
+import CreateDirectMessage from './components/CreateDirectMessage.svelte'
 import ChannelView from './components/ChannelView.svelte'
 import ThreadsView from './components/ThreadsView.svelte'
 import chunter from './plugin'
@@ -28,6 +29,7 @@ export { ThreadsView, ChannelView }
 
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
+  setResource(chunter.component.CreateMessage, CreateDirectMessage)
   setResource(chunter.component.ChannelView, ChannelView)
   setResource(chunter.component.ThreadsView, ThreadsView)
 

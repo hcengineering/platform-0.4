@@ -53,6 +53,7 @@
     "@anticrm/workbench":"~0.4.0",
     "@anticrm/richeditor":"~0.4.0",
     "@anticrm/text":"~0.4.0",
-    "@anticrm/presentation":"~0.4.0"
+    "@anticrm/presentation":"~0.4.0",
+    "fast-equals":"~2.0.3"
   }
 }

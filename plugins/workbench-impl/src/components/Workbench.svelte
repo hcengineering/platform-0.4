@@ -15,6 +15,7 @@
 <script lang="ts">
   import type { Doc, Ref, Space } from '@anticrm/core'
   import { PresentationClient } from '@anticrm/presentation'
+  import { IntlString } from '@anticrm/status'
   import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
@@ -32,19 +33,28 @@
   setContext(workbench.context.Client, client)
 
   let currentApp: Ref<Application> | undefined
+
+  const UndefinedApp = 'undefined' as IntlString
+  let currentAppLabel: IntlString = UndefinedApp
+
   let currentSpace: Ref<Space> | undefined
   let navigatorModel: NavigatorModel | undefined
   let itemId: Ref<Doc> | undefined
 
+  let currentSpecial: number = -1
+
   onDestroy(
     location.subscribe(async (loc) => {
       currentApp = loc.path[1] as Ref<Application>
+      currentSpecial = -1
       currentSpace = loc.path[2] as Ref<Space>
       itemId = loc.path[3] as Ref<Doc>
     })
   )
-  $: client.findAll(workbench.class.Application, { _id: currentApp }).then((result) => {
-    navigatorModel = result.pop()?.navigatorModel
+  $: client.findAll(workbench.class.Application, { _id: currentApp }).then((results) => {
+    const result = results.pop()
+    currentAppLabel = result?.label ?? currentAppLabel
+    navigatorModel = result?.navigatorModel
   })
 </script>
 
@@ -63,14 +73,16 @@
   </div>
   {#if navigator}
     <div class="navigator">
-      <NavHeader />
-      <Navigator model={navigatorModel} />
+      <NavHeader title={navigatorModel?.navTitle ?? currentAppLabel ?? UndefinedApp} />
+      <Navigator model={navigatorModel} bind:special={currentSpecial} />
     </div>
   {/if}
   <div class="component">
-    <SpaceHeader model={navigatorModel} space={currentSpace} />
-    {#if navigatorModel}
+    {#if navigatorModel && currentSpecial === -1}
+      <SpaceHeader model={navigatorModel} space={currentSpace} />
       <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpace }} />
+    {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
+      <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
   </div>
   {#if navigatorModel && navigatorModel.editComponent && itemId}
