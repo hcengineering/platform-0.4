@@ -58,7 +58,7 @@
 </div>
 <div class="content">
   {#if message}
-    <ScrollBox vertical>
+    <ScrollBox autoscrollable={true} vertical>
       <MsgView {message} thread />
       <ChannelSeparator label={'Replies'} line />
       <Comments {message} />
