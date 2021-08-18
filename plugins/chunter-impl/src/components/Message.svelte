@@ -144,7 +144,7 @@
           font-weight: 400;
           font-size: 14px;
           line-height: 18px;
-          opacity: .4;
+          opacity: 0.4;
         }
       }
       .text {

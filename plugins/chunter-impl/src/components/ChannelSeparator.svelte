@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
-  import { IntlString } from "@anticrm/status"
+  import { IntlString } from '@anticrm/status'
 
   export let label: IntlString
   export let line: boolean = false
 </script>
 
-<div class="flex-center container" class:line={line}>
+<div class="flex-center container" class:line>
   <div class="label">{label}</div>
 </div>
 
@@ -35,7 +34,7 @@
       padding: 6px 12px;
       font-weight: 600;
       font-size: 12px;
-      letter-spacing: .5;
+      letter-spacing: 0.5;
       text-transform: uppercase;
       color: var(--theme-content-trans-color);
       z-index: 1;
