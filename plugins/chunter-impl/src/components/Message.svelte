@@ -24,6 +24,7 @@
   import core from '@anticrm/core'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
+  import { onMount } from 'svelte'
 
   interface MessageData {
     _id: Ref<WithMessage>
@@ -63,39 +64,47 @@
     const date = new Date(value).getTime()
     return date - today > 0
   }
+
+  let user: Account | undefined
+
+  onMount(async () => {
+    user = await getUser(message.modifiedBy)
+  })
 </script>
 
-{#await getUser(message.modifiedBy) then user}
-  <div class="container" class:no-thread={!thread} on:click={onClick}>
+<div class="container" class:no-thread={!thread} on:click={onClick}>
+  {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
-    <div class="message">
-      <div class="header">
-        {user?.name ?? ''}<span><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span>
-      </div>
-      <div class="text">
-        <MarkdownViewer message={message.message} />
-      </div>
-      {#if replyIds.length > 0 && !thread}
-        <div class="footer">
-          <div>
-            <Reactions />
-          </div>
-          <div>
-            {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
-          </div>
-        </div>
-      {/if}
+  {/if}
+  <div class="message">
+    <div class="header">
+      {#if user}{user?.name ?? ''}{/if}<span
+        ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
+      >
     </div>
-    {#if !thread}
-      <div class="buttons">
-        <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+    <div class="text">
+      <MarkdownViewer message={message.message} />
+    </div>
+    {#if replyIds.length > 0 && !thread}
+      <div class="footer">
+        <div>
+          <Reactions />
+        </div>
+        <div>
+          {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
+        </div>
       </div>
     {/if}
   </div>
-{/await}
+  {#if !thread}
+    <div class="buttons">
+      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   .container {
