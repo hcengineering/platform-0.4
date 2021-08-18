@@ -60,8 +60,8 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 15px 15px 0px;
-    padding: 25px 25px 0px;
+    margin: 10px 10px 0px;
+    padding: 10px 10px 0px;
     overflow: auto;
   }
 </style>

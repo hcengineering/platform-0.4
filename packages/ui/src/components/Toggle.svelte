@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   export let on: boolean = false
 </script>
 
 <label class="toggle">
-  <input class="chBox" type="checkbox" bind:checked={on} />
-  <span class="toggle-switch" />
+  <input class="chBox" type="checkbox" bind:checked={on}>
+  <span class="toggle-switch"></span>
 </label>
 
 <style lang="scss">
@@ -27,7 +28,7 @@
     height: 28px;
     line-height: 28px;
     vertical-align: middle;
-    font-size: 14px;
+    font-size: inherit;
     user-select: none;
     .chBox {
       position: absolute;
@@ -38,11 +39,11 @@
       padding: 0;
       clip: rect(0 0 0 0);
       overflow: hidden;
-
+      
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
-          transform: translateX(22px);
+          left: 26px;
         }
       }
       &:not(:disabled) + .toggle-switch {
@@ -59,29 +60,31 @@
         box-shadow: 0 0 0 2px var(--primary-button-outline);
       }
     }
+    &:active > .toggle-switch {
+      border: 1px solid var(--primary-button-focused-border);
+      box-shadow: 0 0 0 2px var(--primary-button-outline);
+    }
     .toggle-switch {
       position: relative;
       display: inline-block;
-      box-sizing: border-box;
-      width: 54px;
+      width: 56px;
       height: 30px;
-      border-radius: 50px;
-      vertical-align: top;
+      border-radius: 3.125rem;
       background-color: var(--theme-off-color);
       border: 1px solid transparent;
-      transition: 0.2s;
+      transition: left .2s;
       &:before {
         content: '';
         position: absolute;
         top: 2px;
-        left: 3px;
+        left: 4px;
         display: inline-block;
         width: 24px;
         height: 24px;
         border-radius: 50%;
         background: #fff;
         box-shadow: 1px 2px 7px rgba(119, 129, 142, 0.1);
-        transition: 0.15s;
+        transition: .15s;
       }
     }
   }

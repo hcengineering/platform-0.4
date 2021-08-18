@@ -85,24 +85,26 @@
           </div>
         </div>
       {/if}
-      {#if !thread}
-        <div class="buttons">
-          <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
-        </div>
-      {/if}
     </div>
-  </div>
+    {#if !thread}
+      <div class="buttons">
+        <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+        <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+      </div>
+    {/if}
+</div>
 {/await}
 
 <style lang="scss">
   .message-container {
     position: relative;
     display: flex;
-    margin-bottom: 32px;
-    z-index: 1;
+    padding: 20px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
 
     .avatar {
       min-width: 36px;
@@ -159,8 +161,8 @@
     .buttons {
       position: absolute;
       visibility: hidden;
-      top: -8px;
-      right: -8px;
+      top: 12px;
+      right: 12px;
       display: flex;
       flex-direction: row-reverse;
       user-select: none;
@@ -178,23 +180,10 @@
       }
     }
 
-    // &:hover > .buttons {
-    //   visibility: visible;
-    // }
-    &:hover::before {
-      content: '';
-    }
-
-    &::before {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      width: calc(100% + 40px);
-      height: calc(100% + 40px);
+    &:hover > .buttons { visibility: visible; }
+    &:hover {
       background-color: var(--theme-button-bg-enabled);
-      border: 1px solid var(--theme-bg-accent-color);
-      border-radius: 12px;
-      z-index: -1;
+      border-color: var(--theme-bg-accent-color);
     }
   }
 </style>

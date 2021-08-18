@@ -14,9 +14,8 @@
 -->
 <script lang="ts">
   import type { Ref, Space, Data } from '@anticrm/core'
-  import { Icon, ActionIcon } from '@anticrm/ui'
+  import { Icon, ActionIcon, Button } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
-  import Add from './icons/Add.svelte'
   import Star from './icons/Star.svelte'
 
   import { getClient, showModal } from '@anticrm/workbench'
@@ -42,19 +41,19 @@
   }
 </script>
 
-<div class="header">
-  <div class="caption">
-    <div class="title">
+<div class="flex-between header">
+  <div class="flex-col caption">
+    <div class="dotted-text title">
       <span><Icon icon={'icon:chunter.Hashtag'} size={16} /></span>
       {#if data}{data.name}{/if}
     </div>
-    <div class="subtitle">
+    <div class="dotted-text subtitle">
       {#if data}{data.description}{/if}
     </div>
   </div>
-  <div class="buttons">
+  <div class="flex-row-center">
+    <Button label={'Create'} size={'small'} primary on:click={addAction} />
     <div class="button"><ActionIcon icon={Star} size={16} /></div>
-    <div class="button"><ActionIcon icon={Add} size={16} action={addAction} /></div>
     <div class="button"><ActionIcon icon={MoreH} size={16} /></div>
   </div>
 </div>
@@ -65,24 +64,15 @@
     height: 72px;
     min-height: 72px;
     border-bottom: 1px solid var(--theme-menu-divider);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 0 32px 0 40px;
 
     .caption {
-      display: flex;
-      flex-direction: column;
       flex-grow: 1;
       color: var(--theme-caption-color);
 
       .title {
         display: flex;
         align-items: center;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        user-select: none;
         font-size: 16px;
         font-weight: 500;
 
@@ -93,26 +83,12 @@
         }
       }
       .subtitle {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         font-size: 12px;
         font-weight: 400;
-        opacity: 0.3;
-        user-select: none;
+        opacity: .3;
       }
     }
 
-    .buttons {
-      display: flex;
-      margin-left: 24px;
-      .button {
-        width: 16px;
-        height: 16px;
-      }
-      .button + .button {
-        margin-left: 16px;
-      }
-    }
+    .button { margin-left: 16px; }
   }
 </style>

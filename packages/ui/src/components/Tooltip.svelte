@@ -20,7 +20,7 @@
   export let direction: string = 'top'
 </script>
 
-<div class="container">
+<div class="flex-center relative">
   <div class="trigger"><slot /></div>
   <div class="tooltip {direction}">
     <Label {label} />
@@ -28,98 +28,90 @@
 </div>
 
 <style lang="scss">
-  .container {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .trigger:hover + .tooltip {
+    opacity: 1;
+    &.top {
+      transform: translateY(-10px);
+    }
+    &.bottom {
+      transform: translateY(10px);
+    }
+    &.right {
+      transform: translateX(10px);
+    }
+    &.left {
+      transform: translateX(-10px);
+    }
+  }
 
-    .trigger:hover + .tooltip {
-      opacity: 1;
-      &.top {
-        transform: translateY(-10px);
+  .tooltip {
+    box-sizing: border-box;
+    position: absolute;
+    padding: 8px;
+    color: var(--theme-caption-color);
+    background-color: var(--theme-tooltip-color);
+    border: 1px solid var(--theme-bg-accent-color);
+    border-radius: 8px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
+    user-select: none;
+    text-align: center;
+    transition-delay: 0.2s;
+    z-index: 10;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: var(--theme-tooltip-color);
+      border: 1px solid var(--theme-bg-accent-color);
+      border-radius: 0 0 3px;
+      clip-path: polygon(100% 25%, 100% 100%, 25% 100%);
+    }
+
+    &.top::after,
+    &.bottom::after {
+      left: 50%;
+      margin-left: -8px;
+    }
+    &.top {
+      bottom: 100%;
+      box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
+      &::after {
+        bottom: -5px;
+        transform: rotate(45deg);
       }
-      &.bottom {
-        transform: translateY(10px);
-      }
-      &.right {
-        transform: translateX(10px);
-      }
-      &.left {
-        transform: translateX(-10px);
+    }
+    &.bottom {
+      top: 100%;
+      box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
+      &::after {
+        top: -5px;
+        transform: rotate(-135deg);
       }
     }
 
-    .tooltip {
-      box-sizing: border-box;
-      position: absolute;
-      padding: 8px;
-      color: var(--theme-caption-color);
-      background-color: var(--theme-tooltip-color);
-      border: 1px solid var(--theme-bg-accent-color);
-      border-radius: 8px;
-      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
-      opacity: 0;
-      transition: transform 0.3s ease, opacity 0.2s ease-in-out;
-      pointer-events: none;
-      user-select: none;
-      text-align: center;
-      transition-delay: 0.2s;
-      z-index: 10;
-
+    &.right::after,
+    &.left::after {
+      top: 50%;
+      margin-top: -8px;
+    }
+    &.right {
+      left: 100%;
+      box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
       &::after {
-        content: '';
-        position: absolute;
-        width: 14px;
-        height: 14px;
-        background-color: var(--theme-tooltip-color);
-        border: 1px solid var(--theme-bg-accent-color);
-        border-radius: 0 0 3px;
-        mask-image: linear-gradient(-45deg, rgba(0, 0, 0, 1) 9px, rgba(0, 0, 0, 0) 9.1px);
+        left: -5px;
+        transform: rotate(135deg);
       }
-
-      &.top::after,
-      &.bottom::after {
-        left: 50%;
-        margin-left: -8px;
-      }
-      &.top {
-        bottom: 100%;
-        box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-        &::after {
-          bottom: -5px;
-          transform: rotate(45deg);
-        }
-      }
-      &.bottom {
-        top: 100%;
-        box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-        &::after {
-          top: -5px;
-          transform: rotate(-135deg);
-        }
-      }
-
-      &.right::after,
-      &.left::after {
-        top: 50%;
-        margin-top: -8px;
-      }
-      &.right {
-        left: 100%;
-        box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
-        &::after {
-          left: -5px;
-          transform: rotate(135deg);
-        }
-      }
-      &.left {
-        right: 100%;
-        box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
-        &::after {
-          right: -5px;
-          transform: rotate(-45deg);
-        }
+    }
+    &.left {
+      right: 100%;
+      box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
+      &::after {
+        right: -5px;
+        transform: rotate(-45deg);
       }
     }
   }
