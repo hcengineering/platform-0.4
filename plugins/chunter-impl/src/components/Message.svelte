@@ -66,7 +66,7 @@
 </script>
 
 {#await getUser(message.modifiedBy) then user}
-  <div class="message-container" on:click={onClick}>
+  <div class="container" class:no-thread={!thread} on:click={onClick}>
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     <div class="message">
       <div class="header">
@@ -98,13 +98,10 @@
 {/await}
 
 <style lang="scss">
-  .message-container {
+  .container {
     position: relative;
     display: flex;
-    padding: 20px;
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
+    padding-bottom: 20px;
 
     .avatar {
       min-width: 36px;
@@ -138,7 +135,7 @@
           font-weight: 400;
           font-size: 14px;
           line-height: 18px;
-          opacity: 0.4;
+          opacity: .4;
         }
       }
       .text {
@@ -157,6 +154,12 @@
         }
       }
     }
+  }
+  .no-thread {
+    padding: 20px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
 
     .buttons {
       position: absolute;
@@ -171,10 +174,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 20px;
-        height: 20px;
+        z-index: 1;
       }
-
       .tool + .tool {
         margin-right: 8px;
       }

@@ -23,6 +23,7 @@
   import Comments from './Comments.svelte'
   import MsgView from './Message.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
+  import ChannelSeparator from './ChannelSeparator.svelte'
 
   const client = getClient()
 
@@ -59,6 +60,7 @@
   {#if message}
     <ScrollBox vertical>
       <MsgView {message} thread />
+      <ChannelSeparator label={'Replies'} line />
       <Comments {message} />
     </ScrollBox>
     <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
@@ -70,6 +72,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 
     .title {
       flex-grow: 1;
@@ -92,6 +95,6 @@
   }
 
   .content {
-    height: calc(100vh - 204px);
+    height: calc(100vh - 231px);
   }
 </style>
