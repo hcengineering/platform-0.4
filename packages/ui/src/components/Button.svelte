@@ -25,7 +25,13 @@
   export let width: string | undefined = undefined
 </script>
 
-<button class="button {size}" class:primary disabled={disabled || loading} style={width ? 'width: ' + width : ''} on:click>
+<button
+  class="button {size}"
+  class:primary
+  disabled={disabled || loading}
+  style={width ? 'width: ' + width : ''}
+  on:click
+>
   {#if loading}
     <Spinner />
   {:else}
@@ -34,8 +40,12 @@
 </button>
 
 <style lang="scss">
-  .small { height: 40px; }
-  .medium { height: 48px; }
+  .small {
+    height: 40px;
+  }
+  .medium {
+    height: 48px;
+  }
   .button {
     padding: 0 25px;
     font-weight: 600;

@@ -94,7 +94,7 @@
         <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
       </div>
     {/if}
-</div>
+  </div>
 {/await}
 
 <style lang="scss">
@@ -180,7 +180,9 @@
       }
     }
 
-    &:hover > .buttons { visibility: visible; }
+    &:hover > .buttons {
+      visibility: visible;
+    }
     &:hover {
       background-color: var(--theme-button-bg-enabled);
       border-color: var(--theme-bg-accent-color);

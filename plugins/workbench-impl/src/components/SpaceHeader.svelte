@@ -85,10 +85,12 @@
       .subtitle {
         font-size: 12px;
         font-weight: 400;
-        opacity: .3;
+        opacity: 0.3;
       }
     }
 
-    .button { margin-left: 16px; }
+    .button {
+      margin-left: 16px;
+    }
   }
 </style>
