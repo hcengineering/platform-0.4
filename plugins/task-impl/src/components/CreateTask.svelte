@@ -155,8 +155,7 @@
     <Grid column={1} />
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>
-      <!-- <CheckList bind:items={checkItems} /> -->
-      <CheckBoxList bind:items={checkItems} label={'Add a To Do'} editable />
+      <CheckBoxList bind:items={checkItems} label={task.string.AddCheckItem} editable />
     </Section>
   {/if}
 </Dialog>

@@ -38,7 +38,7 @@
         <div class="reply"><img class="circle" src={reply.avatar} alt={reply.name} /></div>
       {/each}
       {#if users.total > shown}
-        <div class="reply"><span>+{users.length - shown}</span></div>
+        <div class="reply"><span>+{users.total - shown}</span></div>
       {/if}
     {/await}
   </div>

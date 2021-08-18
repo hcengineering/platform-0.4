@@ -20,6 +20,7 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
+  import { afterUpdate, beforeUpdate } from 'svelte'
 
   export let currentSpace: Ref<Space>
 
@@ -35,22 +36,28 @@
   }
 
   let query: QueryUpdater<Message> | undefined
+  let lastPosition = 0
 
   $: if (currentSpace !== undefined) {
     query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
-      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }
+
+  beforeUpdate(() => {
+    if (div) {
+      autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
+      lastPosition = div.scrollTop
+    }
+  })
+
+  afterUpdate(() => {
+    if (autoscroll) div.scrollTo(0, div.scrollHeight)
+    else div.scrollTo(0, lastPosition)
+  })
 </script>
 
-<div
-  class="msg-board"
-  bind:this={div}
-  on:scroll={() => {
-    div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
-  }}
->
+<div class="msg-board" bind:this={div}>
   <Channel {messages} />
 </div>
 <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
