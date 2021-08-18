@@ -124,10 +124,4 @@
       }
     }
   }
-  .dropdown {
-    visibility: visible;
-    height: auto;
-    width: 100%;
-    margin-bottom: 20px;
-  }
 </style>
