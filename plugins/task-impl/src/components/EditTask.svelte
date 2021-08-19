@@ -122,7 +122,7 @@
               showSearch
             />
             <DatePicker
-              selected={item.dueTo}
+              selected={new Date(item.dueTo)}
               title={task.string.PickDue}
               on:change={(e) => {
                 update('dueTo', e.detail)

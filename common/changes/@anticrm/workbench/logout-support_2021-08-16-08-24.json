@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "Logout Support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench"
+}

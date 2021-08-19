@@ -1,3 +1,4 @@
+import { rm } from 'fs/promises'
 import { extractTypeInformation } from '../componentExtender'
 import { ParsedComponent } from '../componentParser'
 import { uiBuild } from '../index'
@@ -35,24 +36,27 @@ describe('test extender', () => {
   })
   it('check build', async () => {
     jest.setTimeout(120000)
-    await uiBuild(
-      {
-        name: '@anticrm/demo-ui',
-        version: '0.4.1',
-        main: 'lib/index.js',
-        typings: 'lib/index.d.ts',
-        author: 'Anticrm Platform Contributors',
-        license: 'EPL-2.0',
-        peerDependencies: {
-          svelte: '3.x'
+    await rm('./.ui-build', { recursive: true, force: true })
+    for (let i = 0; i < 2; i++) {
+      await uiBuild(
+        {
+          name: '@anticrm/demo-ui',
+          version: '0.4.1',
+          main: 'lib/index.js',
+          typings: 'lib/index.d.ts',
+          author: 'Anticrm Platform Contributors',
+          license: 'EPL-2.0',
+          peerDependencies: {
+            svelte: '3.x'
+          },
+          devDependencies: {},
+          dependencies: {}
         },
-        devDependencies: {},
-        dependencies: {}
-      },
-      {
-        entryPoints: ['demo/src/index.ts'],
-        outfile: 'demo/lib/index.js'
-      }
-    )
+        {
+          entryPoints: ['demo/src/index.ts'],
+          outfile: 'demo/lib/index.js'
+        }
+      )
+    }
   })
 })

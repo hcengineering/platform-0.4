@@ -16,21 +16,43 @@
   import { PresentationClient } from '@anticrm/presentation'
   import login, { currentAccount } from '@anticrm/login'
   import { Component } from '@anticrm/ui'
+  import pluginCore from '@anticrm/plugin-core'
 
   import Workbench from './Workbench.svelte'
+  import { getPlugin } from '@anticrm/platform'
 
   async function connect (): Promise<PresentationClient> {
-    return await PresentationClient.create()
+    const plugin = await getPlugin(pluginCore.id)
+    const accountId = (await plugin.getClient()).accountId()
+    return await PresentationClient.create(accountId, async () => await plugin.getClient())
   }
+
+  let clientPromise = connect()
+
   let accountSet = false
 
   $: accountSet = currentAccount()?.clientUrl !== undefined
+
+  async function doLogout (): Promise<void> {
+    const loginPlugin = await getPlugin(login.id)
+    loginPlugin.doLogout()
+
+    const corePlugin = await getPlugin(pluginCore.id)
+    corePlugin.disconnect()
+
+    clientPromise = connect()
+  }
 </script>
 
-{#await connect()}
+{#await clientPromise}
   <div />
 {:then client}
-  <Workbench {client} />
+  <Workbench {client} on:logout={doLogout} />
 {:catch error}
-  <Component is={login.component.LoginForm} />
+  <Component
+    is={login.component.LoginForm}
+    on:open={() => {
+      clientPromise = connect()
+    }}
+  />
 {/await}

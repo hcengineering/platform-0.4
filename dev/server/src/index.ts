@@ -34,7 +34,7 @@ async function start (): Promise<void> {
 
   await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri })
 
-  const s = await startServer('localhost', 18080, 'secret')
+  const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true })
 
   const addr = s.address()
   const { accounts } = await newAuthServer(3000, db, { server: addr.address, port: addr.port, tokenSecret: 'secret' })

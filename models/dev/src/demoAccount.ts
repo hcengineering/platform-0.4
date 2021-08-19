@@ -7,7 +7,9 @@ export function demoAccount (builder: Builder): void {
   builder.createDoc(
     core.class.Account,
     {
-      name: 'System user'
+      email: 'system',
+      name: 'System user',
+      avatar: faker.image.avatar()
     },
     core.account.System
   )
@@ -16,6 +18,7 @@ export function demoAccount (builder: Builder): void {
     builder.createDoc(
       core.class.Account,
       {
+        email: faker.internet.email(),
         name: faker.internet.userName(),
         avatar: faker.image.avatar()
       },

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Ui build update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

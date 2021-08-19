@@ -149,7 +149,10 @@ describe('memdb', () => {
       private: false,
       members: []
     })
-    const account = await client.createDoc(core.class.Account, core.space.Model, { name: 'account' })
+    const account = await client.createDoc(core.class.Account, core.space.Model, {
+      email: 'account@site.com',
+      name: 'account'
+    })
     await client.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id } })
     const txSpace = await client.findAll(core.class.Space, { _id: space._id })
     expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
@@ -193,8 +196,14 @@ describe('memdb', () => {
     for (const tx of txes) await hierarchy.tx(tx)
     const model = withOperations(core.account.System, new ModelDb(hierarchy))
     for (const tx of txes) await model.tx(tx)
-    const account1 = await model.createDoc(core.class.Account, core.space.Model, { name: 'account1' })
-    const account2 = await model.createDoc(core.class.Account, core.space.Model, { name: 'account2' })
+    const account1 = await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account1@site.com',
+      name: 'account1'
+    })
+    const account2 = await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account2@site.com',
+      name: 'account2'
+    })
     const space = await model.createDoc(core.class.Space, core.space.Model, {
       name: 'name',
       description: 'desc',

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/presentation",
+      "comment": "Logout Support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/presentation"
+}

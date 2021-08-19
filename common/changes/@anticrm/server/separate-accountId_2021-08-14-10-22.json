@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Proper AccountId",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server"
+}

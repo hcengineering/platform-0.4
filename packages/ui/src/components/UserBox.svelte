@@ -16,13 +16,14 @@
   import type { IntlString } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
   import Label from './Label.svelte'
-  import EditBox from './EditBox.svelte'
+  import EditWithIcon from './EditWithIcon.svelte'
   import PopupMenu from './PopupMenu.svelte'
   import PopupItem from './PopupItem.svelte'
   import UserInfo from './UserInfo.svelte'
   import ui from '../component'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
+  import Search from './icons/Search.svelte'
   import { createEventDispatcher } from 'svelte'
 
   export let title: IntlString
@@ -59,7 +60,7 @@
         </div>
       {/if}
     </button>
-    <div slot="header" class="search"><EditBox label={ui.string.Search} bind:value={search} /></div>
+    <div slot="header" class="search"><EditWithIcon icon={Search} label={ui.string.Search} bind:value={search} /></div>
     {#if selectedItem}
       <PopupItem
         component={UserInfo}
@@ -89,7 +90,7 @@
   <div class="selectUser">
     <div class="title"><Label label={title} /></div>
     <div class="user">
-      {#if selectedItem}{selectedItem._id}{:else}<Label {label} />{/if}
+      {#if selectedItem}{selectedItem.email}{:else}<Label {label} />{/if}
     </div>
   </div>
 </div>
@@ -150,6 +151,10 @@
           opacity: 1;
         }
       }
+    }
+
+    .search {
+      margin-bottom: 16px;
     }
 
     .selectUser {

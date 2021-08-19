@@ -15,7 +15,6 @@
 
 import { mergeIds } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
-
 import workbench from '@anticrm/workbench'
 
 export default mergeIds(workbench, {

@@ -12,6 +12,7 @@
     "HaveAccount": "Have account?",
     "SignUp": "Sign up",
     "FirstName": "First Name",
-    "LastName": "Last Name"
+    "LastName": "Last Name",
+    "PasswordMismatch": "Both password fiels should be equal."
   }
 }

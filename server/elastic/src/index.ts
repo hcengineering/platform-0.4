@@ -219,10 +219,10 @@ function getIdFilter (query: DocumentQuery<Doc>): any | undefined {
         }
       }
     }
-    if ((query._id as any).$in !== undefined) {
+    if (query._id.$in !== undefined) {
       return {
         ids: {
-          values: (query._id as any).$in
+          values: query._id.$in
         }
       }
     }

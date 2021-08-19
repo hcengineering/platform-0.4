@@ -76,14 +76,15 @@ export class Workspace implements Storage {
     }
 
     const handlers: TxHandler[] = txh !== undefined ? [model, ...(await txh(hierarchy, storage, model))] : [modelTx]
-    return new Workspace(workspaceId, hierarchy, storage, handlers)
+    return new Workspace(workspaceId, hierarchy, storage, handlers, model)
   }
 
   private constructor (
     readonly workspaceId: string,
     readonly hierarchy: Hierarchy,
     private readonly storage: WorkspaceStorage,
-    readonly txh: TxHandler[]
+    readonly txh: TxHandler[],
+    readonly model: ModelDb
   ) {}
 
   getHierarchy (): Hierarchy {

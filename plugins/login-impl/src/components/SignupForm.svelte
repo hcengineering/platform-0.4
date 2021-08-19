@@ -16,6 +16,7 @@
   import statusCode, { OK, Severity, Status } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
   import Form from './Form.svelte'
+  import { translate } from '@anticrm/platform'
 
   const dispatch = createEventDispatcher()
 
@@ -48,15 +49,26 @@
   const action = {
     i18n: loginImpl.string.SignUp,
     func: async () => {
+      if (object.password !== object.password2) {
+        status = new Status(Severity.INFO, statusCode.status.OK, translate(loginImpl.string.PasswordMismatch, {}))
+        return Promise.resolve()
+      }
       status = new Status(Severity.INFO, statusCode.status.OK, 'Соединяюсь с сервером...')
 
-      const loginStatus = await (await loginPlugin).doLogin(object.username, object.password, object.workspace)
+      const signupResult = (await loginPlugin).doSignup(object.username, object.password, object.workspace, {
+        firstName: object.first,
+        lastName: object.last
+      })
 
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          status = loginStatus
+      return new Promise<void>((resolve) => {
+        signupResult.then((newStatus) => {
+          status = newStatus
+          if (status.code === OK.code) {
+            // Login is success
+            dispatch('open')
+          }
           resolve()
-        }, 1000)
+        })
       })
     }
   }

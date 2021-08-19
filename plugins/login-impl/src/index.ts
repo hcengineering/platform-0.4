@@ -13,15 +13,13 @@
 // limitations under the License.
 //
 
-import login, { ACCOUNT_KEY, LoginInfo, LoginService } from '@anticrm/login'
+import login, { ACCOUNT_KEY, LoginInfo, LoginService, SignupDetails } from '@anticrm/login'
 import { getMetadata, setMetadata, setResource } from '@anticrm/platform'
-import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
-import LoginApp from './components/LoginApp.svelte'
-
-import SettingForm from './components/SettingForm.svelte'
-import { Request, Response, serialize } from '../../../packages/rpc/lib'
-
 import pluginCore from '@anticrm/plugin-core'
+import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
+import { Request, Response, serialize } from '@anticrm/rpc'
+import LoginApp from './components/LoginApp.svelte'
+import SettingForm from './components/SettingForm.svelte'
 
 export default async (): Promise<LoginService> => {
   setResource(login.component.LoginForm, LoginApp)
@@ -114,6 +112,37 @@ export default async (): Promise<LoginService> => {
       return unknownError(err)
     }
   }
+  async function doSignup (
+    username: string,
+    password: string,
+    workspace: string,
+    details: SignupDetails
+  ): Promise<Status> {
+    const accountsUrl = getMetadata(login.metadata.AccountsUrl) ?? 'localhost:18080'
+
+    const request: Request<[string, string, string, SignupDetails]> = {
+      method: 'signup',
+      params: [username, password, workspace, details]
+    }
+
+    try {
+      const response = await fetch(accountsUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: serialize(request)
+      })
+      const result: Response<LoginInfo> = await response.json()
+      const status = result.error ?? OK
+      if (result.result !== undefined) {
+        setLoginInfo(result.result)
+      }
+      return status
+    } catch (err) {
+      return unknownError(err)
+    }
+  }
 
   async function doLogout (): Promise<void> {
     clearLoginInfo()
@@ -122,6 +151,7 @@ export default async (): Promise<LoginService> => {
 
   return {
     doLogin,
+    doSignup,
     doLogout,
     getLoginInfo,
     saveSetting

@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { generateId, Ref, Account as CoreAccount } from '@anticrm/core'
 import { ReqId, Request, Response } from '@anticrm/rpc'
 import { Component, component, PlatformError, Severity, Status, StatusCode, unknownError } from '@anticrm/status'
 import { Buffer } from 'buffer'
@@ -24,11 +25,20 @@ import { Binary, Collection, Db, ObjectId } from 'mongodb'
  * @public
  */
 export interface Account {
-  _id: ObjectId
-  email: string
+  _id: Ref<CoreAccount>
+  email: string // It should be uniq
+  details: AccountDetails
   hash: Binary
   salt: Binary
   workspaces: ObjectId[]
+}
+
+/**
+ * @public
+ */
+export interface AccountDetails {
+  firstName?: string
+  lastName?: string
 }
 
 /**
@@ -43,7 +53,7 @@ export interface Workspace {
   _id: ObjectId
   workspace: string
   organisation: string
-  accounts: ObjectId[]
+  accounts: Ref<CoreAccount>[]
 }
 
 /**
@@ -75,6 +85,7 @@ export const Code = component('account' as Component, {
     DuplicateAccount: '' as StatusCode<{email: string}>,
     DuplicateWorkspace: '' as StatusCode<{workspace: string}>,
     WorkspaceNotAccessible: '' as StatusCode<{workspace: string, email: string}>,
+    WorkspaceAlreadyJoined: '' as StatusCode<{workspace: string, email: string}>,
     InvalidRequest: '' as StatusCode<{}>
   }
 })
@@ -109,6 +120,7 @@ export class Accounts {
     // A list of allowed operations
     this.methods = {
       login: this.login.bind(this),
+      signup: this.signup.bind(this),
       createAccount: this.createAccount.bind(this),
       createWorkspace: this.createWorkspace.bind(this),
       addWorkspace: this.addWorkspace.bind(this),
@@ -152,8 +164,8 @@ export class Accounts {
     throw new PlatformError(new Status(Severity.ERROR, Code.status.AccountNotFound, { email }))
   }
 
-  public async findAccount (email: string): Promise<Account | undefined> {
-    return await this.accounts().findOne<Account>({ email }) ?? undefined
+  public async findAccount (email: string): Promise<AccountInfo | undefined> {
+    return await this.accounts().findOne<Account>({ email }).then(acc => acc !== null ? toAccountInfo(acc) : undefined)
   }
 
   public async findWorkspace (workspace: string): Promise<Workspace | undefined> {
@@ -174,15 +186,20 @@ export class Accounts {
     return err.code === 11000 ? new PlatformError(new Status(Severity.ERROR, code, vars)) : new PlatformError(unknownError(err))
   }
 
-  async createAccount (email: string, password: string): Promise<AccountInfo> {
+  async createAccount (email: string, password: string, details?: AccountDetails): Promise<AccountInfo> {
     checkDefined('email and password should be specified', email, password)
 
     const salt = randomBytes(32)
     const hash = hashWithSalt(password, salt)
 
     try {
-      const result = await this.accounts().insertOne({ email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [] })
-      return { _id: result.insertedId, email, workspaces: [] }
+      const accountDetails = { firstName: '', lastName: '', ...details }
+      const result = await this.accounts().insertOne({ _id: generateId(), email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
+
+      // We need to connect to server and create an Account entry with all required information for user.
+
+
+      return { _id: result.insertedId, email, workspaces: [], details: accountDetails }
     } catch (err) {
       throw this.wrapDuplicateError(err, Code.status.DuplicateAccount, { email })
     }
@@ -215,18 +232,44 @@ export class Accounts {
     const workspaceInfo = await this.getWorkspace(workspace)
     const accountInfo = await this.getAccountVerify(email, password)
 
-    for (const w of accountInfo.workspaces) {
-      if (w.equals(workspaceInfo._id)) {
-        const token = encode({ accountId: email, workspaceId: workspace }, this.server.tokenSecret)
-        const result: LoginInfo = {
-          workspace,
-          clientUrl: `${this.server.server}:${this.server.port}/${token}`,
-          email
-        }
-        return result
+    const ws = accountInfo.workspaces.find(w => w.equals(workspaceInfo._id))
+    if (ws !== undefined) {
+      const token = encode({
+        accountId: accountInfo._id,
+        workspaceId: workspace,
+        details: { ...accountInfo.details, email }
+      }, this.server.tokenSecret)
+      const result: LoginInfo = {
+        workspace,
+        clientUrl: `${this.server.server}:${this.server.port}/${token}`,
+        email
       }
+      return result
     }
     throw new PlatformError(new Status(Severity.ERROR, Code.status.WorkspaceNotAccessible, { workspace, email }))
+  }
+
+  async signup (email: string, password: string, workspace: string, details: AccountDetails): Promise<LoginInfo> {
+    checkDefined('email and password should be specified', email, password)
+
+    const workspaceInfo = await this.getWorkspace(workspace)
+
+    let accountInfo = await this.findAccount(email)
+    if (accountInfo === undefined) {
+      // Will in account information
+      accountInfo = await this.createAccount(email, password, details)
+    }
+
+    for (const w of accountInfo.workspaces) {
+      if (w.equals(workspaceInfo._id)) {
+        // Workspace is already exists
+        throw new PlatformError(new Status(Severity.ERROR, Code.status.WorkspaceAlreadyJoined, { workspace, email }))
+      }
+    }
+    // Add workspace
+    await this.addWorkspace(email, workspace)
+    // Do login
+    return await this.login(email, password, workspace)
   }
 
 

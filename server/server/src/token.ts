@@ -11,6 +11,13 @@ import { Ref, Account } from '@anticrm/core'
 export function generateToken (secret: string, accountId: string, workspaceId: string): string {
   return encode({ accountId, workspaceId }, secret)
 }
-export function decodeToken (secret: string, token: string): { accountId: Ref<Account>, workspaceId: string } {
+
+export interface AccountDetails {
+  firstName?: string
+  lastName?: string
+  email: string
+}
+
+export function decodeToken (secret: string, token: string): { accountId: Ref<Account>, workspaceId: string, details: AccountDetails } {
   return decode(token, secret)
 }

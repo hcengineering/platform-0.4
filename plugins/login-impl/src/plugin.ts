@@ -32,6 +32,7 @@ export default mergeIds(login, {
     HaveAccount: '' as IntlString,
     SignUp: '' as IntlString,
     FirstName: '' as IntlString,
-    LastName: '' as IntlString
+    LastName: '' as IntlString,
+    PasswordMismatch: '' as IntlString
   }
 })

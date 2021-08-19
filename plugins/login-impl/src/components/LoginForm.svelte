@@ -27,6 +27,8 @@
 
   const dispatch = createEventDispatcher()
 
+  export const LAST_WORKSPACE_KEY = 'anticrm-last-workspace'
+
   const fields = [
     { name: 'username', i18n: loginImpl.string.Email },
     {
@@ -38,7 +40,7 @@
   ]
 
   const object = {
-    workspace: '',
+    workspace: localStorage.getItem(LAST_WORKSPACE_KEY) ?? '',
     username: '',
     password: ''
   }
@@ -50,13 +52,19 @@
     func: async () => {
       status = new Status(Severity.INFO, loginImpl.status.ConnectingToServer, {})
 
-      const loginStatus = await (await loginPlugin).doLogin(object.username, object.password, object.workspace)
+      const loginStatus = (await loginPlugin).doLogin(object.username, object.password, object.workspace)
 
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          status = loginStatus
+      return new Promise<void>((resolve) => {
+        loginStatus.then((newStatus) => {
+          status = newStatus
+          console.log('login status', status.code, OK.code)
+          if (status.code === OK.code) {
+            localStorage.setItem(LAST_WORKSPACE_KEY, object.workspace)
+            // Login is success
+            dispatch('open')
+          }
           resolve()
-        }, 1000)
+        })
       })
     }
   }
