@@ -12,31 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Ref, Class, Doc, Space, Account, Timestamp } from '@anticrm/core'
+import type { Ref, Class, Doc, Space, Account, Timestamp, Tx, DocumentMapper, DerivedData } from '@anticrm/core'
 import type { IntlString, Plugin, Service } from '@anticrm/platform'
+import type { Resource } from '@anticrm/status'
 import { plugin } from '@anticrm/platform'
 
-export interface LastViewed<T extends Doc> extends Doc {
+export interface SpaceSubscribe<T extends Doc> extends Doc {
   objectClass: Ref<Class<T>>
   client: Ref<Account>
   lastTime: Timestamp
 }
 
-export interface ObjectLastViewed<T extends Doc> extends Doc {
-  objectClass: Ref<Class<T>>
-  client: Ref<Account>
-  lastTime: Timestamp
-  objectIDs: Array<Ref<T>>
-}
-
-export interface Notification<T extends Doc> extends Doc {
-  objectClass: Ref<Class<T>>
+export interface ObjectSubscribe<T extends Doc> extends Doc {
   objectId: Ref<T>
+  objectClass: Ref<Class<T>>
+  clients: Array<Ref<Account>>
+}
+
+export interface Notification extends DerivedData {
   client: Ref<Account>
+  tx: Ref<Tx>
 }
 
 export interface NotificationService extends Service {
-  markAsRead: <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>) => void
+  markAsRead: <T extends Doc>(
+    objectClass: Ref<Class<T>>,
+    space: Ref<Space>,
+    withObjects?: boolean,
+    toTime?: Timestamp
+  ) => Promise<void>
+
+  markAsReadObject: <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
 
   getSubscibeStatus: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>) => Promise<boolean>
 
@@ -59,6 +65,13 @@ export interface NotificationService extends Service {
     space: Ref<Space>,
     callback: (result: T[]) => void
   ) => () => void
+
+  objectNotifications: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    callback: (result: Notification[]) => void
+  ) => () => void
 }
 
 const PluginNotification = 'notification' as Plugin<NotificationService>
@@ -68,13 +81,16 @@ const notification = plugin(
   {},
   {
     class: {
-      Notification: '' as Ref<Class<Notification<Doc>>>,
-      LastViewed: '' as Ref<Class<LastViewed<Doc>>>,
-      ObjectLastViewed: '' as Ref<Class<ObjectLastViewed<Doc>>>
+      Notification: '' as Ref<Class<Notification>>,
+      SpaceSubscribe: '' as Ref<Class<SpaceSubscribe<Doc>>>,
+      ObjectSubscribe: '' as Ref<Class<ObjectSubscribe<Doc>>>
     },
     string: {
       Subscribe: '' as IntlString,
       Unsubscribe: '' as IntlString
+    },
+    mapper: {
+      NotificationMapper: '' as Resource<DocumentMapper>
     }
   }
 )

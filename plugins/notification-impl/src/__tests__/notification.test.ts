@@ -13,7 +13,18 @@
 // limitations under the License.
 //
 
-import core, { Account, Class, Data, Doc, DocumentUpdate, generateId, Ref, Space, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
+import core, {
+  Account,
+  Class,
+  Data,
+  Doc,
+  DocumentUpdate,
+  generateId,
+  Ref,
+  Space,
+  TxCreateDoc,
+  TxUpdateDoc
+} from '@anticrm/core'
 import { notificationPlugin } from '..'
 import { addLocation, getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
@@ -68,8 +79,8 @@ describe('notification', () => {
 
     const notificationService = await getPlugin(notificationPlugin.id)
     await notificationService.subscribeSpace(core.class.Space, core.space.Model)
-    notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
-      expect(result).toHaveLength(++attempt)
+    const unsubscribe = notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
+      expect(result).toHaveLength(attempt++)
       if (attempt === expectedLength) {
         done()
       }
@@ -83,10 +94,11 @@ describe('notification', () => {
       })
       await client.tx(tx)
     }
+    unsubscribe()
     await notificationService.unsubscribeSpace(core.class.Space, core.space.Model)
   })
 
-  it('should subscribe object', async (done) => {
+  it('should subscribe object and space notify', async (done) => {
     const expectedLength = 5
     let attempt = 0
 
@@ -95,7 +107,7 @@ describe('notification', () => {
 
     const notificationService = await getPlugin(notificationPlugin.id)
     await notificationService.subscribeObject(core.class.Space, core.space.Model, space)
-    notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
+    const unsubscribe = notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
       expect(result).toHaveLength(Math.min(attempt++, 1))
       if (attempt === expectedLength) done()
     })
@@ -106,12 +118,12 @@ describe('notification', () => {
       })
       await client.tx(tx)
     }
+    unsubscribe()
     await notificationService.unsubscribeObject(core.class.Space, core.space.Model, space)
   })
 })
 
-
-function createDocTx <T extends Doc> (
+function createDocTx<T extends Doc> (
   _class: Ref<Class<T>>,
   space: Ref<Space>,
   attributes: Data<T>,
@@ -132,7 +144,7 @@ function createDocTx <T extends Doc> (
   return tx
 }
 
-function updateDoc <T extends Doc> (
+function updateDoc<T extends Doc> (
   _class: Ref<Class<T>>,
   space: Ref<Space>,
   objectId: Ref<T>,

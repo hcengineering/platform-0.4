@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Ref, Class, Doc, Space, DocumentQuery, FindResult, Data } from '@anticrm/core'
+import { Ref, Class, Doc, Space, DocumentQuery, FindResult, Data, Timestamp } from '@anticrm/core'
 import { getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
-import type { NotificationService, LastViewed, ObjectLastViewed, Notification } from '@anticrm/notification'
+import type { NotificationService, SpaceSubscribe, Notification } from '@anticrm/notification'
 import notification from '@anticrm/notification'
 import notificationPlugin from './plugin'
 
@@ -26,214 +26,165 @@ export default async (): Promise<NotificationService> => {
   const client: Client = await coreP.getClient()
   const accountId = client.accountId()
 
-  const markAsRead = <T extends Doc>(objectClass: Ref<Class<T>>, space: Ref<Space>): void => {
+  async function markAsRead<T extends Doc> (
+    objectClass: Ref<Class<T>>,
+    space: Ref<Space>,
+    withObjects: boolean = false,
+    toTime?: Timestamp
+  ): Promise<void> {
     const query = {
       objectClass: objectClass,
       space: space,
       client: accountId
     }
-    // eslint-disable-next-line no-void
-    void client.findAll(notification.class.LastViewed, query).then((subscribes) => {
+    await client.findAll(notification.class.SpaceSubscribe, query).then(async (subscribes) => {
       for (const subscribe of subscribes) {
-        // eslint-disable-next-line no-void
-        void client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
-          lastTime: new Date().getTime()
+        await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
+          lastTime: toTime ?? new Date().getTime()
         })
       }
     })
-    // eslint-disable-next-line no-void
-    void client.findAll(notification.class.ObjectLastViewed, query).then((subscribes) => {
-      for (const subscribe of subscribes) {
-        // eslint-disable-next-line no-void
-        void client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
-          lastTime: new Date().getTime()
-        })
-      }
-    })
-    // eslint-disable-next-line no-void
-    void client.findAll(notification.class.Notification, query).then((subscribes) => {
-      for (const subscribe of subscribes) {
-        // eslint-disable-next-line no-void
-        void client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
-      }
-    })
-  }
-
-  const getSubscibeStatus = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>): Promise<boolean> => {
-    const subscribes = await client.findAll(notification.class.LastViewed, {
-      objectClass: _class,
-      space: space,
-      client: accountId
-    })
-    const subscribe = subscribes.shift()
-    return subscribe !== undefined
-  }
-
-  const getObjectSubscibeStatus = async <T extends Doc>(
-    _class: Ref<Class<T>>,
-    space: Ref<Space>,
-    objectId: Ref<T>
-  ): Promise<boolean> => {
-    const subscribes = await client.findAll(notification.class.ObjectLastViewed, {
-      objectClass: _class,
-      space: space,
-      client: accountId
-    })
-    const subscribe = subscribes.shift()
-    if (subscribe == null) return false
-    return subscribe.objectIDs.includes(objectId)
-  }
-
-  const subscribeSpace = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>): Promise<void> => {
-    const subscribes = await client.findAll(notification.class.LastViewed, {
-      objectClass: _class,
-      space: space,
-      client: accountId
-    })
-    const subscribe = subscribes.shift()
-    if (subscribe == null) {
-      const obj: Data<LastViewed<T>> = {
-        objectClass: _class,
-        client: accountId,
-        lastTime: new Date().getTime()
-      }
-      await client.createDoc(notification.class.LastViewed, space, obj)
-    }
-  }
-
-  const subscribeObject = async <T extends Doc>(
-    _class: Ref<Class<T>>,
-    space: Ref<Space>,
-    objectId: Ref<T>
-  ): Promise<void> => {
-    const subscribes = await client.findAll(notification.class.ObjectLastViewed, {
-      objectClass: _class,
-      space: space,
-      client: accountId
-    })
-    const subscribe = subscribes.shift()
-    if (subscribe == null) {
-      const obj: Data<ObjectLastViewed<T>> = {
-        objectClass: _class,
-        client: accountId,
-        lastTime: new Date().getTime(),
-        objectIDs: [objectId]
-      }
-      await client.createDoc(notification.class.ObjectLastViewed, space, obj)
-      return
-    }
-
-    if (!subscribe.objectIDs.includes(objectId)) {
-      await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
-        $push: { objectIDs: objectId }
+    if (withObjects) {
+      await client.findAll(notification.class.Notification, query).then(async (subscribes) => {
+        for (const subscribe of subscribes) {
+          await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
+        }
       })
     }
   }
 
-  const unsubscribeSpace = async <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>): Promise<void> => {
-    const subscribes = await client.findAll(notification.class.LastViewed, {
+  async function markAsReadObject<T extends Doc> (
+    objectClass: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>
+  ): Promise<void> {
+    const query = {
+      objectClass: objectClass,
+      space: space,
+      client: accountId,
+      objectId: objectId
+    }
+    await client.findAll(notification.class.Notification, query).then(async (subscribes) => {
+      for (const subscribe of subscribes) {
+        await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
+      }
+    })
+  }
+
+  async function getSubscibeStatus<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>): Promise<boolean> {
+    const subscribes = await client.findAll(notification.class.SpaceSubscribe, {
+      objectClass: _class,
+      space: space,
+      client: accountId
+    })
+    return subscribes.length > 0
+  }
+
+  async function getObjectSubscibeStatus<T extends Doc> (
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>
+  ): Promise<boolean> {
+    const subscribes = await client.findAll(notification.class.ObjectSubscribe, {
+      objectClass: _class,
+      space: space,
+      objectId: objectId
+    })
+    const subscribe = subscribes.shift()
+    if (subscribe === undefined) return false
+    return subscribe.clients.includes(accountId)
+  }
+
+  async function subscribeSpace<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>): Promise<void> {
+    if (await getSubscibeStatus(_class, space)) return
+    const obj: Data<SpaceSubscribe<T>> = {
+      objectClass: _class,
+      client: accountId,
+      lastTime: new Date().getTime()
+    }
+    await client.createDoc(notification.class.SpaceSubscribe, space, obj)
+  }
+
+  async function subscribeObject<T extends Doc> (
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>
+  ): Promise<void> {
+    const subscribes = await client.findAll(notification.class.ObjectSubscribe, {
+      objectClass: _class,
+      space: space,
+      objectId: objectId
+    })
+    const subscribe = subscribes.shift()
+    if (subscribe === undefined) {
+      await client.createDoc(notification.class.ObjectSubscribe, space, {
+        objectClass: _class,
+        objectId: objectId,
+        clients: [accountId]
+      })
+    } else if (!subscribe.clients.includes(accountId)) {
+      await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
+        $push: { clients: accountId }
+      })
+    }
+  }
+
+  async function unsubscribeSpace<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>): Promise<void> {
+    const subscribes = await client.findAll(notification.class.SpaceSubscribe, {
       objectClass: _class,
       space: space,
       client: accountId
     })
     const subscribe = subscribes.shift()
-    if (subscribe == null) return
+    if (subscribe === undefined) return
 
     await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
   }
 
-  const unsubscribeObject = async <T extends Doc>(
+  async function unsubscribeObject<T extends Doc> (
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     objectId: Ref<T>
-  ): Promise<void> => {
-    const subscribes = await client.findAll(notification.class.ObjectLastViewed, {
+  ): Promise<void> {
+    const subscribes = await client.findAll(notification.class.ObjectSubscribe, {
       objectClass: _class,
       space: space,
-      client: accountId
+      objectId: objectId
     })
     const subscribe = subscribes.shift()
-    if (subscribe == null) return
-
-    if (subscribe.objectIDs.includes(objectId)) {
-      if (subscribe.objectIDs.length === 1) {
-        await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
-      } else {
-        await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
-          $pull: { objectIDs: objectId }
-        })
-      }
+    if (subscribe === undefined || !subscribe.clients.includes(accountId)) return
+    if (subscribe.clients.length === 1) {
+      await client.removeDoc(subscribe._class, subscribe.space, subscribe._id)
+    } else {
+      await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
+        $pull: { clients: accountId }
+      })
     }
   }
 
-  const spaceNotifications = <T extends Doc>(
-    _class: Ref<Class<T>>,
-    space: Ref<Space>,
-    callback: (result: T[]) => void
-  ): (() => void) => {
-    let objectSubscribe: () => void = () => {}
-    const lastViewedSubscribe = client.query(
-      notification.class.LastViewed,
-      {
-        objectClass: _class,
-        space: space,
-        client: accountId
-      },
-      (result) => {
-        const lastViewed = result.shift()
-        objectSubscribe()
-        if (lastViewed != null) {
-          objectSubscribe = querySpace(lastViewed as LastViewed<T>, _class, space, callback)
-        } else {
-          objectSubscribe = queryObjects(_class, space, callback)
-        }
-      }
-    )
-    const unsubscribes = (): void => {
-      objectSubscribe()
-      lastViewedSubscribe()
-    }
-    return unsubscribes
-  }
-
-  function querySpace<T extends Doc> (
-    lastViewed: LastViewed<T>,
-    _class: Ref<Class<T>>,
-    space: Ref<Space>,
-    callback: (result: T[]) => void
-  ): () => void {
-    const query: DocumentQuery<Doc> = {
-      modifiedOn: { $gt: lastViewed.lastTime },
-      modifiedBy: { $ne: accountId },
-      space: space
-    }
-    return client.query(_class, query, callback)
-  }
-
-  function queryObjects<T extends Doc> (
+  function spaceNotifications<T extends Doc> (
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     callback: (result: T[]) => void
   ): () => void {
     let objectSubscribe: () => void = () => {}
     const lastViewedSubscribe = client.query(
-      notification.class.ObjectLastViewed,
+      notification.class.SpaceSubscribe,
       {
         objectClass: _class,
         space: space,
         client: accountId
       },
       (result) => {
-        const lastViewed = result.shift()
+        const subscribe = result.shift()
         objectSubscribe()
-        if (lastViewed != null) {
-          objectSubscribe = queryObjectByIDs(lastViewed as ObjectLastViewed<T>, _class, space, callback)
+        if (subscribe !== undefined) {
+          objectSubscribe = querySpace(subscribe as SpaceSubscribe<T>, _class, space, callback)
         } else {
           objectSubscribe = queryNotification(_class, space, callback)
         }
       }
     )
-
     const unsubscribes = (): void => {
       objectSubscribe()
       lastViewedSubscribe()
@@ -241,55 +192,36 @@ export default async (): Promise<NotificationService> => {
     return unsubscribes
   }
 
-  function queryObjectByIDs<T extends Doc> (
-    lastViewed: ObjectLastViewed<T>,
+  function objectNotifications<T extends Doc> (
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    callback: (result: Notification[]) => void
+  ): () => void {
+    return client.query<Notification>(
+      notification.class.Notification,
+      {
+        space: space,
+        objectClass: _class,
+        client: accountId,
+        objectId: objectId
+      },
+      callback
+    )
+  }
+
+  function querySpace<T extends Doc> (
+    subscribe: SpaceSubscribe<T>,
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     callback: (result: T[]) => void
   ): () => void {
     const query: DocumentQuery<Doc> = {
-      modifiedOn: { $gt: lastViewed.lastTime },
+      modifiedOn: { $gt: subscribe.lastTime },
       modifiedBy: { $ne: accountId },
-      space: space,
-      _id: { $in: lastViewed.objectIDs }
+      space: space
     }
-
-    const callbackWithNotify = (result: T[]): void => {
-      // eslint-disable-next-line no-void
-      void client
-        .findAll(notification.class.Notification, {
-          space: space,
-          objectClass: _class,
-          client: accountId
-        })
-        .then((notifications) => {
-          const objectIDs = notifications.map((p) => p.objectId)
-          const query: DocumentQuery<Doc> = {
-            _id: { $in: objectIDs }
-          }
-          // eslint-disable-next-line no-void
-          void client.findAll(_class, query).then((notifyObjects) => {
-            const res = notifyObjects.concat(result.filter((p) => notifyObjects.find((n) => n._id === p._id) === undefined)) as FindResult<T>
-            callback(res)
-          })
-        })
-    }
-
-    const notifyCallback = (result: T[]): void => {
-      // eslint-disable-next-line no-void
-      void client.findAll(_class, query).then((docs) => {
-        const res = docs.concat(result.filter((p) => docs.find((n) => n._id === p._id) === undefined)) as FindResult<T>
-        callback(res)
-      })
-    }
-
-    const notificationSubscribe = queryNotification(_class, space, notifyCallback)
-    const objectSubscribe = client.query(_class, query, callbackWithNotify)
-    const unsubscribes = (): void => {
-      objectSubscribe()
-      notificationSubscribe()
-    }
-    return unsubscribes
+    return client.query(_class, query, callback)
   }
 
   function queryNotification<T extends Doc> (
@@ -297,11 +229,10 @@ export default async (): Promise<NotificationService> => {
     space: Ref<Space>,
     callback: (result: T[]) => void
   ): () => void {
-    const notify = (result: Array<Notification<T>>): void => {
+    const notify = (result: Array<Notification>): void => {
       const query: DocumentQuery<Doc> = {
         _id: { $in: result.map((p) => p.objectId) }
       }
-      // eslint-disable-next-line no-void
       void client.findAll(_class, query).then((result) => {
         const res = result as FindResult<T>
         callback(res)
@@ -321,12 +252,14 @@ export default async (): Promise<NotificationService> => {
 
   return {
     markAsRead,
+    markAsReadObject,
     getSubscibeStatus,
     getObjectSubscibeStatus,
     subscribeObject,
     subscribeSpace,
     unsubscribeObject,
     unsubscribeSpace,
-    spaceNotifications
+    spaceNotifications,
+    objectNotifications
   }
 }
