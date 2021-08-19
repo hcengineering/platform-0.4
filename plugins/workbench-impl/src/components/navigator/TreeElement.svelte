@@ -56,10 +56,10 @@
 >
   <div class="title" class:sub={!node}>
     <div class="icon" class:sub={!node}>
-      {#if icon && useIcon}       
+      {#if icon && useIcon}
         <Icon {icon} size={16} />
       {:else if icon && !useIcon}
-        <img src={icon} width={16} height={16} alt='Avatar'/>
+        <img src={icon} width={16} height={16} alt="Avatar" />
       {:else if collapsed}
         <Collapsed />
       {:else}

@@ -51,7 +51,11 @@
     label: model.label,
     icon: Search,
     action: async (): Promise<void> => {
-      showModal(workbench.component.Spaces, { _class: model.spaceClass, spaceQuery: model.spaceQuery ?? {}, label: model.label })
+      showModal(workbench.component.Spaces, {
+        _class: model.spaceClass,
+        spaceQuery: model.spaceQuery ?? {},
+        label: model.label
+      })
     }
   }
 
@@ -63,7 +67,9 @@
   }
   async function getUser (space: Space): Promise<Account> {
     const curAcc = client.accountId()
-    return (await client.findAll(core.class.Account, { _id: { $in: space.members } })).filter(acc => acc._id !== curAcc).shift()
+    return (await client.findAll(core.class.Account, { _id: { $in: space.members } }))
+      .filter((acc) => acc._id !== curAcc)
+      .shift()
   }
 </script>
 
@@ -71,14 +77,14 @@
   <TreeNode label={model.label} actions={[addSpace, joinSpace]}>
     {#each spaces as space}
       {#if model.showUsers}
-        {#await getUser(space) then spUser }
+        {#await getUser(space) then spUser}
           <TreeItem
-          title={spUser.name}
-          icon={spUser.avatar ?? avatar}
-          on:click={() => {
-            selectSpace(space._id)
-          }}
-        />  
+            title={spUser.name}
+            icon={spUser.avatar ?? avatar}
+            on:click={() => {
+              selectSpace(space._id)
+            }}
+          />
         {/await}
       {:else}
         <TreeItem

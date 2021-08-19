@@ -79,7 +79,7 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--theme-caption-color);
-      user-select: none;    
+      user-select: none;
       .icon {
         width: 16px;
         min-width: 16px;
@@ -87,7 +87,7 @@
         margin: 10px 16px 10px 18px;
         border-radius: 4px;
         opacity: 0.3;
-      }    
+      }
       span {
         flex-grow: 1;
         overflow: hidden;
