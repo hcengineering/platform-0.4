@@ -72,7 +72,7 @@
   })
 </script>
 
-<div class="message-container" on:click={onClick}>
+<div class="container" class:no-thread={!thread} on:click={onClick}>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}
@@ -95,23 +95,22 @@
         </div>
       </div>
     {/if}
-    {#if !thread}
-      <div class="buttons">
-        <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-        <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
-      </div>
-    {/if}
   </div>
+  {#if !thread}
+    <div class="buttons">
+      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
-  .message-container {
+  .container {
     position: relative;
     display: flex;
-    margin-bottom: 32px;
-    z-index: 1;
+    padding-bottom: 20px;
 
     .avatar {
       min-width: 36px;
@@ -164,12 +163,18 @@
         }
       }
     }
+  }
+  .no-thread {
+    padding: 20px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
 
     .buttons {
       position: absolute;
       visibility: hidden;
-      top: -8px;
-      right: -8px;
+      top: 12px;
+      right: 12px;
       display: flex;
       flex-direction: row-reverse;
       user-select: none;
@@ -178,32 +183,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 20px;
-        height: 20px;
+        z-index: 1;
       }
-
       .tool + .tool {
         margin-right: 8px;
       }
     }
 
-    // &:hover > .buttons {
-    //   visibility: visible;
-    // }
-    &:hover::before {
-      content: '';
+    &:hover > .buttons {
+      visibility: visible;
     }
-
-    &::before {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      width: calc(100% + 40px);
-      height: calc(100% + 40px);
+    &:hover {
       background-color: var(--theme-button-bg-enabled);
-      border: 1px solid var(--theme-bg-accent-color);
-      border-radius: 12px;
-      z-index: -1;
+      border-color: var(--theme-bg-accent-color);
     }
   }
 </style>

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Fix bugs in components.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}

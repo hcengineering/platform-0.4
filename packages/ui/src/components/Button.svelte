@@ -19,12 +19,19 @@
 
   export let label: IntlString
   export let primary: boolean = false
+  export let size: 'small' | 'medium' = 'medium'
   export let disabled: boolean = false
   export let loading: boolean = false
   export let width: string | undefined = undefined
 </script>
 
-<button class="button" class:primary disabled={disabled || loading} style={width ? 'width: ' + width : ''} on:click>
+<button
+  class="button {size}"
+  class:primary
+  disabled={disabled || loading}
+  style={width ? 'width: ' + width : ''}
+  on:click
+>
   {#if loading}
     <Spinner />
   {:else}
@@ -33,22 +40,19 @@
 </button>
 
 <style lang="scss">
-  .button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .small {
+    height: 40px;
+  }
+  .medium {
     height: 48px;
+  }
+  .button {
     padding: 0 25px;
+    font-weight: 600;
     color: var(--theme-caption-color);
     background-color: var(--theme-button-bg-enabled);
     border: 1px solid var(--theme-button-border-enabled);
     border-radius: 12px;
-    outline: none;
-    user-select: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
     &:hover {
       background-color: var(--theme-button-bg-hovered);
       border-color: var(--theme-button-border-hovered);

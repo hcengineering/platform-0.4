@@ -29,16 +29,8 @@
   }
 </script>
 
-<div class="channel-container" bind:this={div}>
+<div class="flex-col" bind:this={div}>
   {#each messages as m (m._id)}
     <Message message={m} />
   {/each}
 </div>
-
-<style lang="scss">
-  .channel-container {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-</style>

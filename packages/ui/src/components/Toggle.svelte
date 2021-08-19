@@ -27,7 +27,7 @@
     height: 28px;
     line-height: 28px;
     vertical-align: middle;
-    font-size: 14px;
+    font-size: inherit;
     user-select: none;
     .chBox {
       position: absolute;
@@ -42,7 +42,7 @@
       &:checked + .toggle-switch {
         background-color: var(--theme-on-color);
         &:before {
-          transform: translateX(22px);
+          left: 26px;
         }
       }
       &:not(:disabled) + .toggle-switch {
@@ -59,22 +59,24 @@
         box-shadow: 0 0 0 2px var(--primary-button-outline);
       }
     }
+    &:active > .toggle-switch {
+      border: 1px solid var(--primary-button-focused-border);
+      box-shadow: 0 0 0 2px var(--primary-button-outline);
+    }
     .toggle-switch {
       position: relative;
       display: inline-block;
-      box-sizing: border-box;
-      width: 54px;
+      width: 56px;
       height: 30px;
-      border-radius: 50px;
-      vertical-align: top;
+      border-radius: 3.125rem;
       background-color: var(--theme-off-color);
       border: 1px solid transparent;
-      transition: 0.2s;
+      transition: left 0.2s;
       &:before {
         content: '';
         position: absolute;
         top: 2px;
-        left: 3px;
+        left: 4px;
         display: inline-block;
         width: 24px;
         height: 24px;
