@@ -10876,7 +10876,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_ts-node@10.2.0:
-    resolution: {integrity: sha512-3tA6BEGUJPS/bs3AZNPHhmMUV998HkWWhmMDVNMPueMML3sKctlb9kBYhysRg028SniEptw1yktiNVJuA9ABLQ==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-t5IM5wlVJKjawqQFABy2staHqJvywRHl8wgIpgv8WKnVE12J7GxdEG0GO+jG21F33utPTKVN6AAYpsHDZdA51Q==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -10893,6 +10893,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       eslint-plugin-svelte3: 3.2.0_eslint@7.32.0+svelte@3.42.1
       eslint-svelte3-preprocess: 0.0.5_svelte@3.42.1
+      fast-equals: 2.0.3
       jest: 26.6.3_ts-node@10.2.0
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.1
@@ -11766,7 +11767,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_typescript@4.3.5:
-    resolution: {integrity: sha512-t+Xre8bvT+1ayU65gnxQWVxtUZYhYhKQx0BGPLt6MXYRn9FdyT1ytwp/52sovxpg+j8Na4HdtK8h40zy/lHt8A==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-neBjCKxpOB1e5C2fCwUWTL76XKgZS1NSw3v1ojpDdySGhiYIB6qJWhsGPELdsSDk6cyLzwdQmp2eTRdkMgpCvA==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0

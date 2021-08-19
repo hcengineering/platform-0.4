@@ -22,6 +22,7 @@ export function demoChunter (builder: Builder): void {
       name: 'PL-CHANNEL',
       description: 'Demo Channel',
       members: members,
+      direct: false,
       private: false
     },
     demoIds.project.DemoChannel

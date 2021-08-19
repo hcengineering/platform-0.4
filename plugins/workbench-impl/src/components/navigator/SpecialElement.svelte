@@ -13,27 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import Collapsed from '../icons/Collapsed.svelte'
-  import Expanded from '../icons/Expanded.svelte'
-
   import type { Asset, IntlString } from '@anticrm/status'
   import type { Action } from '@anticrm/ui'
-  import { Icon, Label, ActionIcon } from '@anticrm/ui'
+  import { ActionIcon, Icon, Label } from '@anticrm/ui'
   import { createEventDispatcher } from 'svelte'
 
-  export let icon: Asset | string | undefined = undefined
+  export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
-  export let title: string | undefined = undefined
   export let notifications = 0
-  export let node = false
-  export let collapsed = false
   export let actions: Action[] = []
-
-  let useIcon = true
-
-  $: if (icon && ((icon as string).startsWith('http') || (icon as string).startsWith('https'))) {
-    useIcon = false
-  }
 
   let toolInvisible: boolean = true
 
@@ -50,24 +38,17 @@
     toolInvisible = true
   }}
   on:click|stopPropagation={() => {
-    if (node && !icon) collapsed = !collapsed
     dispatch('click')
   }}
 >
-  <div class="title" class:sub={!node}>
-    <div class="icon" class:sub={!node}>
-      {#if icon && useIcon}
+  <div class="title">
+    <div class="icon">
+      {#if icon}
         <Icon {icon} size={16} />
-      {:else if icon && !useIcon}
-        <img src={icon} width={16} height={16} alt="Avatar" />
-      {:else if collapsed}
-        <Collapsed />
-      {:else}
-        <Expanded />
       {/if}
     </div>
     <span>
-      {#if label}<Label {label} />{:else}{title}{/if}
+      {#if label}<Label {label} />{:else}{label}{/if}
     </span>
     {#each actions as action}
       <div class="tool">
@@ -80,16 +61,11 @@
         />
       </div>
     {/each}
-    {#if notifications > 0 && collapsed}
+    {#if notifications > 0}
       <div class="counter">{notifications}</div>
     {/if}
   </div>
 </div>
-{#if node && !icon}
-  <div class="dropdown" class:collapsed>
-    <slot />
-  </div>
-{/if}
 
 <style lang="scss">
   .container {
@@ -104,10 +80,6 @@
       font-weight: 500;
       color: var(--theme-caption-color);
       user-select: none;
-      &.sub {
-        font-weight: 400;
-        color: var(--theme-content-color);
-      }
       .icon {
         width: 16px;
         min-width: 16px;
@@ -115,18 +87,7 @@
         margin: 10px 16px 10px 18px;
         border-radius: 4px;
         opacity: 0.3;
-        &.sub {
-          margin: 10px 16px 10px 50px;
-        }
       }
-      // .avatar {
-      //   width: 24px;
-      //   min-width: 24px;
-      //   height: 24px;
-      //   margin: 6px 8px 6px 50px;
-      //   border-radius: 50%;
-      //   background-color: var(--theme-bg-selection);
-      // }
       span {
         flex-grow: 1;
         overflow: hidden;
@@ -161,17 +122,6 @@
           visibility: visible;
         }
       }
-    }
-  }
-  .dropdown {
-    visibility: visible;
-    height: auto;
-    width: 100%;
-    margin-bottom: 20px;
-    &.collapsed {
-      visibility: hidden;
-      height: 0;
-      margin-bottom: 8px;
     }
   }
 </style>

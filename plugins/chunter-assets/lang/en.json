@@ -7,7 +7,15 @@
     "MakePrivate": "Make private",
     "MakePrivateDescription": "Make channel private",
     "Thread": "Thread",
-    "Replies": "Replies",
-    "NewMessagePlaceholder": "Type a new message"
+    "Replies": " replies",
+    "NewMessagePlaceholder": "Type a new message",
+    "ApplicationLabelChunter": "Chat",
+    "DirectMessages": "Messages",
+    "CreateDirectMessage": "New Direct message",
+    "MessagesSpecial": "Messages",
+    "ThreadsSpecial": "All Threads",
+    "UserTo": "User:",
+    "MessageTo": "Message to:",
+    "MessageToLabel": "Person"
   }
 }

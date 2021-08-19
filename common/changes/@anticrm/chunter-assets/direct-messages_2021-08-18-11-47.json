@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-assets",
+      "comment": "Direct Messages",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-assets"
+}

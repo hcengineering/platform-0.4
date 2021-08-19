@@ -16,7 +16,7 @@
 import { getContext } from 'svelte'
 
 import type { IntlString, Asset } from '@anticrm/status'
-import type { Ref, Class, Doc, Space } from '@anticrm/core'
+import type { Ref, Class, Doc, Space, DocumentQuery } from '@anticrm/core'
 import type { Service, Plugin } from '@anticrm/platform'
 import type { PresentationClient } from '@anticrm/presentation'
 import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
@@ -40,6 +40,8 @@ export interface SpacesNavModel {
   label: IntlString
   spaceIcon: Asset
   spaceClass: Ref<Class<Space>>
+  spaceQuery?: DocumentQuery<Space>
+  showUsers?: boolean // If defined, will short user Ids, instead of space name.
   addSpaceLabel: IntlString
   createComponent: AnyComponent
   component?: AnyComponent
@@ -48,7 +50,18 @@ export interface SpacesNavModel {
 /**
  * @public
  */
+export interface SpecialNavModel {
+  label: IntlString
+  icon: Asset
+  component: AnyComponent
+}
+
+/**
+ * @public
+ */
 export interface NavigatorModel {
+  navTitle?: IntlString // Navigator title, if applicable.
+  specials?: SpecialNavModel[]
   spaces: SpacesNavModel[]
   spaceView: AnyComponent
   createComponent?: AnyComponent

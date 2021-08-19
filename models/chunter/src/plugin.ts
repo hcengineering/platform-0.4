@@ -27,8 +27,10 @@ import { mergeIds } from '@anticrm/status'
 export default mergeIds(chunter, {
   component: {
     CreateChannel: '' as Resource<any>,
+    CreateMessage: '' as Resource<any>,
     ChannelView: '' as Resource<any>,
-    ThreadsView: '' as Resource<any>
+    ThreadsView: '' as Resource<any>,
+    AllThreadsView: '' as Resource<any>
   },
   string: {
     ApplicationLabelChunter: '' as IntlString

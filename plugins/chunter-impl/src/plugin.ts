@@ -20,6 +20,7 @@ import type { AnyComponent } from '@anticrm/ui'
 export default mergeIds(chunter, {
   component: {
     CreateChannel: '' as AnyComponent,
+    CreateMessage: '' as AnyComponent,
     ChannelView: '' as AnyComponent,
     ThreadsView: '' as AnyComponent
   }

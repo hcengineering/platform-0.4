@@ -13,12 +13,14 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, Ref, FullRefString, Space } from '@anticrm/core'
+import type { Account, Class, Doc, FullRefString, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
 
-export interface Channel extends Space {}
+export interface Channel extends Space {
+  direct: boolean // <-- Identify if it is a direct messaging channel
+}
 
 export interface CommentRef {
   _id: Ref<Doc>
@@ -45,6 +47,9 @@ export default plugin(
   PluginChunter,
   {},
   {
+    app: {
+      Chunter: '' as Ref<Doc>
+    },
     class: {
       Channel: '' as Ref<Class<Channel>>,
       Message: '' as Ref<Class<Message>>,
@@ -52,14 +57,23 @@ export default plugin(
     },
     string: {
       Channels: '' as IntlString,
+      DirectMessages: '' as IntlString,
       CreateChannel: '' as IntlString,
+      CreateDirectMessage: '' as IntlString,
       ChannelName: '' as IntlString,
       ChannelDescription: '' as IntlString,
       MakePrivate: '' as IntlString,
       MakePrivateDescription: '' as IntlString,
       Thread: '' as IntlString,
       Replies: '' as IntlString,
-      NewMessagePlaceholder: '' as IntlString
+      NewMessagePlaceholder: '' as IntlString,
+
+      MessagesSpecial: '' as IntlString,
+      ThreadsSpecial: '' as IntlString,
+
+      UserTo: '' as IntlString,
+      MessageTo: '' as IntlString,
+      MessageToLabel: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,

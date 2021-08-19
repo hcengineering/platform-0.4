@@ -13,15 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { ActionIcon } from '@anticrm/ui'
+  import { IntlString } from '@anticrm/status'
+
+  import { ActionIcon, Label } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
 
-  export let title: string = 'Company name'
+  export let title: IntlString = 'Company name' as IntlString
 </script>
 
 <div class="navigator-header">
   <div class="title">
-    <span>{title}</span>
+    <span><Label label={title} /></span>
     <div class="arrow">
       <ActionIcon icon={MoreH} size={16} />
     </div>

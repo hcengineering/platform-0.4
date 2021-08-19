@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Ref, Class, Space } from '@anticrm/core'
+  import core, { Ref, Class, Space, DocumentQuery } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
   import ui, { Dialog, EditBox } from '@anticrm/ui'
@@ -21,6 +21,7 @@
   import { getClient } from '@anticrm/workbench'
 
   export let _class: Ref<Class<Space>>
+  export let spaceQuery: DocumentQuery<Space> = {}
   export let label: IntlString
 
   let spaces: Space[] = []
@@ -31,7 +32,7 @@
   let query: QueryUpdater<Space> | undefined
 
   $: {
-    query = client.query(query, _class, { name: { $like: '%' + search + '%' } }, (result) => {
+    query = client.query(query, _class, { name: { $like: '%' + search + '%' }, ...spaceQuery }, (result) => {
       spaces = result.filter((space) => !space.private || space.members.includes(accountId))
     })
   }
