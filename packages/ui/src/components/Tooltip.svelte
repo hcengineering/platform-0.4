@@ -29,6 +29,7 @@
 
 <style lang="scss">
   .trigger:hover + .tooltip {
+    visibility: visible;
     opacity: 1;
     &.top {
       transform: translateY(-10px);
@@ -54,6 +55,7 @@
     border-radius: 8px;
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
     opacity: 0;
+    visibility: hidden;
     transition: transform 0.3s ease, opacity 0.2s ease-in-out;
     user-select: none;
     text-align: center;
