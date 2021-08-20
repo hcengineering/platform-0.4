@@ -63,12 +63,7 @@
     </span>
     {#each actions as action}
       <div class="tool">
-        <ActionIcon
-          label={action.label}
-          icon={action.icon}
-          size={16}
-          action={action.action}
-        />
+        <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} />
       </div>
     {/each}
     {#if notifications > 0 && collapsed}

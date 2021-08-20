@@ -17,6 +17,7 @@
   import { createEventDispatcher } from 'svelte'
   import SpacesNav from './navigator/SpacesNav.svelte'
   import SpecialElement from './navigator/SpecialElement.svelte'
+  import TreeSeparator from './navigator/TreeSeparator.svelte'
 
   export let model: NavigatorModel | undefined = undefined
   export let special: number
@@ -35,6 +36,7 @@
       <SpecialElement label={special.label} icon={special.icon} on:click={() => selectSpecial(special)} />
     {/each}
   {/if}
+  <TreeSeparator />
   {#each model.spaces as space}
     <SpacesNav model={space} />
   {/each}
