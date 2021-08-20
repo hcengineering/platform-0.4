@@ -35,8 +35,8 @@
     {#each model.specials as special}
       <SpecialElement label={special.label} icon={special.icon} on:click={() => selectSpecial(special)} />
     {/each}
+    <TreeSeparator />
   {/if}
-  <TreeSeparator />
   {#each model.spaces as space}
     <SpacesNav model={space} />
   {/each}
