@@ -16,7 +16,7 @@
   import type { Doc, Ref, Space } from '@anticrm/core'
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
   import { Component, location } from '@anticrm/ui'
   import type { Application, NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'

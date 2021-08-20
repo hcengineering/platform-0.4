@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
 
   import { ActionIcon, Label } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'

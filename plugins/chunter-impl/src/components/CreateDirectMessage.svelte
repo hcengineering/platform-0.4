@@ -23,7 +23,7 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
-  import { IntlString } from '@anticrm/status'
+  import type { IntlString } from '@anticrm/status'
 
   const client = getClient()
 

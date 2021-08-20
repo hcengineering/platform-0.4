@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { PresentationClient } from '@anticrm/presentation'
-  import login, { currentAccount } from '@anticrm/login'
+  import login from '@anticrm/login'
   import { Component } from '@anticrm/ui'
   import pluginCore from '@anticrm/plugin-core'
 
@@ -28,10 +28,6 @@
   }
 
   let clientPromise = connect()
-
-  let accountSet = false
-
-  $: accountSet = currentAccount()?.clientUrl !== undefined
 
   async function doLogout (): Promise<void> {
     const loginPlugin = await getPlugin(login.id)

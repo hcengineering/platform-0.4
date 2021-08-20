@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Channel } from '@anticrm/chunter'
+  import type { Channel } from '@anticrm/chunter'
 
   import { Icon } from '@anticrm/ui'
 

@@ -37,21 +37,19 @@
     })
   }
 
-  function addSpace (model: SpacesNavModel): Action | undefined {
+  function toolActions (model: SpacesNavModel): Action[] {
+    const result: Action[] = []
     const create = model.createComponent
-    if (create === undefined) {
-      return undefined
+    if (create !== undefined) {
+      result.push({
+        label: model.addSpaceLabel,
+        icon: IconAdd,
+        action: async (): Promise<void> => {
+          showModal(create, {})
+        }
+      })
     }
-    return {
-      label: model.addSpaceLabel,
-      icon: IconAdd,
-      action: async (): Promise<void> => {
-        showModal(create, {})
-      }
-    }
-  }
-  function joinSpace (model: SpacesNavModel): Action | undefined {
-    return {
+    result.push({
       label: model.label,
       icon: Search,
       action: async (): Promise<void> => {
@@ -61,10 +59,11 @@
           label: model.label
         })
       }
-    }
+    })
+    return result
   }
 
-  $: actions = [addSpace(model), joinSpace(model)].filter((a) => a !== undefined)
+  $: actions = toolActions(model)
 
   function selectSpace (id: Ref<Space>) {
     const loc = getCurrentLocation()

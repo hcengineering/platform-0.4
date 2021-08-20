@@ -16,7 +16,7 @@
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
-  import { AnyComponent } from '@anticrm/ui'
+  import type { AnyComponent } from '@anticrm/ui'
 
   export let component: AnyComponent | undefined = undefined
   export let props: any | undefined
