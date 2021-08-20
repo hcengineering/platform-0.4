@@ -35,20 +35,12 @@
     useIcon = false
   }
 
-  let toolInvisible: boolean = true
-
   const dispatch = createEventDispatcher()
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
   class="container"
-  on:mouseover={() => {
-    toolInvisible = false
-  }}
-  on:mouseout={() => {
-    toolInvisible = true
-  }}
   on:click|stopPropagation={() => {
     if (node && !icon) collapsed = !collapsed
     dispatch('click')
@@ -76,7 +68,6 @@
           icon={action.icon}
           size={16}
           action={action.action}
-          invisible={toolInvisible}
         />
       </div>
     {/each}
@@ -137,6 +128,7 @@
         width: 16px;
         height: 16px;
         margin-left: 12px;
+        visibility: hidden;
         &:last-child {
           margin-right: 10px;
         }
