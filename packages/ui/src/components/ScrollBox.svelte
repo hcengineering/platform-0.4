@@ -13,13 +13,30 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { afterUpdate } from 'svelte'
+
   export let gap: number = 12
   export let vertical: boolean = false
   export let stretch: boolean = false
   export let bothScroll: boolean = false
+  export let autoscrollable: boolean = false
+  let autoscroll: boolean = true
+  let div: HTMLElement
+
+  afterUpdate(async () => {
+    if (autoscrollable && autoscroll) div.scrollTo(0, div.scrollHeight)
+  })
 </script>
 
-<div class="scrollBox" class:vertical class:bothScroll>
+<div
+  class="scrollBox"
+  bind:this={div}
+  class:vertical
+  class:bothScroll
+  on:scroll={() => {
+    autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
+  }}
+>
   <div class="box" class:stretch style="gap: {gap}px">
     <slot />
   </div>

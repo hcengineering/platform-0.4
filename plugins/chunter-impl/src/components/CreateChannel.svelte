@@ -34,6 +34,7 @@
       name,
       description,
       private: isPrivate,
+      direct: false,
       members: [client.accountId()]
     })
   }

@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef } from '@anticrm/core'
+  import { getFullRef, SortingOrder } from '@anticrm/core'
   import type { Message as MessageModel, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
@@ -26,7 +26,6 @@
   const client = getClient()
   let query: QueryUpdater<Comment> | undefined
 
-  let div: HTMLElement
   const dispatch = createEventDispatcher()
   afterUpdate(async () => {
     dispatch('update')
@@ -40,12 +39,15 @@
       { replyOf: getFullRef(message._id, message._class) },
       (result) => {
         comments = result
+      },
+      {
+        sort: { createOn: SortingOrder.Ascending }
       }
     )
   }
 </script>
 
-<div class="channel-container" bind:this={div}>
+<div class="channel-container">
   {#each comments as m (m._id)}
     <Message thread message={m} />
   {/each}

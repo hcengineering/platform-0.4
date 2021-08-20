@@ -13,13 +13,28 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { NavigatorModel } from '@anticrm/workbench'
+  import type { NavigatorModel, SpecialNavModel } from '@anticrm/workbench'
+  import { createEventDispatcher } from 'svelte'
   import SpacesNav from './navigator/SpacesNav.svelte'
+  import SpecialElement from './navigator/SpecialElement.svelte'
 
   export let model: NavigatorModel | undefined = undefined
+  export let special: number
+
+  const dispatch = createEventDispatcher()
+
+  function selectSpecial (sp: SpecialNavModel): void {
+    special = model?.specials?.indexOf(sp) ?? -1
+    dispatch('special', special)
+  }
 </script>
 
 {#if model}
+  {#if model.specials}
+    {#each model.specials as special}
+      <SpecialElement label={special.label} icon={special.icon} on:click={() => selectSpecial(special)} />
+    {/each}
+  {/if}
   {#each model.spaces as space}
     <SpacesNav model={space} />
   {/each}

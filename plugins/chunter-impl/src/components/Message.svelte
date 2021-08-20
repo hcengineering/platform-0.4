@@ -24,6 +24,7 @@
   import core from '@anticrm/core'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
+  import { onMount } from 'svelte'
 
   interface MessageData {
     _id: Ref<WithMessage>
@@ -63,46 +64,53 @@
     const date = new Date(value).getTime()
     return date - today > 0
   }
+
+  let user: Account | undefined
+
+  onMount(async () => {
+    user = await getUser(message.modifiedBy)
+  })
 </script>
 
-{#await getUser(message.modifiedBy) then user}
-  <div class="message-container" on:click={onClick}>
+<div class="container" class:no-thread={!thread} on:click={onClick}>
+  {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
-    <div class="message">
-      <div class="header">
-        {user?.name ?? ''}<span><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span>
-      </div>
-      <div class="text">
-        <MarkdownViewer message={message.message} />
-      </div>
-      {#if replyIds.length > 0 && !thread}
-        <div class="footer">
-          <div>
-            <Reactions />
-          </div>
-          <div>
-            {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
-          </div>
-        </div>
-      {/if}
-      {#if !thread}
-        <div class="buttons">
-          <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-          <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
-        </div>
-      {/if}
+  {/if}
+  <div class="message">
+    <div class="header">
+      {#if user}{user?.name ?? ''}{/if}<span
+        ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
+      >
     </div>
+    <div class="text">
+      <MarkdownViewer message={message.message} />
+    </div>
+    {#if replyIds.length > 0 && !thread}
+      <div class="footer">
+        <div>
+          <Reactions />
+        </div>
+        <div>
+          {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
+        </div>
+      </div>
+    {/if}
   </div>
-{/await}
+  {#if !thread}
+    <div class="buttons">
+      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
-  .message-container {
+  .container {
     position: relative;
     display: flex;
-    margin-bottom: 32px;
-    z-index: 1;
+    padding-bottom: 20px;
 
     .avatar {
       min-width: 36px;
@@ -155,12 +163,18 @@
         }
       }
     }
+  }
+  .no-thread {
+    padding: 20px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
 
     .buttons {
       position: absolute;
       visibility: hidden;
-      top: -8px;
-      right: -8px;
+      top: 12px;
+      right: 12px;
       display: flex;
       flex-direction: row-reverse;
       user-select: none;
@@ -169,32 +183,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 20px;
-        height: 20px;
+        z-index: 1;
       }
-
       .tool + .tool {
         margin-right: 8px;
       }
     }
 
-    // &:hover > .buttons {
-    //   visibility: visible;
-    // }
-    &:hover::before {
-      content: '';
+    &:hover > .buttons {
+      visibility: visible;
     }
-
-    &::before {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      width: calc(100% + 40px);
-      height: calc(100% + 40px);
+    &:hover {
       background-color: var(--theme-button-bg-enabled);
-      border: 1px solid var(--theme-bg-accent-color);
-      border-radius: 12px;
-      z-index: -1;
+      border-color: var(--theme-bg-accent-color);
     }
   }
 </style>

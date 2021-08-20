@@ -22,6 +22,7 @@
   import { getClient } from '@anticrm/workbench'
   import { notificationPlugin } from '@anticrm/notification-impl'
   import { getPlugin } from '@anticrm/platform'
+  import { afterUpdate, beforeUpdate } from 'svelte'
 
   export let currentSpace: Ref<Space>
 
@@ -37,24 +38,30 @@
   }
 
   let query: QueryUpdater<Message> | undefined
+  let lastPosition = 0
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
-      const notificationP = await getPlugin(notificationPlugin.id)
-      notificationP.markAsRead(chunter.class.Message, currentSpace)
-      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }
+
+  beforeUpdate(async () => {
+    if (div) {
+      autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
+      lastPosition = div.scrollTop
+      const notificationP = await getPlugin(notificationPlugin.id)
+      notificationP.markAsRead(chunter.class.Message, currentSpace)
+    }
+  })
+
+  afterUpdate(() => {
+    if (autoscroll) div.scrollTo(0, div.scrollHeight)
+    else div.scrollTo(0, lastPosition)
+  })
 </script>
 
-<div
-  class="msg-board"
-  bind:this={div}
-  on:scroll={() => {
-    div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
-  }}
->
+<div class="msg-board" bind:this={div}>
   <Channel {messages} />
 </div>
 <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
@@ -64,8 +71,8 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 15px 15px 0px;
-    padding: 25px 25px 0px;
+    margin: 10px 10px 0px;
+    padding: 10px 10px 0px;
     overflow: auto;
   }
 </style>
