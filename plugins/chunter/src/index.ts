@@ -66,6 +66,7 @@ export default plugin(
       MakePrivateDescription: '' as IntlString,
       Thread: '' as IntlString,
       Replies: '' as IntlString,
+      RepliesText: '' as IntlString,
       NewMessagePlaceholder: '' as IntlString,
 
       MessagesSpecial: '' as IntlString,

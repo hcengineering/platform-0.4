@@ -20,6 +20,8 @@ import CreateChannel from './components/CreateChannel.svelte'
 import CreateDirectMessage from './components/CreateDirectMessage.svelte'
 import ChannelView from './components/ChannelView.svelte'
 import ThreadsView from './components/ThreadsView.svelte'
+import SpaceItem from './components/SpaceItem.svelte'
+import SpaceHeader from './components/SpaceHeader.svelte'
 import chunter from './plugin'
 
 export { default as Channel } from './components/Channel.svelte'
@@ -32,6 +34,8 @@ export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateMessage, CreateDirectMessage)
   setResource(chunter.component.ChannelView, ChannelView)
   setResource(chunter.component.ThreadsView, ThreadsView)
+  setResource(chunter.component.SpaceItem, SpaceItem)
+  setResource(chunter.component.SpaceHeader, SpaceHeader)
 
   return {}
 }

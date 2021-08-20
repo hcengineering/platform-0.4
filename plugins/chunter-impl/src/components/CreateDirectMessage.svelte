@@ -1,27 +1,29 @@
 <!--
 // Copyright © 2020 Anticrm Platform Contributors.
-// 
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
 <script lang="ts">
   import core, { Account, Ref, Space } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
-  import { UserBox } from '@anticrm/ui'
+  import { SelectBox, UserInfo } from '@anticrm/ui'
+  import type { IPopupItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
   import type { Message, Message as MessageModel } from '@anticrm/chunter'
   import ReferenceInput from './ReferenceInput.svelte'
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
+  import type { IntlString } from '@anticrm/status'
 
   const client = getClient()
 
@@ -30,16 +32,24 @@
   let currentSpace: Ref<Space> | undefined
 
   let div: HTMLElement
-  let autoscroll: boolean = true
+  let autoscroll = true
   let messages: MessageModel[] = []
 
-  $: client.findAll(core.class.Account, { _id: { $in: to } }).then((acc) => {
+  let allAccounts: Account[] = []
+
+  let accountUpdater: QueryUpdater<Account> | undefined = undefined
+
+  $: accountUpdater = client.query<Account>(accountUpdater, core.class.Account, {}, (results) => {
+    allAccounts = results
+  })
+
+  $: client.findAll<Account>(core.class.Account, { _id: { $in: to } }).then((acc) => {
     toAccount = acc
     currentSpace = undefined
     messages = []
 
     // Check if we have already a channel between us.
-    client.findAll(chunter.class.Channel, { direct: true, private: true }).then((channels) => {
+    client.findAll<Space>(chunter.class.Channel, { direct: true, private: true }).then((channels) => {
       for (const c of channels) {
         const m1 = [...c.members].sort()
         const m2 = [client.accountId(), ...to].sort()
@@ -53,7 +63,7 @@
   })
 
   async function addMessage (message: string): Promise<void> {
-    if (to === undefined) {
+    if (to.length === 0) {
       return
     }
     if (currentSpace === undefined) {
@@ -67,38 +77,46 @@
       currentSpace = channel._id
     }
 
-    client.createDoc(chunter.class.Message, currentSpace, {
+    await client.createDoc(chunter.class.Message, currentSpace, {
       message
     })
   }
 
-  async function getMembers (): Promise<Array<Account>> {
-    return await client.findAll(core.class.Account, {})
-  }
-
-  let query: QueryUpdater<Message> | undefined
+  let query: QueryUpdater<Message> | undefined = undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
+    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
+    })
+  }
+
+  function popupItems (items: Account[]): IPopupItem[] {
+    return items.map((acc, index) => {
+      return {
+        _id: index,
+        title: acc.name as IntlString,
+        props: { user: acc },
+        selected: to.indexOf(acc._id) !== -1,
+        action: () => {
+          to = [...to, acc._id]
+        },
+        matcher: (search) => {
+          return acc.name.toLowerCase().indexOf(search) !== -1 || acc.email.toLowerCase().indexOf(search) !== -1
+        }
+      }
     })
   }
 </script>
 
 <div class="new-message">
   <div class="address">
-    {#await getMembers() then users}
-      <UserBox
-        selected={[...to].shift()}
-        on:change={(evt) => (to = [evt.detail])}
-        {users}
-        caption={chunter.string.UserTo}
-        title={chunter.string.MessageTo}
-        label={chunter.string.MessageToLabel}
-        showSearch
-      />
-    {/await}
+    <SelectBox
+      component={UserInfo}
+      items={popupItems(allAccounts)}
+      searchLabel={chunter.string.UserTo}
+      showSearch={true}
+    />
   </div>
   <div
     class="msg-board"

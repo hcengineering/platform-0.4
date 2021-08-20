@@ -17,9 +17,13 @@
   import type { AnySvelteComponent, IPopupItem } from '../types'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
+  import Search from './icons/Search.svelte'
   import PopupItem from './PopupItem.svelte'
   import PopupMenu from './PopupMenu.svelte'
   import SelectItem from './SelectItem.svelte'
+  import EditWithIcon from './EditWithIcon.svelte'
+  import ui from '../component'
+  import { translate } from '@anticrm/platform'
 
   export let component: AnySvelteComponent | undefined = undefined
   export let items: Array<IPopupItem>
@@ -29,12 +33,22 @@
   export let gap: number = 8
   export let removeLabel: IntlString | undefined = undefined
   export let searchLabel: IntlString | undefined = undefined
+  export let showSearch = true
 
   const byTitle: boolean = !component
   let pressed: boolean = false
   let count: number
+  let search: string = ''
 
   $: count = items.filter((i) => i.selected).length
+
+  function searchItem (i: IPopupItem, search: string): boolean {
+    const lowerSearch = search.toLowerCase()
+    if (i.matcher !== undefined) {
+      return !i.selected && i.matcher(lowerSearch)
+    }
+    return !i.selected && i.title?.toLowerCase().indexOf(lowerSearch) !== -1
+  }
 </script>
 
 <div class="selectBox" style="padding: {gap / 2}px;">
@@ -42,7 +56,7 @@
     <SelectItem bind:item={complate} bind:component bind:items {vAlign} {hAlign} {margin} {gap} {removeLabel} />
   {/each}
   {#if items.filter((i) => !i.selected).length}
-    <PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed} {searchLabel}>
+    <PopupMenu {margin} bind:show={pressed} bind:title={searchLabel} bind:showHeader={showSearch}>
       <button
         slot="trigger"
         class="btn"
@@ -54,16 +68,22 @@
         }}
       >
         <div class="icon">
-          {#if pressed}<Close />{:else}<Add />{/if}
+          {#if pressed}<Close size={16} />{:else}<Add size={16} />{/if}
         </div>
       </button>
-      {#each items.filter((i) => !i.selected) as item}
+      <div slot="header" class="search">
+        {#await translate(ui.string.Search, {}) then searchValue}
+          <EditWithIcon icon={Search} placeholder={searchValue} bind:value={search} />
+        {/await}
+      </div>
+      {#each items.filter((i) => searchItem(i, search)) as item}
         {#if byTitle}
           <PopupItem
             title={item.title}
             selectable
             bind:selected={item.selected}
             action={() => {
+              item.action?.()
               pressed = !pressed
             }}
           />
@@ -74,6 +94,7 @@
             selectable
             bind:selected={item.selected}
             action={() => {
+              item.action?.()
               pressed = !pressed
             }}
           />

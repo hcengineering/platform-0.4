@@ -19,7 +19,7 @@
   import SpecialElement from './navigator/SpecialElement.svelte'
 
   export let model: NavigatorModel | undefined = undefined
-  export let special: number
+  export let special: number = -1
 
   const dispatch = createEventDispatcher()
 

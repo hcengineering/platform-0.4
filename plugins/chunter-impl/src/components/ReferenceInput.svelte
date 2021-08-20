@@ -247,7 +247,7 @@
         {#if popupVisible && completions.length > 0}
           <CompletionPopup
             bind:this={completionControl}
-            on:blur={(e) => (completions = [])}
+            on:blur={() => (completions = [])}
             ontop={true}
             items={completions}
             pos={{

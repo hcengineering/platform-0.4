@@ -41,10 +41,11 @@ export interface SpacesNavModel {
   spaceIcon: Asset
   spaceClass: Ref<Class<Space>>
   spaceQuery?: DocumentQuery<Space>
-  showUsers?: boolean // If defined, will short user Ids, instead of space name.
   addSpaceLabel: IntlString
-  createComponent: AnyComponent
+  createComponent?: AnyComponent
   component?: AnyComponent
+  spaceItem?: AnyComponent // An component to display a space selectable item. param {space: Space}
+  spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
 }
 
 /**
@@ -91,6 +92,10 @@ const workbench = plugin(
     string: {
       Logout: '' as IntlString,
       Profile: '' as IntlString
+    },
+    icon: {
+      Hashtag: '' as Asset,
+      Lock: '' as Asset
     }
   }
 )

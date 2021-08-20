@@ -60,7 +60,7 @@
   {#if message}
     <ScrollBox autoscrollable={true} vertical>
       <MsgView {message} thread />
-      <ChannelSeparator label={'Replies'} line />
+      <ChannelSeparator label={chunter.string.RepliesText} line />
       <Comments {message} />
     </ScrollBox>
     <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />

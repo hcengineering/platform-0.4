@@ -1,6 +1,6 @@
 import { Doc } from './classes'
 import { createPredicates, isPredicate } from './predicate'
-import { SortingQuery } from './storage'
+import { DocumentQuery, QuerySelector, SortingQuery } from './storage'
 
 /**
  * @public
@@ -72,3 +72,21 @@ export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuer
   }
   result.sort(sortFunc)
 }
+
+/**
+ * @public
+ */
+export function matchDocument<T extends Doc> (doc: T, query: DocumentQuery<T>): boolean {
+  let result: Doc[] = [doc]
+  for (const key in query) {
+    if (!shouldSkipId<T>(key, query)) {
+      const value = (query as any)[key]
+      result = findProperty(result, key, value)
+    }
+  }
+  return result.length === 1
+}
+function shouldSkipId<T extends Doc> (key: string, query: DocumentQuery<T>): boolean {
+  return key === '_id' && (query._id as QuerySelector<T>)?.$like === undefined
+}
+

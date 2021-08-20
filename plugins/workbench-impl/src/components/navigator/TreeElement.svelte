@@ -13,15 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { Asset, IntlString } from '@anticrm/status'
+  import type { Action, AnyComponent } from '@anticrm/ui'
+  import { ActionIcon, Component, Icon, Label } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
   import Collapsed from '../icons/Collapsed.svelte'
   import Expanded from '../icons/Expanded.svelte'
 
-  import type { Asset, IntlString } from '@anticrm/status'
-  import type { Action } from '@anticrm/ui'
-  import { Icon, Label, ActionIcon } from '@anticrm/ui'
-  import { createEventDispatcher } from 'svelte'
+  export let component: AnyComponent | undefined = undefined
+  export let props: any | undefined = undefined
 
-  export let icon: Asset | string | undefined = undefined
+  export let icon: Asset | undefined = undefined
   export let label: IntlString | undefined = undefined
   export let title: string | undefined = undefined
   export let notifications = 0
@@ -55,20 +57,28 @@
   }}
 >
   <div class="title" class:sub={!node}>
-    <div class="icon" class:sub={!node}>
-      {#if icon && useIcon}
-        <Icon {icon} size={16} />
-      {:else if icon && !useIcon}
-        <img src={icon} width={16} height={16} alt="Avatar" />
-      {:else if collapsed}
-        <Collapsed />
-      {:else}
-        <Expanded />
-      {/if}
-    </div>
-    <span>
-      {#if label}<Label {label} />{:else}{title}{/if}
-    </span>
+    {#if component}
+      <div class="component" class:sub={!node}>
+        <Component is={component} {props} />
+      </div>
+    {:else}
+      <div class="icon" class:sub={!node}>
+        {#if icon}
+          {#if useIcon}
+            <Icon {icon} size={16} />
+          {:else}
+            <img src={icon} width={16} height={16} alt="Avatar" />
+          {/if}
+        {:else if collapsed}
+          <Collapsed />
+        {:else}
+          <Expanded />
+        {/if}
+      </div>
+      <span>
+        {#if label}<Label {label} />{:else}{title}{/if}
+      </span>
+    {/if}
     {#each actions as action}
       <div class="tool">
         <ActionIcon
@@ -119,19 +129,21 @@
           margin: 10px 16px 10px 50px;
         }
       }
-      // .avatar {
-      //   width: 24px;
-      //   min-width: 24px;
-      //   height: 24px;
-      //   margin: 6px 8px 6px 50px;
-      //   border-radius: 50%;
-      //   background-color: var(--theme-bg-selection);
-      // }
       span {
         flex-grow: 1;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      .component {
+        margin: 10px 16px 10px 18px;
+        flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        &.sub {
+          margin: 10px 16px 10px 50px;
+        }
       }
       .tool {
         width: 16px;

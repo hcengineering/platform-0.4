@@ -22,6 +22,8 @@ export default mergeIds(chunter, {
     CreateChannel: '' as AnyComponent,
     CreateMessage: '' as AnyComponent,
     ChannelView: '' as AnyComponent,
-    ThreadsView: '' as AnyComponent
+    ThreadsView: '' as AnyComponent,
+    SpaceItem: '' as AnyComponent,
+    SpaceHeader: '' as AnyComponent
   }
 })

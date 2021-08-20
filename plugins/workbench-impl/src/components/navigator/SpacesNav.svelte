@@ -13,18 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space, Account } from '@anticrm/core'
-  import core from '@anticrm/core'
-  import { getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
+  import type { Ref, Space } from '@anticrm/core'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
   import type { SpacesNavModel } from '@anticrm/workbench'
+  import { getClient, showModal } from '@anticrm/workbench'
   import workbench from '../../plugin'
+  import Search from '../icons/Search.svelte'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
-  import Search from '../icons/Search.svelte'
-  import type { QueryUpdater } from '@anticrm/presentation'
-  import avatar from '../../../img/avatar.png'
 
   export let model: SpacesNavModel
 
@@ -39,25 +37,33 @@
     })
   }
 
-  $: addSpace = {
-    label: model.addSpaceLabel,
-    icon: IconAdd,
-    action: async (): Promise<void> => {
-      showModal(model.createComponent, {})
-    }
-  }
-
-  const joinSpace: Action = {
-    label: model.label,
-    icon: Search,
-    action: async (): Promise<void> => {
-      showModal(workbench.component.Spaces, {
-        _class: model.spaceClass,
-        spaceQuery: model.spaceQuery ?? {},
-        label: model.label
+  function toolActions (model: SpacesNavModel): Action[] {
+    const result: Action[] = []
+    const create = model.createComponent
+    if (create !== undefined) {
+      result.push({
+        label: model.addSpaceLabel,
+        icon: IconAdd,
+        action: async (): Promise<void> => {
+          showModal(create, {})
+        }
       })
     }
+    result.push({
+      label: model.label,
+      icon: Search,
+      action: async (): Promise<void> => {
+        showModal(workbench.component.Spaces, {
+          _class: model.spaceClass,
+          spaceQuery: model.spaceQuery ?? {},
+          label: model.label
+        })
+      }
+    })
+    return result
   }
+
+  $: actions = toolActions(model)
 
   function selectSpace (id: Ref<Space>) {
     const loc = getCurrentLocation()
@@ -65,36 +71,20 @@
     loc.path.length = 3
     navigate(loc)
   }
-  async function getUser (space: Space): Promise<Account> {
-    const curAcc = client.accountId()
-    return (await client.findAll(core.class.Account, { _id: { $in: space.members } }))
-      .filter((acc) => acc._id !== curAcc)
-      .shift()
-  }
 </script>
 
 <div>
-  <TreeNode label={model.label} actions={[addSpace, joinSpace]}>
+  <TreeNode label={model.label} {actions}>
     {#each spaces as space}
-      {#if model.showUsers}
-        {#await getUser(space) then spUser}
-          <TreeItem
-            title={spUser.name}
-            icon={spUser.avatar ?? avatar}
-            on:click={() => {
-              selectSpace(space._id)
-            }}
-          />
-        {/await}
-      {:else}
-        <TreeItem
-          title={space.name}
-          icon={model.spaceIcon}
-          on:click={() => {
-            selectSpace(space._id)
-          }}
-        />
-      {/if}
+      <TreeItem
+        component={model.spaceItem}
+        props={{ space: space }}
+        title={space.name}
+        icon={model.spaceIcon}
+        on:click={() => {
+          selectSpace(space._id)
+        }}
+      />
     {/each}
   </TreeNode>
 </div>

@@ -13,43 +13,43 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space, Data } from '@anticrm/core'
-  import { Icon, ActionIcon, Button } from '@anticrm/ui'
+  import type { Space } from '@anticrm/core'
+  import { ActionIcon, Button, Component, Icon } from '@anticrm/ui'
+  import type { NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
+  import { showModal } from '@anticrm/workbench'
   import MoreH from './icons/MoreH.svelte'
   import Star from './icons/Star.svelte'
 
-  import { getClient, showModal } from '@anticrm/workbench'
-  import type { NavigatorModel } from '@anticrm/workbench'
-  import core from '@anticrm/core'
-  import type { QueryUpdater } from '@anticrm/presentation'
-
-  export let space: Ref<Space> | undefined
+  export let space: Space | undefined
   export let model: NavigatorModel | undefined
+  export let spaceModel: SpacesNavModel | undefined
 
-  let data: Data<Space> | undefined
   const addAction = () => {
     if (model?.createComponent !== undefined) showModal(model.createComponent, { space })
-  }
-
-  const client = getClient()
-  let query: QueryUpdater<Space> | undefined
-
-  $: if (space) {
-    query = client.query(query, core.class.Space, { _id: space }, (result) => {
-      data = result[0]
-    })
   }
 </script>
 
 <div class="flex-between header">
   <div class="flex-col caption">
-    <div class="dotted-text title">
-      <span><Icon icon={'icon:chunter.Hashtag'} size={16} /></span>
-      {#if data}{data.name}{/if}
-    </div>
-    <div class="dotted-text subtitle">
-      {#if data}{data.description}{/if}
-    </div>
+    {#if spaceModel && spaceModel.spaceHeader}
+      {#if space}
+        <Component is={spaceModel.spaceHeader} props={{ space: space }} />
+      {/if}
+    {:else}
+      <div class="dotted-text title">
+        {#if spaceModel}
+          <span>
+            {#if space}
+              <Icon icon={spaceModel.spaceIcon} size={16} />
+            {/if}
+          </span>
+          {#if space}{space.name}{/if}
+        {/if}
+      </div>
+      <div class="dotted-text subtitle">
+        {#if space}{space.description}{/if}
+      </div>
+    {/if}
   </div>
   <div class="flex-row-center">
     <Button label={'Create'} size={'small'} primary on:click={addAction} />
