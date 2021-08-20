@@ -66,6 +66,7 @@ export interface IPopupItem {
   props?: Object
   selected?: boolean
   action?: Function
+  matcher?: (search: string) => boolean
 }
 
 export interface CheckListItem {

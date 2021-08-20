@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString } from '@anticrm/platform'
+  import { IntlString, translate } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
   import Label from './Label.svelte'
   import EditWithIcon from './EditWithIcon.svelte'
@@ -60,7 +60,11 @@
         </div>
       {/if}
     </button>
-    <div slot="header" class="search"><EditWithIcon icon={Search} label={ui.string.Search} bind:value={search} /></div>
+    <div slot="header" class="search">
+      {#await translate(ui.string.Search, {}) then searchValue}
+        <EditWithIcon icon={Search} placeholder={searchValue} bind:value={search} />
+      {/await}
+    </div>
     {#if selectedItem}
       <PopupItem
         component={UserInfo}

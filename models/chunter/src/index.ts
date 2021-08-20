@@ -79,16 +79,18 @@ export function createModel (builder: Builder): void {
             spaceClass: chunter.class.Channel,
             spaceQuery: { direct: false },
             addSpaceLabel: chunter.string.CreateChannel,
-            createComponent: chunter.component.CreateChannel
+            createComponent: chunter.component.CreateChannel,
+            spaceItem: chunter.component.SpaceItem,
+            spaceHeader: chunter.component.SpaceHeader
           },
           {
             label: chunter.string.DirectMessages,
             spaceIcon: chunter.icon.Hashtag,
             spaceClass: chunter.class.Channel,
             spaceQuery: { direct: true },
-            showUsers: true,
             addSpaceLabel: chunter.string.CreateDirectMessage,
-            createComponent: chunter.component.CreateMessage
+            spaceItem: chunter.component.SpaceItem,
+            spaceHeader: chunter.component.SpaceHeader
           }
         ],
         spaceView: chunter.component.ChannelView,

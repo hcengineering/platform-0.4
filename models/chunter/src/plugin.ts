@@ -30,7 +30,9 @@ export default mergeIds(chunter, {
     CreateMessage: '' as Resource<any>,
     ChannelView: '' as Resource<any>,
     ThreadsView: '' as Resource<any>,
-    AllThreadsView: '' as Resource<any>
+    AllThreadsView: '' as Resource<any>,
+    SpaceItem: '' as Resource<any>,
+    SpaceHeader: '' as Resource<any>
   },
   string: {
     ApplicationLabelChunter: '' as IntlString

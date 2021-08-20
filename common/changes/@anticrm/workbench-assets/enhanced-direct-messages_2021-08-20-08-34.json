@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-assets",
+      "comment": "Enhance Direct messages",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-assets"
+}

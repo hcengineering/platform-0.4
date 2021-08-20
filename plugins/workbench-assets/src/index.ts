@@ -13,8 +13,14 @@
 // limitations under the License.
 //
 
-import { addStringsLoader } from '@anticrm/platform'
+import { addStringsLoader, loadMetadata } from '@anticrm/platform'
 import workbench from '@anticrm/workbench'
+
+const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-eslint/no-var-requires
+loadMetadata(workbench.icon, {
+  Hashtag: `${icons}#hashtag`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Lock: `${icons}#lock` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+})
 
 addStringsLoader(workbench.id, async (lang: string) => {
   return await import(`../lang/${lang}.json`)

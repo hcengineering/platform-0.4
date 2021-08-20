@@ -14,10 +14,11 @@
 -->
 <script lang="ts">
   import type { Doc, Ref, Space } from '@anticrm/core'
-  import { PresentationClient } from '@anticrm/presentation'
+  import core, { matchDocument } from '@anticrm/core'
+  import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import { IntlString } from '@anticrm/status'
   import { Component, location } from '@anticrm/ui'
-  import type { Application, NavigatorModel } from '@anticrm/workbench'
+  import type { Application, NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'
   import ActivityStatus from './ActivityStatus.svelte'
@@ -37,8 +38,10 @@
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
 
-  let currentSpace: Ref<Space> | undefined
+  let currentSpaceRef: Ref<Space> | undefined
+  let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
+  let spaceModel: SpacesNavModel | undefined
   let itemId: Ref<Doc> | undefined
 
   let currentSpecial: number = -1
@@ -47,15 +50,36 @@
     location.subscribe(async (loc) => {
       currentApp = loc.path[1] as Ref<Application>
       currentSpecial = -1
-      currentSpace = loc.path[2] as Ref<Space>
+      currentSpaceRef = loc.path[2] as Ref<Space>
       itemId = loc.path[3] as Ref<Doc>
     })
   )
+
+  function updateSpaceModel (space: Space, navigatorModel: NavigatorModel): SpacesNavModel | undefined {
+    for (const sm of navigatorModel.spaces ?? []) {
+      if (sm.spaceClass === space._class && matchDocument(space, sm.spaceQuery ?? {})) {
+        // TODO: Add inheritance check.
+        // We have space model matched, check query
+        return sm
+      }
+    }
+  }
   $: client.findAll(workbench.class.Application, { _id: currentApp }).then((results) => {
     const result = results.pop()
     currentAppLabel = result?.label ?? currentAppLabel
     navigatorModel = result?.navigatorModel
   })
+
+  let spaceQuery: QueryUpdater<Space> | undefined
+  $: if (currentSpaceRef && navigatorModel) {
+    spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentSpaceRef }, (result) => {
+      currentSpace = result[0]
+      // Find a space model
+      if (navigatorModel !== undefined) {
+        spaceModel = updateSpaceModel(result[0], navigatorModel)
+      }
+    })
+  }
 </script>
 
 <svg class="mask">
@@ -79,8 +103,10 @@
   {/if}
   <div class="component">
     {#if navigatorModel && currentSpecial === -1}
-      <SpaceHeader model={navigatorModel} space={currentSpace} />
-      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpace }} />
+      {#if spaceModel}
+        <SpaceHeader model={navigatorModel} space={currentSpace} {spaceModel} />
+      {/if}
+      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpaceRef }} />
     {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}

@@ -28,6 +28,23 @@ export function demoChunter (builder: Builder): void {
     demoIds.project.DemoChannel
   )
 
+  // Create few direct message spaces
+
+  const dmc = faker.datatype.number(5) + 1
+  for (let i = 0; i < dmc; i++) {
+    let ms = faker.random.arrayElements(members, faker.datatype.number(members.length) + 1)
+    if (!ms.includes(core.account.System)) {
+      ms = [core.account.System, ...ms]
+    }
+    builder.createDoc(chunter.class.Channel, {
+      name: 'direct-message',
+      description: 'My direct mesage',
+      members: ms,
+      direct: true,
+      private: true
+    })
+  }
+
   const ri = faker.datatype.number(10) + 10
 
   for (let i = 0; i < ri; i++) {

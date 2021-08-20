@@ -16,8 +16,11 @@
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
+  import { AnyComponent } from '@anticrm/ui'
 
-  export let icon: Asset
+  export let component: AnyComponent | undefined = undefined
+  export let props: any | undefined
+  export let icon: Asset | undefined
   export let title: string
   export let notifications = 0
 
@@ -25,6 +28,8 @@
 </script>
 
 <TreeElement
+  {component}
+  {props}
   {icon}
   {title}
   {notifications}

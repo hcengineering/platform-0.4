@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Enhance Direct messages",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl"
+}
