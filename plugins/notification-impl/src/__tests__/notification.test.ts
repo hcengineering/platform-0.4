@@ -109,7 +109,11 @@ describe('notification', () => {
     await notificationService.subscribeObject(core.class.Space, core.space.Model, space)
     const unsubscribe = notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
       expect(result).toHaveLength(Math.min(attempt++, 1))
-      if (attempt === expectedLength) done()
+      if (attempt === expectedLength) {
+        unsubscribe()
+        void notificationService.unsubscribeObject(core.class.Space, core.space.Model, space)
+        done()
+      }
     })
 
     for (let i = 0; i < expectedLength; i++) {
@@ -118,8 +122,34 @@ describe('notification', () => {
       })
       await client.tx(tx)
     }
+  })
+
+  it('should read space', async (done) => {
+    const expectedLength = 5
+    let expected = 5
+
+    const notificationService = await getPlugin(notificationPlugin.id)
+    await notificationService.subscribeSpace(core.class.Space, core.space.Model)
+
+    for (let i = 0; i < expectedLength; i++) {
+      const tx = createDocTx(core.class.Space, core.space.Model, {
+        description: '',
+        name: generateId(),
+        private: false,
+        members: []
+      })
+      await client.tx(tx)
+    }
+    const unsubscribe = notificationService.spaceNotifications(core.class.Space, core.space.Model, (result) => {
+      expect(result).toHaveLength(expected)
+      if (expected === 0) {
+        done()
+      }
+      expected = 0
+    })
+    await notificationService.markAsRead(core.class.Space, core.space.Model, true)
+    await notificationService.unsubscribeSpace(core.class.Space, core.space.Model)
     unsubscribe()
-    await notificationService.unsubscribeObject(core.class.Space, core.space.Model, space)
   })
 })
 
