@@ -79,7 +79,7 @@ describe('security', () => {
       security,
       {
         findAll: async (_class, query) => await db.findAll(_class, query),
-        tx: async (tx) => {
+        tx: async (clientId, tx) => {
           hierarchy.tx(tx)
           await db.tx(tx)
           await security.tx(tx)

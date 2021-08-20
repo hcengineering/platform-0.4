@@ -1,16 +1,14 @@
 import core, {
-  ModelDb,
   Class,
   Doc,
   DocumentQuery,
   DOMAIN_TX,
   FindResult,
-  Hierarchy,
-  Ref,
+  Hierarchy, ModelDb, Ref,
   Storage,
   Tx
 } from '@anticrm/core'
-import { DocStorage, getMongoClient, TxStorage, mongoUnescape, mongoReplaceNulls } from '@anticrm/mongo'
+import { DocStorage, getMongoClient, mongoReplaceNulls, mongoUnescape, TxStorage } from '@anticrm/mongo'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
 
@@ -19,7 +17,7 @@ import { WorkspaceStorage } from './storage'
  * @public
  */
 export interface TxHandler {
-  tx: (tx: Tx) => Promise<void>
+  tx: (clientId: string, tx: Tx) => Promise<void>
 }
 
 /**
@@ -37,11 +35,18 @@ export interface WorkspaceOptions {
 }
 
 /**
+ * @public
+ */
+export interface WithWorkspaceTx extends Omit<Storage, 'tx'> {
+  tx: (clientId: string, tx: Tx) => Promise<void>
+}
+
+/**
  * Represent a workspace.
  * Before find*, tx operations could be used, consider initialize Db with model transactions.
  * @public
  */
-export class Workspace implements Storage {
+export class Workspace implements WithWorkspaceTx {
   static async create (workspaceId: string, options: WorkspaceOptions, txh?: TxHandlerFactory): Promise<Workspace> {
     const hierarchy: Hierarchy = new Hierarchy()
     const model = new ModelDb(hierarchy)
@@ -68,14 +73,14 @@ export class Workspace implements Storage {
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
     const modelTx: TxHandler = {
-      tx: async (tx) => {
+      tx: async (clientId, tx) => {
         if (tx.objectSpace === core.space.Model) {
           await model.tx(tx)
         }
       }
     }
 
-    const handlers: TxHandler[] = txh !== undefined ? [model, ...(await txh(hierarchy, storage, model))] : [modelTx]
+    const handlers: TxHandler[] = txh !== undefined ? [modelTx, ...(await txh(hierarchy, storage, model))] : [modelTx]
     return new Workspace(workspaceId, hierarchy, storage, handlers, model)
   }
 
@@ -96,7 +101,7 @@ export class Workspace implements Storage {
     return result
   }
 
-  async tx (tx: Tx): Promise<void> {
+  async tx (clientId: string, tx: Tx): Promise<void> {
     // 1. go to storage to check for potential object duplicate transactions.
     await (await this.storage).tx(tx)
 
@@ -106,7 +111,7 @@ export class Workspace implements Storage {
     }
 
     // 3. process all other transaction handlers
-    await Promise.all(this.txh.map(async (t) => await t.tx(tx)))
+    await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
   }
 }
 

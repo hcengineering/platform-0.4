@@ -27,6 +27,7 @@ import core, {
   generateId,
   Ref,
   Space,
+  Storage,
   Tx,
   TxCreateDoc,
   TxOperations,
@@ -62,6 +63,13 @@ const taskIds = component('my-task' as Component, {
 const myTx = _createClass(taskIds.class.MyTx, { extends: core.class.TxCreateDoc }, DOMAIN_TX)
 
 const createMyTaskClass = _createClass(taskIds.class.MyTask, { extends: core.class.Doc }, 'mytask' as Domain)
+
+function asStorage (ws: Workspace): Storage {
+  return {
+    tx: async (tx) => await ws.tx('system', tx),
+    findAll: async (_class, query) => await ws.findAll(_class, query)
+  }
+}
 
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
@@ -141,7 +149,7 @@ describe('workspace', () => {
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
-    await workspace.tx(createMyTaskClass)
+    await workspace.tx('c1', createMyTaskClass)
 
     // check where is no our classes.
     const q1 = await workspace.findAll(taskIds.class.MyTask, {})
@@ -162,7 +170,7 @@ describe('workspace', () => {
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
-    await workspace.tx(createMyTaskClass)
+    await workspace.tx('c1', createMyTaskClass)
 
     // check where is no our classes.
     const q1 = await workspace.findAll(taskIds.class.MyTask, {})
@@ -189,7 +197,7 @@ describe('workspace', () => {
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
-    await workspace.tx(myTx)
+    await workspace.tx('c1', myTx)
 
     // Let's create a client instance, since it has usefull functions.
     const client = await newWorkspaceClient(workspace)
@@ -218,7 +226,7 @@ describe('workspace', () => {
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
-    await workspace.tx(createMyTaskClass)
+    await workspace.tx('c1', createMyTaskClass)
 
     // check where is no our classes.
     const q1 = await workspace.findAll(taskIds.class.MyTask, {})
@@ -259,8 +267,8 @@ describe('workspace', () => {
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
-    await workspace.tx(createMyTaskClass)
-    await workspace.tx(_createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
+    await workspace.tx('c1', createMyTaskClass)
+    await workspace.tx('c1', _createClass(taskIds.class.MyRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
 
     // Let's create a client instance, since it has usefull functions.
     const client = await newWorkspaceClient(workspace)
@@ -272,12 +280,12 @@ describe('workspace', () => {
     const sp = (await workspace.findAll(taskIds.class.MyTask, {}))[0]
 
     const initial = (await workspace.findAll(core.class.Tx, {})).length
-    const t1 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
+    const t1 = await createShortRef(asStorage(workspace), '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t1).toBe('TASK-1')
 
     expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(1)
 
-    const t2 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
+    const t2 = await createShortRef(asStorage(workspace), '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t2).toBe('TASK-2')
 
     expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(2)
@@ -296,9 +304,9 @@ describe('workspace', () => {
         name: 'qwe'
       }
     }
-    await workspace.tx(tx)
+    await workspace.tx('c1', tx)
 
-    const t4 = await createShortRef(workspace, '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
+    const t4 = await createShortRef(asStorage(workspace), '' as Ref<Account>, sp.space, sp._id, sp._class, 'TASK')
     expect(t4).toBe('TASK-4')
 
     const lastTx = await workspace.findAll(core.class.Tx, {})
@@ -307,7 +315,7 @@ describe('workspace', () => {
 })
 
 async function newWorkspaceClient (workspace: Workspace): Promise<Client & TxOperations> {
-  const clientStorage = workspace as unknown as WithAccountId
+  const clientStorage = asStorage(workspace) as WithAccountId
   clientStorage.accountId = async (): Promise<Ref<Account>> => {
     return core.account.System
   }

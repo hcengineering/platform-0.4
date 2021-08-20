@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspace",
+      "comment": "Fix #282",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspace"
+}

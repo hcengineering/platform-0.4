@@ -3,6 +3,7 @@ import { DocumentQuery, Storage } from '../storage'
 import { Class, Data, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { Tx } from '../tx'
+import { DescriptorMap, Descr } from './descriptors'
 
 /**
  * @public
@@ -113,3 +114,4 @@ export interface DerivedData extends Doc {
 }
 
 export { registerMapper, DerivedDataProcessor } from './processor'
+export { DescriptorMap, Descr }

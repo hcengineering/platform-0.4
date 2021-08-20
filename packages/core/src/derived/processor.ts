@@ -34,18 +34,24 @@ export function registerMapper (id: Resource<DocumentMapper>, mapper: DocumentMa
  * @public
  */
 export class DerivedDataProcessor extends TxProcessor {
-  private readonly descrs: DescriptorMap
-
-  private constructor (readonly model: ModelDb, readonly hierarchy: Hierarchy, readonly storage: Storage) {
+  private constructor (
+    readonly descrs: DescriptorMap,
+    readonly model: ModelDb,
+    readonly hierarchy: Hierarchy,
+    readonly storage: Storage
+  ) {
     super()
-    this.descrs = new DescriptorMap(hierarchy)
+  }
+
+  public clone (storage: Storage): DerivedDataProcessor {
+    return new DerivedDataProcessor(this.descrs, this.model, this.hierarchy, storage)
   }
 
   /**
    * Obtain initial set of descriptors and have derived data up to date.
    */
   static async create (model: ModelDb, hierarchy: Hierarchy, storage: Storage): Promise<DerivedDataProcessor> {
-    const processor = new DerivedDataProcessor(model, hierarchy, storage)
+    const processor = new DerivedDataProcessor(new DescriptorMap(hierarchy), model, hierarchy, storage)
     const descriptors = await model.findAll(core.class.DerivedDataDescriptor, {})
 
     for (const d of descriptors) {

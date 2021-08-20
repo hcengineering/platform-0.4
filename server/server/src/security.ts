@@ -1,27 +1,19 @@
 import core, {
-  Account,
-  Class,
+  Account, checkLikeQuery, Class,
   Doc,
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
   FindOptions,
   FindResult,
-  Hierarchy,
-  checkLikeQuery,
-  ObjQueryType,
-  ModelDb,
-  Ref,
-  Space,
-  Storage,
-  Tx,
+  Hierarchy, ModelDb, ObjQueryType, Ref,
+  Space, Tx,
   TxCreateDoc,
-  TxProcessor,
-  TxUpdateDoc,
-  WithAccountId,
-  TxRemoveDoc
+  TxProcessor, TxRemoveDoc, TxUpdateDoc,
+  WithAccountId
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
+import { WithWorkspaceTx } from '@anticrm/workspace'
 
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
@@ -177,7 +169,7 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
 export class SecurityClientStorage implements WithAccountId {
   constructor (
     readonly security: SecurityModel,
-    readonly workspace: Storage,
+    readonly workspace: WithWorkspaceTx,
     readonly hierarchy: Hierarchy,
     readonly user: ClientInfo
   ) {}
@@ -189,7 +181,9 @@ export class SecurityClientStorage implements WithAccountId {
   ): Promise<FindResult<T>> {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
-    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) return await this.workspace.findAll(_class, query, options)
+    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) {
+      return await this.workspace.findAll(_class, query, options)
+    }
     const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.security.getUserSpaces(this.user.accountId)
     query.space =
@@ -204,7 +198,7 @@ export class SecurityClientStorage implements WithAccountId {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
     // Check if tx is allowed and process with workspace
-    await this.workspace.tx(tx)
+    await this.workspace.tx(this.user.clientId, tx)
   }
 
   async accountId (): Promise<Ref<Account>> {
