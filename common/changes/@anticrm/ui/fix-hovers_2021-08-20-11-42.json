@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Fix hover bugs.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
