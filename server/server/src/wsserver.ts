@@ -50,7 +50,7 @@ function connectClient (
       const { workspace, clientStorage } = await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
 
       // We need to check if there is Account exists and if not create it.
-      await updateAccount(workspace, accountId, details)
+      await updateAccount(clientId, workspace, accountId, details)
 
       if (options.logTransactions || options.logRequests) {
         return {
@@ -83,11 +83,11 @@ function connectClient (
 /**
  * Will check and create Account for current log-in user if required.
  */
-async function updateAccount (workspace: WorkspaceInfo, accountId: Ref<Account>, details: AccountDetails): Promise<void> {
+async function updateAccount (clientId: string, workspace: WorkspaceInfo, accountId: Ref<Account>, details: AccountDetails): Promise<void> {
   const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId })
   if (accountRef.length === 0) {
     // We need to create an account entry.
-    await workspace.workspace.tx(
+    await workspace.workspace.tx(clientId,
       newTxCreateDoc<Account>(accountId, core.class.Account, core.space.Model, {
         email: details.email,
         name: ((details?.firstName ?? '') + ' ' + (details?.lastName ?? '')).trim(),

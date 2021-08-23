@@ -3,12 +3,12 @@ import { Class, Doc, Obj, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 
 /**
- * @internal
+ * @public
  */
-type Descr = DerivedDataDescriptor<Doc, DerivedData>
+export type Descr = DerivedDataDescriptor<Doc, DerivedData>
 
 /**
- * @internal
+ * @public
  */
 export class DescriptorMap {
   class2Descr = new Map<Ref<Class<Obj>>, Map<Ref<Doc>, Descr>>()

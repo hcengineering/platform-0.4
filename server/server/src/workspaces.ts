@@ -19,8 +19,8 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 
   // Send transactions to clients.
   const sendTo: TxHandler = {
-    async tx (tx: Tx): Promise<void> {
-      sendToClients(clients, tx, security)
+    async tx (clientId: string, tx: Tx): Promise<void> {
+      sendToClients(clientId, clients, tx, security)
     }
   }
 
@@ -30,11 +30,16 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
     async (hierarchy, storage, model) => {
       security = await SecurityModel.create(hierarchy, model)
 
-      const derivedData = await DerivedDataProcessor.create(model, hierarchy, createDerivedDataStorage(storage, sendTo))
+      const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage)
       return [
         sendTo, // Send to clients of passed tx
-        security,
-        derivedData // If dd produce more tx, they also will be send.
+        { tx: async (clientId, tx) => await security.tx(tx) },
+        {
+          tx: async (clientId, tx) => {
+            const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
+            return await processor.tx(tx)
+          }
+        } // If dd produce more tx, they also will be send.
         // <<---- Placeholder: Add triggers here
         // hierarchy and storage are available
       ]
@@ -48,9 +53,9 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   }
 }
 
-function sendToClients (clients: Map<string, ClientInfo>, tx: Tx, security: SecurityModel): void {
+function sendToClients (clientId: string, clients: Map<string, ClientInfo>, tx: Tx, security: SecurityModel): void {
   for (const cl of clients.entries()) {
-    const differentAccount = cl[1].accountId !== tx.modifiedBy
+    const differentAccount = cl[1].clientId !== clientId
     const spaceOpAllowed = security.checkSecurity(cl[1].accountId, tx)
     if (differentAccount && spaceOpAllowed) {
       cl[1].tx(tx)
@@ -58,7 +63,7 @@ function sendToClients (clients: Map<string, ClientInfo>, tx: Tx, security: Secu
   }
 }
 
-function createDerivedDataStorage (storage: Storage, sendTo: TxHandler): Storage {
+function createDerivedDataStorage (clientId: string, storage: Storage, sendTo: TxHandler): Storage {
   // Send derived data produced objects to clients.
   return {
     findAll: async (_class, query) => await storage.findAll(_class, query),
@@ -66,7 +71,7 @@ function createDerivedDataStorage (storage: Storage, sendTo: TxHandler): Storage
       await storage.tx(tx)
 
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      sendTo.tx(tx)
+      sendTo.tx(clientId, tx)
     }
   }
 }
