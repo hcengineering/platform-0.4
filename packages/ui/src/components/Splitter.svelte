@@ -110,11 +110,12 @@
       background-color: var(--primary-button-enabled);
       border-radius: 2px;
     }
-    &:hover, &-hoverMode {
+    &:hover,
+    &-hoverMode {
       background-color: var(--primary-button-enabled);
       &::after {
         content: '';
-        animation: showDivider .5s ease-in-out forwards;
+        animation: showDivider 0.5s ease-in-out forwards;
       }
     }
   }
@@ -149,7 +150,7 @@
     z-index: 1000;
   }
   .coverDev {
-    opacity: .5;
+    opacity: 0.5;
   }
 
   @keyframes showDivider {
