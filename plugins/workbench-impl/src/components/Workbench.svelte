@@ -17,7 +17,7 @@
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, location } from '@anticrm/ui'
+  import { Component, location, Splitter } from '@anticrm/ui'
   import type { Application, NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { onDestroy, setContext } from 'svelte'
@@ -80,6 +80,16 @@
       }
     })
   }
+
+  let compHTML: HTMLElement
+  let asideHTML: HTMLElement
+  $: {
+    if (asideHTML) {
+      if (compHTML) compHTML.style.marginRight = '0'
+    } else {
+      if (compHTML) compHTML.style.marginRight = '20px'
+    }
+  }
 </script>
 
 <svg class="mask">
@@ -101,7 +111,7 @@
       <Navigator model={navigatorModel} bind:special={currentSpecial} />
     </div>
   {/if}
-  <div class="component">
+  <div bind:this={compHTML} class="component">
     {#if navigatorModel && currentSpecial === -1}
       {#if spaceModel}
         <SpaceHeader model={navigatorModel} space={currentSpace} {spaceModel} />
@@ -112,7 +122,8 @@
     {/if}
   </div>
   {#if navigatorModel && navigatorModel.editComponent && itemId}
-    <div class="aside">
+    <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
+    <div bind:this={asideHTML} class="aside">
       <Component is={navigatorModel.editComponent} props={{ id: itemId }} />
     </div>
   {/if}
@@ -169,7 +180,7 @@
     .aside {
       @include panel(var(--theme-bg-color));
       min-width: 400px;
-      max-width: 400px;
+      // max-width: 400px;
       margin-right: 20px;
       padding: 20px;
     }

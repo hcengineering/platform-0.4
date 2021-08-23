@@ -29,7 +29,7 @@
 </script>
 
 <div class="msg-board">
-  <Channel {messages} />
+  <Channel {messages} thread />
 </div>
 <ReferenceInput withoutMargin={true} on:message />
 
