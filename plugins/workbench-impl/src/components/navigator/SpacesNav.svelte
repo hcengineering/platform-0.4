@@ -20,7 +20,7 @@
   import type { SpacesNavModel } from '@anticrm/workbench'
   import { getClient, showModal } from '@anticrm/workbench'
   import workbench from '../../plugin'
-  import Search from '../icons/Search.svelte'
+  import MoreH from '../icons/MoreH.svelte'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
 
@@ -51,7 +51,7 @@
     }
     result.push({
       label: model.label,
-      icon: Search,
+      icon: MoreH,
       action: async (): Promise<void> => {
         showModal(workbench.component.Spaces, {
           _class: model.spaceClass,
@@ -77,6 +77,7 @@
   <TreeNode label={model.label} {actions}>
     {#each spaces as space}
       <TreeItem
+        notifications={5}
         component={model.spaceItem}
         props={{ space: space }}
         title={space.name}
