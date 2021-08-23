@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Dialog margins and Slitter component",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
