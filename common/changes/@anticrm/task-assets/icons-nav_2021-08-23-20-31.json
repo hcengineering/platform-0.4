@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-assets",
+      "comment": "Updated icons and mask. Fix navigator.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-assets"
+}

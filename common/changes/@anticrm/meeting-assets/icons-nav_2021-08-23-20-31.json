@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting-assets",
+      "comment": "Updated icons and mask. Fix navigator.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting-assets"
+}
