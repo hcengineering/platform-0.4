@@ -107,6 +107,16 @@ describe('memdb', () => {
       space: { $like: '%Mod%' }
     })
     expect(all).toHaveLength(expectedLength)
+
+    const nonSp1 = await model.findAll(core.class.Space, {
+      name: { $ne: 'Sp1' }
+    })
+    expect(nonSp1).toHaveLength(1)
+
+    const nonStarred = await model.findAll(core.class.Space, {
+      'account.starred': { $ne: true }
+    })
+    expect(nonStarred).toHaveLength(2)
   })
 
   it('should push to array', async () => {

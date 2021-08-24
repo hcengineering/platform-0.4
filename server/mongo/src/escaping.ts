@@ -14,8 +14,10 @@
 //
 
 function keyEscape (key: string, reverse: boolean): string {
-  const kk = ['$', '\\$']
-  key = key.split(kk[reverse ? 1 : 0]).join(kk[reverse ? 0 : 1])
+  const kkk = [['$', '\\$'], ['.', '%{dot}']]
+  for (const kk of kkk) {
+    key = key.split(kk[reverse ? 1 : 0]).join(kk[reverse ? 0 : 1])
+  }
   return key
 }
 

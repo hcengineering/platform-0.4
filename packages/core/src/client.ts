@@ -15,10 +15,9 @@
 
 import { DerivedDataProcessor } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
-import { DOMAIN_MODEL } from './classes'
-import core from './component'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
+import { findModelTxs, isModelFind, isModelTx } from './model'
 import type { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxProcessor } from './tx'
 
@@ -50,7 +49,7 @@ class ClientImpl extends TxProcessor implements Client {
   readonly model = new ModelDb(this.hierarchy)
   extraTx?: (tx: Tx) => Promise<void>
 
-  constructor (readonly conn: WithAccountId, private readonly notify?: TxHandler) {
+  constructor (readonly conn: WithAccountId, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
     super()
   }
 
@@ -58,17 +57,17 @@ class ClientImpl extends TxProcessor implements Client {
    * Process notify events from connection, update model and hierarchy
    */
   txHandler (txs: Tx[], bootstrap: boolean): void {
-    for (const tx of txs) {
-      this.hierarchy.tx(tx)
-    }
-    for (const tx of txs) {
-      if (tx.objectSpace === core.space.Model) {
-        void this.model.tx(tx)
-      }
-      if (!bootstrap) {
-        // We do not need to notify about model bootstap transactions.
-        this.notify?.(tx)
-      }
+    const modelTx = txs.filter(isModelTx)
+
+    // Hierarchy should be updated first, since model could use it.
+    modelTx.forEach((tx) => this.hierarchy.tx(tx))
+
+    // Now it is safe to update model, since hierarchy is up to date.
+    modelTx.forEach((tx) => void this.model.tx(tx))
+
+    if (!bootstrap && this.notify !== undefined) {
+      // Notify passed handler.
+      txs.forEach(this.notify)
     }
   }
 
@@ -81,11 +80,8 @@ class ClientImpl extends TxProcessor implements Client {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    const domain = this.hierarchy.getDomain(_class)
-    if (domain === DOMAIN_MODEL) {
-      return await this.model.findAll(_class, query, options)
-    }
-    return await this.conn.findAll(_class, query, options)
+    const storage = isModelFind(_class, this.hierarchy) ? this.model : this.conn
+    return await storage.findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {
@@ -94,7 +90,7 @@ class ClientImpl extends TxProcessor implements Client {
   }
 
   async accountId (): Promise<Ref<Account>> {
-    return await this.conn.accountId()
+    return this.connAccount
   }
 }
 
@@ -135,12 +131,14 @@ export async function createClient (
   const buffer = new TransactionBuffer()
   const connection = await connect((tx) => buffer.tx(tx)) // << --- new transactions go into buffer, until we process existing ones.
 
-  const txes = await connection.findAll(core.class.Tx, { objectSpace: core.space.Model })
+  const accountId = await connection.accountId()
+
+  const txes = await findModelTxs(connection, accountId)
 
   // Put all transactions we recieve before out model transactions.
   buffer.pretend(txes)
 
-  const client = new ClientImpl(connection, notify)
+  const client = new ClientImpl(connection, accountId, notify)
 
   // Apply all model transactions, including ones arrived during findAll is executed.
   buffer.flush((txs, bootstrap) => client.txHandler(txs, bootstrap))

@@ -22,6 +22,7 @@ import type { DocumentQuery, FindResult } from '../storage'
 import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { _genMinModel } from '../minmodel'
+import { isModelTx } from '../model'
 
 class ClientImpl implements WithAccountId {
   constructor (
@@ -38,7 +39,7 @@ class ClientImpl implements WithAccountId {
   }
 
   async tx (tx: Tx): Promise<void> {
-    if (tx.objectSpace === core.space.Model) {
+    if (isModelTx(tx)) {
       this.hierarchy.tx(tx)
     }
     await Promise.all([this.model.tx(tx), this.transactions.tx(tx)])

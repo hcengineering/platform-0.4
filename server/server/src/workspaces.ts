@@ -1,4 +1,4 @@
-import { WithAccountId, DerivedDataProcessor, Storage, Tx } from '@anticrm/core'
+import core, { WithAccountId, DerivedDataProcessor, Storage, Tx } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
@@ -58,7 +58,10 @@ function sendToClients (clientId: string, clients: Map<string, ClientInfo>, tx: 
     const differentAccount = cl[1].clientId !== clientId
     const spaceOpAllowed = security.checkSecurity(cl[1].accountId, tx)
     if (differentAccount && spaceOpAllowed) {
-      cl[1].tx(tx)
+      // Only send if account is same, or space is allowed and space is not personalized.
+      if (cl[1].accountId === tx.modifiedBy || tx.space === core.space.Tx) {
+        cl[1].tx(tx)
+      }
     }
   }
 }

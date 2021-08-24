@@ -181,6 +181,17 @@ export interface Space extends Doc {
   description: string
   private: boolean
   members: Arr<Ref<Account>>
+
+  // Per account properties, should be stored inside account transaction space.
+  account?: AccountProperties
+}
+
+/**
+ * @public
+ */
+export interface AccountProperties {
+  starred?: boolean // If defined
+  muted?: boolean // Disable all notifications for this space.
 }
 
 /**

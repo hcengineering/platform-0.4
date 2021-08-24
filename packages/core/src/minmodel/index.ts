@@ -22,7 +22,7 @@ export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T
     modifiedOn: Date.now(),
     createOn: Date.now(),
     objectSpace: core.space.Model,
-    space: core.space.Model
+    space: core.space.Tx
   }
   return result
 }

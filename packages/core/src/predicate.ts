@@ -15,7 +15,7 @@
 //
 
 import type { Doc } from './classes'
-import { checkLikeQuery } from './query'
+import { checkLikeQuery, nestedDotQueryCheck } from './query'
 
 type Predicate = (docs: Doc[]) => Doc[]
 type PredicateFactory = (pred: any, propertyKey: string) => Predicate
@@ -40,6 +40,18 @@ const predicates: Record<string, PredicateFactory> = {
       for (const doc of docs) {
         const value = (doc as any)[propertyKey] as string
         if (checkLikeQuery(value, query)) result.push(doc)
+      }
+      return result
+    }
+  },
+  $ne: (query: any, propertyKey: string): Predicate => {
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = (doc as any)[propertyKey] as string
+        if (query !== value && !nestedDotQueryCheck(propertyKey, doc, query)) {
+          result.push(doc)
+        }
       }
       return result
     }

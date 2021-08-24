@@ -46,6 +46,7 @@ export interface SpacesNavModel {
   component?: AnyComponent
   spaceItem?: AnyComponent // An component to display a space selectable item. param {space: Space}
   spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
+  hideIfEmpty?: boolean // If defined and true, category will be not visible
 }
 
 /**

@@ -45,8 +45,8 @@ export default component(ComponentCore, {
     Reference: '' as Ref<Class<Reference>>
   },
   space: {
-    Tx: '' as Ref<Space>,
-    Model: '' as Ref<Space>
+    Tx: '' as Ref<Space>, // A special space for all transactions
+    Model: '' as Ref<Space> // A special space for all model transactions.
   },
   account: {
     System: '' as Ref<Account>

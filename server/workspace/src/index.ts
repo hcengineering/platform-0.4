@@ -4,7 +4,7 @@ import core, {
   DocumentQuery,
   DOMAIN_TX,
   FindResult,
-  Hierarchy, ModelDb, Ref,
+  Hierarchy, isModelTx, ModelDb, Ref,
   Storage,
   Tx
 } from '@anticrm/core'
@@ -59,13 +59,14 @@ export class Workspace implements WithWorkspaceTx {
 
     // Load hierarchy from transactions.
     const txCollection = db.collection(DOMAIN_TX as string)
-    const transactions: Tx[] = (await txCollection.find({}).toArray())
+
+    // We only need model global transactions.
+    const transactions: Tx[] = (await txCollection.find({ space: core.space.Tx, objectSpace: core.space.Model }).toArray())
       .map(mongoUnescape)
       .map(mongoReplaceNulls)
 
-    for (const tx of transactions) {
-      hierarchy.tx(tx)
-    }
+    transactions.forEach(tx => hierarchy.tx(tx))
+
     for (const tx of transactions) {
       await model.tx(tx)
     }
@@ -74,7 +75,8 @@ export class Workspace implements WithWorkspaceTx {
 
     const modelTx: TxHandler = {
       tx: async (clientId, tx) => {
-        if (tx.objectSpace === core.space.Model) {
+        // Update model only for global model transactions.
+        if (isModelTx(tx)) {
           await model.tx(tx)
         }
       }
@@ -97,21 +99,21 @@ export class Workspace implements WithWorkspaceTx {
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    const result = await this.storage.findAll(_class, query)
-    return result
+    return await this.storage.findAll(_class, query)
   }
 
   async tx (clientId: string, tx: Tx): Promise<void> {
     // 1. go to storage to check for potential object duplicate transactions.
-    await (await this.storage).tx(tx)
+    const result = await this.storage.tx(tx)
 
-    // 2. update hierarchy
-    if (tx.objectSpace === core.space.Model) {
+    // 2. update hierarchy only for global model transactions only.
+    if (isModelTx(tx) && tx.space === core.space.Tx) {
       this.hierarchy.tx(tx)
     }
 
     // 3. process all other transaction handlers
     await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
+    return result
   }
 }
 

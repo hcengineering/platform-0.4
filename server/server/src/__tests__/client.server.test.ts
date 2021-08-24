@@ -31,7 +31,7 @@ import core, {
 } from '@anticrm/core'
 import { Domain } from '@anticrm/core/src/classes'
 import builder from '@anticrm/model-all'
-import { getMongoClient, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
+import { getMongoClient, mongoEscape, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { component, Component } from '@anticrm/status'
 import * as net from 'net'
 import { generateToken } from '../token'
@@ -108,11 +108,11 @@ async function prepareServer (): Promise<{
   )
 
   for (const tx of btx) {
-    await txes.insertOne(tx)
+    await txes.insertOne(mongoEscape(tx))
   }
 
   // eslint-disable-next-line
-  const server = await startServer('localhost', 0, SERVER_SECRET)
+  const server = await startServer('localhost', 0, SERVER_SECRET, { logRequests: true, logTransactions: true })
   console.log('server created')
   return {
     shutdown: async () => {
@@ -199,6 +199,24 @@ describe('real-server', () => {
     console.info('TEST1 PASS')
   })
 
+  it('failed client', async () => {
+    const client = await createClient(
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
+      (tx) => {}
+    )
+    expect(client).toBeDefined()
+    console.info('try client with wrong token')
+
+    // eslint-disable-next-line
+    expect(
+      createClient(
+        `${address.address}:${address.port}/${
+          'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId)
+        }`,
+        (tx) => {}
+      )
+    ).rejects.toThrow()
+  })
   it('check comments dd', async () => {
     console.log('connecting')
     const johnTxes: Tx[] = []

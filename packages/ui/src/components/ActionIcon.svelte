@@ -22,6 +22,7 @@
   export let label: IntlString
   export let direction: string = 'top'
   export let icon: Asset | AnySvelteComponent
+  export let filled: boolean = false
   export let size: 16 | 20 | 24
   export let action: () => void = () => {}
   export let invisible: boolean = false
@@ -33,7 +34,7 @@
       {#if typeof icon === 'string'}
         <Icon {icon} {size} />
       {:else}
-        <svelte:component this={icon} {size} />
+        <svelte:component this={icon} {size} {filled} />
       {/if}
     </div>
   </button>
