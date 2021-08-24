@@ -57,20 +57,26 @@
     .icon {
       width: 50px;
       height: 50px;
-      opacity: .3;
+      opacity: 0.3;
       &.noty {
         clip-path: url(#notify);
       }
     }
-    &:hover .icon { opacity: 1; }
+    &:hover .icon {
+      opacity: 1;
+    }
     &:focus {
       border: 1px solid var(--primary-button-focused-border);
       box-shadow: 0 0 0 3px var(--primary-button-outline);
-      .icon { opacity: 1; }
+      .icon {
+        opacity: 1;
+      }
     }
     &.selected {
       background-color: var(--theme-menu-selection);
-      .icon { opacity: 1; }
+      .icon {
+        opacity: 1;
+      }
     }
   }
 </style>

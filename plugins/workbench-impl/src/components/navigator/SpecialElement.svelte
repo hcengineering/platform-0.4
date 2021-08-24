@@ -69,7 +69,7 @@
       min-width: 16px;
       height: 16px;
       border-radius: 4px;
-      opacity: .3;
+      opacity: 0.3;
     }
     span {
       flex-grow: 1;
@@ -90,7 +90,9 @@
 
     &:hover {
       background-color: var(--theme-button-bg-enabled);
-      .tool { visibility: visible; }
+      .tool {
+        visibility: visible;
+      }
     }
   }
 </style>
