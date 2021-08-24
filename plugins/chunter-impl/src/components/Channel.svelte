@@ -18,6 +18,7 @@
   import Message from './Message.svelte'
 
   export let messages: MessageData[] = []
+  export let thread: boolean = false
   let div: HTMLElement
 
   interface MessageData {
@@ -31,6 +32,6 @@
 
 <div class="flex-col" bind:this={div}>
   {#each messages as m (m._id)}
-    <Message message={m} />
+    <Message message={m} {thread} />
   {/each}
 </div>

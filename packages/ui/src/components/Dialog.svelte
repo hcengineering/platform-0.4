@@ -86,13 +86,12 @@
     .dialog {
       display: flex;
       flex-direction: column;
-      min-width: 40%;
-      max-width: 80%;
+      margin: 32px 20px 20px 0;
       width: auto;
       max-height: 100vh;
-      height: 100vh;
+      height: calc(100vh - 52px);
       background-color: var(--theme-bg-color);
-      border-radius: 30px 0 0 30px;
+      border-radius: 20px;
       box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
       .header {
@@ -127,7 +126,7 @@
         flex-shrink: 0;
         width: 640px;
         margin: 0 40px;
-        height: calc(100vh - 168px);
+        height: calc(100vh - 168px - 52px);
       }
 
       .footer {
