@@ -42,44 +42,43 @@
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
-  class="container"
+  class="flex-row-center container"
+  class:sub={!node}
   on:click|stopPropagation={() => {
     if (node && !icon) collapsed = !collapsed
     dispatch('click')
   }}
 >
-  <div class="title" class:sub={!node}>
-    {#if component}
-      <div class="component" class:sub={!node}>
-        <Component is={component} {props} />
-      </div>
-    {:else}
-      <div class="icon" class:sub={!node}>
-        {#if icon}
-          {#if useIcon}
-            <Icon {icon} size={16} />
-          {:else}
-            <img src={icon} width={16} height={16} alt="Avatar" />
-          {/if}
-        {:else if collapsed}
-          <Collapsed />
+  {#if component}
+    <div class="component">
+      <Component is={component} {props} />
+    </div>
+  {:else}
+    <div class="icon">
+      {#if icon}
+        {#if useIcon}
+          <Icon {icon} size={16} />
         {:else}
-          <Expanded />
+          <img src={icon} width={16} height={16} alt="Avatar" />
         {/if}
-      </div>
-      <span>
-        {#if label}<Label {label} />{:else}{title}{/if}
-      </span>
-    {/if}
-    {#each actions as action}
-      <div class="tool">
-        <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} />
-      </div>
-    {/each}
-    {#if notifications > 0 && collapsed}
-      <div class="counter">{notifications}</div>
-    {/if}
-  </div>
+      {:else if collapsed}
+        <Collapsed />
+      {:else}
+        <Expanded />
+      {/if}
+    </div>
+    <span>
+      {#if label}<Label {label} />{:else}{title}{/if}
+    </span>
+  {/if}
+  {#each actions as action}
+    <div class="tool">
+      <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} />
+    </div>
+  {/each}
+  {#if notifications > 0 && collapsed}
+    <div class="counter">{notifications}</div>
+  {/if}
 </div>
 {#if node && !icon}
   <div class="dropdown" class:collapsed>
@@ -89,79 +88,60 @@
 
 <style lang="scss">
   .container {
-    height: 36px;
+    margin: 0 16px;
+    padding-left: 10px;
+    padding-right: 12px;
+    min-height: 36px;
+    font-weight: 500;
+    color: var(--theme-caption-color);
+    border-radius: 8px;
+    user-select: none;
     cursor: pointer;
-    .title {
-      display: flex;
-      align-items: center;
-      margin: 0 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--theme-caption-color);
-      user-select: none;
-      &.sub {
-        font-weight: 400;
-        color: var(--theme-content-color);
-      }
+    &.sub {
+      padding-left: 44px;
+      font-weight: 400;
       .icon {
-        width: 16px;
-        min-width: 16px;
-        height: 16px;
-        margin: 10px 16px 10px 18px;
-        border-radius: 4px;
-        opacity: 0.3;
-        &.sub {
-          margin: 10px 16px 10px 50px;
-        }
+        margin-right: 8px;
       }
-      span {
-        flex-grow: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .component {
-        margin: 10px 16px 10px 18px;
-        flex-grow: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        &.sub {
-          margin: 10px 16px 10px 50px;
-        }
-      }
+    }
+
+    .icon {
+      margin-right: 18px;
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      opacity: 0.3;
+    }
+    span {
+      flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .component {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+    .tool {
+      margin-left: 12px;
+      visibility: hidden;
+    }
+    .counter {
+      margin-left: 12px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 100%;
+    }
+
+    &:hover {
+      background-color: var(--theme-button-bg-enabled);
       .tool {
-        width: 16px;
-        height: 16px;
-        margin-left: 12px;
-        visibility: hidden;
-        &:last-child {
-          margin-right: 10px;
-        }
-      }
-      .counter {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 24px;
-        min-width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        margin: 6px 10px;
-        background-color: #da5f44;
-        font-size: 12px;
-        font-weight: 600;
-        color: #fff;
-      }
-      &:hover {
-        background-color: var(--theme-button-bg-enabled);
-        .tool {
-          visibility: visible;
-        }
+        visibility: visible;
       }
     }
   }
+
   .dropdown {
     visibility: visible;
     height: auto;

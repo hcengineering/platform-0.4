@@ -94,7 +94,7 @@
 
 <svg class="mask">
   <clipPath id="notify">
-    <path d="M0,0v48h48V0H0z M32,25c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S35.9,25,32,25z" />
+    <path d="M0,0v50h50V0H0z M32,24.5c-3.6,0-6.5-2.9-6.5-6.5s2.9-6.5,6.5-6.5s6.5,2.9,6.5,6.5S35.6,24.5,32,24.5z" />
   </clipPath>
 </svg>
 <div class="container">
