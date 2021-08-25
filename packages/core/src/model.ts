@@ -30,4 +30,3 @@ export async function findModelTxs (storage: Storage, accountId: Ref<Account>): 
   // We search for model object space.
   return await storage.findAll(core.class.Tx, { objectSpace: core.space.Model })
 }
-

@@ -60,6 +60,11 @@ describe('memdb', () => {
       kind: 0
     })
     expect(first.length).toBe(1)
+    const und = await model.findAll(core.class.Class, {
+      _id: txes[1].objectId as Ref<Class<Obj>>,
+      kind: undefined
+    })
+    expect(und.length).toBe(1)
     const second = await model.findAll(core.class.Class, {
       _id: { $in: [txes[1].objectId as Ref<Class<Obj>>, txes[3].objectId as Ref<Class<Obj>>] }
     })

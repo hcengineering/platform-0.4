@@ -31,9 +31,9 @@ describe('hierarchy', () => {
   it('isDerived', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
-    const derived = hierarchy.isDerived('class:core.Space' as Ref<Class<Obj>>, 'class:core.Doc' as Ref<Class<Obj>>)
+    const derived = hierarchy.isDerived(core.class.Space, core.class.Doc)
     expect(derived).toBeTruthy()
-    const notDerived = hierarchy.isDerived('class:core.Space' as Ref<Class<Obj>>, 'class:core.Tx' as Ref<Class<Obj>>)
+    const notDerived = hierarchy.isDerived(core.class.Space, core.class.Tx)
     expect(notDerived).not.toBeTruthy()
   })
 
@@ -44,6 +44,7 @@ describe('hierarchy', () => {
     expect(data).toMatchObject((txes.find((p) => p.objectId === core.class.TxCreateDoc) as TxCreateDoc<Doc>).attributes)
     const notExistClass = 'class:test.MyClass' as Ref<Class<Obj>>
     expect(() => hierarchy.getClass(notExistClass)).toThrowError('class not found: ' + notExistClass)
+    expect(() => hierarchy.getAncestors(notExistClass)).toThrowError('ancestors not found: ' + notExistClass)
   })
 
   it('getDomain', async () => {
@@ -53,5 +54,17 @@ describe('hierarchy', () => {
     expect(txDomain).toBe('tx')
     const modelDomain = hierarchy.getDomain(core.class.Class)
     expect(modelDomain).toBe('model')
+    const nestedDomain = hierarchy.getDomain(core.class.Title)
+    expect(nestedDomain).toBe('model')
+    expect(() => hierarchy.getDomain(core.class.Obj)).toThrowError('domain not found: ' + core.class.Obj)
+  })
+
+  it('getDescendants', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) hierarchy.tx(tx)
+    const tx = hierarchy.getDescendants(core.class.Tx)
+    expect(tx.length).toBe(4)
+    const notExistClass = 'class:test.MyClass' as Ref<Class<Obj>>
+    expect(() => hierarchy.getDescendants(notExistClass)).toThrowError('descendants not found: ' + notExistClass)
   })
 })

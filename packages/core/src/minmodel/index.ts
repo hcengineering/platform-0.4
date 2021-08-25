@@ -15,7 +15,7 @@ export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T
     objectClass: core.class.Class,
     attributes: {
       kind: ClassifierKind.CLASS,
-      domain: domain ?? DOMAIN_MODEL,
+      domain: domain,
       ...cl
     },
     modifiedBy: 'model' as Ref<Account>,
@@ -55,20 +55,20 @@ export function _genMinModel (): Tx[] {
   const txes = []
   // Fill Tx'es with basic model classes.
   txes.push(_createClass(core.class.Obj, {}))
-  txes.push(_createClass(core.class.Doc, { extends: core.class.Obj }))
+  txes.push(_createClass(core.class.Doc, { extends: core.class.Obj }, DOMAIN_MODEL))
   txes.push(_createClass(core.class.Class, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.Space, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.Account, { extends: core.class.Doc }))
-  txes.push(_createClass(core.class.Reference, { extends: core.class.Doc }, DOMAIN_REFERENCES))
   txes.push(_createClass(core.class.DerivedData, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.DerivedDataDescriptor, { extends: core.class.Doc }))
+  txes.push(_createClass(core.class.Reference, { extends: core.class.DerivedData }, DOMAIN_REFERENCES))
   txes.push(_createClass(core.class.Title, { extends: core.class.DerivedData }))
-  txes.push(_createClass(core.class.ShortRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
+  txes.push(_createClass(core.class.ShortRef, { extends: core.class.Title }))
 
   txes.push(_createClass(core.class.Tx, { extends: core.class.Doc }, DOMAIN_TX))
-  txes.push(_createClass(core.class.TxCreateDoc, { extends: core.class.Tx }, DOMAIN_TX))
-  txes.push(_createClass(core.class.TxUpdateDoc, { extends: core.class.Tx }, DOMAIN_TX))
-  txes.push(_createClass(core.class.TxRemoveDoc, { extends: core.class.Tx }, DOMAIN_TX))
+  txes.push(_createClass(core.class.TxCreateDoc, { extends: core.class.Tx }))
+  txes.push(_createClass(core.class.TxUpdateDoc, { extends: core.class.Tx }))
+  txes.push(_createClass(core.class.TxRemoveDoc, { extends: core.class.Tx }))
 
   const u1 = 'User1' as Ref<Account>
   const u2 = 'User2' as Ref<Account>
