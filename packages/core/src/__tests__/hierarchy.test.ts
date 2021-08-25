@@ -56,7 +56,6 @@ describe('hierarchy', () => {
     expect(modelDomain).toBe('model')
     const nestedDomain = hierarchy.getDomain(core.class.Title)
     expect(nestedDomain).toBe('model')
-    expect(() => hierarchy.getDomain(core.class.Obj)).toThrowError('domain not found: ' + core.class.Obj)
   })
 
   it('getDescendants', async () => {
