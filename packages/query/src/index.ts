@@ -159,8 +159,8 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
           q.result.splice(pos, 1)
           q.total--
         }
+        q.result[q.result.findIndex((p) => p._id === updatedDoc._id)] = updatedDoc
         this.sort(q, tx)
-        q.result[q.result.findIndex(p => p._id === updatedDoc._id)] = updatedDoc
         await this.callback(updatedDoc, q)
       } else if (this.matchQuery(q, tx)) {
         await this.refresh(q)
@@ -197,7 +197,11 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         q.result = copy(await q.result)
       }
       const index = q.result.findIndex((p) => p._id === tx.objectId)
-      if (q.options?.limit !== undefined && q.options.limit === q.result.length && this.isDerived(q._class, tx.objectClass)) {
+      if (
+        q.options?.limit !== undefined &&
+        q.options.limit === q.result.length &&
+        this.isDerived(q._class, tx.objectClass)
+      ) {
         return await this.refresh(q)
       }
       if (index > -1) {

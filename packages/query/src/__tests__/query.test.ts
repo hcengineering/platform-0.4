@@ -75,7 +75,6 @@ describe('query', () => {
       }
     })
 
-
     await storage.createDoc(core.class.Account, core.space.Model, {
       email: 'user1@site.com',
       name: 'User1'
@@ -250,10 +249,15 @@ describe('query', () => {
 
     const expectedLength = 2
     let attempt = 0
-    client.query<Space>(core.class.Space, { private: false }, (result) => {
-      expect(result).toHaveLength(attempt++ === expectedLength ? 0 : 1)
-      if (attempt === expectedLength) done()
-    }, { limit: 1 })
+    client.query<Space>(
+      core.class.Space,
+      { private: false },
+      (result) => {
+        expect(result).toHaveLength(attempt++ === expectedLength ? 0 : 1)
+        if (attempt === expectedLength) done()
+      },
+      { limit: 1 }
+    )
 
     const spaces = await client.findAll(core.class.Space, {})
     for (const space of spaces) {
