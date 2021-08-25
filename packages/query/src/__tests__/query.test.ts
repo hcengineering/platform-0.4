@@ -33,7 +33,7 @@ describe('query', () => {
     const storage = await getClient()
 
     let expectedLength = 0
-    const txes = await getModel()
+    const txes = getModel()
     for (let i = 0; i < txes.length; i++) {
       if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, core.class.Space)) {
         expectedLength++
@@ -50,7 +50,7 @@ describe('query', () => {
     const storage = await getClient()
 
     let expectedLength = 0
-    const txes = await getModel()
+    const txes = getModel()
     for (let i = 0; i < txes.length; i++) {
       if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, core.class.Space)) {
         expectedLength++
@@ -75,6 +75,18 @@ describe('query', () => {
       }
     })
 
+
+    await storage.createDoc(core.class.Account, core.space.Model, {
+      email: 'user1@site.com',
+      name: 'User1'
+    })
+    await storage.createDoc<Channel>(core.class.Space, core.space.Model, {
+      private: true,
+      name: '#0',
+      description: '',
+      members: [],
+      x: 0
+    })
     await storage.createDoc<Channel>(core.class.Space, core.space.Model, {
       private: false,
       name: '#1',
@@ -102,7 +114,7 @@ describe('query', () => {
     const storage = await getClient()
 
     let expectedLength = 0
-    const txes = await getModel()
+    const txes = getModel()
     for (let i = 0; i < txes.length; i++) {
       if (storage.isDerived((txes[i] as TxCreateDoc<Doc>).objectClass, core.class.Space)) {
         expectedLength++
@@ -216,6 +228,7 @@ describe('query', () => {
       })
     }
   })
+
   it('remove', async (done) => {
     const client = await getClient()
 
@@ -225,6 +238,22 @@ describe('query', () => {
       expect(result).toHaveLength(expectedLength - attempt)
       if (attempt++ === expectedLength) done()
     })
+
+    const spaces = await client.findAll(core.class.Space, {})
+    for (const space of spaces) {
+      await client.removeDoc(space._class, space.space, space._id)
+    }
+  })
+
+  it('remove with limit', async (done) => {
+    const client = await getClient()
+
+    const expectedLength = 2
+    let attempt = 0
+    client.query<Space>(core.class.Space, { private: false }, (result) => {
+      expect(result).toHaveLength(attempt++ === expectedLength ? 0 : 1)
+      if (attempt === expectedLength) done()
+    }, { limit: 1 })
 
     const spaces = await client.findAll(core.class.Space, {})
     for (const space of spaces) {
@@ -273,12 +302,63 @@ describe('query', () => {
 
     expect(queryResult.length).toEqual(0)
 
-    const space = spaces[0]
-    await client.updateDoc(space._class, space.space, space._id, {
+    await client.updateDoc(spaces[1]._class, spaces[1].space, spaces[1]._id, {
+      account: { starred: false }
+    })
+    await client.updateDoc(spaces[0]._class, spaces[0].space, spaces[0]._id, {
       account: { starred: true }
     })
 
     expect(queryResult.length).toEqual(1)
+  })
+
+  it('update with no match query', async (done) => {
+    const client = await getClient()
+
+    const spaces = await client.findAll(core.class.Space, {})
+    let attempt = 0
+    client.query<Space>(
+      core.class.Space,
+      { private: false },
+      (result) => {
+        if (attempt > 0) {
+          expect(result.length === spaces.length - attempt)
+          expect(result.total === spaces.length - attempt)
+          if (attempt === spaces.length) done()
+        }
+      },
+      { sort: { private: SortingOrder.Ascending } }
+    )
+
+    for (const space of spaces) {
+      attempt++
+      await client.updateDoc(space._class, space.space, space._id, {
+        private: true
+      })
+    }
+  })
+
+  it('update with over limit', async (done) => {
+    const client = await getClient()
+
+    const spaces = await client.findAll(core.class.Space, {})
+    let attempt = 0
+    client.query<Space>(
+      core.class.Space,
+      {},
+      (result) => {
+        expect(result[0].name).toEqual(`Sp${++attempt}`)
+        if (attempt === spaces.length + 1) done()
+      },
+      { sort: { name: SortingOrder.Ascending }, limit: 1 }
+    )
+
+    for (let index = 0; index < spaces.length; index++) {
+      const space = spaces[index]
+      await client.updateDoc(space._class, space.space, space._id, {
+        name: `Sp${index + spaces.length + 1}`
+      })
+    }
   })
 })
 

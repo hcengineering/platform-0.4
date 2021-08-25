@@ -53,7 +53,7 @@ export interface Queriable {
   query: <T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: T[]) => void,
+    callback: (result: FindResult<T>) => void,
     options?: FindOptions<T>
   ) => () => void
 
@@ -100,7 +100,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   query<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: T[]) => void,
+    callback: (result: FindResult<T>) => void,
     options?: FindOptions<T>
   ): () => void {
     const result = this.client.findAll(_class, query, options)
@@ -111,12 +111,13 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       result,
       total: 0,
       options,
-      callback: callback as (result: Doc[]) => void
+      callback: callback as (result: FindResult<Doc>) => void
     }
     this.queries.set(q._id, q)
     result
       .then((res) => {
         q.result = copy(res)
+        q.total = res.total
         q.callback(res)
       })
       .catch((err) => {
@@ -153,29 +154,23 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       const updatedDoc = q.result.find((p) => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
         const pos = q.result.indexOf(updatedDoc)
-        await this.doUpdateDoc(updatedDoc, tx)
+        this.doUpdateDoc(updatedDoc, tx)
         if (!this.match(q, updatedDoc)) {
           q.result.splice(pos, 1)
           q.total--
         }
         this.sort(q, tx)
+        q.result[q.result.findIndex(p => p._id === updatedDoc._id)] = updatedDoc
         await this.callback(updatedDoc, q)
-      } else {
-        // We need to check what change potentially cause object to apper in results.
-        if (this.matchQuery(q, tx)) {
-          const res = copy(await this.findAll(q._class, q.query, q.options))
-          q.result = res
-          q.total = res.total
-          this.sort(q, tx)
-          q.callback(res)
-        }
+      } else if (this.matchQuery(q, tx)) {
+        await this.refresh(q)
       }
     }
   }
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
+    const doc = TxProcessor.createDoc2Doc(tx)
     for (const q of this.queries.values()) {
-      const doc = TxProcessor.createDoc2Doc(tx)
       if (this.match(q, doc)) {
         if (q.result instanceof Promise) {
           q.result = copy(await q.result)
@@ -202,6 +197,9 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         q.result = copy(await q.result)
       }
       const index = q.result.findIndex((p) => p._id === tx.objectId)
+      if (q.options?.limit !== undefined && q.options.limit === q.result.length && this.isDerived(q._class, tx.objectClass)) {
+        return await this.refresh(q)
+      }
       if (index > -1) {
         q.result.splice(index, 1)
         q.callback(Object.assign(q.result, { total: --q.total }))
@@ -217,7 +215,8 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     await super.tx(tx)
   }
 
-  async doUpdateDoc (updatedDoc: Doc, tx: TxUpdateDoc<Doc>): Promise<void> {
+  doUpdateDoc (doc: Doc, tx: TxUpdateDoc<Doc>): Doc {
+    const updatedDoc = copy(doc)
     const ops = tx.operations as any
     for (const key in ops) {
       if (key.startsWith('$')) {
@@ -229,6 +228,14 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     }
     updatedDoc.modifiedBy = tx.modifiedBy
     updatedDoc.modifiedOn = tx.modifiedOn
+    return updatedDoc
+  }
+
+  private async refresh (q: Query): Promise<void> {
+    const res = await this.client.findAll(q._class, q.query, q.options)
+    q.result = copy(res)
+    q.total = res.total
+    q.callback(res)
   }
 
   private sort (q: Query, tx: TxUpdateDoc<Doc>): void {
@@ -257,17 +264,11 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   private async callback (updatedDoc: Doc, q: Query): Promise<void> {
     q.result = q.result as Doc[]
 
-    if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
-      if (q.result[q.options?.limit]._id === updatedDoc._id) {
-        const res = copy(await this.findAll(q._class, q.query, q.options))
-        q.result = res
-        q.total = res.total
-        q.callback(res)
-        return
+    if (q.options?.limit !== undefined && q.total > q.options.limit) {
+      if (q.result.pop()?._id === updatedDoc._id) {
+        return await this.refresh(q)
       }
-      if (q.result.pop()?._id !== updatedDoc._id) q.callback(Object.assign(q.result, { total: q.total }))
-    } else {
-      q.callback(Object.assign(q.result, { total: q.total }))
     }
+    q.callback(Object.assign(q.result, { total: q.total }))
   }
 }
