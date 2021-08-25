@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server-tools",
+      "comment": "Personal model operations",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server-tools"
+}
