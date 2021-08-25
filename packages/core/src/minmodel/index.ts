@@ -54,16 +54,16 @@ export function _createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Da
 export function _genMinModel (): Tx[] {
   const txes = []
   // Fill Tx'es with basic model classes.
-  txes.push(_createClass(core.class.Obj, {}))
-  txes.push(_createClass(core.class.Doc, { extends: core.class.Obj }, DOMAIN_MODEL))
+  txes.push(_createClass(core.class.Obj, {}, DOMAIN_MODEL))
+  txes.push(_createClass(core.class.Doc, { extends: core.class.Obj }))
   txes.push(_createClass(core.class.Class, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.Space, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.Account, { extends: core.class.Doc }))
+  txes.push(_createClass(core.class.Reference, { extends: core.class.Doc }, DOMAIN_REFERENCES))
   txes.push(_createClass(core.class.DerivedData, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.DerivedDataDescriptor, { extends: core.class.Doc }))
-  txes.push(_createClass(core.class.Reference, { extends: core.class.DerivedData }, DOMAIN_REFERENCES))
   txes.push(_createClass(core.class.Title, { extends: core.class.DerivedData }))
-  txes.push(_createClass(core.class.ShortRef, { extends: core.class.Title }))
+  txes.push(_createClass(core.class.ShortRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
 
   txes.push(_createClass(core.class.Tx, { extends: core.class.Doc }, DOMAIN_TX))
   txes.push(_createClass(core.class.TxCreateDoc, { extends: core.class.Tx }))
