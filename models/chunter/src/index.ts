@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-import type { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
+import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
 import type { Domain, FullRefString, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
-import { Application } from '../../../plugins/workbench/lib'
+import { Application } from '@anticrm/workbench'
 import chunter from './plugin'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
@@ -29,6 +29,11 @@ const DOMAIN_CHUNTER = 'chunter' as Domain
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {
   direct!: boolean
+
+  topic!: string
+  favourite!: boolean
+  muted!: boolean
+  notifications!: ChannelNotificationSchema
 }
 
 /**
@@ -74,10 +79,20 @@ export function createModel (builder: Builder): void {
         ],
         spaces: [
           {
+            label: chunter.string.Starred,
+            hideIfEmpty: true,
+            spaceIcon: chunter.icon.Hashtag,
+            spaceClass: chunter.class.Channel,
+            spaceQuery: { 'account.starred': true },
+            addSpaceLabel: chunter.string.CreateChannel,
+            spaceItem: chunter.component.SpaceItem,
+            spaceHeader: chunter.component.SpaceHeader
+          },
+          {
             label: chunter.string.Channels,
             spaceIcon: chunter.icon.Hashtag,
             spaceClass: chunter.class.Channel,
-            spaceQuery: { direct: false },
+            spaceQuery: { direct: false, 'account.starred': { $ne: true } },
             addSpaceLabel: chunter.string.CreateChannel,
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
@@ -87,7 +102,7 @@ export function createModel (builder: Builder): void {
             label: chunter.string.DirectMessages,
             spaceIcon: chunter.icon.Hashtag,
             spaceClass: chunter.class.Channel,
-            spaceQuery: { direct: true },
+            spaceQuery: { direct: true, 'account.starred': { $ne: true } },
             addSpaceLabel: chunter.string.CreateDirectMessage,
             spaceItem: chunter.component.SpaceItem,
             spaceHeader: chunter.component.SpaceHeader

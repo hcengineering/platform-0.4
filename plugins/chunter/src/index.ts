@@ -18,8 +18,19 @@ import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
 
+export interface ChannelAccountPreferences {
+  favourite: boolean
+  muted: boolean
+  notifications: ChannelNotificationSchema
+}
+
 export interface Channel extends Space {
   direct: boolean // <-- Identify if it is a direct messaging channel
+
+  topic?: string
+
+  // Customizable fields.
+  account?: ChannelAccountPreferences
 }
 
 export interface CommentRef {
@@ -37,6 +48,15 @@ export interface Message extends WithMessage {
 
 export interface Comment extends WithMessage {
   replyOf: FullRefString
+}
+
+/**
+ * @public
+ */
+export enum ChannelNotificationSchema {
+  AllNewMessages,
+  OnlyMentions,
+  Nothing
 }
 
 export interface ChunterService extends Service {}
@@ -74,7 +94,9 @@ export default plugin(
 
       UserTo: '' as IntlString,
       MessageTo: '' as IntlString,
-      MessageToLabel: '' as IntlString
+      MessageToLabel: '' as IntlString,
+
+      Starred: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,

@@ -339,7 +339,7 @@ describe('security', () => {
 
     const securityModel = await SecurityModel.create(hierarchy, modelDb)
 
-    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(2)
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(4)
   })
 
   it('check security push/pull', async () => {
@@ -373,7 +373,7 @@ describe('security', () => {
     }
     await securityModel.tx(tx)
 
-    expect((await securityModel.getUserSpaces('User1' as Ref<Account>)).size).toEqual(1)
+    expect((await securityModel.getUserSpaces('User1' as Ref<Account>)).size).toEqual(3)
   })
 
   it('check change space private', async () => {
@@ -421,7 +421,7 @@ describe('security', () => {
     }
     await securityModel.tx(tx)
 
-    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(2)
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(4)
   })
   it('check remove space', async () => {
     const txes = _genMinModel()
@@ -450,6 +450,6 @@ describe('security', () => {
     expect(securityModel.checkSpaceTx(u1, tx)).toEqual(true)
     await securityModel.tx(tx)
 
-    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(1)
+    expect(securityModel.getSpaces('User1' as Ref<Account>).size).toEqual(3)
   })
 })

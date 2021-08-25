@@ -57,14 +57,14 @@ function connectClient (
           findAll: async (_class, query) => {
             const result = await clientStorage.findAll(_class, query)
             if (options?.logRequests ?? false) {
-              console.info(`request from ${accountId}-${details.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+              console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
             }
             return result
           },
           tx: async (tx) => {
             const result = await clientStorage.tx(tx)
             if (options.logTransactions) {
-              console.info(`tx from ${accountId}-${details.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+              console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
             }
             return result
           },

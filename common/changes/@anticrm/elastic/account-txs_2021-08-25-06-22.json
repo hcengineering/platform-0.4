@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/elastic",
+      "comment": "Personal model operations",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/elastic"
+}

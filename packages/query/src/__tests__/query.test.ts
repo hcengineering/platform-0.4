@@ -14,7 +14,7 @@
 //
 
 import type { Doc, Space, TxCreateDoc, TxOperations } from '@anticrm/core'
-import core, { Storage, createClient, SortingOrder, withOperations, _genMinModel as getModel } from '@anticrm/core'
+import core, { createClient, SortingOrder, Storage, withOperations, _genMinModel as getModel } from '@anticrm/core'
 import { LiveQuery } from '..'
 import { connect } from './connection'
 export interface Client extends Storage, TxOperations, LiveQuery {}
@@ -257,6 +257,28 @@ describe('query', () => {
         $push: { members: core.account.System }
       })
     }
+  })
+
+  it('update-inner-field', async () => {
+    const client = await getClient()
+
+    const spaces = await client.findAll(core.class.Space, {})
+    let queryResult: Doc[] = []
+    await new Promise((resolve) => {
+      client.query<Space>(core.class.Space, { 'account.starred': true }, (result) => {
+        queryResult = result
+        resolve(null)
+      })
+    })
+
+    expect(queryResult.length).toEqual(0)
+
+    const space = spaces[0]
+    await client.updateDoc(space._class, space.space, space._id, {
+      account: { starred: true }
+    })
+
+    expect(queryResult.length).toEqual(1)
   })
 })
 

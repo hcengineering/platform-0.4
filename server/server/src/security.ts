@@ -15,6 +15,10 @@ import core, {
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 import { WithWorkspaceTx } from '@anticrm/workspace'
 
+function accountTxSpace (user: Ref<Account>): Ref<Space> {
+  return (core.space.Tx + '#' + user) as Ref<Space>
+}
+
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
   private readonly allowedSpaces: Map<Ref<Account>, Set<Ref<Space>>> = new Map<Ref<Account>, Set<Ref<Space>>>()
@@ -107,9 +111,11 @@ export class SecurityModel extends TxProcessor {
   }
 
   checkSecurity (userId: Ref<Account>, tx: Tx): boolean {
-    if (tx.objectSpace === core.space.Model) return this.checkSpaceTx(userId, tx)
-    const spaces = this.allowedSpaces.get(userId)
-    return spaces?.has(tx.objectSpace) === true
+    if (tx.objectSpace === core.space.Model) {
+      return this.checkSpaceTx(userId, tx)
+    }
+    const spaces = this.getUserSpaces(userId)
+    return spaces.has(tx.objectSpace)
   }
 
   checkSpaceTx (userId: Ref<Account>, tx: Tx): boolean {
@@ -125,21 +131,25 @@ export class SecurityModel extends TxProcessor {
   txUpdateSpace (userId: Ref<Account>, tx: TxUpdateDoc<Doc>): boolean {
     if (!this.hierarchy.isDerived(tx.objectClass, core.class.Space)) return true
     const spaces = this.getSpaces(userId)
-    return spaces?.has(tx.objectId as Ref<Space>)
+    return spaces.has(tx.objectId as Ref<Space>)
   }
 
   txRemoveSpace (userId: Ref<Account>, tx: TxRemoveDoc<Doc>): boolean {
     if (!this.hierarchy.isDerived(tx.objectClass, core.class.Space)) return true
-    const spaces = this.allowedSpaces.get(userId)
-    return spaces?.has(tx.objectId as Ref<Space>) === true
+    const spaces = this.getSpaces(userId)
+    return spaces.has(tx.objectId as Ref<Space>)
   }
 
   getSpaces (userId: Ref<Account>): Set<Ref<Space>> {
     return new Set<Ref<Space>>([...this.publicSpaces, ...(this.allowedSpaces.get(userId) ?? [])])
+      .add(core.space.Model)
+      .add(core.space.Tx)
   }
 
   getUserSpaces (userId: Ref<Account>): Set<Ref<Space>> {
-    return this.allowedSpaces.get(userId) ?? new Set<Ref<Space>>()
+    return new Set(this.allowedSpaces.get(userId) ?? new Set<Ref<Space>>())
+      .add(core.space.Model)
+      .add(core.space.Tx)
   }
 }
 
@@ -152,7 +162,9 @@ export interface ClientInfo {
 
 function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref<Space>>): ObjQueryType<Ref<Space>> {
   if (typeof querySpace === 'string') {
-    if (!spaces.has(querySpace)) throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    if (!spaces.has(querySpace)) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+    }
   } else {
     if (querySpace.$in?.every((space) => spaces.has(space)) === false) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
@@ -181,9 +193,17 @@ export class SecurityClientStorage implements WithAccountId {
   ): Promise<FindResult<T>> {
     // Filter for client accountId
     const domain = this.hierarchy.getDomain(_class)
-    if (domain === DOMAIN_MODEL || domain === DOMAIN_TX) {
-      return await this.workspace.findAll(_class, query, options)
+    if (domain === DOMAIN_MODEL) {
+      // Model requests are handled on client side.
+      return Object.assign([], { total: 0 })
     }
+
+    return domain === DOMAIN_TX
+      ? await this.findInTxDomain<T>(query, _class, options)
+      : await this.findInWorkspace<T>(query, _class, options)
+  }
+
+  private async findInWorkspace<T extends Doc>(query: DocumentQuery<T>, _class: Ref<Class<T>>, options: FindOptions<T> | undefined): Promise<FindResult<T>> {
     const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.security.getUserSpaces(this.user.accountId)
     query.space =
@@ -193,12 +213,44 @@ export class SecurityClientStorage implements WithAccountId {
     return await this.workspace.findAll(_class, query, options)
   }
 
+  private async findInTxDomain<T extends Doc>(query: DocumentQuery<T>, _class: Ref<Class<T>>, options: FindOptions<T> | undefined): Promise<FindResult<T>> {
+    const txQuery = (query as DocumentQuery<Tx>)
+    const querySpace = txQuery.objectSpace
+
+    // Availabel spaces + model
+    const spaces = this.security.getUserSpaces(this.user.accountId)
+      .add(core.space.Model) // Every one capable to query model
+
+    txQuery.objectSpace =
+      querySpace !== undefined
+        ? (query.space = checkQuerySpaces(spaces, querySpace))
+        : (query.space = { $in: [...spaces.values()] })
+
+    // We allow to return only transactions visible to global and account tx spaces.
+    txQuery.space = { $in: [core.space.Tx, accountTxSpace(this.user.accountId)] }
+    // We need to enhance with current client security.
+    return await this.workspace.findAll(_class, txQuery, options)
+  }
+
   async tx (tx: Tx): Promise<void> {
+    // Check if transaction is into global or custom user space.
+    this.checkModelTransactions(tx)
     if (!this.security.checkSecurity(this.user.accountId, tx)) {
       throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
     }
     // Check if tx is allowed and process with workspace
     await this.workspace.tx(this.user.clientId, tx)
+  }
+
+  private checkModelTransactions (tx: Tx<Doc>): void {
+    const accountSpace = accountTxSpace(this.user.accountId)
+    if (![core.space.Tx, accountSpace].includes(tx.space)) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.TransactionSpaceDenied, {}))
+    }
+    // Disallow account space transactions to modify non model objects.
+    if (tx.space === accountSpace && tx.objectSpace !== core.space.Model) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.TransactionSpaceDenied, {}))
+    }
   }
 
   async accountId (): Promise<Ref<Account>> {
@@ -207,5 +259,6 @@ export class SecurityClientStorage implements WithAccountId {
 }
 
 export const Code = component('security' as Component, {
-  AccessDenied: '' as StatusCode
+  AccessDenied: '' as StatusCode,
+  TransactionSpaceDenied: '' as StatusCode
 })

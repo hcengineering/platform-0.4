@@ -74,6 +74,7 @@
 </script>
 
 <div>
+  <!-- {#if !(model.hideIfEmpty ?? false) || spaces.length > 0} -->
   <TreeNode label={model.label} {actions}>
     {#each spaces as space}
       <TreeItem
@@ -88,4 +89,5 @@
       />
     {/each}
   </TreeNode>
+  <!-- {/if} -->
 </div>

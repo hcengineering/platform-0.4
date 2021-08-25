@@ -51,9 +51,7 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    const handler = this.txHandlers[tx._class]
-    await handler?.(tx)
-    return await Promise.resolve()
+    return await this.txHandlers[tx._class]?.(tx)
   }
 
   private collection<T extends Doc>(_class: Ref<Class<T>>): Collection {

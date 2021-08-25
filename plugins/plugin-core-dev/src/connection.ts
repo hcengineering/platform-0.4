@@ -32,6 +32,7 @@ import core, {
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import copy from 'fast-copy'
+import { isModelTx } from '@anticrm/core'
 
 export class ClientImpl extends TxProcessor implements Client {
   handler: (tx: Tx) => void = () => {}
@@ -50,7 +51,6 @@ export class ClientImpl extends TxProcessor implements Client {
       tx: async (tx) => {
         await storage.tx(tx)
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         sendTo(tx)
       }
     }
@@ -60,7 +60,7 @@ export class ClientImpl extends TxProcessor implements Client {
     const txes = builder.getTxes()
 
     const hierarchy = new Hierarchy()
-    for (const tx of txes) hierarchy.tx(tx)
+    txes.forEach((tx) => hierarchy.tx(tx))
 
     const transactions = new TxDb(hierarchy)
     const model = new ModelDb(hierarchy)
@@ -86,19 +86,19 @@ export class ClientImpl extends TxProcessor implements Client {
   }
 
   async tx (tx: Tx): Promise<void> {
-    // 2. update hierarchy
-    if (tx.objectSpace === core.space.Model) {
+    // 1. update hierarchy
+    if (isModelTx(tx)) {
       this.hierarchy.tx(tx)
     }
 
-    // 3. update transactions
+    // 2. update transactions
     await this.transactions.tx(tx)
 
     if (typeof window !== 'undefined') {
       console.info('Model updated', this.model)
     }
 
-    // 5. process client handlers
+    // 3. process client handlers
     this.handler(tx)
   }
 

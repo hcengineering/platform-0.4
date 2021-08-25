@@ -1,4 +1,4 @@
-import core, {
+import {
   Class,
   Doc,
   DocumentQuery,
@@ -6,6 +6,7 @@ import core, {
   DOMAIN_TX,
   FindResult,
   Hierarchy,
+  isModelTx,
   Ref,
   Storage,
   Tx
@@ -30,7 +31,7 @@ export class WorkspaceStorage implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    if (tx.objectSpace !== core.space.Model) {
+    if (!isModelTx(tx)) {
       await this.doc.tx(tx)
     }
 

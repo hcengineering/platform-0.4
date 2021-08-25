@@ -14,11 +14,11 @@
 //
 
 import type { KeysByType } from 'simplytyped'
-import type { Class, Data, Doc, Domain, Ref, Account, Space, Arr } from './classes'
+import type { Account, Arr, Class, Data, Doc, Domain, Ref, Space } from './classes'
 import core from './component'
-import { generateId } from './utils'
 import { createShortRef } from './shortref'
 import { Storage } from './storage'
+import { generateId } from './utils'
 
 /**
  * @public
@@ -85,15 +85,14 @@ export const DOMAIN_TX = 'tx' as Domain
  * @public
  */
 export class TxProcessor {
+  txHandlers = {
+    [core.class.TxCreateDoc]: async (tx: Tx) => await this.txCreateDoc(tx as TxCreateDoc<Doc>),
+    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>),
+    [core.class.TxRemoveDoc]: async (tx: Tx) => await this.txRemoveDoc(tx as TxRemoveDoc<Doc>)
+  }
+
   async tx (tx: Tx): Promise<void> {
-    switch (tx._class) {
-      case core.class.TxCreateDoc:
-        return await this.txCreateDoc(tx as TxCreateDoc<Doc>)
-      case core.class.TxUpdateDoc:
-        return await this.txUpdateDoc(tx as TxUpdateDoc<Doc>)
-      case core.class.TxRemoveDoc:
-        return await this.txRemoveDoc(tx as TxRemoveDoc<Doc>)
-    }
+    return await this.txHandlers[tx._class]?.(tx)
   }
 
   static createDoc2Doc (tx: TxCreateDoc<Doc>): Doc {
@@ -122,16 +121,26 @@ export interface TxOperations {
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     attributes: Data<T>,
-    objectId?: Ref<T>
+    objectId?: Ref<T>,
+    userTxSpace?: boolean // Use user Transaction space.
   ) => Promise<T>
-  createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
+  createShortRef: <T extends Doc>(
+    _id: Ref<T>,
+    _class: Ref<Class<T>>,
+    space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     objectId: Ref<T>,
-    operations: DocumentUpdate<T>
+    operations: DocumentUpdate<T>,
+    userTxSpace?: boolean // Use user Transaction space.
   ) => Promise<void>
-  removeDoc: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
+  removeDoc: <T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    userTxSpace?: boolean // Use user Transaction space.
+  ) => Promise<void>
 }
 
 /**
@@ -146,9 +155,10 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     attributes: Data<T>,
-    objectId?: Ref<T>
+    objectId?: Ref<T>,
+    userTxSpace?: boolean
   ): Promise<T> => {
-    const tx: TxCreateDoc<T> = newTxCreateDoc<T>(user, _class, space, attributes, objectId)
+    const tx: TxCreateDoc<T> = newTxCreateDoc<T>(user, _class, space, attributes, objectId, userTxSpace)
     await storage.tx(tx)
     return TxProcessor.createDoc2Doc(tx) as T
   }
@@ -171,12 +181,13 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     objectId: Ref<T>,
-    operations: DocumentUpdate<T>
+    operations: DocumentUpdate<T>,
+    userTxSpace?: boolean
   ): Promise<void> => {
     const tx: TxUpdateDoc<T> = {
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
-      space: core.space.Tx,
+      space: txSpace(user, userTxSpace),
       modifiedBy: user,
       modifiedOn: Date.now(),
       createOn: Date.now(),
@@ -191,12 +202,13 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
   result.removeDoc = async <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
-    objectId: Ref<T>
+    objectId: Ref<T>,
+    userTxSpace?: boolean
   ): Promise<void> => {
     const tx: TxRemoveDoc<T> = {
       _id: generateId(),
       _class: core.class.TxRemoveDoc,
-      space: core.space.Tx,
+      space: txSpace(user, userTxSpace),
       modifiedBy: user,
       modifiedOn: Date.now(),
       createOn: Date.now(),
@@ -214,11 +226,11 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
  * Will create a transaction to create a docuemnt.
  * @public
  */
-export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>): TxCreateDoc<T> {
+export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>, userTxSpace?: boolean): TxCreateDoc<T> {
   return {
     _id: generateId(),
     _class: core.class.TxCreateDoc,
-    space: core.space.Tx,
+    space: txSpace(user, userTxSpace),
     modifiedBy: user,
     modifiedOn: Date.now(),
     createOn: Date.now(),
@@ -227,5 +239,9 @@ export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<C
     objectSpace: space,
     attributes
   }
+}
+
+function txSpace (user: Ref<Account>, userTxSpace?: boolean): Ref<Space> {
+  return (userTxSpace ?? false) ? (core.space.Tx + '#' + user) as Ref<Space> : core.space.Tx
 }
 

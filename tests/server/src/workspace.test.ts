@@ -59,7 +59,7 @@ const createMyTaskClass: TxCreateDoc<Class<MyTask>> = {
   createOn: Date.now(),
   modifiedOn: Date.now(),
   objectSpace: core.space.Model,
-  space: core.space.Model
+  space: core.space.Tx
 }
 
 const createMyTaskSpace: TxCreateDoc<Space> = {
@@ -71,7 +71,7 @@ const createMyTaskSpace: TxCreateDoc<Space> = {
   createOn: Date.now(),
   modifiedOn: Date.now(),
   objectSpace: core.space.Model,
-  space: core.space.Model,
+  space: core.space.Tx,
   attributes: {
     name: 'myTaskSpace',
     description: 'test Space',

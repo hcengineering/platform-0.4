@@ -41,7 +41,10 @@ export function findProperty (objects: Doc[], propertyKey: string, value: any): 
   return result
 }
 
-function nestedDotQueryCheck (key: string, value: any, pattern: any): boolean {
+/**
+ * @public
+ */
+export function nestedDotQueryCheck (key: string, value: any, pattern: any): boolean {
   // Check dot notation
 
   // Replace escapting, since memdb is not escape keys

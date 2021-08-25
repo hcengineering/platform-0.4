@@ -128,6 +128,23 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     }
   }
 
+  /**
+   * Method to check if query had any glue to be matched with update transaction.
+   */
+  private matchQuery (q: Query, tx: TxUpdateDoc<Doc>): boolean {
+    if (!this.isDerived(q._class, tx.objectClass)) {
+      return false
+    }
+    for (const key in q.query) {
+      const value = (q.query as any)[key]
+      const res = findProperty([tx.operations as unknown as Doc], key, value)
+      if (res.length === 1) {
+        return true
+      }
+    }
+    return false
+  }
+
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
@@ -135,13 +152,23 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       }
       const updatedDoc = q.result.find((p) => p._id === tx.objectId)
       if (updatedDoc !== undefined) {
+        const pos = q.result.indexOf(updatedDoc)
         await this.doUpdateDoc(updatedDoc, tx)
         if (!this.match(q, updatedDoc)) {
-          q.result.splice(0, q.result.indexOf(updatedDoc))
+          q.result.splice(pos, 1)
           q.total--
         }
         this.sort(q, tx)
         await this.callback(updatedDoc, q)
+      } else {
+        // We need to check what change potentially cause object to apper in results.
+        if (this.matchQuery(q, tx)) {
+          const res = copy(await this.findAll(q._class, q.query, q.options))
+          q.result = res
+          q.total = res.total
+          this.sort(q, tx)
+          q.callback(res)
+        }
       }
     }
   }

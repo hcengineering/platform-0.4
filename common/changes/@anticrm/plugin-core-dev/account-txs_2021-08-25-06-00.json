@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Personal model operations",
+      "type": "patch",
+      "packageName": "@anticrm/plugin-core-dev"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-dev",
+  "email": "haiodo@gmail.com"
+}

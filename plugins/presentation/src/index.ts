@@ -127,9 +127,10 @@ export class PresentationClient implements Storage, TxOperations {
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     attributes: Data<T>,
-    objectId?: Ref<T>
+    objectId?: Ref<T>,
+    txSpace?: boolean // Use user Transaction space.
   ): Promise<T> {
-    return await (await this.client()).createDoc(_class, space, attributes, objectId).catch((error) => {
+    return await (await this.client()).createDoc(_class, space, attributes, objectId, txSpace).catch((error) => {
       this.handleError(error)
       throw error
     })
@@ -147,15 +148,23 @@ export class PresentationClient implements Storage, TxOperations {
     _class: Ref<Class<T>>,
     space: Ref<Space>,
     objectId: Ref<T>,
-    operations: DocumentUpdate<T>
+    operations: DocumentUpdate<T>,
+    txSpace?: boolean // Use user Transaction space.
   ): Promise<void> {
     return await (await this.client())
-      .updateDoc(_class, space, objectId, operations)
+      .updateDoc(_class, space, objectId, operations, txSpace)
       .catch((error) => this.handleError(error))
   }
 
-  async removeDoc<T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>): Promise<void> {
-    return await (await this.client()).removeDoc(_class, space, objectId).catch((error) => this.handleError(error))
+  async removeDoc<T extends Doc>(
+    _class: Ref<Class<T>>,
+    space: Ref<Space>,
+    objectId: Ref<T>,
+    txSpace?: boolean // Use user Transaction space.
+  ): Promise<void> {
+    return await (await this.client())
+      .removeDoc(_class, space, objectId, txSpace)
+      .catch((error) => this.handleError(error))
   }
 
   private liveQuery<T extends Doc>(

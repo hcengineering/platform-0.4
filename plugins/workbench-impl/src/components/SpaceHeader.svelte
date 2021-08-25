@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Space } from '@anticrm/core'
+  import { Space } from '@anticrm/core'
   import { ActionIcon, Button, Component, Icon } from '@anticrm/ui'
   import type { NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
-  import { showModal } from '@anticrm/workbench'
+  import { getClient, showModal } from '@anticrm/workbench'
   import MoreH from './icons/MoreH.svelte'
   import Star from './icons/Star.svelte'
 
@@ -24,8 +24,23 @@
   export let model: NavigatorModel | undefined
   export let spaceModel: SpacesNavModel | undefined
 
+  const client = getClient()
+
   const addAction = () => {
     if (model?.createComponent !== undefined) showModal(model.createComponent, { space })
+  }
+  const changeStarred = () => {
+    if (space !== undefined) {
+      client.updateDoc<Space>(
+        space._class,
+        space.space,
+        space._id,
+        {
+          account: { starred: !(space?.account?.starred ?? false) }
+        },
+        true
+      )
+    }
   }
 </script>
 
@@ -53,7 +68,9 @@
   </div>
   <div class="flex-row-center">
     <Button label={'Create'} size={'small'} primary on:click={addAction} />
-    <div class="button"><ActionIcon icon={Star} size={16} /></div>
+    <div class="button">
+      <ActionIcon icon={Star} size={16} action={changeStarred} filled={space?.account?.starred ?? false} />
+    </div>
     <div class="button"><ActionIcon icon={MoreH} size={16} /></div>
   </div>
 </div>

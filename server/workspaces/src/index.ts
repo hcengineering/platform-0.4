@@ -1,6 +1,6 @@
 import core, { DOMAIN_TX } from '@anticrm/core'
 import builder from '@anticrm/model-all'
-import { getMongoClient } from '@anticrm/mongo'
+import { getMongoClient, mongoEscape } from '@anticrm/mongo'
 
 /**
  * Workspace connection options.
@@ -25,7 +25,7 @@ export async function createWorkspace (workspaceId: string, options: WorkspaceOp
   }
   const txes = db.collection(DOMAIN_TX as string)
   for (const tx of builder.getTxes()) {
-    await txes.insertOne(tx)
+    await txes.insertOne(mongoEscape(tx))
   }
 }
 
@@ -40,7 +40,7 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   const txes = db.collection(DOMAIN_TX as string)
   await txes.deleteMany({ objectSpace: core.space.Model })
   for (const tx of builder.getTxes()) {
-    await txes.insertOne(tx)
+    await txes.insertOne(mongoEscape(tx))
   }
 
   // TODO: Replay other transactions and re-create other collections.

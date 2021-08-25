@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Personal model operations",
+      "type": "patch",
+      "packageName": "@anticrm/chunter"
+    }
+  ],
+  "packageName": "@anticrm/chunter",
+  "email": "haiodo@gmail.com"
+}
