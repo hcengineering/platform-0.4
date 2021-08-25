@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/query",
+      "comment": "fixs&tests",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/query"
+}
