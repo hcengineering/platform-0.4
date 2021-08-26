@@ -72,6 +72,9 @@
     "@anticrm/fsm-impl": "~0.4.0",
     "@anticrm/recruiting": "~0.4.0",
     "@anticrm/fsm": "~0.4.0",
-    "@anticrm/login-assets": "~0.4.0"
+    "@anticrm/login-assets": "~0.4.0",
+    "@anticrm/calendar": "~0.4.0",
+    "@anticrm/calendar-impl": "~0.4.0",
+    "@anticrm/calendar-assets": "~0.4.0"
   }
 }

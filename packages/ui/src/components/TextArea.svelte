@@ -27,7 +27,7 @@
 
 <div class="textarea" style="{width ? `width: ${width}px;` : ''} {height ? `height: ${height}px;` : ''}">
   {#if label}<div class="label"><Label {label} /></div>{/if}
-  <textarea {id} rows={lines} bind:value on:keyup {placeholder} />
+  <textarea {id} rows={lines} bind:value on:keyup on:blur {placeholder} />
 </div>
 
 <style lang="scss">

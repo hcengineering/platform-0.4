@@ -4,6 +4,7 @@ import { Class, Data, Doc, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { Tx } from '../tx'
 import { DescriptorMap, Descr } from './descriptors'
+import { ModelDb } from '../memdb'
 
 /**
  * @public
@@ -12,6 +13,7 @@ export interface MappingOptions {
   descriptor: DerivedDataDescriptor<Doc, DerivedData>
   hierarchy: Hierarchy
   storage: Storage
+  model: ModelDb
 }
 /**
  * Provide an maping function to transform
