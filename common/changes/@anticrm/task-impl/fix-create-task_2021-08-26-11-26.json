@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Fix invalid space property usage",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

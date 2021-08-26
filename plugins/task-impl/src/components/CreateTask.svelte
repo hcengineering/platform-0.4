@@ -44,7 +44,7 @@
 
   const dispatch = createEventDispatcher()
 
-  export let space: Ref<Space>
+  export let space: Space
   let name: string = ''
   let description: string = ''
   let assignee: Ref<Account> | undefined
@@ -57,7 +57,7 @@
   const client = getClient()
 
   async function getProjectMembers (): Promise<Array<Account>> {
-    const members = (await client.findAll(core.class.Space, { _id: space })).pop()?.members
+    const members = (await client.findAll(core.class.Space, { _id: space._id })).pop()?.members
     if (members !== undefined) {
       return await client.findAll(core.class.Account, { _id: { $in: members } })
     } else {
@@ -85,11 +85,11 @@
   }
 
   async function create () {
-    const shortRefId = await client.createShortRef(id, task.class.Task, space)
+    const shortRefId = await client.createShortRef(id, task.class.Task, space._id)
 
     await client.createDoc(
       task.class.Task,
-      space,
+      space._id,
       {
         name,
         assignee,
@@ -104,7 +104,7 @@
     )
 
     for (const comment of comments) {
-      await client.createDoc(chunter.class.Comment, space, {
+      await client.createDoc(chunter.class.Comment, space._id, {
         message: comment.message,
         replyOf: getFullRef(id, task.class.Task)
       })
