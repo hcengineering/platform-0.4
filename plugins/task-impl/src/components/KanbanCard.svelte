@@ -35,12 +35,10 @@
 <div class="card-container">
   <div class="header">{doc.name}</div>
   <div class="footer">
-    <div>
-      {#await getUser(doc.assignee) then user}
-        <UserInfo {user} size={24} avatarOnly />
-      {/await}
-    </div>
-    <div class="action">
+    {#await getUser(doc.assignee) then user}
+      <UserInfo {user} size={24} avatarOnly />
+    {/await}
+    <div class="actions">
       <ActionIcon size={24} icon={Chat} direction={'left'} label={task.string.Comments} />
       <div class="counter">{doc.comments.length}</div>
       <ActionIcon size={24} icon={MoreH} direction={'left'} label={ui.string.More} />
@@ -52,47 +50,32 @@
   .card-container {
     display: flex;
     flex-direction: column;
+    padding: 16px;
+    color: var(--theme-caption-color);
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 0;
-      padding: 16px;
-      height: 72px;
-      min-height: 72px;
-      background-color: var(--theme-button-bg-focused);
-      border-radius: 11px 11px 0 0;
+      margin-bottom: 16px;
     }
 
     .footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 0;
-      padding: 16px;
-      height: 72px;
-      min-height: 72px;
-      background-color: var(--theme-button-bg-focused);
-      border-radius: 11px 11px 0 0;
 
-      .action {
+      .actions {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         align-items: center;
 
         .counter {
-          margin-left: 4px;
+          margin-left: 2px;
+          margin-right: 12px;
           color: var(--theme-caption-color);
         }
-      }
-
-      div + div {
-        margin-left: 16px;
       }
     }
   }
