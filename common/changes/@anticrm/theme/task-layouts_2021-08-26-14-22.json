@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "New Task layouts. Add icons.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}
