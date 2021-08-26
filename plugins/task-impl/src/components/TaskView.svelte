@@ -13,18 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Class, Doc, Space } from '@anticrm/core'
+  import type { DocumentQuery } from '@anticrm/core'
   import ViewSelection from './ViewSelection.svelte'
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
   import ui, { ScrollBox } from '@anticrm/ui'
-  import task from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import type { IntlString } from '@anticrm/status'
 
   export let view: IntlString = ui.string.List
-  export let currentSpace: Ref<Space>
-  const _class: Ref<Class<Doc>> = task.class.Task
+  export let query: DocumentQuery<Task>
 </script>
 
 <div class="container">
@@ -35,15 +34,15 @@
     </div>
     {#if view === ui.string.Kanban}
       <ScrollBox>
-        <KanbanView {currentSpace} />
+        <KanbanView {query} />
       </ScrollBox>
     {:else if view === ui.string.Cards}
       <ScrollBox vertical>
-        <CardView {_class} {currentSpace} />
+        <CardView {query} />
       </ScrollBox>
     {:else if view === ui.string.List}
       <ScrollBox vertical>
-        <TableView {currentSpace} />
+        <TableView {query} />
       </ScrollBox>
     {/if}
   </div>

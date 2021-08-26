@@ -19,7 +19,9 @@ import { mergeIds, Resource } from '@anticrm/status'
 export default mergeIds(task, {
   component: {
     CreateProject: '' as Resource<any>,
-    TaskView: '' as Resource<any>,
+    ProjectView: '' as Resource<any>,
+    MyTasksView: '' as Resource<any>,
+    FavoriteView: '' as Resource<any>,
     CreateTask: '' as Resource<any>,
     EditTask: '' as Resource<any>
   }

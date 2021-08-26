@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { Table, Label, UserInfo, DateTime, getCurrentLocation, navigate } from '@anticrm/ui'
-  import core from '@anticrm/core'
+  import core, { DocumentQuery } from '@anticrm/core'
   import type { Ref, Doc, Space, Account } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
 
@@ -24,8 +24,8 @@
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
 
-  export let currentSpace: Ref<Space> | undefined
-  let prevSpace: Ref<Space> | undefined
+  export let query: DocumentQuery<Task>
+  let prevQuery: DocumentQuery<Task> | undefined
 
   const columns = [
     { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
@@ -48,10 +48,13 @@
   const client = getClient()
   let data: Doc[] = []
 
-  let query: QueryUpdater<Task> | undefined
+  let lq: QueryUpdater<Task> | undefined
 
-  $: if (currentSpace !== prevSpace) {
-    query = client.query(query, task.class.Task, { space: currentSpace }, async (result) => {
+  $: if (query !== prevQuery) {
+    prevQuery = query
+    lq = client.query(lq, task.class.Task, query, async (result) => {
+      console.log(query)
+      console.log(result)
       data = []
       for (const item of result) {
         data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))

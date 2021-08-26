@@ -33,7 +33,9 @@ export function getStatusColor (status: TaskStatus): string {
 export default mergeIds(task, {
   component: {
     CreateProject: '' as AnyComponent,
-    TaskView: '' as AnyComponent,
+    ProjectView: '' as AnyComponent,
+    MyTasksView: '' as AnyComponent,
+    FavoriteView: '' as AnyComponent,
     CreateTask: '' as AnyComponent,
     EditTask: '' as AnyComponent
   }
