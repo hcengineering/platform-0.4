@@ -124,10 +124,7 @@ export interface TxOperations {
     objectId?: Ref<T>,
     userTxSpace?: boolean // Use user Transaction space.
   ) => Promise<T>
-  createShortRef: <T extends Doc>(
-    _id: Ref<T>,
-    _class: Ref<Class<T>>,
-    space: Ref<Space>) => Promise<string | undefined>
+  createShortRef: <T extends Doc>(_id: Ref<T>, _class: Ref<Class<T>>, space: Ref<Space>) => Promise<string | undefined>
   updateDoc: <T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,
@@ -226,7 +223,14 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
  * Will create a transaction to create a docuemnt.
  * @public
  */
-export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<Class<T>>, space: Ref<Space>, attributes: Data<T>, objectId?: Ref<T>, userTxSpace?: boolean): TxCreateDoc<T> {
+export function newTxCreateDoc<T extends Doc> (
+  user: Ref<Account>,
+  _class: Ref<Class<T>>,
+  space: Ref<Space>,
+  attributes: Data<T>,
+  objectId?: Ref<T>,
+  userTxSpace?: boolean
+): TxCreateDoc<T> {
   return {
     _id: generateId(),
     _class: core.class.TxCreateDoc,
@@ -242,6 +246,5 @@ export function newTxCreateDoc<T extends Doc> (user: Ref<Account>, _class: Ref<C
 }
 
 function txSpace (user: Ref<Account>, userTxSpace?: boolean): Ref<Space> {
-  return (userTxSpace ?? false) ? (core.space.Tx + '#' + user) as Ref<Space> : core.space.Tx
+  return userTxSpace ?? false ? ((core.space.Tx + '#' + user) as Ref<Space>) : core.space.Tx
 }
-

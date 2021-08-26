@@ -18,7 +18,7 @@ import type { Class, Doc, Ref } from './classes'
 import core from './component'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-import { findProperty, resultSort } from './query'
+import { findProperty, resultSort, shouldSkipId } from './query'
 import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 
@@ -100,7 +100,7 @@ export class MemDb extends TxProcessor implements Storage {
     }
 
     for (const key in query) {
-      if (key === '_id' && (query._id as any)?.$like === undefined) continue
+      if (shouldSkipId<T>(key, query)) continue
       const value = (query as any)[key]
       result = findProperty(result, key, value)
     }
@@ -124,10 +124,7 @@ export class MemDb extends TxProcessor implements Storage {
   }
 
   delDoc (_id: Ref<Doc>): void {
-    const doc = this.objectById.get(_id)
-    if (doc === undefined) {
-      throw new PlatformError(new Status(Severity.ERROR, core.status.ObjectNotFound, { _id }))
-    }
+    const doc = this.getObject(_id)
     this.objectById.delete(_id)
     this.hierarchy.getAncestors(doc._class).forEach((_class) => {
       this.cleanObjectByClass(_class, _id)
