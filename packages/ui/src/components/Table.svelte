@@ -103,12 +103,17 @@
     }
   }
 
-  .table-body { width: 100%; }
+  .table-body {
+    width: 100%;
+  }
 
-  th, td {
+  th,
+  td {
     padding: 8px 24px;
     text-align: left;
-    &:first-child { padding-left: 40px; }
+    &:first-child {
+      padding-left: 40px;
+    }
   }
 
   th {
@@ -127,7 +132,11 @@
     height: 60px;
     color: var(--theme-caption-color);
     border-bottom: 1px solid var(--theme-button-border-hovered);
-    &:last-child { border-bottom: none; }
-    &:hover { background-color: var(--theme-table-bg-hover); }
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background-color: var(--theme-table-bg-hover);
+    }
   }
 </style>

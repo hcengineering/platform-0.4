@@ -93,7 +93,9 @@
 
     &.noShift {
       margin: 0;
-      .box { padding: 0; }
+      .box {
+        padding: 0;
+      }
     }
   }
   .hShrink::-webkit-scrollbar-track:horizontal {
