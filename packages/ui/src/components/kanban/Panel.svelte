@@ -17,6 +17,7 @@
 
   import Label from '../Label.svelte'
   import ScrollBox from '../ScrollBox.svelte'
+  import Grid from '../Grid.svelte'
 
   export let title: IntlString
   export let counter: number | undefined
@@ -25,7 +26,7 @@
   let collapsed: boolean = false
 </script>
 
-<section class="panel" on:dragover on:drop class:collapsed>
+<section class="panel-kanban" on:dragover on:drop class:collapsed>
   <div
     class="header"
     class:collapsed
@@ -40,19 +41,21 @@
   {#if collapsed !== true}
     <div class="scroll">
       <ScrollBox vertical>
-        <slot />
+        <Grid column={1} rowGap={12}>
+          <slot />
+        </Grid>
       </ScrollBox>
     </div>
   {/if}
 </section>
 
 <style lang="scss">
-  .panel {
+  .panel-kanban {
     display: flex;
     flex-direction: column;
     align-items: stretch;
 
-    width: 320px;
+    min-width: 320px;
     height: 100%;
     background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-color);

@@ -18,6 +18,7 @@
 
   import type { AnySvelteComponent } from '../types'
   import Label from './Label.svelte'
+  import ScrollBox from './ScrollBox.svelte'
 
   interface Cell {
     component: AnySvelteComponent
@@ -59,72 +60,83 @@
     }))
 </script>
 
-<table class="table-body">
-  {#if showHeader}
-    <tr class="tr-head">
-      {#each columns as field}
-        <th><Label label={field.label} /></th>
-      {/each}
-    </tr>
-  {/if}
-  {#each data as doc (doc._id)}
-    <tr class="tr-body" on:click={() => dispatch('rowClick', { id: doc._id })}>
-      {#each docToRow(doc) as cell}
-        <td><svelte:component this={cell.component} {...cell.props} /></td>
-      {/each}
-    </tr>
-  {/each}
-</table>
+<div class="container">
+  <ScrollBox vertical stretch noShift>
+    <table class="table-body">
+      {#if showHeader}
+        <thead>
+          <tr class="tr-head">
+            {#each columns as field}
+              <th><Label label={field.label} /></th>
+            {/each}
+          </tr>
+        </thead>
+      {/if}
+      <tbody>
+        {#each data as doc (doc._id)}
+          <tr class="tr-body" on:click={() => dispatch('rowClick', { id: doc._id })}>
+            {#each docToRow(doc) as cell}
+              <td><svelte:component this={cell.component} {...cell.props} /></td>
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </ScrollBox>
+</div>
 
 <style lang="scss">
-  .table-body {
-    display: table;
-    border-collapse: collapse;
+  .container {
+    flex-grow: 1;
+    position: relative;
+    padding-bottom: 40px;
+    height: max-content;
 
-    td {
-      align-items: center;
-      height: 64px;
-      padding: 6px 20px;
-      color: var(--theme-content-accent-color);
+    &::before {
+      position: absolute;
+      content: '';
+      top: 40px;
+      bottom: 0;
+      width: 100%;
+      background-color: var(--theme-table-bg-color);
+      border-radius: 0 0 20px 2px;
     }
-    th {
-      align-items: center;
-      height: 50px;
-      padding: 0 20px;
-      font-weight: 500;
-      text-align: left;
-      color: var(--theme-content-trans-color);
+  }
+
+  .table-body {
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 8px 24px;
+    text-align: left;
+    &:first-child {
+      padding-left: 40px;
     }
-    .tr-head {
-      position: sticky;
-      top: 0;
-      background-color: var(--theme-bg-color);
-      border-bottom: 1px solid var(--theme-bg-focused-color);
-      box-shadow: 0 1px 0 var(--theme-bg-focused-color);
-      z-index: 5;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    height: 40px;
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--theme-content-dark-color);
+    background-color: var(--theme-bg-color);
+    box-shadow: inset 0 -1px 0 0 var(--theme-bg-focused-color);
+    z-index: 1;
+  }
+
+  .tr-body {
+    height: 60px;
+    color: var(--theme-caption-color);
+    border-bottom: 1px solid var(--theme-button-border-hovered);
+    &:last-child {
+      border-bottom: none;
     }
-    .tr-body {
-      position: relative;
-      border-top: 1px solid var(--theme-bg-accent-hover);
-      &:nth-child(2) {
-        border-top: 1px solid transparent;
-      }
-      &:last-child {
-        border-bottom: 1px solid transparent;
-      }
-    }
-    .tr-body:hover {
-      & > td {
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
-        background-color: var(--theme-button-bg-enabled);
-        &:first-child {
-          border-radius: 12px 0 0 12px;
-        }
-        &:last-child {
-          border-radius: 0 12px 12px 0;
-        }
-      }
+    &:hover {
+      background-color: var(--theme-table-bg-hover);
     }
   }
 </style>

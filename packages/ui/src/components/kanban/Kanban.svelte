@@ -20,6 +20,7 @@
   import type { AnySvelteComponent } from '../../types'
   import Panel from './Panel.svelte'
   import Card from './Card.svelte'
+  import ScrollBox from '../ScrollBox.svelte'
 
   interface State {
     _id: string
@@ -59,32 +60,52 @@
   }
 </script>
 
-{#each states as state (state._id)}
-  <Panel
-    title={state.name}
-    counter={getItems(state._id).length}
-    color={state.color}
-    on:dragover={(event) => {
-      event.preventDefault()
-    }}
-    on:drop={(event) => {
-      event.preventDefault()
-      const dragCard = itemMap.get(dragId ?? '')
+<div class="container">
+  <ScrollBox stretch hShrink>
+    <div class="content">
+      {#each states as state (state._id)}
+        <Panel
+          title={state.name}
+          counter={getItems(state._id).length}
+          color={state.color}
+          on:dragover={(event) => {
+            event.preventDefault()
+          }}
+          on:drop={(event) => {
+            event.preventDefault()
+            const dragCard = itemMap.get(dragId ?? '')
 
-      if (dragCard !== undefined && state._id !== dragCard.state) {
-        dispatch('drop', { item: dragId, state: state._id })
-      }
-    }}
-  >
-    {#each getItems(state._id) as item (item._id)}
-      <Card
-        component={cardComponent}
-        draggable={true}
-        doc={item}
-        on:dragstart={() => {
-          dragId = item._id
-        }}
-      />
-    {/each}
-  </Panel>
-{/each}
+            if (dragCard !== undefined && state._id !== dragCard.state) {
+              dispatch('drop', { item: dragId, state: state._id })
+            }
+          }}
+        >
+          {#each getItems(state._id) as item (item._id)}
+            <Card
+              component={cardComponent}
+              draggable={true}
+              doc={item}
+              on:dragstart={() => {
+                dragId = item._id
+              }}
+            />
+          {/each}
+        </Panel>
+      {/each}
+    </div>
+  </ScrollBox>
+</div>
+
+<style lang="scss">
+  .container {
+    flex-grow: 1;
+    position: relative;
+    margin-bottom: 20px;
+    height: max-content;
+  }
+  .content {
+    display: flex;
+    padding: 0 40px 0 40px;
+    height: 100%;
+  }
+</style>

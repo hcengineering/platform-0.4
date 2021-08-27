@@ -26,48 +26,33 @@
   export let query: DocumentQuery<Task>
 </script>
 
-<div class="container">
-  <div class="tab">
-    <div class="toolbar">
-      <div style="flex-grow: 1" />
-      <ViewSelection bind:selected={view} />
-    </div>
-    {#if view === ui.string.Kanban}
-      <ScrollBox>
-        <KanbanView {query} />
-      </ScrollBox>
-    {:else if view === ui.string.Cards}
-      <ScrollBox vertical>
-        <CardView {query} />
-      </ScrollBox>
-    {:else if view === ui.string.List}
-      <ScrollBox vertical>
-        <TableView {query} />
-      </ScrollBox>
-    {/if}
-  </div>
+<div class="toolbar">
+  <ViewSelection bind:selected={view} />
 </div>
+{#if view === ui.string.Kanban}
+  <KanbanView {currentSpace} />
+{:else if view === ui.string.Cards}
+  <div class="content">
+    <ScrollBox vertical>
+      <CardView {_class} {currentSpace} />
+    </ScrollBox>
+  </div>
+{:else if view === ui.string.List}
+  <TableView {currentSpace} />
+{/if}
 
 <style lang="scss">
-  .container {
+  .toolbar {
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 40px;
+    min-height: 40px;
+    height: 40px;
+  }
+  .content {
     height: 100%;
-
-    .tab {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      margin: 40px;
-      .toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        min-height: 80px;
-        height: 80px;
-      }
-    }
+    margin: 0 40px 40px;
   }
 </style>

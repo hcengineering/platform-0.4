@@ -30,6 +30,10 @@
   import GIF from './icons/GIF.svelte'
   import Send from './icons/Send.svelte'
   import TextStyle from './icons/TextStyle.svelte'
+  import Bold from './icons/Bold.svelte'
+  import Italic from './icons/Italic.svelte'
+  import Brackets from './icons/Brackets.svelte'
+  import Mention from './icons/Mention.svelte'
   import chunter from '../plugin'
 
   export let thread: boolean = false
@@ -268,6 +272,10 @@
   <div class="buttons">
     <div class="tool"><Attach /></div>
     <div class="tool"><TextStyle /></div>
+    <div class="tool"><Bold /></div>
+    <div class="tool"><Italic /></div>
+    <div class="tool"><Brackets /></div>
+    <div class="tool"><Mention /></div>
     <div class="tool"><Emoji /></div>
     <div class="tool"><GIF /></div>
   </div>

@@ -108,6 +108,7 @@
 
 <style lang="scss">
   .container {
+    flex-shrink: 0;
     position: relative;
     display: flex;
     padding-bottom: 20px;
