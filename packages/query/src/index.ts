@@ -151,15 +151,16 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       if (q.result instanceof Promise) {
         q.result = copy(await q.result)
       }
-      const updatedDoc = q.result.find((p) => p._id === tx.objectId)
-      if (updatedDoc !== undefined) {
-        const pos = q.result.indexOf(updatedDoc)
-        this.doUpdateDoc(updatedDoc, tx)
+      const pos = q.result.findIndex((p) => p._id === tx.objectId)
+      if (pos !== -1) {
+        const doc = q.result[pos]
+        const updatedDoc = this.doUpdateDoc(doc, tx)
         if (!this.match(q, updatedDoc)) {
           q.result.splice(pos, 1)
           q.total--
+        } else {
+          q.result[pos] = updatedDoc
         }
-        q.result[q.result.findIndex((p) => p._id === updatedDoc._id)] = updatedDoc
         this.sort(q, tx)
         await this.callback(updatedDoc, q)
       } else if (this.matchQuery(q, tx)) {
