@@ -15,11 +15,12 @@
 <script lang="ts">
   import { afterUpdate } from 'svelte'
 
-  export let gap: number = 12
   export let vertical: boolean = false
   export let stretch: boolean = false
   export let bothScroll: boolean = false
   export let autoscrollable: boolean = false
+  export let noShift: boolean = false
+  export let hShrink: boolean = false
   let autoscroll: boolean = true
   let div: HTMLElement
 
@@ -33,11 +34,13 @@
   bind:this={div}
   class:vertical
   class:bothScroll
+  class:noShift
+  class:hShrink
   on:scroll={() => {
     autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
   }}
 >
-  <div class="box" class:stretch style="gap: {gap}px">
+  <div class="box" class:stretch>
     <slot />
   </div>
 </div>
@@ -54,10 +57,8 @@
 
     .box {
       position: absolute;
-      display: grid;
-      grid-auto-flow: column;
+      display: flex;
       padding: 0 0 5px 0;
-      gap: 24px;
       top: 0;
       left: 0;
       width: auto;
@@ -72,10 +73,10 @@
       overflow-x: hidden;
       overflow-y: auto;
       .box {
+        flex-direction: column;
         padding: 0 10px 0 10px;
         width: 100%;
         height: auto;
-        grid-auto-flow: row;
         &.stretch {
           height: 100%;
         }
@@ -89,5 +90,15 @@
         padding: 0 5px 5px 0;
       }
     }
+
+    &.noShift {
+      margin: 0;
+      .box {
+        padding: 0;
+      }
+    }
+  }
+  .hShrink::-webkit-scrollbar-track:horizontal {
+    margin: 0 40px;
   }
 </style>

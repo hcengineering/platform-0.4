@@ -77,7 +77,6 @@
 
 <style lang="scss">
   .header {
-    width: 100%;
     height: 72px;
     min-height: 72px;
     border-bottom: 1px solid var(--theme-menu-divider);
