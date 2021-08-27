@@ -15,9 +15,9 @@
 <script lang="ts">
   import { Table, Label, UserInfo, DateTime, getCurrentLocation, navigate } from '@anticrm/ui'
   import core, { DocumentQuery } from '@anticrm/core'
-  import type { Ref, Doc, Space, Account } from '@anticrm/core'
+  import type { Ref, Doc, Account } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-
+  import { deepEqual } from 'fast-equals'
   import TaskStatus from './TaskStatus.svelte'
 
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -50,11 +50,9 @@
 
   let lq: QueryUpdater<Task> | undefined
 
-  $: if (query !== prevQuery) {
+  $: if (!deepEqual(prevQuery, query)) {
     prevQuery = query
     lq = client.query(lq, task.class.Task, query, async (result) => {
-      console.log(query)
-      console.log(result)
       data = []
       for (const item of result) {
         data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))

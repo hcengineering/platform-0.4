@@ -16,7 +16,7 @@
   import { getClient } from '@anticrm/workbench'
   import TaskView from './TaskView.svelte'
 
-  let accountId = getClient().accountId()
+  const accountId = getClient().accountId()
 </script>
 
 <TaskView query={{ assignee: accountId }} />

@@ -16,7 +16,7 @@
   import { TaskStatuses } from '@anticrm/task'
   import type { DocumentQuery } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-
+  import { deepEqual } from 'fast-equals'
   import { Kanban } from '@anticrm/ui'
   import KanbanCard from './KanbanCard.svelte'
 
@@ -39,7 +39,7 @@
     color: getStatusColor(v)
   }))
 
-  $: if (query !== prevQuery) {
+  $: if (!deepEqual(prevQuery, query)) {
     prevQuery = query
 
     lq = client.query(lq, task.class.Task, query, (result) => {
@@ -53,7 +53,7 @@
   async function onDrop (event: CustomEvent<any>) {
     const { item, state } = event.detail
     const tState = state as keyof typeof TaskStatuses
-    const doc = items.find(p => p._id === item)
+    const doc = items.find((p) => p._id === item)
 
     await client.updateDoc<Task>(doc!._class, doc!.space, item, {
       status: TaskStatuses[tState]

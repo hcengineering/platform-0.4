@@ -26,8 +26,8 @@
   let ids: Array<Ref<Project>> = []
 
   query = client.query(query, task.class.Project, { 'account.starred': true }, (result) => {
-    ids = result.map(p => p._id)
+    ids = result.map((p) => p._id)
   })
 </script>
 
-<TaskView query={{ space: { $in: ids }}} />
+<TaskView query={{ space: { $in: ids } }} />
