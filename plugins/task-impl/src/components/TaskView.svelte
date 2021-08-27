@@ -30,15 +30,15 @@
   <ViewSelection bind:selected={view} />
 </div>
 {#if view === ui.string.Kanban}
-  <KanbanView {currentSpace} />
+  <KanbanView {query} />
 {:else if view === ui.string.Cards}
   <div class="content">
     <ScrollBox vertical>
-      <CardView {_class} {currentSpace} />
+      <CardView {query} />
     </ScrollBox>
   </div>
 {:else if view === ui.string.List}
-  <TableView {currentSpace} />
+  <TableView {query} />
 {/if}
 
 <style lang="scss">
