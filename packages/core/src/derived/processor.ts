@@ -224,7 +224,7 @@ export class DerivedDataProcessor extends TxProcessor {
     const descriptors = this.descrs.getByClass(tx.objectClass)
 
     for (const d of descriptors) {
-      const oldData = await this.storage.findAll(core.class.DerivedData, {
+      const oldData = await this.storage.findAll(d.targetClass, {
         objectId: tx.objectId,
         objectClass: tx.objectClass,
         descriptorId: d._id
