@@ -19,12 +19,16 @@ import task from './plugin'
 
 import CreateTask from './components/CreateTask.svelte'
 import EditTask from './components/EditTask.svelte'
-import TaskView from './components/TaskView.svelte'
+import ProjectView from './components/ProjectView.svelte'
+import MyTasksView from './components/MyTasksView.svelte'
+import FavoriteView from './components/FavoriteView.svelte'
 import CreateProject from './components/CreateProject.svelte'
 
 export default async (): Promise<TaskService> => {
   setResource(task.component.CreateProject, CreateProject)
-  setResource(task.component.TaskView, TaskView)
+  setResource(task.component.ProjectView, ProjectView)
+  setResource(task.component.MyTasksView, MyTasksView)
+  setResource(task.component.FavoriteView, FavoriteView)
   setResource(task.component.CreateTask, CreateTask)
   setResource(task.component.EditTask, EditTask)
 

@@ -27,6 +27,8 @@
     "Status": "Status",
     "Open": "Open",
     "InProgress": "In progress",
-    "Closed": "Closed"
+    "Closed": "Closed",
+    "Favorite": "Favorite",
+    "MyTasks": "My tasks"
   }
 }

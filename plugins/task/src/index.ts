@@ -46,7 +46,8 @@ const task = plugin(
   {},
   {
     icon: {
-      Task: '' as Asset
+      Task: '' as Asset,
+      Star: '' as Asset
     },
     class: {
       Project: '' as Ref<Class<Project>>,
@@ -80,7 +81,9 @@ const task = plugin(
       Status: '' as IntlString,
       Open: '' as IntlString,
       InProgress: '' as IntlString,
-      Closed: '' as IntlString
+      Closed: '' as IntlString,
+      Favorite: '' as IntlString,
+      MyTasks: '' as IntlString
     }
   }
 )

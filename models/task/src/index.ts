@@ -57,6 +57,18 @@ export function createModel (builder: Builder): void {
     label: task.string.ApplicationLabelTask,
     icon: task.icon.Task,
     navigatorModel: {
+      specials: [
+        {
+          label: task.string.MyTasks,
+          component: task.component.MyTasksView,
+          icon: task.icon.Task
+        },
+        {
+          label: task.string.Favorite,
+          component: task.component.FavoriteView,
+          icon: task.icon.Star
+        }
+      ],
       spaces: [
         {
           label: task.string.Projects,
@@ -66,7 +78,7 @@ export function createModel (builder: Builder): void {
           createComponent: task.component.CreateProject
         }
       ],
-      spaceView: task.component.TaskView,
+      spaceView: task.component.ProjectView,
       createComponent: task.component.CreateTask,
       editComponent: task.component.EditTask
     }

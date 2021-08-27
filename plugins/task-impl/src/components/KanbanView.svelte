@@ -14,9 +14,9 @@
 -->
 <script lang="ts">
   import { TaskStatuses } from '@anticrm/task'
-  import type { Ref, Space } from '@anticrm/core'
+  import type { DocumentQuery } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
-
+  import { deepEqual } from 'fast-equals'
   import { Kanban } from '@anticrm/ui'
   import KanbanCard from './KanbanCard.svelte'
 
@@ -25,8 +25,8 @@
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
 
-  export let currentSpace: Ref<Space> | undefined
-  let prevSpace: Ref<Space> | undefined
+  export let query: DocumentQuery<Task>
+  let prevQuery: DocumentQuery<Task>
 
   const statusByName = new Map(Object.entries(TaskStatuses).map(([k, v]) => [v, k]))
 
@@ -39,28 +39,23 @@
     color: getStatusColor(v)
   }))
 
-  $: if (currentSpace !== prevSpace) {
-    prevSpace = currentSpace
+  $: if (!deepEqual(prevQuery, query)) {
+    prevQuery = query
 
-    if (currentSpace !== undefined) {
-      lq = client.query(lq, task.class.Task, { space: currentSpace }, (result) => {
-        items = result.map((item) => ({
-          ...item,
-          state: statusByName.get(item.status) ?? ''
-        }))
-      })
-    }
+    lq = client.query(lq, task.class.Task, query, (result) => {
+      items = result.map((item) => ({
+        ...item,
+        state: statusByName.get(item.status) ?? ''
+      }))
+    })
   }
 
   async function onDrop (event: CustomEvent<any>) {
-    if (currentSpace === undefined) {
-      return
-    }
-
     const { item, state } = event.detail
     const tState = state as keyof typeof TaskStatuses
+    const doc = items.find((p) => p._id === item)
 
-    await client.updateDoc(task.class.Task, currentSpace, item, {
+    await client.updateDoc<Task>(doc!._class, doc!.space, item, {
       status: TaskStatuses[tState]
     })
   }

@@ -13,37 +13,21 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { DocumentQuery } from '@anticrm/core'
-  import type { Task } from '@anticrm/task'
-  import task from '@anticrm/task'
+  import TaskView from './TaskView.svelte'
   import { getClient } from '@anticrm/workbench'
+  import task from '@anticrm/task'
+  import type { Project } from '@anticrm/task'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import type { Ref } from '@anticrm/core'
 
-  import Card from './Card.svelte'
-
-  export let query: DocumentQuery<Task>
   const client = getClient()
-  let cards: Task[] = []
-  let lq: QueryUpdater<Task> | undefined
 
-  $: if (query !== undefined) {
-    lq = client.query(lq, task.class.Task, query, (result) => {
-      cards = result
-    })
-  }
+  let query: QueryUpdater<Project> | undefined
+  let ids: Array<Ref<Project>> = []
+
+  query = client.query(query, task.class.Project, { 'account.starred': true }, (result) => {
+    ids = result.map((p) => p._id)
+  })
 </script>
 
-<div class="cards-container">
-  {#each cards as card}
-    <Card {card} />
-  {/each}
-</div>
-
-<style lang="scss">
-  .cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, auto));
-    grid-auto-rows: 280px;
-    grid-gap: 20px;
-  }
-</style>
+<TaskView query={{ space: { $in: ids } }} />

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task",
+      "comment": "special task spaces",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task"
+}
