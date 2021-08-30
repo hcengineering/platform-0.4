@@ -70,7 +70,10 @@ export function configurePlatform (): void {
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
   addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
-  addLocation(notification, async () => await import(/* webpackChunkName: "notification" */ '@anticrm/notification-impl'))
+  addLocation(
+    notification,
+    async () => await import(/* webpackChunkName: "notification" */ '@anticrm/notification-impl')
+  )
   // platform.addLocation(i18n, () => import(/* webpackChunkName: "platform-i18n" */ '@anticrm/platform-i18n/src/plugin'))
   // platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
   // platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
