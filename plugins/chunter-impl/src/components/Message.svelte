@@ -25,6 +25,9 @@
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { onMount } from 'svelte'
+  import notification from '@anticrm/notification'
+  import type { Notification } from '@anticrm/notification'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   interface MessageData {
     _id: Ref<WithMessage>
@@ -36,6 +39,7 @@
 
   export let message: MessageData
   export let thread: boolean = false
+  let notifications: Array<Notification> = []
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -48,6 +52,20 @@
   async function getUser (userId: Ref<Account>): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
+
+  let query: QueryUpdater<Notification> | undefined
+
+  query = client.query(
+    query,
+    notification.class.Notification,
+    {
+      objectId: message._id,
+      client: client.accountId()
+    },
+    (result) => {
+      notifications = result
+    }
+  )
 
   function onClick () {
     if (thread) {
@@ -65,6 +83,12 @@
     return date - today > 0
   }
 
+  async function markAsRead () {
+    for (const notify of notifications) {
+      await client.removeDoc(notify._class, notify.space, notify._id)
+    }
+  }
+
   let user: Account | undefined
 
   onMount(async () => {
@@ -72,7 +96,14 @@
   })
 </script>
 
-<div class="container" class:no-thread={!thread} on:click={onClick}>
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div
+  class="container"
+  class:no-thread={!thread}
+  class:isNew={notifications.length > 0}
+  on:click={onClick}
+  on:mouseover={() => markAsRead()}
+>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}
@@ -112,6 +143,10 @@
     position: relative;
     display: flex;
     padding-bottom: 20px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-color);
+    }
 
     .avatar {
       min-width: 36px;

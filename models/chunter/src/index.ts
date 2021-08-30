@@ -14,12 +14,23 @@
 //
 
 import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
-import type { Domain, FullRefString, Ref } from '@anticrm/core'
+import {
+  Account,
+  Domain,
+  FullRefString,
+  generateId,
+  parseFullRef,
+  Ref,
+  registerMapper,
+  TxCreateDoc
+} from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
 import { Application } from '@anticrm/workbench'
 import chunter from './plugin'
+import notification from '@anticrm/notification'
+import type { Notification } from '@anticrm/notification'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
@@ -29,7 +40,6 @@ const DOMAIN_CHUNTER = 'chunter' as Domain
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {
   direct!: boolean
-
   topic!: string
   favourite!: boolean
   muted!: boolean
@@ -86,7 +96,8 @@ export function createModel (builder: Builder): void {
             spaceQuery: { 'account.starred': true },
             addSpaceLabel: chunter.string.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            objectsClass: chunter.class.Message
           },
           {
             label: chunter.string.Channels,
@@ -96,7 +107,8 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: chunter.string.CreateChannel,
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            objectsClass: chunter.class.Message
           },
           {
             label: chunter.string.DirectMessages,
@@ -105,7 +117,8 @@ export function createModel (builder: Builder): void {
             spaceQuery: { direct: true, 'account.starred': { $ne: true } },
             addSpaceLabel: chunter.string.CreateDirectMessage,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            objectsClass: chunter.class.Message
           }
         ],
         spaceView: chunter.component.ChannelView,
@@ -127,6 +140,46 @@ export function createModel (builder: Builder): void {
     private: false,
     members: [],
     direct: false
+  })
+
+  registerMapper(chunter.mapper.CommentNotificationMappes, {
+    map: async (tx, options): Promise<Notification[]> => {
+      switch (tx._class) {
+        case core.class.TxCreateDoc: {
+          const res: Notification[] = []
+          const ctx = tx as TxCreateDoc<Comment>
+          const parentDocRef = parseFullRef(ctx.attributes.replyOf)
+          const commentsAuthors = (
+            await options.storage.findAll(chunter.class.Comment, { replyOf: ctx.attributes.replyOf })
+          ).map((p) => p.modifiedBy)
+          const clients = new Set<Ref<Account>>(commentsAuthors)
+          const doc = (
+            await options.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })
+          ).shift()
+          if (doc === undefined) return res
+          clients.add(doc.modifiedBy)
+          for (const client of clients) {
+            if (client === ctx.modifiedBy) continue
+            const result: Notification = {
+              _class: options.descriptor.targetClass,
+              objectId: ctx.objectId,
+              objectClass: ctx.objectClass,
+              _id: `dd-${generateId()}` as Ref<Notification>,
+              modifiedBy: ctx.modifiedBy,
+              modifiedOn: Date.now(),
+              createOn: Date.now(),
+              space: ctx.objectSpace,
+              descriptorId: options.descriptor._id,
+              tx: ctx._id,
+              client: client
+            }
+            res.push(result)
+          }
+          return res
+        }
+      }
+      return []
+    }
   })
 
   // D E R I V E D   D A T A
@@ -173,5 +226,11 @@ export function createModel (builder: Builder): void {
         ]
       }
     ]
+  })
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: notification.class.Notification,
+    mapper: chunter.mapper.CommentNotificationMappes
   })
 }

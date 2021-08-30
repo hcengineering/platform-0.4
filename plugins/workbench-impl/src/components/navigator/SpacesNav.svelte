@@ -78,10 +78,10 @@
   <TreeNode label={model.label} {actions}>
     {#each spaces as space}
       <TreeItem
-        notifications={5}
         component={model.spaceItem}
         props={{ space: space }}
-        title={space.name}
+        {space}
+        objectsClass={model.objectsClass}
         icon={model.spaceIcon}
         on:click={() => {
           selectSpace(space._id)

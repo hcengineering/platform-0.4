@@ -27,11 +27,15 @@ specifiers:
   '@rush-temp/model-dev': file:./projects/model-dev.tgz
   '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
+  '@rush-temp/model-notification': file:./projects/model-notification.tgz
   '@rush-temp/model-recruiting': file:./projects/model-recruiting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/mongo': file:./projects/mongo.tgz
   '@rush-temp/node-client': file:./projects/node-client.tgz
+  '@rush-temp/notification': file:./projects/notification.tgz
+  '@rush-temp/notification-assets': file:./projects/notification-assets.tgz
+  '@rush-temp/notification-impl': file:./projects/notification-impl.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/platform-rig': file:./projects/platform-rig.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -196,11 +200,15 @@ dependencies:
   '@rush-temp/model-dev': file:projects/model-dev.tgz_@types+node@14.17.11
   '@rush-temp/model-fsm': file:projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:projects/model-meeting.tgz
+  '@rush-temp/model-notification': file:projects/model-notification.tgz
   '@rush-temp/model-recruiting': file:projects/model-recruiting.tgz
   '@rush-temp/model-task': file:projects/model-task.tgz
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.11
   '@rush-temp/node-client': file:projects/node-client.tgz
+  '@rush-temp/notification': file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461
+  '@rush-temp/notification-assets': file:projects/notification-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
+  '@rush-temp/notification-impl': file:projects/notification-impl.tgz_9529d560057a30dad2b90eea8f41661e
   '@rush-temp/platform': file:projects/platform.tgz
   '@rush-temp/platform-rig': file:projects/platform-rig.tgz_postcss@8.3.6
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_e2648ea3577eecbba3519a3bcb75d461
@@ -11290,7 +11298,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-/Q1il9UdBJEAbsoBneBBESY2ptT3Y75lAlgIxItrAXFx2nP74ISsoq1JmVnvb1pcmET3BdysZrrefO0/v1MAgg==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-18fr7sfMr+jjvgC6oRCnlKlbm7HBZZT/QxTTuDYc5J5ygKlSymQFbdZeFpUATqAOz+uUIwLxuhc87NZPdxb8Gw==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -11320,7 +11328,7 @@ packages:
     dev: false
 
   file:projects/model-chunter.tgz:
-    resolution: {integrity: sha512-Ga6uXd4ookIhjYJVKWTzFuMSziNiIRMTB5IBKpzon75s15PxDx8X34yMd7m7YHdFtK6JlcX0mN4XySqfeaoRWA==, tarball: file:projects/model-chunter.tgz}
+    resolution: {integrity: sha512-AxtqfTcn3TNwD+tdMOAV3/n5FxjAH6avcZyUWVYsgQcRpXLKlQkb+Mk+j1e9iqYD3acRUesQUyclVTaq/xfe0A==, tarball: file:projects/model-chunter.tgz}
     name: '@rush-temp/model-chunter'
     version: 0.0.0
     dependencies:
@@ -11370,7 +11378,7 @@ packages:
     dev: false
 
   file:projects/model-dev.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-2YvZu80romONA8u2YEjYwM+dQ+dq9S7xC8uROaZOeGxcenBNJVqUyduitdwI6DojAvi5IGM8B2rUld6jJdteNQ==, tarball: file:projects/model-dev.tgz}
+    resolution: {integrity: sha512-Ps+FzKJVyGdZzmwUx1i230BerLvcGGCOkCtoEU61qYOqaeJVloyS8p+S5NKce1tacq5DW9MyG+q+YSAzneStiA==, tarball: file:projects/model-dev.tgz}
     id: file:projects/model-dev.tgz
     name: '@rush-temp/model-dev'
     version: 0.0.0
@@ -11429,6 +11437,31 @@ packages:
   file:projects/model-meeting.tgz:
     resolution: {integrity: sha512-gfOrzsWm40hH/1OBdpahnz0vyJBaSCIqcj2ysCfnTom2GnCFF+0fNWIHvuj4hGiyAGTwCItbnFBCzBL999+OTQ==, tarball: file:projects/model-meeting.tgz}
     name: '@rush-temp/model-meeting'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/model-notification.tgz:
+    resolution: {integrity: sha512-tlZszvn90Ouz3BLl76ZUIbttCGUU/60xpC52ItgmDhELdyzcyKMBPsS2Hu9P0yQ4GiLWvdkneKQ6aX9ARA+1TQ==, tarball: file:projects/model-notification.tgz}
+    name: '@rush-temp/model-notification'
     version: 0.0.0
     dependencies:
       '@rushstack/heft': 0.35.1
@@ -11622,6 +11655,94 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/notification-assets.tgz_e2648ea3577eecbba3519a3bcb75d461:
+    resolution: {integrity: sha512-xnhDOuEatcnt+qEvoSUO9RuROzp/9aNTZaoGozKVKDTmBDXPrx+T5COx81MnhxHiltMgAJRoiVQKAggRrtaW+g==, tarball: file:projects/notification-assets.tgz}
+    id: file:projects/notification-assets.tgz
+    name: '@rush-temp/notification-assets'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@types/jest': 26.0.24
+      '@types/node': 14.17.11
+      jest: 26.6.3_ts-node@10.2.1
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification-impl.tgz_9529d560057a30dad2b90eea8f41661e:
+    resolution: {integrity: sha512-NM/4TME1ubU0ldnO3gKw0iJT+MNoewvIIDkzbFhVzHzJDUrqmfP4+La9WxPlpwj3KKXtW+oup4M5wmng9RlOCQ==, tarball: file:projects/notification-impl.tgz}
+    id: file:projects/notification-impl.tgz
+    name: '@rush-temp/notification-impl'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      svelte-preprocess: 4.8.0_postcss@8.3.6+typescript@4.3.5
+      ts-node: 10.2.1_a3da7f9f56afe7b98c9382c63365a60d
+      ts-node-dev: 1.1.8_typescript@4.3.5
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - '@typescript-eslint/eslint-plugin'
+      - bufferutil
+      - canvas
+      - coffeescript
+      - less
+      - node-notifier
+      - node-sass
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - svelte
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461:
+    resolution: {integrity: sha512-t4cwqPV0Ly/tFt+AmVvdXJd634VyRBqp4uR1h9YhrRcADIxJ7lNrM8uby7pQ2j5kj1cvfx0Kr2jtcKpON2idpg==, tarball: file:projects/notification.tgz}
+    id: file:projects/notification.tgz
+    name: '@rush-temp/notification'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@types/jest': 26.0.24
+      jest: 26.6.3_ts-node@10.2.1
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/platform-rig.tgz_postcss@8.3.6:
     resolution: {integrity: sha512-zQwLU0/PsRRILCxoUsiNZkW4Nkt4s3efdsUFlKU1hiEuS6m5MTzDNjTK/J/aaZcZF85G49ItR2Pt/o2efr+whg==, tarball: file:projects/platform-rig.tgz}
     id: file:projects/platform-rig.tgz
@@ -11792,7 +11913,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-neBjCKxpOB1e5C2fCwUWTL76XKgZS1NSw3v1ojpDdySGhiYIB6qJWhsGPELdsSDk6cyLzwdQmp2eTRdkMgpCvA==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-3StY0O+aEYWCLl1lc99jnX0hnwlDf+Oe2e0dhfVOyJfkm15PefcWl3nW5HxygBryB6LkU6CAVCe5RpY+vgeRFg==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -12500,7 +12621,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-psSHFxTu2/jzxHS9mB7J0pD5TEoGFQ445N8QfiB6X2ywnp1tGHN04H8XgUi++BecAUCgFWoItT/rAJYCA1jNMQ==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-0Yh5gL75IkJYwyE1lsfu6GMmpNxQKq/ZV+bF4D+1xpUy0oyrCfPlwhOg6AlqpcDQwaUVc5TevYJ/i+0jErmSrQ==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0

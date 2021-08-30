@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, FullRefString, Ref, Space } from '@anticrm/core'
+import type { Account, Class, Doc, DocumentMapper, FullRefString, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Asset, IntlString } from '@anticrm/status'
+import type { Asset, IntlString, Resource } from '@anticrm/status'
 
 export interface ChannelAccountPreferences {
   favourite: boolean
@@ -102,6 +102,9 @@ export default plugin(
       Chunter: '' as Asset,
       Hashtag: '' as Asset,
       Lock: '' as Asset
+    },
+    mapper: {
+      CommentNotificationMappes: '' as Resource<DocumentMapper>
     }
   }
 )

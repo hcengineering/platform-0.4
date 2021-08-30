@@ -16,25 +16,86 @@
   import TreeElement from './TreeElement.svelte'
   import type { Asset } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
-  import type { AnyComponent } from '@anticrm/ui'
+  import type { Action, AnyComponent } from '@anticrm/ui'
+  import type { Class, Doc, Ref, Space } from '@anticrm/core'
+  import { getClient } from '@anticrm/workbench'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import notification from '@anticrm/notification'
+  import type { Notification } from '@anticrm/notification'
+  import { getPlugin } from '@anticrm/platform'
+  import { notificationPlugin } from '@anticrm/notification-impl'
+  import Search from '../icons/Search.svelte'
 
   export let component: AnyComponent | undefined = undefined
   export let props: any | undefined
   export let icon: Asset | undefined
-  export let title: string
-  export let notifications = 0
+  export let space: Space
+  export let objectsClass: Ref<Class<Doc>> | undefined
+
+  let notifications = 0
+  const client = getClient()
+  const accountId = client.accountId()
+  let query: QueryUpdater<Notification> | undefined
+
+  $: {
+    query = client.query(
+      query,
+      notification.class.Notification,
+      {
+        client: accountId,
+        space: space._id
+      },
+      (result) => {
+        notifications = result.length
+      }
+    )
+  }
 
   const dispatch = createEventDispatcher()
+  let actions: Array<Action> = []
+
+  const subscribe: Action = {
+    label: notification.string.Subscribe,
+    icon: Search,
+    action: async (): Promise<void> => {
+      if (!objectsClass) return
+      const notificationP = await getPlugin(notificationPlugin.id)
+      await notificationP.subscribe(objectsClass, space._id, space._id)
+      actions = [unsubscribe]
+    }
+  }
+  const unsubscribe: Action = {
+    label: notification.string.Unsubscribe,
+    icon: Search,
+    action: async (): Promise<void> => {
+      if (!objectsClass) return
+      const notificationP = await getPlugin(notificationPlugin.id)
+      await notificationP.unsubscribe(objectsClass, space._id, space._id)
+      actions = [subscribe]
+    }
+  }
+  async function getAction (objectsClass: Ref<Class<Doc>> | undefined): Promise<void> {
+    if (!objectsClass) {
+      actions = []
+      return
+    }
+    const notificationP = await getPlugin(notificationPlugin.id)
+    const subscribed = await notificationP.getSubscibeStatus(objectsClass, space._id, space._id)
+    actions = subscribed ? [unsubscribe] : [subscribe]
+  }
 </script>
 
-<TreeElement
-  {component}
-  {props}
-  {icon}
-  {title}
-  {notifications}
-  collapsed
-  on:click={() => {
-    dispatch('click')
-  }}
-/>
+{#await getAction(objectsClass) then value}
+  <TreeElement
+    {component}
+    {props}
+    {icon}
+    title={space.name}
+    {notifications}
+    collapsed
+    {actions}
+    on:click={() => {
+      dispatch('click')
+    }}
+  />
+{/await}

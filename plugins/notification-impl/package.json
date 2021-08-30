@@ -1,5 +1,5 @@
 {
-  "name": "@anticrm/model-all",
+  "name": "@anticrm/notification-impl",
   "version": "0.4.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -7,11 +7,10 @@
   "license": "EPL-2.0",
   "scripts": {
     "build": "heft build",
-    "test": "echo 'no tests'",
-    "lint": "eslint src",
+    "test": "heft test",
+    "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && eslint --fix src",
-    "gen-model": "ts-node src/genmodel.ts"
+    "format": "prettier --write src/**/*.ts && eslint --fix src"
   },
   "devDependencies": {
     "@anticrm/platform-rig": "^0.4.0",
@@ -19,8 +18,6 @@
     "@rushstack/heft": "^0.35.0",
     "@types/heft-jest": "^1.0.2",
     "@types/browser-or-node": "^1.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
@@ -28,19 +25,16 @@
     "eslint": "^7.25.0",
     "prettier": "^2.2.1",
     "typescript": "^4.2.4",
-    "ts-node": "^10.0.0"
+    "ts-node-dev": "^1.1.6",
+    "ts-node": "^10.0.0",
+    "@anticrm/plugin-core-dev":"~0.4.0",
+    "svelte-preprocess": "^4.7.0"
   },
   "dependencies": {
-    "@anticrm/model":"~0.4.0",
     "@anticrm/core":"~0.4.0",
-    "@anticrm/status":"~0.4.2",
-    "@anticrm/model-workbench":"~0.4.0",
-    "@anticrm/model-chunter":"~0.4.0",
-    "@anticrm/model-task":"~0.4.0",
-    "@anticrm/model-core":"~0.4.0",
-    "@anticrm/model-meeting":"~0.4.0",
-    "@anticrm/model-fsm":"~0.4.0",
-    "@anticrm/model-recruiting":"~0.4.0",
-    "@anticrm/model-notification":"~0.4.0"
+    "@anticrm/platform":"~0.4.2",
+    "@anticrm/plugin-core":"~0.4.0",
+    "@anticrm/notification":"~0.4.0",
+    "@anticrm/status":"~0.4.2"
   }
 }

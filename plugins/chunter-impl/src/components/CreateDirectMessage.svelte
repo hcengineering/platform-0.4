@@ -24,6 +24,7 @@
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
+  import notification from '@anticrm/notification'
 
   const client = getClient()
 
@@ -74,6 +75,13 @@
         direct: true,
         members: [client.accountId(), ...to]
       })
+
+      await client.createDoc(notification.class.Subscribe, channel._id, {
+        objectClass: chunter.class.Message,
+        objectId: channel._id,
+        clients: channel.members
+      })
+
       currentSpace = channel._id
     }
 
