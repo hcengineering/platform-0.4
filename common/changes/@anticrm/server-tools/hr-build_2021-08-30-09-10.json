@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server-tools",
+      "comment": "Product build tweaks",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server-tools"
+}

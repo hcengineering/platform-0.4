@@ -14,7 +14,7 @@
 //
 
 import { getMongoClient } from '@anticrm/mongo'
-import { startServer } from '@anticrm/server/src/wsserver'
+import { startServer } from '@anticrm/server'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { newAuthServer } from './auth'
 

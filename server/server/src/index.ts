@@ -13,13 +13,6 @@
 // limitations under the License.
 //
 
-import { startServer } from './wsserver'
-
-const SERVER_SECRET = process.env.SERVER_SECRET ?? 'secret'
-const SERVER_HOST = process.env.SERVER_HOST ?? 'localhost'
-const SERVER_PORT = parseInt(process.env.SERVER_PORT ?? '18080')
-
-// eslint-disable-next-line
-startServer(SERVER_HOST, SERVER_PORT, SERVER_SECRET).then((s) => {
-  console.log('server is active at:', s.address())
-})
+export * from './wsserver'
+export * from './server'
+export * from './token'

@@ -13,9 +13,8 @@
 // limitations under the License.
 //
 
-const Dotenv = require('dotenv-webpack')
 const path = require('path')
-const DefinePlugin = require('webpack').DefinePlugin
+const CopyPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const mode = process.env.NODE_ENV || 'development'
@@ -38,11 +37,14 @@ module.exports = {
     mainFields: (prod || NO_SVELTE) ? ['browser', 'module', 'main'] : ['svelte', 'browser', 'module', 'main']
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist/dist'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
     publicPath: '/'
   },
+  // optimization: {
+  //   minimize: true
+  // },
   module: {
     rules: [
       {
@@ -122,9 +124,11 @@ module.exports = {
   mode,
   plugins: [
     new MiniCssExtractPlugin(),
-    new Dotenv(),
-    new DefinePlugin({
-      'process.env.CLIENT': JSON.stringify(process.env.CLIENT)
+    new CopyPlugin({
+      patterns: [
+        { from: './node_modules/@anticrm/server-tools/dist/tools.js', to: '../' },
+        { from: './public', to: '.' }
+      ]
     })
   ],
   devtool: prod ? false : 'eval-source-map',

@@ -11,7 +11,7 @@ export interface WorkspaceInfo {
 const workspaces = new Map<string, WorkspaceInfo>()
 const clients = new Map<string, ClientInfo>()
 
-const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
+const MONGO_URI = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
 async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   let security!: SecurityModel
