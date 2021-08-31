@@ -31,7 +31,7 @@
   //   { description: 'Third round interview', done: false },
   // ]
   export let editable: boolean = false
-  
+
   const dispatch = createEventDispatcher()
 </script>
 

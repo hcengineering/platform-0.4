@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { CheckBoxList, UserInfo, ActionIcon, IconMoreV } from '@anticrm/ui'
   import type { CheckListItem } from '@anticrm/ui'
   import IconChat from './icons/Chat.svelte'
 
   export let label: string
-  export let tasks: Array<CheckListItem>
-  = [
+  export let tasks: Array<CheckListItem> = [
     { description: 'Do a UX research', done: true },
-    { description: 'I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts', done: false },
+    {
+      description:
+        'I believe the QR “Typography and spacing” is showing the subtle differences in line height that need to be specified when the weight of fonts',
+      done: false
+    },
     { description: 'We should  stick with the 12 text styles ', done: false }
   ]
-
 </script>
 
 <div class="container">
-  <div class="line"/>
+  <div class="line" />
   <div class="content">
     <div class="header">
       <span>{label}</span>
@@ -57,7 +58,7 @@
     .line {
       margin-right: 14px;
       width: 5px;
-      background-color: #22CC62;
+      background-color: #22cc62;
       border-radius: 3px;
     }
     .content {
@@ -67,7 +68,8 @@
       border: 1px solid var(--theme-bg-accent-color);
       border-radius: 12px;
 
-      .header, .footer {
+      .header,
+      .footer {
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;
