@@ -24,17 +24,18 @@
   import MsgView from './Message.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import ChannelSeparator from './ChannelSeparator.svelte'
+  import type { WithNotifications } from '@anticrm/notification'
 
   const client = getClient()
 
   export let id: Ref<Message>
-  let message: Message | undefined
+  let message: (Message & WithNotifications) | undefined
 
   let lq: QueryUpdater<Message> | undefined
 
   $: {
     lq = client.query(lq, chunter.class.Message, { _id: id }, (result) => {
-      message = result[0]
+      message = Object.assign(result[0], { notifications: [] })
     })
   }
 

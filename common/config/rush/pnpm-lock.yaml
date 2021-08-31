@@ -36,6 +36,7 @@ specifiers:
   '@rush-temp/notification': file:./projects/notification.tgz
   '@rush-temp/notification-assets': file:./projects/notification-assets.tgz
   '@rush-temp/notification-impl': file:./projects/notification-impl.tgz
+  '@rush-temp/notification-mappers': file:./projects/notification-mappers.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/platform-rig': file:./projects/platform-rig.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -209,6 +210,7 @@ dependencies:
   '@rush-temp/notification': file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/notification-assets': file:projects/notification-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/notification-impl': file:projects/notification-impl.tgz_9529d560057a30dad2b90eea8f41661e
+  '@rush-temp/notification-mappers': file:projects/notification-mappers.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/platform': file:projects/platform.tgz
   '@rush-temp/platform-rig': file:projects/platform-rig.tgz_postcss@8.3.6
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_e2648ea3577eecbba3519a3bcb75d461
@@ -10905,7 +10907,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-nuwiqOZHSNVyFVia+KJykAKbvvLmbb0Z9hG5sMjhSbrs0hVU6tb6HE1BAKEcncTIpESDOKK2JmWPUmMRVQ2/qQ==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-AnTqMVDCeuKd9qxiMepg7QoCv7EpAXUQacxqnwGlsw6uH7/oXhPQxEw22HLX6Zxp6eivplGLrEftf+q21JOapg==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -11718,6 +11720,28 @@ packages:
       - sugarss
       - supports-color
       - svelte
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification-mappers.tgz_e2648ea3577eecbba3519a3bcb75d461:
+    resolution: {integrity: sha512-uZYjqT4WPgd0s0AwnXmDlpewPaY0StIIi6V++i4C8dk1EqvM0wkNVB0BV2+WW9/Zh12L2ClL8a/dHoisMFa1aA==, tarball: file:projects/notification-mappers.tgz}
+    id: file:projects/notification-mappers.tgz
+    name: '@rush-temp/notification-mappers'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@types/jest': 26.0.24
+      jest: 26.6.3_ts-node@10.2.1
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
       - utf-8-validate
     dev: false
 

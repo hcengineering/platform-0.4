@@ -16,6 +16,7 @@
   import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import type { Message as MessageModel } from '@anticrm/chunter'
+  import type { Notification } from '@anticrm/notification'
 
   export let messages: Message[] = []
 
@@ -25,6 +26,7 @@
     modifiedOn: Timestamp
     createOn: Timestamp
     modifiedBy: Ref<Account>
+    notifications: Array<Notification>
   }
 </script>
 

@@ -32,14 +32,14 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 
       const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage)
       return [
-        sendTo, // Send to clients of passed tx
         { tx: async (clientId, tx) => await security.tx(tx) },
         {
           tx: async (clientId, tx) => {
             const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
             return await processor.tx(tx)
           }
-        } // If dd produce more tx, they also will be send.
+        }, // If dd produce more tx, they also will be send.
+        sendTo // Send to clients of passed tx
         // <<---- Placeholder: Add triggers here
         // hierarchy and storage are available
       ]
@@ -96,10 +96,15 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
  * Assign client to workspace, construct workspace if it is not yet started.
  * @param client
  */
-export async function assignWorkspace (client: ClientInfo): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo} > {
+export async function assignWorkspace (
+  client: ClientInfo
+): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo }> {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
-  return { clientStorage: new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client), workspace: ws }
+  return {
+    clientStorage: new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client),
+    workspace: ws
+  }
 }
 
 export async function closeWorkspace (clientId: string): Promise<void> {

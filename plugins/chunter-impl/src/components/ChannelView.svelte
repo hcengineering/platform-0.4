@@ -21,13 +21,15 @@
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, beforeUpdate } from 'svelte'
+  import notification from '@anticrm/notification'
+  import type { WithNotifications } from '@anticrm/notification'
 
   export let currentSpace: Ref<Space>
 
   const client = getClient()
   let div: HTMLElement
   let autoscroll: boolean = true
-  let messages: MessageModel[] = []
+  let messages: (MessageModel & WithNotifications)[] = []
 
   function addMessage (message: string): void {
     client.createDoc(chunter.class.Message, currentSpace, {
@@ -39,8 +41,14 @@
   let lastPosition = 0
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
-      messages = result
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
+      const notifications = await client.findAll(notification.class.Notification, {
+        objectId: { $in: result.map((m) => m._id) },
+        client: client.accountId()
+      })
+      messages = result.map((m) =>
+        Object.assign(m, { notifications: notifications.filter((n) => n.objectId === m._id) })
+      )
     })
   }
 

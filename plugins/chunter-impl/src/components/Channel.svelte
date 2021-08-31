@@ -15,6 +15,7 @@
 <script lang="ts">
   import type { Message as MessageModel } from '@anticrm/chunter'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { Notification } from '@anticrm/notification'
   import Message from './Message.svelte'
 
   export let messages: MessageData[] = []
@@ -27,6 +28,7 @@
     modifiedOn: Timestamp
     createOn: Timestamp
     modifiedBy: Ref<Account>
+    notifications: Array<Notification>
   }
 </script>
 

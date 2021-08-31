@@ -20,6 +20,8 @@
   import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
+  import notification from '@anticrm/notification'
+  import type { WithNotifications } from '@anticrm/notification'
 
   export let message: MessageModel
 
@@ -31,14 +33,20 @@
     dispatch('update')
   })
 
-  let comments: Comment[] = []
+  let comments: (Comment & WithNotifications)[] = []
   $: {
     query = client.query(
       query,
       chunter.class.Comment,
       { replyOf: getFullRef(message._id, message._class) },
-      (result) => {
-        comments = result
+      async (result) => {
+        const notifications = await client.findAll(notification.class.Notification, {
+          objectId: { $in: result.map((m) => m._id) },
+          client: client.accountId()
+        })
+        comments = result.map((m) =>
+          Object.assign(m, { notifications: notifications.filter((n) => n.objectId === m._id) })
+        )
       },
       {
         sort: { createOn: SortingOrder.Ascending }

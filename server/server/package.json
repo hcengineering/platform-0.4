@@ -45,6 +45,7 @@
     "@anticrm/rpc": "~0.4.1",
     "@anticrm/workspace": "~0.4.0",
     "@anticrm/mongo": "~0.4.0",
+    "@anticrm/notification-mappers": "~0.4.0",
     "gravatar": "~1.8.1"    
   }
 }

@@ -25,9 +25,7 @@
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { onMount } from 'svelte'
-  import notification from '@anticrm/notification'
   import type { Notification } from '@anticrm/notification'
-  import type { QueryUpdater } from '@anticrm/presentation'
 
   interface MessageData {
     _id: Ref<WithMessage>
@@ -35,11 +33,11 @@
     modifiedOn: Timestamp
     createOn: Timestamp
     modifiedBy: Ref<Account>
+    notifications: Array<Notification>
   }
 
   export let message: MessageData
   export let thread: boolean = false
-  let notifications: Array<Notification> = []
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -52,20 +50,6 @@
   async function getUser (userId: Ref<Account>): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
-
-  let query: QueryUpdater<Notification> | undefined
-
-  query = client.query(
-    query,
-    notification.class.Notification,
-    {
-      objectId: message._id,
-      client: client.accountId()
-    },
-    (result) => {
-      notifications = result
-    }
-  )
 
   function onClick () {
     if (thread) {
@@ -84,9 +68,10 @@
   }
 
   async function markAsRead () {
-    for (const notify of notifications) {
+    for (const notify of message.notifications) {
       await client.removeDoc(notify._class, notify.space, notify._id)
     }
+    message.notifications = []
   }
 
   let user: Account | undefined
@@ -100,7 +85,7 @@
 <div
   class="container"
   class:no-thread={!thread}
-  class:isNew={notifications.length > 0}
+  class:isNew={message.notifications.length > 0}
   on:click={onClick}
   on:mouseover={() => markAsRead()}
 >

@@ -27,23 +27,19 @@ export default async (): Promise<NotificationService> => {
   const accountId = client.accountId()
 
   async function subscribe<T extends Doc> (_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>): Promise<void> {
-    console.log('SUBSCRIBE CALL')
     const subscribes = await client.findAll(notification.class.Subscribe, {
       objectClass: _class,
       space: space,
       objectId: objectId
     })
-    console.log(subscribes)
     const subscribe = subscribes.shift()
     if (subscribe === undefined) {
-      console.log('create subscribe')
       await client.createDoc(notification.class.Subscribe, space, {
         objectClass: _class,
         objectId: objectId,
         clients: [accountId]
       })
     } else if (!subscribe.clients.includes(accountId)) {
-      console.log('push subscribe')
       await client.updateDoc(subscribe._class, subscribe.space, subscribe._id, {
         $push: { clients: accountId }
       })

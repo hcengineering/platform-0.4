@@ -25,6 +25,7 @@
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
   import notification from '@anticrm/notification'
+  import type { WithNotifications } from '@anticrm/notification'
 
   const client = getClient()
 
@@ -34,7 +35,7 @@
 
   let div: HTMLElement
   let autoscroll = true
-  let messages: MessageModel[] = []
+  let messages: (MessageModel & WithNotifications)[] = []
 
   let allAccounts: Account[] = []
 
@@ -93,8 +94,14 @@
   let query: QueryUpdater<Message> | undefined = undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace }, (result) => {
-      messages = result
+    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace }, async (result) => {
+      const notifications = await client.findAll(notification.class.Notification, {
+        objectId: { $in: result.map((m) => m._id) },
+        client: client.accountId()
+      })
+      messages = result.map((m) =>
+        Object.assign(m, { notifications: notifications.filter((n) => n.objectId === m._id) })
+      )
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
   }

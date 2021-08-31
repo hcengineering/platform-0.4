@@ -104,7 +104,7 @@ export default plugin(
       Lock: '' as Asset
     },
     mapper: {
-      CommentNotificationMappes: '' as Resource<DocumentMapper>
+      CommentNotificationMapper: '' as Resource<DocumentMapper>
     }
   }
 )

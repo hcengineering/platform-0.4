@@ -28,6 +28,10 @@ export interface Notification extends DerivedData {
   tx: Ref<Tx>
 }
 
+export interface WithNotifications {
+  notifications: Notification[]
+}
+
 export interface NotificationService extends Service {
   subscribe: <T extends Doc>(_class: Ref<Class<T>>, space: Ref<Space>, objectId: Ref<T>) => Promise<void>
 

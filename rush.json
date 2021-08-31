@@ -692,6 +692,11 @@
       "packageName": "@anticrm/model-notification",
       "projectFolder": "models/notification",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/notification-mappers",
+      "projectFolder": "plugins/notification-mappers",
+      "shouldPublish": true
     }
 
     // {

@@ -4,7 +4,10 @@ import core, {
   DocumentQuery,
   DOMAIN_TX,
   FindResult,
-  Hierarchy, isModelTx, ModelDb, Ref,
+  Hierarchy,
+  isModelTx,
+  ModelDb,
+  Ref,
   Storage,
   Tx
 } from '@anticrm/core'
@@ -61,11 +64,13 @@ export class Workspace implements WithWorkspaceTx {
     const txCollection = db.collection(DOMAIN_TX as string)
 
     // We only need model global transactions.
-    const transactions: Tx[] = (await txCollection.find({ space: core.space.Tx, objectSpace: core.space.Model }).toArray())
+    const transactions: Tx[] = (
+      await txCollection.find({ space: core.space.Tx, objectSpace: core.space.Model }).toArray()
+    )
       .map(mongoUnescape)
       .map(mongoReplaceNulls)
 
-    transactions.forEach(tx => hierarchy.tx(tx))
+    transactions.forEach((tx) => hierarchy.tx(tx))
 
     for (const tx of transactions) {
       await model.tx(tx)
@@ -112,7 +117,11 @@ export class Workspace implements WithWorkspaceTx {
     }
 
     // 3. process all other transaction handlers
-    await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
+    for (const txh of this.txh) {
+      await txh.tx(clientId, tx)
+    }
+
+    // await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
     return result
   }
 }
