@@ -73,7 +73,7 @@
 <svelte:window on:mousedown={waitClick} />
 <div class="checkBox-container">
   <div style="margin-top: 1px;">
-    <CheckBox bind:checked on:change={changeItem} />
+    <CheckBox bind:checked on:change={changeItem} {editable} />
   </div>
   <div
     class="label"
