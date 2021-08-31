@@ -697,6 +697,31 @@
       "packageName": "@anticrm/notification-mappers",
       "projectFolder": "plugins/notification-mappers",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/calendar-impl",
+      "projectFolder": "plugins/calendar-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/calendar-assets",
+      "projectFolder": "plugins/calendar-assets",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-calendar",
+      "projectFolder": "models/calendar",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/calendar-mappers",
+      "projectFolder": "plugins/calendar-mappers",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/calendar",
+      "projectFolder": "plugins/calendar",
+      "shouldPublish": true
     }
 
     // {

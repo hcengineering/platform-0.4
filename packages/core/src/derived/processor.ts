@@ -211,6 +211,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectClass: tx.objectClass,
         descriptorId: d._id
       })
+
       await this.applyDerivedData(oldData, results, tx.modifiedBy)
     }
   }
@@ -287,7 +288,7 @@ export class DerivedDataProcessor extends TxProcessor {
   private async applyMapper (descriptor: Descr, tx: Tx): Promise<DerivedData[] | undefined> {
     const mapper = derivedDataMappers.get(descriptor.mapper ?? EMPTY_MAPPER)
     if (mapper !== undefined) {
-      return await mapper.map(tx, { descriptor, hierarchy: this.hierarchy, storage: this.storage })
+      return await mapper.map(tx, { descriptor, hierarchy: this.hierarchy, storage: this.storage, model: this.model })
     }
     return undefined
   }

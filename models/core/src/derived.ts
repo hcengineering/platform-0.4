@@ -41,7 +41,7 @@ const DOMAIN_TITLE = 'title' as Domain
 /**
  * @public
  */
-@Model(core.class.DerivedData, core.class.Doc, DOMAIN_MODEL)
+@Model(core.class.DerivedData, core.class.Doc)
 export class TDerivedData extends TDoc implements DerivedData {
   descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
   objectId!: Ref<Doc>

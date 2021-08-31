@@ -14,6 +14,7 @@
 //
 
 import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
+import regCalendarMappers from '@anticrm/calendar-mappers'
 import * as gravatar from 'gravatar'
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -37,6 +38,8 @@ export async function startServer (
   options?: ServerOptions
 ): Promise<Server> {
   regNotificationMappers()
+  regCalendarMappers()
+
   const instance = await start(host, port, {
     connect: connectClient(serverToken, options),
     close: async (clientId) => {

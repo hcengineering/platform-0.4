@@ -59,7 +59,11 @@
         icon={Close}
         size={16}
         action={() => {
-          item.selected = false
+          const shouldDeselect = item.onDeselect?.() ?? true
+
+          if (shouldDeselect) {
+            item.selected = false
+          }
         }}
       />
     </div>

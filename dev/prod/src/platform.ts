@@ -19,6 +19,7 @@ import login from '@anticrm/login'
 import workbench from '@anticrm/workbench'
 import core from '@anticrm/plugin-core'
 import chunter from '@anticrm/chunter'
+import calendar from '@anticrm/calendar'
 import task from '@anticrm/task'
 import meeting from '@anticrm/meeting'
 import recruiting from '@anticrm/recruiting'
@@ -44,6 +45,7 @@ import '@anticrm/meeting-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/notification-assets'
+import '@anticrm/calendar-assets'
 // import uiMeta from '@anticrm/platform-ui/src/__meta__/meta'
 // import workbenchMeta from '@anticrm/workbench/src/__meta__'
 // import chunterMeta from '@anticrm/chunter/src/__meta__'
@@ -74,6 +76,7 @@ export function configurePlatform (): void {
     notification,
     async () => await import(/* webpackChunkName: "notification" */ '@anticrm/notification-impl')
   )
+  addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
   // platform.addLocation(i18n, () => import(/* webpackChunkName: "platform-i18n" */ '@anticrm/platform-i18n/src/plugin'))
   // platform.addLocation(presentation, () => import(/* webpackChunkName: "presentation" */ '@anticrm/presentation/src/plugin'))
   // platform.addLocation(contact, () => import(/* webpackChunkName: "contact" */ '@anticrm/contact/src/plugin'))
