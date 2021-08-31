@@ -34,13 +34,13 @@
   <div class="content">
     <div class="header">
       <span>{label}</span>
-      <ActionIcon size={24} icon={IconMoreV} direction={'left'} label={'Comments'} />
+      <ActionIcon size={24} icon={IconMoreV} direction={'left'} />
     </div>
     <div class="checklist"><CheckBoxList items={tasks} /></div>
     <div class="footer">
       <UserInfo />
       <div class="actions">
-        <ActionIcon size={24} icon={IconChat} direction={'left'} label={'Comments'} />
+        <ActionIcon size={24} icon={IconChat} direction={'left'} />
         <div class="counter">2</div>
       </div>
     </div>
