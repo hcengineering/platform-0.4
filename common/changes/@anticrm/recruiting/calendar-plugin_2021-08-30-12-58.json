@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting",
+      "comment": "Update eslintrc",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting"
+}

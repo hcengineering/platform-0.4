@@ -1,3 +1,4 @@
+import { deepEqual } from 'fast-equals'
 import { Doc } from './classes'
 import { createPredicates, isPredicate } from './predicate'
 import { DocumentQuery, QuerySelector, SortingQuery } from './storage'
@@ -34,7 +35,7 @@ export function findProperty (objects: Doc[], propertyKey: string, value: any): 
   const result: Doc[] = []
   for (const object of objects) {
     const val = (object as any)[propertyKey]
-    if (val === value || nestedDotQueryCheck(propertyKey, object, value)) {
+    if (deepEqual(val, value) || nestedDotQueryCheck(propertyKey, object, value)) {
       result.push(object)
     }
   }

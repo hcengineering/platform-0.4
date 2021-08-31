@@ -14,6 +14,7 @@
 //
 
 import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
+import regCalendarMappers from '@anticrm/calendar-mappers'
 import * as gravatar from 'gravatar'
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -30,6 +31,8 @@ export interface ServerOptions {
  * @public
  */
 export async function startServer (host: string, port: number, serverToken: string, options?: ServerOptions): Promise<Server> {
+  regCalendarMappers()
+
   const instance = await start(host, port, {
     connect: connectClient(serverToken, options),
     close: async (clientId) => {
@@ -97,4 +100,3 @@ async function updateAccount (clientId: string, workspace: WorkspaceInfo, accoun
       }, accountId))
   }
 }
-

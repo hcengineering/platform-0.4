@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Introduce calendar plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
