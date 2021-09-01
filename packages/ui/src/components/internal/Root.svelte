@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte'
   import { OK } from '@anticrm/status'
   import { PlatformEvent, getMetadata, addEventListener } from '@anticrm/platform'
   import type { AnyComponent } from '../../types'
-  import { applicationShortcutKey } from '../../utils'
-  import { location } from '../../location'
+  import { applicationShortcutKey, defaultApplicationShortcutKey } from '../../utils'
+  import { newRouter } from '../../router'
 
   import { Theme } from '@anticrm/theme'
   import Component from '../Component.svelte'
@@ -15,16 +14,24 @@
   import WiFi from './icons/WiFi.svelte'
   import ThemeSelector from './ThemeSelector.svelte'
 
-  let application: AnyComponent | undefined
+  interface AppRoute {
+    application: string
+  }
 
-  onDestroy(
-    location.subscribe((loc) => {
-      if (loc.path[0]) {
-        const app = loc.path[0] as AnyComponent
-        const shortcut = getMetadata(applicationShortcutKey(app))
-        application = shortcut ?? app
-      }
-    })
+  let application: AnyComponent | undefined
+  let appRoute: AppRoute | undefined
+
+  const defaultMeta = getMetadata(defaultApplicationShortcutKey())
+
+  newRouter<AppRoute>(
+    ':application',
+    (match) => {
+      appRoute = match
+      const app = appRoute.application
+      const shortcut = getMetadata(applicationShortcutKey(app))
+      application = shortcut ?? (app as AnyComponent)
+    },
+    { application: defaultMeta ?? '' }
   )
 
   let status = OK

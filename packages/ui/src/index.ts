@@ -17,8 +17,9 @@ import { SvelteComponent } from 'svelte'
 import Root from './components/internal/Root.svelte'
 
 export * from './types'
-export { applicationShortcutKey } from './utils'
-export { getCurrentLocation, navigate, location } from './location'
+export { applicationShortcutKey, defaultApplicationShortcutKey } from './utils'
+export * from './location'
+export * from './router'
 
 export { default as EditBox } from './components/EditBox.svelte'
 export { default as EditWithIcon } from './components/EditWithIcon.svelte'

@@ -30,7 +30,11 @@ import '@anticrm/login-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 
+import workbenchMeta from '@anticrm/workbench/src/meta'
+
 export function configurePlatform (): void {
+  workbenchMeta()
+
   addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
 
   addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))

@@ -15,8 +15,8 @@
 <script lang="ts">
   import type { Ref } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getCurrentLocation, navigate } from '@anticrm/ui'
-  import type { Application } from '@anticrm/workbench'
+  import { getRouter } from '@anticrm/ui'
+  import type { Application, WorkbenchRoute } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
   import AppItem from './AppItem.svelte'
 
@@ -27,15 +27,14 @@
   const client = getClient()
   let query: QueryUpdater<Application> | undefined
 
+  const router = getRouter<WorkbenchRoute>()
+
   query = client.query(query, workbench.class.Application, {}, (result) => {
     apps = result
   })
 
   function navigateApp (app: Ref<Application>) {
-    const loc = getCurrentLocation()
-    loc.path[1] = app
-    loc.path.length = 2
-    navigate(loc)
+    router.navigate({ app })
   }
 </script>
 

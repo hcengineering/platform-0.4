@@ -50,6 +50,7 @@ specifiers:
   '@rush-temp/recruiting-assets': file:./projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:./projects/recruiting-impl.tgz
   '@rush-temp/richeditor': file:./projects/richeditor.tgz
+  '@rush-temp/router': file:./projects/router.tgz
   '@rush-temp/rpc': file:./projects/rpc.tgz
   '@rush-temp/server': file:./projects/server.tgz
   '@rush-temp/server-tools': file:./projects/server-tools.tgz
@@ -234,6 +235,7 @@ dependencies:
   '@rush-temp/recruiting-assets': file:projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1
   '@rush-temp/richeditor': file:projects/richeditor.tgz_postcss@8.3.6+ts-node@10.2.1
+  '@rush-temp/router': file:projects/router.tgz
   '@rush-temp/rpc': file:projects/rpc.tgz
   '@rush-temp/server': file:projects/server.tgz
   '@rush-temp/server-tools': file:projects/server-tools.tgz_@types+node@14.17.11
@@ -11609,7 +11611,7 @@ packages:
     dev: false
 
   file:projects/model-calendar.tgz:
-    resolution: {integrity: sha512-ZV2G6u9QoGkSnrK0Q9fwlplavo1Uxv56mgqnhQKZxumML2C12JCG5qjpbwhOX11QD+gdpxduqgyExotUFfXLUg==, tarball: file:projects/model-calendar.tgz}
+    resolution: {integrity: sha512-ZvjAZM16VHEcqlBTGu6Ql0xBuVSAdm9l2E8JyQFlJjyURH1SvJT49Gl+9S0dw6WY9e23ORA5+MgWFPtVsP0TJg==, tarball: file:projects/model-calendar.tgz}
     name: '@rush-temp/model-calendar'
     version: 0.0.0
     dependencies:
@@ -11684,7 +11686,7 @@ packages:
     dev: false
 
   file:projects/model-dev.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-2YvZu80romONA8u2YEjYwM+dQ+dq9S7xC8uROaZOeGxcenBNJVqUyduitdwI6DojAvi5IGM8B2rUld6jJdteNQ==, tarball: file:projects/model-dev.tgz}
+    resolution: {integrity: sha512-Ps+FzKJVyGdZzmwUx1i230BerLvcGGCOkCtoEU61qYOqaeJVloyS8p+S5NKce1tacq5DW9MyG+q+YSAzneStiA==, tarball: file:projects/model-dev.tgz}
     id: file:projects/model-dev.tgz
     name: '@rush-temp/model-dev'
     version: 0.0.0
@@ -12322,6 +12324,32 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/router.tgz:
+    resolution: {integrity: sha512-jLaObUJ4K05yjcLPZ6bpr3Ualm/7kePwfmjsMbKknWhdJimpbBnqQIrL1lpYw30ZidtIzwdl4XVpZr3ihpLXig==, tarball: file:projects/router.tgz}
+    name: '@rush-temp/router'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      fast-equals: 2.0.3
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   file:projects/rpc.tgz:
     resolution: {integrity: sha512-fl/aLdi7voroEnk9JoW7qqAfHVnAIOzsgGuPb9BwtYjXZGldpef3WJ2A0H4Zz4zNT6y/TAp3eI5sZzgOt2LKvw==, tarball: file:projects/rpc.tgz}
     name: '@rush-temp/rpc'
@@ -12783,7 +12811,7 @@ packages:
     dev: false
 
   file:projects/ui.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-63CoyNKWH1EmyKgGdRNlXs5hz1SpDZAda+04vnHVAsaXns6CVl8T8ulhuabrD45Hn5jPhG0DAdah46ejysGkyA==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-XPCHFYWEq73H+7K7a+NNj7ShO+OVM2twuRoEqv7ovwO/A32FWecwaDQzMd3tsluGKOHeeMk3IUgC8pFOgYNAsg==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0

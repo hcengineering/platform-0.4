@@ -19,7 +19,6 @@ import workbench from '@anticrm/workbench'
 
 export default mergeIds(workbench, {
   component: {
-    WorkbenchApp: '' as AnyComponent,
     Spaces: '' as AnyComponent
   }
 })

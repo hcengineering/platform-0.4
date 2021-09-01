@@ -13,10 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, UserInfo, DateTime, getCurrentLocation, navigate } from '@anticrm/ui'
+  import { Table, Label, UserInfo, DateTime } from '@anticrm/ui'
+  import { getRouter } from '@anticrm/ui'
   import core, { DocumentQuery } from '@anticrm/core'
   import type { Ref, Doc, Account } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import { deepEqual } from 'fast-equals'
   import TaskStatus from './TaskStatus.svelte'
 
@@ -46,6 +48,7 @@
   ]
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
   let data: Doc[] = []
 
   let lq: QueryUpdater<Task> | undefined
@@ -62,10 +65,7 @@
   }
 
   function onClick (event: any) {
-    const loc = getCurrentLocation()
-    loc.path[3] = event.detail.id
-    loc.path.length = 4
-    navigate(loc)
+    router.navigate({ itemId: event.detail.id })
   }
 
   async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {

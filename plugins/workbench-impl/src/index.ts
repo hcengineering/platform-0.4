@@ -15,9 +15,8 @@
 
 import { setResource } from '@anticrm/platform'
 import type { WorkbenchService } from '@anticrm/workbench'
-
-import WorkbenchApp from './components/WorkbenchApp.svelte'
 import Spaces from './components/Spaces.svelte'
+import WorkbenchApp from './components/WorkbenchApp.svelte'
 import workbench from './plugin'
 
 /*!

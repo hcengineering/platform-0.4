@@ -16,10 +16,9 @@
 // P L U G I N
 
 import type { Metadata, Plugin, Service } from '@anticrm/platform'
-import { plugin, setMetadata } from '@anticrm/platform'
+import { plugin } from '@anticrm/platform'
 import { Status, StatusCode } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/ui'
-import { applicationShortcutKey } from '@anticrm/ui'
 
 /**
  * @public
@@ -97,8 +96,6 @@ const login = plugin(
     }
   }
 )
-
-setMetadata(applicationShortcutKey('login'), login.component.LoginForm)
 /**
  * @public
  */

@@ -14,17 +14,19 @@
 -->
 <script lang="ts">
   import type { CommentRef, WithMessage } from '@anticrm/chunter'
-  import { ActionIcon, getCurrentLocation, DateTime, MarkdownViewer, navigate } from '@anticrm/ui'
+  import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
+  import { getRouter } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { onMount } from 'svelte'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import core from '@anticrm/core'
-  import type { Account, Ref, Timestamp } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import { onMount } from 'svelte'
 
   interface MessageData {
     _id: Ref<WithMessage>
@@ -44,6 +46,7 @@
   }
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
@@ -53,10 +56,9 @@
     if (thread) {
       return
     }
-    const loc = getCurrentLocation()
-    loc.path[3] = message._id
-    loc.path.length = 4
-    navigate(loc)
+    router.navigate({
+      itemId: message._id
+    })
   }
 
   function isToday (value: Date | Timestamp): boolean {

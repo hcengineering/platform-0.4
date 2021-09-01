@@ -13,14 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Doc, Ref, Space } from '@anticrm/core'
+  import type { Space } from '@anticrm/core'
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, location, Splitter } from '@anticrm/ui'
-  import type { Application, NavigatorModel, SpacesNavModel } from '@anticrm/workbench'
+  import { Component, Splitter } from '@anticrm/ui'
+  import { newRouter } from '@anticrm/ui'
+  import type { NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
-  import { onDestroy, setContext } from 'svelte'
+  import { setContext } from 'svelte'
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
   import Modal from './Modal.svelte'
@@ -33,26 +34,30 @@
 
   setContext(workbench.context.Client, client)
 
-  let currentApp: Ref<Application> | undefined
-
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
 
-  let currentSpaceRef: Ref<Space> | undefined
   let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
   let spaceModel: SpacesNavModel | undefined
-  let itemId: Ref<Doc> | undefined
 
   let currentSpecial: number = -1
 
-  onDestroy(
-    location.subscribe(async (loc) => {
-      currentApp = loc.path[1] as Ref<Application>
+  let currentRoute: WorkbenchRoute = {}
+
+  const router = newRouter<WorkbenchRoute>(
+    '?app&space&itemId',
+    (match) => {
+      if (currentRoute?.app !== undefined && currentRoute?.app !== match.app) {
+        // Remove itemId if app is switched
+        match.itemId = undefined
+        match.space = undefined
+        router.navigate({ itemId: undefined, space: undefined })
+      }
+      currentRoute = match
       currentSpecial = -1
-      currentSpaceRef = loc.path[2] as Ref<Space>
-      itemId = loc.path[3] as Ref<Doc>
-    })
+    },
+    {}
   )
 
   function updateSpaceModel (space: Space, navigatorModel: NavigatorModel): SpacesNavModel | undefined {
@@ -64,16 +69,22 @@
       }
     }
   }
-  $: client.findAll(workbench.class.Application, { _id: currentApp }).then((results) => {
-    const result = results.pop()
-    currentAppLabel = result?.label ?? currentAppLabel
+  $: client.findAll(workbench.class.Application, { _id: currentRoute.app }).then((results) => {
+    const result = results.shift()
+
+    currentAppLabel = result?.label ?? UndefinedApp
     navigatorModel = result?.navigatorModel
+
+    if (result !== undefined && currentRoute.app === undefined) {
+      router.navigate({ app: result._id })
+    }
   })
 
   let spaceQuery: QueryUpdater<Space> | undefined
-  $: if (currentSpaceRef && navigatorModel) {
-    spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentSpaceRef }, (result) => {
+  $: if (currentRoute.space && navigatorModel) {
+    spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
       currentSpace = result[0]
+
       // Find a space model
       if (navigatorModel !== undefined) {
         spaceModel = updateSpaceModel(result[0], navigatorModel)
@@ -100,7 +111,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active" />
-    <Applications active={currentApp} />
+    <Applications active={currentRoute.app} />
     <div class="profile">
       <Profile on:logout />
     </div>
@@ -116,15 +127,15 @@
       {#if spaceModel}
         <SpaceHeader model={navigatorModel} space={currentSpace} {spaceModel} />
       {/if}
-      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpaceRef }} />
+      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
     {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
   </div>
-  {#if navigatorModel && navigatorModel.editComponent && itemId}
+  {#if navigatorModel && navigatorModel.editComponent && currentRoute.itemId}
     <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
     <div bind:this={asideHTML} class="aside">
-      <Component is={navigatorModel.editComponent} props={{ id: itemId }} />
+      <Component is={navigatorModel.editComponent} props={{ id: currentRoute.itemId }} />
     </div>
   {/if}
 </div>
