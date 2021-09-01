@@ -33,12 +33,10 @@ export function newFrontServer (app: Koa, hostDir: string): FrontServer {
 
   app.use(async function (ctx, next) {
     console.log('handle send index.html')
-    return await send(ctx, '/index.html', { root: hostDir })
-      .then(async () => await next())
+    return await send(ctx, '/index.html', { root: hostDir }).then(async () => await next())
   })
 
   return {
     shutdown: () => {}
   }
 }
-

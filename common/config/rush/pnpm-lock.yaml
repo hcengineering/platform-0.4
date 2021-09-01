@@ -18,6 +18,7 @@ specifiers:
   '@rush-temp/elastic': file:./projects/elastic.tgz
   '@rush-temp/fsm': file:./projects/fsm.tgz
   '@rush-temp/fsm-impl': file:./projects/fsm-impl.tgz
+  '@rush-temp/hr-build': file:./projects/hr-build.tgz
   '@rush-temp/login': file:./projects/login.tgz
   '@rush-temp/login-assets': file:./projects/login-assets.tgz
   '@rush-temp/login-impl': file:./projects/login-impl.tgz
@@ -52,6 +53,7 @@ specifiers:
   '@rush-temp/rpc': file:./projects/rpc.tgz
   '@rush-temp/server': file:./projects/server.tgz
   '@rush-temp/server-tools': file:./projects/server-tools.tgz
+  '@rush-temp/services': file:./projects/services.tgz
   '@rush-temp/status': file:./projects/status.tgz
   '@rush-temp/task': file:./projects/task.tgz
   '@rush-temp/task-assets': file:./projects/task-assets.tgz
@@ -81,7 +83,11 @@ specifiers:
   '@types/jwt-simple': ^0.5.33
   '@types/koa': ^2.13.1
   '@types/koa-bodyparser': ^4.3.0
+  '@types/koa-logger': ~3.1.1
+  '@types/koa-mount': ~4.0.1
   '@types/koa-router': ^7.4.2
+  '@types/koa-send': ^4.1.3
+  '@types/koa-static': ~4.0.2
   '@types/koa__cors': ^3.0.2
   '@types/kurento-client': ~6.14.4
   '@types/lodash.debounce': ~4.0.6
@@ -105,6 +111,7 @@ specifiers:
   '@typescript-eslint/parser': ^4.22.0
   autoprefixer: ~10.2.6
   comment-parser: ^1.2.3
+  copy-webpack-plugin: ~9.0.1
   core-js: ^3.10.1
   cross-env: ^7.0.3
   css-loader: ^5.2.1
@@ -126,13 +133,16 @@ specifiers:
   fast-copy: ~2.1.1
   fast-equals: ^2.0.1
   file-loader: ^6.2.0
-  gravatar: ~1.8.1
+  gravatar: ^1.8.1
   intl-messageformat: ^9.6.12
   jest: ^26.6.3
   jwt-simple: ^0.5.6
   koa: ^2.13.1
   koa-bodyparser: ^4.3.0
+  koa-logger: ^3.2.1
   koa-router: ^10.0.0
+  koa-send: ^5.0.1
+  koa-static: ^5.0.0
   locate-character: ^2.0.5
   lodash: ^4.17.21
   lodash.debounce: ~4.0.8
@@ -192,6 +202,7 @@ dependencies:
   '@rush-temp/elastic': file:projects/elastic.tgz
   '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_postcss@8.3.6+ts-node@10.2.1
+  '@rush-temp/hr-build': file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5
   '@rush-temp/login': file:projects/login.tgz
   '@rush-temp/login-assets': file:projects/login-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/login-impl': file:projects/login-impl.tgz_postcss@8.3.6+ts-node@10.2.1
@@ -226,6 +237,7 @@ dependencies:
   '@rush-temp/rpc': file:projects/rpc.tgz
   '@rush-temp/server': file:projects/server.tgz
   '@rush-temp/server-tools': file:projects/server-tools.tgz_@types+node@14.17.11
+  '@rush-temp/services': file:projects/services.tgz_@types+node@14.17.11
   '@rush-temp/status': file:projects/status.tgz
   '@rush-temp/task': file:projects/task.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/task-assets': file:projects/task-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
@@ -255,7 +267,11 @@ dependencies:
   '@types/jwt-simple': 0.5.33
   '@types/koa': 2.13.4
   '@types/koa-bodyparser': 4.3.3
+  '@types/koa-logger': 3.1.1
+  '@types/koa-mount': 4.0.1
   '@types/koa-router': 7.4.4
+  '@types/koa-send': 4.1.3
+  '@types/koa-static': 4.0.2
   '@types/koa__cors': 3.0.3
   '@types/kurento-client': 6.14.5
   '@types/lodash.debounce': 4.0.6
@@ -279,6 +295,7 @@ dependencies:
   '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
   autoprefixer: 10.2.6_postcss@8.3.6
   comment-parser: 1.2.4
+  copy-webpack-plugin: 9.0.1_webpack@5.51.1
   core-js: 3.16.3
   cross-env: 7.0.3
   css-loader: 5.2.7_webpack@5.51.1
@@ -306,7 +323,10 @@ dependencies:
   jwt-simple: 0.5.6
   koa: 2.13.1
   koa-bodyparser: 4.3.0
+  koa-logger: 3.2.1
   koa-router: 10.1.1
+  koa-send: 5.0.1
+  koa-static: 5.0.0
   locate-character: 2.0.5
   lodash: 4.17.21
   lodash.debounce: 4.0.8
@@ -1728,10 +1748,35 @@ packages:
       '@types/koa': 2.13.4
     dev: false
 
+  /@types/koa-logger/3.1.1:
+    resolution: {integrity: sha512-wp2HaskkPugfwgXgNnc+idnReuJZSTTYQbkcxXjsMhp1kTc342PxDzTL9FXDgBfEvgt9NX1CCGjkwPKX2dlEKQ==}
+    dependencies:
+      '@types/koa': 2.13.4
+    dev: false
+
+  /@types/koa-mount/4.0.1:
+    resolution: {integrity: sha512-HNeg80CVS9Dfq8dGYqCZZCAUm7g6jPCNJ1ydqVLEJxLrjmeburpvq+lOZkE4rxBZ6O38dr3tj9IA3IfbdoI05w==}
+    dependencies:
+      '@types/koa': 2.13.4
+    dev: false
+
   /@types/koa-router/7.4.4:
     resolution: {integrity: sha512-3dHlZ6CkhgcWeF6wafEUvyyqjWYfKmev3vy1PtOmr0mBc3wpXPU5E8fBBd4YQo5bRpHPfmwC5yDaX7s4jhIN6A==}
     dependencies:
       '@types/koa': 2.13.4
+    dev: false
+
+  /@types/koa-send/4.1.3:
+    resolution: {integrity: sha512-daaTqPZlgjIJycSTNjKpHYuKhXYP30atFc1pBcy6HHqB9+vcymDgYTguPdx9tO4HMOqNyz6bz/zqpxt5eLR+VA==}
+    dependencies:
+      '@types/koa': 2.13.4
+    dev: false
+
+  /@types/koa-static/4.0.2:
+    resolution: {integrity: sha512-ns/zHg+K6XVPMuohjpOlpkR1WLa4VJ9czgUP9bxkCDn0JZBtUWbD/wKDZzPGDclkQK1bpAEScufCHOy8cbfL0w==}
+    dependencies:
+      '@types/koa': 2.13.4
+      '@types/koa-send': 4.1.3
     dev: false
 
   /@types/koa/2.13.4:
@@ -3268,6 +3313,22 @@ packages:
 
   /copy-to/2.0.1:
     resolution: {integrity: sha1-JoD7uAaKSNCGVrYJgJK9r8kG9KU=}
+    dev: false
+
+  /copy-webpack-plugin/9.0.1_webpack@5.51.1:
+    resolution: {integrity: sha512-14gHKKdYIxF84jCEgPgYXCPpldbwpxxLbCmA7LReY7gvbaT555DgeBWBgBZM116tv/fO6RRJrsivBqRyRlukhw==}
+    engines: {node: '>= 12.13.0'}
+    peerDependencies:
+      webpack: ^5.1.0
+    dependencies:
+      fast-glob: 3.2.7
+      glob-parent: 6.0.1
+      globby: 11.0.4
+      normalize-path: 3.0.0
+      p-limit: 3.1.0
+      schema-utils: 3.1.1
+      serialize-javascript: 6.0.0
+      webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
   /core-js-pure/3.16.3:
@@ -4932,6 +4993,13 @@ packages:
       is-glob: 4.0.1
     dev: false
 
+  /glob-parent/6.0.1:
+    resolution: {integrity: sha512-kEVjS71mQazDBHKcsq4E9u/vUzaLcw1A8EtUeydawvIWQCJM0qQ08G1H7/XTjFUulla6XQiDOG6MXSaG0HDKog==}
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      is-glob: 4.0.1
+    dev: false
+
   /glob-to-regexp/0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
     dev: false
@@ -5275,6 +5343,10 @@ packages:
   /human-signals/2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
+    dev: false
+
+  /humanize-number/0.0.2:
+    resolution: {integrity: sha1-EcCvakcWQ2M1iFiASPF5lUFInBg=}
     dev: false
 
   /iconv-lite/0.4.24:
@@ -6977,6 +7049,16 @@ packages:
       koa-compose: 3.2.1
     dev: false
 
+  /koa-logger/3.2.1:
+    resolution: {integrity: sha512-MjlznhLLKy9+kG8nAXKJLM0/ClsQp/Or2vI3a5rbSQmgl8IJBQO0KI5FA70BvW+hqjtxjp49SpH2E7okS6NmHg==}
+    engines: {node: '>= 7.6.0'}
+    dependencies:
+      bytes: 3.1.0
+      chalk: 2.4.2
+      humanize-number: 0.0.2
+      passthrough-counter: 1.0.0
+    dev: false
+
   /koa-router/10.1.1:
     resolution: {integrity: sha512-z/OzxVjf5NyuNO3t9nJpx7e1oR3FSBAauiwXtMQu4ppcnuNZzTaQ4p21P8A6r2Es8uJJM339oc4oVW+qX7SqnQ==}
     engines: {node: '>= 8.0.0'}
@@ -6986,6 +7068,27 @@ packages:
       koa-compose: 4.1.0
       methods: 1.1.2
       path-to-regexp: 6.2.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /koa-send/5.0.1:
+    resolution: {integrity: sha512-tmcyQ/wXXuxpDxyNXv5yNNkdAMdFRqwtegBXUaowiQzUKqJehttS0x2j0eOZDQAyloAth5w6wwBImnFzkUz3pQ==}
+    engines: {node: '>= 8'}
+    dependencies:
+      debug: 4.3.2
+      http-errors: 1.8.0
+      resolve-path: 1.4.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /koa-static/5.0.0:
+    resolution: {integrity: sha512-UqyYyH5YEXaJrf9S8E23GoJFQZXkBVJ9zYYMPGz919MSX1KuvAcycIuS0ci150HCoPf4XQVhQ84Qf8xRPWxFaQ==}
+    engines: {node: '>= 7.6.0'}
+    dependencies:
+      debug: 3.2.7
+      koa-send: 5.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -7911,6 +8014,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
+  /passthrough-counter/1.0.0:
+    resolution: {integrity: sha1-GWfZ5m2lcrXAI8eH2xEqOHqxZvo=}
+    dev: false
+
   /patch-package/6.4.7:
     resolution: {integrity: sha512-S0vh/ZEafZ17hbhgqdnpunKDfzHQibQizx9g8yEf5dcVk3KOflOfdufRXQX8CSEkyOQwuM/bNz1GwKvFj54kaQ==}
     engines: {npm: '>5'}
@@ -8655,6 +8762,14 @@ packages:
   /resolve-from/5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /resolve-path/1.4.0:
+    resolution: {integrity: sha1-xL2p9e+y/OZSR4c6s2u02DT+Fvc=}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      http-errors: 1.6.3
+      path-is-absolute: 1.0.1
     dev: false
 
   /resolve-url/0.2.1:
@@ -10884,7 +10999,7 @@ packages:
     dev: false
 
   file:projects/calendar-assets.tgz:
-    resolution: {integrity: sha512-i/9zIZV70SH7OwjTqgjVgHbAHrTeEIoRRKX7z2KQEx8aNv7Sqb5HUxBbY24S/HkuOnOmFJJs60kvufEYHxgpDQ==, tarball: file:projects/calendar-assets.tgz}
+    resolution: {integrity: sha512-CQxv3SBDCMiVBAWLMRR+LfTwsPfE7EZJB+4TOF0fcsoNHzNbDJUrxHDtBGQ15y5gudo4M/yKaNjMiWVt7Toq9A==, tarball: file:projects/calendar-assets.tgz}
     name: '@rush-temp/calendar-assets'
     version: 0.0.0
     dependencies:
@@ -10981,7 +11096,7 @@ packages:
     dev: false
 
   file:projects/calendar.tgz:
-    resolution: {integrity: sha512-+hxnKqaK3uOkkPK0W3lYY5Pco/DYlafCZTAtDiQoJGZwDRBe5xbTzvcY+L7aDXyVv0B4kH/GCGqo60dn1Es1iw==, tarball: file:projects/calendar.tgz}
+    resolution: {integrity: sha512-yAwCVcdrjSt0hIK5Z19rP9NME6MJ0jjAyYfObhziNvVUSOYNpM3oOVDuLfxqJ1jk8h6Q26/aFYSA2edCODfjlg==, tarball: file:projects/calendar.tgz}
     name: '@rush-temp/calendar'
     version: 0.0.0
     dependencies:
@@ -11247,6 +11362,51 @@ packages:
       - supports-color
     dev: false
 
+  file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
+    resolution: {integrity: sha512-MzapVi+e+W6fupVgjjR0GBLLaq51Qeul8eASiMooPABniDe2Ug5H7PlARKCjt0byBRHVnP6xLFxckUDpZU5OkA==, tarball: file:projects/hr-build.tgz}
+    id: file:projects/hr-build.tgz
+    name: '@rush-temp/hr-build'
+    version: 0.0.0
+    dependencies:
+      '@types/node': 14.17.11
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      autoprefixer: 10.2.6_postcss@8.3.6
+      copy-webpack-plugin: 9.0.1_webpack@5.51.1
+      cross-env: 7.0.3
+      css-loader: 5.2.7_webpack@5.51.1
+      dotenv-webpack: 7.0.3_webpack@5.51.1
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      file-loader: 6.2.0_webpack@5.51.1
+      mini-css-extract-plugin: 1.6.2_webpack@5.51.1
+      prettier: 2.3.2
+      sass-loader: 11.1.1_webpack@5.51.1
+      style-loader: 2.0.0_webpack@5.51.1
+      svelte: 3.42.3
+      svelte-loader: 3.1.2_svelte@3.42.3
+      svgo-loader: 3.0.0
+      ts-loader: 8.3.0_typescript@4.3.5+webpack@5.51.1
+      webpack: 5.51.1_webpack-cli@4.8.0
+      webpack-bundle-analyzer: 4.4.2
+      webpack-cli: 4.8.0_b7b75b8d969789edffcc3c191127c767
+      webpack-dev-server: 3.11.2_webpack-cli@4.8.0+webpack@5.51.1
+    transitivePeerDependencies:
+      - '@webpack-cli/generators'
+      - '@webpack-cli/migrate'
+      - bufferutil
+      - fibers
+      - node-sass
+      - postcss
+      - sass
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: false
+
   file:projects/login-assets.tgz_e2648ea3577eecbba3519a3bcb75d461:
     resolution: {integrity: sha512-EeM6qgERRE2roIF765iv8lcvimiwcinx3/i2u6ytlMv5Edm5qiVZ495KmWJPSBFTf/Ykp3yisn7ruxLI/V9WEA==, tarball: file:projects/login-assets.tgz}
     id: file:projects/login-assets.tgz
@@ -11401,7 +11561,7 @@ packages:
     dev: false
 
   file:projects/meeting.tgz_@typescript-eslint+parser@4.29.3:
-    resolution: {integrity: sha512-UocsgivbhHUC3dZ8kBIHauCOy84xyXCeusM6jSB4T+UdrAhmGETICKriLeL5YStV6zJd+orkTjr+IdiB+UD79g==, tarball: file:projects/meeting.tgz}
+    resolution: {integrity: sha512-AToy/jL6iXDV3XkP2m0Ysg292+NhXV6kBZQsozsw8dwRi3sR47irdBb+UxW3gL1JBDcUPe5nNLYa/QORCFF+jg==, tarball: file:projects/meeting.tgz}
     id: file:projects/meeting.tgz
     name: '@rush-temp/meeting'
     version: 0.0.0
@@ -11415,10 +11575,7 @@ packages:
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
-      - bufferutil
-      - canvas
       - supports-color
-      - utf-8-validate
     dev: false
 
   file:projects/model-all.tgz_@types+node@14.17.11:
@@ -12019,7 +12176,7 @@ packages:
     dev: false
 
   file:projects/recruiting-assets.tgz:
-    resolution: {integrity: sha512-qj8Yhcx6ATvy3v/vaF0yXK7U4JO7UKHtfxoAQlBTYtuBrVarHuQu1V0DoovCsXul/J+LS+oH9h+qhaA9a9FSlQ==, tarball: file:projects/recruiting-assets.tgz}
+    resolution: {integrity: sha512-FksVKkLfwoDQ6SwrDwAt2pZaxUN7ZOCEeXKzC+PSQbDdwtplGKZgvwbYqTNr+QFAqW0qermKv5uhoUUnnAQX+w==, tarball: file:projects/recruiting-assets.tgz}
     name: '@rush-temp/recruiting-assets'
     version: 0.0.0
     dependencies:
@@ -12084,7 +12241,7 @@ packages:
     dev: false
 
   file:projects/recruiting.tgz:
-    resolution: {integrity: sha512-QaPQgLSfhbBU+xLWtDvkNiSwnVav3tJI0GLTosQHxbOMfReVeMkRUUCU4K3Wh30Xo90vOa8Dp9VnnA5E8bGP7g==, tarball: file:projects/recruiting.tgz}
+    resolution: {integrity: sha512-9VnR0lhVLLQdFgOAoVmyCItBbhYIPb70sGK8gu4YPPA6h4KZTg3fbKPJS99kz03qlGptyzX8RWSdRCSugJUt9A==, tarball: file:projects/recruiting.tgz}
     name: '@rush-temp/recruiting'
     version: 0.0.0
     dependencies:
@@ -12191,7 +12348,7 @@ packages:
     dev: false
 
   file:projects/server-tools.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-9TPkHwjsCQ1T2euqgTgHr+gTj9EINtcW0nSfWeZGyPoR0+VW3GYCPAcwZv/XiyAtAl0Xj+tSj5HuyoCMmzOxOg==, tarball: file:projects/server-tools.tgz}
+    resolution: {integrity: sha512-drTNTn+/+zoUrcQbVdywnbzpB7dmGz1z4NMf/R97/iBV1Cvg5AkiQuekRqWqQep+PhH3BAxSD0FoTy04NFPUTA==, tarball: file:projects/server-tools.tgz}
     id: file:projects/server-tools.tgz
     name: '@rush-temp/server-tools'
     version: 0.0.0
@@ -12202,6 +12359,7 @@ packages:
       '@types/heft-jest': 1.0.2
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      esbuild: 0.12.22
       eslint: 7.32.0
       eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
       eslint-plugin-import: 2.24.2_eslint@7.32.0
@@ -12221,7 +12379,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-j9Wn+IZqWCtMcc0EoJtzHlMNzJnSVHvza7n9a1BlTuZ/4ocYBAbTftrGuI0cjZFI8kS3FSW1k8FTrYPb4DfSWQ==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-ks/I06HP7D0scFPW40fY65dt+mzic8GcUhd7IWSz1kwuQaUlzyD+n+YqisamqyCMvgHCJHiVcW6KQwDKzEfgEw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -12253,6 +12411,61 @@ packages:
       - bufferutil
       - canvas
       - node-notifier
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/services.tgz_@types+node@14.17.11:
+    resolution: {integrity: sha512-VNij8qf3wMJVnkMnuoHnywHzI5ToXvaOFQdD2Bg/3SV2eGFlSeqwmaMDtonPiQ0b21UsYqTAeHXoBWaRXbQAcQ==, tarball: file:projects/services.tgz}
+    id: file:projects/services.tgz
+    name: '@rush-temp/services'
+    version: 0.0.0
+    dependencies:
+      '@koa/cors': 3.1.0
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jwt-simple': 0.5.33
+      '@types/koa': 2.13.4
+      '@types/koa__cors': 3.0.3
+      '@types/koa-bodyparser': 4.3.3
+      '@types/koa-logger': 3.1.1
+      '@types/koa-mount': 4.0.1
+      '@types/koa-router': 7.4.4
+      '@types/koa-send': 4.1.3
+      '@types/koa-static': 4.0.2
+      '@types/mongodb': 3.6.20
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      esbuild: 0.12.22
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      koa: 2.13.1
+      koa-bodyparser: 4.3.0
+      koa-logger: 3.2.1
+      koa-router: 10.1.1
+      koa-send: 5.0.1
+      koa-static: 5.0.0
+      mongodb: 3.6.11
+      prettier: 2.3.2
+      ts-node: 10.2.1_a3da7f9f56afe7b98c9382c63365a60d
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - aws4
+      - bson-ext
+      - bufferutil
+      - canvas
+      - kerberos
+      - mongodb-client-encryption
+      - mongodb-extjson
+      - snappy
       - supports-color
       - utf-8-validate
     dev: false

@@ -31,7 +31,12 @@ export interface AuthServer {
 /**
  * @public
  */
-export async function newAuthServer (dbUri: string, app: Koa, router: Router, serverInfo: ServerInfo): Promise<AuthServer> {
+export async function newAuthServer (
+  dbUri: string,
+  app: Koa,
+  router: Router,
+  serverInfo: ServerInfo
+): Promise<AuthServer> {
   const client = await getMongoClient(dbUri)
 
   const db = client.db('accounts')

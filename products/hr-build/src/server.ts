@@ -14,12 +14,7 @@ const appSecret = process.env.SERVER_SECRET ?? 'secret'
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
 async function start (): Promise<void> {
-  const s: Server = await startServer(
-    undefined,
-    appPort,
-    appSecret,
-    { logRequests: false, logTransactions: false }
-  )
+  const s: Server = await startServer(undefined, appPort, appSecret, { logRequests: false, logTransactions: false })
 
   const { koa, router, logger } = newApp()
 
@@ -41,9 +36,13 @@ async function start (): Promise<void> {
   const confDir = join(cwd(), 'dist')
   console.log('writing configuration to', confDir)
   // Now we could write and env.js file
-  writeFileSync(join(confDir, 'env.js'), `
+  writeFileSync(
+    join(confDir, 'env.js'),
+    `
     window.APP_ACCOUNTS_URL = 'http://${webHost}:${webPort}/auth'
-  `, {})
+  `,
+    {}
+  )
 
   const server = koa.listen(webPort, () => {
     console.log('Anticrm Platform Web server is started at ', webHost, webPort)
