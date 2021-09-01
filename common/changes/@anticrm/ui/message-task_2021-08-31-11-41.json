@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Add MessageTask component. Fix CheckBoxList.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

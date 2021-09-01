@@ -16,13 +16,14 @@
   import { createEventDispatcher } from 'svelte'
 
   export let checked: boolean = false
+  export let editable: boolean = false
 
   const dispatch = createEventDispatcher()
   $: dispatch('change', checked)
 </script>
 
 <label class="checkbox">
-  <input class="chBox" type="checkbox" bind:checked />
+  <input class="chBox" type="checkbox" bind:checked disabled={!editable} />
   <svg class="checkSVG" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
     <path class="back" d="M4,0h8c2.2,0,4,1.8,4,4v8c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V4C0,1.8,1.8,0,4,0z" />
     <polygon class="check" points="7.3,11.5 4,8.3 5,7.4 7.3,9.7 11.8,5.1 12.7,6.1 " />

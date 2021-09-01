@@ -64,6 +64,7 @@ export { default as IconToDo } from './components/icons/ToDo.svelte'
 export { default as IconSearch } from './components/icons/Search.svelte'
 export { default as IconProjectFolder } from './components/icons/ProjectFolder.svelte'
 export { default as IconPerson } from './components/icons/Person.svelte'
+export { default as IconMoreV } from './components/icons/MoreV.svelte'
 
 export { default as MessageViewer } from './components/text/MessageViewer.svelte'
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'

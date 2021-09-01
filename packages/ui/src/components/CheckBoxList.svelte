@@ -20,7 +20,7 @@
   import Label from './Label.svelte'
   import Add from './icons/Add.svelte'
 
-  export let label: IntlString
+  export let label: IntlString | undefined
   export let items: Array<CheckListItem>
   //  = [
   //   { description: '15 minute phone call', done: true },
@@ -48,16 +48,18 @@
       />
     </div>
   {/each}
-  <div
-    class="add-item"
-    on:click={() => {
-      items.push({ description: 'New item', done: false })
-      items = items
-    }}
-  >
-    <div class="icon"><Add /></div>
-    <div class="label"><Label {label} /></div>
-  </div>
+  {#if editable}
+    <div
+      class="add-item"
+      on:click={() => {
+        items.push({ description: 'New item', done: false })
+        items = items
+      }}
+    >
+      <div class="icon"><Add /></div>
+      <div class="label"><Label {label} /></div>
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
