@@ -70,6 +70,13 @@ jobs:
           name: hr-build
           path: |
             products/hr-build/dist
+      - name: 'Build HR docker image and publish to github docker registry.'
+        #if: ${{ github.ref == 'refs/heads/main' }}        
+        run: |
+          cd ./products/hr-build          
+          DOCKER_BUILDKIT=1 docker build . -t anticrm/hr-build
+          docker push ghcr.io/hardcoreeng/anticrm/hr-build:0.4.0${GITHUB_REF##*/}        
+          
 
   lint_and_format:
     runs-on: ubuntu-latest
