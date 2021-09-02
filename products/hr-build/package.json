@@ -1,21 +1,20 @@
 {
-  "name": "prod",
-  "version": "1.0.0",
+  "name": "@anticrm/hr-build",
+  "version": "0.4.0",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "cross-env CLIENT=server NODE_ENV=production webpack",
+    "build-server": "esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error",
+    "build": "rm -rf ./dist && cross-env NODE_ENV=production webpack && rushx build-server",
+    "build-dev": "rm -rf ./dist && cross-env NODE_ENV=development webpack && rushx build-server",
+    "dev": "webpack serve --content-base public",
+    "compose": "DOCKER_BUILDKIT=1 docker compose build",
+    "docker": "DOCKER_BUILDKIT=1 docker build . -t anticrm/hr-build",
+    "docker-run": "docker run -p 8080:8080 anticrm/hr-front",
     "analyze": "cross-env NODE_ENV=production webpack --json > stats.json",
     "show": "webpack-bundle-analyzer stats.json dist",
-    "dev": "webpack serve --content-base public",
-    "dev-bin": "cross-env NO_SVELTE=true webpack serve --content-base public",
-    "dev-server": "cross-env CLIENT=server webpack serve --content-base public",
-    "dev-server-bin": "cross-env CLIENT=server NO_SVELTE=true webpack serve --content-base public",
-    "start": "cross-env CLIENT=server NODE_ENV=production webpack serve --content-base public",
     "test": "echo 'no tests'",
-    "preformat-svelte": "prettier -w src/**/*.svelte",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "deploy": "cp -p public/* dist && aws s3 sync dist s3://anticrm-platform --delete --acl public-read",
     "format": "prettier --write --plugin-search-dir=. src/**/*.ts && eslint --fix src"
   },
   "devDependencies": {
@@ -41,7 +40,8 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "copy-webpack-plugin": "~9.0.1"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
@@ -63,9 +63,6 @@
     "@anticrm/task-impl": "~0.4.0",
     "@anticrm/plugin-core-impl": "~0.4.0",
     "autoprefixer": "~10.2.6",
-    "@anticrm/meeting": "~0.4.0",
-    "@anticrm/meeting-impl": "~0.4.0",
-    "@anticrm/meeting-assets": "~0.4.0",
     "@anticrm/ui-assets": "~0.4.0",
     "@anticrm/recruiting-assets": "~0.4.0",
     "@anticrm/recruiting-impl": "~0.4.0",
@@ -73,8 +70,8 @@
     "@anticrm/recruiting": "~0.4.0",
     "@anticrm/fsm": "~0.4.0",
     "@anticrm/login-assets": "~0.4.0",
-    "@anticrm/calendar": "~0.4.0",
-    "@anticrm/calendar-impl": "~0.4.0",
-    "@anticrm/calendar-assets": "~0.4.0"
+    "@anticrm/services": "~0.4.0",
+    "@anticrm/server": "~0.4.0",
+    "@anticrm/server-tools": "~0.4.0"
   }
 }

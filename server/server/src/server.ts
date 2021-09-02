@@ -21,11 +21,17 @@ import { createServer, IncomingMessage, Server as HttpServer } from 'http'
 import * as net from 'net'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 
+/**
+ * @public
+ */
 export interface StorageProvider {
   connect: (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<Storage>
   close: (clientId: string) => Promise<void>
 }
 
+/**
+ * @public
+ */
 export function parseAddress (addr: string): net.AddressInfo {
   const addrSegm = addr.split(':')
   if (addrSegm.length === 2) {
@@ -37,6 +43,9 @@ export function parseAddress (addr: string): net.AddressInfo {
   throw new PlatformError(unknownStatus(`Invalid address returned:${addr}`))
 }
 
+/**
+ * @public
+ */
 export class Server {
   connections = new Map<string /* clientId */, WebSocket>()
   server: WebSocketServer
@@ -172,6 +181,8 @@ export class Server {
  * @param port - port, could pass 0 to handle on any random port.
  * @param provider - a client connection storage provider.
  * @returns a server promise, promise will be resolved in case of server become available.
+ *
+ * @public
  */
 export async function start (host: string | undefined, port: number, provider: StorageProvider): Promise<Server> {
   console.log(`starting server on port ${port}...`)

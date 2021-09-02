@@ -30,7 +30,7 @@ export interface ServerOptions {
 /**
  * @public
  */
-export async function startServer (host: string, port: number, serverToken: string, options?: ServerOptions): Promise<Server> {
+export async function startServer (host: string | undefined, port: number, serverToken: string, options?: ServerOptions): Promise<Server> {
   regCalendarMappers()
 
   const instance = await start(host, port, {

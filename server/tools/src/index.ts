@@ -13,8 +13,10 @@
 // limitations under the License.
 //
 
-import { generateToken } from '@anticrm/server/src/token'
+import { generateToken } from '@anticrm/server'
 import { createWorkspace, shutdown, upgradeWorkspace } from '@anticrm/workspaces'
+import { Accounts } from '@anticrm/accounts'
+import { getMongoClient, shutdown as mongoShutdown } from '@anticrm/mongo'
 
 if (process.argv.length < 2) {
   console.warn('please use server-cli with {command} {arg} ')
@@ -23,12 +25,41 @@ const cmd = process.argv[2]
 const arg1 = process.argv[3]
 const arg2 = process.argv[4]
 
-const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017'
-const SECRET = process.env.SERVER_SECRET ?? 'mongodb://localhost:27017'
+const MONGO_URI = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
+const SECRET = process.env.SERVER_SECRET ?? 'secret'
+
+process.on('exit', () => {
+  shutdown() //eslint-disable-line
+  mongoShutdown() //eslint-disable-line
+})
 
 async function main (): Promise<void> {
+  const client = await getMongoClient(MONGO_URI)
+  const db = client.db('accounts')
+  const accounts = new Accounts(db, 'workspace', 'account', { server: 'localhost', port: 0, tokenSecret: '' })
+
+  async function initAccounts (): Promise<void> {
+    if ((await db.collections()).length === 0) {
+      await accounts.initAccountDb()
+    }
+  }
+  async function initWorkspace (): Promise<void> {
+    if ((await accounts.findWorkspace(arg1)) === undefined) {
+      await accounts.createWorkspace(arg1, arg2 ?? arg1)
+      await createWorkspace(arg1, { mongoDBUri: MONGO_URI })
+    }
+  }
   try {
     switch (cmd) {
+      case 'init': {
+        await initAccounts()
+        break
+      }
+      case 'init-workspace': {
+        await initAccounts()
+        await initWorkspace()
+        break
+      }
       case 'generate-token': {
         const token = generateToken(SECRET, arg1, arg2)
         console.log('TOKEN: ', token)
@@ -36,7 +67,7 @@ async function main (): Promise<void> {
       }
       case 'create-workspace': {
         console.log(`creating workspace ${arg1}`)
-        await createWorkspace(arg1, { mongoDBUri: MONGO_URI })
+        await initWorkspace()
         break
       }
       case 'upgrade-workspace': {

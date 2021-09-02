@@ -69,3 +69,4 @@ common/autoinstallers/*/.npmrc
 .heft
 .ui-build
 tsdoc-metadata.json
+dist

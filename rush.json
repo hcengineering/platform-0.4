@@ -381,7 +381,7 @@
    * 2. On a caching CI machine, scans can accidentally pick up files left behind from a previous build.
    * 3. It's useful to have a centralized inventory of all projects and their important metadata.
    */
-  "projects": [    
+  "projects": [
     {
       "packageName": "@anticrm/platform-rig",
       "projectFolder": "dev/platform-rig",
@@ -406,7 +406,7 @@
       "packageName": "@anticrm/query",
       "projectFolder": "packages/query",
       "shouldPublish": true
-    },    
+    },
     {
       "packageName": "@anticrm/platform",
       "projectFolder": "packages/platform",
@@ -555,7 +555,7 @@
     {
       "packageName": "@anticrm/plugin-core-dev",
       "projectFolder": "plugins/plugin-core-dev",
-      "shouldPublish": true
+      "shouldPublish": false
     },
     {
       "packageName": "@anticrm/plugin-core-impl",
@@ -697,6 +697,18 @@
       "packageName": "@anticrm/calendar-mappers",
       "projectFolder": "plugins/calendar-mappers",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/services",
+      "projectFolder": "server/services",
+      "shouldPublish": false
+    },
+
+    // Production packages.
+    {
+      "packageName": "@anticrm/hr-build",
+      "projectFolder": "products/hr-build",
+      "shouldPublish": false
     }
 
     // {
