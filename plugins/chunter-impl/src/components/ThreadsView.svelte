@@ -83,9 +83,11 @@
     }
     .tool {
       margin-left: 12px;
-      opacity: .4;
+      opacity: 0.4;
       cursor: pointer;
-      &:hover { opacity: 1; }
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 

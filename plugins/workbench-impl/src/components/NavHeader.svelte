@@ -25,7 +25,7 @@
   <div class="title">
     <span><Label label={title} /></span>
     <div class="tool">
-      <ActionIcon icon={MoreH} size={24} scaleIcon={.65} />
+      <ActionIcon icon={MoreH} size={24} scaleIcon={0.65} />
     </div>
   </div>
 </div>
@@ -55,7 +55,9 @@
         color: var(--theme-caption-color);
         user-select: none;
       }
-      .tool { margin-left: 16px; }
+      .tool {
+        margin-left: 16px;
+      }
     }
   }
 </style>

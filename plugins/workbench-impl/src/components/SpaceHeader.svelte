@@ -69,9 +69,15 @@
   <div class="flex-row-center">
     <Button label={'Create'} size={'small'} primary on:click={addAction} />
     <div class="button">
-      <ActionIcon icon={Star} size={24} scaleIcon={.65} action={changeStarred} filled={space?.account?.starred ?? false} />
+      <ActionIcon
+        icon={Star}
+        size={24}
+        scaleIcon={0.65}
+        action={changeStarred}
+        filled={space?.account?.starred ?? false}
+      />
     </div>
-    <div class="button"><ActionIcon icon={MoreH} size={24} scaleIcon={.65} /></div>
+    <div class="button"><ActionIcon icon={MoreH} size={24} scaleIcon={0.65} /></div>
   </div>
 </div>
 

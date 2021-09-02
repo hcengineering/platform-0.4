@@ -16,7 +16,7 @@
   import type { Message as MessageModel } from '@anticrm/chunter'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import Message from './Message.svelte'
-  import MessageTask from './MessageTask.svelte'
+  // import MessageTask from './MessageTask.svelte'
 
   export let messages: MessageData[] = []
   export let thread: boolean = false
