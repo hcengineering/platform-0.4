@@ -14,18 +14,21 @@
 -->
 <script lang="ts">
   import type { Message } from '@anticrm/chunter'
-  import { getFullRef } from '@anticrm/core'
   import type { Ref } from '@anticrm/core'
+  import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getCurrentLocation, IconClose, navigate, ScrollBox, Label } from '@anticrm/ui'
+  import { IconClose, Label, ScrollBox } from '@anticrm/ui'
+  import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import chunter from '../plugin'
+  import ChannelSeparator from './ChannelSeparator.svelte'
   import Comments from './Comments.svelte'
   import MsgView from './Message.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
-  import ChannelSeparator from './ChannelSeparator.svelte'
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
 
   export let id: Ref<Message>
   let message: Message | undefined
@@ -39,9 +42,9 @@
   }
 
   function close () {
-    const loc = getCurrentLocation()
-    loc.path.length = 3
-    navigate(loc)
+    router.navigate({
+      itemId: undefined
+    })
   }
 
   function addMessage (text: string): void {

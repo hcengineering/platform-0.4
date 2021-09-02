@@ -44,14 +44,11 @@ import '@anticrm/meeting-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
-// import uiMeta from '@anticrm/platform-ui/src/__meta__/meta'
-// import workbenchMeta from '@anticrm/workbench/src/__meta__'
-// import chunterMeta from '@anticrm/chunter/src/__meta__'
-// import recruitingMeta from '@anticrm/recruiting/src/__meta__'
-// import presentationMeta from '@anticrm/presentation/src/__meta__'
-// import dataGenMeta from '@anticrm/data-generator/src/__meta__'
+
+import workbenchMeta from '@anticrm/workbench/src/meta'
 
 export function configurePlatform (): void {
+  workbenchMeta()
   // platform.setMetadata(ui.metadata.LoginApplication, 'login')
   // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 

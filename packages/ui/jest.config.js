@@ -5,5 +5,5 @@ module.exports = {
     '<rootDir>/src'
   ],
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
-  coverageReporters: ['text', ['lcov', { projectRoot: '../../' }]]  
+  coverageReporters: ['text', ['lcov', { projectRoot: '../../' }]]
 }

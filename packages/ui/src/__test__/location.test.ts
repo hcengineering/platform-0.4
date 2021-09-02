@@ -1,5 +1,4 @@
-import { locationToUrl } from '../location'
-import { Location } from '../types'
+import { locationToUrl, Location } from '@anticrm/router'
 
 describe('location', () => {
   it('should translate location to url', () => {

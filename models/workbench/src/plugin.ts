@@ -14,11 +14,9 @@
 //
 
 import type {} from '@anticrm/platform' // need this for type inference
-import { mergeIds } from '@anticrm/status'
-
 import workbench from '@anticrm/workbench'
 
 /**
  * @public
  */
-export default mergeIds(workbench, {})
+export default workbench

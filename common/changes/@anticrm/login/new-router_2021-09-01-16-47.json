@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Use router",
+      "type": "patch",
+      "packageName": "@anticrm/login"
+    }
+  ],
+  "packageName": "@anticrm/login",
+  "email": "haiodo@gmail.com"
+}

@@ -16,8 +16,9 @@
   import type { Ref, Space } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
-  import { getCurrentLocation, IconAdd, navigate } from '@anticrm/ui'
-  import type { SpacesNavModel } from '@anticrm/workbench'
+  import { IconAdd } from '@anticrm/ui'
+  import { getRouter } from '@anticrm/ui'
+  import type { SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import { getClient, showModal } from '@anticrm/workbench'
   import workbench from '../../plugin'
   import MoreH from '../icons/MoreH.svelte'
@@ -28,6 +29,7 @@
 
   let spaces: Space[] = []
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
   const accountId = client.accountId()
   let query: QueryUpdater<Space> | undefined
 
@@ -66,10 +68,7 @@
   $: actions = toolActions(model)
 
   function selectSpace (id: Ref<Space>) {
-    const loc = getCurrentLocation()
-    loc.path[2] = id
-    loc.path.length = 3
-    navigate(loc)
+    router.navigate({ space: id, itemId: undefined })
   }
 </script>
 

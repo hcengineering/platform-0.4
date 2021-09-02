@@ -14,8 +14,6 @@
 -->
 <script lang="ts">
   import {
-    getCurrentLocation,
-    navigate,
     EditBox,
     UserBox,
     ScrollBox,
@@ -30,7 +28,9 @@
     Row,
     CheckBoxList
   } from '@anticrm/ui'
+  import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import task from '../plugin'
   import core from '@anticrm/core'
@@ -43,6 +43,7 @@
   import type { IntlString } from '@anticrm/status'
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
 
   export let id: Ref<Task>
   let item: Task | undefined
@@ -68,9 +69,7 @@
   }
 
   function close () {
-    const loc = getCurrentLocation()
-    loc.path.length = 3
-    navigate(loc)
+    router.navigate({ itemId: undefined })
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]

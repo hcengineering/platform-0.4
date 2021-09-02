@@ -408,6 +408,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/router",
+      "projectFolder": "packages/router",
+      "shouldPublish": true
+    },    
+    {
       "packageName": "@anticrm/platform",
       "projectFolder": "packages/platform",
       "shouldPublish": true

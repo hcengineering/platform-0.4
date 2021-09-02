@@ -19,15 +19,6 @@ import type { Asset, IntlString } from '@anticrm/status'
 
 export type { Asset }
 
-/**
- * Describe a browser URI location parsed to path, query and fragment.
- */
-export interface Location {
-  path: string[] // A useful path value
-  query?: Record<string, string | null> // a value of query parameters, no duplication are supported
-  fragment?: string // a value of fragment
-}
-
 export type AnySvelteComponent = typeof SvelteComponent
 
 export type Component<C extends AnySvelteComponent> = Resource<C>

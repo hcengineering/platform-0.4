@@ -13,15 +13,12 @@
 // limitations under the License.
 //
 
-import { getContext } from 'svelte'
-
-import type { IntlString, Asset } from '@anticrm/status'
-import type { Ref, Class, Doc, Space, DocumentQuery } from '@anticrm/core'
-import type { Service, Plugin } from '@anticrm/platform'
+import type { Class, Doc, DocumentQuery, Ref, Space } from '@anticrm/core'
+import { Plugin, plugin, Service } from '@anticrm/platform'
 import type { PresentationClient } from '@anticrm/presentation'
+import type { Asset, IntlString } from '@anticrm/status'
 import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
-
-import { plugin } from '@anticrm/platform'
+import { getContext } from 'svelte'
 import { CompAndProps, store } from './stores'
 
 /**
@@ -97,6 +94,9 @@ const workbench = plugin(
     icon: {
       Hashtag: '' as Asset,
       Lock: '' as Asset
+    },
+    component: {
+      WorkbenchApp: '' as AnyComponent
     }
   }
 )
@@ -126,6 +126,15 @@ export function closeModal (): void {
  * @public
  */
 export { store, CompAndProps }
+
+/**
+ * @public
+ */
+export interface WorkbenchRoute {
+  app?: Ref<Application>
+  space?: Ref<Space>
+  itemId?: Ref<Doc>
+}
 
 /**
  * @public
