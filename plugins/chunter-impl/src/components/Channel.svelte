@@ -32,9 +32,7 @@
 </script>
 
 <div class="flex-col" bind:this={div}>
-  <MessageTask label={'Create UI for apps without the spaces and update the interface flow'} />
   {#each messages as m (m._id)}
     <Message message={m} {thread} />
   {/each}
-  <MessageTask label={'Create UI for apps without the spaces and update the interface flow'} />
 </div>

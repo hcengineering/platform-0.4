@@ -77,20 +77,15 @@
     .title {
       flex-grow: 1;
       font-weight: 500;
-      font-size: 20px;
-      line-height: 26px;
+      font-size: 1.25rem;
       color: var(--theme-caption-color);
       user-select: none;
     }
     .tool {
-      width: 16px;
-      height: 16px;
       margin-left: 12px;
-      opacity: 0.4;
+      opacity: .4;
       cursor: pointer;
-      &:hover {
-        opacity: 1;
-      }
+      &:hover { opacity: 1; }
     }
   }
 

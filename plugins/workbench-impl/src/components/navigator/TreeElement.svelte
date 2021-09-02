@@ -73,7 +73,7 @@
   {/if}
   {#each actions as action}
     <div class="tool">
-      <ActionIcon label={action.label} icon={action.icon} size={16} action={action.action} />
+      <ActionIcon label={action.label} icon={action.icon} size={24} scaleIcon={.65} action={action.action} />
     </div>
   {/each}
   {#if notifications > 0 && collapsed}
@@ -124,7 +124,7 @@
       overflow: hidden;
     }
     .tool {
-      margin-left: 12px;
+      margin-left: 2px;
       visibility: hidden;
     }
     .counter {
