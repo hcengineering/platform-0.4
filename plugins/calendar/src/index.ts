@@ -19,6 +19,7 @@ import { DerivedData } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import { Application } from '@anticrm/workbench'
+import { Action as ActionDef } from '@anticrm/action'
 
 export interface Calendar extends Space {}
 
@@ -55,7 +56,8 @@ export default plugin(PluginCalendar, {}, {
     CreateEvent: '' as AnyComponent,
     EditEvent: '' as AnyComponent,
     CreateCalendar: '' as AnyComponent,
-    Workspace: '' as AnyComponent
+    Workspace: '' as AnyComponent,
+    EventTable: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,
@@ -80,5 +82,8 @@ export default plugin(PluginCalendar, {}, {
   },
   presenter: {
     EventPresenter: '' as Ref<DocumentPresenter<Doc>>
+  },
+  action: {
+    waitForEvent: '' as Resource<ActionDef>
   }
 })

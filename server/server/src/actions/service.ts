@@ -13,6 +13,7 @@ import {
   TxUpdateDoc
 } from '@anticrm/core'
 import core from '@anticrm/core'
+import { UpdateTxCallback, UpdateTxFilter } from '@anticrm/action'
 import plugin, { ActionInstance, ExecutionContext as CompleteExecutionContext } from '@anticrm/action-plugin'
 
 type ExecutionContext = Omit<CompleteExecutionContext, keyof Doc>
@@ -73,6 +74,7 @@ export class Service {
       query: DocumentQuery<T>,
       options?: FindOptions<T>
     ) => Promise<FindResult<T>>,
+    public readonly subscribe: (filter: UpdateTxFilter, cb: UpdateTxCallback) => () => void,
     private readonly stateID: Ref<CompleteExecutionContext>
   ) {}
 

@@ -14,16 +14,19 @@
 //
 
 import contact from '@anticrm/contact'
-import { Account, DocumentPresenter, PresentationMode, Ref, Timestamp } from '@anticrm/core'
+import type { Account, DocumentPresenter, Ref, Timestamp } from '@anticrm/core'
+import { generateId, PresentationMode } from '@anticrm/core'
 import fsm from '@anticrm/fsm'
 import { Builder, Model } from '@anticrm/model'
 import { TPerson } from '@anticrm/model-contact'
 import core, { TSpace } from '@anticrm/model-core'
-import { templateFSM, TFSMItem, TWithFSM } from '@anticrm/model-fsm'
 import workbench from '@anticrm/model-workbench'
 import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
+import calendar from '@anticrm/calendar'
+import { templateFSM, TWithFSM, TFSMItem, PureState } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
+import type { Action } from '@anticrm/action-plugin'
 
 /**
  * @public
@@ -125,16 +128,39 @@ export function createModel (builder: Builder): void {
     recruiting.presenter.CandidatePresenter
   )
 
+  // Actions
+  const factorialId: Ref<Action> = generateId()
+  builder.createDoc(action.class.Action, {
+    name: 'Factorial',
+    description: 'Goto based factorial calculation',
+    resId: recruiting.action.Factorial
+  }, factorialId)
+
+  const recurFactorialId: Ref<Action> = generateId()
+  builder.createDoc(action.class.Action, {
+    name: 'Recursive Factorial',
+    description: 'Recur based factorial calculation',
+    resId: recruiting.action.RecurFactorial
+  }, recurFactorialId)
+
+  const interviewId: Ref<Action> = generateId()
+  builder.createDoc(action.class.Action, {
+    name: 'Interview',
+    description: 'Plan interview',
+    resId: recruiting.action.Interview,
+    input: calendar.class.Event
+  }, interviewId)
+
   // FSM
 
-  const states = {
-    rejected: { name: 'Rejected' },
-    applied: { name: 'Applied' },
-    hrInterview: { name: 'HR interview' },
-    testTask: { name: 'Test Task' },
-    techInterview: { name: 'Technical interview' },
-    offer: { name: 'Offer' },
-    contract: { name: 'Contract signing' }
+  const states: Record<string, PureState> = {
+    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] },
+    applied: { name: 'Applied', requiredActions: [], optionalActions: [] },
+    hrInterview: { name: 'HR interview', requiredActions: [interviewId], optionalActions: [recurFactorialId] },
+    testTask: { name: 'Test Task', requiredActions: [], optionalActions: [] },
+    techInterview: { name: 'Technical interview', requiredActions: [interviewId], optionalActions: [factorialId] },
+    offer: { name: 'Offer', requiredActions: [], optionalActions: [] },
+    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] }
   }
 
   templateFSM('Default developer vacancy', recruiting.class.VacancySpace, recruiting.fsm.DefaultVacancy)
@@ -144,24 +170,4 @@ export function createModel (builder: Builder): void {
     .transition(states.techInterview, [states.offer, states.rejected])
     .transition(states.offer, [states.contract, states.rejected])
     .build(builder)
-
-  templateFSM('Another default vacancy', recruiting.class.VacancySpace, recruiting.fsm.AnotherDefaultVacancy)
-    .transition(states.applied, [states.techInterview, states.rejected])
-    .transition(states.techInterview, [states.offer, states.rejected])
-    .transition(states.offer, states.rejected)
-    .build(builder)
-
-  // Actions
-
-  builder.createDoc(action.class.Action, {
-    name: 'Factorial',
-    description: 'Goto based factorial calculation',
-    resId: recruiting.action.Factorial
-  })
-
-  builder.createDoc(action.class.Action, {
-    name: 'Recursive Factorial',
-    description: 'Recur based factorial calculation',
-    resId: recruiting.action.RecurFactorial
-  })
 }

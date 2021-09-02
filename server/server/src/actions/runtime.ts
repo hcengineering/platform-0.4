@@ -17,6 +17,7 @@ import {
 } from '@anticrm/core'
 import core from '@anticrm/core'
 import { getResource } from '@anticrm/platform'
+import { UpdateTxCallback, UpdateTxFilter } from '@anticrm/action'
 import plugin, { ActionState } from '@anticrm/action-plugin'
 import type { ActionInstance } from '@anticrm/action-plugin'
 import { exec } from './exec'
@@ -24,9 +25,15 @@ import { Service, updateTx } from './service'
 
 type PureActionInst = Omit<ActionInstance, keyof Doc> & { _id: Ref<ActionInstance> }
 
+interface UpdateTxSub {
+  filter: UpdateTxFilter
+  cb: UpdateTxCallback
+}
+
 export class ActionRuntime {
   private readonly actions = new Map<Ref<ActionInstance>, PureActionInst>()
   private _tx: ((tx: Tx<Doc>) => Promise<void>) | undefined
+  private readonly updateTxSubs: Map<string, UpdateTxSub> = new Map()
 
   constructor (
     private readonly hierarchy: Hierarchy,
@@ -67,8 +74,30 @@ export class ActionRuntime {
     }
   }
 
+  private readonly subscribe = (filter: UpdateTxFilter, cb: UpdateTxCallback): () => void => {
+    const id = generateId()
+    this.updateTxSubs.set(id, { filter, cb })
 
-  async txUpdateDoc (_tx: TxUpdateDoc<Doc>): Promise<void> {}
+    return () => this.unsubscribe(id)
+  }
+
+  private unsubscribe (id: string): void {
+    this.updateTxSubs.delete(id)
+  }
+
+  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    const cbs = [...this.updateTxSubs.values()]
+      .filter(({ filter }) => {
+        return (filter.id === undefined || filter.id === tx.objectId) &&
+          (filter.clazz === undefined || filter.clazz === tx.objectClass) &&
+          (filter.space === undefined || filter.space === tx.objectSpace)
+      })
+      .map(x => x.cb)
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    Promise.all(cbs.map(async cb => await cb(tx)))
+  }
+
   async txRemoveDoc (_tx: TxRemoveDoc<Doc>): Promise<void> {}
 
   private readonly findAll = async <T extends Doc>(
@@ -98,7 +127,7 @@ export class ActionRuntime {
     this.actions.set(id, actionInst)
 
     const actionDef = await getResource(action.resId)
-    const service = new Service(this._tx, this.findAll, state._id)
+    const service = new Service(this._tx, this.findAll, this.subscribe, state._id)
 
     try {
       await exec(actionDef, service, state)

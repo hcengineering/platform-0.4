@@ -25,13 +25,13 @@ export default async (): Promise<ActionService> => {
   const client: Client = await coreP.getClient()
 
   return {
-    runAction: async (action: Action, target: Ref<Doc>, input?: Ref<Doc>): Promise<void> => {
+    runAction: async (action: Action, target: string, input?: Ref<Doc>): Promise<void> => {
       const context = await client.createDoc(
         actionP.class.ExecutionContext,
         core.space.Model,
         {
           counter: [0],
-          stack: []
+          stack: input !== undefined ? [input] : []
         }
       )
 

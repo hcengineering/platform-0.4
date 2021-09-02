@@ -42,6 +42,9 @@
     "Candidate": "Candidate",
     "Recruiter": "Recruiter",
     "SelectCandidate": "Select Candidate",
-    "AssignRecruiter": "Assign Recruiter"
+    "AssignRecruiter": "Assign Recruiter",
+    "ScheduleInterview": "Schedule Interview",
+    "Applications": "Applications",
+    "Interviews": "Interviews"
   }
 }

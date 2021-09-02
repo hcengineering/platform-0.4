@@ -13,16 +13,20 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Doc, Ref } from '@anticrm/core'
-  import { getPlugin } from '@anticrm/platform'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
-  import type { Action, ActionInstance, ExecutionContext } from '@anticrm/action-plugin'
-  import { Button } from '@anticrm/ui'
+  import type { Action, ActionInstance } from '@anticrm/action-plugin'
+  import { AnySvelteComponent } from '@anticrm/ui'
+  import type { Applicant } from '@anticrm/recruiting'
+  import recruiting from '@anticrm/recruiting'
+
+  import FactorialAction from '../actions/FactorialAction.svelte'
+  import InterviewAction from '../actions/InterviewAction.svelte'
 
   export let action: Action
-  export let target: Ref<Doc>
+  export let target: Applicant
 
   const client = getClient()
 
@@ -32,7 +36,7 @@
     instanceQ,
     actionPlugin.class.ActionInstance,
     {
-      target,
+      target: `${target._id}_${target.state}`,
       action: action._id
     },
     (res) => {
@@ -40,71 +44,16 @@
     }
   )
 
-  let stack: any[] = []
-  let stackQ: QueryUpdater<ExecutionContext> | undefined
-  $: if (instance) {
-    stackQ = client.query(
-      stackQ,
-      actionPlugin.class.ExecutionContext,
-      {
-        _id: instance.context
-      },
-      (res) => {
-        stack = res[0]?.stack ?? []
-      }
-    )
-  }
+  const componentMap = new Map([
+    [recruiting.action.Factorial, FactorialAction as AnySvelteComponent],
+    [recruiting.action.RecurFactorial, FactorialAction as AnySvelteComponent],
+    [recruiting.action.Interview, InterviewAction as AnySvelteComponent]
+  ])
 
-  async function run () {
-    if (instance !== undefined) {
-      return
-    }
-
-    const actionP = await getPlugin(actionPlugin.id)
-
-    await actionP.runAction(action, target)
-  }
+  let component: AnySvelteComponent | undefined
+  $: component = componentMap.get(action.resId)
 </script>
 
-<div class="root">
-  <div class="header">
-    <div class="label">
-      {action.name}
-    </div>
-    {#if instance === undefined}
-      <Button label="Run" on:click={run} />
-    {/if}
-  </div>
-  {#if instance !== undefined}
-    <div class="details">
-      Stack: [{stack.join(' ')}]
-    </div>
-  {/if}
-</div>
-
-<style lang="scss">
-  .root {
-    display: flex;
-    flex-direction: column;
-
-    gap: 10px;
-
-    background-color: var(--theme-button-bg-hovered);
-    border: 1px solid var(--theme-bg-accent-color);
-    border-radius: 12px;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-  }
-
-  .label {
-    flex-grow: 1;
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-weight: 500;
-  }
-</style>
+{#if component !== undefined}
+  <svelte:component this={component} action={action} instance={instance} target={target} />
+{/if}

@@ -16,11 +16,12 @@
 import type { RecruitingService } from '@anticrm/recruiting'
 import { setResource } from '@anticrm/platform'
 import recruiting from '@anticrm/recruiting'
+import calendar from '@anticrm/calendar'
 import { Action } from '@anticrm/action'
 
 const Factorial = new Action()
-  .call(async () => [20, 1])
-  .call(
+  .exec(async () => [20, 1])
+  .exec(
     async (ctx) => {
       const [n, acc] = ctx.pop()
 
@@ -39,15 +40,15 @@ const Factorial = new Action()
       return top[0] !== 0
     }
   )
-  .call(async (ctx) => {
+  .exec(async (ctx) => {
     const [, acc] = ctx.pop()
 
     return acc
   })
 
 const RecurFactorial = new Action()
-  .call(async () => [20, 1])
-  .call(
+  .exec(async () => [20, 1])
+  .exec(
     async (ctx) => {
       const [n, acc] = ctx.pop()
 
@@ -61,9 +62,12 @@ const RecurFactorial = new Action()
     }
   )
 
+const Interview = new Action()
+  .call(calendar.action.waitForEvent)
+
 export default async (): Promise<RecruitingService> => {
   setResource(recruiting.action.Factorial, Factorial)
   setResource(recruiting.action.RecurFactorial, RecurFactorial)
-
+  setResource(recruiting.action.Interview, Interview)
   return {}
 }

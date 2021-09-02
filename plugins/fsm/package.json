@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@anticrm/core":"~0.4.0",
-    "@anticrm/platform":"~0.4.2"
+    "@anticrm/platform":"~0.4.2",
+    "@anticrm/action":"~0.4.0",
+    "@anticrm/action-plugin":"~0.4.0"
   }
 }

@@ -39,7 +39,10 @@ export enum ActionState {
 
 export interface ActionInstance extends Doc {
   action: Ref<Action>
-  target: Ref<Doc>
+  // String target is temporary solution, most likely
+  // it will be removed from ActionInstance and become
+  // part of inherited classes to fit plugin requirements.
+  target: string
   input?: Ref<Doc>
   state: ActionState
   context: Ref<ExecutionContext>
@@ -47,7 +50,7 @@ export interface ActionInstance extends Doc {
 }
 
 export interface ActionService extends Service {
-  runAction: (action: Action, target: Ref<Doc>, input?: Ref<Doc>) => Promise<void>
+  runAction: (action: Action, target: string, input?: Ref<Doc>) => Promise<void>
 }
 
 const PluginAction = 'action' as Plugin<ActionService>

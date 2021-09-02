@@ -38,7 +38,7 @@ class TAction extends TDoc implements Action {
 @Model(action.class.ActionInstance, core.class.Doc, DOMAIN_MODEL)
 class TActionInstance extends TDoc implements ActionInstance {
   action!: Ref<Action>
-  target!: Ref<Doc>
+  target!: string
   input!: Ref<Doc>
   state!: ActionState
   context!: Ref<ExecutionContext>

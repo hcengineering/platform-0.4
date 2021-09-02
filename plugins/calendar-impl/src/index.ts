@@ -21,12 +21,14 @@ import Workspace from './components/Workspace.svelte'
 import CreateCalendar from './components/CreateCalendar.svelte'
 import CreateEvent from './components/CreateEvent.svelte'
 import EditEvent from './components/EditEvent.svelte'
+import EventTable from './components/EventTable.svelte'
 
 export default async (): Promise<CalendarService> => {
   setResource(plugin.component.Workspace, Workspace)
   setResource(plugin.component.CreateCalendar, CreateCalendar)
   setResource(plugin.component.CreateEvent, CreateEvent)
   setResource(plugin.component.EditEvent, EditEvent)
+  setResource(plugin.component.EventTable, EventTable)
 
   return {}
 }

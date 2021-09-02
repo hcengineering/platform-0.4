@@ -18,6 +18,7 @@ import regCalendarMappers from '@anticrm/calendar-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
 import regRecruitingActions from '@anticrm/recruiting-action'
+import regCalendarActions from '@anticrm/calendar-action'
 
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -44,6 +45,7 @@ export async function startServer (
   regCalendarMappers()
   regNotificationMappers()
 
+  await regCalendarActions()
   await regRecruitingActions()
 
   const instance = await start(

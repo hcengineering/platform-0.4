@@ -79,10 +79,12 @@ export default plugin(PluginRecruiting, {}, {
     CreateApplication: '' as AnyComponent,
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
-    EditCandidate: '' as AnyComponent
+    EditCandidate: '' as AnyComponent,
+    Applications: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,
+    Candidate: '' as IntlString,
     Candidates: '' as IntlString,
     Vacancies: '' as IntlString,
     Name: '' as IntlString,
@@ -121,7 +123,6 @@ export default plugin(PluginRecruiting, {}, {
     CreateApplication: '' as IntlString,
     Unassign: '' as IntlString,
 
-    Candidate: '' as IntlString,
     Recruiter: '' as IntlString,
     SelectCandidate: '' as IntlString,
     AssignRecruiter: '' as IntlString,
@@ -132,16 +133,21 @@ export default plugin(PluginRecruiting, {}, {
     Company: '' as IntlString,
 
     AddCandidate: '' as IntlString,
-    Bio: '' as IntlString
+    Bio: '' as IntlString,
+
+    ScheduleInterview: '' as IntlString,
+
+    Applications: '' as IntlString,
+    Interviews: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>
   },
   fsm: {
-    DefaultVacancy: '' as Ref<FSM>,
-    AnotherDefaultVacancy: '' as Ref<FSM>
+    DefaultVacancy: '' as Ref<FSM>
   },
   action: {
+    Interview: '' as Resource<ActionDef>,
     Factorial: '' as Resource<ActionDef>,
     RecurFactorial: '' as Resource<ActionDef>
   }

@@ -1,5 +1,18 @@
-import type { Storage } from '@anticrm/core'
+import type { Account, Class, Doc, Ref, Space, Storage, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
 import { nanoid } from 'nanoid'
+
+/**
+ * @public
+ */export interface UpdateTxFilter {
+  space?: Ref<Space>
+  clazz?: Ref<Class<Doc>>
+  id?: Ref<Doc>
+}
+
+/**
+ * @public
+ */
+export type UpdateTxCallback = (tx: TxUpdateDoc<Doc>) => Promise<void>
 
 /**
  * @public
@@ -8,6 +21,21 @@ export interface Context {
   recur: (ret: any) => Promise<void>
   pop: () => any
   push: (item: any) => void
+  create: <T extends Doc>(data: {
+    id?: Ref<T>
+    clazz: Ref<Class<T>>
+    space: Ref<Space>
+    attributes: TxCreateDoc<T>['attributes']
+    account?: Ref<Account>
+  }) => void
+  update: <T extends Doc>(data: {
+    id: Ref<T>
+    clazz: Ref<Class<T>>
+    space: Ref<Space>
+    ops: TxUpdateDoc<T>['operations']
+    account?: Ref<Account>
+  }) => void
+  subscribe: (filter: UpdateTxFilter, cb: UpdateTxCallback) => () => void
   findAll: Storage['findAll']
 }
 
@@ -40,7 +68,7 @@ export interface GotoAtom {
  */
 export interface ActionAtom {
   _type: 'action'
-  action: string // Should be Ref?
+  action: string
 }
 
 /**
@@ -68,11 +96,23 @@ export class Action {
     return this._labelMap
   }
 
-  call (fn: ActionFn, label?: string): Action {
+  exec (fn: ActionFn, label?: string): Action {
     this.addAtom(
       {
         _type: 'fn',
         fn
+      },
+      label
+    )
+
+    return this
+  }
+
+  call (action: string, label?: string): Action {
+    this.addAtom(
+      {
+        _type: 'action',
+        action
       },
       label
     )

@@ -31,6 +31,9 @@ export async function exec (
       },
       pop: () => stack.pop(),
       push: (item: any) => stack.push(item),
+      create: svc.create.bind(svc),
+      update: svc.update.bind(svc),
+      subscribe: svc.subscribe.bind(svc),
       findAll: svc.findAll.bind(svc)
     }
 
@@ -41,7 +44,7 @@ export async function exec (
         continue
       }
 
-      counter = ret ? labelMap.get(atom.label) ?? counter + 1 : counter + 1
+      counter = ret ? (labelMap.get(atom.label)) ?? counter + 1 : counter + 1
     }
 
     if (atom._type === 'fn') {

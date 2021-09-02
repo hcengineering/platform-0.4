@@ -53,6 +53,7 @@
     "@anticrm/action": "~0.4.0",
     "@anticrm/action-plugin": "~0.4.0",
     "@anticrm/recruiting-action": "~0.4.0",
+    "@anticrm/calendar-action": "~0.4.0",
     "pem": "^1.14.4"
   }
 }

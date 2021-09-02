@@ -739,6 +739,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/calendar-action",
+      "projectFolder": "plugins/calendar-action",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/services",
       "projectFolder": "server/services",
       "shouldPublish": false
