@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspaces",
+      "comment": "Model auto upgrade",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspaces"
+}

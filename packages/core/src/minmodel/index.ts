@@ -18,7 +18,7 @@ export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T
       domain: domain,
       ...cl
     },
-    modifiedBy: 'model' as Ref<Account>,
+    modifiedBy: core.account.System,
     modifiedOn: Date.now(),
     createOn: Date.now(),
     objectSpace: core.space.Model,
@@ -30,12 +30,17 @@ export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T
 /**
  * @internal
  */
-export function _createDoc<T extends Doc> (_class: Ref<Class<T>>, attributes: Data<T>, id?: Ref<T>): Tx {
+export function _createDoc<T extends Doc> (
+  _class: Ref<Class<T>>,
+  attributes: Data<T>,
+  id?: Ref<T>,
+  modifiedBy?: Ref<Account>
+): Tx {
   const tx: TxCreateDoc<T> = {
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     space: core.space.Tx,
-    modifiedBy: core.account.System,
+    modifiedBy: modifiedBy ?? core.account.System,
     modifiedOn: Date.now(),
     createOn: Date.now(),
     objectId: id ?? generateId(),

@@ -114,64 +114,84 @@ export function createModel (builder: Builder): void {
     },
     chunter.app.Chunter as Ref<Application>
   )
-  builder.createDoc(chunter.class.Channel, {
-    name: 'general',
-    description: 'General Channel',
-    private: false,
-    members: [],
-    direct: false
-  })
-  builder.createDoc(chunter.class.Channel, {
-    name: 'random',
-    description: 'Random Talks',
-    private: false,
-    members: [],
-    direct: false
-  })
+  builder.createDoc(
+    chunter.class.Channel,
+    {
+      name: 'general',
+      description: 'General Channel',
+      private: false,
+      members: [],
+      direct: false
+    },
+    chunter.channel.General
+  )
+  builder.createDoc(
+    chunter.class.Channel,
+    {
+      name: 'random',
+      description: 'Random Talks',
+      private: false,
+      members: [],
+      direct: false
+    },
+    chunter.channel.Random
+  )
 
   // D E R I V E D   D A T A
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Message,
-    targetClass: core.class.Reference,
-    rules: [
-      {
-        sourceField: 'message',
-        targetField: 'link',
-        pattern: {
-          pattern: MARKDOWN_REFERENCE_PATTERN.source,
-          multDoc: true
-        }
-      }
-    ]
-  })
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Comment,
-    targetClass: core.class.Reference,
-    rules: [
-      {
-        sourceField: 'message',
-        targetField: 'link',
-        pattern: {
-          pattern: MARKDOWN_REFERENCE_PATTERN.source,
-          multDoc: true
-        }
-      }
-    ]
-  })
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Comment,
-    targetClass: chunter.class.Message,
-    collections: [
-      {
-        sourceField: 'replyOf',
-        targetField: 'comments',
-        rules: [
-          {
-            sourceField: 'modifiedBy',
-            targetField: 'userId'
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Message,
+      targetClass: core.class.Reference,
+      rules: [
+        {
+          sourceField: 'message',
+          targetField: 'link',
+          pattern: {
+            pattern: MARKDOWN_REFERENCE_PATTERN.source,
+            multDoc: true
           }
-        ]
-      }
-    ]
-  })
+        }
+      ]
+    },
+    chunter.dd.MessageReferences
+  )
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: core.class.Reference,
+      rules: [
+        {
+          sourceField: 'message',
+          targetField: 'link',
+          pattern: {
+            pattern: MARKDOWN_REFERENCE_PATTERN.source,
+            multDoc: true
+          }
+        }
+      ]
+    },
+    chunter.dd.CommentReferences
+  )
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: chunter.class.Message,
+      collections: [
+        {
+          sourceField: 'replyOf',
+          targetField: 'comments',
+          rules: [
+            {
+              sourceField: 'modifiedBy',
+              targetField: 'userId'
+            }
+          ]
+        }
+      ]
+    },
+    chunter.dd.ReplyOf
+  )
 }

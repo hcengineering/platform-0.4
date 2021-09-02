@@ -77,30 +77,34 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
 export function createModel (builder: Builder): void {
   builder.createModel(TApplicant, TResume, TCandidate, TCandidatePoolSpace, TVacancySpace)
 
-  builder.createDoc(workbench.class.Application, {
-    label: recruiting.string.App,
-    icon: recruiting.icon.Recruiting,
-    navigatorModel: {
-      spaces: [
-        {
-          label: recruiting.string.Vacancies,
-          spaceIcon: recruiting.icon.Recruiting,
-          spaceClass: recruiting.class.VacancySpace,
-          addSpaceLabel: recruiting.string.AddVacancy,
-          createComponent: recruiting.component.CreateVacancy
-        },
-        {
-          label: recruiting.string.Candidates,
-          spaceIcon: recruiting.icon.Recruiting,
-          spaceClass: recruiting.class.CandidatePoolSpace,
-          addSpaceLabel: recruiting.string.AddPoolSpace,
-          createComponent: recruiting.component.CreatePool
-        }
-      ],
-      spaceView: recruiting.component.WorkspaceComponent,
-      createComponent: recruiting.component.CreateVacancy
-    }
-  })
+  builder.createDoc(
+    workbench.class.Application,
+    {
+      label: recruiting.string.App,
+      icon: recruiting.icon.Recruiting,
+      navigatorModel: {
+        spaces: [
+          {
+            label: recruiting.string.Vacancies,
+            spaceIcon: recruiting.icon.Recruiting,
+            spaceClass: recruiting.class.VacancySpace,
+            addSpaceLabel: recruiting.string.AddVacancy,
+            createComponent: recruiting.component.CreateVacancy
+          },
+          {
+            label: recruiting.string.Candidates,
+            spaceIcon: recruiting.icon.Recruiting,
+            spaceClass: recruiting.class.CandidatePoolSpace,
+            addSpaceLabel: recruiting.string.AddPoolSpace,
+            createComponent: recruiting.component.CreatePool
+          }
+        ],
+        spaceView: recruiting.component.WorkspaceComponent,
+        createComponent: recruiting.component.CreateVacancy
+      }
+    },
+    recruiting.app.Recrutting
+  )
 
   const states = {
     rejected: { name: 'Rejected' },

@@ -13,9 +13,10 @@
 // limitations under the License.
 //
 
-import chunter from '@anticrm/chunter'
+import chunter, { Channel } from '@anticrm/chunter'
 import type { IntlString, Resource } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
+import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
 
 /**
  * NOTICE:
@@ -36,5 +37,14 @@ export default mergeIds(chunter, {
   },
   string: {
     ApplicationLabelChunter: '' as IntlString
+  },
+  channel: {
+    General: '' as Ref<Channel>,
+    Random: '' as Ref<Channel>
+  },
+  dd: {
+    MessageReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    CommentReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   }
 })
