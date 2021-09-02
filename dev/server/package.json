@@ -53,6 +53,9 @@
     "@anticrm/services": "~0.4.0",
     "@anticrm/mongo": "~0.4.0",
     "@anticrm/model-all": "~0.4.0",
+    "@anticrm/recruiting-action": "~0.4.0",
+    "@anticrm/calendar-action": "~0.4.0",
+    "@anticrm/calendar-mappers": "~0.4.0",
     "koa-logger": "^3.2.1"
   }
 }

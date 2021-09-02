@@ -17,6 +17,9 @@ import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
 import { upgradeWorkspace } from '@anticrm/workspaces'
+import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regCalendarActions from '@anticrm/calendar-action'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 
@@ -30,6 +33,10 @@ const defaultWorkspace = 'workspace'
 const defaultWorkspaceOrg = 'Horses inc'
 
 async function start (): Promise<void> {
+  regCalendarMappers()
+  await regCalendarActions()
+  await regRecruitingActions()
+
   await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri, txes: builder.getTxes() })
 
   const security: SecurityOptions = {

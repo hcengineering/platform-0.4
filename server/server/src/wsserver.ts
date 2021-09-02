@@ -13,12 +13,9 @@
 // limitations under the License.
 //
 
-import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
-import regCalendarMappers from '@anticrm/calendar-mappers'
-import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
-import regRecruitingActions from '@anticrm/recruiting-action'
-import regCalendarActions from '@anticrm/calendar-action'
+import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
+import regNotificationMappers from '@anticrm/notification-mappers'
 
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -33,6 +30,7 @@ export interface ServerOptions {
   logRequests: boolean
   security?: SecurityOptions
 }
+
 /**
  * @public
  */
@@ -42,12 +40,7 @@ export async function startServer (
   serverToken: string,
   options: ServerOptions
 ): Promise<Server> {
-  regCalendarMappers()
   regNotificationMappers()
-
-  await regCalendarActions()
-  await regRecruitingActions()
-
   const instance = await start(
     host,
     port,
@@ -61,6 +54,7 @@ export async function startServer (
   )
   return instance
 }
+
 function connectClient (
   serverToken: string,
   options: ServerOptions
