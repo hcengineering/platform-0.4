@@ -15,11 +15,13 @@
 
 import { Builder, Model } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
-import { Class, Doc, DOMAIN_MODEL, Ref } from '@anticrm/core'
+import { Class, Doc, Domain, DOMAIN_MODEL, Ref } from '@anticrm/core'
 import { Resource } from '@anticrm/status'
 import type { Action as ActionDef } from '@anticrm/action'
 import action, { ActionInstance, ActionState, ExecutionContext } from '@anticrm/action-plugin'
 import type { Action } from '@anticrm/action-plugin'
+
+const DOMAIN_ACTION = 'action' as Domain
 
 /**
  * @public
@@ -35,7 +37,7 @@ class TAction extends TDoc implements Action {
 /**
  * @public
  */
-@Model(action.class.ActionInstance, core.class.Doc, DOMAIN_MODEL)
+@Model(action.class.ActionInstance, core.class.Doc, DOMAIN_ACTION)
 class TActionInstance extends TDoc implements ActionInstance {
   action!: Ref<Action>
   target!: string
@@ -48,7 +50,7 @@ class TActionInstance extends TDoc implements ActionInstance {
 /**
  * @public
  */
-@Model(action.class.ExecutionContext, core.class.Doc, DOMAIN_MODEL)
+@Model(action.class.ExecutionContext, core.class.Doc, DOMAIN_ACTION)
 class TExecutionContext extends TDoc implements ExecutionContext {
   stack!: any[]
   counter!: number[]

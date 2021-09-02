@@ -55,7 +55,7 @@
   async function onEventCreate (event: Event) {
     const actionP = await getPlugin(actionPlugin.id)
 
-    await actionP.runAction(action, `${target._id}_${target.state}`, event._id)
+    await actionP.runAction(action, `${target._id}_${target.state}`, $space._id, event._id)
   }
 
   async function run () {

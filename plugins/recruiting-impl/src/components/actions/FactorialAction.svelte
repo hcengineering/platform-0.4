@@ -13,7 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Doc, Ref } from '@anticrm/core'
+  import { getContext } from 'svelte';
+  import { Readable } from 'svelte/store';
+  import type { Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -25,6 +27,7 @@
   export let action: Action
   export let target: Applicant
   export let instance: ActionInstance
+  const space = getContext('space') as Readable<Space>
 
   const client = getClient()
 
@@ -50,7 +53,7 @@
 
     const actionP = await getPlugin(actionPlugin.id)
 
-    await actionP.runAction(action, `${target._id}_${target.state}`)
+    await actionP.runAction(action, `${target._id}_${target.state}`, $space._id)
   }
 </script>
 

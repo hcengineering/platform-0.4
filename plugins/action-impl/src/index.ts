@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Ref } from '@anticrm/core'
-import core from '@anticrm/core'
+import type { Doc, Ref, Space } from '@anticrm/core'
 import { getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
 import type { Action, ActionService } from '@anticrm/action-plugin'
@@ -25,10 +24,10 @@ export default async (): Promise<ActionService> => {
   const client: Client = await coreP.getClient()
 
   return {
-    runAction: async (action: Action, target: string, input?: Ref<Doc>): Promise<void> => {
+    runAction: async (action: Action, target: string, space: Ref<Space>, input?: Ref<Doc>): Promise<void> => {
       const context = await client.createDoc(
         actionP.class.ExecutionContext,
-        core.space.Model,
+        space,
         {
           counter: [0],
           stack: input !== undefined ? [input] : []
@@ -37,7 +36,7 @@ export default async (): Promise<ActionService> => {
 
       await client.createDoc(
         actionP.class.ActionInstance,
-        core.space.Model,
+        space,
         {
           action: action._id,
           target,

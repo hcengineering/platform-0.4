@@ -69,6 +69,7 @@ export class Service {
 
   constructor (
     private readonly tx: (tx: Tx<Doc>) => Promise<void>,
+    private readonly space: Ref<Space>,
     public readonly findAll: <T extends Doc>(
       _class: Ref<Class<T>>,
       query: DocumentQuery<T>,
@@ -112,7 +113,7 @@ export class Service {
     await this.tx(
       updateTx({
         id: this.stateID,
-        space: core.space.Model,
+        space: this.space,
         clazz: plugin.class.ExecutionContext,
         ops: {
           stack: ctx.stack,

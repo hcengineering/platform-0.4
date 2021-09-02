@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref } from '@anticrm/core'
+import type { Class, Doc, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Resource } from '@anticrm/status'
@@ -50,7 +50,7 @@ export interface ActionInstance extends Doc {
 }
 
 export interface ActionService extends Service {
-  runAction: (action: Action, target: string, input?: Ref<Doc>) => Promise<void>
+  runAction: (action: Action, target: string, space: Ref<Space>, input?: Ref<Doc>) => Promise<void>
 }
 
 const PluginAction = 'action' as Plugin<ActionService>

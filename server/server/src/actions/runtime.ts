@@ -9,6 +9,7 @@ import {
   Hierarchy,
   ModelDb,
   Ref,
+  Space,
   Storage,
   Tx,
   TxCreateDoc,
@@ -23,7 +24,7 @@ import type { ActionInstance } from '@anticrm/action-plugin'
 import { exec } from './exec'
 import { Service, updateTx } from './service'
 
-type PureActionInst = Omit<ActionInstance, keyof Doc> & { _id: Ref<ActionInstance> }
+type PureActionInst = Omit<ActionInstance, keyof Doc> & { _id: Ref<ActionInstance>, space: Ref<Space> }
 
 interface UpdateTxSub {
   filter: UpdateTxFilter
@@ -49,10 +50,10 @@ export class ActionRuntime {
   }
 
   async execExistingActions (): Promise<void> {
-    const actions = await this.model.findAll(plugin.class.ActionInstance, { state: ActionState.Pending })
+    const actions = await this.storage.findAll(plugin.class.ActionInstance, { state: ActionState.Pending })
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    Promise.all(actions.map(async (x) => await this.runAction(x._id, x)))
+    Promise.all(actions.map(async (x) => await this.runAction(x)))
   }
 
   txHandlers = {
@@ -66,11 +67,17 @@ export class ActionRuntime {
   }
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    if (tx.objectClass === plugin.class.ActionInstance) {
+    if (this.hierarchy.isDerived(tx.objectClass, plugin.class.ActionInstance)) {
       const instance = tx.attributes as PureActionInst
 
+      const biba = await this.storage.findAll(plugin.class.ActionInstance, { _id: instance._id })
+      console.log(biba)
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.runAction(tx.objectId as Ref<ActionInstance>, instance)
+      this.runAction({
+        ...instance,
+        _id: tx.objectId as Ref<ActionInstance>,
+        space: tx.objectSpace
+      })
     }
   }
 
@@ -112,30 +119,30 @@ export class ActionRuntime {
     return await this.storage.findAll(_class, query, options)
   }
 
-  async runAction (id: Ref<ActionInstance>, actionInst: PureActionInst): Promise<void> {
+  async runAction (actionInst: PureActionInst): Promise<void> {
     if (this._tx === undefined) {
       return
     }
 
     const action = (await this.model.findAll(plugin.class.Action, { _id: actionInst.action }))[0]
-    const state = (await this.model.findAll(plugin.class.ExecutionContext, { _id: actionInst.context }))[0]
+    const state = (await this.storage.findAll(plugin.class.ExecutionContext, { _id: actionInst.context }))[0]
 
     if (action === undefined || state === undefined) {
       return
     }
 
-    this.actions.set(id, actionInst)
+    this.actions.set(actionInst._id, actionInst)
 
     const actionDef = await getResource(action.resId)
-    const service = new Service(this._tx, this.findAll, this.subscribe, state._id)
+    const service = new Service(this._tx, actionInst.space, this.findAll, this.subscribe, state._id)
 
     try {
       await exec(actionDef, service, state)
       await this._tx(
         updateTx({
-          id,
+          id: actionInst._id,
           clazz: plugin.class.ActionInstance,
-          space: core.space.Model,
+          space: actionInst.space,
           ops: {
             state: ActionState.Fullfilled
           }
@@ -144,9 +151,9 @@ export class ActionRuntime {
     } catch (e: unknown) {
       await this._tx(
         updateTx({
-          id,
+          id: actionInst._id,
           clazz: plugin.class.ActionInstance,
-          space: core.space.Model,
+          space: actionInst.space,
           ops: {
             state: ActionState.Rejected,
             reject: e instanceof Error ? e.message : undefined
@@ -154,7 +161,7 @@ export class ActionRuntime {
         })
       )
     } finally {
-      this.actions.delete(id)
+      this.actions.delete(actionInst._id)
     }
   }
 }
