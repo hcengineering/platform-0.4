@@ -17,7 +17,7 @@ import { component, Component } from '@anticrm/status'
 import { Account, Attribute, Class, Doc, DOMAIN_MODEL, PropertyType, Ref, Space, Type } from '../classes'
 import core from '../component'
 import { _createClass, _createDoc } from '../minmodel'
-import { buildModel, generateModelDiff } from '../model'
+import { generateModelDiff } from '../model'
 import { DOMAIN_TX, Tx } from '../tx'
 
 const testIds = component('types' as Component, {
@@ -111,10 +111,6 @@ describe('model-diff', () => {
   it('should save all tx', async () => {
     const tx1 = genTx(1)
     const tx2 = genTx(2)
-    const { model: model1 } = await buildModel(tx1)
-    const { model: model2 } = await buildModel(tx2)
-
-    console.log(model1, model2)
 
     const result = await generateModelDiff(tx1, tx2)
     expect(result.length).toEqual(7)
@@ -125,6 +121,5 @@ describe('model-diff', () => {
     ;[4, 5, 6].forEach((i) => {
       expect(result[i]._class).toEqual(core.class.TxCreateDoc)
     })
-    console.log(result)
   })
 })
