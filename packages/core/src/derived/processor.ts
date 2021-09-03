@@ -4,6 +4,7 @@ import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
 import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
+import { DocumentQuery, FindOptions, FindResult } from '../storage'
 import { DocumentUpdate, TxCreateDoc, TxProcessor, TxUpdateDoc } from '../tx'
 import { parseFullRef } from '../utils'
 import { DescriptorMap } from './descriptors'
@@ -29,6 +30,25 @@ export function registerMapper (id: Resource<DocumentMapper>, mapper: DocumentMa
   derivedDataMappers.set(id, mapper)
 }
 
+class DDStorage implements Storage {
+  processor: TxProcessor | undefined
+  constructor (private readonly storage: Storage) {}
+
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
+    return await this.storage.findAll(_class, query)
+  }
+
+  async tx (tx: Tx): Promise<void> {
+    const result = await this.storage.tx(tx)
+    await this.processor?.tx(tx)
+    return result
+  }
+}
+
 /**
  * Allow to generate derived data with rules and mappers.
  * @public
@@ -51,7 +71,9 @@ export class DerivedDataProcessor extends TxProcessor {
    * Obtain initial set of descriptors and have derived data up to date.
    */
   static async create (model: ModelDb, hierarchy: Hierarchy, storage: Storage): Promise<DerivedDataProcessor> {
-    const processor = new DerivedDataProcessor(new DescriptorMap(hierarchy), model, hierarchy, storage)
+    const ddStorage = new DDStorage(storage)
+    const processor = new DerivedDataProcessor(new DescriptorMap(hierarchy), model, hierarchy, ddStorage)
+    ddStorage.processor = processor
     const descriptors = await model.findAll(core.class.DerivedDataDescriptor, {})
 
     for (const d of descriptors) {

@@ -27,6 +27,7 @@ import { Tx } from '../tx'
 import { connect } from './connection'
 import { _createClass, _createDoc, _genMinModel } from '../minmodel'
 import { _createTestTxAndDocStorage } from '../minmodel'
+import { Reference } from '../reference'
 
 const txes = _genMinModel()
 
@@ -177,20 +178,34 @@ describe('deried data', () => {
 
     const { operations, model, storage } = await prepare([...dtxes])
 
+    // Add descriptor
+    await storage.tx(taskTitleDD)
+
+    // Just copy all title to reference :-)
+    await storage.tx(
+      _createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
+        sourceClass: core.class.Title,
+        targetClass: core.class.Reference,
+        initiValue: {},
+        rules: [{ sourceField: 'title', targetField: 'link' }]
+      })
+    )
+
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
       shortId: 'T-101',
       description: ''
     })
 
-    // Add descriptor
-    await storage.tx(taskTitleDD)
-
     // Check for Title to be created
 
     const titles = await model.findAll(core.class.Title, {})
     expect(titles.length).toEqual(1)
     expect(titles[0].title).toEqual('T-101')
+
+    const references = await model.findAll(core.class.Reference, {})
+    expect(references.length).toEqual(1)
+    expect(references[0].link).toEqual('T-101')
   })
 
   it('check DD updated appear after being updated', async () => {
@@ -538,5 +553,26 @@ describe('deried data', () => {
     const updD2 = await model.findAll(testIds.class.Page, { _id: doc1._id })
     expect(updD2.length).toEqual(1)
     expect(updD2[0].comments?.length).toEqual(9) // 1 - create Doc, 2 - create title
+  })
+
+  it('check DD over DD', async () => {
+    // We need few descriptors to be available
+
+    const { operations, model, storage } = await prepare([...dtxes])
+
+    await operations.createDoc(testIds.class.Task, core.space.Model, {
+      title: 'my-task',
+      shortId: 'T-101',
+      description: ''
+    })
+
+    // Add descriptor
+    await storage.tx(taskTitleDD)
+
+    // Check for Title to be created
+
+    const titles = await model.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(1)
+    expect(titles[0].title).toEqual('T-101')
   })
 })
