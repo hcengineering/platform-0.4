@@ -184,6 +184,7 @@
 
     .component {
       @include panel(var(--theme-bg-color));
+      min-width: 400px;
       flex-grow: 1;
       margin-right: 20px;
     }
@@ -191,7 +192,6 @@
     .aside {
       @include panel(var(--theme-bg-color));
       min-width: 400px;
-      // max-width: 400px;
       margin-right: 20px;
       padding: 20px;
     }

@@ -87,11 +87,11 @@
 
 {#await getItem(id) then value}
   {#if item}
+    <div class="header">
+      <div class="title">{item.name}</div>
+      <div class="tool" on:click={close}><IconClose size={16} /></div>
+    </div>
     <ScrollBox autoscrollable={true} vertical>
-      <div class="header">
-        <div class="title">{item.name}</div>
-        <div class="tool" on:click={close}><IconClose size={16} /></div>
-      </div>
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
@@ -164,18 +164,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 
     .title {
       flex-grow: 1;
       font-weight: 500;
-      font-size: 20px;
-      line-height: 26px;
+      font-size: 1.25rem;
       color: var(--theme-caption-color);
       user-select: none;
     }
     .tool {
-      width: 16px;
-      height: 16px;
       margin-left: 12px;
       opacity: 0.4;
       cursor: pointer;

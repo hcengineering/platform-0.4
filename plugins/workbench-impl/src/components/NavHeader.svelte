@@ -24,8 +24,8 @@
 <div class="navigator-header">
   <div class="title">
     <span><Label label={title} /></span>
-    <div class="arrow">
-      <ActionIcon icon={MoreH} size={16} />
+    <div class="tool">
+      <ActionIcon icon={MoreH} size={16} padding={4} />
     </div>
   </div>
 </div>
@@ -37,7 +37,7 @@
     align-items: center;
     width: 100%;
     height: 72px;
-    padding: 20px 28px;
+    padding: 20px 20px 20px 28px;
     .title {
       display: flex;
       justify-content: space-between;
@@ -55,11 +55,7 @@
         color: var(--theme-caption-color);
         user-select: none;
       }
-      .arrow {
-        width: 16px;
-        min-width: 16px;
-        height: 16px;
-        border-radius: 4px;
+      .tool {
         margin-left: 16px;
       }
     }

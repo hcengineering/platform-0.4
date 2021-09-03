@@ -16,7 +16,7 @@
   import type { Message as MessageModel } from '@anticrm/chunter'
   import type { Account, Ref, Timestamp } from '@anticrm/core'
   import Message from './Message.svelte'
-  import MessageTask from './MessageTask.svelte'
+  // import MessageTask from './MessageTask.svelte'
 
   export let messages: MessageData[] = []
   export let thread: boolean = false
@@ -32,9 +32,7 @@
 </script>
 
 <div class="flex-col" bind:this={div}>
-  <MessageTask label={'Create UI for apps without the spaces and update the interface flow'} />
   {#each messages as m (m._id)}
     <Message message={m} {thread} />
   {/each}
-  <MessageTask label={'Create UI for apps without the spaces and update the interface flow'} />
 </div>
