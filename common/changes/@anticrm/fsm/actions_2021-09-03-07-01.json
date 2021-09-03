@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm",
+      "comment": "Add actions to fsm state",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/fsm"
+}

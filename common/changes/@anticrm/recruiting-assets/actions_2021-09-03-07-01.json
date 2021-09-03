@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "comment": "Add intl texts",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-assets"
+}

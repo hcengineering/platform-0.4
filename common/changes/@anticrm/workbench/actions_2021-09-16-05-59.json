@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "Adjust userSpace type",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/workbench"
+}
