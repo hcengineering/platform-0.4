@@ -13,7 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Doc, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
@@ -55,5 +54,5 @@
 </script>
 
 {#if component !== undefined}
-  <svelte:component this={component} action={action} instance={instance} target={target} />
+  <svelte:component this={component} {action} {instance} {target} />
 {/if}

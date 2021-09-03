@@ -44,7 +44,7 @@ export async function exec (
         continue
       }
 
-      counter = ret ? (labelMap.get(atom.label)) ?? counter + 1 : counter + 1
+      counter = ret ? labelMap.get(atom.label) ?? counter + 1 : counter + 1
     }
 
     if (atom._type === 'fn') {

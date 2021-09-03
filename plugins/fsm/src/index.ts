@@ -45,8 +45,8 @@ export interface State extends Doc {
   name: string
   color: string
   fsm: Ref<FSM>
-  requiredActions: Ref<Action>[]
-  optionalActions: Ref<Action>[]
+  requiredActions: Array<Ref<Action>>
+  optionalActions: Array<Ref<Action>>
 }
 
 export interface FSMService extends Service {

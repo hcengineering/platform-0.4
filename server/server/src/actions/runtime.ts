@@ -81,7 +81,7 @@ export class ActionRuntime {
     }
   }
 
-  private readonly subscribe = (filter: UpdateTxFilter, cb: UpdateTxCallback): () => void => {
+  private readonly subscribe = (filter: UpdateTxFilter, cb: UpdateTxCallback): (() => void) => {
     const id = generateId()
     this.updateTxSubs.set(id, { filter, cb })
 
@@ -95,14 +95,16 @@ export class ActionRuntime {
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     const cbs = [...this.updateTxSubs.values()]
       .filter(({ filter }) => {
-        return (filter.id === undefined || filter.id === tx.objectId) &&
+        return (
+          (filter.id === undefined || filter.id === tx.objectId) &&
           (filter.clazz === undefined || filter.clazz === tx.objectClass) &&
           (filter.space === undefined || filter.space === tx.objectSpace)
+        )
       })
-      .map(x => x.cb)
+      .map((x) => x.cb)
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    Promise.all(cbs.map(async cb => await cb(tx)))
+    Promise.all(cbs.map(async (cb) => await cb(tx)))
   }
 
   async txRemoveDoc (_tx: TxRemoveDoc<Doc>): Promise<void> {}

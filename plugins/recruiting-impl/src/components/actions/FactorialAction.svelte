@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { Readable } from 'svelte/store';
+  import { getContext } from 'svelte'
+  import { Readable } from 'svelte/store'
   import type { Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
@@ -22,7 +22,7 @@
   import actionPlugin from '@anticrm/action-plugin'
   import type { Action, ActionInstance, ExecutionContext } from '@anticrm/action-plugin'
   import { Button } from '@anticrm/ui'
-  import type { Applicant } from '@anticrm/recruiting';
+  import type { Applicant } from '@anticrm/recruiting'
 
   export let action: Action
   export let target: Applicant

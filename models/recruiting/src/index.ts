@@ -130,26 +130,38 @@ export function createModel (builder: Builder): void {
 
   // Actions
   const factorialId: Ref<Action> = generateId()
-  builder.createDoc(action.class.Action, {
-    name: 'Factorial',
-    description: 'Goto based factorial calculation',
-    resId: recruiting.action.Factorial
-  }, factorialId)
+  builder.createDoc(
+    action.class.Action,
+    {
+      name: 'Factorial',
+      description: 'Goto based factorial calculation',
+      resId: recruiting.action.Factorial
+    },
+    factorialId
+  )
 
   const recurFactorialId: Ref<Action> = generateId()
-  builder.createDoc(action.class.Action, {
-    name: 'Recursive Factorial',
-    description: 'Recur based factorial calculation',
-    resId: recruiting.action.RecurFactorial
-  }, recurFactorialId)
+  builder.createDoc(
+    action.class.Action,
+    {
+      name: 'Recursive Factorial',
+      description: 'Recur based factorial calculation',
+      resId: recruiting.action.RecurFactorial
+    },
+    recurFactorialId
+  )
 
   const interviewId: Ref<Action> = generateId()
-  builder.createDoc(action.class.Action, {
-    name: 'Interview',
-    description: 'Plan interview',
-    resId: recruiting.action.Interview,
-    input: calendar.class.Event
-  }, interviewId)
+  builder.createDoc(
+    action.class.Action,
+    {
+      name: 'Interview',
+      description: 'Plan interview',
+      resId: recruiting.action.Interview,
+      input: calendar.class.Event
+    },
+    interviewId
+  )
 
   // FSM
 

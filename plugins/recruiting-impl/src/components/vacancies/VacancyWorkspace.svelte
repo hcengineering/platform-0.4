@@ -42,7 +42,7 @@
   <div class="tabs">
     <Tabs tabs={tabOpts} bind:selected={selectedTab} />
   </div>
-  <Component is={content} props={{space, currentSpace: space._id}} />
+  <Component is={content} props={{ space, currentSpace: space._id }} />
 </div>
 
 <style lang="scss">

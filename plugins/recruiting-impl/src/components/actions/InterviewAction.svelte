@@ -16,7 +16,7 @@
   import { Readable } from 'svelte/store'
   import { getContext } from 'svelte'
 
-  import type { Doc, Ref, Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient, showModal } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'

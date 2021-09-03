@@ -18,10 +18,10 @@
   import recruiting from '@anticrm/recruiting'
   import action from '@anticrm/action-plugin'
   import type { Action } from '@anticrm/action-plugin'
-  import type { State } from '@anticrm/fsm';
-  import fsm from '@anticrm/fsm';
+  import type { State } from '@anticrm/fsm'
+  import fsm from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { Label, ActionIcon } from '@anticrm/ui';
+  import { Label, ActionIcon } from '@anticrm/ui'
   import type { Applicant, Candidate } from '@anticrm/recruiting'
 
   import ActionPresenter from './ActionPresenter.svelte'
@@ -52,9 +52,14 @@
   let actions: Action[] = []
   let actionsQ: QueryUpdater<Action> | undefined
   $: if (state) {
-    actionsQ = client.query(actionsQ, action.class.Action, {_id: {'$in': state.optionalActions.concat(state.requiredActions)}}, (res) => {
-      actions = res
-    })
+    actionsQ = client.query(
+      actionsQ,
+      action.class.Action,
+      { _id: { $in: state.optionalActions.concat(state.requiredActions) } },
+      (res) => {
+        actions = res
+      }
+    )
   }
 </script>
 
@@ -63,11 +68,11 @@
     <div class="header">
       <div class="candidate">
         <div class="candidate-avatar">
-          <img width="100%" height="100%" src={`https://robohash.org/${candidate.name}?set=set4`} alt="avatar"/>
+          <img width="100%" height="100%" src={`https://robohash.org/${candidate.name}?set=set4`} alt="avatar" />
         </div>
         <div class="candidate-info">
           <div class="candidate-title">
-            <Label label={recruiting.string.Candidate}/>
+            <Label label={recruiting.string.Candidate} />
           </div>
           <div class="candidate-name">
             {`${candidate.firstName} ${candidate.lastName}`}
@@ -76,7 +81,7 @@
       </div>
       <ActionIcon icon={Dots} size={24} />
     </div>
-    <div class="content"> 
+    <div class="content">
       {#each actions as action (action._id)}
         <ActionPresenter {action} target={doc} />
       {/each}

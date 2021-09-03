@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid'
 
 /**
  * @public
- */export interface UpdateTxFilter {
+ */ export interface UpdateTxFilter {
   space?: Ref<Space>
   clazz?: Ref<Class<Doc>>
   id?: Ref<Doc>
