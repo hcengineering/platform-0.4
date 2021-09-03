@@ -25,7 +25,7 @@
   <div class="title">
     <span><Label label={title} /></span>
     <div class="tool">
-      <ActionIcon icon={MoreH} size={24} scaleIcon={0.65} />
+      <ActionIcon icon={MoreH} size={16} padding={4} />
     </div>
   </div>
 </div>

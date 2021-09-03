@@ -22,7 +22,7 @@
   export let label: IntlString
   export let direction: string = 'top'
   export let icon: Asset | AnySvelteComponent
-  export let scaleIcon: number = 1
+  export let padding: number = 0
   export let filled: boolean = false
   export let size: 16 | 20 | 24
   export let action: () => void = () => {}
@@ -30,8 +30,8 @@
 </script>
 
 <Tooltip {label} {direction}>
-  <button class="button" style="width: {size}px; height: {size}px" on:click|stopPropagation={action}>
-    <div class="icon" style="width: {size}px; height: {size}px; transform: scale({scaleIcon});" class:invisible>
+  <button class="button" style="padding: {padding}px" on:click|stopPropagation={action}>
+    <div class="icon" style="width: {size}px; height: {size}px;" class:invisible>
       {#if typeof icon === 'string'}
         <Icon {icon} {size} />
       {:else}
@@ -54,7 +54,6 @@
     cursor: pointer;
 
     .icon {
-      transform-origin: center center;
       opacity: 0.3;
       &.invisible {
         opacity: 0;

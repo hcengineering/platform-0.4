@@ -71,13 +71,13 @@
     <div class="button">
       <ActionIcon
         icon={Star}
-        size={24}
-        scaleIcon={0.65}
+        size={16}
+        padding={8}
         action={changeStarred}
         filled={space?.account?.starred ?? false}
       />
     </div>
-    <div class="button"><ActionIcon icon={MoreH} size={24} scaleIcon={0.65} /></div>
+    <div class="button"><ActionIcon icon={MoreH} size={16} padding={4} /></div>
   </div>
 </div>
 
