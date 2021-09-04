@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import type { Space } from '@anticrm/core'
   import type { Message } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
