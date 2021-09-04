@@ -47,7 +47,7 @@
   $: if (currentSpace !== undefined) {
     query = client.query(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
       messages = result
-      autoscroll = lastPosition > 0 ? (lastPosition > div.scrollHeight - div.clientHeight - 30) : false
+      autoscroll = lastPosition > 0 ? lastPosition > div.scrollHeight - div.clientHeight - 30 : false
     })
   }
 
@@ -63,7 +63,7 @@
     }
   })
 
-  function scroll() {
+  function scroll () {
     if (autoscroll) {
       div.scrollTo(0, div.scrollHeight)
       return
@@ -79,8 +79,7 @@
         const elem = messages[i] as HTMLElement
         if (elem === undefined) continue
         const modified = elem.dataset.modified
-        if (modified !== undefined && parseInt(modified) > currentSpace.account.lastRead)
-        olderNewMessage = elem
+        if (modified !== undefined && parseInt(modified) > currentSpace.account.lastRead) olderNewMessage = elem
       }
       if (olderNewMessage !== undefined) {
         olderNewMessage.scrollIntoView(false)
