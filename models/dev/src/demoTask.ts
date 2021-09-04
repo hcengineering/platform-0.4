@@ -4,7 +4,7 @@ import { component, Component } from '@anticrm/status'
 import task, { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
 import faker from 'faker'
 import chunter from '@anticrm/chunter'
-import { Comment } from '@anticrm/chunter'
+import { CommentRef } from '@anticrm/chunter'
 import { accountIds } from './demoAccount'
 
 const demoIds = component('demo-task' as Component, {
@@ -62,10 +62,11 @@ export function demoTask (builder: Builder): void {
       })
     }
 
-    const comments: Ref<Comment>[] = []
+    const comments: CommentRef[] = []
 
     for (let i = 0; i < faker.datatype.number(10); i++) {
       const commentId = generateId()
+      const userId = faker.random.arrayElement(accountIds)
       builder.createDoc(
         chunter.class.Comment,
         {
@@ -75,12 +76,12 @@ export function demoTask (builder: Builder): void {
         commentId,
         {
           space: demoIds.project.DemoProject,
-          modifiedBy: faker.random.arrayElement(accountIds),
+          modifiedBy: userId,
           modifiedOn: Date.now(),
           createOn: Date.now()
         }
       )
-      comments.push(commentId as Ref<Comment>)
+      comments.push({ _id: commentId, userId, createOn: Date.now(), lastModified: Date.now() })
     }
 
     builder.createDoc(

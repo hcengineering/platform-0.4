@@ -13,14 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { CommentRef, WithMessage } from '@anticrm/chunter'
-  import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { CommentRef, WithMessage, Message, Comment } from '@anticrm/chunter'
+  import { Account, parseFullRef, Ref, Space, Timestamp } from '@anticrm/core'
   import core from '@anticrm/core'
-  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
   import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import { onMount } from 'svelte'
+  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
@@ -28,16 +28,9 @@
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
 
-  interface MessageData {
-    _id: Ref<WithMessage>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
-
-  export let message: MessageData
+  export let message: WithMessage
   export let thread: boolean = false
+  export let currentSpace: Space
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -72,13 +65,39 @@
   onMount(async () => {
     user = await getUser(message.modifiedBy)
   })
+
+  function isNew (message: WithMessage, currentSpace: Space): boolean {
+    if (!thread) {
+      if (message.modifiedOn > (currentSpace.account?.lastRead ?? message.modifiedOn)) return true
+      const comments = (message as Message).comments
+      if (comments !== undefined) {
+        let lastTime = 0
+        if (currentSpace.account?.objectLastReads !== undefined) {
+          lastTime = currentSpace.account.objectLastReads.get(message._id) ?? lastTime
+        }
+        for (const comment of comments) {
+          if (comment.lastModified > lastTime) return true
+        }
+      }
+    } else if ((message as Comment).replyOf !== undefined) {
+      let lastTime = currentSpace.account?.lastRead ?? 0
+      if (currentSpace.account?.objectLastReads !== undefined) {
+        const fullRef = parseFullRef((message as Comment).replyOf)
+        lastTime = currentSpace.account.objectLastReads.get(fullRef._id) ?? lastTime
+      }
+      if (message.modifiedOn > lastTime) {
+        return true
+      }
+    }
+    return false
+  }
 </script>
 
-<div class="container" class:no-thread={!thread} on:click={onClick}>
+<div class="container" class:no-thread={!thread} class:isNew={isNew(message, currentSpace)} on:click={onClick}>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}
-  <div class="message">
+  <div class="message" data-modified={message.modifiedOn}>
     <div class="header">
       {#if user}{user?.name ?? ''}{/if}<span
         ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
@@ -114,6 +133,10 @@
     position: relative;
     display: flex;
     padding-bottom: 20px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-color);
+    }
 
     .avatar {
       min-width: 36px;

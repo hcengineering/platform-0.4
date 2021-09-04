@@ -31,12 +31,19 @@
   }
   const changeStarred = () => {
     if (space !== undefined) {
+      if (space.account === undefined) {
+        space.account = {
+          starred: true
+        }
+      } else {
+        space.account.starred = !space.account.starred
+      }
       client.updateDoc<Space>(
         space._class,
         space.space,
         space._id,
         {
-          account: { starred: !(space?.account?.starred ?? false) }
+          account: space.account
         },
         true
       )

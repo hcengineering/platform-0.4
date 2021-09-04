@@ -77,7 +77,8 @@
   <TreeNode label={model.label} {actions}>
     {#each spaces as space}
       <TreeItem
-        notifications={5}
+        notifications={space.account?.notificatedObjects?.length ?? 0}
+        changed={(space.account?.lastRead ?? 0) < (space.lastModified ?? 0)}
         component={model.spaceItem}
         props={{ space: space }}
         title={space.name}

@@ -27,6 +27,7 @@
   export let label: IntlString | undefined = undefined
   export let title: string | undefined = undefined
   export let notifications = 0
+  export let changed = false
   export let node = false
   export let collapsed = false
   export let actions: Action[] = []
@@ -44,6 +45,7 @@
 <div
   class="flex-row-center container"
   class:sub={!node}
+  class:changed
   on:click|stopPropagation={() => {
     if (node && !icon) collapsed = !collapsed
     dispatch('click')
@@ -103,6 +105,10 @@
       .icon {
         margin-right: 8px;
       }
+    }
+
+    &.changed {
+      font-weight: bold;
     }
 
     .icon {

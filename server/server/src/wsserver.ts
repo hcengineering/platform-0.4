@@ -30,7 +30,12 @@ export interface ServerOptions {
 /**
  * @public
  */
-export async function startServer (host: string | undefined, port: number, serverToken: string, options?: ServerOptions): Promise<Server> {
+export async function startServer (
+  host: string | undefined,
+  port: number,
+  serverToken: string,
+  options?: ServerOptions
+): Promise<Server> {
   regCalendarMappers()
 
   const instance = await start(host, port, {
@@ -42,7 +47,8 @@ export async function startServer (host: string | undefined, port: number, serve
   return instance
 }
 function connectClient (
-  serverToken: string, options: ServerOptions = { logRequests: false, logTransactions: false }
+  serverToken: string,
+  options: ServerOptions = { logRequests: false, logTransactions: false }
 ): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<WithAccountId> {
   return async (clientId, token, sendTx) => {
     try {
@@ -59,15 +65,27 @@ function connectClient (
         return {
           findAll: async (_class, query) => {
             const result = await clientStorage.findAll(_class, query)
-            if (options?.logRequests ?? false) {
-              console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+            if (options.logRequests) {
+              console.info(
+                `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
+                  query,
+                  undefined,
+                  2
+                )} result: ${JSON.stringify(result, undefined, 2)}`
+              )
             }
             return result
           },
           tx: async (tx) => {
             const result = await clientStorage.tx(tx)
             if (options.logTransactions) {
-              console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result, undefined, 2)}`)
+              console.info(
+                `tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(
+                  result,
+                  undefined,
+                  2
+                )}`
+              )
             }
             return result
           },
@@ -86,17 +104,30 @@ function connectClient (
 /**
  * Will check and create Account for current log-in user if required.
  */
-async function updateAccount (clientId: string, workspace: WorkspaceInfo, accountId: Ref<Account>, details: AccountDetails): Promise<void> {
+async function updateAccount (
+  clientId: string,
+  workspace: WorkspaceInfo,
+  accountId: Ref<Account>,
+  details: AccountDetails
+): Promise<void> {
   const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId })
   if (accountRef.length === 0) {
     // We need to create an account entry.
-    await workspace.workspace.tx(clientId,
-      newTxCreateDoc<Account>(accountId, core.class.Account, core.space.Model, {
-        email: details.email,
-        name: ((details?.firstName ?? '') + ' ' + (details?.lastName ?? '')).trim(),
-        firstName: details?.firstName ?? '',
-        lastName: details?.lastName ?? '',
-        avatar: gravatar.url(details.email) // TODO: Use platform plugin mechanism for this
-      }, accountId))
+    await workspace.workspace.tx(
+      clientId,
+      newTxCreateDoc<Account>(
+        accountId,
+        core.class.Account,
+        core.space.Model,
+        {
+          email: details.email,
+          name: ((details?.firstName ?? '') + ' ' + (details?.lastName ?? '')).trim(),
+          firstName: details?.firstName ?? '',
+          lastName: details?.lastName ?? '',
+          avatar: gravatar.url(details.email) // TODO: Use platform plugin mechanism for this
+        },
+        accountId
+      )
+    )
   }
 }

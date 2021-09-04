@@ -19,7 +19,7 @@
   import type { IPopupItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
-  import type { Message, Message as MessageModel } from '@anticrm/chunter'
+  import type { Message } from '@anticrm/chunter'
   import ReferenceInput from './ReferenceInput.svelte'
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
@@ -29,11 +29,11 @@
 
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []
-  let currentSpace: Ref<Space> | undefined
+  let currentSpace: Space | undefined
 
   let div: HTMLElement
   let autoscroll = true
-  let messages: MessageModel[] = []
+  let messages: Message[] = []
 
   let allAccounts: Account[] = []
 
@@ -55,7 +55,7 @@
         const m2 = [client.accountId(), ...to].sort()
         if (deepEqual(m1, m2)) {
           // Ok, we have channel already
-          currentSpace = c._id
+          currentSpace = c
           return
         }
       }
@@ -74,10 +74,10 @@
         direct: true,
         members: [client.accountId(), ...to]
       })
-      currentSpace = channel._id
+      currentSpace = channel
     }
 
-    await client.createDoc(chunter.class.Message, currentSpace, {
+    await client.createDoc(chunter.class.Message, currentSpace._id, {
       message
     })
   }
@@ -85,7 +85,7 @@
   let query: QueryUpdater<Message> | undefined = undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace }, (result) => {
+    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
       messages = result
       if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
     })
@@ -125,7 +125,9 @@
       div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
     }}
   >
-    <Channel {messages} />
+    {#if currentSpace}
+      <Channel {currentSpace} {messages} />
+    {/if}
   </div>
   <div class="message-input">
     <ReferenceInput

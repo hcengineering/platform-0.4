@@ -23,14 +23,14 @@
   import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
 
-  export let currentSpace: Ref<Space>
+  export let currentSpace: Space
   export let taskId: Ref<Task>
 
   const client = getClient()
   let messages: Comment[] = []
 
   function addMessage (message: string): void {
-    client.createDoc(chunter.class.Comment, currentSpace, {
+    client.createDoc(chunter.class.Comment, currentSpace!._id, {
       message,
       replyOf: getFullRef(taskId, task.class.Task)
     })
@@ -38,11 +38,11 @@
 
   let query: QueryUpdater<Comment> | undefined
 
-  $: if (currentSpace !== undefined) {
+  $: {
     query = client.query(
       query,
       chunter.class.Comment,
-      { space: currentSpace, replyOf: getFullRef(taskId, task.class.Task) },
+      { space: currentSpace._id, replyOf: getFullRef(taskId, task.class.Task) },
       (result) => {
         messages = result
       },
@@ -53,4 +53,4 @@
   }
 </script>
 
-<Comments {messages} on:message={(event) => addMessage(event.detail)} />
+<Comments {messages} {currentSpace} on:message={(event) => addMessage(event.detail)} />

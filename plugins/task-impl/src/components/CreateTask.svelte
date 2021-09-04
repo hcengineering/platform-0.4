@@ -33,7 +33,7 @@
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
   import core, { generateId, getFullRef } from '@anticrm/core'
-  import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
+  import type { Account, Ref, Space } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
@@ -49,7 +49,7 @@
   let description: string = ''
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
-  let comments: Message[] = []
+  let comments: Comment[] = []
   let dueTo: Date
   let status: IntlString = TaskStatuses.Open
   const id = generateId() as Ref<Task>
@@ -65,21 +65,16 @@
     }
   }
 
-  interface Message {
-    _id: Ref<Comment>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
-
   function addMessage (message: string): void {
     comments.push({
       message: message,
       modifiedBy: client.accountId(),
       modifiedOn: Date.now(),
       createOn: Date.now(),
-      _id: generateId()
+      _id: generateId(),
+      space: space._id,
+      _class: chunter.class.Comment,
+      replyOf: getFullRef(id, task.class.Task)
     })
     comments = comments
   }
@@ -142,13 +137,18 @@
         {/await}
         <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
         <Row>
-          <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
+          <DescriptionEditor
+            placeholder={task.string.TaskDescription}
+            label={task.string.TaskDescription}
+            lines={5}
+            bind:value={description}
+          />
         </Row>
       </Grid>
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
       <Grid column={1}>
-        <Comments messages={comments} on:message={(event) => addMessage(event.detail)} />
+        <Comments messages={comments} currentSpace={space} on:message={(event) => addMessage(event.detail)} />
       </Grid>
     </Section>
   {:else if selectedTab === task.string.Attachment}

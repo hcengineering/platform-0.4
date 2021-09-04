@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, FullRefString, Ref, Space } from '@anticrm/core'
+import type { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
@@ -36,6 +36,8 @@ export interface Channel extends Space {
 export interface CommentRef {
   _id: Ref<Doc>
   userId: Ref<Account>
+  lastModified: Timestamp
+  createOn: Timestamp
 }
 
 export interface WithMessage extends Doc {

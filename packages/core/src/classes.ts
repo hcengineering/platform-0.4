@@ -181,6 +181,7 @@ export interface Space extends Doc {
   description: string
   private: boolean
   members: Arr<Ref<Account>>
+  lastModified?: Timestamp
 
   // Per account properties, should be stored inside account transaction space.
   account?: AccountProperties
@@ -190,6 +191,9 @@ export interface Space extends Doc {
  * @public
  */
 export interface AccountProperties {
+  lastRead?: Timestamp
+  objectLastReads?: Map<Ref<Doc>, Timestamp>
+  notificatedObjects?: Array<Ref<Doc>>
   starred?: boolean // If defined
   muted?: boolean // Disable all notifications for this space.
 }

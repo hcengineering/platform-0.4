@@ -23,6 +23,7 @@
   export let icon: Asset | undefined
   export let title: string
   export let notifications = 0
+  export let changed: boolean
 
   const dispatch = createEventDispatcher()
 </script>
@@ -33,6 +34,7 @@
   {icon}
   {title}
   {notifications}
+  {changed}
   collapsed
   on:click={() => {
     dispatch('click')
