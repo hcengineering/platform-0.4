@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-mappers",
+      "comment": "Use default user space instead of first private one",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-mappers"
+}

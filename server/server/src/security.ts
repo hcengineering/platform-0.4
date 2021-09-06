@@ -114,6 +114,7 @@ export class SecurityModel extends TxProcessor {
     if (tx.objectSpace === core.space.Model) {
       return this.checkSpaceTx(userId, tx)
     }
+
     const spaces = this.getUserSpaces(userId)
     return spaces.has(tx.objectSpace)
   }
@@ -150,6 +151,7 @@ export class SecurityModel extends TxProcessor {
     return new Set(this.allowedSpaces.get(userId) ?? new Set<Ref<Space>>())
       .add(core.space.Model)
       .add(core.space.Tx)
+      .add(userId.toString() as Ref<Space>)
   }
 }
 

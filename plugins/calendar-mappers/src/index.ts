@@ -13,18 +13,12 @@
 // limitations under the License.
 //
 
-import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, Account, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc } from '@anticrm/core'
+import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, Account, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc, Space } from '@anticrm/core'
 import core, { registerMapper } from '@anticrm/core'
 import type { DerivedEvent, Event } from '@anticrm/calendar'
 import calendar from '@anticrm/calendar'
 
 async function createEvent (event: Event, participant: Ref<Account>, d: DerivedDataDescriptor<Doc, DerivedData>, options: MappingOptions): Promise<(DerivedEvent & DerivedData)[]> {
-  const space = (await options.model.findAll(calendar.class.Calendar, { members: [participant], private: true }, { limit: 1 }))[0]
-
-  if (space === undefined) {
-    return []
-  }
-
   return [
     {
       ...event,
@@ -36,7 +30,7 @@ async function createEvent (event: Event, participant: Ref<Account>, d: DerivedD
       modifiedOn: Date.now(),
       createOn: Date.now(),
       orig: event._id,
-      space: space._id,
+      space: participant.toString() as Ref<Space>,
       descriptorId: d._id
     }
   ]
