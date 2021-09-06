@@ -18,10 +18,10 @@
     application: string
   }
 
-  let application: AnyComponent | undefined
-  let appRoute: AppRoute | undefined
-
   const defaultMeta = getMetadata(defaultApplicationShortcutKey())
+
+  let application: AnyComponent | undefined = getMetadata(applicationShortcutKey(defaultMeta ?? ''))
+  let appRoute: AppRoute | undefined
 
   newRouter<AppRoute>(
     ':application',
