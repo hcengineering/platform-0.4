@@ -67,7 +67,7 @@ jobs:
       - name: Build Demo
         run: |
           cd ./dev/prod
-          node ../../common/scripts/install-run-rush.js build-demo --verbose
+          node ../../common/scripts/install-run-rushx.js build-demo
       
       - name: Deploy Demo
         uses: peaceiris/actions-gh-pages@v3
