@@ -88,4 +88,14 @@ export function createModel (builder: Builder): void {
     sourceClass: calendar.class.Event,
     mapper: calendar.mapper.defaultMapper
   })
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: calendar.class.Event,
+      targetClass: core.class.Title,
+      rules: [{ sourceField: 'name', targetField: 'title' }]
+    },
+    calendar.dd.NameTitleIndex
+  )
 }
