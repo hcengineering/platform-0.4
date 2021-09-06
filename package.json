@@ -8,6 +8,7 @@
     "format-diff": "./common/scripts/each-diff.sh rushx format",
     "dev": "cd ./dev/prod/ && rushx dev",
     "clean-logs": "git status --ignored | grep build*.log | xargs rm",
+    "remove-untracked-files": "git status --untracked-files --porcelain | grep '??' | cut -d ' ' -f 2 | xargs rm",
     "do-changes": "rush change --bulk --bump-type patch --message",
     "clean-ui-cache": "find . -name '.ui-build' | xargs rm -rf"
   },

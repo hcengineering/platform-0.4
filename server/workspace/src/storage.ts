@@ -1,4 +1,4 @@
-import {
+import core, {
   Class,
   Doc,
   DocumentQuery,
@@ -9,7 +9,8 @@ import {
   isModelTx,
   Ref,
   Storage,
-  Tx
+  Tx,
+  txObjectClass
 } from '@anticrm/core'
 
 /**
@@ -33,6 +34,12 @@ export class WorkspaceStorage implements Storage {
   async tx (tx: Tx): Promise<void> {
     if (!isModelTx(tx)) {
       await this.doc.tx(tx)
+    }
+
+    const objectClass = txObjectClass(tx)
+    // Do not store transaction for derived data objects.
+    if (objectClass !== undefined && this.hierarchy.isDerived(objectClass, core.class.DerivedData)) {
+      return
     }
 
     await this.txStore.tx(tx) // In any case send into transaction storage.
