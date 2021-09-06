@@ -22,6 +22,7 @@
   import { getClient, showModal } from '@anticrm/workbench'
   import workbench from '../../plugin'
   import MoreH from '../icons/MoreH.svelte'
+  import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
 
@@ -35,7 +36,11 @@
 
   $: {
     query = client.query(query, model.spaceClass, model.spaceQuery ?? {}, (result) => {
-      spaces = result.filter((space) => space.members.includes(accountId))
+      const userSpace = buildUserSpace(accountId, model)
+      spaces = [
+        ...(userSpace === undefined ? [] : [userSpace]),
+        ...result.filter((space) => space.members.includes(accountId))
+      ]
     })
   }
 

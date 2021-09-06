@@ -373,7 +373,7 @@ describe('security', () => {
     }
     await securityModel.tx(tx)
 
-    expect((await securityModel.getUserSpaces('User1' as Ref<Account>)).size).toEqual(3)
+    expect((await securityModel.getUserSpaces('User1' as Ref<Account>)).size).toEqual(4)
   })
 
   it('check change space private', async () => {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Make possible to render default user space",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

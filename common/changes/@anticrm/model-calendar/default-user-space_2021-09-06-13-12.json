@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-calendar",
+      "comment": "Update application doc to show default user space",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/model-calendar"
+}

@@ -75,7 +75,13 @@ export function createModel (builder: Builder): void {
           spaceIcon: calendar.icon.Calendar,
           spaceClass: calendar.class.Calendar,
           addSpaceLabel: calendar.string.AddCalendar,
-          createComponent: calendar.component.CreateCalendar
+          createComponent: calendar.component.CreateCalendar,
+          userSpace: {
+            name: 'Personal',
+            description: 'Personal calendar',
+            members: [],
+            private: true
+          }
         }
       ],
       createComponent: calendar.component.CreateEvent,
