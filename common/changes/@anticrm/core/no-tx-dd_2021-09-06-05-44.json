@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Do not store Tx for DD",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
