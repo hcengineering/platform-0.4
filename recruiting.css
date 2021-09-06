@@ -1,0 +1,216 @@
+/* fakecss:src/components/candidates/CreateCandidatePool.esbuild-svelte-fake-css */
+.content.svelte-sc4c5l {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* fakecss:src/components/vacancies/CreateVacancy.esbuild-svelte-fake-css */
+.content.svelte-sc4c5l {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* fakecss:src/components/candidates/CreateCandidate.esbuild-svelte-fake-css */
+.content.svelte-sc4c5l {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* fakecss:src/components/common/Float.esbuild-svelte-fake-css */
+.root.svelte-oer3sb {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  width: 100vw;
+  max-height: 100vh;
+  height: 100vh;
+}
+.container.svelte-oer3sb {
+  display: flex;
+  flex-direction: column;
+  min-width: 40%;
+  max-width: 80%;
+  width: auto;
+  max-height: 100vh;
+  height: 100vh;
+  background-color: var(--theme-bg-color);
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
+}
+.header.svelte-oer3sb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 12px;
+  padding: 0 32px 0 40px;
+  height: 72px;
+}
+.title.svelte-oer3sb {
+  flex-grow: 1;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--theme-caption-color);
+  user-select: none;
+}
+.close.svelte-oer3sb {
+  width: 16px;
+  height: 16px;
+  margin-left: 12px;
+  opacity: 0.4;
+  cursor: pointer;
+}
+.close.svelte-oer3sb:hover {
+  opacity: 1;
+}
+.content.svelte-oer3sb {
+  flex-shrink: 0;
+  margin: 24px 20px 0;
+  padding: 0 20px;
+  height: calc(100vh - 204px);
+}
+
+/* fakecss:src/components/candidates/Candidate.esbuild-svelte-fake-css */
+.root.svelte-zl5x3y {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.row.svelte-zl5x3y {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.label.svelte-zl5x3y {
+  font-weight: 500;
+}
+.assignment.svelte-zl5x3y {
+  display: grid;
+  grid-template-columns: auto;
+  grid-gap: 10px;
+}
+.assignment-content.svelte-zl5x3y {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.assign-control.svelte-zl5x3y {
+  font-weight: 400;
+  cursor: pointer;
+}
+.vacancy.svelte-zl5x3y {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* fakecss:src/components/candidates/CandidatesWorkspace.esbuild-svelte-fake-css */
+.root.svelte-11o0d8m {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 40px;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+.content.svelte-11o0d8m {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+.selector.svelte-11o0d8m {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+.view.svelte-11o0d8m {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+.opt.svelte-11o0d8m {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.opt.selected.svelte-11o0d8m {
+  background-color: var(--theme-button-bg-enabled);
+  cursor: default;
+}
+
+/* fakecss:src/components/vacancies/ApplicantCard.esbuild-svelte-fake-css */
+.root.svelte-1y38kfr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  font-weight: 500;
+  background-color: var(--theme-button-bg-hovered);
+  border: 1px solid var(--theme-bg-accent-color);
+  border-radius: 12px;
+}
+
+/* fakecss:src/components/vacancies/VacancyWorkspace.esbuild-svelte-fake-css */
+.root.svelte-11o0d8m {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 40px;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+.content.svelte-11o0d8m {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+.selector.svelte-11o0d8m {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+.view.svelte-11o0d8m {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+.opt.svelte-11o0d8m {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.opt.selected.svelte-11o0d8m {
+  background-color: var(--theme-button-bg-enabled);
+  cursor: default;
+}
+
