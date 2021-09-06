@@ -11768,7 +11768,7 @@ packages:
     dev: false
 
   file:projects/model-recruiting.tgz:
-    resolution: {integrity: sha512-7BZRwQ7ZS1J8IgjR+vSQ5yJZopWY3WBAqhk2vRYgaahMIhZ0Z/sISfIjASlvVDNQ7tIU6M6ImozVz7/z7LU+nw==, tarball: file:projects/model-recruiting.tgz}
+    resolution: {integrity: sha512-U9mCy6cCpeIJhbzhG/W2TfqWq1exmv16G+5NzVMv0P3GD7QRhk4J6ChGjwwcz0F9dEPC5yzXwn+hbxx7zQOSXQ==, tarball: file:projects/model-recruiting.tgz}
     name: '@rush-temp/model-recruiting'
     version: 0.0.0
     dependencies:
@@ -13002,7 +13002,7 @@ packages:
     dev: false
 
   file:projects/workspaces.tgz:
-    resolution: {integrity: sha512-sCbuqWMZZ226y87f1BETY6bzlryW5DW4vHLpizUamhoODhrJ3zNV7uY+MMSQg5Ua0kuMrVMpmSj1to8HG/r/7g==, tarball: file:projects/workspaces.tgz}
+    resolution: {integrity: sha512-ovf5kqLJnwwaedFJ8oQO8gMmIeeo3d0dPoZkzy9o7fM54f4nCriRhnsjpJNh2SadDKT5XPVKYzqcQ9itWg4Nkw==, tarball: file:projects/workspaces.tgz}
     name: '@rush-temp/workspaces'
     version: 0.0.0
     dependencies:
@@ -13018,6 +13018,8 @@ packages:
       eslint-plugin-import: 2.24.2_eslint@7.32.0
       eslint-plugin-node: 11.1.0_eslint@7.32.0
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      fast-copy: 2.1.1
+      fast-equals: 2.0.3
       mongodb: 3.6.11
       prettier: 2.3.2
       typescript: 4.3.5

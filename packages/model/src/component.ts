@@ -16,33 +16,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import type { Attribute, Class, PropertyType, Ref, Type } from '@anticrm/core'
-import type {
-  Doc,
-  Obj,
-  Tx,
-  TxCreateDoc,
-  TxUpdateDoc,
-  TxRemoveDoc,
-  Title,
-  ShortRef,
-  Reference,
-  DerivedData,
-  DerivedDataDescriptor,
-  Space,
-  Account
-} from '@anticrm/core'
-
 import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
-import type { Component, Status, StatusCode } from '@anticrm/status'
 
 /**
  * @public
  */
 export default mergeIds(core, {
   class: {
-    Attribute: '' as Ref<Class<Attribute<PropertyType>>>,
-
     TypeString: '' as Ref<Class<Type<string>>>
   }
 })

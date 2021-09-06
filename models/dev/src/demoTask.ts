@@ -1,10 +1,9 @@
-import core, { Account, DerivedDataDescriptor, Doc, generateId, getFullRef, Ref, ShortRef } from '@anticrm/core'
+import chunter, { Comment } from '@anticrm/chunter'
+import core, { Account, DerivedDataDescriptor, Doc, getFullRef, Ref, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import task, { Project, CheckListItem, Task, TaskStatuses } from '@anticrm/task'
+import task, { CheckListItem, Project, Task, TaskStatuses } from '@anticrm/task'
 import faker from 'faker'
-import chunter from '@anticrm/chunter'
-import { Comment } from '@anticrm/chunter'
 import { accountIds } from './demoAccount'
 
 const demoIds = component('demo-task' as Component, {
@@ -30,10 +29,13 @@ export function demoTask (builder: Builder): void {
     demoIds.project.DemoProject
   )
 
-  const taskCount = faker.datatype.number(20) + 10
+  const taskCount = 7
+  const sTasks = [1, 4, 2, 0, 10, 1, 5]
+  const sComments = [2, 5, 1, 0, 2, 0, 3]
   const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
+  let commentIds = 0
   for (let i = 0; i < taskCount; i++) {
-    const id: Ref<Task> = generateId()
+    const id: Ref<Task> = `tid-${i}` as Ref<Task>
     const shortRefId: Ref<ShortRef> = `TSK-${i}` as Ref<ShortRef>
     // Create short references
     builder.createDoc(
@@ -55,7 +57,7 @@ export function demoTask (builder: Builder): void {
     )
 
     const checkItems: CheckListItem[] = []
-    for (let i = 0; i < faker.datatype.number(10); i++) {
+    for (let j = 0; j < sTasks[i]; j++) {
       checkItems.push({
         description: `do ${faker.commerce.productDescription()}`,
         done: faker.datatype.boolean()
@@ -64,8 +66,8 @@ export function demoTask (builder: Builder): void {
 
     const comments: Ref<Comment>[] = []
 
-    for (let i = 0; i < faker.datatype.number(10); i++) {
-      const commentId = generateId()
+    for (let j = 0; j < sComments[i]; j++) {
+      const commentId = `t-cid-${commentIds++}` as Ref<Comment>
       builder.createDoc(
         chunter.class.Comment,
         {
@@ -80,7 +82,7 @@ export function demoTask (builder: Builder): void {
           createOn: Date.now()
         }
       )
-      comments.push(commentId as Ref<Comment>)
+      comments.push(commentId)
     }
 
     builder.createDoc(
