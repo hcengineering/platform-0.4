@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, DocumentMapper, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, DerivedDataDescriptor, Doc, DocumentMapper, Ref, Space, Timestamp } from '@anticrm/core'
 import { AnyComponent } from '@anticrm/ui'
 import { DerivedData } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
@@ -69,5 +69,8 @@ export default plugin(PluginCalendar, {}, {
   },
   mapper: {
     defaultMapper: '' as Resource<DocumentMapper>
+  },
+  dd: {
+    NameTitleIndex: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   }
 })
