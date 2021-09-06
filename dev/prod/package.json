@@ -4,6 +4,7 @@
   "license": "EPL-2.0",
   "scripts": {
     "build": "cross-env CLIENT=server NODE_ENV=production webpack",
+    "build-demo": "cross-env NODE_ENV=production webpack && cp ./public/* ./dist",
     "analyze": "cross-env NODE_ENV=production webpack --json > stats.json",
     "show": "webpack-bundle-analyzer stats.json dist",
     "dev": "webpack serve --content-base public",

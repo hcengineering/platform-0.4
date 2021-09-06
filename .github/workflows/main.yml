@@ -64,12 +64,18 @@ jobs:
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
             ${{github.workspace}}/server/*/coverage/lcov.info:lcov
       
-      - name: Archive artifacts...
-        uses: actions/upload-artifact@v2
+      - name: Build Demo
+        run: |
+          cd ./dev/prod
+          node common/scripts/install-run-rush.js build-demo --verbose
+      
+      - name: Deploy Demo
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
-          name: hr-build
-          path: |
-            products/hr-build/dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          
 
   lint_and_format:
     runs-on: ubuntu-latest
