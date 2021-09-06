@@ -32,7 +32,7 @@
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { generateId, getFullRef } from '@anticrm/core'
+  import core, { generateId, getFullRef, Timestamp } from '@anticrm/core'
   import type { Account, Ref, Space } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
@@ -77,6 +77,7 @@
       replyOf: getFullRef(id, task.class.Task)
     })
     comments = comments
+    updateLastRead()
   }
 
   async function create () {
@@ -104,6 +105,26 @@
         replyOf: getFullRef(id, task.class.Task)
       })
     }
+    updateLastRead()
+  }
+
+  async function updateLastRead () {
+    if (space.account === undefined) {
+      space.account = { objectLastReads: new Map<Ref<Task>, Timestamp>() }
+    }
+    if (space.account.objectLastReads === undefined) {
+      space.account.objectLastReads = new Map<Ref<Task>, Timestamp>()
+    }
+    space.account.objectLastReads.set(id, Date.now())
+    client.updateDoc<Space>(
+      space._class,
+      space.space,
+      space._id,
+      {
+        account: space.account
+      },
+      true
+    )
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]

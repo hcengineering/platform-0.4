@@ -33,7 +33,7 @@
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Space } from '@anticrm/core'
+  import core, { Space, Timestamp } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
@@ -41,12 +41,15 @@
   import StatusPicker from './StatusPicker.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
+  import { onDestroy } from 'svelte'
+  import { afterUpdate } from 'svelte'
 
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
 
   export let id: Ref<Task>
   export let currentSpace: Space
+  let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
 
@@ -62,6 +65,38 @@
       projectMembers = await client.findAll(core.class.Account, { _id: { $in: currentSpace.members } })
     })
     return item
+  }
+
+  onDestroy(async () => {
+    await updateLastRead(id)
+  })
+
+  afterUpdate(async () => {
+    if (prevId !== id) {
+      if (prevId !== undefined) {
+        updateLastRead(prevId)
+      }
+      prevId = id
+    }
+  })
+
+  async function updateLastRead (id: Ref<Task>) {
+    if (currentSpace.account === undefined) {
+      currentSpace.account = { objectLastReads: new Map<Ref<Task>, Timestamp>() }
+    }
+    if (currentSpace.account.objectLastReads === undefined) {
+      currentSpace.account.objectLastReads = new Map<Ref<Task>, Timestamp>()
+    }
+    currentSpace.account.objectLastReads.set(id, Date.now())
+    client.updateDoc<Space>(
+      currentSpace._class,
+      currentSpace.space,
+      currentSpace._id,
+      {
+        account: currentSpace.account
+      },
+      true
+    )
   }
 
   function close () {
