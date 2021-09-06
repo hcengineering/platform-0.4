@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import { Matcher } from './router'
+
 /**
  * @public
  */
@@ -62,7 +64,7 @@ export interface ApplicationRouter<T> {
   /**
    * Add a new route to router.
    */
-  addRoute: <P>(patternText: string, matcher: (match: P) => void, defaults: P) => ApplicationRouter<P>
+  addRoute: <P>(patternText: string, matcher: Matcher<P>, defaults: P) => ApplicationRouter<P>
 }
 
 export * from './location'
