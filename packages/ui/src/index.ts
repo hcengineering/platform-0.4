@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { SvelteComponent } from 'svelte'
+import { UIComponent } from 'svelte'
 import Root from './components/internal/Root.svelte'
 
 export * from './types'
@@ -74,7 +74,7 @@ export { default as MDRefEditor } from './components/MDRefEditor.svelte'
 
 export { default } from './component'
 
-export function createApp (target: HTMLElement): SvelteComponent {
+export function createApp (target: HTMLElement): UIComponent {
   return new Root({ target })
 }
 

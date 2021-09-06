@@ -14,7 +14,8 @@
 -->
 <script lang="ts">
   import type { Asset, IntlString } from '@anticrm/status'
-  import type { Action, AnyComponent } from '@anticrm/ui'
+  import type { Action } from '@anticrm/ui'
+  import type { AnyComponent } from '@anticrm/status'
   import { ActionIcon, Component, Icon, Label } from '@anticrm/ui'
   import { createEventDispatcher } from 'svelte'
   import Collapsed from '../icons/Collapsed.svelte'

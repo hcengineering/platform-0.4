@@ -13,11 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Asset } from '@anticrm/status'
-  import type { AnySvelteComponent } from '../types'
+  import type { Asset, UIComponent } from '@anticrm/status'
   import Icon from './Icon.svelte'
 
-  export let icon: Asset | AnySvelteComponent
+  export let icon: Asset | UIComponent
   export let width: string | undefined = undefined
   export let value: string | undefined = undefined
   export let id: string | undefined = undefined

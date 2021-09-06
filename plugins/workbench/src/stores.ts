@@ -13,14 +13,14 @@
 // limitations under the License.
 //
 
-import type { AnySvelteComponent, AnyComponent } from '@anticrm/ui'
+import type { AnyComponent, UIComponent } from '@anticrm/status'
 import { writable } from 'svelte/store'
 
 /**
  * @public
  */
 export interface CompAndProps {
-  is: AnySvelteComponent | AnyComponent | undefined
+  is: UIComponent | AnyComponent | undefined
   props: any
   element: HTMLElement | undefined
 }

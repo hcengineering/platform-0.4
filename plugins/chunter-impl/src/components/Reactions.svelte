@@ -13,12 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { AnySvelteComponent } from '@anticrm/ui'
+  import type { UIComponent } from '@anticrm/status'
   import Check from './icons/Check.svelte'
   import Heart from './icons/Heart.svelte'
 
   interface Reaction {
-    icon: AnySvelteComponent
+    icon: UIComponent
     count: number
   }
 

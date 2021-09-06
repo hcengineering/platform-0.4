@@ -14,12 +14,12 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent } from '../types'
+  import type { UIComponent } from '@anticrm/status'
   import Label from './Label.svelte'
   import Check from './icons/Check.svelte'
 
   export let title: IntlString | string | undefined = undefined
-  export let component: AnySvelteComponent | undefined = undefined
+  export let component: UIComponent | undefined = undefined
   export let props: Object = {}
   export let selectable: boolean = false
   export let selected: boolean = false

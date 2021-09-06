@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
+import { Ref } from '@anticrm/core'
 import meeting, { RoomSpace } from '@anticrm/meeting'
-import type { IntlString, Resource } from '@anticrm/status'
+import type { AnyComponent, IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
-import { Ref } from '@anticrm/core'
 
 export default mergeIds(meeting, {
   string: {
@@ -25,8 +25,8 @@ export default mergeIds(meeting, {
     CreateChannel: '' as IntlString
   },
   component: {
-    CreateChannel: '' as Resource<any>,
-    WorkspaceComponent: '' as Resource<any>
+    CreateChannel: '' as AnyComponent,
+    WorkspaceComponent: '' as AnyComponent
   },
   app: {
     Meeting: '' as Ref<Application>
