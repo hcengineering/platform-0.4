@@ -16,6 +16,8 @@
 import recruiting from '@anticrm/recruiting'
 import type { IntlString, Resource } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
+import { Application } from '@anticrm/workbench'
+import { Ref } from '@anticrm/core'
 
 /**
  * @public
@@ -29,5 +31,8 @@ export default mergeIds(recruiting, {
     CreatePool: '' as Resource<any>,
     CreateVacancy: '' as Resource<any>,
     WorkspaceComponent: '' as Resource<any>
+  },
+  app: {
+    Recrutting: '' as Ref<Application>
   }
 })

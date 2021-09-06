@@ -35,6 +35,8 @@
     "@anticrm/mongo": "~0.4.0",
     "@anticrm/workspace": "~0.4.0",
     "mongodb": "^3.6.9",
-    "@anticrm/model-all": "~0.4.0"    
+    "@anticrm/model-all": "~0.4.0",
+    "fast-copy": "~2.1.1",
+    "fast-equals": "^2.0.1"      
   }
 }

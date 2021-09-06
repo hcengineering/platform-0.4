@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Model auto upgrade",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}

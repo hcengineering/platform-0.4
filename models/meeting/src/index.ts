@@ -32,26 +32,34 @@ export class TRoom extends TSpace implements RoomSpace {}
  */
 export function createModel (builder: Builder): void {
   builder.createModel(TRoom)
-  builder.createDoc(workbench.class.Application, {
-    label: meeting.string.ApplicationLabelMeeting,
-    icon: meeting.icon.Meeting,
-    navigatorModel: {
-      spaces: [
-        {
-          label: meeting.string.Rooms,
-          spaceIcon: meeting.icon.Hashtag,
-          spaceClass: meeting.class.RoomSpace,
-          addSpaceLabel: meeting.string.CreateChannel,
-          createComponent: meeting.component.CreateChannel
-        }
-      ],
-      spaceView: meeting.component.WorkspaceComponent
-    }
-  })
-  builder.createDoc(meeting.class.RoomSpace, {
-    name: 'Kitchen',
-    description: 'Kitchen Talks',
-    private: false,
-    members: []
-  })
+  builder.createDoc(
+    workbench.class.Application,
+    {
+      label: meeting.string.ApplicationLabelMeeting,
+      icon: meeting.icon.Meeting,
+      navigatorModel: {
+        spaces: [
+          {
+            label: meeting.string.Rooms,
+            spaceIcon: meeting.icon.Hashtag,
+            spaceClass: meeting.class.RoomSpace,
+            addSpaceLabel: meeting.string.CreateChannel,
+            createComponent: meeting.component.CreateChannel
+          }
+        ],
+        spaceView: meeting.component.WorkspaceComponent
+      }
+    },
+    meeting.app.Meeting
+  )
+  builder.createDoc(
+    meeting.class.RoomSpace,
+    {
+      name: 'Kitchen',
+      description: 'Kitchen Talks',
+      private: false,
+      members: []
+    },
+    meeting.room.Kitchen
+  )
 }

@@ -1,5 +1,5 @@
-import chunter, { Channel, Comment, Message, CommentRef } from '@anticrm/chunter'
-import core, { Account, generateId, getFullRef, Ref } from '@anticrm/core'
+import chunter, { Channel, Comment, CommentRef, Message } from '@anticrm/chunter'
+import core, { Account, getFullRef, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import faker from 'faker'
@@ -30,30 +30,36 @@ export function demoChunter (builder: Builder): void {
 
   // Create few direct message spaces
 
-  const dmc = faker.datatype.number(5) + 1
+  const dmc = 7
   for (let i = 0; i < dmc; i++) {
     let ms = faker.random.arrayElements(members, faker.datatype.number(members.length) + 1)
     if (!ms.includes(core.account.System)) {
       ms = [core.account.System, ...ms]
     }
-    builder.createDoc(chunter.class.Channel, {
-      name: 'direct-message',
-      description: 'My direct mesage',
-      members: ms,
-      direct: true,
-      private: true
-    })
+    builder.createDoc(
+      chunter.class.Channel,
+      {
+        name: 'direct-message',
+        description: 'My direct mesage',
+        members: ms,
+        direct: true,
+        private: true
+      },
+      `dmc-${i}` as Ref<Channel>
+    )
   }
 
-  const ri = faker.datatype.number(10) + 10
+  const ri = 10
 
+  const cii = [2, 0, 4, 7, 20, 30, 1, 2, 3, 1]
+  let cind = 0
   for (let i = 0; i < ri; i++) {
-    const msgId: Ref<Message> = generateId()
+    const msgId: Ref<Message> = `mid-${i}` as Ref<Message>
     const comments: CommentRef[] = []
-    const ci = faker.datatype.number(15)
+    const ci = cii[i]
     for (let j = 0; j < ci; j++) {
       const userId = faker.random.arrayElement(accountIds)
-      const cid: Ref<Comment> = generateId()
+      const cid: Ref<Comment> = `cid-${cind++}` as Ref<Comment>
       comments.push({ _id: cid, userId, createOn: Date.now(), lastModified: Date.now() })
       builder.createDoc(
         chunter.class.Comment,

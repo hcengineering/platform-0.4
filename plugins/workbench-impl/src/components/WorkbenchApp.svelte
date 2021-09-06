@@ -29,6 +29,8 @@
 
   let clientPromise = connect()
 
+  $: clientPromise.catch((e) => console.error(e))
+
   async function doLogout (): Promise<void> {
     const loginPlugin = await getPlugin(login.id)
     loginPlugin.doLogout()

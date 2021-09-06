@@ -53,81 +53,96 @@ export class TTask extends TDoc implements Task {
  */
 export function createModel (builder: Builder): void {
   builder.createModel(TProject, TTask)
-  builder.createDoc(workbench.class.Application, {
-    label: task.string.ApplicationLabelTask,
-    icon: task.icon.Task,
-    navigatorModel: {
-      specials: [
-        {
-          label: task.string.MyTasks,
-          component: task.component.MyTasksView,
-          icon: task.icon.Task
-        },
-        {
-          label: task.string.Favorite,
-          component: task.component.FavoriteView,
-          icon: task.icon.Star
-        }
-      ],
-      spaces: [
-        {
-          label: task.string.Projects,
-          spaceIcon: task.icon.Task,
-          spaceClass: task.class.Project,
-          addSpaceLabel: task.string.CreateProject,
-          createComponent: task.component.CreateProject
-        }
-      ],
-      spaceView: task.component.ProjectView,
-      createComponent: task.component.CreateTask,
-      editComponent: task.component.EditTask
-    }
-  })
-  builder.createDoc(task.class.Project, {
-    name: 'default',
-    description: 'Default Project',
-    private: false,
-    members: []
-  })
-
-  // D E R I V E D   D A T A
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: task.class.Task,
-    targetClass: core.class.Title,
-    rules: [{ sourceField: 'name', targetField: 'title' }]
-  })
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: task.class.Task,
-    targetClass: core.class.Reference,
-    rules: [
-      {
-        sourceField: 'description',
-        targetField: 'link',
-        pattern: {
-          pattern: MARKDOWN_REFERENCE_PATTERN.source,
-          multDoc: true
-        }
-      }
-    ]
-  })
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Comment,
-    targetClass: task.class.Task,
-    collections: [
-      {
-        sourceField: 'replyOf',
-        targetField: 'comments',
-        rules: [
+  builder.createDoc(
+    workbench.class.Application,
+    {
+      label: task.string.ApplicationLabelTask,
+      icon: task.icon.Task,
+      navigatorModel: {
+        specials: [
           {
-            sourceField: 'modifiedBy',
-            targetField: 'userId'
+            label: task.string.MyTasks,
+            component: task.component.MyTasksView,
+            icon: task.icon.Task
           },
           {
-            sourceField: 'modifiedOn',
-            targetField: 'lastModified'
+            label: task.string.Favorite,
+            component: task.component.FavoriteView,
+            icon: task.icon.Star
           }
-        ]
+        ],
+        spaces: [
+          {
+            label: task.string.Projects,
+            spaceIcon: task.icon.Task,
+            spaceClass: task.class.Project,
+            addSpaceLabel: task.string.CreateProject,
+            createComponent: task.component.CreateProject
+          }
+        ],
+        spaceView: task.component.ProjectView,
+        createComponent: task.component.CreateTask,
+        editComponent: task.component.EditTask
       }
-    ]
-  })
+    },
+    task.ids.Application
+  )
+
+  builder.createDoc(
+    task.class.Project,
+    {
+      name: 'default',
+      description: 'Default Project',
+      private: false,
+      members: []
+    },
+    task.space.Default
+  )
+
+  // D E R I V E D   D A T A
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: task.class.Task,
+      targetClass: core.class.Title,
+      rules: [{ sourceField: 'name', targetField: 'title' }]
+    },
+    task.dd.NameTitleIndex
+  )
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: task.class.Task,
+      targetClass: core.class.Reference,
+      rules: [
+        {
+          sourceField: 'description',
+          targetField: 'link',
+          pattern: {
+            pattern: MARKDOWN_REFERENCE_PATTERN.source,
+            multDoc: true
+          }
+        }
+      ]
+    },
+    task.dd.ReferencesIndex
+  )
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: task.class.Task,
+      collections: [
+        {
+          sourceField: 'replyOf',
+          targetField: 'comments'
+        },
+        {
+          sourceField: 'modifiedOn',
+          targetField: 'lastModified'
+        }
+      ]
+    },
+    task.dd.ReplyOf
+  )
 }

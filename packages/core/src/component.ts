@@ -14,7 +14,7 @@
 //
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
-import type { Account, Class, Doc, Obj, Ref, Space } from './classes'
+import type { Account, Attribute, Class, Doc, Obj, PropertyType, Ref, Space } from './classes'
 import { DerivedData, DerivedDataDescriptor } from './derived'
 import { Reference } from './reference'
 import { ShortRef } from './shortref'
@@ -31,6 +31,7 @@ export default component(ComponentCore, {
     Obj: '' as Ref<Class<Obj>>,
     Doc: '' as Ref<Class<Doc>>,
     Class: '' as Ref<Class<Class<Obj>>>,
+    Attribute: '' as Ref<Class<Attribute<PropertyType>>>,
     Tx: '' as Ref<Class<Tx>>,
     TxCreateDoc: '' as Ref<Class<TxCreateDoc<Doc>>>,
     TxUpdateDoc: '' as Ref<Class<TxUpdateDoc<Doc>>>,

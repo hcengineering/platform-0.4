@@ -31,8 +31,14 @@ export interface Tx<T extends Doc = Doc> extends Doc {
 /**
  * @public
  */
-export interface TxCreateDoc<T extends Doc> extends Tx<T> {
+export interface ObjectTx<T extends Doc> extends Tx<T> {
   objectClass: Ref<Class<T>>
+}
+
+/**
+ * @public
+ */
+export interface TxCreateDoc<T extends Doc> extends ObjectTx<T> {
   attributes: Data<T>
 }
 
@@ -64,22 +70,34 @@ export type DocumentUpdate<T extends Doc> = Partial<Data<T>> & DocOperation<T>
 /**
  * @public
  */
-export interface TxUpdateDoc<T extends Doc> extends Tx<T> {
-  objectClass: Ref<Class<T>>
+export interface TxUpdateDoc<T extends Doc> extends ObjectTx<T> {
   operations: DocumentUpdate<T>
 }
 
 /**
  * @public
  */
-export interface TxRemoveDoc<T extends Doc> extends Tx<T> {
-  objectClass: Ref<Class<T>>
+export interface TxRemoveDoc<T extends Doc> extends ObjectTx<T> {
 }
 
 /**
  * @public
  */
 export const DOMAIN_TX = 'tx' as Domain
+
+/**
+ * Define a list of classes with objectClass definition inside.
+ */
+const TxObjectClasses = [core.class.TxCreateDoc, core.class.TxUpdateDoc, core.class.TxRemoveDoc]
+
+/**
+ * @public
+ */
+export function txObjectClass (tx: Tx): Ref<Class<Doc>> | undefined {
+  if (TxObjectClasses.includes(tx._class)) {
+    return (tx as ObjectTx<Doc>).objectClass
+  }
+}
 
 /**
  * @public

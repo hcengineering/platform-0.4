@@ -13,8 +13,8 @@ export function demoAccount (builder: Builder): void {
     },
     core.account.System
   )
-  for (let i = 0; i < 2 + faker.datatype.number(8); i++) {
-    const accountId: Ref<Account> = faker.internet.exampleEmail() as Ref<Account>
+  for (let i = 0; i < 11; i++) {
+    const accountId: Ref<Account> = `demo_account_id${i}` as Ref<Account>
     builder.createDoc(
       core.class.Account,
       {

@@ -1,4 +1,4 @@
-import core, { DOMAIN_TX } from '@anticrm/core'
+import core, { DOMAIN_TX, generateModelDiff } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { getMongoClient, mongoEscape } from '@anticrm/mongo'
 
@@ -38,12 +38,15 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
 
   const db = client.db('ws-' + workspaceId)
   const txes = db.collection(DOMAIN_TX as string)
-  await txes.deleteMany({ objectSpace: core.space.Model })
-  for (const tx of builder.getTxes()) {
+
+  // Find all system transactions.
+  const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
+
+  const updateTxes = await generateModelDiff(existingTxes, builder.getTxes())
+
+  for (const tx of updateTxes) {
     await txes.insertOne(mongoEscape(tx))
   }
-
-  // TODO: Replay other transactions and re-create other collections.
 }
 
 /**
