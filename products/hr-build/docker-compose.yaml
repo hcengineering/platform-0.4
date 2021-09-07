@@ -5,13 +5,16 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - 8080:8080
-      - 18080:18080
+      - "8080:8080"
+      - "18080:18080"
     links:
       - mongodb
     environment:
       SERVER_HOST: localhost
-      MONGODB_URI: mongodb://mongodb:27017  
+      MONGODB_URI: mongodb://mongodb:27017
+    env_file:
+      - .env
+
   mongodb:
     image : mongo
     container_name: mongodb
@@ -21,7 +24,7 @@ services:
     volumes:
       - database:/data/db
     ports:
-      - 27017:27017
+      - "27017:27017"
     restart: unless-stopped
 
 volumes:
