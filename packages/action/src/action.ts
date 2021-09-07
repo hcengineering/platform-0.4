@@ -3,7 +3,8 @@ import { nanoid } from 'nanoid'
 
 /**
  * @public
- */ export interface UpdateTxFilter {
+ */
+export interface TxFilter {
   space?: Ref<Space>
   clazz?: Ref<Class<Doc>>
   id?: Ref<Doc>
@@ -12,7 +13,7 @@ import { nanoid } from 'nanoid'
 /**
  * @public
  */
-export type UpdateTxCallback = (tx: TxUpdateDoc<Doc>) => Promise<void>
+export type TxCallback = (tx: TxCreateDoc<Doc> | TxUpdateDoc<Doc>) => Promise<void>
 
 /**
  * @public
@@ -35,7 +36,7 @@ export interface Context {
     ops: TxUpdateDoc<T>['operations']
     account?: Ref<Account>
   }) => void
-  subscribe: (filter: UpdateTxFilter, cb: UpdateTxCallback) => () => void
+  subscribe: (filter: TxFilter, cb: TxCallback) => () => void
   findAll: Storage['findAll']
 }
 

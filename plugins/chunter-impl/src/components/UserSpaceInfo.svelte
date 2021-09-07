@@ -38,9 +38,20 @@
   let memberQuery: QueryUpdater<Account> | undefined
 
   $: if (space) {
-    memberQuery = client.query<Account>(memberQuery, core.class.Account, { _id: { $in: members } }, (result) => {
-      accounts = result
-    })
+    if (space.isChunterbot) {
+      accounts = [
+        {
+          _id: 'chunterbot',
+          name: 'Chunterbot',
+          email: 'chunterbot@hc.engineering',
+          avatar: 'https://robohash.org/chunterbot'
+        } as Account
+      ]
+    } else {
+      memberQuery = client.query<Account>(memberQuery, core.class.Account, { _id: { $in: members } }, (result) => {
+        accounts = result
+      })
+    }
   }
 
   let user: Account | undefined

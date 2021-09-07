@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, DocumentPresenter, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, Ref, Space, DocumentPresenter, Timestamp, DocumentMapper, Doc, DerivedData, DerivedDataDescriptor } from '@anticrm/core'
 import type { Person } from '@anticrm/contact'
 import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
 import { Action as ActionDef } from '@anticrm/action'
@@ -56,6 +56,19 @@ export interface Vacancy {
 }
 export interface VacancySpace extends WithFSM, Vacancy {}
 
+export interface FeedbackRequest extends Doc {
+  parent: Ref<Doc>
+  targetSpace: Ref<Space>
+}
+
+export interface Feedback extends Doc {
+  parent: Ref<Doc>
+  request: Ref<FeedbackRequest>
+  feedback: string
+}
+
+export interface DerivedFeedback extends Feedback, DerivedData {}
+
 export interface RecruitingService extends Service {}
 
 const PluginRecruiting = 'recruiting' as Plugin<RecruitingService>
@@ -71,7 +84,10 @@ export default plugin(PluginRecruiting, {}, {
     Candidate: '' as Ref<Class<Candidate>>,
     CandidatePoolSpace: '' as Ref<Class<CandidatePoolSpace>>,
     Applicant: '' as Ref<Class<Applicant>>,
-    VacancySpace: '' as Ref<Class<VacancySpace>>
+    VacancySpace: '' as Ref<Class<VacancySpace>>,
+    FeedbackRequest: '' as Ref<Class<FeedbackRequest>>,
+    Feedback: '' as Ref<Class<Feedback>>,
+    DerivedFeedback: '' as Ref<Class<DerivedFeedback>>
   },
   component: {
     CreatePool: '' as AnyComponent,
@@ -80,7 +96,8 @@ export default plugin(PluginRecruiting, {}, {
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent,
-    Applications: '' as AnyComponent
+    Applications: '' as AnyComponent,
+    Feedback: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,
@@ -141,7 +158,8 @@ export default plugin(PluginRecruiting, {}, {
     Interviews: '' as IntlString
   },
   presenter: {
-    CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>
+    CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,
+    FeedbackRequestPresenter: '' as Ref<DocumentPresenter<Doc>>
   },
   fsm: {
     DefaultVacancy: '' as Ref<FSM>
@@ -150,5 +168,11 @@ export default plugin(PluginRecruiting, {}, {
     Interview: '' as Resource<ActionDef>,
     Factorial: '' as Resource<ActionDef>,
     RecurFactorial: '' as Resource<ActionDef>
+  },
+  dd: {
+    Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+  },
+  mapper: {
+    Feedback: '' as Resource<DocumentMapper>
   }
 })

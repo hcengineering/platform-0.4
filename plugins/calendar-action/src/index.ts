@@ -14,6 +14,7 @@
 //
 
 import type { Ref, TxUpdateDoc } from '@anticrm/core'
+import core from '@anticrm/core'
 import type { CalendarService, Event } from '@anticrm/calendar'
 import { setResource } from '@anticrm/platform'
 import calendar from '@anticrm/calendar'
@@ -71,7 +72,11 @@ const waitForEvent = new Action()
       let update = new DeferredPromise<number>()
 
       const unsub = ctx.subscribe({ id: event._id }, async (tx) => {
-        const ttx = tx as never as TxUpdateDoc<Event>
+        if (tx._class === core.class.TxCreateDoc) {
+          return
+        }
+
+        const ttx = tx as TxUpdateDoc<Event>
 
         if (ttx.operations.endsAt !== undefined && ttx.operations.endsAt !== endsAt) {
           update.resolve(ttx.operations.endsAt)

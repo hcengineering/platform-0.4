@@ -1,8 +1,8 @@
 export { Action } from './action'
 export type {
   Context,
-  UpdateTxCallback,
-  UpdateTxFilter,
+  TxCallback,
+  TxFilter,
   Program,
   ActionFn,
   ActionPred,

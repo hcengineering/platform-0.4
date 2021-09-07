@@ -1,0 +1,7 @@
+{
+  "extends": "./node_modules/@anticrm/platform-rig/profiles/default/tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src"
+  }
+}

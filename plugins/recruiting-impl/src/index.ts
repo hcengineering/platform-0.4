@@ -24,6 +24,7 @@ import CreateCandidate from './components/candidates/CreateCandidate.svelte'
 import EditCandidate from './components/candidates/EditCandidate.svelte'
 import Workspace from './components/Workspace.svelte'
 import Applications from './components/vacancies/Applications.svelte'
+import FeedbackForm from './components/feedback/FeedbackForm.svelte'
 
 export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.CreatePool, CreateCandidatePool)
@@ -33,6 +34,7 @@ export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.WorkspaceComponent, Workspace)
   setResource(recruiting.component.CreateApplication, CreateApplication)
   setResource(recruiting.component.Applications, Applications)
+  setResource(recruiting.component.Feedback, FeedbackForm)
 
   return {}
 }

@@ -14,19 +14,41 @@
 //
 
 import contact from '@anticrm/contact'
-import type { Account, DocumentPresenter, Ref, Timestamp } from '@anticrm/core'
+import type {
+  Account,
+  Ref,
+  Timestamp,
+  Space,
+  DerivedData,
+  DerivedDataDescriptor,
+  Doc,
+  DocumentPresenter,
+  Domain,
+  Class
+} from '@anticrm/core'
 import { generateId, PresentationMode } from '@anticrm/core'
 import fsm from '@anticrm/fsm'
 import { Builder, Model } from '@anticrm/model'
 import { TPerson } from '@anticrm/model-contact'
-import core, { TSpace } from '@anticrm/model-core'
+import core, { TSpace, TDoc } from '@anticrm/model-core'
+import type {
+  Applicant,
+  Candidate,
+  CandidatePoolSpace,
+  CandidateStatus,
+  DerivedFeedback,
+  Feedback,
+  FeedbackRequest,
+  VacancySpace
+} from '@anticrm/recruiting'
 import workbench from '@anticrm/model-workbench'
-import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
 import calendar from '@anticrm/calendar'
 import { templateFSM, TWithFSM, TFSMItem, PureState } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
 import type { Action } from '@anticrm/action-plugin'
+
+const DOMAIN_RECRUITING = 'recruiting' as Domain
 
 /**
  * @public
@@ -72,8 +94,45 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
 /**
  * @public
  */
+@Model(recruiting.class.FeedbackRequest, core.class.Doc, DOMAIN_RECRUITING)
+class TFeedbackRequest extends TDoc implements FeedbackRequest {
+  parent!: Ref<Doc>
+  targetSpace!: Ref<Space>
+}
+
+/**
+ * @public
+ */
+@Model(recruiting.class.Feedback, core.class.Doc, DOMAIN_RECRUITING)
+class TFeedback extends TDoc implements Feedback {
+  parent!: Ref<Doc>
+  request!: Ref<FeedbackRequest>
+  feedback!: string
+}
+
+/**
+ * @public
+ */
+@Model(recruiting.class.DerivedFeedback, recruiting.class.Feedback, DOMAIN_RECRUITING)
+class TDerivedFeedback extends TFeedback implements DerivedFeedback {
+  descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  objectId!: Ref<Doc>
+  objectClass!: Ref<Class<Doc>>
+}
+
+/**
+ * @public
+ */
 export function createModel (builder: Builder): void {
-  builder.createModel(TApplicant, TCandidate, TCandidatePoolSpace, TVacancySpace)
+  builder.createModel(
+    TApplicant,
+    TCandidate,
+    TCandidatePoolSpace,
+    TVacancySpace,
+    TFeedbackRequest,
+    TFeedback,
+    TDerivedFeedback
+  )
 
   builder.createDoc(
     workbench.class.Application,
@@ -127,6 +186,17 @@ export function createModel (builder: Builder): void {
     },
     recruiting.presenter.CandidatePresenter
   )
+
+  builder.createDoc<DocumentPresenter<FeedbackRequest>>(core.class.DocumentPresenter, {
+    objectClass: recruiting.class.FeedbackRequest,
+    presentation: [
+      {
+        component: recruiting.component.Feedback,
+        description: 'Feedback request',
+        mode: PresentationMode.Preview
+      }
+    ]
+  }, recruiting.presenter.FeedbackRequestPresenter)
 
   // Actions
   const factorialId: Ref<Action> = generateId()
@@ -182,4 +252,11 @@ export function createModel (builder: Builder): void {
     .transition(states.techInterview, [states.offer, states.rejected])
     .transition(states.offer, [states.contract, states.rejected])
     .build(builder)
+
+  // Derived data
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    targetClass: recruiting.class.DerivedFeedback,
+    sourceClass: recruiting.class.Feedback,
+    mapper: recruiting.mapper.Feedback
+  }, recruiting.dd.Feedback)
 }

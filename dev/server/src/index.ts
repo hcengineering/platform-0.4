@@ -18,6 +18,7 @@ import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import regRecruitingActions from '@anticrm/recruiting-action'
 import regCalendarActions from '@anticrm/calendar-action'
 import { readFileSync } from 'fs'
@@ -34,6 +35,7 @@ const defaultWorkspaceOrg = 'Horses inc'
 
 async function start (): Promise<void> {
   regCalendarMappers()
+  regRecruitingMappers()
   await regCalendarActions()
   await regRecruitingActions()
 

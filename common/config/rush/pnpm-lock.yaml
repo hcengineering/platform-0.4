@@ -60,6 +60,7 @@ specifiers:
   '@rush-temp/recruiting-action': file:./projects/recruiting-action.tgz
   '@rush-temp/recruiting-assets': file:./projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:./projects/recruiting-impl.tgz
+  '@rush-temp/recruiting-mappers': file:./projects/recruiting-mappers.tgz
   '@rush-temp/richeditor': file:./projects/richeditor.tgz
   '@rush-temp/router': file:./projects/router.tgz
   '@rush-temp/rpc': file:./projects/rpc.tgz
@@ -262,6 +263,7 @@ dependencies:
   '@rush-temp/recruiting-action': file:projects/recruiting-action.tgz_ts-node@10.2.1
   '@rush-temp/recruiting-assets': file:projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1
+  '@rush-temp/recruiting-mappers': file:projects/recruiting-mappers.tgz_ts-node@10.2.1
   '@rush-temp/richeditor': file:projects/richeditor.tgz_postcss@8.3.6+ts-node@10.2.1
   '@rush-temp/router': file:projects/router.tgz
   '@rush-temp/rpc': file:projects/rpc.tgz
@@ -11448,7 +11450,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-RWRFJP1GvJJp0j2JU3fcDrVq8DBni96jNDF4bbM0tYe9+kBY7BJ8ZDvE7ydDhzd2G08uS4qjMedaU62uJ9COJw==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-5QPHKBemPXbcHDm3A+FowVfX24xLpgF+a9QVcUyd61Tt2PEqP7MHFnXFxJ1wQ5oyqKAw8vJGayVE6WPk8DUndw==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -12534,7 +12536,7 @@ packages:
     dev: false
 
   file:projects/recruiting-action.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-0IhMU/ln+ALOcM6xNXph6hn+Fbo8xELWVu9uxJliD7LTHwsHv9yogxVEAst1DVh2u1HYn1VeXpklxbAvVdzTRA==, tarball: file:projects/recruiting-action.tgz}
+    resolution: {integrity: sha512-MVqji3z+/FgcbnAVDVhW0z4YBT8rm9nQ8Qm970Ifa3Pb0XbFnN6nyz9Sg13Bi1EHqm84YZOttcyRXL1Kb352Ew==, tarball: file:projects/recruiting-action.tgz}
     id: file:projects/recruiting-action.tgz
     name: '@rush-temp/recruiting-action'
     version: 0.0.0
@@ -12629,6 +12631,38 @@ packages:
       - stylus
       - sugarss
       - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/recruiting-mappers.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-MenTLqJ/negEQRrNt2GGAeqHAdsbNLav3bozybpPd7hkyNsrkmlVj3Wgo1EQzOdQzrZndQqLBohkm2nr3c2A+Q==, tarball: file:projects/recruiting-mappers.tgz}
+    id: file:projects/recruiting-mappers.tgz
+    name: '@rush-temp/recruiting-mappers'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
       - ts-node
       - utf-8-validate
     dev: false
@@ -12798,7 +12832,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-IIaYlC41AINHeq0Z6sEKjq+VIii+HRv4sS8R4kfrZ10j8jYJ/NSJOewaHgeIvPTssUayQgV/lbsj6Ukm/5VIsQ==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-2CTBadASnTKcvycjBbyQOYwTeLzsoGVcQR+CIMtGHS7jJr7xarnRxgkTk4qVDX40WaV+BWrKx71OLaPpj6Za9g==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:

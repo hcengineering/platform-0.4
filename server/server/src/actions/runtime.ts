@@ -18,7 +18,7 @@ import {
 } from '@anticrm/core'
 import core from '@anticrm/core'
 import { getResource } from '@anticrm/platform'
-import { UpdateTxCallback, UpdateTxFilter } from '@anticrm/action'
+import { TxCallback, TxFilter } from '@anticrm/action'
 import plugin, { ActionState } from '@anticrm/action-plugin'
 import type { ActionInstance } from '@anticrm/action-plugin'
 import { exec } from './exec'
@@ -27,8 +27,8 @@ import { Service, updateTx } from './service'
 type PureActionInst = Omit<ActionInstance, keyof Doc> & { _id: Ref<ActionInstance>, space: Ref<Space> }
 
 interface UpdateTxSub {
-  filter: UpdateTxFilter
-  cb: UpdateTxCallback
+  filter: TxFilter
+  cb: TxCallback
 }
 
 export class ActionRuntime {
@@ -70,8 +70,8 @@ export class ActionRuntime {
     if (this.hierarchy.isDerived(tx.objectClass, plugin.class.ActionInstance)) {
       const instance = tx.attributes as PureActionInst
 
-      const biba = await this.storage.findAll(plugin.class.ActionInstance, { _id: instance._id })
-      console.log(biba)
+      await this.storage.findAll(plugin.class.ActionInstance, { _id: instance._id })
+
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.runAction({
         ...instance,
@@ -79,9 +79,11 @@ export class ActionRuntime {
         space: tx.objectSpace
       })
     }
+
+    await this.sendSubs(tx)
   }
 
-  private readonly subscribe = (filter: UpdateTxFilter, cb: UpdateTxCallback): (() => void) => {
+  private readonly subscribe = (filter: TxFilter, cb: TxCallback): (() => void) => {
     const id = generateId()
     this.updateTxSubs.set(id, { filter, cb })
 
@@ -92,7 +94,7 @@ export class ActionRuntime {
     this.updateTxSubs.delete(id)
   }
 
-  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+  private async sendSubs (tx: TxUpdateDoc<Doc> | TxCreateDoc<Doc>): Promise<void> {
     const cbs = [...this.updateTxSubs.values()]
       .filter(({ filter }) => {
         return (
@@ -105,6 +107,10 @@ export class ActionRuntime {
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     Promise.all(cbs.map(async (cb) => await cb(tx)))
+  }
+
+  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
+    await this.sendSubs(tx)
   }
 
   async txRemoveDoc (_tx: TxRemoveDoc<Doc>): Promise<void> {}

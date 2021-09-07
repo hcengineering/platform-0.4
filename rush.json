@@ -709,6 +709,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/recruiting-mappers",
+      "projectFolder": "plugins/recruiting-mappers",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/presentation",
       "projectFolder": "plugins/presentation",
       "shouldPublish": true

@@ -13,7 +13,7 @@ import {
   TxUpdateDoc
 } from '@anticrm/core'
 import core from '@anticrm/core'
-import { UpdateTxCallback, UpdateTxFilter } from '@anticrm/action'
+import { TxCallback, TxFilter } from '@anticrm/action'
 import plugin, { ActionInstance, ExecutionContext as CompleteExecutionContext } from '@anticrm/action-plugin'
 
 type ExecutionContext = Omit<CompleteExecutionContext, keyof Doc>
@@ -51,7 +51,7 @@ const createTx = <T extends Doc>(data: {
 
   return {
     _id: generateId(),
-    _class: core.class.TxUpdateDoc,
+    _class: core.class.TxCreateDoc,
     modifiedBy: data.account ?? core.account.System,
     modifiedOn: date,
     createOn: date,
@@ -75,7 +75,7 @@ export class Service {
       query: DocumentQuery<T>,
       options?: FindOptions<T>
     ) => Promise<FindResult<T>>,
-    public readonly subscribe: (filter: UpdateTxFilter, cb: UpdateTxCallback) => () => void,
+    public readonly subscribe: (filter: TxFilter, cb: TxCallback) => () => void,
     private readonly stateID: Ref<CompleteExecutionContext>
   ) {}
 

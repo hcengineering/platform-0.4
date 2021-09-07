@@ -18,7 +18,7 @@ import { Domain, FullRefString, PresentationMode, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
-import { Application } from '@anticrm/workbench'
+import { Application, SpacesNavModel } from '@anticrm/workbench'
 import chunter from './plugin'
 import notification from '@anticrm/notification'
 
@@ -30,6 +30,7 @@ const DOMAIN_CHUNTER = 'chunter' as Domain
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {
   direct!: boolean
+  isChunterbot!: boolean
 
   topic!: string
   favourite!: boolean
@@ -42,6 +43,7 @@ export class TChannel extends TSpace implements Channel {
  */
 @Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
 export class TMessage extends TDoc implements Message {
+  isChunterbot!: boolean
   message!: string
   comments!: CommentRef[]
 }
@@ -51,6 +53,7 @@ export class TMessage extends TDoc implements Message {
  */
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
 export class TComment extends TDoc implements Comment {
+  isChunterbot!: boolean
   replyOf!: FullRefString
   message!: string
 }
@@ -60,6 +63,25 @@ export class TComment extends TDoc implements Comment {
  */
 export function createModel (builder: Builder): void {
   builder.createModel(TChannel, TMessage, TComment)
+  const directMessagesModel: SpacesNavModel<Channel> = {
+    label: chunter.string.DirectMessages,
+    spaceIcon: chunter.icon.Hashtag,
+    spaceClass: chunter.class.Channel,
+    spaceQuery: { direct: true, 'account.starred': { $ne: true } },
+    addSpaceLabel: chunter.string.CreateDirectMessage,
+    spaceItem: chunter.component.SpaceItem,
+    spaceHeader: chunter.component.SpaceHeader,
+    userSpace: {
+      name: 'Chunterbot',
+      description: '',
+      topic: 'Your best friend here',
+      members: [],
+      private: true,
+      direct: true,
+      isChunterbot: true
+    }
+  }
+
   builder.createDoc<Application>(
     workbench.class.Application,
     {
@@ -101,15 +123,7 @@ export function createModel (builder: Builder): void {
             spaceItem: chunter.component.SpaceItem,
             spaceHeader: chunter.component.SpaceHeader
           },
-          {
-            label: chunter.string.DirectMessages,
-            spaceIcon: chunter.icon.Hashtag,
-            spaceClass: chunter.class.Channel,
-            spaceQuery: { direct: true, 'account.starred': { $ne: true } },
-            addSpaceLabel: chunter.string.CreateDirectMessage,
-            spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
-          }
+          directMessagesModel
         ],
         spaceView: chunter.component.ChannelView
       }

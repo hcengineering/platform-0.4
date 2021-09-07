@@ -73,11 +73,16 @@ export async function exec (
         counter
       ])
 
-      stack.push(ret)
+      if (ret !== undefined) {
+        stack.push(ret)
+      }
+
       counter++
     }
 
     await svc.commit()
     await svc.saveContext({ stack, counter: [...parentCnt, counter] })
   }
+
+  return stack.pop()
 }

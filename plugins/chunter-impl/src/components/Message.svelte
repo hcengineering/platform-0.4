@@ -53,6 +53,15 @@
   const client = getClient()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
+    if (message.isChunterbot) {
+      return {
+        _id: 'chunterbot',
+        name: 'Chunterbot',
+        email: 'chunterbot@hc.engineering',
+        avatar: 'https://robohash.org/chunterbot'
+      } as Account
+    }
+
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
 

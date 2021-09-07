@@ -26,7 +26,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   }
 
   let resActionRuntime: (x: ActionRuntime) => void
-  const actionRuntimeP: Promise<ActionRuntime> = new Promise(resolve => {
+  const actionRuntimeP: Promise<ActionRuntime> = new Promise((resolve) => {
     resActionRuntime = resolve
   })
 
