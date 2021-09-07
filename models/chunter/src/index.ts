@@ -96,7 +96,8 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: chunter.string.CreateChannel,
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            internalEditComponent: chunter.component.ThreadsView
           },
           {
             label: chunter.string.DirectMessages,
@@ -105,11 +106,11 @@ export function createModel (builder: Builder): void {
             spaceQuery: { direct: true, 'account.starred': { $ne: true } },
             addSpaceLabel: chunter.string.CreateDirectMessage,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            internalEditComponent: chunter.component.ThreadsView
           }
         ],
-        spaceView: chunter.component.ChannelView,
-        editComponent: chunter.component.ThreadsView
+        spaceView: chunter.component.ChannelView
       }
     },
     chunter.app.Chunter as Ref<Application>

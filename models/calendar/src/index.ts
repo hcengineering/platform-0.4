@@ -86,10 +86,11 @@ export function createModel (builder: Builder): void {
             description: 'Personal calendar',
             members: [],
             private: true
-          }
+          },
+          internalCreateComponent: calendar.component.CreateEvent,
+          internalEditComponent: calendar.component.EditEvent
         }
       ],
-      createComponent: calendar.component.CreateEvent,
       spaceView: calendar.component.Workspace
     }
   })

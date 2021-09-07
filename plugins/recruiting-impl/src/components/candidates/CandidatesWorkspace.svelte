@@ -15,13 +15,9 @@
 <script lang="ts">
   import type { IntlString, UIComponent } from '@anticrm/status'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
-  import ui, { Button, IconGroup, IconList } from '@anticrm/ui'
-  import { showModal } from '@anticrm/workbench'
+  import ui, { IconGroup, IconList } from '@anticrm/ui'
 
-  import CreateCandidate from './CreateCandidate.svelte'
   import CandidateTable from './CandidateTable.svelte'
-
-  import recruiting from '../../plugin'
 
   export let space: CandidatePoolSpace
   type IDs = 'list'
@@ -40,22 +36,15 @@
   ])
   let view: UIComponent | undefined = CandidateTable
   $: view = views.get(selected)
-
-  function onAdd () {
-    showModal(CreateCandidate, { space: space._id })
-  }
 </script>
 
 <div class="root">
-  <Button label={recruiting.string.AddCandidate} on:click={onAdd} />
-  <div class="content">
-    <div class="selector">
-      <IconGroup {items} bind:selected={selected} />
-    </div>
-    {#if view !== undefined}
-      <svelte:component this={view} currentSpace={space._id} />
-    {/if}
+  <div class="selector">
+    <IconGroup {items} bind:selected={selected} />
   </div>
+  {#if view !== undefined}
+    <svelte:component this={view} currentSpace={space._id} />
+  {/if}
 </div>
 
 <style lang="scss">
@@ -63,17 +52,6 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-
-    width: 100%;
-    height: 100%;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
 
     flex-grow: 1;
 
@@ -86,7 +64,7 @@
     justify-content: flex-end;
     align-items: center;
     gap: 5px;
-    padding: 0 40px;
+    padding: 20px 40px;
 
     width: 100%;
   }

@@ -17,8 +17,7 @@
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
-
-  import recruiting from '../../plugin'
+  import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace

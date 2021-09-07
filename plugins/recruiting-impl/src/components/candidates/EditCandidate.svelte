@@ -15,19 +15,18 @@
 <script lang="ts">
   import type { Ref } from '@anticrm/core'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
-  import { getClient } from '@anticrm/workbench'
+  import recruiting from '@anticrm/recruiting'
+  import { getClient, WorkbenchRoute } from '@anticrm/workbench'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import type { WithFSM } from '@anticrm/fsm'
   import { getPlugin } from '@anticrm/platform'
-  import { PopupItem, PopupMenu } from '@anticrm/ui'
-
-  import Float from '../common/Float.svelte'
-  import recruiting from '../../plugin'
+  import { getRouter, IconClose, PopupItem, PopupMenu, ScrollBox } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let id: Ref<Candidate>
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
   let candidate: Candidate | undefined
   let lqCandidates: QueryUpdater<Candidate> | undefined
 
@@ -70,11 +69,23 @@
       }
     })
   }
+
+  function onClose () {
+    router.navigate({ itemId: undefined })
+  }
 </script>
 
-<Float title={candidate?.name ?? ''} on:close>
-  {#if candidate !== undefined}
-    <div class="root">
+{#if candidate !== undefined}
+  <div class="header">
+    <div class="title">
+    {candidate.name}
+    </div>
+    <div class="close" on:click={onClose}>
+      <IconClose size={16} />
+    </div>
+  </div>
+  <ScrollBox autoscrollable vertical>
+    <div class="content">
       <div class="row">
         <div class="label">Name:</div>
         {candidate.name}
@@ -112,11 +123,34 @@
         </div>
       </div>
     </div>
-  {/if}
-</Float>
+  </ScrollBox>
+{/if}
 
 <style lang="scss">
-  .root {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--theme-caption-color);
+    user-select: none;
+  }
+
+  .close {
+    margin-left: 12px;
+    opacity: 0.4;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .content {
     display: flex;
     flex-direction: column;
     gap: 20px;

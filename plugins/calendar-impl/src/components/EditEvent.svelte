@@ -17,15 +17,16 @@
   import type { DerivedEvent, Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, WorkbenchRoute } from '@anticrm/workbench'
+  import { getRouter, IconClose, ScrollBox } from '@anticrm/ui'
 
-  import Float from './Float.svelte'
   import EventEditor from './EventEditor.svelte'
   import EventViewer from './EventViewer.svelte'
 
   export let id: Ref<Event | DerivedEvent>
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
   let event: Event | undefined
   let prevEvent: Event | undefined
 
@@ -62,14 +63,51 @@
 
     await client.updateDoc(calendar.class.Event, a.space, a._id, update)
   }
+
+  function onClose () {
+    router.navigate({ itemId: undefined })
+  }
 </script>
 
-<Float title={event?.name ?? ''} on:close>
-  {#if event !== undefined}
+{#if event !== undefined}
+  <div class="header">
+    <div class="title">
+      {event.name}
+    </div>
+    <div class="close" on:click={onClose}>
+      <IconClose size={16} />
+    </div>
+  </div>
+  <ScrollBox autoscrollable vertical>
     {#if isDerived}
       <EventViewer {event} />
     {:else}
       <EventEditor {event} on:update={onUpdate} />
     {/if}
-  {/if}
-</Float>
+  </ScrollBox>
+{/if}
+
+<style lang="scss">
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--theme-caption-color);
+    user-select: none;
+  }
+
+  .close {
+    margin-left: 12px;
+    opacity: 0.4;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
+  }
+</style>

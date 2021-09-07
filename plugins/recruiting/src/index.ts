@@ -17,7 +17,8 @@ import type { Class, Doc, Ref, Space } from '@anticrm/core'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Asset, IntlString } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
+import { Application } from '@anticrm/workbench'
 
 export interface Resume extends Doc {
   description: string
@@ -51,6 +52,9 @@ export interface RecruitingService extends Service {}
 const PluginRecruiting = 'recruiting' as Plugin<RecruitingService>
 
 export default plugin(PluginRecruiting, {}, {
+  app: {
+    Recruiting: '' as Ref<Application>
+  },
   icon: {
     Recruiting: '' as Asset
   },
@@ -60,6 +64,13 @@ export default plugin(PluginRecruiting, {}, {
     Resume: '' as Ref<Class<Resume>>,
     Applicant: '' as Ref<Class<Applicant>>,
     VacancySpace: '' as Ref<Class<VacancySpace>>
+  },
+  component: {
+    CreatePool: '' as AnyComponent,
+    CreateVacancy: '' as AnyComponent,
+    CreateCandidate: '' as AnyComponent,
+    WorkspaceComponent: '' as AnyComponent,
+    EditCandidate: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,

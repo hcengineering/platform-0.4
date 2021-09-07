@@ -20,8 +20,7 @@ import { Domain, Ref } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
-
-import recruiting from './plugin'
+import recruiting from '@anticrm/recruiting'
 
 const DOMAIN_RECRUITING = 'recruiting' as Domain
 
@@ -89,21 +88,23 @@ export function createModel (builder: Builder): void {
             spaceIcon: recruiting.icon.Recruiting,
             spaceClass: recruiting.class.VacancySpace,
             addSpaceLabel: recruiting.string.AddVacancy,
-            createComponent: recruiting.component.CreateVacancy
+            createComponent: recruiting.component.CreateVacancy,
+            internalCreateComponent: recruiting.component.CreateVacancy
           },
           {
             label: recruiting.string.Candidates,
             spaceIcon: recruiting.icon.Recruiting,
             spaceClass: recruiting.class.CandidatePoolSpace,
             addSpaceLabel: recruiting.string.AddPoolSpace,
-            createComponent: recruiting.component.CreatePool
+            createComponent: recruiting.component.CreatePool,
+            internalCreateComponent: recruiting.component.CreateCandidate,
+            internalEditComponent: recruiting.component.EditCandidate
           }
         ],
-        spaceView: recruiting.component.WorkspaceComponent,
-        createComponent: recruiting.component.CreateVacancy
+        spaceView: recruiting.component.WorkspaceComponent
       }
     },
-    recruiting.app.Recrutting
+    recruiting.app.Recruiting
   )
 
   const states = {
