@@ -42,18 +42,6 @@
     prevEvent = { ...first }
   })
 
-  let lqDEvent: QueryUpdater<DerivedEvent> | undefined
-  $: lqDEvent = client.query(lqDEvent, calendar.class.DerivedEvent, { _id: id as Ref<DerivedEvent> }, (evts) => {
-    const first = evts[0]
-
-    if (!first) {
-      return
-    }
-
-    event = { ...first }
-    prevEvent = { ...first }
-  })
-
   let isDerived = false
   $: isDerived = event?._class === calendar.class.DerivedEvent
 
