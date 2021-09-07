@@ -13,12 +13,32 @@
 // limitations under the License.
 //
 
-import { Doc, MappingOptions, Tx, TxCreateDoc, TxUpdateDoc, TxRemoveDoc, generateId, Ref, Space, TxProcessor, Timestamp, Account, DerivedDataDescriptor, DerivedData } from '@anticrm/core'
-import core, { registerMapper } from '@anticrm/core'
+import core, {
+  Doc,
+  MappingOptions,
+  Tx,
+  TxCreateDoc,
+  TxUpdateDoc,
+  TxRemoveDoc,
+  generateId,
+  Ref,
+  Space,
+  TxProcessor,
+  Timestamp,
+  Account,
+  DerivedDataDescriptor,
+  DerivedData
+  , registerMapper
+} from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
-async function updateSpaceInfo<T extends Doc> (tx: TxUpdateDoc<T> | TxCreateDoc<T> | TxRemoveDoc<T>, options: MappingOptions): Promise<void> {
-  const spaceInfo = (await options.storage.findAll<SpaceInfo>(notification.class.SpaceInfo, { objectId: tx.objectSpace }))[0]
+async function updateSpaceInfo<T extends Doc> (
+  tx: TxUpdateDoc<T> | TxCreateDoc<T> | TxRemoveDoc<T>,
+  options: MappingOptions
+): Promise<void> {
+  const spaceInfo = (
+    await options.storage.findAll<SpaceInfo>(notification.class.SpaceInfo, { objectId: tx.objectSpace })
+  )[0]
   if (spaceInfo === undefined) return
   const updateTx: TxUpdateDoc<SpaceInfo> = {
     objectId: spaceInfo._id,
@@ -38,7 +58,11 @@ async function updateSpaceInfo<T extends Doc> (tx: TxUpdateDoc<T> | TxCreateDoc<
   await options.storage.tx(updateTx)
 }
 
-function createSpaceNotification<T extends Space> (ctx: TxCreateDoc<T> | TxUpdateDoc<T>, options: MappingOptions, member: Ref<Account>): SpaceNotifications {
+function createSpaceNotification<T extends Space> (
+  ctx: TxCreateDoc<T> | TxUpdateDoc<T>,
+  options: MappingOptions,
+  member: Ref<Account>
+): SpaceNotifications {
   return {
     _id: `spaceNotification-${ctx.objectId}-${member}` as Ref<SpaceNotifications>,
     lastRead: ctx.modifiedOn,
@@ -55,7 +79,10 @@ function createSpaceNotification<T extends Space> (ctx: TxCreateDoc<T> | TxUpdat
   }
 }
 
-function createSpaceInfo<T extends Space> (ctx: TxCreateDoc<T> | TxUpdateDoc<T>, descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>): SpaceInfo {
+function createSpaceInfo<T extends Space> (
+  ctx: TxCreateDoc<T> | TxUpdateDoc<T>,
+  descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+): SpaceInfo {
   const data: SpaceInfo = {
     _class: notification.class.SpaceInfo,
     objectId: ctx.objectId,
@@ -74,12 +101,14 @@ function createSpaceInfo<T extends Space> (ctx: TxCreateDoc<T> | TxUpdateDoc<T>,
 export default (): void => {
   registerMapper(notification.mappers.SpaceInfo, {
     map: async (tx: Tx, options: MappingOptions): Promise<SpaceInfo[]> => {
-      console.log('Space info map call')
       if (tx._class === core.class.TxCreateDoc) {
         const ctx = tx as TxCreateDoc<Doc>
         if (options.hierarchy.isDerived(ctx.objectClass, core.class.Space)) {
           return [createSpaceInfo(ctx as TxCreateDoc<Space>, options.descriptor._id)]
-        } else if (ctx.objectSpace !== core.space.Model) {
+        } else if (
+          ctx.objectSpace !== core.space.Model &&
+          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
+        ) {
           await updateSpaceInfo(ctx, options)
         }
       }
@@ -92,14 +121,21 @@ export default (): void => {
             return [createSpaceInfo(ctx as TxUpdateDoc<Space>, options.descriptor._id)]
           }
           return result
-        } else if (ctx.objectSpace !== core.space.Model) {
+        } else if (
+          ctx.objectSpace !== core.space.Model &&
+          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
+        ) {
           await updateSpaceInfo(ctx, options)
         }
       }
 
       if (tx._class === core.class.TxRemoveDoc) {
         const ctx = tx as TxRemoveDoc<Doc>
-        if (!options.hierarchy.isDerived(ctx.objectClass, core.class.Space) && ctx.objectSpace !== core.space.Model) {
+        if (
+          !options.hierarchy.isDerived(ctx.objectClass, core.class.Space) &&
+          ctx.objectSpace !== core.space.Model &&
+          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
+        ) {
           await updateSpaceInfo(ctx, options)
         }
       }
@@ -110,7 +146,6 @@ export default (): void => {
 
   registerMapper(notification.mappers.SpaceNotification, {
     map: async (tx: Tx, options: MappingOptions): Promise<SpaceNotifications[]> => {
-      console.log('Space notification map call')
       if (tx._class === core.class.TxCreateDoc) {
         const result: SpaceNotifications[] = []
         const ctx = tx as TxCreateDoc<Space>
@@ -130,7 +165,9 @@ export default (): void => {
           }
           return result
         }
-        let result: Array<SpaceNotifications> = await options.storage.findAll(notification.class.SpaceNotifications, { objectId: ctx.objectId })
+        let result: SpaceNotifications[] = await options.storage.findAll(notification.class.SpaceNotifications, {
+          objectId: ctx.objectId
+        })
         if (ctx.operations.$pull?.members !== undefined) {
           const pos = -1 // result.findIndex((p) => p.clientId === ctx.operations.$pull.members)
           if (pos !== -1) {

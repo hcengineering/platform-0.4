@@ -11145,7 +11145,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-nuwiqOZHSNVyFVia+KJykAKbvvLmbb0Z9hG5sMjhSbrs0hVU6tb6HE1BAKEcncTIpESDOKK2JmWPUmMRVQ2/qQ==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-AnTqMVDCeuKd9qxiMepg7QoCv7EpAXUQacxqnwGlsw6uH7/oXhPQxEw22HLX6Zxp6eivplGLrEftf+q21JOapg==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -11587,7 +11587,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-1w2icVcZ8gCu7Swuxb6JrSTHgBU++vCLDi9HhmAuOoQWySeGgxNLosdr2RRlyG1L53mVPyNUi0WPYFZ2EseFFw==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-ctvIBHeztTmJ0+zIFeJpGzp2t/oQHFYnHjO0aVCAt7WdRi4A/DjQyWgVD5ai9t/srt4Tis6GCguQvfUWb0W+pQ==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -11970,7 +11970,7 @@ packages:
     dev: false
 
   file:projects/notification-mappers.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-XTd8JbthsoNlGiCd4AOAOCEhG9UDPs4XAqBFBycInhAwU3Sclc41KAHtAVdm4HIfsb753gKiyVTDGbHS9BblSQ==, tarball: file:projects/notification-mappers.tgz}
+    resolution: {integrity: sha512-mHMQRr9iVMYuD+EjygerFc6pLVSaqMiJEd8tj7gN7nzO3TMKdY6HVBG/lznYygQ4CsADkOWQY5dzySLGKAgBvg==, tarball: file:projects/notification-mappers.tgz}
     id: file:projects/notification-mappers.tgz
     name: '@rush-temp/notification-mappers'
     version: 0.0.0
@@ -11991,6 +11991,8 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
       jest: 26.6.3_ts-node@10.2.1
+      prettier: 2.3.2
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
       typescript: 4.3.5
     transitivePeerDependencies:
       - bufferutil
@@ -12632,7 +12634,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-0pDE+VJjx4LN+V5hIpY9S6Gxtde/vx3RgNERXwfsiOlVZXhXmh4WVSpF6nMa+ZEQSxq9FOQow0LZoaJwmjzlmQ==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-UyBZuapnADtkr/C42wfcRczqS7aRjY47BiJIKGX6J4zdyu5dgCea0AFtTLukBXGgqA18Q4IuCY/bOBT/aTQ1rg==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
@@ -12983,7 +12985,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-psSHFxTu2/jzxHS9mB7J0pD5TEoGFQ445N8QfiB6X2ywnp1tGHN04H8XgUi++BecAUCgFWoItT/rAJYCA1jNMQ==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-U8WrXlAXsHxbdsWC379lTzFyqCUaisk6knm7l3NQPosgHctPzU1MT1K43dQS5w6V2whhWfLCuCBvPCQ0W9cW/Q==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0
