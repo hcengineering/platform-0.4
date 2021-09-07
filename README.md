@@ -52,6 +52,11 @@ We use [rush.js - a scalable monorepo manager](https://rushjs.io/) in the projec
 ```bash
 npm install -g @microsoft/rush
 ```
+Please check that it works
+```bash
+rush -h
+```
+
 
 ### MongoDB 4.x
 You can install [MongoDB 4.x](https://www.mongodb.com/try/download/community) locally or run it as a docker container
@@ -72,7 +77,11 @@ docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsear
 Please run in the project root folder:
 
 ```bash
+#Incremental install
 rush update
+
+#  Force all projects to be rebuilt
+rush rebuild
 ```
 
 and we are ready.
