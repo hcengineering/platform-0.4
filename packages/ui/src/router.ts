@@ -44,7 +44,7 @@ function subscribeLocation<T> (result: Router<T>): void {
 }
 
 function checkPatternPrefix (pattern: string): string {
-  const prefix = ((window as any)[PlatformRouterKey] as PlatformRouterParams).routerPrefix
+  const prefix = ((window as any)[PlatformRouterKey] as PlatformRouterParams)?.routerPrefix
   if (prefix !== undefined) {
     pattern = prefix + pattern
   }

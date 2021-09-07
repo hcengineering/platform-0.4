@@ -21,6 +21,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const mode = process.env.NODE_ENV || 'development'
 const NO_SVELTE = process.env.NO_SVELTE ?? false
 const prod = mode === 'production'
+const PUBLIC_PATH = process.env.PUBLIC_PATH ?? '/'
 
 module.exports = {
   entry: {
@@ -41,7 +42,7 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
-    publicPath: '/'
+    publicPath: PUBLIC_PATH
   },
   module: {
     rules: [
@@ -129,7 +130,7 @@ module.exports = {
   ],
   devtool: prod ? false : 'eval-source-map',
   devServer: {
-    publicPath: '/',
+    publicPath: PUBLIC_PATH,
     historyApiFallback: {
       disableDotRule: true
     }
