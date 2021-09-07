@@ -19,4 +19,4 @@
   export let currentSpace: Ref<Space>
 </script>
 
-<TaskView query={{ space: currentSpace }} {notifications} />
+<TaskView query={{ space: currentSpace }} />
