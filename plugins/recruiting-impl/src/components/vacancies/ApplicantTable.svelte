@@ -71,4 +71,4 @@
   $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
 </script>
 
-<Table {data} {columns} />
+<Table {data} {columns} showHeader />

@@ -48,9 +48,7 @@
         </div>
       {/each}
     </div>
-    <div class="view">
-      <svelte:component this={selected.view} currentSpace={space._id} />
-    </div>
+    <svelte:component this={selected.view} currentSpace={space._id} />
   </div>
 </div>
 
@@ -59,7 +57,6 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 40px;
     gap: 10px;
 
     width: 100%;
@@ -70,7 +67,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 20px;
 
     flex-grow: 1;
 
@@ -83,15 +80,9 @@
     justify-content: flex-end;
     align-items: center;
     gap: 5px;
+    padding: 0 40px;
 
     width: 100%;
-  }
-
-  .view {
-    flex-grow: 1;
-
-    width: 100%;
-    height: 100%;
   }
 
   .opt {

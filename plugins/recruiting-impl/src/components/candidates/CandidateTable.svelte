@@ -56,4 +56,4 @@
   }
 </script>
 
-<Table {data} {columns} on:rowClick={(event) => showModal(CandidateCmp, { id: event.detail.id })} />
+<Table {data} {columns} showHeader on:rowClick={(event) => showModal(CandidateCmp, { id: event.detail.id })} />

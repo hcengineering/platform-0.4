@@ -14,7 +14,6 @@
 -->
 <script lang="ts">
   import type { VacancySpace } from '@anticrm/recruiting'
-  import { ScrollBox } from '@anticrm/ui'
 
   import List from '../icons/List.svelte'
   import Kanban from '../icons/Kanban.svelte'
@@ -32,26 +31,20 @@
 </script>
 
 <div class="root">
-  <div class="content">
-    <div class="selector">
-      {#each options as opt}
-        <div
-          class="opt"
-          class:selected={opt === selected}
-          on:click={() => {
-            selected = opt
-          }}
-        >
-          <svelte:component this={opt.icon} />
-        </div>
-      {/each}
-    </div>
-    <div class="view">
-      <ScrollBox>
-        <svelte:component this={selected.view} {space} />
-      </ScrollBox>
-    </div>
+  <div class="selector">
+    {#each options as opt}
+      <div
+        class="opt"
+        class:selected={opt === selected}
+        on:click={() => {
+          selected = opt
+        }}
+      >
+        <svelte:component this={opt.icon} />
+      </div>
+    {/each}
   </div>
+  <svelte:component this={selected.view} {space} />
 </div>
 
 <style lang="scss">
@@ -59,18 +52,6 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 40px;
-    gap: 10px;
-
-    width: 100%;
-    height: 100%;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
 
     flex-grow: 1;
 
@@ -83,15 +64,9 @@
     justify-content: flex-end;
     align-items: center;
     gap: 5px;
+    padding: 20px 40px;
 
     width: 100%;
-  }
-
-  .view {
-    flex-grow: 1;
-
-    width: 100%;
-    height: 100%;
   }
 
   .opt {
