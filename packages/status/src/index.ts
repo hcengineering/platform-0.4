@@ -249,3 +249,18 @@ export type Asset = Metadata<URL>
  * @public
  */
 export { status as default }
+
+// Reference to svelte component
+
+/**
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface UIComponent {
+}
+
+/**
+ * @public
+ */
+export type AnyComponent = Resource<UIComponent>
+

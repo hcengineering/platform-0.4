@@ -45,10 +45,7 @@ import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
 
-import workbenchMeta from '@anticrm/workbench/src/meta'
-
 export function configurePlatform (): void {
-  workbenchMeta()
   // platform.setMetadata(ui.metadata.LoginApplication, 'login')
   // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
 

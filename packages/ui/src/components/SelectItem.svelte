@@ -13,20 +13,18 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString } from '@anticrm/status'
+  import type { IntlString, UIComponent } from '@anticrm/status'
   import ui from '../component'
-  import type { AnySvelteComponent, IPopupItem } from '../types'
+  import type { IPopupItem } from '../types'
   import ActionIcon from './ActionIcon.svelte'
   import Close from './icons/Close.svelte'
   import Label from './Label.svelte'
   import PopupItem from './PopupItem.svelte'
   import PopupMenu from './PopupMenu.svelte'
 
-  export let component: AnySvelteComponent | undefined
+  export let component: UIComponent | undefined
   export let items: Array<IPopupItem>
   export let item: IPopupItem
-  export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
-  export let hAlign: 'left' | 'center' | 'right' = 'left'
   export let margin: number = 16
   export let gap: number = 8
   export let removeLabel: IntlString | undefined
@@ -35,7 +33,7 @@
   let pressed: boolean = false
 </script>
 
-<PopupMenu {vAlign} {hAlign} {margin} bind:show={pressed}>
+<PopupMenu {margin} bind:show={pressed}>
   <button
     class="btn"
     slot="trigger"

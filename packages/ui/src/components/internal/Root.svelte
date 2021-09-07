@@ -1,7 +1,7 @@
 <script lang="ts">
   import { OK } from '@anticrm/status'
   import { PlatformEvent, getMetadata, addEventListener } from '@anticrm/platform'
-  import type { AnyComponent } from '../../types'
+  import type { AnyComponent } from '@anticrm/status'
   import { applicationShortcutKey, defaultApplicationShortcutKey } from '../../utils'
   import { newRouter } from '../../router'
 

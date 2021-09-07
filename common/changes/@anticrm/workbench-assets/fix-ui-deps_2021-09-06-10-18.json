@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Fix UI deps",
+      "type": "patch",
+      "packageName": "@anticrm/workbench-assets"
+    }
+  ],
+  "packageName": "@anticrm/workbench-assets",
+  "email": "haiodo@gmail.com"
+}

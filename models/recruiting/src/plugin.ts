@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
+import { Ref } from '@anticrm/core'
 import recruiting from '@anticrm/recruiting'
-import type { IntlString, Resource } from '@anticrm/status'
+import type { AnyComponent, IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
-import { Ref } from '@anticrm/core'
 
 /**
  * @public
@@ -28,9 +28,9 @@ export default mergeIds(recruiting, {
     CreateChannel: '' as IntlString
   },
   component: {
-    CreatePool: '' as Resource<any>,
-    CreateVacancy: '' as Resource<any>,
-    WorkspaceComponent: '' as Resource<any>
+    CreatePool: '' as AnyComponent,
+    CreateVacancy: '' as AnyComponent,
+    WorkspaceComponent: '' as AnyComponent
   },
   app: {
     Recrutting: '' as Ref<Application>

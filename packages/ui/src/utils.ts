@@ -14,7 +14,7 @@
 //
 
 import type { Metadata } from '@anticrm/platform'
-import type { AnyComponent } from './types'
+import type { AnyComponent } from '@anticrm/status'
 
 // R O U T E R  M E T A D A T A  K E Y S
 

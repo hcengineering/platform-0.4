@@ -14,12 +14,12 @@
 -->
 <script lang="ts">
   import { IntlString } from '@anticrm/platform'
-  import type { AnySvelteComponent } from '../types'
+  import type { UIComponent } from '@anticrm/status'
   import Label from './Label.svelte'
   import ArrowUp from './icons/Up.svelte'
   import ArrowDown from './icons/Down.svelte'
 
-  export let icon: AnySvelteComponent
+  export let icon: UIComponent
   export let label: IntlString
   export let closed: boolean = false
 </script>

@@ -13,15 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString, Asset } from '@anticrm/status'
-  import type { AnySvelteComponent } from '../types'
+  import type { IntlString, Asset, UIComponent } from '@anticrm/status'
 
   import Icon from './Icon.svelte'
   import Tooltip from './Tooltip.svelte'
 
   export let label: IntlString
   export let direction: string = 'top'
-  export let icon: Asset | AnySvelteComponent
+  export let icon: Asset | UIComponent
   export let padding: number = 0
   export let filled: boolean = false
   export let size: 16 | 20 | 24

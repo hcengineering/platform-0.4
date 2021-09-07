@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
-    "@anticrm/ui": "~0.4.1",
     "@anticrm/status": "~0.4.2"    
   }
 }

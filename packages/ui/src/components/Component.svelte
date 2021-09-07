@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { getResource } from '@anticrm/platform'
-  import type { AnyComponent } from '../types'
+  import type { AnyComponent } from '@anticrm/status'
 
   // import Icon from './Icon.svelte'
   import Spinner from './Spinner.svelte'
