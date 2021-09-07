@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, DocumentQuery, Ref, Space } from '@anticrm/core'
+import type { Class, Data, Doc, DocumentQuery, Ref, Space } from '@anticrm/core'
 import { Plugin, plugin, Service } from '@anticrm/platform'
 import type { PresentationClient } from '@anticrm/presentation'
 import type { Asset, IntlString } from '@anticrm/status'
@@ -44,6 +44,7 @@ export interface SpacesNavModel {
   spaceItem?: AnyComponent // An component to display a space selectable item. param {space: Space}
   spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
   hideIfEmpty?: boolean // If defined and true, category will be not visible
+  userSpace?: Data<Space>
 }
 
 /**

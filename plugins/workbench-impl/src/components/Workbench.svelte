@@ -29,8 +29,11 @@
   import Navigator from './Navigator.svelte'
   import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
+  import { buildUserSpace } from './utils/space.utils'
 
   export let client: PresentationClient
+  let account = client.accountId()
+  $: account = client.accountId()
 
   setContext(workbench.context.Client, client)
 
@@ -83,11 +86,12 @@
   let spaceQuery: QueryUpdater<Space> | undefined
   $: if (currentRoute.space && navigatorModel) {
     spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
-      currentSpace = result[0]
+      const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
+      currentSpace = currentRoute.space === account.toString() ? buildUserSpace(account, target) : result[0]
 
       // Find a space model
-      if (navigatorModel !== undefined) {
-        spaceModel = updateSpaceModel(result[0], navigatorModel)
+      if (navigatorModel !== undefined && currentSpace !== undefined) {
+        spaceModel = updateSpaceModel(currentSpace, navigatorModel)
       }
     })
   }

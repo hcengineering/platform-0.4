@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar",
+      "comment": "Add calendar event titles",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/calendar"
+}

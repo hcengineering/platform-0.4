@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/router",
+      "comment": "Router support prefixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/router"
+}
