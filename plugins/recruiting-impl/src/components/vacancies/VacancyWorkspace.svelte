@@ -13,38 +13,42 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { IntlString, UIComponent } from '@anticrm/status'
+  import ui, { IconGroup, IconList, IconKanban } from '@anticrm/ui'
   import type { VacancySpace } from '@anticrm/recruiting'
-
-  import List from '../icons/List.svelte'
-  import Kanban from '../icons/Kanban.svelte'
 
   import ApplicantTable from './ApplicantTable.svelte'
   import VacancyKanban from './VacancyKanban.svelte'
 
   export let space: VacancySpace
 
-  const options = [
-    { icon: List, view: ApplicantTable },
-    { icon: Kanban, view: VacancyKanban }
+  type IDs = 'list' | 'kanban'
+
+  const items: {
+    icon: UIComponent
+    tooltip: IntlString
+    id: IDs
+  }[] = [
+    { icon: IconList, tooltip: ui.string.List, id: 'list' },
+    { icon: IconKanban, tooltip: ui.string.Kanban, id: 'kanban' }
   ]
-  let selected: typeof options[number] = options[0]
+  let selected: IDs = 'list'
+
+  const views = new Map([
+    ['list', ApplicantTable],
+    ['kanban', VacancyKanban]
+  ])
+  let view: UIComponent | undefined = ApplicantTable
+  $: view = views.get(selected)
 </script>
 
 <div class="root">
   <div class="selector">
-    {#each options as opt}
-      <div
-        class="opt"
-        class:selected={opt === selected}
-        on:click={() => {
-          selected = opt
-        }}
-      >
-        <svelte:component this={opt.icon} />
-      </div>
-    {/each}
+    <IconGroup {items} bind:selected={selected} />
   </div>
-  <svelte:component this={selected.view} {space} />
+  {#if view !== undefined}
+    <svelte:component this={view} {space} />
+  {/if}
 </div>
 
 <style lang="scss">
@@ -63,25 +67,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 5px;
     padding: 20px 40px;
+    min-height: 40px;
 
     width: 100%;
-  }
-
-  .opt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background-color: transparent;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--theme-button-bg-enabled);
-      cursor: default;
-    }
   }
 </style>

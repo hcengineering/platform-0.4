@@ -13,19 +13,33 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { IntlString, UIComponent } from '@anticrm/status'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
-  import { Button } from '@anticrm/ui'
+  import ui, { Button, IconGroup, IconList } from '@anticrm/ui'
   import { showModal } from '@anticrm/workbench'
 
   import CreateCandidate from './CreateCandidate.svelte'
   import CandidateTable from './CandidateTable.svelte'
-  import List from '../icons/List.svelte'
 
   import recruiting from '../../plugin'
 
   export let space: CandidatePoolSpace
-  const options = [{ icon: List, view: CandidateTable }]
-  let selected: typeof options[number] = options[0]
+  type IDs = 'list'
+
+  const items: {
+    icon: UIComponent
+    tooltip: IntlString
+    id: IDs
+  }[] = [
+    { icon: IconList, tooltip: ui.string.List, id: 'list' }
+  ]
+  let selected: IDs = 'list'
+
+  const views = new Map([
+    ['list', CandidateTable]
+  ])
+  let view: UIComponent | undefined = CandidateTable
+  $: view = views.get(selected)
 
   function onAdd () {
     showModal(CreateCandidate, { space: space._id })
@@ -36,19 +50,11 @@
   <Button label={recruiting.string.AddCandidate} on:click={onAdd} />
   <div class="content">
     <div class="selector">
-      {#each options as opt}
-        <div
-          class="opt"
-          class:selected={opt === selected}
-          on:click={() => {
-            selected = opt
-          }}
-        >
-          <svelte:component this={selected.icon} />
-        </div>
-      {/each}
+      <IconGroup {items} bind:selected={selected} />
     </div>
-    <svelte:component this={selected.view} currentSpace={space._id} />
+    {#if view !== undefined}
+      <svelte:component this={view} currentSpace={space._id} />
+    {/if}
   </div>
 </div>
 
@@ -83,21 +89,5 @@
     padding: 0 40px;
 
     width: 100%;
-  }
-
-  .opt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background-color: transparent;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--theme-button-bg-enabled);
-      cursor: default;
-    }
   }
 </style>

@@ -15,11 +15,12 @@
 <script lang="ts">
   import core from '@anticrm/core'
   import type { Ref, Space } from '@anticrm/core'
+  import type { IntlString, UIComponent } from '@anticrm/status'
+  import ui, { IconGroup, IconList } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   import EventTable from './EventTable.svelte'
-  import List from './icons/List.svelte'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -39,27 +40,29 @@
     }
   }
 
-  const options = [{ icon: List, view: EventTable }]
-  let selected: typeof options[number] = options[0]
+  type IDs = 'list'
+
+  const items: {
+    icon: UIComponent
+    tooltip: IntlString
+    id: IDs
+  }[] = [{ icon: IconList, tooltip: ui.string.List, id: 'list' }]
+  let selected: IDs = 'list'
+
+  const views = new Map([['list', EventTable]])
+  let view: UIComponent | undefined = EventTable
+  $: view = views.get(selected)
 </script>
 
 {#if space !== undefined}
   <div class="root">
     <div class="content">
       <div class="selector">
-        {#each options as opt}
-          <div
-            class="opt"
-            class:selected={opt === selected}
-            on:click={() => {
-              selected = opt
-            }}
-          >
-            <svelte:component this={selected.icon} />
-          </div>
-        {/each}
+        <IconGroup {items} bind:selected />
       </div>
-      <svelte:component this={selected.view} currentSpace={space._id} />
+      {#if view !== undefined}
+        <svelte:component this={view} currentSpace={space._id} />
+      {/if}
     </div>
   </div>
 {/if}
@@ -95,20 +98,5 @@
     padding: 20px 40px;
 
     width: 100%;
-  }
-  .opt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background-color: transparent;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--theme-button-bg-enabled);
-      cursor: default;
-    }
   }
 </style>

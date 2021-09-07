@@ -14,30 +14,42 @@
 -->
 <script lang="ts">
   import type { DocumentQuery } from '@anticrm/core'
-  import ViewSelection from './ViewSelection.svelte'
+  import ui, { ScrollBox, IconGroup, IconList, IconCard, IconKanban } from '@anticrm/ui'
+  import type { Task } from '@anticrm/task'
+  import type { IntlString, UIComponent } from '@anticrm/status'
+
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
   import CardView from './CardView.svelte'
-  import ui, { ScrollBox } from '@anticrm/ui'
-  import type { Task } from '@anticrm/task'
-  import type { IntlString } from '@anticrm/status'
 
-  export let view: IntlString = ui.string.List
+  type IDs = 'list' | 'card' | 'kanban'
+
+  const items: {
+    icon: UIComponent
+    tooltip: IntlString
+    id: IDs
+  }[] = [
+    { icon: IconList, tooltip: ui.string.List, id: 'list' },
+    { icon: IconCard, tooltip: ui.string.Cards, id: 'card' },
+    { icon: IconKanban, tooltip: ui.string.Kanban, id: 'kanban' }
+  ]
+  let selected: IDs = 'list'
+
   export let query: DocumentQuery<Task>
 </script>
 
 <div class="toolbar">
-  <ViewSelection bind:selected={view} />
+  <IconGroup {items} bind:selected />
 </div>
-{#if view === ui.string.Kanban}
+{#if selected === 'kanban'}
   <KanbanView {query} />
-{:else if view === ui.string.Cards}
+{:else if selected === 'card'}
   <div class="content">
     <ScrollBox vertical>
       <CardView {query} />
     </ScrollBox>
   </div>
-{:else if view === ui.string.List}
+{:else if selected === 'list'}
   <TableView {query} />
 {/if}
 
