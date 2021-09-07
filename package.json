@@ -1,6 +1,9 @@
 {
   "name": "@anticrm/platform-root",
   "version": "0.4.0",
+  "engines": {
+    "node": ">=14.17 <15"
+  },
   "scripts": {
     "test-diff": "./common/scripts/each-diff.sh rushx test",
     "lint-diff": "./common/scripts/each-diff.sh rushx lint",
