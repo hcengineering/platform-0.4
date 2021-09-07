@@ -29,7 +29,7 @@
   const client = getClient()
   let lq: QueryUpdater<Space> | undefined
 
-  $: if (currentSpace?._id !== prevSpace) {
+  $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
 
     if (currentSpace) {
