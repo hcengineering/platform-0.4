@@ -33,7 +33,7 @@
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Space, Timestamp } from '@anticrm/core'
+  import core, { Timestamp } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
@@ -43,12 +43,13 @@
   import type { IntlString } from '@anticrm/status'
   import { onDestroy } from 'svelte'
   import { afterUpdate } from 'svelte'
+  import { SpaceNotifications } from '@anticrm/notification'
 
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
 
   export let id: Ref<Task>
-  export let currentSpace: Space
+  export let notifications: SpaceNotifications | undefined
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
@@ -62,7 +63,12 @@
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       item = result[0]
-      projectMembers = await client.findAll(core.class.Account, { _id: { $in: currentSpace.members } })
+      const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
+      if (members !== undefined) {
+        projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
+      } else {
+        projectMembers = []
+      }
     })
     return item
   }
@@ -81,22 +87,15 @@
   })
 
   async function updateLastRead (id: Ref<Task>) {
-    if (currentSpace.account === undefined) {
-      currentSpace.account = { objectLastReads: new Map<Ref<Task>, Timestamp>() }
+    if (notifications === undefined) return
+    if (notifications.objectLastReads.set === undefined) {
+      notifications.objectLastReads = new Map<Ref<Task>, Timestamp>()
     }
-    if (currentSpace.account.objectLastReads === undefined) {
-      currentSpace.account.objectLastReads = new Map<Ref<Task>, Timestamp>()
-    }
-    currentSpace.account.objectLastReads.set(id, Date.now())
-    client.updateDoc<Space>(
-      currentSpace._class,
-      currentSpace.space,
-      currentSpace._id,
-      {
-        account: currentSpace.account
-      },
-      true
-    )
+    notifications.objectLastReads.set(id, Date.now())
+
+    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
+      lastRead: Date.now()
+    })
   }
 
   function close () {
@@ -171,7 +170,7 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView {currentSpace} taskId={item._id} />
+          <CommentsView {notifications} currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />

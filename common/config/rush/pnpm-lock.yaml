@@ -33,11 +33,14 @@ specifiers:
   '@rush-temp/model-dev': file:./projects/model-dev.tgz
   '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:./projects/model-meeting.tgz
+  '@rush-temp/model-notification': file:./projects/model-notification.tgz
   '@rush-temp/model-recruiting': file:./projects/model-recruiting.tgz
   '@rush-temp/model-task': file:./projects/model-task.tgz
   '@rush-temp/model-workbench': file:./projects/model-workbench.tgz
   '@rush-temp/mongo': file:./projects/mongo.tgz
   '@rush-temp/node-client': file:./projects/node-client.tgz
+  '@rush-temp/notification': file:./projects/notification.tgz
+  '@rush-temp/notification-mappers': file:./projects/notification-mappers.tgz
   '@rush-temp/platform': file:./projects/platform.tgz
   '@rush-temp/platform-rig': file:./projects/platform-rig.tgz
   '@rush-temp/plugin-core': file:./projects/plugin-core.tgz
@@ -218,11 +221,14 @@ dependencies:
   '@rush-temp/model-dev': file:projects/model-dev.tgz_@types+node@14.17.11
   '@rush-temp/model-fsm': file:projects/model-fsm.tgz
   '@rush-temp/model-meeting': file:projects/model-meeting.tgz
+  '@rush-temp/model-notification': file:projects/model-notification.tgz
   '@rush-temp/model-recruiting': file:projects/model-recruiting.tgz
   '@rush-temp/model-task': file:projects/model-task.tgz
   '@rush-temp/model-workbench': file:projects/model-workbench.tgz
   '@rush-temp/mongo': file:projects/mongo.tgz_@types+node@14.17.11
   '@rush-temp/node-client': file:projects/node-client.tgz
+  '@rush-temp/notification': file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461
+  '@rush-temp/notification-mappers': file:projects/notification-mappers.tgz_ts-node@10.2.1
   '@rush-temp/platform': file:projects/platform.tgz
   '@rush-temp/platform-rig': file:projects/platform-rig.tgz_postcss@8.3.6
   '@rush-temp/plugin-core': file:projects/plugin-core.tgz_e2648ea3577eecbba3519a3bcb75d461
@@ -11767,6 +11773,31 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/model-notification.tgz:
+    resolution: {integrity: sha512-8foeLpePgGn2V0TSiAb1ii7GQqisk17EmY9F2bvP+HQ7QfZdrywCyg9pyC7zPsmHwSf7OwVQATkXUG+bd65SrQ==, tarball: file:projects/model-notification.tgz}
+    name: '@rush-temp/model-notification'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   file:projects/model-recruiting.tgz:
     resolution: {integrity: sha512-U9mCy6cCpeIJhbzhG/W2TfqWq1exmv16G+5NzVMv0P3GD7QRhk4J6ChGjwwcz0F9dEPC5yzXwn+hbxx7zQOSXQ==, tarball: file:projects/model-recruiting.tgz}
     name: '@rush-temp/model-recruiting'
@@ -11935,6 +11966,60 @@ packages:
       - bufferutil
       - canvas
       - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification-mappers.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-XTd8JbthsoNlGiCd4AOAOCEhG9UDPs4XAqBFBycInhAwU3Sclc41KAHtAVdm4HIfsb753gKiyVTDGbHS9BblSQ==, tarball: file:projects/notification-mappers.tgz}
+    id: file:projects/notification-mappers.tgz
+    name: '@rush-temp/notification-mappers'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461:
+    resolution: {integrity: sha512-t4cwqPV0Ly/tFt+AmVvdXJd634VyRBqp4uR1h9YhrRcADIxJ7lNrM8uby7pQ2j5kj1cvfx0Kr2jtcKpON2idpg==, tarball: file:projects/notification.tgz}
+    id: file:projects/notification.tgz
+    name: '@rush-temp/notification'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@types/jest': 26.0.24
+      jest: 26.6.3_ts-node@10.2.1
+      prettier: 2.3.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
       - utf-8-validate
     dev: false
 
@@ -12407,7 +12492,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-ks/I06HP7D0scFPW40fY65dt+mzic8GcUhd7IWSz1kwuQaUlzyD+n+YqisamqyCMvgHCJHiVcW6KQwDKzEfgEw==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-sDA3QU2fkfLzNqPYI2be9zlHMBmN4+14PTf0pUuCEQpQez6PfbC/+c6hRZ4gQLTRP9BH6axS50UfNKaU+bKfig==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:

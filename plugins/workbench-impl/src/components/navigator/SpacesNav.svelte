@@ -25,10 +25,14 @@
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
+  import type { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
 
   export let model: SpacesNavModel
 
   let spaces: Space[] = []
+  let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  let spaceInfo: Map<Ref<Space>, SpaceInfo> = new Map<Ref<Space>, SpaceInfo>()
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
   const accountId = client.accountId()
@@ -42,6 +46,34 @@
         ...result.filter((space) => space.members.includes(accountId))
       ]
     })
+  }
+
+  let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
+  $: if (spaces.length > 0) {
+    notificationQuery = client.query<SpaceNotifications>(
+      notificationQuery,
+      notification.class.SpaceNotifications,
+      { objectId: { $in: spaces.map((p) => p._id) } },
+      (result) => {
+        notifications.clear()
+        result.forEach((p) => notifications.set(p.objectId as Ref<Space>, p))
+        notifications = notifications
+      }
+    )
+  }
+
+  let lastModifiedQuery: QueryUpdater<SpaceInfo> | undefined
+  $: if (spaces.length > 0) {
+    lastModifiedQuery = client.query<SpaceInfo>(
+      lastModifiedQuery,
+      notification.class.SpaceInfo,
+      { objectId: { $in: spaces.map((p) => p._id) } },
+      (result) => {
+        spaceInfo.clear()
+        result.forEach((p) => spaceInfo.set(p.objectId as Ref<Space>, p))
+        spaceInfo = spaceInfo
+      }
+    )
   }
 
   function toolActions (model: SpacesNavModel): Action[] {
@@ -82,8 +114,8 @@
   <TreeNode label={model.label} {actions}>
     {#each spaces as space}
       <TreeItem
-        notifications={space.account?.notificatedObjects?.length ?? 0}
-        changed={(space.account?.lastRead ?? 0) < (space.lastModified ?? 0)}
+        notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
+        changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
         component={model.spaceItem}
         props={{ space: space }}
         title={space.name}

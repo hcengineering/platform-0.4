@@ -14,13 +14,14 @@
 -->
 <script lang="ts">
   import type { Message } from '@anticrm/chunter'
-  import type { Ref, Space, Timestamp } from '@anticrm/core'
+  import { Ref, Timestamp } from '@anticrm/core'
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconClose, Label } from '@anticrm/ui'
   import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { WorkbenchRoute } from '@anticrm/workbench'
+  import type { SpaceNotifications } from '@anticrm/notification'
   import chunter from '../plugin'
   import ChannelSeparator from './ChannelSeparator.svelte'
   import Comments from './Comments.svelte'
@@ -32,7 +33,7 @@
   const router = getRouter<WorkbenchRoute>()
 
   export let id: Ref<Message>
-  export let currentSpace: Space
+  export let notifications: SpaceNotifications | undefined
   let message: Message | undefined
   let prevMessage: Message | undefined
   let div: HTMLElement
@@ -45,13 +46,12 @@
   let lq: QueryUpdater<Message> | undefined
 
   $: {
-    lq = client.query(lq, chunter.class.Message, { _id: id }, (result) => {
+    lq = client.query(lq, chunter.class.Message, { _id: id }, async (result) => {
       message = result[0]
       autoscroll = lastPosition > 0 ? lastPosition > div.scrollHeight - div.clientHeight - 30 : false
-      if (currentSpace.account?.objectLastReads !== undefined) {
-        messageLastRead = currentSpace.account.objectLastReads.get(message._id) ?? 0
-      } else {
-        messageLastRead = 0
+      messageLastRead = 0
+      if (notifications?.objectLastReads?.get !== undefined) {
+        messageLastRead = notifications.objectLastReads.get(message._id) ?? 0
       }
     })
   }
@@ -117,7 +117,6 @@
   })
 
   function scrollHandler () {
-    if (currentSpace === undefined) return
     lastPosition = div.scrollTop
     const messages = div.getElementsByClassName('message')
     const divBottom = div.getBoundingClientRect().bottom
@@ -138,22 +137,14 @@
   }
 
   async function updateLastRead (message: Message) {
-    if (currentSpace.account === undefined) {
-      currentSpace.account = { objectLastReads: new Map<Ref<Message>, Timestamp>() }
+    if (notifications === undefined) return
+    if (notifications.objectLastReads.set === undefined) {
+      notifications.objectLastReads = new Map<Ref<Message>, Timestamp>()
     }
-    if (currentSpace.account.objectLastReads === undefined) {
-      currentSpace.account.objectLastReads = new Map<Ref<Message>, Timestamp>()
-    }
-    currentSpace.account.objectLastReads.set(message._id, Date.now())
-    client.updateDoc<Space>(
-      currentSpace._class,
-      currentSpace.space,
-      currentSpace._id,
-      {
-        account: currentSpace.account
-      },
-      true
-    )
+    notifications.objectLastReads.set(message._id, lastTime)
+    client.updateDoc(notifications._class, notifications.space, notifications._id, {
+      objectLastReads: notifications.objectLastReads
+    })
     waitingUpdate = false
   }
 </script>
@@ -165,9 +156,9 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} {currentSpace} thread />
+      <MsgView {message} {notifications} thread />
       <ChannelSeparator label={chunter.string.RepliesText} line />
-      <Comments {message} {currentSpace} />
+      <Comments {message} {notifications} />
     </div>
   {/if}
 </div>

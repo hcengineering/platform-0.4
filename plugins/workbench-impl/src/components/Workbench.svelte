@@ -30,6 +30,8 @@
   import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   import { buildUserSpace } from './utils/space.utils'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
 
   export let client: PresentationClient
   let account = client.accountId()
@@ -39,6 +41,7 @@
 
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
+  let notifications: SpaceNotifications | undefined
 
   let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
@@ -84,7 +87,16 @@
   })
 
   let spaceQuery: QueryUpdater<Space> | undefined
+  let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
   $: if (currentRoute.space && navigatorModel) {
+    notificationQuery = client.query<SpaceNotifications>(
+      notificationQuery,
+      notification.class.SpaceNotifications,
+      { objectId: currentRoute.space },
+      (result) => {
+        notifications = result.shift()
+      }
+    )
     spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
       const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
       currentSpace = currentRoute.space === account.toString() ? buildUserSpace(account, target) : result[0]
@@ -131,7 +143,10 @@
       {#if spaceModel}
         <SpaceHeader model={navigatorModel} space={currentSpace} {spaceModel} />
       {/if}
-      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentSpace }} />
+      <Component
+        is={navigatorModel.spaceView}
+        props={{ currentSpace: currentRoute.space, notifications: notifications }}
+      />
     {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
@@ -139,7 +154,7 @@
   {#if navigatorModel && navigatorModel.editComponent && currentRoute.itemId}
     <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
     <div bind:this={asideHTML} class="aside">
-      <Component is={navigatorModel.editComponent} props={{ id: currentRoute.itemId, currentSpace: currentSpace }} />
+      <Component is={navigatorModel.editComponent} props={{ id: currentRoute.itemId, notifications: notifications }} />
     </div>
   {/if}
 </div>

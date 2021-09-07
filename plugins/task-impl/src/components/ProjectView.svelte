@@ -13,10 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
+  import type { SpaceNotifications } from '@anticrm/notification'
   import TaskView from './TaskView.svelte'
 
-  export let currentSpace: Space
+  export let currentSpace: Ref<Space>
+  export let notifications: SpaceNotifications | undefined
 </script>
 
-<TaskView query={{ space: currentSpace._id }} />
+<TaskView query={{ space: currentSpace }} {notifications} />

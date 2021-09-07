@@ -21,9 +21,11 @@
   import ui, { ScrollBox } from '@anticrm/ui'
   import type { Task } from '@anticrm/task'
   import type { IntlString } from '@anticrm/status'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let view: IntlString = ui.string.List
   export let query: DocumentQuery<Task>
+  export let notifications: SpaceNotifications | undefined
 </script>
 
 <div class="toolbar">

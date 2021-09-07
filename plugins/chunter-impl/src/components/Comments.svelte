@@ -13,16 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef, SortingOrder, Space } from '@anticrm/core'
+  import { getFullRef, SortingOrder } from '@anticrm/core'
   import type { Message as MessageModel, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let message: MessageModel
-  export let currentSpace: Space
+  export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
   let query: QueryUpdater<Comment> | undefined
@@ -50,7 +51,7 @@
 
 <div class="channel-container">
   {#each comments as m (m._id)}
-    <Message {currentSpace} thread message={m} />
+    <Message {notifications} thread message={m} />
   {/each}
 </div>
 

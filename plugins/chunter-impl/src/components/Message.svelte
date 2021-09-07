@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { CommentRef, WithMessage, Message, Comment } from '@anticrm/chunter'
-  import { Account, parseFullRef, Ref, Space, Timestamp } from '@anticrm/core'
+  import { Account, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import core from '@anticrm/core'
   import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
@@ -27,10 +27,11 @@
   import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let message: WithMessage
+  export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
-  export let currentSpace: Space
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -66,34 +67,33 @@
     user = await getUser(message.modifiedBy)
   })
 
-  function isNew (message: WithMessage, currentSpace: Space): boolean {
+  function isNew (message: WithMessage, notifications: SpaceNotifications | undefined): boolean {
+    if (notifications === undefined) return false
     if (!thread) {
-      if (message.modifiedOn > (currentSpace.account?.lastRead ?? message.modifiedOn)) return true
+      if (message.modifiedOn > notifications.lastRead) return true
       const comments = (message as Message).comments
       if (comments !== undefined) {
-        let lastTime = 0
-        if (currentSpace.account?.objectLastReads !== undefined) {
-          lastTime = currentSpace.account.objectLastReads.get(message._id) ?? lastTime
+        let lastTime = notifications.lastRead
+        if (notifications.objectLastReads.get !== undefined) {
+          lastTime = notifications.objectLastReads.get(message._id) ?? lastTime
         }
         for (const comment of comments) {
           if (comment.lastModified > lastTime) return true
         }
       }
     } else if ((message as Comment).replyOf !== undefined) {
-      let lastTime = currentSpace.account?.lastRead ?? 0
-      if (currentSpace.account?.objectLastReads !== undefined) {
+      let lastTime = notifications.lastRead
+      if (notifications.objectLastReads.get !== undefined) {
         const fullRef = parseFullRef((message as Comment).replyOf)
-        lastTime = currentSpace.account.objectLastReads.get(fullRef._id) ?? lastTime
+        lastTime = notifications.objectLastReads.get(fullRef._id) ?? lastTime
       }
-      if (message.modifiedOn > lastTime) {
-        return true
-      }
+      return message.modifiedOn > lastTime
     }
     return false
   }
 </script>
 
-<div class="container" class:no-thread={!thread} class:isNew={isNew(message, currentSpace)} on:click={onClick}>
+<div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}

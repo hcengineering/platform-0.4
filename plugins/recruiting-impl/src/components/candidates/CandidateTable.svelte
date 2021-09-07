@@ -23,7 +23,7 @@
   import recruiting from '../../plugin'
   import type { QueryUpdater } from '@anticrm/presentation'
 
-  export let currentSpace: Space | undefined
+  export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
   const columns = [
@@ -47,11 +47,11 @@
   const client = getClient()
   let data: Candidate[] = []
   let lq: QueryUpdater<Candidate> | undefined
-  $: if (currentSpace?._id !== prevSpace) {
-    prevSpace = currentSpace?._id
+  $: if (currentSpace !== prevSpace) {
+    prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace._id }, (result) => (data = result))
+      lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => (data = result))
     }
   }
 </script>

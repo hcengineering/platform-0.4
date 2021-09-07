@@ -41,6 +41,8 @@
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
 
   const dispatch = createEventDispatcher()
 
@@ -108,23 +110,21 @@
     updateLastRead()
   }
 
-  async function updateLastRead () {
-    if (space.account === undefined) {
-      space.account = { objectLastReads: new Map<Ref<Task>, Timestamp>() }
+  async function updateLastRead (): Promise<void> {
+    const notifications = (
+      await client.findAll(notification.class.SpaceNotifications, {
+        objectId: space._id
+      })
+    ).shift()
+    if (notifications === undefined) return
+    if (notifications.objectLastReads.set === undefined) {
+      notifications.objectLastReads = new Map<Ref<Task>, Timestamp>()
     }
-    if (space.account.objectLastReads === undefined) {
-      space.account.objectLastReads = new Map<Ref<Task>, Timestamp>()
-    }
-    space.account.objectLastReads.set(id, Date.now())
-    client.updateDoc<Space>(
-      space._class,
-      space.space,
-      space._id,
-      {
-        account: space.account
-      },
-      true
-    )
+    notifications.objectLastReads.set(id, Date.now())
+
+    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
+      lastRead: Date.now()
+    })
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]

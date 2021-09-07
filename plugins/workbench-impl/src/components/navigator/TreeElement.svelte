@@ -102,13 +102,15 @@
     &.sub {
       padding-left: 44px;
       font-weight: 400;
+      color: var(--theme-content-color);
       .icon {
         margin-right: 8px;
       }
     }
 
     &.changed {
-      font-weight: bold;
+      font-weight: 900;
+      color: var(--theme-caption-color);
     }
 
     .icon {

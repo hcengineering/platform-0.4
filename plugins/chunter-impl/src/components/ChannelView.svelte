@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import type { Message } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
@@ -21,9 +21,11 @@
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, beforeUpdate } from 'svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
-  export let currentSpace: Space | undefined
-  let prevSpace: Space | undefined
+  export let currentSpace: Ref<Space> | undefined
+  export let notifications: SpaceNotifications | undefined
+  let prevSpace: Ref<Space> | undefined
 
   const client = getClient()
   let div: HTMLElement
@@ -32,11 +34,11 @@
   let messages: Message[] = []
 
   async function addMessage (message: string): Promise<void> {
-    await client.createDoc(chunter.class.Message, currentSpace!._id, {
+    await client.createDoc(chunter.class.Message, currentSpace!, {
       message
     })
     lastTime = Date.now()
-    await updateLastRead(currentSpace!)
+    await updateLastRead()
   }
 
   let query: QueryUpdater<Message> | undefined
@@ -45,15 +47,15 @@
   let waitingUpdate = false
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
       autoscroll = lastPosition > 0 ? lastPosition > div.scrollHeight - div.clientHeight - 30 : false
     })
   }
 
   beforeUpdate(async () => {
-    if (currentSpace?._id !== prevSpace?._id) {
-      if (waitingUpdate && prevSpace !== undefined) await updateLastRead(prevSpace)
+    if (currentSpace !== prevSpace) {
+      if (waitingUpdate && prevSpace !== undefined) await updateLastRead()
       prevSpace = currentSpace
       lastPosition = 0
       lastTime = 0
@@ -72,14 +74,14 @@
       div.scrollTo(0, lastPosition)
       return
     }
-    if (currentSpace?.account?.lastRead !== undefined) {
+    if (notifications?.lastRead !== undefined) {
       const messages = div.getElementsByClassName('message')
       let olderNewMessage: HTMLElement | undefined
       for (let i = messages.length; i >= 0; i--) {
         const elem = messages[i] as HTMLElement
         if (elem === undefined) continue
         const modified = elem.dataset.modified
-        if (modified !== undefined && parseInt(modified) > currentSpace.account.lastRead) olderNewMessage = elem
+        if (modified !== undefined && parseInt(modified) > notifications.lastRead) olderNewMessage = elem
       }
       if (olderNewMessage !== undefined) {
         olderNewMessage.scrollIntoView(false)
@@ -107,7 +109,7 @@
       const messageModified = parseInt(modified)
       lastTime = messageModified > lastTime ? messageModified : lastTime
     }
-    if (lastTime > (currentSpace?.account?.lastRead ?? 0)) {
+    if (lastTime > (notifications?.lastRead ?? 0)) {
       if (!waitingUpdate) {
         waitingUpdate = true
         setTimeout(updateLastRead, 3000, currentSpace)
@@ -115,30 +117,18 @@
     }
   }
 
-  async function updateLastRead (space: Space) {
-    if (space.account === undefined) {
-      space.account = {
-        lastRead: lastTime
-      }
-    } else {
-      space.account.lastRead = lastTime
-    }
-    await client.updateDoc<Space>(
-      space._class,
-      space.space,
-      space._id,
-      {
-        account: space.account
-      },
-      true
-    )
+  async function updateLastRead (): Promise<void> {
+    if (notifications === undefined) return
+    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
+      lastRead: lastTime
+    })
     waitingUpdate = false
   }
 </script>
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
   {#if currentSpace}
-    <Channel {messages} {currentSpace} />
+    <Channel {messages} {notifications} />
   {/if}
 </div>
 <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />

@@ -21,7 +21,7 @@
   import EventTable from './EventTable.svelte'
   import List from './icons/List.svelte'
 
-  export let currentSpace: Space | undefined
+  export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
   let space: Space | undefined
@@ -30,10 +30,10 @@
   let lq: QueryUpdater<Space> | undefined
 
   $: if (currentSpace?._id !== prevSpace) {
-    prevSpace = currentSpace?._id
+    prevSpace = currentSpace
 
     if (currentSpace) {
-      lq = client.query(lq, core.class.Space, { _id: currentSpace._id }, (result) => {
+      lq = client.query(lq, core.class.Space, { _id: currentSpace }, (result) => {
         space = result[0]
       })
     }

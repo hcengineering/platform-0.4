@@ -14,15 +14,15 @@
 -->
 <script lang="ts">
   import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
-  import type { Space } from '@anticrm/core'
   import type { Comment } from '@anticrm/chunter'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let messages: Comment[] = []
-  export let currentSpace: Space
+  export let notifications: SpaceNotifications | undefined
 </script>
 
 <div class="msg-board">
-  <Channel {messages} {currentSpace} thread />
+  <Channel {messages} {notifications} thread />
 </div>
 <ReferenceInput withoutMargin={true} on:message />
 

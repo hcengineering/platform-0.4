@@ -22,7 +22,7 @@
 
   import EditEvent from './EditEvent.svelte'
 
-  export let currentSpace: Space | undefined
+  export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
   const columns = [
@@ -48,15 +48,15 @@
   let dEvents: Event[] = []
   let lqEvent: QueryUpdater<Event> | undefined
   let lqDEvent: QueryUpdater<DerivedEvent> | undefined
-  $: if (currentSpace?._id !== prevSpace) {
-    prevSpace = currentSpace?._id
+  $: if (currentSpace !== prevSpace) {
+    prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace._id }, (result) => (events = result))
+      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (events = result))
       lqDEvent = client.query(
         lqDEvent,
         calendar.class.DerivedEvent,
-        { space: currentSpace._id },
+        { space: currentSpace },
         (result) => (dEvents = result)
       )
     }

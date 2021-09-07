@@ -24,7 +24,7 @@
   import CandidatesWorkspace from './candidates/CandidatesWorkspace.svelte'
   import VacancyWorkspace from './vacancies/VacancyWorkspace.svelte'
 
-  export let currentSpace: VacancySpace | CandidatePoolSpace | undefined
+  export let currentSpace: Ref<VacancySpace | CandidatePoolSpace> | undefined
   let prevSpace: Ref<VacancySpace | CandidatePoolSpace> | undefined
 
   let space: VacancySpace | CandidatePoolSpace | undefined
@@ -32,11 +32,11 @@
   const client = getClient()
   let lq: QueryUpdater<Space> | undefined
 
-  $: if (currentSpace?._id !== prevSpace) {
-    prevSpace = currentSpace?._id
+  $: if (currentSpace !== prevSpace) {
+    prevSpace = currentSpace
 
     if (currentSpace) {
-      lq = client.query(lq, core.class.Space, { _id: currentSpace._id }, (result) => {
+      lq = client.query(lq, core.class.Space, { _id: currentSpace }, (result) => {
         space = result[0]
       })
     }
