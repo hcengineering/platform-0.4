@@ -27,8 +27,8 @@ import core, {
   Timestamp,
   Account,
   DerivedDataDescriptor,
-  DerivedData
-  , registerMapper
+  DerivedData,
+  registerMapper
 } from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
