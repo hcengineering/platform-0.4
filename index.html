@@ -9,7 +9,17 @@
 
 	<link rel='icon' type='image/png' href='/platform/favicon.png'>
 	<link rel='stylesheet' href='/platform/bundle.css'>
+
+    <script type="text/javascript">
+		const key = 'Platform_404_Uri'
+		var loc = localStorage.getItem(key)
+		if( loc ) {
+			localStorage.removeItem(key)
+			window.history.replaceState(null, null, loc)
+		}
+    </script>
 </head>
+
 
 <body style="margin: 0; overflow: hidden;">
 	<script>
