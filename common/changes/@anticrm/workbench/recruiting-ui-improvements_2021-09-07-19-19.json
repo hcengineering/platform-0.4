@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench",
+      "comment": "Make possible to provide edit and create components on space level",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/workbench"
+}
