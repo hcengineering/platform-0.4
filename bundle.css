@@ -414,93 +414,6 @@ li.ProseMirror-selectednode:after {
   border-color: var(--system-error-60-color);
 }
 
-/* fakecss:src/components/Tooltip.esbuild-svelte-fake-css */
-.trigger.svelte-swwvxo:hover + .tooltip.svelte-swwvxo {
-  visibility: visible;
-  opacity: 1;
-}
-.trigger.svelte-swwvxo:hover + .tooltip.top.svelte-swwvxo {
-  transform: translateY(-10px);
-}
-.trigger.svelte-swwvxo:hover + .tooltip.bottom.svelte-swwvxo {
-  transform: translateY(10px);
-}
-.trigger.svelte-swwvxo:hover + .tooltip.right.svelte-swwvxo {
-  transform: translateX(10px);
-}
-.trigger.svelte-swwvxo:hover + .tooltip.left.svelte-swwvxo {
-  transform: translateX(-10px);
-}
-.tooltip.svelte-swwvxo.svelte-swwvxo {
-  box-sizing: border-box;
-  position: absolute;
-  padding: 8px;
-  color: var(--theme-caption-color);
-  background-color: var(--theme-tooltip-color);
-  border: 1px solid var(--theme-bg-accent-color);
-  border-radius: 8px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
-  opacity: 0;
-  visibility: hidden;
-  transition: transform 0.3s ease, opacity 0.2s ease-in-out;
-  user-select: none;
-  text-align: center;
-  transition-delay: 0.2s;
-  z-index: 10;
-}
-.tooltip.svelte-swwvxo.svelte-swwvxo::after {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background-color: var(--theme-tooltip-color);
-  border: 1px solid var(--theme-bg-accent-color);
-  border-radius: 0 0 3px;
-  clip-path: polygon(100% 25%, 100% 100%, 25% 100%);
-}
-.tooltip.top.svelte-swwvxo.svelte-swwvxo::after,
-.tooltip.bottom.svelte-swwvxo.svelte-swwvxo::after {
-  left: 50%;
-  margin-left: -8px;
-}
-.tooltip.top.svelte-swwvxo.svelte-swwvxo {
-  bottom: 100%;
-  box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-}
-.tooltip.top.svelte-swwvxo.svelte-swwvxo::after {
-  bottom: -5px;
-  transform: rotate(45deg);
-}
-.tooltip.bottom.svelte-swwvxo.svelte-swwvxo {
-  top: 100%;
-  box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-}
-.tooltip.bottom.svelte-swwvxo.svelte-swwvxo::after {
-  top: -5px;
-  transform: rotate(-135deg);
-}
-.tooltip.right.svelte-swwvxo.svelte-swwvxo::after,
-.tooltip.left.svelte-swwvxo.svelte-swwvxo::after {
-  top: 50%;
-  margin-top: -8px;
-}
-.tooltip.right.svelte-swwvxo.svelte-swwvxo {
-  left: 100%;
-  box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
-}
-.tooltip.right.svelte-swwvxo.svelte-swwvxo::after {
-  left: -5px;
-  transform: rotate(135deg);
-}
-.tooltip.left.svelte-swwvxo.svelte-swwvxo {
-  right: 100%;
-  box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
-}
-.tooltip.left.svelte-swwvxo.svelte-swwvxo::after {
-  right: -5px;
-  transform: rotate(-45deg);
-}
-
 /* fakecss:src/components/ActionIcon.esbuild-svelte-fake-css */
 .button.svelte-1iitm9n.svelte-1iitm9n {
   display: flex;
@@ -1639,6 +1552,77 @@ th.svelte-1lkmas2 {
   to {
     opacity: 1;
   }
+}
+
+/* fakecss:src/components/TooltipInstance.esbuild-svelte-fake-css */
+.tooltip.svelte-4upyyc {
+  position: fixed;
+  padding: 8px;
+  color: var(--theme-caption-color);
+  background-color: var(--theme-tooltip-color);
+  border: 1px solid var(--theme-bg-accent-color);
+  border-radius: 8px;
+  user-select: none;
+  text-align: center;
+  z-index: 10;
+}
+.tooltip.svelte-4upyyc::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: var(--theme-tooltip-color);
+  border: 1px solid var(--theme-bg-accent-color);
+  border-radius: 0 0 3px;
+  clip-path: polygon(100% 25%, 100% 100%, 25% 100%);
+}
+.tooltip.top.svelte-4upyyc::after,
+.tooltip.bottom.svelte-4upyyc::after {
+  left: 50%;
+  margin-left: -8px;
+}
+.tooltip.top.svelte-4upyyc {
+  bottom: 100%;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.35);
+}
+.tooltip.top.svelte-4upyyc::after {
+  bottom: -5px;
+  transform: rotate(45deg);
+}
+.tooltip.bottom.svelte-4upyyc {
+  top: 100%;
+  box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.35);
+}
+.tooltip.bottom.svelte-4upyyc::after {
+  top: -5px;
+  transform: rotate(-135deg);
+}
+.tooltip.right.svelte-4upyyc::after,
+.tooltip.left.svelte-4upyyc::after {
+  top: 50%;
+  margin-top: -8px;
+}
+.tooltip.right.svelte-4upyyc {
+  left: 100%;
+  box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.35);
+}
+.tooltip.right.svelte-4upyyc::after {
+  left: -5px;
+  transform: rotate(135deg);
+}
+.tooltip.left.svelte-4upyyc {
+  right: 100%;
+  box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.35);
+}
+.tooltip.left.svelte-4upyyc::after {
+  right: -5px;
+  transform: rotate(-45deg);
+}
+.no-arrow.svelte-4upyyc {
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.75);
+}
+.no-arrow.svelte-4upyyc::after {
+  content: none;
 }
 
 /* fakecss:src/components/text/MessageViewer.esbuild-svelte-fake-css */
