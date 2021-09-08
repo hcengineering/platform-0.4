@@ -1626,23 +1626,24 @@ th.svelte-1lkmas2 {
 }
 
 /* fakecss:src/components/text/MessageViewer.esbuild-svelte-fake-css */
-.inline_block.svelte-1j1hd79 {
+.inline_block.svelte-17p9241 {
   display: inline;
+  word-wrap: break-word;
   white-space: pre-inline;
 }
-.bold.svelte-1j1hd79 {
+.bold.svelte-17p9241 {
   font-weight: bold;
 }
-.italic.svelte-1j1hd79 {
+.italic.svelte-17p9241 {
   font-style: italic;
 }
-.code.svelte-1j1hd79 {
+.code.svelte-17p9241 {
   background-color: #444444;
 }
-.resolved_reference.svelte-1j1hd79 {
+.resolved_reference.svelte-17p9241 {
   color: lightblue;
 }
-.unknown_reference.svelte-1j1hd79 {
+.unknown_reference.svelte-17p9241 {
   color: grey;
 }
 
