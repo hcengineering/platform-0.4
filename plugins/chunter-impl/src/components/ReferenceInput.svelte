@@ -338,12 +338,18 @@
         height: 24px;
         border-radius: 4px;
 
-        & .icon { opacity: .3; }
-        &:hover .icon { opacity: 1; }
+        & .icon {
+          opacity: 0.3;
+        }
+        &:hover .icon {
+          opacity: 1;
+        }
         &:focus {
           border: 1px solid var(--primary-button-focused-border);
           box-shadow: 0 0 0 3px var(--primary-button-outline);
-          & .icon { opacity: 1; }
+          & .icon {
+            opacity: 1;
+          }
         }
       }
     }

@@ -90,9 +90,15 @@
       margin-left: 12px;
       opacity: 0.4;
       cursor: pointer;
-      &:hover { opacity: 1; }
+      &:hover {
+        opacity: 1;
+      }
     }
   }
-  .content { flex-grow: 1; }
-  .ref-input { margin: 20px 0 0; }
+  .content {
+    flex-grow: 1;
+  }
+  .ref-input {
+    margin: 20px 0 0;
+  }
 </style>
