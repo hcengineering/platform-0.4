@@ -13,17 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString, UIComponent } from '@anticrm/status'
-
+  import type { IconGroupItem } from '../types'
   import Tooltip from './Tooltip.svelte'
 
-  interface Item {
-    tooltip: IntlString
-    icon: UIComponent
-    id: string
-  }
-
-  export let items: Array<Item>
+  export let items: Array<IconGroupItem>
   export let selected: string = items[0]?.id ?? ''
 
   let lastItems = items

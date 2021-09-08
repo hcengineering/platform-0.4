@@ -17,7 +17,8 @@
   import type { DerivedEvent, Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getClient, WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import { getRouter, IconClose, ScrollBox } from '@anticrm/ui'
 
   import EventEditor from './EventEditor.svelte'

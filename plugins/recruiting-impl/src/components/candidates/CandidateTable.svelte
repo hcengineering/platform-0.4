@@ -15,7 +15,8 @@
 <script lang="ts">
   import { Table, Label, getRouter } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
