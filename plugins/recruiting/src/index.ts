@@ -13,24 +13,26 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Class, Person, Ref, Space, Timestamp } from '@anticrm/core'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 
-export interface Resume extends Doc {
-  description: string
+export enum CandidateStatus {
+  Employed = 'employed',
+  AvailableForHire = 'available-for-hire'
 }
 
-export interface Candidate extends Doc {
-  name: string
-  bio: string
-  position: string
-  location: string
+export interface Candidate extends Person {
+  status: CandidateStatus
+  employment: {
+    position: string
+    experience: number
+  }
   salaryExpectation?: number
-  resume: Ref<Resume>
+  resume: string
 }
 
 export interface Applicant extends FSMItem {}
@@ -64,7 +66,6 @@ export default plugin(PluginRecruiting, {}, {
   class: {
     Candidate: '' as Ref<Class<Candidate>>,
     CandidatePoolSpace: '' as Ref<Class<CandidatePoolSpace>>,
-    Resume: '' as Ref<Class<Resume>>,
     Applicant: '' as Ref<Class<Applicant>>,
     VacancySpace: '' as Ref<Class<VacancySpace>>
   },
@@ -79,8 +80,10 @@ export default plugin(PluginRecruiting, {}, {
     App: '' as IntlString,
     Candidates: '' as IntlString,
     Vacancies: '' as IntlString,
-
     Name: '' as IntlString,
+
+    GeneralInformation: '' as IntlString,
+    Details: '' as IntlString,
     VacancyTitle: '' as IntlString,
     Description: '' as IntlString,
     MakePrivate: '' as IntlString,
@@ -91,19 +94,32 @@ export default plugin(PluginRecruiting, {}, {
     VacancyDetails: '' as IntlString,
     Summary: '' as IntlString,
     Qualification: '' as IntlString,
-    Experience: '' as IntlString,
+    VacationExperience: '' as IntlString,
     Flow: '' as IntlString,
+    Location: '' as IntlString,
 
-    GeneralInformation: '' as IntlString,
-    Details: '' as IntlString,
+    PersonalInformation: '' as IntlString,
+    FirstName: '' as IntlString,
+    LastName: '' as IntlString,
+    Email: '' as IntlString,
+    Phone: '' as IntlString,
+    SalaryExpectation: '' as IntlString,
+    Position: '' as IntlString,
+    Experience: '' as IntlString,
+    EmploymentStatus: '' as IntlString,
+    Address: '' as IntlString,
+    Street: '' as IntlString,
+    City: '' as IntlString,
+    Zip: '' as IntlString,
+    Country: '' as IntlString,
+    ApplicationInfo: '' as IntlString,
+    CreateApplication: '' as IntlString,
+    Unassign: '' as IntlString,
 
     AddPoolSpace: '' as IntlString,
 
     AddVacancy: '' as IntlString,
     Company: '' as IntlString,
-
-    Position: '' as IntlString,
-    Location: '' as IntlString,
 
     AddCandidate: '' as IntlString,
     Bio: '' as IntlString

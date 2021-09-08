@@ -14,9 +14,9 @@
 //
 
 import { Builder, Model } from '@anticrm/model'
-import type { Applicant, Candidate, CandidatePoolSpace, Resume, VacancySpace } from '@anticrm/recruiting'
-import core, { TDoc, TSpace } from '@anticrm/model-core'
-import { Domain, Ref, Timestamp } from '@anticrm/core'
+import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
+import core, { TPerson, TSpace } from '@anticrm/model-core'
+import { Domain, Timestamp } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
@@ -27,14 +27,16 @@ const DOMAIN_RECRUITING = 'recruiting' as Domain
 /**
  * @public
  */
-@Model(recruiting.class.Candidate, core.class.Doc, DOMAIN_RECRUITING)
-class TCandidate extends TDoc implements Candidate {
-  name!: string
-  bio!: string
-  location!: string
-  position!: string
+@Model(recruiting.class.Candidate, core.class.Person, DOMAIN_RECRUITING)
+class TCandidate extends TPerson implements Candidate {
+  status!: CandidateStatus
+  employment!: {
+    position: string
+    experience: number
+  }
+
   salaryExpectation!: number
-  resume!: Ref<Resume>
+  resume!: string
 }
 
 /**
@@ -42,14 +44,6 @@ class TCandidate extends TDoc implements Candidate {
  */
 @Model(recruiting.class.CandidatePoolSpace, core.class.Space)
 class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
-
-/**
- * @public
- */
-@Model(recruiting.class.Resume, core.class.Doc, DOMAIN_RECRUITING)
-class TResume extends TDoc implements Resume {
-  description!: string
-}
 
 /**
  * @public
@@ -73,7 +67,7 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
  * @public
  */
 export function createModel (builder: Builder): void {
-  builder.createModel(TApplicant, TResume, TCandidate, TCandidatePoolSpace, TVacancySpace)
+  builder.createModel(TApplicant, TCandidate, TCandidatePoolSpace, TVacancySpace)
 
   builder.createDoc(
     workbench.class.Application,

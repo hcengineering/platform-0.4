@@ -27,18 +27,13 @@
   // but it's gonna get updated eventually
   const columns = [
     {
-      label: recruiting.string.Name,
-      properties: [{ key: 'name', property: 'label' }],
+      label: recruiting.string.FirstName,
+      properties: [{ key: 'firstName', property: 'label' }],
       component: Label
     },
     {
-      label: recruiting.string.Position,
-      properties: [{ key: 'position', property: 'label' }],
-      component: Label
-    },
-    {
-      label: recruiting.string.Location,
-      properties: [{ key: 'location', property: 'label' }],
+      label: recruiting.string.LastName,
+      properties: [{ key: 'lastName', property: 'label' }],
       component: Label
     }
   ]

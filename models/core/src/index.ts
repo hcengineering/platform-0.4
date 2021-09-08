@@ -18,7 +18,7 @@ import core from './component'
 import { TClass, TDoc, TMixin, TObj } from './core'
 import { TDerivedData, TDerivedDataDescriptor, TReference, TShortRef, TTitle } from './derived'
 import { TDocumentPresenter } from './presentation'
-import { TSpace, TAccount } from './security'
+import { TSpace, TAccount, TPerson } from './security'
 import { TTx, TTxCreateDoc, TTxRemoveDoc, TTxUpdateDoc } from './tx'
 
 export * from './core'
@@ -42,6 +42,7 @@ export function createModel (builder: Builder): void {
     TTxUpdateDoc,
     TTxRemoveDoc,
     TSpace,
+    TPerson,
     TAccount,
     TDerivedData,
     TDerivedDataDescriptor,
