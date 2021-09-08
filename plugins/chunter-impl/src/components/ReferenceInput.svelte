@@ -36,9 +36,6 @@
   import Mention from './icons/Mention.svelte'
   import chunter from '../plugin'
 
-  export let thread: boolean = false
-  export let withoutMargin: boolean = false
-
   export let stylesEnabled = false
   // If specified, submit button will be enabled, message will be send on any modify operation
   export let submitEnabled = true
@@ -224,11 +221,10 @@
   const transformFunction = createTextTransform(findTitle)
 </script>
 
-<div class="ref-container" class:withoutMargin>
-  <div class="textInput" style={`height: ${lines + 1}em;`}>
+<div class="ref-container">
+  <div class="flex-between textInput" style={`height: ${lines + 1}em;`}>
     <div
       class="inputMsg"
-      class:thread
       class:edit-box-vertical={stylesEnabled}
       class:edit-box-horizontal={!stylesEnabled}
       on:keydown={onKeyDown}
@@ -286,17 +282,9 @@
     display: flex;
     flex-direction: column;
     min-height: 74px;
-    margin: 20px 40px;
-
-    &.withoutMargin {
-      margin: 0px;
-    }
 
     .textInput {
       position: relative;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       min-height: 44px;
       padding: 12px 16px;
       background-color: var(--theme-bg-accent-color);
@@ -310,14 +298,12 @@
 
       .inputMsg {
         width: 100%;
+        max-width: calc(100% - 32px);
         height: 100%;
         color: var(--theme-content-color);
         background-color: transparent;
         border: none;
         outline: none;
-        &.thread {
-          width: auto;
-        }
 
         .edit-box-horizontal {
           width: 100%;
@@ -345,34 +331,19 @@
         }
       }
       .sendButton {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-shrink: 0;
         margin-left: 8px;
-        padding: 0;
-        width: 20px;
-        height: 20px;
-        background-color: transparent;
-        border: 1px solid transparent;
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
         border-radius: 4px;
-        outline: none;
-        cursor: pointer;
 
-        .icon {
-          width: 20px;
-          height: 20px;
-          opacity: 0.3;
-          cursor: pointer;
-          &:hover {
-            opacity: 1;
-          }
-        }
+        & .icon { opacity: .3; }
+        &:hover .icon { opacity: 1; }
         &:focus {
           border: 1px solid var(--primary-button-focused-border);
           box-shadow: 0 0 0 3px var(--primary-button-outline);
-          & > .icon {
-            opacity: 1;
-          }
+          & .icon { opacity: 1; }
         }
       }
     }

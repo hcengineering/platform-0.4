@@ -158,6 +158,7 @@
 <style lang="scss">
   .inline_block {
     display: inline;
+    word-wrap: break-word;
     white-space: pre-inline;
   }
 
