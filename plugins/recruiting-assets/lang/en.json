@@ -13,6 +13,16 @@
     "Bio": "Bio",
     "Position": "Position",
     "Location": "Location",
-    "AddCandidate": "Add candidate"
+    "AddCandidate": "Add candidate",
+    "GeneralInformation": "General Information",
+    "VacancyTitle": "Vacancy Title",
+    "VacancyNotes": "Vacancy Notes",
+    "Summary": "Summary",
+    "Qualification": "Key Qualifications",
+    "Experience": "Education & Experience",
+    "VacancyDetails": "Vacancy Details",
+    "VacancyType": "Job Type",
+    "Due": "Due",
+    "Flow": "Flow"
   }
 }

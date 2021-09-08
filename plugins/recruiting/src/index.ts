@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref, Space } from '@anticrm/core'
+import type { Class, Doc, Ref, Space, Timestamp } from '@anticrm/core'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
@@ -39,11 +39,14 @@ export interface CandidatePoolSpace extends Space {}
 
 export interface Vacancy {
   company: string
-  description: string
+  details?: {
+    summary: string
+    qualification: string
+    experience: string
+  }
   location: string
-  salary?: number
-  salaryMin?: number
-  salaryMax?: number
+  type: string
+  dueDate: Timestamp
 }
 export interface VacancySpace extends WithFSM, Vacancy {}
 
@@ -78,9 +81,21 @@ export default plugin(PluginRecruiting, {}, {
     Vacancies: '' as IntlString,
 
     Name: '' as IntlString,
+    VacancyTitle: '' as IntlString,
     Description: '' as IntlString,
     MakePrivate: '' as IntlString,
     MakePrivateDescription: '' as IntlString,
+    Due: '' as IntlString,
+    VacancyType: '' as IntlString,
+    VacancyNotes: '' as IntlString,
+    VacancyDetails: '' as IntlString,
+    Summary: '' as IntlString,
+    Qualification: '' as IntlString,
+    Experience: '' as IntlString,
+    Flow: '' as IntlString,
+
+    GeneralInformation: '' as IntlString,
+    Details: '' as IntlString,
 
     AddPoolSpace: '' as IntlString,
 

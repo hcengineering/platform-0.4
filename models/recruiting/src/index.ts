@@ -16,7 +16,7 @@
 import { Builder, Model } from '@anticrm/model'
 import type { Applicant, Candidate, CandidatePoolSpace, Resume, VacancySpace } from '@anticrm/recruiting'
 import core, { TDoc, TSpace } from '@anticrm/model-core'
-import { Domain, Ref } from '@anticrm/core'
+import { Domain, Ref, Timestamp } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
@@ -65,9 +65,8 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
   company!: string
   description!: string
   location!: string
-  salary!: number
-  salaryMin!: number
-  salaryMax!: number
+  type!: string
+  dueDate!: Timestamp
 }
 
 /**
