@@ -25,7 +25,6 @@
       if ($tooltip.element) {
         const rect = $tooltip.element.getBoundingClientRect()
         const doc = document.body.getBoundingClientRect()
-        const tip = tooltipHTML.getBoundingClientRect()
 
         if (!$tooltip.direction) {
           if (rect.right < doc.width / 5) dir = 'right'
@@ -101,7 +100,7 @@
     }
     &.top {
       bottom: 100%;
-      box-shadow: 0px 8px 20px rgba(0, 0, 0, .35);
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.35);
       &::after {
         bottom: -5px;
         transform: rotate(45deg);
@@ -109,7 +108,7 @@
     }
     &.bottom {
       top: 100%;
-      box-shadow: 0px -8px 20px rgba(0, 0, 0, .35);
+      box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.35);
       &::after {
         top: -5px;
         transform: rotate(-135deg);
@@ -123,7 +122,7 @@
     }
     &.right {
       left: 100%;
-      box-shadow: -8px 0px 20px rgba(0, 0, 0, .35);
+      box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.35);
       &::after {
         left: -5px;
         transform: rotate(135deg);
@@ -131,7 +130,7 @@
     }
     &.left {
       right: 100%;
-      box-shadow: 8px 0px 20px rgba(0, 0, 0, .35);
+      box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.35);
       &::after {
         right: -5px;
         transform: rotate(-45deg);
@@ -139,7 +138,9 @@
     }
   }
   .no-arrow {
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, .75);
-    &::after { content: none; }
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.75);
+    &::after {
+      content: none;
+    }
   }
 </style>

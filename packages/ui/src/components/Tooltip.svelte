@@ -23,9 +23,15 @@
   let triggerHTML: HTMLElement
 </script>
 
-<div class="tooltip-trigger" bind:this={triggerHTML}
-  on:mouseenter={(ev) => { showTooltip(label, triggerHTML, direction) }}
-  on:mouseleave={(ev) => { closeTooltip() }}
+<div
+  class="tooltip-trigger"
+  bind:this={triggerHTML}
+  on:mouseenter={(ev) => {
+    showTooltip(label, triggerHTML, direction)
+  }}
+  on:mouseleave={(ev) => {
+    closeTooltip()
+  }}
 >
   <slot />
 </div>

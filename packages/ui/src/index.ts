@@ -89,11 +89,11 @@ export const tooltipstore = writable<LabelAndProps>({
   direction: undefined
 })
 
-export function showTooltip(label: IntlString, element: HTMLElement, direction?: TooltipAligment): void {
+export function showTooltip (label: IntlString, element: HTMLElement, direction?: TooltipAligment): void {
   tooltipstore.set({ label: label, element: element, direction: direction })
 }
 
-export function closeTooltip(): void {
+export function closeTooltip (): void {
   tooltipstore.set({ label: undefined, element: undefined, direction: undefined })
 }
 
