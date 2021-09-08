@@ -29,7 +29,7 @@
         if (!$tooltip.direction) {
           if (rect.right < doc.width / 5) dir = 'right'
           else if (rect.left > doc.width - doc.width / 5) dir = 'left'
-          else if (rect.bottom < doc.height / 5) dir = 'bottom'
+          else if (rect.top < tooltipHTML.clientHeight) dir = 'bottom'
           else dir = 'top'
         } else dir = $tooltip.direction
 
