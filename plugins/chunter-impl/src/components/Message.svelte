@@ -100,10 +100,10 @@
   </div>
   {#if !thread}
     <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} direction={'left'} /></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} direction={'left'} /></div>
+      <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
+      <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
+      <div class="tool"><ActionIcon icon={Share} size={20} /></div>
+      <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
     </div>
   {/if}
 </div>
