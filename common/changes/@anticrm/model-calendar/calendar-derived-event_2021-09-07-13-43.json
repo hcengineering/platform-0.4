@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-calendar",
+      "comment": "Inherit DerivedEvent from Event",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/model-calendar"
+}
