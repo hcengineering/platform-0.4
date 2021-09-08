@@ -26,21 +26,17 @@
     icon: UIComponent
     tooltip: IntlString
     id: IDs
-  }[] = [
-    { icon: IconList, tooltip: ui.string.List, id: 'list' }
-  ]
+  }[] = [{ icon: IconList, tooltip: ui.string.List, id: 'list' }]
   let selected: IDs = 'list'
 
-  const views = new Map([
-    ['list', CandidateTable]
-  ])
+  const views = new Map([['list', CandidateTable]])
   let view: UIComponent | undefined = CandidateTable
   $: view = views.get(selected)
 </script>
 
 <div class="root">
   <div class="selector">
-    <IconGroup {items} bind:selected={selected} />
+    <IconGroup {items} bind:selected />
   </div>
   {#if view !== undefined}
     <svelte:component this={view} currentSpace={space._id} />

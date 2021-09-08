@@ -44,7 +44,7 @@
 
 <div class="root">
   <div class="selector">
-    <IconGroup {items} bind:selected={selected} />
+    <IconGroup {items} bind:selected />
   </div>
   {#if view !== undefined}
     <svelte:component this={view} {space} />

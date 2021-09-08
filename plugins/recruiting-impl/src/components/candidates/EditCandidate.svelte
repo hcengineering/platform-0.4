@@ -78,7 +78,7 @@
 {#if candidate !== undefined}
   <div class="header">
     <div class="title">
-    {candidate.name}
+      {candidate.name}
     </div>
     <div class="close" on:click={onClose}>
       <IconClose size={16} />
