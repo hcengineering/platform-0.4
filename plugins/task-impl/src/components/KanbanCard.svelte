@@ -39,9 +39,9 @@
       <UserInfo {user} size={24} avatarOnly />
     {/await}
     <div class="actions">
-      <ActionIcon size={24} icon={Chat} direction={'left'} label={task.string.Comments} />
+      <ActionIcon size={24} icon={Chat} label={task.string.Comments} />
       <div class="counter">{doc.comments.length}</div>
-      <ActionIcon size={24} icon={MoreH} direction={'left'} label={ui.string.More} />
+      <ActionIcon size={24} icon={MoreH} label={ui.string.More} />
     </div>
   </div>
 </div>

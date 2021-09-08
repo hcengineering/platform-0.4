@@ -17,7 +17,7 @@
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, Splitter } from '@anticrm/ui'
+  import { Component, Splitter, TooltipInstance } from '@anticrm/ui'
   import { newRouter } from '@anticrm/ui'
   import type { NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
@@ -144,6 +144,7 @@
   {/if}
 </div>
 <Modal />
+<TooltipInstance />
 
 <style lang="scss">
   @mixin panel($bg-color) {

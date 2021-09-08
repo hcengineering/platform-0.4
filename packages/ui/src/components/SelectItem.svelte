@@ -53,7 +53,6 @@
     <div class="icon">
       <ActionIcon
         label={removeLabel ?? ui.string.Remove}
-        direction={'top'}
         icon={Close}
         size={16}
         action={() => {
