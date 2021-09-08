@@ -136,10 +136,10 @@
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
   </div>
-  {#if spaceModel && spaceModel.internalEditComponent && currentRoute.itemId}
+  {#if spaceModel?.item?.editComponent && currentRoute.itemId}
     <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
     <div bind:this={asideHTML} class="aside">
-      <Component is={spaceModel?.internalEditComponent} props={{ id: currentRoute.itemId }} />
+      <Component is={spaceModel.item.editComponent} props={{ id: currentRoute.itemId }} />
     </div>
   {/if}
 </div>

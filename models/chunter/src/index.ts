@@ -97,7 +97,9 @@ export function createModel (builder: Builder): void {
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
             spaceHeader: chunter.component.SpaceHeader,
-            internalEditComponent: chunter.component.ThreadsView
+            item: {
+              editComponent: chunter.component.ThreadsView
+            }
           },
           {
             label: chunter.string.DirectMessages,
@@ -107,7 +109,9 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: chunter.string.CreateDirectMessage,
             spaceItem: chunter.component.SpaceItem,
             spaceHeader: chunter.component.SpaceHeader,
-            internalEditComponent: chunter.component.ThreadsView
+            item: {
+              editComponent: chunter.component.ThreadsView
+            }
           }
         ],
         spaceView: chunter.component.ChannelView

@@ -87,8 +87,10 @@ export function createModel (builder: Builder): void {
             members: [],
             private: true
           },
-          internalCreateComponent: calendar.component.CreateEvent,
-          internalEditComponent: calendar.component.EditEvent
+          item: {
+            createComponent: calendar.component.CreateEvent,
+            editComponent: calendar.component.EditEvent
+          }
         }
       ],
       spaceView: calendar.component.Workspace

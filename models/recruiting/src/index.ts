@@ -89,7 +89,9 @@ export function createModel (builder: Builder): void {
             spaceClass: recruiting.class.VacancySpace,
             addSpaceLabel: recruiting.string.AddVacancy,
             createComponent: recruiting.component.CreateVacancy,
-            internalCreateComponent: recruiting.component.CreateVacancy
+            item: {
+              createComponent: recruiting.component.CreateVacancy
+            }
           },
           {
             label: recruiting.string.Candidates,
@@ -97,8 +99,10 @@ export function createModel (builder: Builder): void {
             spaceClass: recruiting.class.CandidatePoolSpace,
             addSpaceLabel: recruiting.string.AddPoolSpace,
             createComponent: recruiting.component.CreatePool,
-            internalCreateComponent: recruiting.component.CreateCandidate,
-            internalEditComponent: recruiting.component.EditCandidate
+            item: {
+              createComponent: recruiting.component.CreateCandidate,
+              editComponent: recruiting.component.EditCandidate
+            }
           }
         ],
         spaceView: recruiting.component.WorkspaceComponent

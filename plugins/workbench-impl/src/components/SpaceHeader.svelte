@@ -26,7 +26,7 @@
   const client = getClient()
 
   const addAction = () => {
-    if (spaceModel?.internalCreateComponent !== undefined) showModal(spaceModel.internalCreateComponent, { space })
+    if (spaceModel?.item?.createComponent !== undefined) showModal(spaceModel.item.createComponent, { space })
   }
   const changeStarred = () => {
     if (space !== undefined) {
@@ -66,7 +66,7 @@
     {/if}
   </div>
   <div class="flex-row-center">
-    <Button label={spaceModel?.internalCreateLabel ?? ui.string.Create} size={'small'} primary on:click={addAction} />
+    <Button label={spaceModel?.item?.createLabel ?? ui.string.Create} size={'small'} primary on:click={addAction} />
     <div class="button">
       <ActionIcon icon={Star} size={16} padding={8} action={changeStarred} filled={space?.account?.starred ?? false} />
     </div>
