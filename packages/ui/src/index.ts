@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { UIComponent } from 'svelte'
+import { UIComponent } from '@anticrm/status'
 import Root from './components/internal/Root.svelte'
 
 export * from './types'
