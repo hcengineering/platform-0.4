@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Fix Send button.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

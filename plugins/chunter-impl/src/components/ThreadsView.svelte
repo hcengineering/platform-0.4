@@ -66,8 +66,10 @@
       <ChannelSeparator label={chunter.string.RepliesText} line />
       <Comments {message} />
     </ScrollBox>
-    <ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
   {/if}
+</div>
+<div class="ref-input">
+  <ReferenceInput on:message={(event) => addMessage(event.detail)} />
 </div>
 
 <style lang="scss">
@@ -93,8 +95,10 @@
       }
     }
   }
-
   .content {
-    height: calc(100vh - 231px);
+    flex-grow: 1;
+  }
+  .ref-input {
+    margin: 20px 0 0;
   }
 </style>
