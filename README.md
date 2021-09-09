@@ -45,6 +45,7 @@ is used for fast build all parts of the project.
     - [Running server](#running-server-1)
     - [Running site](#running-site)
   - [Dev tasks](#dev-tasks)
+    - [Force all parts of the projects to be rebuilt](#force-all-parts-of-the-projects-to-be-rebuilt)
     - [Format all changed files](#format-all-changed-files)
     - [Lint all changed files](#lint-all-changed-files)
     - [Execute tests on modified projects](#execute-tests-on-modified-projects)
@@ -240,7 +241,7 @@ That's it! Your application is available at http://localhost:8080
 
 All dev required tasks could be executed from root of project using `rushx` tool.
 
-#### Force all parts of the projects to be rebuilt
+#### Force all parts of the project to be rebuilt
 ```bash
 rush rebuild
 ```
