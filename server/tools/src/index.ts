@@ -17,6 +17,7 @@ import { generateToken } from '@anticrm/server'
 import { createWorkspace, shutdown, upgradeWorkspace } from '@anticrm/workspaces'
 import { Accounts } from '@anticrm/accounts'
 import { getMongoClient, shutdown as mongoShutdown } from '@anticrm/mongo'
+import builder from '@anticrm/model-all'
 
 if (process.argv.length < 2) {
   console.warn('please use server-cli with {command} {arg} ')
@@ -46,7 +47,7 @@ async function main (): Promise<void> {
   async function initWorkspace (): Promise<void> {
     if ((await accounts.findWorkspace(arg1)) === undefined) {
       await accounts.createWorkspace(arg1, arg2 ?? arg1)
-      await createWorkspace(arg1, { mongoDBUri: MONGO_URI })
+      await createWorkspace(arg1, { mongoDBUri: MONGO_URI, txes: builder.getTxes() })
     }
   }
   try {
@@ -72,7 +73,7 @@ async function main (): Promise<void> {
       }
       case 'upgrade-workspace': {
         console.log(`upgrading workspace ${arg1} (with dropping all model transactions)`)
-        await upgradeWorkspace(arg1, { mongoDBUri: MONGO_URI })
+        await upgradeWorkspace(arg1, { mongoDBUri: MONGO_URI, txes: builder.getTxes() })
         break
       }
       default:

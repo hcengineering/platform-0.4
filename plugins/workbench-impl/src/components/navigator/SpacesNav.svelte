@@ -110,21 +110,21 @@
 </script>
 
 <div>
-  <!-- {#if !(model.hideIfEmpty ?? false) || spaces.length > 0} -->
-  <TreeNode label={model.label} {actions}>
-    {#each spaces as space}
-      <TreeItem
-        notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
-        changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
-        component={model.spaceItem}
-        props={{ space: space }}
-        title={space.name}
-        icon={model.spaceIcon}
-        on:click={() => {
-          selectSpace(space._id)
-        }}
-      />
-    {/each}
-  </TreeNode>
-  <!-- {/if} -->
+  {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
+    <TreeNode label={model.label} {actions}>
+      {#each spaces as space}
+        <TreeItem
+          notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
+          changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
+          component={model.spaceItem}
+          props={{ space: space }}
+          title={space.name}
+          icon={model.spaceIcon}
+          on:click={() => {
+            selectSpace(space._id)
+          }}
+        />
+      {/each}
+    </TreeNode>
+  {/if}
 </div>

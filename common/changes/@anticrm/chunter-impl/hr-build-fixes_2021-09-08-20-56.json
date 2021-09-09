@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "HR build fixes",
+      "type": "patch",
+      "packageName": "@anticrm/chunter-impl"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "haiodo@gmail.com"
+}

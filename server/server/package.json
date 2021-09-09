@@ -1,7 +1,7 @@
 {
   "name": "@anticrm/server",
   "version": "0.4.0",
-  "main": "lib/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "build": "heft build",
     "test": "heft test",

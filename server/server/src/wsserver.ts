@@ -66,28 +66,32 @@ function connectClient (
       if (options.logTransactions || options.logRequests) {
         return {
           findAll: async (_class, query) => {
-            const result = await clientStorage.findAll(_class, query)
+            const resultTx = clientStorage.findAll(_class, query)
+            resultTx.catch(err => {
+              if (options.logRequests) {
+                console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)}`, err)
+              }
+            })
+            const result = await resultTx
             if (options.logRequests) {
-              console.info(
-                `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
-                  query,
-                  undefined,
-                  2
-                )} result: ${JSON.stringify(result, undefined, 2)}`
-              )
+              let printResult: any = result
+              if (Array.isArray(result)) {
+                printResult = result.slice(0, 5)
+              }
+              console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(printResult)}`)
             }
             return result
           },
           tx: async (tx) => {
-            const result = await clientStorage.tx(tx)
+            const resultTx = clientStorage.tx(tx)
+            resultTx.catch(err => {
+              if (options.logTransactions) {
+                console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)}`, err)
+              }
+            })
+            const result = await resultTx
             if (options.logTransactions) {
-              console.info(
-                `tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(
-                  result,
-                  undefined,
-                  2
-                )}`
-              )
+              console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result)}`)
             }
             return result
           },
@@ -96,8 +100,8 @@ function connectClient (
       }
 
       return clientStorage
-    } catch (err) {
-      console.log('FAILED to accept client:', err)
+    } catch (err: any) {
+      console.error('FAILED to accept client:', err.message)
       throw new Error('invalid token')
     }
   }

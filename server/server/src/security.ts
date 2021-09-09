@@ -165,7 +165,7 @@ export interface ClientInfo {
 function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref<Space>>): ObjQueryType<Ref<Space>> {
   if (typeof querySpace === 'string') {
     if (!spaces.has(querySpace)) {
-      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, {}))
+      throw new PlatformError(new Status(Severity.ERROR, Code.AccessDenied, { space: querySpace }))
     }
   } else {
     if (querySpace.$in?.every((space) => spaces.has(space)) === false) {
@@ -261,6 +261,6 @@ export class SecurityClientStorage implements WithAccountId {
 }
 
 export const Code = component('security' as Component, {
-  AccessDenied: '' as StatusCode,
+  AccessDenied: '' as StatusCode<{space?: Ref<Space>}>,
   TransactionSpaceDenied: '' as StatusCode
 })

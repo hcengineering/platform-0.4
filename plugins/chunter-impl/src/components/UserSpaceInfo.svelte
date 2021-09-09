@@ -55,7 +55,7 @@
     <div class="caption">
       <div class="title" class:header={headerSize} class:item={!headerSize}>
         {accounts
-          .map((u) => u.name)
+          .map((u) => (u.name.trim().length > 0 ? u.name : u.email))
           .slice(0, 2)
           .join(', ') + (accounts.length > 2 ? ` and ${accounts.length - 2} more.` : '')}
       </div>

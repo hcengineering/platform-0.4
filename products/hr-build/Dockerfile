@@ -2,7 +2,6 @@ FROM node:14-alpine
 
 WORKDIR /app
 COPY dist .
-COPY launcher.sh .
 
 # Public server host, will be used for auth and websocket access to server.
 ENV WEB_HOST=localhost
@@ -19,8 +18,9 @@ ENV MONGODB_URI=mongodb://localhost:27017
 
 # Workspace with following name will be automatically created if not pressent already.
 ENV WORKSPACE=workspace
+ENV WORKSPACE_ORGANIZATION=Organization
 
 EXPOSE 18080
 EXPOSE 8080
 
-CMD [ "sh", "launcher.sh" ]
+CMD [ "node", "./server.js" ]

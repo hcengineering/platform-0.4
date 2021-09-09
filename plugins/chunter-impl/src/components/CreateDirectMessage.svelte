@@ -44,32 +44,35 @@
   let accountUpdater: QueryUpdater<Account> | undefined = undefined
 
   $: accountUpdater = client.query<Account>(accountUpdater, core.class.Account, {}, (results) => {
-    allAccounts = results
+    allAccounts = results.filter((it) => it._id !== client.accountId())
   })
+
+  let query: QueryUpdater<Message> | undefined = undefined
 
   $: client.findAll<Account>(core.class.Account, { _id: { $in: to } }).then((acc) => {
     toAccount = acc
-    currentSpace = undefined
     notifications = undefined
     messages = []
+    query?.unsubscribe()
+  })
 
-    // Check if we have already a channel between us.
-    client.findAll<Space>(chunter.class.Channel, { direct: true, private: true }).then((channels) => {
-      for (const c of channels) {
-        const m1 = [...c.members].sort()
-        const m2 = [client.accountId(), ...to].sort()
-        if (deepEqual(m1, m2)) {
-          // Ok, we have channel already
-          currentSpace = c
-          break
+  // Check if we have already a channel between us.
+  $: client.findAll<Space>(chunter.class.Channel, { direct: true, private: true }).then((channels) => {
+    const targetAccounts = [client.accountId(), ...to].sort()
+    for (const c of channels) {
+      const channelAccounts = [...c.members].sort()
+      if (deepEqual(channelAccounts, targetAccounts)) {
+        // Ok, we have channel already
+        currentSpace = c
+        if (currentSpace !== undefined) {
+          client
+            .findAll(notification.class.SpaceNotifications, { objectId: currentSpace._id })
+            .then((result) => (notifications = result.shift()))
         }
+        return
       }
-      if (currentSpace !== undefined) {
-        client
-          .findAll(notification.class.SpaceNotifications, { objectId: currentSpace._id })
-          .then((result) => (notifications = result.shift()))
-      }
-    })
+      currentSpace = undefined
+    }
   })
 
   async function addMessage (message: string): Promise<void> {
@@ -105,8 +108,6 @@
     notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
   }
 
-  let query: QueryUpdater<Message> | undefined = undefined
-
   $: if (currentSpace !== undefined) {
     query = client.query<Message>(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
       messages = result
@@ -123,6 +124,9 @@
         selected: to.indexOf(acc._id) !== -1,
         action: () => {
           to = [...to, acc._id]
+        },
+        onDeselect: () => {
+          to = to.filter((it) => acc._id !== it)
         },
         matcher: (search) => {
           return acc.name.toLowerCase().indexOf(search) !== -1 || acc.email.toLowerCase().indexOf(search) !== -1

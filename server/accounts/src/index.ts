@@ -172,7 +172,6 @@ export class Accounts {
     return await this.workspaces().findOne<Workspace>({ workspace }) ?? undefined
   }
 
-
   async getAccountVerify (email: string, password: string): Promise<Account> {
     const account = await this.getAccount(email)
 
