@@ -13,8 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString } from '@anticrm/status'
-  import type { AnySvelteComponent, IPopupItem } from '../types'
+  import type { IntlString, UIComponent } from '@anticrm/status'
+  import type { IPopupItem } from '../types'
   import Add from './icons/Add.svelte'
   import Close from './icons/Close.svelte'
   import Search from './icons/Search.svelte'
@@ -25,7 +25,7 @@
   import ui from '../component'
   import { translate } from '@anticrm/platform'
 
-  export let component: AnySvelteComponent | undefined = undefined
+  export let component: UIComponent | undefined = undefined
   export let items: Array<IPopupItem>
   export let vAlign: 'top' | 'middle' | 'bottom' = 'bottom'
   export let hAlign: 'left' | 'center' | 'right' = 'left'

@@ -100,7 +100,9 @@
     </div>
   {/if}
 </div>
-<ReferenceInput on:message={(event) => addMessage(event.detail)} />
+<div class="ref-input">
+  <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+</div>
 
 <style lang="scss">
   .header {
@@ -125,7 +127,6 @@
       }
     }
   }
-
   .content {
     height: calc(100vh - 231px);
     display: flex;
@@ -134,5 +135,8 @@
     margin: 10px 10px 0px;
     padding: 10px 10px 0px;
     overflow: auto;
+  }
+  .ref-input {
+    margin: 20px 0 0;
   }
 </style>

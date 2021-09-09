@@ -75,6 +75,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dev/prod/dist
+      
+      - name: Archive artifacts...
+        uses: actions/upload-artifact@v2
+        with:
+          name: hr-build
+          path: |
+            products/hr-build/dist
           
 
   lint_and_format:

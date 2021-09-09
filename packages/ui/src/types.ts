@@ -13,16 +13,9 @@
 // limitations under the License.
 //
 
-import { /* Metadata, Plugin, plugin, */ Resource /*, Service */ } from '@anticrm/status'
-import { /* getContext, */ SvelteComponent } from 'svelte'
-import type { Asset, IntlString } from '@anticrm/status'
+import type { Asset, IntlString, UIComponent } from '@anticrm/status'
 
 export type { Asset }
-
-export type AnySvelteComponent = typeof SvelteComponent
-
-export type Component<C extends AnySvelteComponent> = Resource<C>
-export type AnyComponent = Resource<AnySvelteComponent>
 
 export const CONTEXT_PLATFORM = 'platform'
 export const CONTEXT_PLATFORM_UI = 'platform-ui'
@@ -46,19 +39,27 @@ export interface DocumentProvider {
 
 export interface Action {
   label: IntlString
-  icon: Asset | AnySvelteComponent
+  icon: Asset | UIComponent
   action: () => Promise<void>
 }
 
 export interface IPopupItem {
   _id?: number
   title?: IntlString
-  component?: AnySvelteComponent
+  component?: UIComponent
   props?: Object
   selected?: boolean
   action?: Function
   onDeselect?: Function
   matcher?: (search: string) => boolean
+}
+
+export type TooltipAligment = 'top' | 'bottom' | 'left' | 'right' | undefined
+
+export interface LabelAndProps {
+  label: IntlString | undefined
+  element: HTMLElement | undefined
+  direction?: TooltipAligment
 }
 
 export interface CheckListItem {

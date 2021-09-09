@@ -15,7 +15,7 @@
 
 import chunter from '@anticrm/chunter'
 import { mergeIds } from '@anticrm/status'
-import type { AnyComponent } from '@anticrm/ui'
+import type { AnyComponent } from '@anticrm/status'
 
 export default mergeIds(chunter, {
   component: {

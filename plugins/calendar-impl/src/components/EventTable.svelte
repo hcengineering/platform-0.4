@@ -17,7 +17,7 @@
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, showModal } from '@anticrm/workbench'
-  import type { DerivedEvent, Event } from '@anticrm/calendar'
+  import type { Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
 
   import EditEvent from './EditEvent.svelte'
@@ -44,28 +44,15 @@
   ]
 
   const client = getClient()
-  let events: Event[] = []
-  let dEvents: Event[] = []
+  let data: Event[] = []
   let lqEvent: QueryUpdater<Event> | undefined
-  let lqDEvent: QueryUpdater<DerivedEvent> | undefined
   $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (events = result))
-      lqDEvent = client.query(
-        lqDEvent,
-        calendar.class.DerivedEvent,
-        { space: currentSpace },
-        (result) => (dEvents = result)
-      )
+      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (data = result))
     }
   }
-
-  let data: Event[] = []
-
-  $: data = events.concat(dEvents)
-  $: console.log(data)
 </script>
 
 <Table {data} {columns} showHeader on:rowClick={(event) => showModal(EditEvent, { id: event.detail.id })} />

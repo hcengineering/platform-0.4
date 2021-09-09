@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@anticrm/platform":"~0.4.2",
-    "@anticrm/workbench":"~0.4.0"
+    "@anticrm/workbench":"~0.4.0",
+    "@anticrm/ui":"~0.4.1"
   }
 }

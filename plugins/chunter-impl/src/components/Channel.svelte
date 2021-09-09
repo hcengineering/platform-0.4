@@ -16,7 +16,6 @@
   import type { WithMessage } from '@anticrm/chunter'
   import type { SpaceNotifications } from '@anticrm/notification'
   import Message from './Message.svelte'
-  // import MessageTask from './MessageTask.svelte'
 
   export let messages: WithMessage[] = []
   export let notifications: SpaceNotifications | undefined

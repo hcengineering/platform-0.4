@@ -15,9 +15,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
 
-  import type { IntlString } from '@anticrm/status'
+  import type { IntlString, UIComponent } from '@anticrm/status'
 
-  import type { AnySvelteComponent } from '../../types'
   import Panel from './Panel.svelte'
   import Card from './Card.svelte'
   import ScrollBox from '../ScrollBox.svelte'
@@ -35,7 +34,7 @@
 
   export let items: Item[] = []
   export let states: State[] = []
-  export let cardComponent: AnySvelteComponent
+  export let cardComponent: UIComponent
 
   const dispatch = createEventDispatcher()
 

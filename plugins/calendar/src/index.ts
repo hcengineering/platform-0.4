@@ -14,11 +14,10 @@
 //
 
 import type { Account, Class, DerivedDataDescriptor, Doc, DocumentMapper, Ref, Space, Timestamp } from '@anticrm/core'
-import { AnyComponent } from '@anticrm/ui'
+import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { DerivedData } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Asset, IntlString, Resource } from '@anticrm/status'
 
 export interface Calendar extends Space {}
 

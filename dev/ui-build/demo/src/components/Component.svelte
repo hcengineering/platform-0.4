@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { AnyComponent } from '../types'
+  import type { AnyComponent } from '@anticrm/status'
   import Spinner from './Spinner.svelte'
   
   export let is: AnyComponent

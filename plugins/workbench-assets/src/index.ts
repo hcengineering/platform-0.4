@@ -13,8 +13,9 @@
 // limitations under the License.
 //
 
-import { addStringsLoader, loadMetadata } from '@anticrm/platform'
+import { addStringsLoader, loadMetadata, setMetadata } from '@anticrm/platform'
 import workbench from '@anticrm/workbench'
+import { applicationShortcutKey, defaultApplicationShortcutKey } from '@anticrm/ui'
 
 const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-eslint/no-var-requires
 loadMetadata(workbench.icon, {
@@ -25,3 +26,6 @@ loadMetadata(workbench.icon, {
 addStringsLoader(workbench.id, async (lang: string) => {
   return await import(`../lang/${lang}.json`)
 })
+
+setMetadata(applicationShortcutKey('workbench'), workbench.component.WorkbenchApp)
+setMetadata(defaultApplicationShortcutKey(), 'workbench')
