@@ -45,6 +45,11 @@ export interface SpacesNavModel {
   spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
   hideIfEmpty?: boolean // If defined and true, category will be not visible
   userSpace?: Data<Space>
+  item?: {
+    createComponent?: AnyComponent
+    createLabel?: IntlString
+    editComponent?: AnyComponent
+  }
 }
 
 /**
@@ -64,8 +69,6 @@ export interface NavigatorModel {
   specials?: SpecialNavModel[]
   spaces: SpacesNavModel[]
   spaceView: AnyComponent
-  createComponent?: AnyComponent
-  editComponent?: AnyComponent
 }
 
 /**

@@ -33,7 +33,7 @@
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import task from '../plugin'
-  import core, { Timestamp } from '@anticrm/core'
+  import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'

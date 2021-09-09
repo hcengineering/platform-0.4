@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-impl",
+      "comment": "Apply multiple UI related changes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-impl"
+}

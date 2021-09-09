@@ -17,13 +17,12 @@
   import { getClient } from '@anticrm/workbench'
   import type { State } from '@anticrm/fsm'
   import { fsmPlugin as fsm } from '@anticrm/fsm-impl'
+  import recruiting from '@anticrm/recruiting'
+  import type { QueryUpdater } from '@anticrm/presentation'
 
   import { Kanban } from '@anticrm/ui'
   import ApplicantCard from './ApplicantCard.svelte'
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
-
-  import recruiting from '../../plugin'
-  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined

@@ -18,8 +18,7 @@
   import type { CandidatePoolSpace, VacancySpace } from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
-
-  import plugin from '../plugin'
+  import plugin from '@anticrm/recruiting'
 
   import CandidatesWorkspace from './candidates/CandidatesWorkspace.svelte'
   import VacancyWorkspace from './vacancies/VacancyWorkspace.svelte'

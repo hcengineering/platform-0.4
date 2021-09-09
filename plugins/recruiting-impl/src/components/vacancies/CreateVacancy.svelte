@@ -19,10 +19,9 @@
   import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { VacancySpace } from '@anticrm/recruiting'
+  import recruiting from '@anticrm/recruiting'
   import type { FSM } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
-
-  import recruiting from '../../plugin'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()

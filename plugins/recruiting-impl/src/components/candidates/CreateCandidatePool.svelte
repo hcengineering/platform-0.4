@@ -18,8 +18,7 @@
   import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
-
-  import recruiting from '../../plugin'
+  import recruiting from '@anticrm/recruiting'
 
   const client = getClient()
 

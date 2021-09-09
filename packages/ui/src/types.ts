@@ -85,4 +85,10 @@ export interface ItemRefefence {
   class: string
 }
 
+export interface IconGroupItem {
+  tooltip: IntlString
+  icon: UIComponent
+  id: string
+}
+
 export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}

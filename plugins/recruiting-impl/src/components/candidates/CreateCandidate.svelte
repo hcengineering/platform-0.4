@@ -18,12 +18,11 @@
   import { EditBox, Dialog, TextArea } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate, Resume } from '@anticrm/recruiting'
-
-  import recruiting from '../../plugin'
+  import recruiting from '@anticrm/recruiting'
 
   const dispatch = createEventDispatcher()
 
-  export let space: Ref<Space>
+  export let space: Space
   const client = getClient()
 
   const candidate: Omit<Candidate, keyof Doc> = {
@@ -35,7 +34,7 @@
   }
 
   async function create () {
-    await client.createDoc(recruiting.class.Candidate, space, candidate)
+    await client.createDoc(recruiting.class.Candidate, space._id, candidate)
   }
 </script>
 

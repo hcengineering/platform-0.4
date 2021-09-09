@@ -77,12 +77,14 @@ export function createModel (builder: Builder): void {
             spaceIcon: task.icon.Task,
             spaceClass: task.class.Project,
             addSpaceLabel: task.string.CreateProject,
-            createComponent: task.component.CreateProject
+            createComponent: task.component.CreateProject,
+            item: {
+              createComponent: task.component.CreateTask,
+              editComponent: task.component.EditTask
+            }
           }
         ],
-        spaceView: task.component.ProjectView,
-        createComponent: task.component.CreateTask,
-        editComponent: task.component.EditTask
+        spaceView: task.component.ProjectView
       }
     },
     task.ids.Application

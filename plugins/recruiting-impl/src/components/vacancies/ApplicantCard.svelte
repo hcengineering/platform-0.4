@@ -15,10 +15,10 @@
 <script lang="ts">
   import type { Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
+  import recruiting from '@anticrm/recruiting'
 
   import type { Applicant, Candidate } from '@anticrm/recruiting'
 
-  import recruiting from '../../plugin'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let doc: Applicant
