@@ -484,38 +484,6 @@
   opacity: 1;
 }
 
-/* fakecss:src/components/ViewSelection.esbuild-svelte-fake-css */
-.viewSelection-container.svelte-17lma94.svelte-17lma94 {
-  display: flex;
-  flex-direction: row;
-  height: 32px;
-}
-.viewSelection-container.svelte-17lma94 .button.svelte-17lma94 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: transparent;
-  cursor: pointer;
-}
-.viewSelection-container.svelte-17lma94 .button .icon.svelte-17lma94 {
-  width: 16px;
-  height: 16px;
-  opacity: 0.2;
-}
-.viewSelection-container.svelte-17lma94 .button:hover .icon.svelte-17lma94 {
-  opacity: 1;
-}
-.viewSelection-container.svelte-17lma94 .button.selected.svelte-17lma94 {
-  background-color: var(--theme-button-bg-enabled);
-  cursor: default;
-}
-.viewSelection-container.svelte-17lma94 .button.selected .icon.svelte-17lma94 {
-  opacity: 0.8;
-}
-
 /* fakecss:src/components/KanbanCard.esbuild-svelte-fake-css */
 .card-container.svelte-1m6tbvp.svelte-1m6tbvp {
   display: flex;

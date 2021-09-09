@@ -1625,6 +1625,38 @@ th.svelte-1lkmas2 {
   content: none;
 }
 
+/* fakecss:src/components/IconGroup.esbuild-svelte-fake-css */
+.root.svelte-1wl1j9v.svelte-1wl1j9v {
+  display: flex;
+  flex-direction: row;
+  height: 32px;
+}
+.item.svelte-1wl1j9v.svelte-1wl1j9v {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.item.svelte-1wl1j9v:hover > .icon.svelte-1wl1j9v {
+  opacity: 1;
+}
+.item.selected.svelte-1wl1j9v.svelte-1wl1j9v {
+  background-color: var(--theme-button-bg-enabled);
+  cursor: default;
+}
+.icon.svelte-1wl1j9v.svelte-1wl1j9v {
+  width: 16px;
+  height: 16px;
+  opacity: 0.2;
+}
+.icon.selected.svelte-1wl1j9v.svelte-1wl1j9v {
+  opacity: 0.8;
+}
+
 /* fakecss:src/components/text/MessageViewer.esbuild-svelte-fake-css */
 .inline_block.svelte-17p9241 {
   display: inline;

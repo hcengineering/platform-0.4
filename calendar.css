@@ -1,58 +1,35 @@
-/* fakecss:src/components/Float.esbuild-svelte-fake-css */
-.root.svelte-oer3sb {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: row;
-  width: 100vw;
-  max-height: 100vh;
-  height: 100vh;
-}
-.container.svelte-oer3sb {
+/* fakecss:src/components/Workspace.esbuild-svelte-fake-css */
+.root.svelte-14p8f9h {
   display: flex;
   flex-direction: column;
-  min-width: 40%;
-  max-width: 80%;
-  width: auto;
-  max-height: 100vh;
-  height: 100vh;
-  background-color: var(--theme-bg-color);
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
-  box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
 }
-.header.svelte-oer3sb {
+.content.svelte-14p8f9h {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  margin-top: 12px;
-  padding: 0 32px 0 40px;
-  height: 72px;
-}
-.title.svelte-oer3sb {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
   flex-grow: 1;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 26px;
-  color: var(--theme-caption-color);
-  user-select: none;
+  width: 100%;
+  height: 100%;
 }
-.close.svelte-oer3sb {
-  width: 16px;
-  height: 16px;
-  margin-left: 12px;
-  opacity: 0.4;
-  cursor: pointer;
+.selector.svelte-14p8f9h {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  padding: 20px 40px;
+  width: 100%;
 }
-.close.svelte-oer3sb:hover {
-  opacity: 1;
-}
-.content.svelte-oer3sb {
-  flex-shrink: 0;
-  margin: 24px 20px 0;
-  padding: 0 20px;
-  height: calc(100vh - 204px);
+
+/* fakecss:src/components/CreateCalendar.esbuild-svelte-fake-css */
+.content.svelte-sc4c5l {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* fakecss:src/components/EventEditor.esbuild-svelte-fake-css */
@@ -86,51 +63,25 @@
   gap: 20px;
 }
 
-/* fakecss:src/components/Workspace.esbuild-svelte-fake-css */
-.root.svelte-9w5x31 {
+/* fakecss:src/components/EditEvent.esbuild-svelte-fake-css */
+.header.svelte-2gda8s {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-  width: 100%;
-  height: 100%;
-}
-.content.svelte-9w5x31 {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-  flex-grow: 1;
-  width: 100%;
-  height: 100%;
-}
-.selector.svelte-9w5x31 {
-  display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  gap: 5px;
-  padding: 20px 40px;
-  width: 100%;
+  padding-bottom: 20px;
 }
-.opt.svelte-9w5x31 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: transparent;
+.title.svelte-2gda8s {
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--theme-caption-color);
+  user-select: none;
+}
+.close.svelte-2gda8s {
+  margin-left: 12px;
+  opacity: 0.4;
   cursor: pointer;
 }
-.opt.selected.svelte-9w5x31 {
-  background-color: var(--theme-button-bg-enabled);
-  cursor: default;
-}
-
-/* fakecss:src/components/CreateCalendar.esbuild-svelte-fake-css */
-.content.svelte-sc4c5l {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.close.svelte-2gda8s:hover {
+  opacity: 1;
 }
 
