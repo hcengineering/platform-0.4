@@ -264,7 +264,7 @@ rushx lint-diff
 rushx test-diff
 ```
 
-## Know issues
+## Known issues
 
 ### MacOS on M1
 
