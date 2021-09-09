@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-notification",
+      "comment": "notification",
+      "type": "none"
+    }
+  ],
+  "packageName": "@anticrm/model-notification"
+}

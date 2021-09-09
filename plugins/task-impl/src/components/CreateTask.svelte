@@ -32,8 +32,8 @@
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { generateId, getFullRef } from '@anticrm/core'
-  import type { Account, Ref, Space, Timestamp } from '@anticrm/core'
+  import core, { generateId, getFullRef, Timestamp } from '@anticrm/core'
+  import type { Account, Ref, Space } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
@@ -41,6 +41,8 @@
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
 
   const dispatch = createEventDispatcher()
 
@@ -49,7 +51,7 @@
   let description: string = ''
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
-  let comments: Message[] = []
+  let comments: Comment[] = []
   let dueTo: Date
   let status: IntlString = TaskStatuses.Open
   const id = generateId() as Ref<Task>
@@ -65,23 +67,19 @@
     }
   }
 
-  interface Message {
-    _id: Ref<Comment>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
-
   function addMessage (message: string): void {
     comments.push({
       message: message,
       modifiedBy: client.accountId(),
       modifiedOn: Date.now(),
       createOn: Date.now(),
-      _id: generateId()
+      _id: generateId(),
+      space: space._id,
+      _class: chunter.class.Comment,
+      replyOf: getFullRef(id, task.class.Task)
     })
     comments = comments
+    updateLastRead()
   }
 
   async function create () {
@@ -109,6 +107,24 @@
         replyOf: getFullRef(id, task.class.Task)
       })
     }
+    updateLastRead()
+  }
+
+  async function updateLastRead (): Promise<void> {
+    const notifications = (
+      await client.findAll(notification.class.SpaceNotifications, {
+        objectId: space._id
+      })
+    ).shift()
+    if (notifications === undefined) return
+    if (notifications.objectLastReads.set === undefined) {
+      notifications.objectLastReads = new Map<Ref<Task>, Timestamp>()
+    }
+    notifications.objectLastReads.set(id, Date.now())
+
+    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
+      lastRead: Date.now()
+    })
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
@@ -142,13 +158,18 @@
         {/await}
         <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
         <Row>
-          <DescriptionEditor label={task.string.TaskDescription} lines={5} bind:value={description} />
+          <DescriptionEditor
+            placeholder={task.string.TaskDescription}
+            label={task.string.TaskDescription}
+            lines={5}
+            bind:value={description}
+          />
         </Row>
       </Grid>
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
       <Grid column={1}>
-        <Comments messages={comments} on:message={(event) => addMessage(event.detail)} />
+        <Comments messages={comments} currentSpace={space} on:message={(event) => addMessage(event.detail)} />
       </Grid>
     </Section>
   {:else if selectedTab === task.string.Attachment}

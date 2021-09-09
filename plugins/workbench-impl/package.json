@@ -52,6 +52,7 @@
     "@anticrm/plugin-core": "~0.4.0",
     "@anticrm/core": "~0.4.0",
     "@anticrm/presentation": "~0.4.0",
+    "@anticrm/notification": "~0.4.0",
     "@anticrm/login": "~0.4.0"
   }
 }

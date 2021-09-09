@@ -19,21 +19,25 @@
   import type { IPopupItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
-  import type { Message, Message as MessageModel } from '@anticrm/chunter'
+  import type { Message } from '@anticrm/chunter'
   import ReferenceInput from './ReferenceInput.svelte'
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import notification, { NotificationClient } from '@anticrm/notification'
+  import { afterUpdate } from 'svelte'
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
 
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []
-  let currentSpace: Ref<Space> | undefined
+  let currentSpace: Space | undefined
 
   let div: HTMLElement
-  let autoscroll = true
-  let messages: MessageModel[] = []
+  let messages: Message[] = []
+  let notifications: SpaceNotifications | undefined
 
   let allAccounts: Account[] = []
 
@@ -46,6 +50,7 @@
   $: client.findAll<Account>(core.class.Account, { _id: { $in: to } }).then((acc) => {
     toAccount = acc
     currentSpace = undefined
+    notifications = undefined
     messages = []
 
     // Check if we have already a channel between us.
@@ -55,9 +60,14 @@
         const m2 = [client.accountId(), ...to].sort()
         if (deepEqual(m1, m2)) {
           // Ok, we have channel already
-          currentSpace = c._id
-          return
+          currentSpace = c
+          break
         }
+      }
+      if (currentSpace !== undefined) {
+        client
+          .findAll(notification.class.SpaceNotifications, { objectId: currentSpace._id })
+          .then((result) => (notifications = result.shift()))
       }
     })
   })
@@ -74,20 +84,33 @@
         direct: true,
         members: [client.accountId(), ...to]
       })
-      currentSpace = channel._id
+      currentSpace = channel
     }
 
-    await client.createDoc(chunter.class.Message, currentSpace, {
+    await client.createDoc(chunter.class.Message, currentSpace._id, {
       message
     })
+
+    if (notifications !== undefined) {
+      notificationClient.readNow(notifications)
+    }
+  }
+
+  afterUpdate(() => {
+    notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+    scrollHandler()
+  })
+
+  function scrollHandler () {
+    notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
   }
 
   let query: QueryUpdater<Message> | undefined = undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace }, (result) => {
+    query = client.query<Message>(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
       messages = result
-      if (autoscroll) div.scrollTo(div.scrollTop, div.scrollHeight)
+      notificationClient.setAutoscroll(div)
     })
   }
 
@@ -118,14 +141,10 @@
       showSearch={true}
     />
   </div>
-  <div
-    class="msg-board"
-    bind:this={div}
-    on:scroll={() => {
-      div.scrollTop > div.scrollHeight - div.clientHeight - 20 ? (autoscroll = true) : (autoscroll = false)
-    }}
-  >
-    <Channel {messages} />
+  <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
+    {#if currentSpace}
+      <Channel {notifications} {messages} />
+    {/if}
   </div>
   <div class="message-input">
     <ReferenceInput

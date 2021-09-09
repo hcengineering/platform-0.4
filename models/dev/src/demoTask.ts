@@ -1,4 +1,4 @@
-import chunter, { Comment } from '@anticrm/chunter'
+import chunter, { Comment, CommentRef } from '@anticrm/chunter'
 import core, { Account, DerivedDataDescriptor, Doc, getFullRef, Ref, ShortRef } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
@@ -64,10 +64,11 @@ export function demoTask (builder: Builder): void {
       })
     }
 
-    const comments: Ref<Comment>[] = []
+    const comments: CommentRef[] = []
 
     for (let j = 0; j < sComments[i]; j++) {
       const commentId = `t-cid-${commentIds++}` as Ref<Comment>
+      const userId = faker.random.arrayElement(accountIds)
       builder.createDoc(
         chunter.class.Comment,
         {
@@ -77,12 +78,12 @@ export function demoTask (builder: Builder): void {
         commentId,
         {
           space: demoIds.project.DemoProject,
-          modifiedBy: faker.random.arrayElement(accountIds),
+          modifiedBy: userId,
           modifiedOn: Date.now(),
           createOn: Date.now()
         }
       )
-      comments.push(commentId)
+      comments.push({ _id: commentId, userId, createOn: Date.now(), lastModified: Date.now() })
     }
 
     builder.createDoc(

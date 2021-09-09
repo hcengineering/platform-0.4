@@ -14,51 +14,64 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import type { Message, Message as MessageModel } from '@anticrm/chunter'
+  import type { Message } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, beforeUpdate } from 'svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
 
-  export let currentSpace: Ref<Space>
+  export let currentSpace: Ref<Space> | undefined
+  export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
-  let div: HTMLElement
-  let autoscroll: boolean = true
-  let messages: MessageModel[] = []
+  const notificationClient = new NotificationClient(client)
 
-  function addMessage (message: string): void {
-    client.createDoc(chunter.class.Message, currentSpace, {
+  let div: HTMLElement
+
+  let messages: Message[] = []
+
+  async function addMessage (message: string): Promise<void> {
+    await client.createDoc(chunter.class.Message, currentSpace!, {
       message
     })
+    if (notifications !== undefined) {
+      await notificationClient.readNow(notifications)
+    }
   }
 
   let query: QueryUpdater<Message> | undefined
-  let lastPosition = 0
 
   $: if (currentSpace !== undefined) {
     query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
       messages = result
+      notificationClient.setAutoscroll(div)
     })
   }
 
-  beforeUpdate(() => {
-    if (div) {
-      autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
-      lastPosition = div.scrollTop
+  beforeUpdate(async () => {
+    if (div && notifications) {
+      notificationClient.before(div, notifications, currentSpace, false)
     }
   })
 
   afterUpdate(() => {
-    if (autoscroll) div.scrollTo(0, div.scrollHeight)
-    else div.scrollTo(0, lastPosition)
+    notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+    scrollHandler()
   })
+
+  function scrollHandler () {
+    notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
+  }
 </script>
 
-<div class="msg-board" bind:this={div}>
-  <Channel {messages} />
+<div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
+  {#if currentSpace}
+    <Channel {messages} {notifications} />
+  {/if}
 </div>
 <div class="ref-input">
   <ReferenceInput on:message={(event) => addMessage(event.detail)} />

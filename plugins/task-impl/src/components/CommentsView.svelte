@@ -22,9 +22,11 @@
   import { chunterIds as chunter } from '@anticrm/chunter-impl'
   import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
+  export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
   let messages: Comment[] = []
@@ -38,7 +40,7 @@
 
   let query: QueryUpdater<Comment> | undefined
 
-  $: if (currentSpace !== undefined) {
+  $: {
     query = client.query(
       query,
       chunter.class.Comment,
@@ -53,4 +55,4 @@
   }
 </script>
 
-<Comments {messages} on:message={(event) => addMessage(event.detail)} />
+<Comments {messages} {currentSpace} {notifications} on:message={(event) => addMessage(event.detail)} />

@@ -192,6 +192,10 @@ export function createModel (builder: Builder): void {
             {
               sourceField: 'modifiedBy',
               targetField: 'userId'
+            },
+            {
+              sourceField: 'modifiedOn',
+              targetField: 'lastModified'
             }
           ]
         }

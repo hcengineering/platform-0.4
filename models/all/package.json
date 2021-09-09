@@ -41,6 +41,7 @@
     "@anticrm/model-meeting":"~0.4.0",
     "@anticrm/model-fsm":"~0.4.0",
     "@anticrm/model-recruiting":"~0.4.0",
-    "@anticrm/model-calendar": "~0.4.0"
+    "@anticrm/model-calendar": "~0.4.0",
+    "@anticrm/model-notification": "~0.4.0"
   }
 }

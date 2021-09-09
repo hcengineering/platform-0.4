@@ -708,6 +708,21 @@
       "projectFolder": "server/services",
       "shouldPublish": false
     },
+    {
+      "packageName": "@anticrm/notification",
+      "projectFolder": "plugins/notification",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-notification",
+      "projectFolder": "models/notification",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/notification-mappers",
+      "projectFolder": "plugins/notification-mappers",
+      "shouldPublish": true
+    },
 
     // Production packages.
     {

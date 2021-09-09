@@ -13,30 +13,24 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { CommentRef, WithMessage } from '@anticrm/chunter'
-  import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { CommentRef, WithMessage, Message, Comment } from '@anticrm/chunter'
+  import { Account, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import core from '@anticrm/core'
-  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
   import { getRouter } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import { onMount } from 'svelte'
+  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
-  interface MessageData {
-    _id: Ref<WithMessage>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
-
-  export let message: MessageData
+  export let message: WithMessage
+  export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
 
   let replyIds: Ref<Account>[] = []
@@ -72,13 +66,51 @@
   onMount(async () => {
     user = await getUser(message.modifiedBy)
   })
+
+  function isNew (message: WithMessage, notifications: SpaceNotifications | undefined): boolean {
+    if (notifications === undefined) return false
+    if (!thread) {
+      if (message.modifiedOn > notifications.lastRead) return true
+      const comments = (message as Message).comments
+      if (comments !== undefined) {
+        let lastTime = notifications.lastRead
+        if (notifications.objectLastReads.get !== undefined) {
+          lastTime = notifications.objectLastReads.get(message._id) ?? lastTime
+        }
+        for (const comment of comments) {
+          if (comment.lastModified > lastTime) return true
+        }
+      }
+    } else if ((message as Comment).replyOf !== undefined) {
+      let lastTime = notifications.lastRead
+      if (notifications.objectLastReads.get !== undefined) {
+        const fullRef = parseFullRef((message as Comment).replyOf)
+        lastTime = notifications.objectLastReads.get(fullRef._id) ?? lastTime
+      }
+      return message.modifiedOn > lastTime
+    }
+    return false
+  }
+
+  function getLastModified (message: WithMessage): number {
+    let lastModified = message.modifiedOn
+    if (!thread) {
+      const comments = (message as Message).comments
+      if (comments !== undefined) {
+        for (const comment of comments) {
+          lastModified = lastModified > comment.lastModified ? lastModified : comment.lastModified
+        }
+      }
+    }
+    return lastModified
+  }
 </script>
 
-<div class="container" class:no-thread={!thread} on:click={onClick}>
+<div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}
-  <div class="message">
+  <div class="message" data-modified={message.modifiedOn} data-lastmodified={getLastModified(message)}>
     <div class="header">
       {#if user}{user?.name ?? ''}{/if}<span
         ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
@@ -114,6 +146,10 @@
     position: relative;
     display: flex;
     padding-bottom: 20px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-color);
+    }
 
     .avatar {
       min-width: 36px;

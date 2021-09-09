@@ -18,7 +18,7 @@ import { Builder, Model } from '@anticrm/model'
 import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
 import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
 import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
-import { Comment } from '@anticrm/chunter'
+import { CommentRef } from '@anticrm/chunter'
 import chunter from '@anticrm/chunter'
 
 import workbench from '@anticrm/model-workbench'
@@ -45,7 +45,7 @@ export class TTask extends TDoc implements Task {
   status!: TaskStatus
   dueTo!: Date
   checkItems!: CheckListItem[]
-  comments!: Array<Ref<Comment>>
+  comments!: CommentRef[]
 }
 
 /**
@@ -138,6 +138,10 @@ export function createModel (builder: Builder): void {
         {
           sourceField: 'replyOf',
           targetField: 'comments'
+        },
+        {
+          sourceField: 'modifiedOn',
+          targetField: 'lastModified'
         }
       ]
     },

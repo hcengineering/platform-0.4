@@ -40,7 +40,7 @@ interface Query {
   _id: string
   _class: Ref<Class<Doc>>
   query: DocumentQuery<Doc>
-  result: Doc[] | Promise<Doc[]>
+  result: Doc[] | Promise<FindResult<Doc>>
   total: number
   options?: FindOptions<Doc>
   callback: (result: FindResult<Doc>) => void
@@ -65,7 +65,6 @@ export interface Queriable {
  */
 export class LiveQuery extends TxProcessor implements Storage, Queriable {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
-  private readonly qid = generateId()
 
   constructor (readonly client: Client) {
     super()
@@ -118,7 +117,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       .then((res) => {
         q.result = copy(res)
         q.total = res.total
-        q.callback(res)
+        q.callback(copy(res))
       })
       .catch((err) => {
         console.log('failed to update Live Query: ', err)
@@ -149,7 +148,9 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
-        q.result = copy(await q.result)
+        const res = await q.result
+        q.result = copy(res)
+        q.total = res.total
       }
       const pos = q.result.findIndex((p) => p._id === tx.objectId)
       if (pos !== -1) {
@@ -174,7 +175,9 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     for (const q of this.queries.values()) {
       if (this.match(q, doc)) {
         if (q.result instanceof Promise) {
-          q.result = copy(await q.result)
+          const res = await q.result
+          q.result = copy(res)
+          q.total = res.total
         }
         q.result.push(doc)
         q.total++
@@ -183,10 +186,10 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
         if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
           if (q.result.pop()?._id !== doc._id) {
-            q.callback(Object.assign(q.result, { total: q.total }))
+            q.callback(Object.assign(copy(q.result), { total: q.total }))
           }
         } else {
-          q.callback(Object.assign(q.result, { total: q.total }))
+          q.callback(Object.assign(copy(q.result), { total: q.total }))
         }
       }
     }
@@ -195,7 +198,9 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
       if (q.result instanceof Promise) {
-        q.result = copy(await q.result)
+        const res = await q.result
+        q.result = copy(res)
+        q.total = res.total
       }
       const index = q.result.findIndex((p) => p._id === tx.objectId)
       if (
@@ -207,7 +212,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       }
       if (index > -1) {
         q.result.splice(index, 1)
-        q.callback(Object.assign(q.result, { total: --q.total }))
+        q.callback(Object.assign(copy(q.result), { total: q.total }))
       }
     }
   }
@@ -228,7 +233,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         const operator = getOperator(key)
         operator(updatedDoc, ops[key])
       } else {
-        ;(updatedDoc as any)[key] = ops[key]
+        ;(updatedDoc as any)[key] = copy(ops[key])
       }
     }
     updatedDoc.modifiedBy = tx.modifiedBy
@@ -240,7 +245,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     const res = await this.client.findAll(q._class, q.query, q.options)
     q.result = copy(res)
     q.total = res.total
-    q.callback(res)
+    q.callback(copy(res))
   }
 
   private sort (q: Query, tx: TxUpdateDoc<Doc>): void {
@@ -274,6 +279,6 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         return await this.refresh(q)
       }
     }
-    q.callback(Object.assign(q.result, { total: q.total }))
+    q.callback(Object.assign(copy(q.result), { total: q.total }))
   }
 }

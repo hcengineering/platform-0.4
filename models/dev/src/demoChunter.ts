@@ -60,7 +60,7 @@ export function demoChunter (builder: Builder): void {
     for (let j = 0; j < ci; j++) {
       const userId = faker.random.arrayElement(accountIds)
       const cid: Ref<Comment> = `cid-${cind++}` as Ref<Comment>
-      comments.push({ _id: cid, userId })
+      comments.push({ _id: cid, userId, createOn: Date.now(), lastModified: Date.now() })
       builder.createDoc(
         chunter.class.Comment,
         {

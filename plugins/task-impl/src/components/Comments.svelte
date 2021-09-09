@@ -14,22 +14,15 @@
 -->
 <script lang="ts">
   import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
-  import type { Account, Ref, Timestamp } from '@anticrm/core'
-  import type { Message as MessageModel } from '@anticrm/chunter'
+  import type { Comment } from '@anticrm/chunter'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
-  export let messages: Message[] = []
-
-  interface Message {
-    _id: Ref<MessageModel>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
+  export let messages: Comment[] = []
+  export let notifications: SpaceNotifications | undefined
 </script>
 
 <div class="msg-board">
-  <Channel {messages} thread />
+  <Channel {messages} {notifications} thread />
 </div>
 <ReferenceInput on:message />
 

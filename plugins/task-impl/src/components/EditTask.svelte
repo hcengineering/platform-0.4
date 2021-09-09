@@ -41,11 +41,18 @@
   import StatusPicker from './StatusPicker.svelte'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
+  import { onDestroy } from 'svelte'
+  import { afterUpdate } from 'svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
 
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
+  const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
+  export let notifications: SpaceNotifications | undefined
+  let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
 
@@ -67,6 +74,21 @@
     })
     return item
   }
+
+  onDestroy(async () => {
+    if (notifications !== undefined) {
+      notificationClient.readNow(notifications, id)
+    }
+  })
+
+  afterUpdate(async () => {
+    if (prevId !== id) {
+      if (prevId !== undefined && notifications !== undefined) {
+        notificationClient.readNow(notifications, prevId)
+      }
+      prevId = id
+    }
+  })
 
   function close () {
     router.navigate({ itemId: undefined })
@@ -130,6 +152,7 @@
             <Row>
               <DescriptionEditor
                 label={task.string.TaskDescription}
+                placeholder={task.string.TaskDescription}
                 on:blur={(e) => {
                   update('description', item?.description)
                 }}
@@ -139,7 +162,7 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView currentSpace={item.space} taskId={item._id} />
+          <CommentsView {notifications} currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />
