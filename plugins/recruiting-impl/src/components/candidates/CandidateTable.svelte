@@ -13,14 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label } from '@anticrm/ui'
+  import { Table, Label, getRouter } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
-
-  import CandidateCmp from './Candidate.svelte'
-
-  import recruiting from '../../plugin'
+  import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let currentSpace: Ref<Space> | undefined
@@ -45,6 +43,7 @@
   ]
 
   const client = getClient()
+  const router = getRouter<WorkbenchRoute>()
   let data: Candidate[] = []
   let lq: QueryUpdater<Candidate> | undefined
   $: if (currentSpace !== prevSpace) {
@@ -54,6 +53,10 @@
       lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => (data = result))
     }
   }
+
+  function onClick (event: any) {
+    router.navigate({ itemId: event.detail.id })
+  }
 </script>
 
-<Table {data} {columns} on:rowClick={(event) => showModal(CandidateCmp, { id: event.detail.id })} />
+<Table {data} {columns} showHeader on:rowClick={onClick} />

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "comment": "Apply multiple UI related changes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-assets"
+}

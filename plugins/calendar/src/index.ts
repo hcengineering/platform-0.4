@@ -49,6 +49,7 @@ export default plugin(PluginCalendar, {}, {
   },
   component: {
     CreateEvent: '' as AnyComponent,
+    EditEvent: '' as AnyComponent,
     CreateCalendar: '' as AnyComponent,
     Workspace: '' as AnyComponent
   },

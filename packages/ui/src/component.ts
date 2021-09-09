@@ -7,6 +7,7 @@ export default component('ui' as Component, {
     Undefined: '' as IntlString,
     Remove: '' as IntlString,
     Cancel: '' as IntlString,
+    Create: '' as IntlString,
     Name: '' as IntlString,
     Description: '' as IntlString,
     Join: '' as IntlString,

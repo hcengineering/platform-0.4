@@ -13,45 +13,34 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { IntlString, UIComponent } from '@anticrm/status'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
-  import { Button } from '@anticrm/ui'
-  import { showModal } from '@anticrm/workbench'
+  import ui, { IconGroup, IconList } from '@anticrm/ui'
 
-  import CreateCandidate from './CreateCandidate.svelte'
   import CandidateTable from './CandidateTable.svelte'
-  import List from '../icons/List.svelte'
-
-  import recruiting from '../../plugin'
 
   export let space: CandidatePoolSpace
-  const options = [{ icon: List, view: CandidateTable }]
-  let selected: typeof options[number] = options[0]
+  type IDs = 'list'
 
-  function onAdd () {
-    showModal(CreateCandidate, { space: space._id })
-  }
+  const items: {
+    icon: UIComponent
+    tooltip: IntlString
+    id: IDs
+  }[] = [{ icon: IconList, tooltip: ui.string.List, id: 'list' }]
+  let selected: IDs = 'list'
+
+  const views = new Map([['list', CandidateTable]])
+  let view: UIComponent | undefined = CandidateTable
+  $: view = views.get(selected)
 </script>
 
 <div class="root">
-  <Button label={recruiting.string.AddCandidate} on:click={onAdd} />
-  <div class="content">
-    <div class="selector">
-      {#each options as opt}
-        <div
-          class="opt"
-          class:selected={opt === selected}
-          on:click={() => {
-            selected = opt
-          }}
-        >
-          <svelte:component this={selected.icon} />
-        </div>
-      {/each}
-    </div>
-    <div class="view">
-      <svelte:component this={selected.view} currentSpace={space._id} />
-    </div>
+  <div class="selector">
+    <IconGroup {items} bind:selected />
   </div>
+  {#if view !== undefined}
+    <svelte:component this={view} currentSpace={space._id} />
+  {/if}
 </div>
 
 <style lang="scss">
@@ -59,18 +48,6 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 40px;
-    gap: 10px;
-
-    width: 100%;
-    height: 100%;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
 
     flex-grow: 1;
 
@@ -83,30 +60,8 @@
     justify-content: flex-end;
     align-items: center;
     gap: 5px;
+    padding: 20px 40px;
 
     width: 100%;
-  }
-
-  .view {
-    flex-grow: 1;
-
-    width: 100%;
-    height: 100%;
-  }
-
-  .opt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background-color: transparent;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--theme-button-bg-enabled);
-      cursor: default;
-    }
   }
 </style>

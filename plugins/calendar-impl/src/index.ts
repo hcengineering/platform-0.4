@@ -20,11 +20,13 @@ import { setResource } from '@anticrm/platform'
 import Workspace from './components/Workspace.svelte'
 import CreateCalendar from './components/CreateCalendar.svelte'
 import CreateEvent from './components/CreateEvent.svelte'
+import EditEvent from './components/EditEvent.svelte'
 
 export default async (): Promise<CalendarService> => {
   setResource(plugin.component.Workspace, Workspace)
   setResource(plugin.component.CreateCalendar, CreateCalendar)
   setResource(plugin.component.CreateEvent, CreateEvent)
+  setResource(plugin.component.EditEvent, EditEvent)
 
   return {}
 }
