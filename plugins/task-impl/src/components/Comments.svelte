@@ -31,7 +31,7 @@
 <div class="msg-board">
   <Channel {messages} thread />
 </div>
-<ReferenceInput withoutMargin={true} on:message />
+<ReferenceInput on:message />
 
 <style lang="scss">
   .msg-board {

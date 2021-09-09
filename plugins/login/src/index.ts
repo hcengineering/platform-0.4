@@ -18,7 +18,7 @@
 import type { Metadata, Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import { Status, StatusCode } from '@anticrm/status'
-import type { AnyComponent } from '@anticrm/ui'
+import type { AnyComponent } from '@anticrm/status'
 
 /**
  * @public

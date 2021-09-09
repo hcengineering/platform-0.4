@@ -14,13 +14,11 @@
 -->
 <script lang="ts">
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { Table, Label } from '@anticrm/ui'
+  import { Table, Label, getRouter } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, showModal } from '@anticrm/workbench'
-  import type { DerivedEvent, Event } from '@anticrm/calendar'
+  import { getClient } from '@anticrm/workbench'
+  import type { WorkbenchRoute } from '@anticrm/workbench'
   import calendar from '@anticrm/calendar'
-
-  import EditEvent from './EditEvent.svelte'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -44,28 +42,21 @@
   ]
 
   const client = getClient()
-  let events: Event[] = []
-  let dEvents: Event[] = []
+  const router = getRouter<WorkbenchRoute>()
+
+  let data: Event[] = []
   let lqEvent: QueryUpdater<Event> | undefined
-  let lqDEvent: QueryUpdater<DerivedEvent> | undefined
   $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (events = result))
-      lqDEvent = client.query(
-        lqDEvent,
-        calendar.class.DerivedEvent,
-        { space: currentSpace },
-        (result) => (dEvents = result)
-      )
+      lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (data = result))
     }
   }
 
-  let data: Event[] = []
-
-  $: data = events.concat(dEvents)
-  $: console.log(data)
+  function onClick (event: any) {
+    router.navigate({ itemId: event.detail.id })
+  }
 </script>
 
-<Table {data} {columns} showHeader on:rowClick={(event) => showModal(EditEvent, { id: event.detail.id })} />
+<Table {data} {columns} showHeader on:rowClick={onClick} />

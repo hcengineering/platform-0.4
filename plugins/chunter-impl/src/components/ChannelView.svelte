@@ -60,7 +60,9 @@
 <div class="msg-board" bind:this={div}>
   <Channel {messages} />
 </div>
-<ReferenceInput thread={false} on:message={(event) => addMessage(event.detail)} />
+<div class="ref-input">
+  <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+</div>
 
 <style lang="scss">
   .msg-board {
@@ -70,5 +72,8 @@
     margin: 10px 10px 0px;
     padding: 10px 10px 0px;
     overflow: auto;
+  }
+  .ref-input {
+    margin: 20px 40px;
   }
 </style>

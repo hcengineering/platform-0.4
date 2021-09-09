@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { AnySvelteComponent } from '../../types'
+  import type { UIComponent } from '@anticrm/status'
 
   export let draggable: boolean = false
-  export let component: AnySvelteComponent
+  export let component: UIComponent
   export let doc: any
 </script>
 

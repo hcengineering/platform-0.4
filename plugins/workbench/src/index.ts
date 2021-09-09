@@ -16,8 +16,8 @@
 import type { Class, Data, Doc, DocumentQuery, Ref, Space } from '@anticrm/core'
 import { Plugin, plugin, Service } from '@anticrm/platform'
 import type { PresentationClient } from '@anticrm/presentation'
-import type { Asset, IntlString } from '@anticrm/status'
-import type { AnyComponent, AnySvelteComponent } from '@anticrm/ui'
+import type { Asset, IntlString, UIComponent } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/status'
 import { getContext } from 'svelte'
 import { CompAndProps, store } from './stores'
 
@@ -45,6 +45,11 @@ export interface SpacesNavModel {
   spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
   hideIfEmpty?: boolean // If defined and true, category will be not visible
   userSpace?: Data<Space>
+  item?: {
+    createComponent?: AnyComponent
+    createLabel?: IntlString
+    editComponent?: AnyComponent
+  }
 }
 
 /**
@@ -64,8 +69,6 @@ export interface NavigatorModel {
   specials?: SpecialNavModel[]
   spaces: SpacesNavModel[]
   spaceView: AnyComponent
-  createComponent?: AnyComponent
-  editComponent?: AnyComponent
 }
 
 /**
@@ -112,7 +115,7 @@ export function getClient (): PresentationClient {
 /**
  * @public
  */
-export function showModal (component: AnySvelteComponent | AnyComponent, props: any, element?: HTMLElement): void {
+export function showModal (component: UIComponent | AnyComponent, props: any, element?: HTMLElement): void {
   store.set({ is: component, props, element: element })
 }
 

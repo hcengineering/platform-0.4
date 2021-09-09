@@ -14,21 +14,20 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { IntlString } from '@anticrm/status'
+  import type { IntlString, UIComponent } from '@anticrm/status'
 
-  import type { AnySvelteComponent } from '../types'
   import Label from './Label.svelte'
   import ScrollBox from './ScrollBox.svelte'
 
   interface Cell {
-    component: AnySvelteComponent
+    component: UIComponent
     props?: Object
   }
 
   interface Column {
     properties: ColumnProp[]
     label: IntlString
-    component: AnySvelteComponent
+    component: UIComponent
   }
 
   interface ColumnProp {

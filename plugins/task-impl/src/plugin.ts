@@ -15,7 +15,7 @@
 
 import { mergeIds } from '@anticrm/status'
 import task, { TaskStatus } from '@anticrm/task'
-import type { AnyComponent } from '@anticrm/ui'
+import type { AnyComponent } from '@anticrm/status'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {

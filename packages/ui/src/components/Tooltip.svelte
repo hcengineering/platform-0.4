@@ -14,107 +14,24 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/platform'
-  import Label from './Label.svelte'
+  import type { TooltipAligment } from '..'
+  import { showTooltip, closeTooltip } from '..'
 
   export let label: IntlString
-  export let direction: string = 'top'
+  export let direction: TooltipAligment
+
+  let triggerHTML: HTMLElement
 </script>
 
-<div class="flex-center relative">
-  <div class="trigger"><slot /></div>
-  <div class="tooltip {direction}">
-    <Label {label} />
-  </div>
+<div
+  class="tooltip-trigger"
+  bind:this={triggerHTML}
+  on:mouseenter={(ev) => {
+    showTooltip(label, triggerHTML, direction)
+  }}
+  on:mouseleave={(ev) => {
+    closeTooltip()
+  }}
+>
+  <slot />
 </div>
-
-<style lang="scss">
-  .trigger:hover + .tooltip {
-    visibility: visible;
-    opacity: 1;
-    &.top {
-      transform: translateY(-10px);
-    }
-    &.bottom {
-      transform: translateY(10px);
-    }
-    &.right {
-      transform: translateX(10px);
-    }
-    &.left {
-      transform: translateX(-10px);
-    }
-  }
-
-  .tooltip {
-    box-sizing: border-box;
-    position: absolute;
-    padding: 8px;
-    color: var(--theme-caption-color);
-    background-color: var(--theme-tooltip-color);
-    border: 1px solid var(--theme-bg-accent-color);
-    border-radius: 8px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
-    opacity: 0;
-    visibility: hidden;
-    transition: transform 0.3s ease, opacity 0.2s ease-in-out;
-    user-select: none;
-    text-align: center;
-    transition-delay: 0.2s;
-    z-index: 10;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background-color: var(--theme-tooltip-color);
-      border: 1px solid var(--theme-bg-accent-color);
-      border-radius: 0 0 3px;
-      clip-path: polygon(100% 25%, 100% 100%, 25% 100%);
-    }
-
-    &.top::after,
-    &.bottom::after {
-      left: 50%;
-      margin-left: -8px;
-    }
-    &.top {
-      bottom: 100%;
-      box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-      &::after {
-        bottom: -5px;
-        transform: rotate(45deg);
-      }
-    }
-    &.bottom {
-      top: 100%;
-      box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.25);
-      &::after {
-        top: -5px;
-        transform: rotate(-135deg);
-      }
-    }
-
-    &.right::after,
-    &.left::after {
-      top: 50%;
-      margin-top: -8px;
-    }
-    &.right {
-      left: 100%;
-      box-shadow: -8px 0px 20px rgba(0, 0, 0, 0.25);
-      &::after {
-        left: -5px;
-        transform: rotate(135deg);
-      }
-    }
-    &.left {
-      right: 100%;
-      box-shadow: 8px 0px 20px rgba(0, 0, 0, 0.25);
-      &::after {
-        right: -5px;
-        transform: rotate(-45deg);
-      }
-    }
-  }
-</style>

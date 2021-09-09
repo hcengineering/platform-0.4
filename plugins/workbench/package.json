@@ -34,7 +34,6 @@
     "@anticrm/status":"~0.4.2",
     "@anticrm/platform":"~0.4.2",
     "@anticrm/plugin-core":"~0.4.0",
-    "@anticrm/ui":"~0.4.1",
     "@anticrm/presentation":"~0.4.0"
   }
 }

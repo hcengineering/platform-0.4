@@ -14,19 +14,19 @@
 //
 
 import task, { Project } from '@anticrm/task'
-import { mergeIds, Resource } from '@anticrm/status'
+import { mergeIds, AnyComponent } from '@anticrm/status'
 
 import { Application } from '@anticrm/workbench'
 import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
 
 export default mergeIds(task, {
   component: {
-    CreateProject: '' as Resource<any>,
-    ProjectView: '' as Resource<any>,
-    MyTasksView: '' as Resource<any>,
-    FavoriteView: '' as Resource<any>,
-    CreateTask: '' as Resource<any>,
-    EditTask: '' as Resource<any>
+    CreateProject: '' as AnyComponent,
+    ProjectView: '' as AnyComponent,
+    MyTasksView: '' as AnyComponent,
+    FavoriteView: '' as AnyComponent,
+    CreateTask: '' as AnyComponent,
+    EditTask: '' as AnyComponent
   },
   ids: {
     Application: '' as Ref<Application>

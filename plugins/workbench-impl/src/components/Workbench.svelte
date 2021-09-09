@@ -17,7 +17,7 @@
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, Splitter } from '@anticrm/ui'
+  import { Component, Splitter, TooltipInstance } from '@anticrm/ui'
   import { newRouter } from '@anticrm/ui'
   import type { NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
@@ -129,21 +129,22 @@
   <div bind:this={compHTML} class="component">
     {#if navigatorModel && currentSpecial === -1}
       {#if spaceModel}
-        <SpaceHeader model={navigatorModel} space={currentSpace} {spaceModel} />
+        <SpaceHeader space={currentSpace} {spaceModel} />
       {/if}
       <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
     {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
   </div>
-  {#if navigatorModel && navigatorModel.editComponent && currentRoute.itemId}
+  {#if spaceModel?.item?.editComponent && currentRoute.itemId}
     <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
     <div bind:this={asideHTML} class="aside">
-      <Component is={navigatorModel.editComponent} props={{ id: currentRoute.itemId }} />
+      <Component is={spaceModel.item.editComponent} props={{ id: currentRoute.itemId }} />
     </div>
   {/if}
 </div>
 <Modal />
+<TooltipInstance />
 
 <style lang="scss">
   @mixin panel($bg-color) {

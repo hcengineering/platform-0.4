@@ -129,7 +129,6 @@
   </div>
   <div class="message-input">
     <ReferenceInput
-      thread={false}
       on:message={(event) => {
         addMessage(event.detail)
       }}

@@ -14,9 +14,9 @@
 //
 
 import chunter, { Channel } from '@anticrm/chunter'
-import type { IntlString, Resource } from '@anticrm/status'
-import { mergeIds } from '@anticrm/status'
 import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
+import type { AnyComponent, IntlString } from '@anticrm/status'
+import { mergeIds } from '@anticrm/status'
 
 /**
  * NOTICE:
@@ -27,13 +27,13 @@ import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
  */
 export default mergeIds(chunter, {
   component: {
-    CreateChannel: '' as Resource<any>,
-    CreateMessage: '' as Resource<any>,
-    ChannelView: '' as Resource<any>,
-    ThreadsView: '' as Resource<any>,
-    AllThreadsView: '' as Resource<any>,
-    SpaceItem: '' as Resource<any>,
-    SpaceHeader: '' as Resource<any>
+    CreateChannel: '' as AnyComponent,
+    CreateMessage: '' as AnyComponent,
+    ChannelView: '' as AnyComponent,
+    ThreadsView: '' as AnyComponent,
+    AllThreadsView: '' as AnyComponent,
+    SpaceItem: '' as AnyComponent,
+    SpaceHeader: '' as AnyComponent
   },
   string: {
     ApplicationLabelChunter: '' as IntlString

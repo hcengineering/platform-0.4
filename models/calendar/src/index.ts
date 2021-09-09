@@ -14,8 +14,18 @@
 //
 
 import { Builder, Model } from '@anticrm/model'
-import core, { TDerivedData, TDoc, TSpace } from '@anticrm/model-core'
-import { Account, Domain, DOMAIN_MODEL, Ref, Timestamp } from '@anticrm/core'
+import core, { TDoc, TSpace } from '@anticrm/model-core'
+import {
+  Account,
+  Class,
+  DerivedData,
+  DerivedDataDescriptor,
+  Doc,
+  Domain,
+  DOMAIN_MODEL,
+  Ref,
+  Timestamp
+} from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import type { DerivedEvent, Event, Calendar } from '@anticrm/calendar'
 import calendar from '@anticrm/calendar'
@@ -46,17 +56,12 @@ export class TEvent extends TDoc implements Event {
 /**
  * @public
  */
-@Model(calendar.class.DerivedEvent, core.class.DerivedData, DOMAIN_CALENDAR)
-export class TDerivedEvent extends TDerivedData implements DerivedEvent {
-  name!: string
-  description!: string
-  startsAt!: Timestamp
-  endsAt!: Timestamp
-  participants!: Ref<Account>[]
-  version!: number
-  isArchived!: boolean
-  owner!: Ref<Account>
+@Model(calendar.class.DerivedEvent, calendar.class.Event, DOMAIN_CALENDAR)
+export class TDerivedEvent extends TEvent implements DerivedEvent {
   orig!: Ref<Event>
+  descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  objectId!: Ref<Doc>
+  objectClass!: Ref<Class<Doc>>
 }
 
 /**
@@ -81,10 +86,13 @@ export function createModel (builder: Builder): void {
             description: 'Personal calendar',
             members: [],
             private: true
+          },
+          item: {
+            createComponent: calendar.component.CreateEvent,
+            editComponent: calendar.component.EditEvent
           }
         }
       ],
-      createComponent: calendar.component.CreateEvent,
       spaceView: calendar.component.Workspace
     }
   })

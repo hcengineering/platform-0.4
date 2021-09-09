@@ -13,8 +13,12 @@
 // limitations under the License.
 //
 
-import { SvelteComponent } from 'svelte'
+import { UIComponent } from '@anticrm/status'
 import Root from './components/internal/Root.svelte'
+
+import type { IntlString } from '@anticrm/platform'
+import { writable } from 'svelte/store'
+import type { LabelAndProps, TooltipAligment } from './types'
 
 export * from './types'
 export { applicationShortcutKey, defaultApplicationShortcutKey } from './utils'
@@ -56,7 +60,8 @@ export { default as Grid } from './components/Grid.svelte'
 export { default as Row } from './components/Row.svelte'
 export { default as DateTime } from './components/DateTime.svelte'
 export { default as Splitter } from './components/Splitter.svelte'
-
+export { default as TooltipInstance } from './components/TooltipInstance.svelte'
+export { default as IconGroup } from './components/IconGroup.svelte'
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconClose } from './components/icons/Close.svelte'
 export { default as IconFile } from './components/icons/File.svelte'
@@ -66,6 +71,9 @@ export { default as IconSearch } from './components/icons/Search.svelte'
 export { default as IconProjectFolder } from './components/icons/ProjectFolder.svelte'
 export { default as IconPerson } from './components/icons/Person.svelte'
 export { default as IconMoreV } from './components/icons/MoreV.svelte'
+export { default as IconList } from './components/icons/List.svelte'
+export { default as IconCard } from './components/icons/Card.svelte'
+export { default as IconKanban } from './components/icons/Kanban.svelte'
 
 export { default as MessageViewer } from './components/text/MessageViewer.svelte'
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
@@ -74,8 +82,22 @@ export { default as MDRefEditor } from './components/MDRefEditor.svelte'
 
 export { default } from './component'
 
-export function createApp (target: HTMLElement): SvelteComponent {
+export function createApp (target: HTMLElement): UIComponent {
   return new Root({ target })
+}
+
+export const tooltipstore = writable<LabelAndProps>({
+  label: undefined,
+  element: undefined,
+  direction: undefined
+})
+
+export function showTooltip (label: IntlString, element: HTMLElement, direction?: TooltipAligment): void {
+  tooltipstore.set({ label: label, element: element, direction: direction })
+}
+
+export function closeTooltip (): void {
+  tooltipstore.set({ label: undefined, element: undefined, direction: undefined })
 }
 
 // let documentProvider: DocumentProvider | undefined
