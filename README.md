@@ -44,6 +44,7 @@ is used for fast build all parts of the project.
   - [How to run dev server](#how-to-run-dev-server)
     - [Running server](#running-server-1)
     - [Running site](#running-site)
+  - [How to run only site (in-memory storage)](#how-to-run-only-site-in-memory-storage)
   - [Dev tasks](#dev-tasks)
     - [Force all parts of the project to be rebuilt](#force-all-parts-of-the-project-to-be-rebuilt)
     - [Format all changed files](#format-all-changed-files)
@@ -210,7 +211,7 @@ PLATFORM
  
 ### How to run dev server
 
-> Before, please make sure that MongoDB & ElasticSearch are started and available.
+> Before, please make sure that MongoDB is started and available.
  
 It needs to run 2 parts in parallel - server & site.
 
@@ -235,6 +236,14 @@ rushx dev-server
 That's it! Your application is available at http://localhost:8080
 (site) and http://localhost:18080 (server)
 
+### How to run only site (in-memory storage)
+
+If you want to work with UI only and storage is not important you can run it the following way
+
+```bash
+cd ./dev/prod
+rushx dev
+```
 
 
 ### Dev tasks
