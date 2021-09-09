@@ -118,7 +118,7 @@ export class NotificationClient {
     if (this.lastTime > lastRead) {
       if (!this.waitingUpdate) {
         this.waitingUpdate = true
-        setTimeout(() => this.updateLastRead(notifications, id), 3000)
+        setTimeout(async () => await this.updateLastRead(notifications, id), 3000)
       }
     }
   }

@@ -32,10 +32,7 @@ import core, {
 } from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
-async function updateSpaceInfo<T extends Doc> (
-  tx: ObjectTx<T>,
-  options: MappingOptions
-): Promise<void> {
+async function updateSpaceInfo<T extends Doc> (tx: ObjectTx<T>, options: MappingOptions): Promise<void> {
   const spaceInfo = (
     await options.storage.findAll<SpaceInfo>(notification.class.SpaceInfo, { objectId: tx.objectSpace })
   )[0]
@@ -166,7 +163,7 @@ export default (): void => {
               result = result.splice(i, 1)
             }
           }
-          const currentMembers = new Set(result.map(p => p.space.toString()))
+          const currentMembers = new Set(result.map((p) => p.space.toString()))
           for (const member of ctx.operations.members) {
             if (!currentMembers.has(member)) {
               result.push(createSpaceNotification(ctx, options, member))
