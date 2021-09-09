@@ -173,7 +173,7 @@
 }
 
 /* fakecss:src/components/navigator/TreeElement.esbuild-svelte-fake-css */
-.container.svelte-gj4dih.svelte-gj4dih {
+.container.svelte-dor1xl.svelte-dor1xl {
   margin: 0 16px;
   padding-left: 10px;
   padding-right: 12px;
@@ -184,14 +184,19 @@
   user-select: none;
   cursor: pointer;
 }
-.container.sub.svelte-gj4dih.svelte-gj4dih {
+.container.sub.svelte-dor1xl.svelte-dor1xl {
   padding-left: 44px;
   font-weight: 400;
+  color: var(--theme-content-color);
 }
-.container.sub.svelte-gj4dih .icon.svelte-gj4dih {
+.container.sub.svelte-dor1xl .icon.svelte-dor1xl {
   margin-right: 8px;
 }
-.container.svelte-gj4dih .icon.svelte-gj4dih {
+.container.changed.svelte-dor1xl.svelte-dor1xl {
+  font-weight: 900;
+  color: var(--theme-caption-color);
+}
+.container.svelte-dor1xl .icon.svelte-dor1xl {
   margin-right: 18px;
   width: 16px;
   min-width: 16px;
@@ -199,39 +204,39 @@
   border-radius: 4px;
   opacity: 0.3;
 }
-.container.svelte-gj4dih span.svelte-gj4dih {
+.container.svelte-dor1xl span.svelte-dor1xl {
   flex-grow: 1;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.container.svelte-gj4dih .component.svelte-gj4dih {
+.container.svelte-dor1xl .component.svelte-dor1xl {
   flex-grow: 1;
   overflow: hidden;
 }
-.container.svelte-gj4dih .tool.svelte-gj4dih {
+.container.svelte-dor1xl .tool.svelte-dor1xl {
   margin-left: 2px;
   visibility: hidden;
 }
-.container.svelte-gj4dih .counter.svelte-gj4dih {
+.container.svelte-dor1xl .counter.svelte-dor1xl {
   margin-left: 12px;
   font-weight: 600;
   font-size: 12px;
   line-height: 100%;
 }
-.container.svelte-gj4dih.svelte-gj4dih:hover {
+.container.svelte-dor1xl.svelte-dor1xl:hover {
   background-color: var(--theme-button-bg-enabled);
 }
-.container.svelte-gj4dih:hover .tool.svelte-gj4dih {
+.container.svelte-dor1xl:hover .tool.svelte-dor1xl {
   visibility: visible;
 }
-.dropdown.svelte-gj4dih.svelte-gj4dih {
+.dropdown.svelte-dor1xl.svelte-dor1xl {
   visibility: visible;
   height: auto;
   width: 100%;
   margin-bottom: 20px;
 }
-.dropdown.collapsed.svelte-gj4dih.svelte-gj4dih {
+.dropdown.collapsed.svelte-dor1xl.svelte-dor1xl {
   visibility: hidden;
   height: 0;
   margin-bottom: 8px;
