@@ -25,23 +25,19 @@
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
   import type { SpaceNotifications } from '@anticrm/notification'
-  import notification from '@anticrm/notification'
+  import notification, { NotificationClient } from '@anticrm/notification'
   import { afterUpdate } from 'svelte'
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
 
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []
   let currentSpace: Space | undefined
 
   let div: HTMLElement
-  let autoscroll = false
   let messages: Message[] = []
   let notifications: SpaceNotifications | undefined
-
-  let lastPosition = 0
-  let lastTime = 0
-  let waitingUpdate = false
 
   let allAccounts: Account[] = []
 
@@ -95,66 +91,18 @@
       message
     })
 
-    await updateLastRead()
-  }
-
-  async function updateLastRead (): Promise<void> {
-    if (notifications === undefined) return
-    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
-      lastRead: Date.now()
-    })
-  }
-
-  function scroll () {
-    if (autoscroll) {
-      div.scrollTo(0, div.scrollHeight)
-      return
+    if (notifications !== undefined) {
+      notificationClient.readNow(notifications)
     }
-    if (lastPosition > 0) {
-      div.scrollTo(0, lastPosition)
-      return
-    }
-    if (notifications?.lastRead !== undefined) {
-      const messages = div.getElementsByClassName('message')
-      let olderNewMessage: HTMLElement | undefined
-      for (let i = messages.length; i >= 0; i--) {
-        const elem = messages[i] as HTMLElement
-        if (elem === undefined) continue
-        const modified = elem.dataset.modified
-        if (modified !== undefined && parseInt(modified) > notifications.lastRead) olderNewMessage = elem
-      }
-      if (olderNewMessage !== undefined) {
-        olderNewMessage.scrollIntoView(false)
-        return
-      }
-    }
-    div.scrollTo(0, div.scrollHeight)
   }
 
   afterUpdate(() => {
-    scroll()
+    notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
     scrollHandler()
   })
 
   function scrollHandler () {
-    if (currentSpace === undefined) return
-    lastPosition = div.scrollTop
-    const messages = div.getElementsByClassName('message')
-    const divBottom = div.getBoundingClientRect().bottom
-    for (let i = 0; i < messages.length; i++) {
-      const elem = messages[i] as HTMLElement
-      if (elem.getBoundingClientRect().bottom > divBottom) break
-      const modified = elem.dataset.modified
-      if (modified === undefined) continue
-      const messageModified = parseInt(modified)
-      lastTime = messageModified > lastTime ? messageModified : lastTime
-    }
-    if (lastTime > (notifications?.lastRead ?? 0)) {
-      if (!waitingUpdate) {
-        waitingUpdate = true
-        setTimeout(updateLastRead, 3000, currentSpace)
-      }
-    }
+    notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
   }
 
   let query: QueryUpdater<Message> | undefined = undefined
@@ -162,7 +110,7 @@
   $: if (currentSpace !== undefined) {
     query = client.query<Message>(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
       messages = result
-      autoscroll = lastPosition > 0 ? lastPosition > div.scrollHeight - div.clientHeight - 30 : false
+      notificationClient.setAutoscroll(div)
     })
   }
 

@@ -11970,7 +11970,7 @@ packages:
     dev: false
 
   file:projects/notification-mappers.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-mHMQRr9iVMYuD+EjygerFc6pLVSaqMiJEd8tj7gN7nzO3TMKdY6HVBG/lznYygQ4CsADkOWQY5dzySLGKAgBvg==, tarball: file:projects/notification-mappers.tgz}
+    resolution: {integrity: sha512-S11nuUBE5CYCk5UFgMuo1boXfmx0j0mpEaJxpnh04m6MtTkzpw+Vi3CJr17k8Cgg4minAM6vI9JP3D9Djy048A==, tarball: file:projects/notification-mappers.tgz}
     id: file:projects/notification-mappers.tgz
     name: '@rush-temp/notification-mappers'
     version: 0.0.0
@@ -12004,13 +12004,14 @@ packages:
     dev: false
 
   file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461:
-    resolution: {integrity: sha512-t4cwqPV0Ly/tFt+AmVvdXJd634VyRBqp4uR1h9YhrRcADIxJ7lNrM8uby7pQ2j5kj1cvfx0Kr2jtcKpON2idpg==, tarball: file:projects/notification.tgz}
+    resolution: {integrity: sha512-1747b5D3l+NnLty8U9ZxTRumepP3LDxtE+6LT+5yUets1nV6Fm7C3ctn83IJ64Y+14gM1WpLj7hnCe8nRgxvqQ==, tarball: file:projects/notification.tgz}
     id: file:projects/notification.tgz
     name: '@rush-temp/notification'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.18.6
       '@types/jest': 26.0.24
+      fast-copy: 2.1.1
       jest: 26.6.3_ts-node@10.2.1
       prettier: 2.3.2
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5

@@ -91,13 +91,26 @@
     }
     return false
   }
+
+  function getLastModified (message: WithMessage): number {
+    let lastModified = message.modifiedOn
+    if (!thread) {
+      const comments = (message as Message).comments
+      if (comments !== undefined) {
+        for (const comment of comments) {
+          lastModified = lastModified > comment.lastModified ? lastModified : comment.lastModified
+        }
+      }
+    }
+    return lastModified
+  }
 </script>
 
 <div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
   {#if user}
     <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
   {/if}
-  <div class="message" data-modified={message.modifiedOn}>
+  <div class="message" data-modified={message.modifiedOn} data-lastmodified={getLastModified(message)}>
     <div class="header">
       {#if user}{user?.name ?? ''}{/if}<span
         ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span

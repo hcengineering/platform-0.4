@@ -43,10 +43,12 @@
   import type { IntlString } from '@anticrm/status'
   import { onDestroy } from 'svelte'
   import { afterUpdate } from 'svelte'
-  import { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
 
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
+  const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
   export let notifications: SpaceNotifications | undefined
@@ -74,29 +76,19 @@
   }
 
   onDestroy(async () => {
-    await updateLastRead(id)
+    if (notifications !== undefined) {
+      notificationClient.readNow(notifications, id)
+    }
   })
 
   afterUpdate(async () => {
     if (prevId !== id) {
-      if (prevId !== undefined) {
-        updateLastRead(prevId)
+      if (prevId !== undefined && notifications !== undefined) {
+        notificationClient.readNow(notifications, prevId)
       }
       prevId = id
     }
   })
-
-  async function updateLastRead (id: Ref<Task>) {
-    if (notifications === undefined) return
-    if (notifications.objectLastReads.set === undefined) {
-      notifications.objectLastReads = new Map<Ref<Task>, Timestamp>()
-    }
-    notifications.objectLastReads.set(id, Date.now())
-
-    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
-      lastRead: Date.now()
-    })
-  }
 
   function close () {
     router.navigate({ itemId: undefined })

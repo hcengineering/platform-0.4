@@ -11,7 +11,7 @@
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && ts-standard --fix src"
+    "format": "prettier --write src/**/*.ts && eslint --fix src"
   },
   "devDependencies": {
     "@anticrm/platform-rig": "^0.4.0",
@@ -20,7 +20,6 @@
     "@rushstack/heft": "^0.35.0",
     "@types/heft-jest": "^1.0.2",
     "prettier": "^2.2.1",
-    "ts-standard": "^10.0.0",
     "typescript": "^4.2.4",
     "@microsoft/api-extractor": "^7.13.4",
     "@typescript-eslint/eslint-plugin": "^4.22.0",

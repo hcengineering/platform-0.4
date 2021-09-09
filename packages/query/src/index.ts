@@ -186,10 +186,10 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
         if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
           if (q.result.pop()?._id !== doc._id) {
-            q.callback(Object.assign({}, q.result, { total: q.total }))
+            q.callback(Object.assign(copy(q.result), { total: q.total }))
           }
         } else {
-          q.callback(Object.assign({}, q.result, { total: q.total }))
+          q.callback(Object.assign(copy(q.result), { total: q.total }))
         }
       }
     }
@@ -212,7 +212,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       }
       if (index > -1) {
         q.result.splice(index, 1)
-        q.callback(Object.assign({}, q.result, { total: q.total }))
+        q.callback(Object.assign(copy(q.result), { total: q.total }))
       }
     }
   }
@@ -279,6 +279,6 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         return await this.refresh(q)
       }
     }
-    q.callback(Object.assign({}, q.result, { total: q.total }))
+    q.callback(Object.assign(copy(q.result), { total: q.total }))
   }
 }

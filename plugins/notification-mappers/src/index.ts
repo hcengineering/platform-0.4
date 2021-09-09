@@ -19,7 +19,6 @@ import core, {
   Tx,
   TxCreateDoc,
   TxUpdateDoc,
-  TxRemoveDoc,
   generateId,
   Ref,
   Space,
@@ -28,12 +27,13 @@ import core, {
   Account,
   DerivedDataDescriptor,
   DerivedData,
-  registerMapper
+  registerMapper,
+  ObjectTx
 } from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
 async function updateSpaceInfo<T extends Doc> (
-  tx: TxUpdateDoc<T> | TxCreateDoc<T> | TxRemoveDoc<T>,
+  tx: ObjectTx<T>,
   options: MappingOptions
 ): Promise<void> {
   const spaceInfo = (
@@ -64,7 +64,7 @@ function createSpaceNotification<T extends Space> (
   member: Ref<Account>
 ): SpaceNotifications {
   return {
-    _id: `spaceNotification-${ctx.objectId}-${member}` as Ref<SpaceNotifications>,
+    _id: `${ctx.objectId}-${member}` as Ref<SpaceNotifications>,
     lastRead: ctx.modifiedOn,
     createOn: ctx.createOn,
     descriptorId: options.descriptor._id,
@@ -129,17 +129,6 @@ export default (): void => {
         }
       }
 
-      if (tx._class === core.class.TxRemoveDoc) {
-        const ctx = tx as TxRemoveDoc<Doc>
-        if (
-          !options.hierarchy.isDerived(ctx.objectClass, core.class.Space) &&
-          ctx.objectSpace !== core.space.Model &&
-          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
-        ) {
-          await updateSpaceInfo(ctx, options)
-        }
-      }
-
       return []
     }
   })
@@ -158,18 +147,11 @@ export default (): void => {
 
       if (tx._class === core.class.TxUpdateDoc) {
         const ctx = tx as TxUpdateDoc<Space>
-        if (ctx.operations.members !== undefined) {
-          const result: SpaceNotifications[] = []
-          for (const member of ctx.operations.members) {
-            result.push(createSpaceNotification(ctx, options, member))
-          }
-          return result
-        }
         let result: SpaceNotifications[] = await options.storage.findAll(notification.class.SpaceNotifications, {
           objectId: ctx.objectId
         })
         if (ctx.operations.$pull?.members !== undefined) {
-          const pos = -1 // result.findIndex((p) => p.clientId === ctx.operations.$pull.members)
+          const pos = result.findIndex((p) => p.space.toString() === ctx.operations.$pull?.members)
           if (pos !== -1) {
             result = result.splice(pos, 1)
           }
@@ -177,11 +159,21 @@ export default (): void => {
         if (ctx.operations.$push?.members !== undefined) {
           result.push(createSpaceNotification(ctx, options, ctx.operations.$push.members))
         }
+        if (ctx.operations.members !== undefined) {
+          for (let i = 0; i < result.length; i++) {
+            const member = result[i].space.toString() as Ref<Account>
+            if (!ctx.operations.members.includes(member)) {
+              result = result.splice(i, 1)
+            }
+          }
+          const currentMembers = new Set(result.map(p => p.space.toString()))
+          for (const member of ctx.operations.members) {
+            if (!currentMembers.has(member)) {
+              result.push(createSpaceNotification(ctx, options, member))
+            }
+          }
+        }
         return result
-      }
-
-      if (tx._class === core.class.TxRemoveDoc) {
-        return []
       }
 
       return []
