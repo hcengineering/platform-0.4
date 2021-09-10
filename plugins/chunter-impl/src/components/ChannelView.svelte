@@ -74,7 +74,9 @@
   {/if}
 </div>
 <div class="ref-input">
-  <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+  {#if currentSpace}
+    <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+  {/if}
 </div>
 
 <style lang="scss">

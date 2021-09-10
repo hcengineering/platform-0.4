@@ -16,6 +16,7 @@
 import { getMongoClient, shutdown } from '@anticrm/mongo'
 import { createWorkspace, deleteWorkspace, upgradeWorkspace } from '..'
 import { DOMAIN_TX } from '@anticrm/core'
+import builder from '@anticrm/model-all'
 
 describe('workspaces', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
@@ -26,7 +27,7 @@ describe('workspaces', () => {
 
   it('create & delete workspace', async () => {
     const client = await getMongoClient(mongoDBUri)
-    await createWorkspace('my', { mongoDBUri })
+    await createWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
 
     expect(
       await client
@@ -35,7 +36,7 @@ describe('workspaces', () => {
         .find({})
         .count()
     ).toBeGreaterThan(0)
-    await deleteWorkspace('my', { mongoDBUri })
+    await deleteWorkspace('my', { mongoDBUri, txes: [] })
 
     const collections = await client.db('ws-my').collections()
     expect(collections.length).toEqual(0)
@@ -43,7 +44,7 @@ describe('workspaces', () => {
 
   it('upgrade workspace', async () => {
     const client = await getMongoClient(mongoDBUri)
-    await createWorkspace('my', { mongoDBUri })
+    await createWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
 
     expect(
       await client
@@ -53,7 +54,7 @@ describe('workspaces', () => {
         .count()
     ).toBeGreaterThan(0)
 
-    await upgradeWorkspace('my', { mongoDBUri })
+    await upgradeWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
     expect(
       await client
         .db('ws-my')
@@ -62,12 +63,12 @@ describe('workspaces', () => {
         .count()
     ).toBeGreaterThan(0)
 
-    await deleteWorkspace('my', { mongoDBUri })
+    await deleteWorkspace('my', { mongoDBUri, txes: [] })
 
     const collections = await client.db('ws-my').collections()
     expect(collections.length).toEqual(0)
   })
   it('delete missing workspace', async () => {
-    await deleteWorkspace('my-missing', { mongoDBUri })
+    await deleteWorkspace('my-missing', { mongoDBUri, txes: [] })
   })
 })

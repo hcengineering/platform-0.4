@@ -1,5 +1,4 @@
-import core, { DOMAIN_TX, generateModelDiff } from '@anticrm/core'
-import builder from '@anticrm/model-all'
+import core, { DOMAIN_TX, generateModelDiff, Tx } from '@anticrm/core'
 import { getMongoClient, mongoEscape } from '@anticrm/mongo'
 
 /**
@@ -9,6 +8,7 @@ import { getMongoClient, mongoEscape } from '@anticrm/mongo'
 export interface WorkspaceOptions {
   mongoDBUri: string // Mongo DB URI.
   mongoOptions?: any // Any other mongo options, should be compatible with @{link MongoClientOptions}
+  txes: Tx[] // An initial set of transactions to initialize/upgrade workspace
 }
 
 /**
@@ -24,7 +24,7 @@ export async function createWorkspace (workspaceId: string, options: WorkspaceOp
     throw Error('workspace already exists')
   }
   const txes = db.collection(DOMAIN_TX as string)
-  for (const tx of builder.getTxes()) {
+  for (const tx of options.txes) {
     await txes.insertOne(mongoEscape(tx))
   }
 }
@@ -42,7 +42,7 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   // Find all system transactions.
   const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
 
-  const updateTxes = await generateModelDiff(existingTxes, builder.getTxes())
+  const updateTxes = await generateModelDiff(existingTxes, options.txes)
 
   for (const tx of updateTxes) {
     await txes.insertOne(mongoEscape(tx))

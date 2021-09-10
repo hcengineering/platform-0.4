@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/presentation",
+      "comment": "HR build fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/presentation"
+}

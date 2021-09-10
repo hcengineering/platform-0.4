@@ -3,13 +3,14 @@
   "version": "0.4.0",
   "license": "EPL-2.0",
   "scripts": {
-    "build-server": "esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error",
+    "check": "tsc --noEmit",
+    "build-server": "rushx check && rushx lint && esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error",
     "build": "rm -rf ./dist && cross-env NODE_ENV=production webpack && rushx build-server",
     "build-dev": "rm -rf ./dist && cross-env NODE_ENV=development webpack && rushx build-server",
     "dev": "webpack serve --content-base public",
     "compose": "DOCKER_BUILDKIT=1 docker compose build",
-    "docker": "DOCKER_BUILDKIT=1 docker build . -t anticrm/hr-build",
-    "docker-run": "docker run -p 8080:8080 anticrm/hr-front",
+    "docker": "DOCKER_BUILDKIT=1 docker build . -t hardcoreeng/hr-build",
+    "docker-run": "docker run -p 8080:8080 hardcoreeng/hr-build",
     "analyze": "cross-env NODE_ENV=production webpack --json > stats.json",
     "show": "webpack-bundle-analyzer stats.json dist",
     "test": "echo 'no tests'",
@@ -72,6 +73,28 @@
     "@anticrm/login-assets": "~0.4.0",
     "@anticrm/services": "~0.4.0",
     "@anticrm/server": "~0.4.0",
-    "@anticrm/server-tools": "~0.4.0"
+    "@anticrm/server-tools": "~0.4.0",
+
+    "@anticrm/meeting": "~0.4.0",
+    "@anticrm/meeting-impl": "~0.4.0",
+    "@anticrm/meeting-assets": "~0.4.0",
+
+    "@anticrm/mongo": "~0.4.0",
+    "@anticrm/accounts": "~0.4.0",
+    "@anticrm/workspaces": "~0.4.0",
+    "@anticrm/calendar": "~0.4.0",
+    "@anticrm/calendar-impl": "~0.4.0",
+    "@anticrm/calendar-assets": "~0.4.0",
+
+    "@anticrm/model-workbench":"~0.4.0",
+    "@anticrm/model-chunter":"~0.4.0",
+    "@anticrm/model-task":"~0.4.0",
+    "@anticrm/model-core":"~0.4.0",
+    "@anticrm/model-meeting":"~0.4.0",
+    "@anticrm/model-fsm":"~0.4.0",
+    "@anticrm/model-recruiting":"~0.4.0",
+    "@anticrm/model-calendar": "~0.4.0",
+    "@anticrm/model-notification": "~0.4.0",
+    "@anticrm/model": "~0.4.0"
   }
 }

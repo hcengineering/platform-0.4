@@ -69,7 +69,9 @@ export class Server {
     this.server.handleUpgrade(request, socket, head, (ws) => {
       this.handleConnection(ws, token).catch((err) => {
         this.traceError(err)
-        ws.close()
+        socket.write('HTTP/1.1 400 Bad Request\r\n\r\n')
+        socket.destroy()
+        // ws.close()
       })
     })
   }
@@ -117,6 +119,8 @@ export class Server {
 
     this.registerOnClose(ws, clientId)
     this.registerOnError(ws, clientId)
+
+    await storage
   }
 
   private async handleRequest (ws: WebSocket, storage: Storage, request: Request<any>): Promise<void> {
@@ -125,7 +129,7 @@ export class Server {
     try {
       const result = await Reflect.apply(callOp, storage, params)
       ws.send(serialize({ id, result }))
-    } catch (error) {
+    } catch (error: any) {
       ws.send(
         serialize({
           id,

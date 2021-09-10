@@ -35,6 +35,7 @@
     "@anticrm/workspaces":"~0.4.0",
     "@anticrm/server": "~0.4.0",
     "@anticrm/accounts": "~0.4.0",
-    "@anticrm/mongo": "~0.4.0"
+    "@anticrm/mongo": "~0.4.0",
+    "@anticrm/model-all": "~0.4.0"
   }
 }

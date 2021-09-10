@@ -42,6 +42,7 @@ class LiveQueryImpl<T extends Doc> {
   constructor (private readonly client: () => Promise<Client>, private readonly callback: (result: T[]) => void) {
     onDestroy(() => {
       this.unsubscribe?.()
+      this.unsubscribe = undefined
     })
   }
 
@@ -72,11 +73,13 @@ class LiveQueryImpl<T extends Doc> {
   }
 }
 
-export type QueryUpdater<T extends Doc> = (
-  _class: Ref<Class<T>>,
-  query: DocumentQuery<T>,
-  options?: FindOptions<T>
-) => void
+/**
+ * @public
+ */
+export interface QueryUpdater<T extends Doc> {
+  update: (_class: Ref<Class<T>>, query: DocumentQuery<T>, options?: FindOptions<T>) => void
+  unsubscribe: () => void
+}
 
 type UnsubscribeFunc = () => void
 export interface PresentationService extends Service {}
@@ -113,7 +116,7 @@ export class PresentationClient implements Storage, TxOperations {
     options?: FindOptions<T>
   ): QueryUpdater<T> {
     if (liveQuery !== undefined) {
-      liveQuery(_class, query, options)
+      liveQuery.update(_class, query, options)
       return liveQuery
     }
     return this.liveQuery(_class, query, callback, options)
@@ -174,10 +177,14 @@ export class PresentationClient implements Storage, TxOperations {
     options?: FindOptions<T>
   ): QueryUpdater<T> {
     const lQuery = new LiveQueryImpl<T>(this.client, callback)
-    const updater = lQuery.update.bind(lQuery)
-    updater(_class, query, options)
+    lQuery.update(_class, query, options)
 
-    return updater
+    return {
+      update: (_class, query, options) => lQuery.update(_class, query, options),
+      unsubscribe: () => {
+        lQuery.unsubscribe?.()
+      }
+    }
   }
 
   private handleError (error: any): void {

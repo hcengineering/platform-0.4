@@ -1,0 +1,22 @@
+# Public host name, will be used for auth and web hosting.
+export WEB_HOST=localhost
+
+# Public port, will be used for auth and web hosting.
+export WEB_PORT=8080    
+
+# Port for websocket connections. web_host will be used to connect to.
+export SERVER_PORT=18080
+
+# Server secret key be used to generate auth tokens. Please update to some secret value.
+export SERVER_SECRET=workspace_secret
+
+# An address of mongodb server to hold data inside.
+export MONGODB_URI=mongodb://localhost:27017
+
+# Workspace with following name will be automatically created if not pressent already.
+export WORKSPACE=workspace
+
+export WORKSPACE_ORGANIZATION='workspace organization'
+
+# Running server on background.
+nohup node ./server.js >out.log &

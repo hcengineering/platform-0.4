@@ -126,8 +126,8 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: './node_modules/@anticrm/server-tools/dist/tools.js', to: '../' },
-        { from: './public', to: '.' }
+        { from: './public', to: '.' },
+        { from: './launcher.sh.template', to: '..' }
       ]
     })
   ],

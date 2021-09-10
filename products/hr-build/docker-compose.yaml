@@ -1,9 +1,7 @@
 version: "3.9"  # optional since v1.27.0
 services:
   server:
-    build: 
-      context: .
-      dockerfile: ./Dockerfile
+    image: hardcoreeng/hr-build
     ports:
       - 8080:8080
       - 18080:18080

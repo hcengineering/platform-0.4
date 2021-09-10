@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "HR build fixes",
+      "type": "patch",
+      "packageName": "@anticrm/workbench-impl"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "haiodo@gmail.com"
+}
