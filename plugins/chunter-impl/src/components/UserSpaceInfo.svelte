@@ -45,6 +45,11 @@
 
   let user: Account | undefined
   $: user = accounts[0]
+
+  function userName (u: Account): string {
+    const uname = u.name.trim()
+    return uname.length > 0 ? uname : u.email
+  }
 </script>
 
 <div class="user-container">
@@ -54,10 +59,8 @@
     </div>
     <div class="caption">
       <div class="title" class:header={headerSize} class:item={!headerSize}>
-        {accounts
-          .map((u) => (u.name.trim().length > 0 ? u.name : u.email))
-          .slice(0, 2)
-          .join(', ') + (accounts.length > 2 ? ` and ${accounts.length - 2} more.` : '')}
+        {accounts.map(userName).slice(0, 2).join(', ') +
+          (accounts.length > 2 ? ` and ${accounts.length - 2} more.` : '')}
       </div>
     </div>
   {/if}
