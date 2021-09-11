@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Person, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, Person, Ref, Space, Timestamp } from '@anticrm/core'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
@@ -35,7 +35,9 @@ export interface Candidate extends Person {
   resume: string
 }
 
-export interface Applicant extends FSMItem {}
+export interface Applicant extends FSMItem {
+  recruiter: Ref<Account>
+}
 
 export interface CandidatePoolSpace extends Space {}
 
@@ -72,6 +74,7 @@ export default plugin(PluginRecruiting, {}, {
   component: {
     CreatePool: '' as AnyComponent,
     CreateVacancy: '' as AnyComponent,
+    CreateApplication: '' as AnyComponent,
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent
@@ -115,6 +118,11 @@ export default plugin(PluginRecruiting, {}, {
     ApplicationInfo: '' as IntlString,
     CreateApplication: '' as IntlString,
     Unassign: '' as IntlString,
+
+    Candidate: '' as IntlString,
+    Recruiter: '' as IntlString,
+    SelectCandidate: '' as IntlString,
+    AssignRecruiter: '' as IntlString,
 
     AddPoolSpace: '' as IntlString,
 

@@ -38,6 +38,10 @@
     "Country": "Country",
     "ApplicationInfo": "Application Info",
     "CreateApplication": "Create Application",
-    "Unassign": "Unassign"
+    "Unassign": "Unassign",
+    "Candidate": "Candidate",
+    "Recruiter": "Recruiter",
+    "SelectCandidate": "Select Candidate",
+    "AssignRecruiter": "Assign Recruiter"
   }
 }

@@ -16,7 +16,7 @@
 import { Builder, Model } from '@anticrm/model'
 import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
 import core, { TPerson, TSpace } from '@anticrm/model-core'
-import { Domain, Timestamp } from '@anticrm/core'
+import { Account, Domain, Ref, Timestamp } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
@@ -49,7 +49,9 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
  * @public
  */
 @Model(recruiting.class.Applicant, fsm.class.FSMItem)
-class TApplicant extends TFSMItem implements Applicant {}
+class TApplicant extends TFSMItem implements Applicant {
+  recruiter!: Ref<Account>
+}
 
 /**
  * @public
@@ -83,7 +85,8 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: recruiting.string.AddVacancy,
             createComponent: recruiting.component.CreateVacancy,
             item: {
-              createComponent: recruiting.component.CreateVacancy
+              createComponent: recruiting.component.CreateApplication,
+              createLabel: recruiting.string.CreateApplication
             }
           },
           {
@@ -94,6 +97,7 @@ export function createModel (builder: Builder): void {
             createComponent: recruiting.component.CreatePool,
             item: {
               createComponent: recruiting.component.CreateCandidate,
+              createLabel: recruiting.string.AddCandidate,
               editComponent: recruiting.component.EditCandidate
             }
           }

@@ -54,8 +54,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: sticky;
-    top: 0;
 
     height: 240px;
     width: 100%;
