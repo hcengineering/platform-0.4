@@ -7,7 +7,7 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "node ./esbuild",
+    "build": "node --max-old-space-size=4096 ./esbuild",
     "build:clean": "rm -rf ./lib && node ./esbuild",
     "test": "echo 'no tests'",
     "lint": "eslint src",
