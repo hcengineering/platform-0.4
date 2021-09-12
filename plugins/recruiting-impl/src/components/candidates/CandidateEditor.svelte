@@ -29,6 +29,15 @@
   function onUpdate () {
     dispatch('update')
   }
+
+  function onNameUpdate () {
+    if (candidate === undefined) {
+      return
+    }
+
+    candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
+    onUpdate()
+  }
 </script>
 
 {#if candidate !== undefined}
@@ -36,8 +45,8 @@
     <PersonSummary person={candidate} subtitle={candidate.employment.position} />
     <Section label={recruiting.string.PersonalInformation} icon={IconFile}>
       <Grid column={2}>
-        <EditBox label={recruiting.string.FirstName} bind:value={candidate.firstName} on:blur={onUpdate} />
-        <EditBox label={recruiting.string.LastName} bind:value={candidate.lastName} on:blur={onUpdate} />
+        <EditBox label={recruiting.string.FirstName} bind:value={candidate.firstName} on:blur={onNameUpdate} />
+        <EditBox label={recruiting.string.LastName} bind:value={candidate.lastName} on:blur={onNameUpdate} />
         <EditBox label={recruiting.string.Email} bind:value={candidate.email} on:blur={onUpdate} />
         <EditBox label={recruiting.string.Phone} bind:value={candidate.phone} on:blur={onUpdate} />
         <EditBox label={recruiting.string.Position} bind:value={candidate.employment.position} on:blur={onUpdate} />

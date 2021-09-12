@@ -30,7 +30,7 @@
   const candidate: Candidate & Data<Required<Candidate>> = {
     firstName: '',
     lastName: '',
-    avatar: '',
+    avatar: 'https://robohash.org/prefix?set=set4',
     email: '',
     phone: '',
     bio: '',

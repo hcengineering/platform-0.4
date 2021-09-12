@@ -13,21 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { writable } from 'svelte/store'
-  import debounce from 'lodash.debounce'
-
   import type { Person } from '../types'
 
   export let person: Person
   export let subtitle: string | undefined
 
-  const getAvatar = (p: Person): string =>
-    p.avatar && p.avatar.length > 0 ? p.avatar : `https://robohash.org/prefix${p.firstName}${p.lastName}?set=set4`
-
-  const avatar = writable(getAvatar(person))
-  const setAvatar = debounce((v: string) => avatar.set(v), 250)
-
-  $: setAvatar(getAvatar(person))
   const getName = (a: string | undefined, b: string | undefined) =>
     [a, b].filter((x) => x !== undefined && x.length > 0).join(' ')
 
@@ -37,7 +27,7 @@
 
 <div class="root">
   <div class="content">
-    <img class="avatar" src={$avatar} alt="avatar" />
+    <img class="avatar" src={person.avatar} alt="avatar" />
     <div class="name">
       {name}
     </div>
