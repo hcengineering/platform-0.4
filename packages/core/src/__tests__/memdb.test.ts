@@ -216,7 +216,6 @@ describe('memdb', () => {
     expect(res[0].members).not.toEqual(expect.arrayContaining([account3._id]))
     expect(res[0].members).not.toEqual(expect.arrayContaining([account4._id]))
   })
-})
 
   it('limit and sorting', async () => {
     const hierarchy = new Hierarchy()
