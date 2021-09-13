@@ -13,16 +13,12 @@
 // limitations under the License.
 //
 
+import chunter, { CommentRef } from '@anticrm/chunter'
+import { Account, DocumentPresenter, Domain, PresentationMode, Ref, ShortRef } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-
-import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
-import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
-import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
-import { CommentRef } from '@anticrm/chunter'
-import chunter from '@anticrm/chunter'
-
+import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
-
+import { CheckListItem, Project, Task, TaskStatus } from '@anticrm/task'
 import task from './plugin'
 
 const DOMAIN_TASK = 'task' as Domain
@@ -147,4 +143,21 @@ export function createModel (builder: Builder): void {
     },
     task.dd.ReplyOf
   )
+
+  // P R E S E N T E R S
+  builder.createDoc<DocumentPresenter<Task>>(core.class.DocumentPresenter, {
+    objectClass: task.class.Task,
+    presentation: {
+      Link: {
+        component: task.component.TaskRefView,
+        description: 'Task Ref',
+        mode: PresentationMode.Link
+      },
+      Preview: {
+        component: task.component.TaskPreview,
+        description: 'Task Preview',
+        mode: PresentationMode.Preview
+      }
+    }
+  })
 }

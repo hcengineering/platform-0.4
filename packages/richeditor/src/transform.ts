@@ -144,7 +144,6 @@ async function checkUpdateItem (
     items = findSameItem(prev, items)
   }
   if (items.length >= 1) {
-    console.log('handle text completion auto replace', refText, items)
     operations.push(createItemReference(items[0], state, cpos, ci, cend))
   }
   if (items.length === 0 && prev.id === '') {

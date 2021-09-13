@@ -263,8 +263,14 @@ function addSpecNode (handlers: HandlersRecord, type: string, spec: ParsingNodeR
 
 function tokAttrGet (token: Token, name: string): string | undefined {
   const attr = token.attrGet(name)
-  if (attr === null) {
-    return undefined
+  if (attr != null) {
+    return attr
+  }
+  // try iterate attrs
+  for (const [k, v] of token.attrs ?? []) {
+    if (k === name) {
+      return v
+    }
   }
 }
 

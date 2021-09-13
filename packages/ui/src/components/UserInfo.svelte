@@ -15,7 +15,7 @@
 <script lang="ts">
   import type { Account } from '@anticrm/core'
 
-  export let user: Account | undefined
+  export let user: Pick<Account, 'name' | 'email' | 'avatar'> | undefined
   export let size: 24 | 32 | 36 = 24
   export let avatarOnly: boolean = false
 </script>

@@ -17,6 +17,7 @@ import chunter, { Channel } from '@anticrm/chunter'
 import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
 import type { AnyComponent, IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
+import {} from '@anticrm/platform'
 
 /**
  * NOTICE:

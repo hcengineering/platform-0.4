@@ -13,33 +13,21 @@
 // limitations under the License.
 //
 
-import { MessageNode } from './model'
-import { MarkdownParser } from './parser'
-import { MarkdownState } from './serializer'
+import { Class, Doc, DocumentPresenter, DOMAIN_MODEL, PresentationFormat, Ref } from '@anticrm/core'
+import { Model } from '@anticrm/model'
+import core from './component'
+import { TDoc } from './core'
 
-export * from './model'
-export { traverseAllMarks } from './node'
-
-/**
- * @public
- */
-export function parseMessage (message: string): MessageNode {
-  return parseMessageMarkdown(message)
-}
+// P R E S E N T A T I O N
 
 /**
  * @public
  */
-export function parseMessageMarkdown (message: string): MessageNode {
-  const parser = new MarkdownParser()
-  return parser.parse(message ?? '')
-}
+@Model(core.class.DocumentPresenter, core.class.Doc, DOMAIN_MODEL)
+export class TDocumentPresenter extends TDoc implements DocumentPresenter<Doc> {
+  // For all classes based on specified.
+  objectClass!: Ref<Class<Doc>>
 
-/**
- * @public
- */
-export function serializeMessage (node: MessageNode): string {
-  const state = new MarkdownState()
-  state.renderContent(node)
-  return state.out
+  // An presentation format definition
+  presentation!: Record<string, PresentationFormat>
 }

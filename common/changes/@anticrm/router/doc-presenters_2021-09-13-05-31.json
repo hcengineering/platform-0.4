@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Document presenters",
+      "type": "patch",
+      "packageName": "@anticrm/router"
+    }
+  ],
+  "packageName": "@anticrm/router",
+  "email": "haiodo@gmail.com"
+}

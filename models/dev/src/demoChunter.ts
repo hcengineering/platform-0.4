@@ -2,6 +2,7 @@ import chunter, { Channel, Comment, CommentRef, Message } from '@anticrm/chunter
 import core, { Account, getFullRef, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
+import { Task } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
 
@@ -14,7 +15,7 @@ const demoIds = component('demo-task' as Component, {
 /**
  * @public
  */
-export function demoChunter (builder: Builder): void {
+export function demoChunter (builder: Builder, tasks: Task[]): void {
   const members: Ref<Account>[] = [core.account.System, ...accountIds]
   builder.createDoc(
     chunter.class.Channel,
@@ -77,10 +78,34 @@ export function demoChunter (builder: Builder): void {
       )
     }
 
+    let msgText = faker.lorem.paragraphs(3)
+
+    if (i === ri - 1) {
+      // Last message
+      msgText = faker.lorem.paragraphs(1)
+      msgText += `Hello [${tasks[0].shortRefId as string}](ref://task.Task#${tasks[0]._id})`
+      msgText += `\nHello2 [${tasks[1].shortRefId as string}](ref://task.Task#${tasks[1]._id})`
+      msgText += faker.lorem.paragraphs(1)
+    }
+
+    if (i === ri - 2) {
+      // Last message
+      msgText = faker.lorem.paragraphs(1)
+      msgText += 'Youtube Page [Demo page](https://www.youtube.com/watch?v=LXb3EKWsInQ)'
+      msgText += faker.lorem.paragraphs(1)
+    }
+
+    if (i === ri - 3) {
+      // Last message
+      msgText = faker.lorem.paragraphs(1)
+      msgText += 'Github link [#261](https://github.com/hardcoreeng/platform/issues/261)'
+      msgText += faker.lorem.paragraphs(1)
+    }
+
     builder.createDoc(
       chunter.class.Message,
       {
-        message: faker.lorem.paragraphs(3),
+        message: msgText,
         comments
       },
       msgId,

@@ -187,25 +187,35 @@ function createState (doc: MessageNode): EditorState {
 rootElement = document.createElement('div')
 
 state = createState(content)
+let updateTimer: any
 view = new EditorView(rootElement, {
   state,
   dispatchTransaction (transaction) {
     let newState = view.state.apply(transaction)
 
-    // Check and update triggers to update content.
-    if (transformInjections !== undefined) {
-      const tr: Promise<Transaction | null> = transformInjections(newState)
-      if (tr !== null) {
-        tr.then((res) => {
-          if (res !== null) {
-            newState = newState.apply(res)
-            view.updateState(newState)
-
-            emitStyleEvent()
-          }
-        })
-      }
+    if (updateTimer !== undefined) {
+      clearInterval(updateTimer)
     }
+    // Update
+    updateTimer = setInterval(() => {
+      // Check and update triggers to update content.
+      if (transformInjections !== undefined) {
+        const tr: Promise<Transaction | null> = transformInjections(newState)
+        if (tr !== null) {
+          tr.then((res) => {
+            if (res !== null) {
+              newState = newState.apply(res)
+              view.updateState(newState)
+
+              emitStyleEvent()
+            }
+          })
+        }
+      }
+      clearInterval(updateTimer)
+      updateTimer = undefined
+    }, 200)
+
     view.updateState(newState)
 
     emitStyleEvent()
