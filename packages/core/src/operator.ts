@@ -15,7 +15,8 @@
 //
 
 import type { Doc, PropertyType } from './classes'
-import { deepEqual } from 'fast-equals'
+import { createPredicates, isPredicate } from './predicate'
+import copy from 'fast-copy'
 
 /**
  * @public
@@ -38,7 +39,18 @@ function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
   for (const key in keyval) {
     const arr: Array<any> = doc[key]
     if (arr !== undefined) {
-      doc[key] = arr.filter((k) => !deepEqual(k, keyval[key]))
+      let pulled: any[] = []
+      if (isPredicate(keyval[key])) {
+        const preds = createPredicates(keyval[key], undefined)
+        let temp = copy(arr)
+        for (const pred of preds) {
+          temp = pred(temp)
+        }
+        pulled = temp
+      } else {
+        pulled = [keyval[key]]
+      }
+      doc[key] = arr.filter((k) => !pulled.includes(k))
     }
   }
 }

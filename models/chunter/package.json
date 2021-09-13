@@ -35,6 +35,7 @@
     "@anticrm/workbench":"~0.4.0",
     "@anticrm/chunter":"~0.4.0",
     "@anticrm/model-workbench":"~0.4.0",
-    "@anticrm/model-core":"~0.4.0"
+    "@anticrm/model-core":"~0.4.0",
+    "@anticrm/notification":"~0.4.0"
   }
 }

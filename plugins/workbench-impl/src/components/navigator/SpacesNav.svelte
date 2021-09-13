@@ -29,9 +29,9 @@
   import notification from '@anticrm/notification'
 
   export let model: SpacesNavModel
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
 
   let spaces: Space[] = []
-  let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
   let spaceInfo: Map<Ref<Space>, SpaceInfo> = new Map<Ref<Space>, SpaceInfo>()
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
@@ -46,20 +46,6 @@
         ...result.filter((space) => space.members.includes(accountId))
       ]
     })
-  }
-
-  let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
-  $: if (spaces.length > 0) {
-    notificationQuery = client.query<SpaceNotifications>(
-      notificationQuery,
-      notification.class.SpaceNotifications,
-      { objectId: { $in: spaces.map((p) => p._id) } },
-      (result) => {
-        notifications.clear()
-        result.forEach((p) => notifications.set(p.objectId as Ref<Space>, p))
-        notifications = notifications
-      }
-    )
   }
 
   let lastModifiedQuery: QueryUpdater<SpaceInfo> | undefined
@@ -113,6 +99,7 @@
   {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
     <TreeNode label={model.label} {actions}>
       {#each spaces as space}
+        {notifications.get(space._id)?.notificatedObjects.length}
         <TreeItem
           notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
           changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}

@@ -83,11 +83,14 @@
         popupVisible = false
         currentPrefix = ''
       } else {
-        currentPrefix = event.completionWord.substring(2)
-        if (currentPrefix.length > 0) {
+        if (event.completionWord.substring(2).length > 0) {
+          currentPrefix = event.completionWord
           popupVisible = true
         }
       }
+    } else if (event.completionWord.startsWith('@')) {
+      currentPrefix = event.completionWord
+      popupVisible = true
     } else {
       currentPrefix = ''
       popupVisible = false
@@ -96,13 +99,15 @@
   }
 
   function handlePopupSelected (value: CompletionItem) {
+    const isMention = styleState.completionWord.startsWith('@')
     let extra = 0
     if (styleState.completionEnd !== null && styleState.completionEnd.endsWith(']]')) {
       extra = styleState.completionEnd.length
     }
     const vv = value as ExtendedCompletionItem
+    const text = isMention ? value.label : '[[' + value.label + ']]'
     htmlEditor.insertMark(
-      '[[' + value.label + ']]',
+      text,
       styleState.selection.from - styleState.completionWord.length,
       styleState.selection.to + extra,
       schema.marks.reference,

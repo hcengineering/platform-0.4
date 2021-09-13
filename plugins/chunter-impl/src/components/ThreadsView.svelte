@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Message } from '@anticrm/chunter'
-  import { Ref } from '@anticrm/core'
+  import { Ref, Space } from '@anticrm/core'
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconClose, Label } from '@anticrm/ui'
@@ -28,14 +28,15 @@
   import Comments from './Comments.svelte'
   import MsgView from './Message.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
-  import { afterUpdate, beforeUpdate } from 'svelte'
+  import { tick } from 'svelte'
 
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Message>
-  export let notifications: SpaceNotifications | undefined
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  let notification: SpaceNotifications | undefined
   let message: Message | undefined
   let div: HTMLElement
   let messageLastRead = 0
@@ -44,12 +45,18 @@
 
   $: {
     lq = client.query(lq, chunter.class.Message, { _id: id }, async (result) => {
-      message = result[0]
+      notification = notifications.get(result[0].space)
       notificationClient.setAutoscroll(div)
+      message = result[0]
       messageLastRead = 0
-      if (notifications?.objectLastReads?.get !== undefined) {
-        messageLastRead = notifications.objectLastReads.get(message._id) ?? 0
+      if (notification?.objectLastReads?.get !== undefined) {
+        messageLastRead = notification.objectLastReads.get(message._id) ?? 0
       }
+      await tick()
+      if (div && notification) {
+        notificationClient.before(div, notification, message?._id, true)
+      }
+      notificationClient.initScroll(div, messageLastRead, true)
     })
   }
 
@@ -64,25 +71,14 @@
       replyOf: getFullRef(message!._id, message!._class),
       message: text
     })
-    if (notifications !== undefined) {
-      await notificationClient.readNow(notifications, message!._id)
+    if (notification !== undefined) {
+      await notificationClient.readNow(notification, message!._id)
     }
   }
 
-  beforeUpdate(async () => {
-    if (div && notifications) {
-      notificationClient.before(div, notifications, message?._id, true)
-    }
-  })
-
-  afterUpdate(() => {
-    notificationClient.initScroll(div, messageLastRead, true)
-    scrollHandler()
-  })
-
   function scrollHandler () {
     if (message !== undefined) {
-      notificationClient.scrollHandler(div, notifications, messageLastRead, true, message!._id)
+      notificationClient.scrollHandler(div, notification, messageLastRead, true, message!._id)
     }
   }
 </script>
@@ -94,14 +90,14 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} {notifications} thread />
+      <MsgView {message} notifications={notification} thread />
       <ChannelSeparator label={chunter.string.RepliesText} line />
-      <Comments {message} {notifications} />
+      <Comments {message} notifications={notification} />
     </div>
   {/if}
 </div>
 <div class="ref-input">
-  <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail)} />
 </div>
 
 <style lang="scss">
