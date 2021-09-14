@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Person, Account, Arr, Ref, Space } from '@anticrm/core'
+import type { Account, Arr, Ref, Space } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
@@ -35,26 +35,11 @@ export class TSpace extends TDoc implements Space {
 /**
  * @public
  */
-@Model(core.class.Person, core.class.Doc)
-export class TPerson extends TDoc implements Person {
+@Model(core.class.Account, core.class.Doc, DOMAIN_MODEL)
+export class TAccount extends TDoc implements Account {
   email!: string
+  name!: string
   firstName!: string
   lastName!: string
   avatar!: string
-  bio!: string
-  phone!: string
-  address!: {
-    country?: string
-    city?: string
-    street?: string
-    zip?: string
-  }
-}
-
-/**
- * @public
- */
-@Model(core.class.Account, core.class.Person, DOMAIN_MODEL)
-export class TAccount extends TPerson implements Account {
-  name!: string
 }

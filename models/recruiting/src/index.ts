@@ -15,19 +15,19 @@
 
 import { Builder, Model } from '@anticrm/model'
 import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
-import core, { TPerson, TSpace } from '@anticrm/model-core'
-import { Account, Domain, Ref, Timestamp } from '@anticrm/core'
+import core, { TSpace } from '@anticrm/model-core'
+import { TPerson } from '@anticrm/model-contact'
+import contact from '@anticrm/contact'
+import { Account, Ref, Timestamp } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
 import recruiting from '@anticrm/recruiting'
 
-const DOMAIN_RECRUITING = 'recruiting' as Domain
-
 /**
  * @public
  */
-@Model(recruiting.class.Candidate, core.class.Person, DOMAIN_RECRUITING)
+@Model(recruiting.class.Candidate, contact.class.Person)
 class TCandidate extends TPerson implements Candidate {
   status!: CandidateStatus
   employment!: {

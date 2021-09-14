@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Person, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Person } from '@anticrm/contact'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'

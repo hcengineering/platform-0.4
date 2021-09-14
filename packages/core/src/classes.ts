@@ -197,24 +197,10 @@ export interface AccountProperties {
 /**
  * @public
  */
-export interface Person extends Doc {
+export interface Account extends Doc {
   email: string
+  name: string // Account name
   firstName?: string
   lastName?: string
   avatar?: string
-  bio?: string
-  phone?: string
-  address?: {
-    country?: string
-    city?: string
-    street?: string
-    zip?: string
-  }
-}
-
-/**
- * @public
- */
-export interface Account extends Person {
-  name: string // Account name
 }

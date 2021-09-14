@@ -13,6 +13,7 @@ specifiers:
   '@rush-temp/chunter': file:./projects/chunter.tgz
   '@rush-temp/chunter-assets': file:./projects/chunter-assets.tgz
   '@rush-temp/chunter-impl': file:./projects/chunter-impl.tgz
+  '@rush-temp/contact': file:./projects/contact.tgz
   '@rush-temp/core': file:./projects/core.tgz
   '@rush-temp/dev-server': file:./projects/dev-server.tgz
   '@rush-temp/elastic': file:./projects/elastic.tgz
@@ -29,6 +30,7 @@ specifiers:
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-calendar': file:./projects/model-calendar.tgz
   '@rush-temp/model-chunter': file:./projects/model-chunter.tgz
+  '@rush-temp/model-contact': file:./projects/model-contact.tgz
   '@rush-temp/model-core': file:./projects/model-core.tgz
   '@rush-temp/model-dev': file:./projects/model-dev.tgz
   '@rush-temp/model-fsm': file:./projects/model-fsm.tgz
@@ -203,6 +205,7 @@ dependencies:
   '@rush-temp/chunter': file:projects/chunter.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/chunter-assets': file:projects/chunter-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/chunter-impl': file:projects/chunter-impl.tgz_postcss@8.3.6+ts-node@10.2.1
+  '@rush-temp/contact': file:projects/contact.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/core': file:projects/core.tgz
   '@rush-temp/dev-server': file:projects/dev-server.tgz_@types+node@14.17.11
   '@rush-temp/elastic': file:projects/elastic.tgz
@@ -219,6 +222,7 @@ dependencies:
   '@rush-temp/model-all': file:projects/model-all.tgz_@types+node@14.17.11
   '@rush-temp/model-calendar': file:projects/model-calendar.tgz
   '@rush-temp/model-chunter': file:projects/model-chunter.tgz
+  '@rush-temp/model-contact': file:projects/model-contact.tgz
   '@rush-temp/model-core': file:projects/model-core.tgz
   '@rush-temp/model-dev': file:projects/model-dev.tgz_@types+node@14.17.11
   '@rush-temp/model-fsm': file:projects/model-fsm.tgz
@@ -11221,6 +11225,20 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/contact.tgz_@typescript-eslint+parser@4.29.3:
+    resolution: {integrity: sha512-+SlWY0UzjRL8rsN2IhXb+n8/ZpyVl9se9Kkr8FdzqATMwRL2bWvp5HENBUG7rZn2o6Esh1SEZZuj8bii0b1QRg==, tarball: file:projects/contact.tgz}
+    id: file:projects/contact.tgz
+    name: '@rush-temp/contact'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - supports-color
+    dev: false
+
   file:projects/core.tgz:
     resolution: {integrity: sha512-s5fRP4N078N9MAkvJNgQKXNLnvKaXqFxFmKapjtQq7CkxrSW4hqLxwR1jxbFaae3cqxqw7psh5fWbCcFMOAibw==, tarball: file:projects/core.tgz}
     name: '@rush-temp/core'
@@ -11598,7 +11616,7 @@ packages:
     dev: false
 
   file:projects/model-all.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-ctvIBHeztTmJ0+zIFeJpGzp2t/oQHFYnHjO0aVCAt7WdRi4A/DjQyWgVD5ai9t/srt4Tis6GCguQvfUWb0W+pQ==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-vZRZqIeQkPWR2U9gmO184LPjrNS2M8sUg+BIrGLN8LqoAeg9DihuYKWb6l7bRStp8XeG6nCLF1XXWbfHeBo+3A==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -11655,6 +11673,31 @@ packages:
   file:projects/model-chunter.tgz:
     resolution: {integrity: sha512-nI7yoI4daoU2D/rQdGMub/cQ8eYjeVLFexfOGq52UKHZis2d6QTo5SqG+W8DWG8tUmwfUnssT9weSxZQsDEv0A==, tarball: file:projects/model-chunter.tgz}
     name: '@rush-temp/model-chunter'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  file:projects/model-contact.tgz:
+    resolution: {integrity: sha512-kKa7V9+AORl8ZtPFXm+YKR6gJVhp4c6KNVDrh4Ea02r/Sc1kWiHSq47PqzQDJ0Evxt50XocSyMZLG+D5XZBLJA==, tarball: file:projects/model-contact.tgz}
+    name: '@rush-temp/model-contact'
     version: 0.0.0
     dependencies:
       '@rushstack/heft': 0.35.1
@@ -11810,7 +11853,7 @@ packages:
     dev: false
 
   file:projects/model-recruiting.tgz:
-    resolution: {integrity: sha512-U9mCy6cCpeIJhbzhG/W2TfqWq1exmv16G+5NzVMv0P3GD7QRhk4J6ChGjwwcz0F9dEPC5yzXwn+hbxx7zQOSXQ==, tarball: file:projects/model-recruiting.tgz}
+    resolution: {integrity: sha512-wc2iosncXKBp7MtPrjl4V1r4jFjAssJ8ndrPn1CcASKuIWg1/hsi31JIf8/+A4h46xPqlUYRfaXXYYxEQWaYWg==, tarball: file:projects/model-recruiting.tgz}
     name: '@rush-temp/model-recruiting'
     version: 0.0.0
     dependencies:
@@ -12350,7 +12393,7 @@ packages:
     dev: false
 
   file:projects/recruiting.tgz:
-    resolution: {integrity: sha512-Gzq3jf7DdMls9iuJUZD24U0ldCJTnNpDnbPkIRcqCB8/KdyeIxyvg2fLvLk2ajEyPnAe3b6obij7WQ6YuD5ZaQ==, tarball: file:projects/recruiting.tgz}
+    resolution: {integrity: sha512-qWqXtofgqLoVvzblD58Yj0VkZgDWmp+5cTdIcxxanT2BG+sNYm9S6TbUf9NMbF5Qy5SAoL74O0pPVVMkFQnrHg==, tarball: file:projects/recruiting.tgz}
     name: '@rush-temp/recruiting'
     version: 0.0.0
     dependencies:
