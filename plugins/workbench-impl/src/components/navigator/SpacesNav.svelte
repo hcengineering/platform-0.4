@@ -92,11 +92,15 @@
       label: model.label,
       icon: MoreH,
       action: async (): Promise<void> => {
-        showPopup(workbench.component.Spaces, {
-          _class: model.spaceClass,
-          spaceQuery: model.spaceQuery ?? {},
-          label: model.label
-        }, 'right')
+        showPopup(
+          workbench.component.Spaces,
+          {
+            _class: model.spaceClass,
+            spaceQuery: model.spaceQuery ?? {},
+            label: model.label
+          },
+          'right'
+        )
       }
     })
     return result

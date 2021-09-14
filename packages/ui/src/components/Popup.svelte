@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { popupstore as modal } from '..'
   import PopupInstance from './PopupInstance.svelte'
 </script>
 
 {#each $modal as popup, i}
-  <PopupInstance is={popup.is} props={popup.props} element={popup.element} onClose={popup.onClose} zIndex={(i+1) * 500}/>
+  <PopupInstance
+    is={popup.is}
+    props={popup.props}
+    element={popup.element}
+    onClose={popup.onClose}
+    zIndex={(i + 1) * 500}
+  />
 {/each}
-

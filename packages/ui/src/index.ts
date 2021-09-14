@@ -96,15 +96,20 @@ interface CompAndProps {
 
 export const popupstore = writable<CompAndProps[]>([])
 
-export function showPopup (component: UIComponent, props: any, element?: PopupAlignment, onClose?: (result: any) => void): void {
-  popupstore.update(popups => {
+export function showPopup (
+  component: UIComponent,
+  props: any,
+  element?: PopupAlignment,
+  onClose?: (result: any) => void
+): void {
+  popupstore.update((popups) => {
     popups.push({ is: component, props, element, onClose })
     return popups
   })
 }
 
 export function closePopup (): void {
-  popupstore.update(popups => {
+  popupstore.update((popups) => {
     popups.pop()
     return popups
   })

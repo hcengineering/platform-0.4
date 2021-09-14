@@ -13,12 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IntlString, translate } from '@anticrm/platform'
+  import { IntlString } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
   import Label from './Label.svelte'
   import UserInfo from './UserInfo.svelte'
-  import ui from '../component'
-  import { createEventDispatcher } from 'svelte'
   import { showPopup } from '..'
   import UserBoxPopup from './UserBoxPopup.svelte'
   import IconAvatar from './icons/Avatar.svelte'
@@ -68,10 +66,16 @@
       height: 36px;
       border: 1px solid var(--theme-bg-focused-color);
       border-radius: 50%;
-      &:hover { background-color: var(--theme-bg-accent-hover); }
-      &:active { background-color: var(--theme-bg-accent-color); }
+      &:hover {
+        background-color: var(--theme-bg-accent-hover);
+      }
+      &:active {
+        background-color: var(--theme-bg-accent-color);
+      }
     }
 
-    .selectUser { margin-left: 12px; }
+    .selectUser {
+      margin-left: 12px;
+    }
   }
 </style>

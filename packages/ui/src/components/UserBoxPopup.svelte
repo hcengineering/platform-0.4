@@ -61,7 +61,9 @@
           }}
         />
       {/if}
-      {#each users.filter((u) => u._id !== selected && u.name.toLowerCase().indexOf(search.toLowerCase()) !== -1) as user}
+      {#each users.filter((u) => u._id !== selected && u.name
+            .toLowerCase()
+            .indexOf(search.toLowerCase()) !== -1) as user}
         <PopupItem
           component={UserInfo}
           props={{ user: user, size: 36 }}
@@ -97,7 +99,9 @@
         font-weight: 500;
         color: var(--theme-content-accent-color);
       }
-      .search { margin-bottom: 8px; }
+      .search {
+        margin-bottom: 8px;
+      }
       .label {
         margin-bottom: 8px;
         text-transform: uppercase;
@@ -110,10 +114,14 @@
     &.scrollable {
       margin-right: 7px;
       padding: 8px 1px 12px 8px;
-      .header { margin-right: 6px; }
+      .header {
+        margin-right: 6px;
+      }
       .scroll {
         overflow-y: scroll;
-        .box { margin-right: 1px; }
+        .box {
+          margin-right: 1px;
+        }
       }
     }
   }

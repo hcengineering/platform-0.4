@@ -68,15 +68,21 @@
       margin-left: 12px;
       border-radius: 50%;
       opacity: 0;
-      &.selected { opacity: .8; }
+      &.selected {
+        opacity: 0.8;
+      }
     }
 
     &:hover {
       background-color: var(--theme-button-bg-pressed);
-      .title { color: var(--theme-caption-color); }
+      .title {
+        color: var(--theme-caption-color);
+      }
       .check {
-        opacity: .2;
-        &.selected { opacity: 1; }
+        opacity: 0.2;
+        &.selected {
+          opacity: 1;
+        }
       }
     }
   }
