@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "fix id ne query",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
