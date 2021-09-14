@@ -13,25 +13,36 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { CommentRef, WithMessage, Message, Comment } from '@anticrm/chunter'
-  import { Account, parseFullRef, Ref, Timestamp } from '@anticrm/core'
-  import core from '@anticrm/core'
-  import { getRouter } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
+  import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
+  import core, { Account, parseFullRef, Ref, Timestamp } from '@anticrm/core'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { MessageNode } from '@anticrm/text'
+  import { parseMessage } from '@anticrm/text'
+  import { ActionIcon, DateTime, getRouter, MessageViewer } from '@anticrm/ui'
   import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import { onMount } from 'svelte'
-  import { ActionIcon, DateTime, MarkdownViewer } from '@anticrm/ui'
+  import type { MessageReference } from '../messages'
+  import { findReferences } from '../messages'
   import Bookmark from './icons/Bookmark.svelte'
   import Emoji from './icons/Emoji.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
+  import RefControl from './RefControl.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
-  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let message: WithMessage
   export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
+
+  let parsedMessage: MessageNode
+
+  let references: MessageReference[] = []
+
+  $: parsedMessage = parseMessage(message.message)
+
+  $: references = findReferences(parsedMessage)
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -106,131 +117,154 @@
   }
 </script>
 
-<div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
-  {#if user}
-    <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
-  {/if}
-  <div class="message" data-modified={message.modifiedOn} data-lastmodified={getLastModified(message)}>
-    <div class="header">
-      {#if user}{user?.name ?? ''}{/if}<span
-        ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
-      >
-    </div>
-    <div class="text">
-      <MarkdownViewer message={message.message} />
-    </div>
-    {#if replyIds.length > 0 && !thread}
-      <div class="footer">
-        <div>
-          <Reactions />
+<div class="message-container">
+  <div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
+    {#if user}
+      <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
+    {/if}
+    <div class="message" data-modified={message.modifiedOn} data-lastmodified={getLastModified(message)}>
+      <div class="header">
+        {#if user}{user?.name ?? ''}{/if}<span
+          ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
+        >
+      </div>
+      <div class="text">
+        <MessageViewer message={parsedMessage} />
+      </div>
+      {#if replyIds.length > 0 && !thread}
+        <div class="footer">
+          <div>
+            <Reactions />
+          </div>
+          <div>
+            {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
+          </div>
         </div>
-        <div>
-          {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
-        </div>
+      {/if}
+    </div>
+    {#if !thread}
+      <div class="buttons">
+        <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
+        <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
+        <div class="tool"><ActionIcon icon={Share} size={20} /></div>
+        <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
       </div>
     {/if}
   </div>
-  {#if !thread}
-    <div class="buttons">
-      <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
-      <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
-      <div class="tool"><ActionIcon icon={Share} size={20} /></div>
-      <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
+  {#if references.length > 0}
+    <div class:references={!thread} class:references-thread={thread}>
+      {#each references as ref}
+        <pre>
+          <RefControl reference={ref} />
+        </pre>
+      {/each}
     </div>
   {/if}
 </div>
 
 <style lang="scss">
-  .container {
-    flex-shrink: 0;
-    position: relative;
+  .message-container {
     display: flex;
+    flex-direction: column;
     padding-bottom: 20px;
 
-    &.isNew {
-      background-color: var(--theme-bg-accent-color);
+    .references {
+      min-width: 466px;
+      margin-left: 76px;
     }
-
-    .avatar {
-      min-width: 36px;
-      width: 36px;
-      height: 36px;
-      background-color: var(--theme-bg-accent-color);
-      border-radius: 50%;
-      user-select: none;
-      overflow: hidden;
-      img {
-        max-width: 100%;
-        max-height: 100%;
-      }
+    .references-thread {
+      min-width: 466px;
+      margin-left: 50px;
     }
-
-    .message {
+    .container {
+      flex-shrink: 0;
       display: flex;
-      flex-direction: column;
-      width: 100%;
-      margin-left: 16px;
 
-      .header {
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--theme-caption-color);
-        margin-bottom: 4px;
+      &.isNew {
+        background-color: var(--theme-bg-accent-color);
+      }
 
-        span {
-          margin-left: 8px;
-          font-weight: 400;
-          font-size: 14px;
-          line-height: 18px;
-          opacity: 0.4;
+      .avatar {
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+        background-color: var(--theme-bg-accent-color);
+        border-radius: 50%;
+        user-select: none;
+        overflow: hidden;
+        img {
+          max-width: 100%;
+          max-height: 100%;
         }
       }
-      .text {
-        line-height: 150%;
-      }
-      .footer {
+
+      .message {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 32px;
-        margin-top: 8px;
+        flex-direction: column;
+        width: 100%;
+        margin-left: 16px;
+
+        .header {
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 150%;
+          color: var(--theme-caption-color);
+          margin-bottom: 4px;
+
+          span {
+            margin-left: 8px;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 18px;
+            opacity: 0.4;
+          }
+        }
+        .text {
+          line-height: 150%;
+        }
+        .footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 32px;
+          margin-top: 8px;
+          user-select: none;
+
+          div + div {
+            margin-left: 16px;
+          }
+        }
+      }
+    }
+    .no-thread {
+      padding: 20px;
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-radius: 12px;
+
+      .buttons {
+        position: absolute;
+        visibility: hidden;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        flex-direction: row-reverse;
         user-select: none;
 
-        div + div {
-          margin-left: 16px;
+        .tool {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+        }
+        .tool + .tool {
+          margin-right: 8px;
         }
       }
-    }
-  }
-  .no-thread {
-    padding: 20px;
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
 
-    .buttons {
-      position: absolute;
-      visibility: hidden;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      flex-direction: row-reverse;
-      user-select: none;
-
-      .tool {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
+      &:hover > .buttons {
+        visibility: visible;
       }
-      .tool + .tool {
-        margin-right: 8px;
-      }
-    }
-
-    &:hover > .buttons {
-      visibility: visible;
     }
     &:hover {
       background-color: var(--theme-button-bg-enabled);

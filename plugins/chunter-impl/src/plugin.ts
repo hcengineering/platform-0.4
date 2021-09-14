@@ -24,6 +24,9 @@ export default mergeIds(chunter, {
     ChannelView: '' as AnyComponent,
     ThreadsView: '' as AnyComponent,
     SpaceItem: '' as AnyComponent,
-    SpaceHeader: '' as AnyComponent
+    SpaceHeader: '' as AnyComponent,
+    OembedPreview: '' as AnyComponent,
+
+    GithubIssuePreview: '' as AnyComponent
   }
 })

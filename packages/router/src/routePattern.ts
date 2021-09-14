@@ -125,6 +125,14 @@ function matchSegment (s: string, value: string): { matched: boolean, key: strin
   if (s.startsWith(':')) {
     return { matched: true, key: s.substring(1), value }
   }
-  return { matched: s === value, key: '', value: '' }
+  return { matched: (s === value || regExpTest(s, value)), key: '', value: '' }
+}
+
+function regExpTest (s: string, value: string): boolean {
+  try {
+    return new RegExp(s).test(value)
+  } catch (e) {
+    return false
+  }
 }
 

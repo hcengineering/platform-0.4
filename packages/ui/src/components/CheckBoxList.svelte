@@ -22,14 +22,6 @@
 
   export let label: IntlString | undefined
   export let items: Array<CheckListItem>
-  //  = [
-  //   { description: '15 minute phone call', done: true },
-  //   { description: 'Follow up email', done: false },
-  //   { description: 'First round interview', done: false },
-  //   { description: 'Follow up email', done: false },
-  //   { description: 'Second round interview', done: false },
-  //   { description: 'Third round interview', done: false },
-  // ]
   export let editable: boolean = false
 
   const dispatch = createEventDispatcher()

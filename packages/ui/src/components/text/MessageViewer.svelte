@@ -12,19 +12,15 @@
   // See the License for the specific language governing permissions and
   // limitations under the License.
 
-  import type { MessageMark, MessageNode, ReferenceMark } from '@anticrm/text'
+  import type { MessageMark, MessageNode, ReferenceMark, LinkMark } from '@anticrm/text'
   import { MessageMarkType, MessageNodeType } from '@anticrm/text'
   import MessageHeading from './MessageHeading.svelte'
-
-  interface DocRef {
-    _class: string
-    id: string
-  }
+  import type { ItemRefefence } from '../../types'
 
   export let message: MessageNode
-  export let refAction: (doc: DocRef) => void = () => {}
+  export let refAction: (doc: ItemRefefence) => void = () => {}
 
-  let hrefVal: DocRef = { _class: '', id: '' }
+  let hrefVal: ItemRefefence = { class: '', id: '' }
 
   interface Style {
     bold: boolean
@@ -38,6 +34,11 @@
       _class: string
       resolved: boolean
     }
+    link: {
+      href: string
+      title: string
+      resolved: boolean
+    }
   }
   function newStyle (): Style {
     return {
@@ -45,6 +46,12 @@
       italic: false,
       strike: false,
       code: false,
+      orderStart: '1',
+      link: {
+        resolved: false,
+        href: '',
+        title: ''
+      },
       reference: {
         state: false,
         resolved: false,
@@ -54,12 +61,17 @@
     }
   }
 
-  $: style = computedStyle(message.marks || [])
+  $: style = computedStyle(message, message.marks || [])
 
-  $: hrefVal = { _class: style.reference._class, id: style.reference._id }
+  $: hrefVal = { class: style.reference._class, id: style.reference._id }
 
-  function computedStyle (marks: MessageMark[]): Style {
+  function computedStyle (message: MessageNode, marks: MessageMark[]): Style {
     const result = newStyle()
+
+    if (message.type === MessageNodeType.ordered_list) {
+      result.orderStart = message.attrs?.order ?? '1'
+    }
+
     for (const mark of marks) {
       switch (mark.type) {
         case MessageMarkType.strong:
@@ -70,6 +82,11 @@
           break
         case MessageMarkType.em:
           result.italic = true
+          break
+        case MessageMarkType.link:
+          result.link.href = (mark as LinkMark).attrs.href
+          result.link.title = (mark as LinkMark).attrs.title
+          result.link.resolved = true
           break
         case MessageMarkType.reference: {
           const rm: ReferenceMark = mark as ReferenceMark
@@ -95,7 +112,7 @@
 {#if message.type === MessageNodeType.paragraph}
   <p>
     {#each messageContent(message) as c}
-      <svelte:self message={c} />
+      <svelte:self message={c} {refAction} />
     {/each}
   </p>
 {:else if message.type === MessageNodeType.text}
@@ -108,32 +125,36 @@
     class:unknown_reference={style.reference.state && !style.reference.resolved}
   >
     {#if style.reference.state}
-      <!-- TODO: Add a proper click handler here-->
-      <a
-        href={'javascript:void'}
-        on:click|preventDefault={() => {
-          refAction(hrefVal)
+      <div
+        on:click|preventDefault|stopPropagation={() => {
+          refAction?.(hrefVal)
         }}
       >
         {message.text || ''}
+      </div>
+    {:else if style.link.resolved}
+      <a class="resolved_link" href={style.link.href}>
+        {message.text || ''}
       </a>
-    {:else}{message.text || ''}{/if}
+    {:else}
+      {message.text || ''}
+    {/if}
   </span>
 {:else if message.type === MessageNodeType.list_item}
   <li>
     {#each messageContent(message) as c}
-      <svelte:self message={c} />
+      <svelte:self message={c} {refAction} />
     {/each}
   </li>
 {:else if message.type === MessageNodeType.doc}
   {#each messageContent(message) as c}
-    <svelte:self message={c} />
+    <svelte:self message={c} {refAction} />
   {/each}
   <!---->
 {:else if message.type === MessageNodeType.ordered_list}
-  <ol type="1">
+  <ol type="1" start={style.orderStart}>
     {#each messageContent(message) as c}
-      <svelte:self message={c} />
+      <svelte:self message={c} {refAction} />
     {/each}
   </ol>
   <!---->
@@ -143,13 +164,13 @@
 {:else if message.type === MessageNodeType.heading}
   <MessageHeading level={getHeadingLevel(message)}>
     {#each messageContent(message) as c}
-      <svelte:self message={c} />
+      <svelte:self message={c} {refAction} />
     {/each}
   </MessageHeading>
 {:else if message.type === MessageNodeType.bullet_list}
   <ul>
     {#each messageContent(message) as c}
-      <svelte:self message={c} />
+      <svelte:self message={c} {refAction} />
     {/each}
   </ul>
   <!---->
@@ -159,7 +180,7 @@
   .inline_block {
     display: inline;
     word-wrap: break-word;
-    white-space: pre-inline;
+    white-space: pre-wrap;
   }
 
   .bold {
@@ -178,8 +199,15 @@
     // padding: 2px;
   }
 
+  .resolved_link {
+    padding: 0px 5px 0px 5px;
+  }
+
   .resolved_reference {
-    color: lightblue;
+    padding: 0px 5px 0px 5px;
+    color: #336699;
+    cursor: pointer;
+    text-decoration-line: underline;
   }
 
   .unknown_reference {
