@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Document selection support",
+      "type": "patch",
+      "packageName": "@anticrm/chunter-impl"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl",
+  "email": "haiodo@gmail.com"
+}

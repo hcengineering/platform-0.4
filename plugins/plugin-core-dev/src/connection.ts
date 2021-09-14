@@ -95,7 +95,7 @@ export class ClientImpl extends TxProcessor implements Client {
     await this.transactions.tx(tx)
 
     if (typeof window !== 'undefined') {
-      console.info('Model updated', this.model)
+      console.info('Model updated', this.model, tx)
     }
 
     // 3. process client handlers

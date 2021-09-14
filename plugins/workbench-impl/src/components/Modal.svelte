@@ -15,6 +15,7 @@
 <script lang="ts">
   import { store as modal } from '@anticrm/workbench'
   import { Component } from '@anticrm/ui'
+  import { AnyComponent, UIComponent } from '@anticrm/status'
 
   let modalHTML: HTMLElement
   let modalOHTML: HTMLElement
@@ -24,6 +25,10 @@
     modalHTML.style.animationDuration = modalOHTML.style.animationDuration = '.6s'
     modal.set({ is: undefined, props: {}, element: undefined })
   }
+
+  let component: UIComponent | AnyComponent | undefined
+
+  $: component = $modal.is
 
   function handleKeydown (ev: KeyboardEvent) {
     if (ev.key === 'Escape' && $modal.is) {
@@ -39,16 +44,19 @@
       return 'top: 50%; left: 50%; transform: translate(-50%, -50%);'
     }
   }
+  function asComponent (comp: UIComponent | AnyComponent): AnyComponent {
+    return comp as AnyComponent
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if $modal.is}
+{#if component}
   <div class="modal" class:top-arrow={$modal.element} bind:this={modalHTML} style={getStyle($modal.element)}>
-    {#if typeof $modal.is === 'string'}
-      <Component is={$modal.is} props={$modal.props} on:close={close} />
+    {#if typeof component === 'string'}
+      <Component is={asComponent(component)} props={$modal.props} on:close={close} />
     {:else}
-      <svelte:component this={$modal.is} {...$modal.props} on:close={close} />
+      <svelte:component this={component} {...$modal.props} on:close={close} />
     {/if}
   </div>
   <div bind:this={modalOHTML} class="modal-overlay" />

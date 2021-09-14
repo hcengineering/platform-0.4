@@ -28,7 +28,7 @@ export type Matcher<P> = (match: P) => void
  */
 export interface Route<T> {
   patternText: string
-  defaults: T
+  defaults?: T
   matcher: Matcher<T>
 }
 
@@ -40,7 +40,7 @@ interface Route2<T> extends Route<T> {
 class RouteRouter<T, P> implements ApplicationRouter<P> {
   constructor (readonly parent: Router<T>, readonly setRoute: () => void) {}
 
-  addRoute<P>(patternText: string, matcher: (match: P) => void, defaults: P): ApplicationRouter<P> {
+  addRoute<P>(patternText: string, matcher: (match: P) => void, defaults?: P): ApplicationRouter<P> {
     return this.parent.addRoute<P>(patternText, matcher, defaults)
   }
 
@@ -76,8 +76,8 @@ export class Router<T> implements ApplicationRouter<T> {
     this.routes.push({ ...route, pattern: parsePattern(route.patternText), variables: route.defaults })
   }
 
-  addRoute<P>(patternText: string, matcher: Matcher<P>, defaults: P): ApplicationRouter<P> {
-    const r = { patternText, pattern: parsePattern(patternText), matcher, defaults, variables: defaults }
+  addRoute<P>(patternText: string, matcher: Matcher<P>, defaults?: P): ApplicationRouter<P> {
+    const r = { patternText, pattern: parsePattern(patternText), matcher, defaults, variables: defaults ?? {} as unknown as P }
     this.routes.push(r)
     return new RouteRouter(this, () => {
       this.selectRoute(r)
@@ -98,15 +98,16 @@ export class Router<T> implements ApplicationRouter<T> {
    * Will received new location
    */
   update (loc: Location, forceUpdate = false): void {
-    for (const route of this.routes) {
+    const longRoutes = [...this.routes]
+    // Match long segment routes first.
+    longRoutes.sort((a, b) => b.pattern.segments.length - a.pattern.segments.length)
+    for (const route of longRoutes) {
       const { childLocation, variables, matched } = matchLocation(route.pattern, loc, route.defaults)
       if (matched) {
         this.processMatchedRoute(route, variables, forceUpdate, childLocation)
         return
       }
     }
-
-    // TODO: Add others, match processor
   }
 
   assigneeConverter = {
@@ -148,7 +149,7 @@ export class Router<T> implements ApplicationRouter<T> {
     return result as unknown as P
   }
 
-  newRouter<P>(patternText: string, matcher: (match: P) => void, defaults: P): Router<P> {
+  newRouter<P>(patternText: string, matcher: (match: P) => void, defaults?: P): Router<P> {
     this.childRouter = new Router<P>({ patternText, matcher, defaults }, this.topRouter, this.doNavigate)
     if (this.childLocation !== undefined) {
       this.childRouter?.update(this.childLocation)

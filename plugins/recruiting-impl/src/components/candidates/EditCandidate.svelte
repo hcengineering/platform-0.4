@@ -18,16 +18,14 @@
   import type { Data, Ref } from '@anticrm/core'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
-  import { getRouter, IconClose, ScrollBox } from '@anticrm/ui'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { IconClose, ScrollBox } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
   import CandidateEditor from './CandidateEditor.svelte'
 
   export let id: Ref<Candidate>
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   let candidate: (Candidate & Required<Data<Candidate>>) | undefined
   let prevCandidate: (Candidate & Required<Data<Candidate>>) | undefined
   let lqCandidates: QueryUpdater<Candidate> | undefined
@@ -73,7 +71,7 @@
   }
 
   function onClose () {
-    router.navigate({ itemId: undefined })
+    selectDocument()
   }
 </script>
 

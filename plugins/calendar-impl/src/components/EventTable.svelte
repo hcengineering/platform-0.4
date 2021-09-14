@@ -14,11 +14,11 @@
 -->
 <script lang="ts">
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { Table, Label, getRouter } from '@anticrm/ui'
+  import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import calendar from '@anticrm/calendar'
+  import type { Event } from '@anticrm/calendar'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -42,7 +42,6 @@
   ]
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
 
   let data: Event[] = []
   let lqEvent: QueryUpdater<Event> | undefined
@@ -55,7 +54,7 @@
   }
 
   function onClick (event: any) {
-    router.navigate({ itemId: event.detail.id })
+    selectDocument(event.detail)
   }
 </script>
 

@@ -29,5 +29,5 @@ export class TDocumentPresenter extends TDoc implements DocumentPresenter<Doc> {
   objectClass!: Ref<Class<Doc>>
 
   // An presentation format definition
-  presentation!: Record<string, PresentationFormat>
+  presentation!: PresentationFormat[]
 }

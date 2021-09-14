@@ -21,11 +21,13 @@ import { Class, Doc, Ref } from './classes'
  *
  *  Link - define and presentatio of link and some basic status.
  *  Preview - define an presentation with mode details.
+ *  Edit - a sidebar edit component mode
  * @public
  */
 export enum PresentationMode {
   Link,
-  Preview
+  Preview,
+  Edit
 }
 /**
  * Define one presentatopwdn format for document instance.
@@ -51,5 +53,5 @@ export interface DocumentPresenter<T extends Doc> extends Doc {
   objectClass: Ref<Class<T>>
 
   // An presentation format definition
-  presentation: Record<string, PresentationFormat>
+  presentation: PresentationFormat[]
 }

@@ -46,7 +46,7 @@
   <div />
 {:then client}
   <Workbench {client} on:logout={doLogout} />
-{:catch error}
+{:catch}
   <Component
     is={login.component.LoginForm}
     on:open={() => {

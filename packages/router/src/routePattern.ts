@@ -72,20 +72,17 @@ function extractFragment (lastPath: string, pattern: RoutePattern): string {
 }
 
 // Perform matching of current location with extraction of variables and constructing childLocation.
-export function matchLocation (pattern: RoutePattern, location: Location, defaults: QueryType): {childLocation: Location, variables: QueryType, matched: boolean} {
+export function matchLocation (pattern: RoutePattern, location: Location, defaults?: QueryType): {childLocation: Location, variables: QueryType, matched: boolean} {
   const variables: QueryType = {}
 
   const childLocation = newLocation()
   const path = [...location.path]
-  for (const s of pattern.segments) {
-    if (path.length > 0) {
-      const value = path.splice(0, 1)[0]
-      const msegm = matchSegment(s, value)
-      if (!msegm.matched && defaults[msegm.key] === undefined) { // If no default and not matched
-        return { childLocation, variables, matched: false }
-      }
-      variables[msegm.key] = msegm.value
-    }
+
+  const matched = matchSegments(pattern, path, defaults, variables)
+
+  if (matched !== pattern.segments.length) {
+    // we have unmatched segments.
+    return { childLocation, variables, matched: false }
   }
   childLocation.path = path
 
@@ -98,6 +95,33 @@ export function matchLocation (pattern: RoutePattern, location: Location, defaul
   updateQueries(pattern, location, variables, childLocation)
   return { variables, childLocation, matched: true }
 }
+function matchSegments (pattern: RoutePattern, path: string[], defaults: QueryType | undefined, variables: QueryType): number {
+  let matched = 0
+  for (const s of pattern.segments) {
+    if (path.length > 0) {
+      const value = path.splice(0, 1)[0]
+      const msegm = matchSegment(s, value)
+      if (matchOrDefault(msegm, defaults)) { // Check if matched or has defaults
+        variables[msegm.key] = msegm.value
+      }
+    }
+    matched += hasVarDefaults(s, variables, defaults)
+  }
+  return matched
+}
+
+function matchOrDefault (msegm: { matched: boolean, key: string }, defaults?: QueryType): boolean {
+  return msegm.matched || defaults?.[msegm.key] !== undefined
+}
+
+function hasVarDefaults (s: string, variables: QueryType, defaults?: QueryType): 0|1 {
+  // Check if we had default value, then mark as matched
+  const key = s.startsWith(':') ? s.substring(1) : ''
+  const varVal = variables[key] !== undefined
+  const defVal = defaults?.[key] !== undefined
+  return (varVal || defVal) ? 1 : 0
+}
+
 function updateQueries (pattern: RoutePattern, location: Location, variables: QueryType, childLocation: Location): void {
   for (const q of pattern.queryNames) {
     const v = location.query?.[q]

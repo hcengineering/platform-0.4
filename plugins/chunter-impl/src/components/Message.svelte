@@ -14,14 +14,14 @@
 -->
 <script lang="ts">
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
-  import core, { Account, parseFullRef, Ref, Timestamp } from '@anticrm/core'
+  import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import type { MessageNode } from '@anticrm/text'
   import { parseMessage } from '@anticrm/text'
-  import { ActionIcon, DateTime, getRouter, MessageViewer } from '@anticrm/ui'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { ActionIcon, DateTime, MessageViewer } from '@anticrm/ui'
+  import type { ItemRefefence } from '@anticrm/ui'
+  import { selectDocument } from '@anticrm/workbench'
   import { getClient } from '@anticrm/workbench'
-  import { onMount } from 'svelte'
   import type { MessageReference } from '../messages'
   import { findReferences } from '../messages'
   import Bookmark from './icons/Bookmark.svelte'
@@ -51,7 +51,6 @@
   }
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
@@ -61,9 +60,7 @@
     if (thread) {
       return
     }
-    router.navigate({
-      itemId: message._id
-    })
+    selectDocument(message)
   }
 
   function isToday (value: Date | Timestamp): boolean {
@@ -74,9 +71,10 @@
 
   let user: Account | undefined
 
-  onMount(async () => {
-    user = await getUser(message.modifiedBy)
-  })
+  const updaterUser = async (msg: Message) => {
+    user = await getUser(msg.modifiedBy)
+  }
+  $: updaterUser(message)
 
   function isNew (message: WithMessage, notifications: SpaceNotifications | undefined): boolean {
     if (notifications === undefined || notifications.objectId !== message.space) return false
@@ -116,6 +114,9 @@
     }
     return lastModified
   }
+  function refAction (doc: ItemRefefence): void {
+    selectDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
+  }
 </script>
 
 <div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
@@ -130,12 +131,25 @@
       data-id={message._id}
     >
       <div class="header">
-        {#if user}{user?.name ?? ''}{/if}<span
-          ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
-        >
+        <div>
+          {#if user}
+            {user?.name ?? ''}
+          {/if}
+          <span>
+            <DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} />
+          </span>
+        </div>
+        {#if !thread}
+          <div class="buttons">
+            <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
+            <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
+            <div class="tool"><ActionIcon icon={Share} size={20} /></div>
+            <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
+          </div>
+        {/if}
       </div>
       <div class="text">
-        <MessageViewer message={parsedMessage} />
+        <MessageViewer message={parsedMessage} {refAction} />
       </div>
       {#if replyIds.length > 0 && !thread}
         <div class="footer">
@@ -148,14 +162,6 @@
         </div>
       {/if}
     </div>
-    {#if !thread}
-      <div class="buttons">
-        <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
-        <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
-        <div class="tool"><ActionIcon icon={Share} size={20} /></div>
-        <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
-      </div>
-    {/if}
   </div>
   {#if references.length > 0}
     <div class:references={!thread} class:references-thread={thread}>
@@ -187,6 +193,11 @@
     .references-thread {
       margin-left: 50px;
     }
+
+    &:hover > .container .message .header .buttons {
+      visibility: visible;
+    }
+
     .container {
       flex-shrink: 0;
       display: flex;
@@ -218,6 +229,9 @@
           color: var(--theme-caption-color);
           margin-bottom: 4px;
 
+          display: flex;
+          justify-content: space-between;
+
           span {
             margin-left: 8px;
             font-weight: 400;
@@ -244,10 +258,8 @@
       }
 
       .buttons {
-        position: absolute;
+        position: relative;
         visibility: hidden;
-        top: 12px;
-        right: 12px;
         display: flex;
         flex-direction: row-reverse;
         user-select: none;
@@ -261,10 +273,6 @@
         .tool + .tool {
           margin-right: 8px;
         }
-      }
-
-      &:hover > .buttons {
-        visibility: visible;
       }
     }
 

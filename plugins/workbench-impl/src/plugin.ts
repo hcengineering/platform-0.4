@@ -13,12 +13,15 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
+import { IntlString, mergeIds } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/status'
 import workbench from '@anticrm/workbench'
 
 export default mergeIds(workbench, {
   component: {
     Spaces: '' as AnyComponent
+  },
+  strings: {
+    More: '' as IntlString
   }
 })

@@ -20,6 +20,7 @@ import type { Asset, IntlString, UIComponent } from '@anticrm/status'
 import type { AnyComponent } from '@anticrm/status'
 import { getContext } from 'svelte'
 import { CompAndProps, store } from './stores'
+import { currentDocument, DocumentSelection } from './selection'
 
 /**
  * @public
@@ -56,6 +57,7 @@ export interface SpacesNavModel {
  * @public
  */
 export interface SpecialNavModel {
+  id: string // Uniq id
   label: IntlString
   icon: Asset
   component: AnyComponent
@@ -132,12 +134,28 @@ export function closeModal (): void {
 export { store, CompAndProps }
 
 /**
+ * Will set current active document,
+ * If undefined is passed no active document is selected.
+ * @public
+ */
+export function selectDocument (doc?: Pick<Doc, '_id' | '_class'>, shortId?: string | null): void {
+  currentDocument.set(doc === undefined ? doc : { document: doc, shortId })
+}
+export { currentDocument, DocumentSelection }
+
+/**
  * @public
  */
 export interface WorkbenchRoute {
   app?: Ref<Application>
   space?: Ref<Space>
-  itemId?: Ref<Doc>
+
+  // Browse define a document selection,
+  // It could be TSK-101 - if short reference to document is exists
+  // Or class:objectId if not.
+  browse?: Ref<Doc> | string
+
+  special?: string
 }
 
 /**
