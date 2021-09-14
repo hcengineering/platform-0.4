@@ -31,6 +31,7 @@ export class TFSM extends TDoc implements FSM {
   name!: string
   clazz!: Ref<Class<Doc>>
   isTemplate!: boolean
+  states!: Ref<State>[]
 }
 
 /**
@@ -54,6 +55,7 @@ export class TState extends TDoc implements State {
   fsm!: Ref<FSM>
   optionalActions!: Ref<Action>[]
   requiredActions!: Ref<Action>[]
+  items!: Ref<FSMItem>[]
 }
 
 /**
@@ -84,7 +86,7 @@ export function createModel (builder: Builder): void {
 /**
  * @public
  */
-export type PureState = Omit<State, keyof Doc | 'fsm' | 'color'> & {
+export type PureState = Omit<State, keyof Doc | 'fsm' | 'color' | 'items'> & {
   color?: string
 }
 
@@ -149,32 +151,32 @@ export class FSMBuilder {
   }
 
   build (S: Builder): Ref<FSM> {
+    const stateIDs: Map<string, Ref<State>> = new Map(
+      [...this.states.keys()].map((x) => [x, this.makeId('st', x)] as [string, Ref<State>])
+    )
     S.createDoc(
       fsmPlugin.class.FSM,
       {
         name: this.name,
         clazz: this.clazz,
-        isTemplate: true
+        isTemplate: true,
+        states: [...stateIDs.values()]
       },
       this.fsmId
     )
 
-    const stateIDs = new Map<string, Ref<State>>()
-
-    this.states.forEach((state) => {
+    this.states.forEach((state, key) => {
       const color = state.color ?? this.genColor.next().value
-      const sID: Ref<State> = this.makeId('st', state.name)
       S.createDoc(
         fsmPlugin.class.State,
         {
           ...state,
           color,
-          fsm: this.fsmId
+          fsm: this.fsmId,
+          items: []
         },
-        sID
+        stateIDs.get(key) ?? ('' as Ref<State>)
       )
-
-      stateIDs.set(state.name, sID)
     })
 
     const transitions: Array<Ref<Transition>> = []
