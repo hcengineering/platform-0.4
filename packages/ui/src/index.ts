@@ -18,7 +18,7 @@ import Root from './components/internal/Root.svelte'
 
 import type { IntlString } from '@anticrm/platform'
 import { writable } from 'svelte/store'
-import type { LabelAndProps, TooltipAligment } from './types'
+import type { LabelAndProps, TooltipAligment, PopupAlignment } from './types'
 
 export * from './types'
 export { applicationShortcutKey, defaultApplicationShortcutKey } from './utils'
@@ -61,6 +61,7 @@ export { default as Row } from './components/Row.svelte'
 export { default as DateTime } from './components/DateTime.svelte'
 export { default as Splitter } from './components/Splitter.svelte'
 export { default as TooltipInstance } from './components/TooltipInstance.svelte'
+export { default as Popup } from './components/Popup.svelte'
 export { default as IconGroup } from './components/IconGroup.svelte'
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconClose } from './components/icons/Close.svelte'
@@ -84,6 +85,29 @@ export { default } from './component'
 
 export function createApp (target: HTMLElement): UIComponent {
   return new Root({ target })
+}
+
+interface CompAndProps {
+  is: UIComponent
+  props: any
+  element?: PopupAlignment
+  onClose?: (result: any) => void
+}
+
+export const popupstore = writable<CompAndProps[]>([])
+
+export function showPopup (component: UIComponent, props: any, element?: PopupAlignment, onClose?: (result: any) => void): void {
+  popupstore.update(popups => {
+    popups.push({ is: component, props, element, onClose })
+    return popups
+  })
+}
+
+export function closePopup (): void {
+  popupstore.update(popups => {
+    popups.pop()
+    return popups
+  })
 }
 
 export const tooltipstore = writable<LabelAndProps>({

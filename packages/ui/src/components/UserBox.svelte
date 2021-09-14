@@ -16,160 +16,62 @@
   import { IntlString, translate } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
   import Label from './Label.svelte'
-  import EditWithIcon from './EditWithIcon.svelte'
-  import PopupMenu from './PopupMenu.svelte'
-  import PopupItem from './PopupItem.svelte'
   import UserInfo from './UserInfo.svelte'
   import ui from '../component'
-  import Add from './icons/Add.svelte'
-  import Close from './icons/Close.svelte'
-  import Search from './icons/Search.svelte'
   import { createEventDispatcher } from 'svelte'
+  import { showPopup } from '..'
+  import UserBoxPopup from './UserBoxPopup.svelte'
+  import IconAvatar from './icons/Avatar.svelte'
 
   export let title: IntlString
   export let label: IntlString
-  export let caption: IntlString | undefined
+  // export let caption: IntlString | undefined
   export let selected: Ref<Account> | undefined
   export let users: Account[] = []
-
-  export let margin: number = 16
   export let showSearch: boolean = false
-  const dispatch = createEventDispatcher()
-  $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
 
-  let pressed: boolean = false
-  let search: string = ''
+  $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
+  let btn: HTMLElement
 </script>
 
-<div class="userBox">
-  <PopupMenu {margin} bind:show={pressed} bind:title={label} {caption} bind:showHeader={showSearch}>
-    <button
-      slot="trigger"
-      class="btn"
-      class:selected={pressed}
-      on:click|preventDefault={(event) => {
-        pressed = !pressed
-        event.stopPropagation()
-      }}
-    >
-      {#if selectedItem}
-        <div class="avatar"><UserInfo user={selectedItem} size={36} avatarOnly /></div>
-      {:else}
-        <div class="icon">
-          {#if pressed}<Close size={16} />{:else}<Add size={16} />{/if}
-        </div>
-      {/if}
-    </button>
-    <div slot="header" class="search">
-      {#await translate(ui.string.Search, {}) then searchValue}
-        <EditWithIcon icon={Search} placeholder={searchValue} bind:value={search} />
-      {/await}
-    </div>
+<div
+  class="userbox-container"
+  on:click={(ev) => {
+    showPopup(UserBoxPopup, { label: title, users, selected, showSearch }, btn, (result) => {
+      if (result) selected = result
+    })
+  }}
+>
+  <button class="btn" bind:this={btn}>
     {#if selectedItem}
-      <PopupItem
-        component={UserInfo}
-        props={{ user: selectedItem }}
-        selectable
-        selected
-        action={() => {
-          selected = undefined
-          pressed = !pressed
-          dispatch('change', selected)
-        }}
-      />
+      <UserInfo user={selectedItem} size={36} avatarOnly />
+    {:else}
+      <IconAvatar />
     {/if}
-    {#each users.filter((u) => u._id !== selected && u.name.toLowerCase().indexOf(search.toLowerCase()) !== -1) as user}
-      <PopupItem
-        component={UserInfo}
-        props={{ user: user }}
-        selectable
-        action={() => {
-          selected = user._id
-          pressed = !pressed
-          dispatch('change', selected)
-        }}
-      />
-    {/each}
-  </PopupMenu>
+  </button>
   <div class="selectUser">
-    <div class="title"><Label label={title} /></div>
-    <div class="user">
+    <div class="content-accent-color"><Label label={title} /></div>
+    <div class="dotted-text name">
       {#if selectedItem}{selectedItem.email}{:else}<Label {label} />{/if}
     </div>
   </div>
 </div>
 
 <style lang="scss">
-  .userBox {
+  .userbox-container {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: auto;
+    flex-wrap: nowrap;
+    cursor: pointer;
 
     .btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      padding: 0;
       width: 36px;
       height: 36px;
-      background-color: var(--theme-button-bg-focused);
-      border: 1px solid transparent;
+      border: 1px solid var(--theme-bg-focused-color);
       border-radius: 50%;
-      outline: none;
-      cursor: pointer;
-
-      .icon {
-        width: 16px;
-        height: 16px;
-        opacity: 0.3;
-      }
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        opacity: 1;
-      }
-
-      &.selected {
-        background-color: var(--theme-button-bg-focused);
-        border: 1px solid var(--theme-bg-accent-color);
-        .icon {
-          opacity: 0.6;
-        }
-      }
-
-      &:hover {
-        background-color: var(--theme-button-bg-pressed);
-        border: 1px solid var(--theme-bg-accent-color);
-        .icon {
-          opacity: 1;
-        }
-      }
-      &:focus {
-        border: 1px solid var(--primary-button-focused-border);
-        box-shadow: 0 0 0 3px var(--primary-button-outline);
-        .icon {
-          opacity: 1;
-        }
-      }
+      &:hover { background-color: var(--theme-bg-accent-hover); }
+      &:active { background-color: var(--theme-bg-accent-color); }
     }
 
-    .search {
-      margin-bottom: 16px;
-    }
-
-    .selectUser {
-      margin-left: 12px;
-      font-size: 14px;
-      .title {
-        color: var(--theme-content-color);
-      }
-      .user {
-        color: var(--theme-caption-color);
-      }
-    }
+    .selectUser { margin-left: 12px; }
   }
 </style>

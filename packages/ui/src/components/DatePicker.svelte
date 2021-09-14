@@ -131,8 +131,7 @@
 <style lang="scss">
   .userBox {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     width: auto;
 
     .btn {

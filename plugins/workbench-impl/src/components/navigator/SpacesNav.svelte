@@ -17,9 +17,9 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
   import { IconAdd } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
+  import { getRouter, showPopup } from '@anticrm/ui'
   import type { SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import workbench from '../../plugin'
   import MoreH from '../icons/MoreH.svelte'
   import { buildUserSpace } from '../utils/space.utils'
@@ -84,7 +84,7 @@
         label: model.addSpaceLabel,
         icon: IconAdd,
         action: async (): Promise<void> => {
-          showModal(create, {})
+          showPopup(create, {}, 'right')
         }
       })
     }
@@ -92,11 +92,11 @@
       label: model.label,
       icon: MoreH,
       action: async (): Promise<void> => {
-        showModal(workbench.component.Spaces, {
+        showPopup(workbench.component.Spaces, {
           _class: model.spaceClass,
           spaceQuery: model.spaceQuery ?? {},
           label: model.label
-        })
+        }, 'right')
       }
     })
     return result
