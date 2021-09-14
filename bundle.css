@@ -1658,24 +1658,30 @@ th.svelte-1lkmas2 {
 }
 
 /* fakecss:src/components/text/MessageViewer.esbuild-svelte-fake-css */
-.inline_block.svelte-17p9241 {
+.inline_block.svelte-a1c9ps {
   display: inline;
   word-wrap: break-word;
-  white-space: pre-inline;
+  white-space: pre-wrap;
 }
-.bold.svelte-17p9241 {
+.bold.svelte-a1c9ps {
   font-weight: bold;
 }
-.italic.svelte-17p9241 {
+.italic.svelte-a1c9ps {
   font-style: italic;
 }
-.code.svelte-17p9241 {
+.code.svelte-a1c9ps {
   background-color: #444444;
 }
-.resolved_reference.svelte-17p9241 {
-  color: lightblue;
+.resolved_link.svelte-a1c9ps {
+  padding: 0px 5px 0px 5px;
 }
-.unknown_reference.svelte-17p9241 {
+.resolved_reference.svelte-a1c9ps {
+  padding: 0px 5px 0px 5px;
+  color: #336699;
+  cursor: pointer;
+  text-decoration-line: underline;
+}
+.unknown_reference.svelte-a1c9ps {
   color: grey;
 }
 
