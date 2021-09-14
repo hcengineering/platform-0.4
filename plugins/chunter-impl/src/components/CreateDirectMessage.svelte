@@ -43,9 +43,14 @@
 
   let accountUpdater: QueryUpdater<Account> | undefined = undefined
 
-  $: accountUpdater = client.query<Account>(accountUpdater, core.class.Account, { _id: { $ne: client.accountId() }}, (results) => {
-    allAccounts = results
-  })
+  $: accountUpdater = client.query<Account>(
+    accountUpdater,
+    core.class.Account,
+    { _id: { $ne: client.accountId() } },
+    (results) => {
+      allAccounts = results
+    }
+  )
 
   let query: QueryUpdater<Message> | undefined = undefined
 
