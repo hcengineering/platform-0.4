@@ -400,10 +400,10 @@ describe('server', () => {
   it('check markdown state', () => {
     const st = new MarkdownState()
 
-    const o1 = st.quote('qwe\'')
+    const o1 = st.quote("qwe'")
     const o2 = st.quote('qwe"')
     expect(o1).toEqual('"qwe\'"')
-    expect(o2).toEqual('\'qwe"\'')
+    expect(o2).toEqual("'qwe\"'")
   })
 
   it('check horizontal rule', () => {
