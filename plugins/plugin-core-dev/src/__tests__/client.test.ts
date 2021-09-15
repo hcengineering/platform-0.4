@@ -47,7 +47,8 @@ describe('client', () => {
       newTxCreateDoc(core.account.System, core.class.Account, core.space.Model, {
         email: 'vasya',
         name: 'vasya'
-      }))
+      })
+    )
     await s.disconnect()
   })
 })

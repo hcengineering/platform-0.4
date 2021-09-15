@@ -37,7 +37,54 @@ jobs:
         run: node common/scripts/install-run-rush.js install
 
       - name: Building...
-        run: node common/scripts/install-run-rush.js rebuild --verbose
+        run: node common/scripts/install-run-rush.js rebuild
+
+      - uses: getong/elasticsearch-action@v1.2
+        with:
+          elasticsearch version: '7.12.0'
+          host port: 9200
+          container port: 9200
+          host node port: 9300
+          node port: 9300
+          discovery type: 'single-node'
+      
+      - name: Build Demo
+        run: |
+          cd ./dev/prod
+          node ../../common/scripts/install-run-rushx.js build-demo
+      
+      - name: Deploy Demo
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dev/prod/dist
+      
+      - name: Archive artifacts...
+        uses: actions/upload-artifact@v2
+        with:
+          name: hr-build
+          path: |
+            products/hr-build/dist
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Checking for mis-matching dependencies...
+        run: node common/scripts/install-run-rush.js check
+
+      - name: Checking for missing change logs...
+        run: node common/scripts/install-run-rush.js change -v
+
+      - name: Installing...
+        run: node common/scripts/install-run-rush.js install
 
       - uses: getong/elasticsearch-action@v1.2
         with:
@@ -62,29 +109,9 @@ jobs:
           coverageLocations: |
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
-            ${{github.workspace}}/server/*/coverage/lcov.info:lcov
-      
-      - name: Build Demo
-        run: |
-          cd ./dev/prod
-          node ../../common/scripts/install-run-rushx.js build-demo
-      
-      - name: Deploy Demo
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dev/prod/dist
-      
-      - name: Archive artifacts...
-        uses: actions/upload-artifact@v2
-        with:
-          name: hr-build
-          path: |
-            products/hr-build/dist
-          
+            ${{github.workspace}}/server/*/coverage/lcov.info:lcov       
 
-  lint_and_format:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -99,7 +126,7 @@ jobs:
         run: node common/scripts/install-run-rush.js install
       
       - name: Building & testing...
-        run: node common/scripts/install-run-rush.js test
+        run: node common/scripts/install-run-rush.js build
 
       - name: Check files formatting & linting
         run: |
