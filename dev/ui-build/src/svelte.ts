@@ -21,12 +21,14 @@ import { extractTypeInformation as extendTypeInformation } from './componentExte
 import { CompiledSvelteCode, ComponentParser } from './componentParser'
 import { writeTsDefinition } from './componentWriter'
 import crypto from 'crypto'
+import { LogLevel } from 'esbuild'
 
 interface esbuildSvelteOptions {
   /**
    * Svelte compiler options
    */
   compileOptions?: CompileOptions
+  logLevel?: LogLevel
 }
 
 interface CacheEntry {
@@ -115,7 +117,9 @@ class SveltePlugin {
           appendFileSync(build.initialOptions.outfile, imports)
         }
       } catch (err) {
-        console.error(err)
+        if ((this.options?.logLevel ?? '') !== 'silent') {
+          console.error(err)
+        }
       }
     }
   }
@@ -214,7 +218,10 @@ class SveltePlugin {
         jsSource,
         this.outDir,
         args,
-        build
+        build,
+        {
+          logLevel: this.options?.logLevel
+        }
       )
 
       const result: OnLoadResult = {
@@ -240,7 +247,7 @@ class SveltePlugin {
       }
 
       return result
-    } catch (e) {
+    } catch (e: any) {
       return { errors: [convertMessage(e)], loader: 'default' }
     }
   }
@@ -391,7 +398,10 @@ async function generateDefinitions (
   jsSource: string,
   outDir: string,
   args: any,
-  build: any
+  build: any,
+  genOptions: {
+    logLevel?: LogLevel
+  }
 ): Promise<{ defContent: string, defFile: string }> {
   let definition = ''
   try {
@@ -414,7 +424,9 @@ async function generateDefinitions (
       mkdirSync(outRelPath, { mode: 0o744, recursive: true })
     }
     definition = writeTsDefinition(Object.assign(parsed, { filePath: filename, moduleName: moduleName }))
-    console.log('generate d.ts inside ', outFileName, definition.length)
+    if ((genOptions.logLevel ?? '') !== 'silent') {
+      console.log('generate d.ts inside ', outFileName, definition.length)
+    }
 
     const options = { parser: 'typescript', printWidth: 80 }
 
