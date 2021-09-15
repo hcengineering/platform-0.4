@@ -1652,6 +1652,118 @@ th.svelte-1lkmas2 {
   opacity: 0.8;
 }
 
+/* fakecss:src/components/Dropdown.esbuild-svelte-fake-css */
+.root.svelte-y1kjgh {
+  font-family: inherit;
+  font-size: 14px;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.root.disabled.svelte-y1kjgh {
+  cursor: unset;
+}
+.selected.svelte-y1kjgh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+.content.svelte-y1kjgh {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.title.svelte-y1kjgh {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--theme-content-accent-color);
+  opacity: 0.8;
+  user-select: none;
+}
+.label.svelte-y1kjgh {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 15px;
+  color: var(--theme-caption-color);
+}
+.items-container.svelte-y1kjgh {
+  position: relative;
+}
+.items.svelte-y1kjgh {
+  position: absolute;
+  width: 100%;
+  top: 18px;
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--theme-button-bg-hovered);
+  border: 1px solid var(--theme-button-border-enabled);
+  border-radius: 12px;
+  z-index: 1000;
+}
+.item.svelte-y1kjgh {
+  flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 15px;
+  padding: 10px 20px;
+}
+.item.svelte-y1kjgh:first-child {
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+.item.svelte-y1kjgh:last-child {
+  padding-bottom: 20px;
+}
+.item.svelte-y1kjgh:hover {
+  background-color: var(--theme-bg-accent-color);
+}
+
+/* fakecss:src/components/PersonSummary.esbuild-svelte-fake-css */
+.root.svelte-1di27uu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px;
+  width: 100%;
+  border-radius: 20px;
+  background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Borscht_served.jpg/1920px-Borscht_served.jpg);
+  background-position: center;
+  background-size: cover;
+}
+.content.svelte-1di27uu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.avatar.svelte-1di27uu {
+  border-radius: 50%;
+  height: 80px;
+  width: 80px;
+}
+.name.svelte-1di27uu {
+  padding-top: 15px;
+  font-weight: 500;
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 1px 1px 1px #000;
+}
+.subtitle.svelte-1di27uu {
+  padding-top: 5px;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 1px 1px 1px #000;
+  opacity: 0.6;
+}
+
 /* fakecss:src/components/text/MessageViewer.esbuild-svelte-fake-css */
 .inline_block.svelte-a1c9ps {
   display: inline;
