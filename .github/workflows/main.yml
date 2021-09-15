@@ -111,7 +111,7 @@ jobs:
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
             ${{github.workspace}}/server/*/coverage/lcov.info:lcov       
 
-  lint:
+  check-formatting:
     runs-on: ubuntu-latest
 
     steps:
@@ -125,10 +125,10 @@ jobs:
       - name: Installing...
         run: node common/scripts/install-run-rush.js install
       
-      - name: Building & testing...
+      - name: Building ...
         run: node common/scripts/install-run-rush.js build
 
-      - name: Check files formatting & linting
+      - name: Check files formatting
         run: |
           node common/scripts/install-run-rush.js format
           echo '================================================================'
