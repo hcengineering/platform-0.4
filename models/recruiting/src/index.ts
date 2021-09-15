@@ -14,27 +14,29 @@
 //
 
 import { Builder, Model } from '@anticrm/model'
-import type { Applicant, Candidate, CandidatePoolSpace, Resume, VacancySpace } from '@anticrm/recruiting'
-import core, { TDoc, TSpace } from '@anticrm/model-core'
-import { Domain, Ref } from '@anticrm/core'
+import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
+import core, { TSpace } from '@anticrm/model-core'
+import { TPerson } from '@anticrm/model-contact'
+import contact from '@anticrm/contact'
+import { Account, Ref, Timestamp } from '@anticrm/core'
 import workbench from '@anticrm/model-workbench'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import fsm from '@anticrm/fsm'
 import recruiting from '@anticrm/recruiting'
 
-const DOMAIN_RECRUITING = 'recruiting' as Domain
-
 /**
  * @public
  */
-@Model(recruiting.class.Candidate, core.class.Doc, DOMAIN_RECRUITING)
-class TCandidate extends TDoc implements Candidate {
-  name!: string
-  bio!: string
-  location!: string
-  position!: string
+@Model(recruiting.class.Candidate, contact.class.Person)
+class TCandidate extends TPerson implements Candidate {
+  status!: CandidateStatus
+  employment!: {
+    position: string
+    experience: number
+  }
+
   salaryExpectation!: number
-  resume!: Ref<Resume>
+  resume!: string
 }
 
 /**
@@ -46,16 +48,10 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 /**
  * @public
  */
-@Model(recruiting.class.Resume, core.class.Doc, DOMAIN_RECRUITING)
-class TResume extends TDoc implements Resume {
-  description!: string
-}
-
-/**
- * @public
- */
 @Model(recruiting.class.Applicant, fsm.class.FSMItem)
-class TApplicant extends TFSMItem implements Applicant {}
+class TApplicant extends TFSMItem implements Applicant {
+  recruiter!: Ref<Account>
+}
 
 /**
  * @public
@@ -65,16 +61,15 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
   company!: string
   description!: string
   location!: string
-  salary!: number
-  salaryMin!: number
-  salaryMax!: number
+  type!: string
+  dueDate!: Timestamp
 }
 
 /**
  * @public
  */
 export function createModel (builder: Builder): void {
-  builder.createModel(TApplicant, TResume, TCandidate, TCandidatePoolSpace, TVacancySpace)
+  builder.createModel(TApplicant, TCandidate, TCandidatePoolSpace, TVacancySpace)
 
   builder.createDoc(
     workbench.class.Application,
@@ -90,7 +85,8 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: recruiting.string.AddVacancy,
             createComponent: recruiting.component.CreateVacancy,
             item: {
-              createComponent: recruiting.component.CreateVacancy
+              createComponent: recruiting.component.CreateApplication,
+              createLabel: recruiting.string.CreateApplication
             }
           },
           {
@@ -101,6 +97,7 @@ export function createModel (builder: Builder): void {
             createComponent: recruiting.component.CreatePool,
             item: {
               createComponent: recruiting.component.CreateCandidate,
+              createLabel: recruiting.string.AddCandidate,
               editComponent: recruiting.component.EditCandidate
             }
           }

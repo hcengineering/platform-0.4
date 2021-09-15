@@ -26,10 +26,11 @@
     "eslint-plugin-promise": "^5.1.0"
   },
   "dependencies": {
-    "@anticrm/core":"~0.4.0",
-    "@anticrm/status":"~0.4.2",
-    "@anticrm/platform":"~0.4.2",
-    "@anticrm/fsm":"~0.4.0",
-    "@anticrm/workbench":"~0.4.0"
+    "@anticrm/core": "~0.4.0",
+    "@anticrm/status": "~0.4.2",
+    "@anticrm/platform": "~0.4.2",
+    "@anticrm/contact": "~0.4.0",
+    "@anticrm/fsm": "~0.4.0",
+    "@anticrm/workbench": "~0.4.0"
   }
 }

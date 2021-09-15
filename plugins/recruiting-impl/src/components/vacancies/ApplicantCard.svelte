@@ -36,7 +36,7 @@
 
 {#if candidate}
   <div class="root">
-    {candidate.name}
+    {`${candidate.firstName} ${candidate.lastName}`}
   </div>
 {/if}
 

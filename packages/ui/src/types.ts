@@ -94,3 +94,14 @@ export interface IconGroupItem {
 }
 
 export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
+
+export interface DropdownItem {
+  id: string
+  label: IntlString | string
+}
+
+export interface Person {
+  firstName?: string
+  lastName?: string
+  avatar?: string
+}
