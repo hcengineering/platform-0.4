@@ -13,7 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref } from '@anticrm/core'
+  import type { Class, Ref, Space } from '@anticrm/core'
+  import { SpaceNotifications } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getRouter } from '@anticrm/ui'
   import type { Application, WorkbenchRoute } from '@anticrm/workbench'
@@ -21,6 +22,8 @@
   import AppItem from './AppItem.svelte'
 
   export let active: Ref<Application> | undefined
+  export let notifications: Map<Ref<Space>, SpaceNotifications>
+  let notificatedClasses: Set<Ref<Class<Space>>> = new Set<Ref<Class<Space>>>()
 
   let apps: Application[] = []
 
@@ -36,6 +39,20 @@
   function navigateApp (app: Ref<Application>) {
     router.navigate({ app })
   }
+
+  $: notificatedClasses = new Set(
+    Array.from(notifications.values())
+      .filter((s) => s.notificatedObjects.length > 0)
+      .map((s) => s.objectClass)
+  )
+
+  function hasNotify (app: Application, notificatedClasses: Set<Ref<Class<Space>>>): boolean {
+    const appSpaceClasses = new Set(app.navigatorModel?.spaces.map((p) => p.spaceClass))
+    for (const spaceClass of appSpaceClasses ?? []) {
+      if (notificatedClasses.has(spaceClass)) return true
+    }
+    return false
+  }
 </script>
 
 <div class="flex-col">
@@ -44,7 +61,7 @@
       selected={app._id === active}
       icon={app.icon}
       label={app.label}
-      notify
+      notify={hasNotify(app, notificatedClasses)}
       action={async () => {
         navigateApp(app._id)
       }}

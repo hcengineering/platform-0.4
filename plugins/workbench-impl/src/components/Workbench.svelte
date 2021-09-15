@@ -131,7 +131,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active" />
-    <Applications active={currentRoute.app} />
+    <Applications {notifications} active={currentRoute.app} />
     <div class="profile">
       <Profile on:logout />
     </div>
