@@ -74,7 +74,7 @@ async function findDocumentPresentation (
   mode: PresentationMode
 ): Promise<PresentationResult | undefined> {
   const presenters = await client.findAll(core.class.DocumentPresenter, { objectClass: reference.objectClass })
-
+  if (presenters.length === 0) return undefined
   const component = presenters
     .map((p) => Object.values(p.presentation))
     .reduce(combinePresentation)

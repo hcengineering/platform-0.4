@@ -31,20 +31,21 @@
   })
 </script>
 
-<div class="container">
-  <div class="line" />
-  <div class="content">
-    {#if component}
+{#if component}
+  <pre class="container">
+    <div class="line" />
+    <div class="content">
       <Component is={component.component} props={component.props} />
-    {/if}
-  </div>
-</div>
+    </div>
+  </pre>
+{/if}
 
 <style lang="scss">
   .container {
     flex-shrink: 0;
     display: flex;
     align-items: stretch;
+    min-width: 466px;
 
     .line {
       margin-right: 14px;
