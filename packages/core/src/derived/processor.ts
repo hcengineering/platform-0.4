@@ -1,5 +1,5 @@
 import { Resource } from '@anticrm/status'
-import { DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
+import { CollectionRule, DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
 import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
 import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
@@ -133,29 +133,13 @@ export class DerivedDataProcessor extends TxProcessor {
     for (const r of d.collections ?? []) {
       if (push) {
         const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
-        const parentDocRefString = (doc as any)[r.sourceField] as FullRefString
-        const parentDocRef = parseFullRef(parentDocRefString)
-        if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
-          try {
-            const target = (
-              await this.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })
-            ).shift()
-            if (target !== undefined) {
-              const obj = this.extractEmbeddedDoc(doc, r.rules)
-              const operation = {
-                $push: { [r.targetField]: obj }
-              }
-              await this.updateData(
-                operation,
-                target.modifiedBy,
-                target.modifiedOn,
-                target._id,
-                target._class,
-                target.space
-              )
-            }
-          } catch (err) {
-            console.log(err)
+        if (r.sourceFieldPattern === undefined) {
+          const target = await this.getTargetByRef(doc, d, r)
+          await this.pushToCollection(doc, target, r)
+        } else {
+          const targets = await this.getTargetsByRegex(doc, d, r)
+          for (const target of targets) {
+            await this.pushToCollection(doc, target, r)
           }
         }
       } else {
@@ -166,17 +150,50 @@ export class DerivedDataProcessor extends TxProcessor {
           [`operations.\\$push.${r.targetField}${eid}`]: tx.objectId
         })
         // If it was in few fields at once, operation probable will be execured few times.
-        for (const op of pushOps) {
-          try {
-            const operation = {
-              $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
-            }
-            await this.updateData(operation, op.modifiedBy, op.modifiedOn, op.objectId, op.objectClass, op.objectSpace)
-          } catch (err) {
-            // Ignore exception.
-            console.log(err)
-          }
+        await this.pullFromCollection(r, pushOps)
+      }
+    }
+  }
+
+  private async getTargetsByRegex (doc: Doc, d: Descr, r: CollectionRule): Promise<Array<Doc>> {
+    if (r.sourceFieldPattern?.pattern === undefined) return []
+    const source = (doc as any)[r.sourceField]
+
+    const refs = this.processRulePattern(r.sourceFieldPattern, source)
+    return await this.storage.findAll(d.targetClass, { _id: { $in: refs } })
+  }
+
+  private async getTargetByRef (doc: Doc, d: Descr, r: CollectionRule): Promise<Doc | undefined> {
+    const parentDocRefString = (doc as any)[r.sourceField] as FullRefString
+    const parentDocRef = parseFullRef(parentDocRefString)
+    if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
+      return (await this.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })).shift()
+    }
+  }
+
+  private async pushToCollection (doc: Doc, target: Doc | undefined, r: CollectionRule): Promise<void> {
+    if (target === undefined) return
+    try {
+      const obj = this.extractEmbeddedDoc(doc, r.rules)
+      const operation = {
+        $push: { [r.targetField]: obj }
+      }
+      await this.updateData(operation, target.modifiedBy, target.modifiedOn, target._id, target._class, target.space)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  private async pullFromCollection (r: CollectionRule, pushOps: FindResult<TxUpdateDoc<Doc>>): Promise<void> {
+    for (const op of pushOps) {
+      try {
+        const operation = {
+          $pull: { [r.targetField]: (op.operations.$push as any)[r.targetField] }
         }
+        await this.updateData(operation, op.modifiedBy, op.modifiedOn, op.objectId, op.objectClass, op.objectSpace)
+      } catch (err) {
+        // Ignore exception.
+        console.log(err)
       }
     }
   }

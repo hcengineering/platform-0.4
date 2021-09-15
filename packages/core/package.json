@@ -31,6 +31,7 @@
   "dependencies": {
     "@anticrm/status": "~0.4.2",
     "simplytyped": "^3.3.0",
-    "fast-equals": "^2.0.1"  
+    "fast-equals": "^2.0.1",
+    "fast-copy": "~2.1.1"
   }
 }

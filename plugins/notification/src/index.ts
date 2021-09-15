@@ -13,7 +13,16 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, DerivedData, DocumentMapper, Ref, Timestamp, DerivedDataDescriptor } from '@anticrm/core'
+import {
+  Class,
+  Doc,
+  DerivedData,
+  DocumentMapper,
+  Ref,
+  Timestamp,
+  DerivedDataDescriptor,
+  DocumentUpdate
+} from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Resource } from '@anticrm/status'
@@ -39,6 +48,7 @@ export class NotificationClient {
   private autoscroll = false
   private prevId: Ref<Doc> | undefined
   private prevNotifications: SpaceNotifications | undefined
+  private readonly readObjects: Set<Ref<Doc>> = new Set<Ref<Doc>>()
 
   constructor (private readonly client: PresentationClient) {}
 
@@ -50,7 +60,7 @@ export class NotificationClient {
   ): Promise<void> {
     if (id !== this.prevId) {
       if (this.waitingUpdate && this.prevId !== undefined && this.prevNotifications != null) {
-        await this.updateLastRead(notifications, isObject ? this.prevId : undefined)
+        await this.updateLastRead(this.prevNotifications, isObject ? this.prevId : undefined)
       }
       this.prevId = id
       this.prevNotifications = copy(notifications)
@@ -110,10 +120,7 @@ export class NotificationClient {
     for (let i = offset ? 1 : 0; i < messages.length; i++) {
       const elem = messages[i] as HTMLElement
       if (elem.getBoundingClientRect().bottom > divBottom) break
-      const modified = elem.dataset.modified
-      if (modified === undefined) continue
-      const messageModified = parseInt(modified)
-      this.lastTime = messageModified > this.lastTime ? messageModified : this.lastTime
+      this.readObject(notifications, elem.dataset)
     }
     if (this.lastTime > lastRead) {
       if (!this.waitingUpdate) {
@@ -127,22 +134,39 @@ export class NotificationClient {
     this.autoscroll = this.lastPosition > 0 ? this.lastPosition > div.scrollHeight - div.clientHeight - 30 : false
   }
 
+  private readObject (notifications: SpaceNotifications, dataset: DOMStringMap): void {
+    if (dataset.id !== undefined) {
+      const id = dataset.id as Ref<Doc>
+      if (notifications.notificatedObjects.includes(id)) {
+        this.readObjects.add(id)
+      }
+    }
+    if (dataset.modified !== undefined) {
+      const modified = parseInt(dataset.modified)
+      this.lastTime = modified > this.lastTime ? modified : this.lastTime
+    }
+  }
+
   private async updateLastRead (notifications: SpaceNotifications, id?: Ref<Doc>): Promise<void> {
     if (notifications === undefined) return
+    const query: DocumentUpdate<SpaceNotifications> = {}
     if (id === undefined) {
-      await this.client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
-        lastRead: this.lastTime
-      })
+      query.lastRead = this.lastTime
     } else {
       if (notifications.objectLastReads.set === undefined) {
         notifications.objectLastReads = new Map<Ref<Doc>, Timestamp>()
       }
       notifications.objectLastReads.set(id, this.lastTime)
-      await this.client.updateDoc(notifications._class, notifications.space, notifications._id, {
-        objectLastReads: notifications.objectLastReads
-      })
+      query.objectLastReads = notifications.objectLastReads
     }
+    if (this.readObjects.size > 0) {
+      query.$pull = {
+        notificatedObjects: { $in: Array.from(this.readObjects) }
+      }
+    }
+    await this.client.updateDoc(notifications._class, notifications.space, notifications._id, query)
     this.waitingUpdate = false
+    this.readObjects.clear()
   }
 }
 

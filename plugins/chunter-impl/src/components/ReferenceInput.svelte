@@ -14,8 +14,7 @@
 -->
 <script lang="ts">
   import core from '@anticrm/core'
-  import type { DocumentQuery, Title } from '@anticrm/core'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { Account, Ref, Space, Title } from '@anticrm/core'
   import type { EditorActions, EditorContentEvent } from '@anticrm/richeditor'
   import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
   import { schema } from '@anticrm/richeditor'
@@ -40,6 +39,7 @@
   // If specified, submit button will be enabled, message will be send on any modify operation
   export let submitEnabled = true
   export let lines = 1
+  export let currentSpace: Ref<Space> | undefined
 
   const dispatch = createEventDispatcher()
 
@@ -67,8 +67,6 @@
 
   const triggers = ['@', '#', '[[']
 
-  let currentPrefix = ''
-
   interface ItemRefefence {
     id: string
     class: string
@@ -80,32 +78,21 @@
 
   let popupVisible = false
 
-  let lq: QueryUpdater<Title> | undefined
-
   const client = getClient()
 
-  function query (prefix: string): DocumentQuery<Title> {
-    return {
-      title: { $like: prefix + '%' }
-    }
+  async function getTitles (prefix: string) {
+    const titles = await client.findAll(core.class.Title, { title: { $like: prefix + '%' } }, { limit: 50 })
+    completions = updateTitles(titles)
   }
 
-  $: if (currentPrefix !== '') {
-    lq = client.query(
-      lq,
-      core.class.Title,
-      query(currentPrefix),
-      (docs) => {
-        completions = updateTitles(docs)
-      },
-      { limit: 50 }
-    )
+  async function getAccounts (prefix: string) {
+    const docs = await client.findAll(core.class.Account, { name: { $like: '%' + prefix + '%' } }, { limit: 50 })
+    completions = updateAccounts(docs)
   }
 
   function updateTitles (docs: Title[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
-      // if (startsWith(value.title.toString(), currentPrefix)) {
       const kk = value.title
       items.push({
         key: `${value._id}${value.title}`,
@@ -115,7 +102,21 @@
         class: value.objectClass,
         id: value.objectId
       } as ExtendedCompletionItem)
-      // }
+    }
+    return items
+  }
+
+  function updateAccounts (docs: Account[]): CompletionItem[] {
+    const items: CompletionItem[] = []
+    for (const value of docs) {
+      items.push({
+        key: value._id,
+        completion: value._id,
+        label: value.email,
+        title: value.name,
+        class: core.class.Account,
+        id: `${currentSpace}-${value._id}`
+      } as ExtendedCompletionItem)
     }
     return items
   }
@@ -138,39 +139,43 @@
     return []
   }
 
-  function updateStyle (event: EditorContentEvent) {
+  async function updateStyle (event: EditorContentEvent): Promise<void> {
     styleState = event
 
     if (event.completionWord.length === 0) {
-      currentPrefix = ''
       popupVisible = false
       return
     }
     if (event.completionWord.startsWith('[[')) {
       if (event.completionWord.endsWith(']')) {
         popupVisible = false
-        currentPrefix = ''
       } else {
-        currentPrefix = event.completionWord.substring(2)
+        const currentPrefix = event.completionWord.substring(2)
         if (currentPrefix.length > 0) {
+          await getTitles(currentPrefix)
           popupVisible = true
         }
       }
+    } else if (event.completionWord.startsWith('@')) {
+      const currentPrefix = event.completionWord.substring(1)
+      await getAccounts(currentPrefix)
+      popupVisible = true
     } else {
-      currentPrefix = ''
       popupVisible = false
     }
     dispatch('update', editorContent)
   }
 
   function handlePopupSelected (value: CompletionItem) {
+    const isMention = styleState.completionWord.startsWith('@')
     let extra = 0
     if (styleState.completionEnd !== null && styleState.completionEnd.endsWith(']]')) {
       extra = styleState.completionEnd.length
     }
     const vv = value as ExtendedCompletionItem
+    const text = isMention ? value.label : '[[' + value.label + ']]'
     htmlEditor.insertMark(
-      '[[' + value.label + ']]',
+      text,
       styleState.selection.from - styleState.completionWord.length,
       styleState.selection.to + extra,
       schema.marks.reference,

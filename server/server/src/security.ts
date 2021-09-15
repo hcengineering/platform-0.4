@@ -10,7 +10,9 @@ import core, {
   Space, Tx,
   TxCreateDoc,
   TxProcessor, TxRemoveDoc, TxUpdateDoc,
-  WithAccountId
+  WithAccountId,
+  isPredicate,
+  createPredicates
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 import { WithWorkspaceTx } from '@anticrm/workspace'
@@ -89,11 +91,23 @@ export class SecurityModel extends TxProcessor {
   }
 
   pullSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
-    const member = spaceTx.operations?.$pull?.members
-    if (member !== undefined) {
-      const accountSpaces = this.allowedSpaces.get(member)
-      if (accountSpaces !== undefined) {
-        accountSpaces.delete(spaceTx.objectId)
+    if (spaceTx.operations?.$pull?.members !== undefined) {
+      let pulled: any[] = []
+      if (isPredicate(spaceTx.operations.$pull.members)) {
+        const preds = createPredicates(spaceTx.operations.$pull.members, 'members')
+        let temp = Array.from(this.allowedSpaces.keys()).map((p) => { return { members: p } }) as any[]
+        for (const pred of preds) {
+          temp = pred(temp)
+        }
+        pulled = temp
+      } else {
+        pulled = [spaceTx.operations.$pull.members]
+      }
+      for (const member of pulled) {
+        const accountSpaces = this.allowedSpaces.get(member)
+        if (accountSpaces !== undefined) {
+          accountSpaces.delete(spaceTx.objectId)
+        }
       }
     }
   }

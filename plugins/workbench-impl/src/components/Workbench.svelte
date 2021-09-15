@@ -98,7 +98,6 @@
         notifications.set(p.objectId as Ref<Space>, p)
       })
       notifications = notifications
-      console.log(notifications)
     }
   )
   $: if (currentRoute.space && navigatorModel) {
@@ -140,7 +139,7 @@
   {#if navigator}
     <div class="navigator">
       <NavHeader title={navigatorModel?.navTitle ?? currentAppLabel ?? UndefinedApp} />
-      <Navigator model={navigatorModel} bind:special={currentSpecial} />
+      <Navigator model={navigatorModel} {notifications} bind:special={currentSpecial} />
     </div>
   {/if}
   <div bind:this={compHTML} class="component">

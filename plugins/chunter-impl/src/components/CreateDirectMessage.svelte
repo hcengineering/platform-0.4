@@ -115,8 +115,8 @@
 
   $: if (currentSpace !== undefined) {
     query = client.query<Message>(query, chunter.class.Message, { space: currentSpace._id }, (result) => {
-      messages = result
       notificationClient.setAutoscroll(div)
+      messages = result
     })
   }
 
@@ -157,6 +157,7 @@
   </div>
   <div class="message-input">
     <ReferenceInput
+      currentSpace={currentSpace?._id}
       on:message={(event) => {
         addMessage(event.detail)
       }}

@@ -17,7 +17,7 @@ import type { KeysByType } from 'simplytyped'
 import type { Account, Arr, Class, Data, Doc, Domain, Ref, Space } from './classes'
 import core from './component'
 import { createShortRef } from './shortref'
-import { Storage } from './storage'
+import { QuerySelector, Storage } from './storage'
 import { generateId } from './utils'
 
 /**
@@ -52,6 +52,13 @@ export type ArrayAsElement<T extends Doc> = {
 /**
  * @public
  */
+export type ArrayAsElementQuery<T extends Doc> = {
+  [P in keyof T]: T[P] extends Arr<infer X> ? X | QuerySelector<X> : never
+}
+
+/**
+ * @public
+ */
 export type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
 
 /**
@@ -59,7 +66,7 @@ export type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
  */
 export interface DocOperation<T extends Doc> {
   $push?: Partial<OmitNever<ArrayAsElement<T>>>
-  $pull?: Partial<OmitNever<ArrayAsElement<T>>>
+  $pull?: Partial<OmitNever<ArrayAsElementQuery<T>>>
 }
 
 /**
@@ -77,8 +84,7 @@ export interface TxUpdateDoc<T extends Doc> extends ObjectTx<T> {
 /**
  * @public
  */
-export interface TxRemoveDoc<T extends Doc> extends ObjectTx<T> {
-}
+export interface TxRemoveDoc<T extends Doc> extends ObjectTx<T> {}
 
 /**
  * @public
