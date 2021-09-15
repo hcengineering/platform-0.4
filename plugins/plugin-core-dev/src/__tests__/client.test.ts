@@ -13,9 +13,11 @@
 // limitations under the License.
 //
 
-import core, { Doc, TxCreateDoc, TxProcessor } from '@anticrm/core'
+import core, { Doc, newTxCreateDoc, TxCreateDoc, TxProcessor } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import { ClientImpl } from '../connection'
+
+import service from '../'
 
 describe('client', () => {
   it('should create connection', async () => {
@@ -35,5 +37,17 @@ describe('client', () => {
       )
       .map((t) => TxProcessor.createDoc2Doc(t as TxCreateDoc<Doc>))
     expect(result.length).toEqual(expected.length)
+  })
+
+  it('should create connection', async () => {
+    const s = await service()
+    const client = await s.getClient()
+    expect(client.accountId()).toEqual(core.account.System)
+    await client.tx(
+      newTxCreateDoc(core.account.System, core.class.Account, core.space.Model, {
+        email: 'vasya',
+        name: 'vasya'
+      }))
+    await s.disconnect()
   })
 })
