@@ -32,7 +32,8 @@
 </script>
 
 {#if component}
-  <pre class="container">
+  <pre
+    class="container">
     <div class="line" />
     <div class="content">
       <Component is={component.component} props={component.props} />
