@@ -26,11 +26,19 @@ export type OperatorFunc = (doc: Doc, op: object) => void
 function $push (document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
   for (const key in keyval) {
+    let pushed: any[] = []
+    if (keyval[key].$each !== undefined) {
+      for (const item of keyval[key].$each) {
+        pushed.push(item)
+      }
+    } else {
+      pushed = [keyval[key]]
+    }
     const arr: Array<any> = doc[key]
     if (arr === undefined) {
-      doc[key] = [keyval[key]]
+      doc[key] = pushed
     } else {
-      arr.push(keyval[key])
+      arr.push(...pushed)
     }
   }
 }

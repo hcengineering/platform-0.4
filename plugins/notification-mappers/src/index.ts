@@ -29,6 +29,7 @@ import core, {
   DerivedData,
   registerMapper,
   ObjectTx,
+  isEachArray,
   isPredicate,
   createPredicates
 } from '@anticrm/core'
@@ -168,8 +169,15 @@ export default (): void => {
             }
           }
         }
-        if (ctx.operations.$push?.members !== undefined) {
-          result.push(createSpaceNotification(ctx, options, ctx.operations.$push.members))
+        const pushMembers = ctx.operations?.$push?.members
+        if (pushMembers !== undefined) {
+          if (isEachArray(pushMembers)) {
+            for (const member of pushMembers.$each) {
+              result.push(createSpaceNotification(ctx, options, member))
+            }
+          } else {
+            result.push(createSpaceNotification(ctx, options, pushMembers))
+          }
         }
         if (ctx.operations.members !== undefined) {
           for (let i = 0; i < result.length; i++) {

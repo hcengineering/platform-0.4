@@ -52,6 +52,20 @@ export type ArrayAsElement<T extends Doc> = {
 /**
  * @public
  */
+export type ArrayPush<T extends Doc> = {
+  [P in keyof T]: T[P] extends Arr<infer X> ? X | EachArray<X> : never
+}
+
+/**
+ * @public
+ */
+export interface EachArray<T> {
+  $each: T[]
+}
+
+/**
+ * @public
+ */
 export type ArrayAsElementQuery<T extends Doc> = {
   [P in keyof T]: T[P] extends Arr<infer X> ? X | QuerySelector<X> : never
 }
@@ -65,7 +79,7 @@ export type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
  * @public
  */
 export interface DocOperation<T extends Doc> {
-  $push?: Partial<OmitNever<ArrayAsElement<T>>>
+  $push?: Partial<OmitNever<ArrayPush<T>>>
   $pull?: Partial<OmitNever<ArrayAsElementQuery<T>>>
 }
 
@@ -271,4 +285,14 @@ export function newTxCreateDoc<T extends Doc> (
 
 function txSpace (user: Ref<Account>, userTxSpace?: boolean): Ref<Space> {
   return userTxSpace ?? false ? ((core.space.Tx + '#' + user) as Ref<Space>) : core.space.Tx
+}
+
+/**
+ * @public
+ */
+export function isEachArray<T> (push: T | EachArray<T>): push is EachArray<T> {
+  if ((push as EachArray<T>).$each !== undefined) {
+    return true
+  }
+  return false
 }
