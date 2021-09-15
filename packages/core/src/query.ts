@@ -95,5 +95,9 @@ export function matchDocument<T extends Doc> (doc: T, query: DocumentQuery<T>): 
  * @public
  */
 export function shouldSkipId<T extends Doc> (key: string, query: DocumentQuery<T>): boolean {
-  return key === '_id' && (query._id as QuerySelector<T>)?.$like === undefined
+  return (
+    key === '_id' &&
+    (query._id as QuerySelector<T>)?.$like === undefined &&
+    (query._id as QuerySelector<T>)?.$ne === undefined
+  )
 }

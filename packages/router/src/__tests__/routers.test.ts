@@ -65,6 +65,29 @@ describe('routes', () => {
     expect(pp?._class).toEqual('qwe')
   })
 
+  it('match regexp path', () => {
+    let matched = 0
+    const r = new Router<Partial<MyProps>>({
+      patternText: '/(.*)workbench/:spaceId/browse/:objId?_class',
+      matcher: (props) => {
+        matched++
+      },
+      defaults: {}
+    })
+    r.update({
+      path: ['ABCworkbench', 'sp1', 'browse', 'obj1'],
+      query: { _class: 'qwe' },
+      fragment: ''
+    })
+    expect(matched).toEqual(1)
+    const pp = r.properties()
+
+    expect(pp).toBeDefined()
+    expect(pp?.objId).toEqual('obj1')
+    expect(pp?.spaceId).toEqual('sp1')
+    expect(pp?._class).toEqual('qwe')
+  })
+
   it('match width default value', () => {
     let matched = 0
     const r = new Router<ParentProps>({

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/richeditor",
+      "comment": "Set completion update interval",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/richeditor"
+}

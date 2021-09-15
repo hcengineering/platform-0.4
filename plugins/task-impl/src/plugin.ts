@@ -37,6 +37,9 @@ export default mergeIds(task, {
     MyTasksView: '' as AnyComponent,
     FavoriteView: '' as AnyComponent,
     CreateTask: '' as AnyComponent,
-    EditTask: '' as AnyComponent
+    EditTask: '' as AnyComponent,
+
+    TaskPreview: '' as AnyComponent,
+    TaskRefView: '' as AnyComponent
   }
 })

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Attribute, Class, Data, Doc, Domain, Obj, PropertyType, Ref, Tx, TxCreateDoc, Type } from '@anticrm/core'
+import { Attribute, Class, Data, Doc, Domain, Obj, PropertyType, Ref, Tx, TxCreateDoc, TxProcessor, Type } from '@anticrm/core'
 import { ClassifierKind, DOMAIN_MODEL, generateId, Hierarchy } from '@anticrm/core'
 import toposort from 'toposort'
 import core from './component'
@@ -159,8 +159,10 @@ export class Builder {
     attributes: Data<T>,
     objectId?: Ref<T>,
     docOptions?: Partial<Doc>
-  ): void {
-    this.txes.push(txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId, docOptions))
+  ): T {
+    const tx = txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId, docOptions)
+    this.txes.push(tx)
+    return TxProcessor.createDoc2Doc(tx) as T
   }
 
   getTxes (): Tx[] {
