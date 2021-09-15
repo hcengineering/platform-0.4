@@ -137,7 +137,7 @@ describe('workspace', () => {
       const addr = (await serverAt).address()
       const client = withOperations(
         core.account.System,
-        await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+        await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId, {})}`)
       )
 
       console.log('client connected')
