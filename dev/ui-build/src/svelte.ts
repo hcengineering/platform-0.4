@@ -1,27 +1,19 @@
 // original version from https://github.com/evanw/esbuild/blob/plugins/docs/plugin-examples.md
+import crypto from 'crypto'
 import type { OnLoadArgs, OnLoadResult, PartialMessage, Plugin, PluginBuild } from 'esbuild'
-import {
-  appendFileSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFile,
-  readFileSync,
-  statSync,
-  writeFile,
-  writeFileSync
-} from 'fs'
+import { LogLevel } from 'esbuild'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFile, readFileSync, statSync, writeFileSync } from 'fs'
+import { writeFile } from 'fs/promises'
 import { basename, dirname, join, relative } from 'path'
 import * as prettier from 'prettier'
 import sveltePreprocess from 'svelte-preprocess'
 import { compile, preprocess } from 'svelte/compiler'
 import type { CompileOptions, Warning } from 'svelte/types/compiler/interfaces'
+import ts from 'typescript'
 import { promisify } from 'util'
-import { extractTypeInformation as extendTypeInformation } from './componentExtender'
-import { CompiledSvelteCode, ComponentParser } from './componentParser'
+import { DefOptions, extractTypeInformation as extendTypeInformation, opt } from './componentExtender'
+import { ComponentParser } from './componentParser'
 import { writeTsDefinition } from './componentWriter'
-import crypto from 'crypto'
-import { LogLevel } from 'esbuild'
 
 interface esbuildSvelteOptions {
   /**
@@ -39,8 +31,8 @@ interface CacheEntry {
   cssFile: string
   cssPath: string
 
-  defFile: string
-  defContent: string // A full typescript defintiion for component
+  defFile?: string
+  defContent?: string // A full typescript defintiion for component
 }
 
 const convertMessage = ({ message, start, end, filename, frame }: Warning): PartialMessage => ({
@@ -74,6 +66,10 @@ class SveltePlugin {
   private outDir: string = ''
   private readonly parser = new ComponentParser({ verbose: true })
   private readonly cssCode = new Map<string, { content: string, baseDir: string }>()
+  private readonly componentTS = new Map<string, DefOptions>()
+  private readonly svelteTsCacheDir: Set<string> = new Set<string>()
+  private readonly genDefinitions: boolean = true
+
   private readonly cacheDir = './.ui-build/'
   private cacheFile: Record<string, CacheEntry> = {}
 
@@ -97,7 +93,23 @@ class SveltePlugin {
     build.onResolve({ filter: /\.esbuild-svelte-fake-css$/ }, ({ path }) => ({ path, namespace: 'fakecss' }))
     build.onLoad({ filter: /\.esbuild-svelte-fake-css$/, namespace: 'fakecss' }, this.handleCssLoad.bind(this))
 
-    build.onEnd(() => {
+    build.onEnd(async () => {
+      // Generate svelte typings
+
+      // eslint-disable-next-line
+      if (this.genDefinitions) {
+        await generateDefinitions(this.svelteTsCacheDir, this.componentTS, {
+          logLevel: this.options?.logLevel
+        })
+
+        // Update cached typing information.
+        for (const [filename, v] of this.componentTS) {
+          if (v.defFile !== undefined && v.defContent !== undefined) {
+            await this.cacheResultsDef(filename, v.defFile, v.defContent, this.cacheFile)
+          }
+        }
+      }
+
       this.saveCache()
 
       // If bundled mode is selected, we
@@ -210,19 +222,37 @@ class SveltePlugin {
       // Extract typescript code from svelte
       const tsCode = extractTypescript(source)
 
-      const { defFile, defContent } = await generateDefinitions(
-        filename,
-        { vars, ast },
-        this.parser,
-        tsCode,
+      const moduleName = basename(filename).replace('.svelte', '')
+      const parsed = this.parser.parseSvelteComponent(
+        source,
         jsSource,
-        this.outDir,
-        args,
-        build,
-        {
-          logLevel: this.options?.logLevel
-        }
+        { vars, ast },
+        { moduleName: moduleName, filePath: filename }
       )
+
+      function getOutRelDir (outDir: string): string {
+        let outRelPath = join(outDir, relative(args.path, filename))
+        for (const s of build.initialOptions.entryPoints as string[]) {
+          const srcRel = dirname(s)
+          const r = dirname(relative(srcRel, filename))
+          if (r.length > 0) {
+            outRelPath = join(outDir, r)
+          }
+        }
+        return outRelPath
+      }
+
+      const outRelPath = getOutRelDir(this.outDir)
+      const cdir = getOutRelDir(join(this.cacheDir, 'svelte_ts'))
+      this.svelteTsCacheDir.add(cdir)
+
+      this.componentTS.set(filename, {
+        tsCode,
+        parsedComponent: parsed,
+        moduleName,
+        outRelPath,
+        cacheDir: cdir
+      })
 
       const result: OnLoadResult = {
         contents,
@@ -233,17 +263,7 @@ class SveltePlugin {
       this.updateResultWatch(build, result, dependencyModifcationTimes)
 
       if (result.warnings?.length === 0) {
-        await this.cacheResults(
-          filename,
-          this.cacheDir,
-          sourceDigest,
-          cssPath,
-          defFile,
-          defContent,
-          contents,
-          cssContent,
-          this.cacheFile
-        )
+        await this.cacheResults(filename, this.cacheDir, sourceDigest, cssPath, contents, cssContent, this.cacheFile)
       }
 
       return result
@@ -312,8 +332,6 @@ class SveltePlugin {
     cacheDir: string,
     sourceDigest: string,
     cssPath: string,
-    defFile: string,
-    defContent: string,
     contents: string,
     cssContent: string,
     cacheFile: Record<string, CacheEntry>
@@ -331,16 +349,26 @@ class SveltePlugin {
       contentFile: join(outRelPath, fname + '.js'),
 
       cssFile: join(outRelPath, fname + '.css'),
-      cssPath,
-
-      defFile,
-      defContent
+      cssPath
     }
 
     // Write contents file
-    await promisify(writeFile)(cacheEntry.contentFile, contents)
-    await promisify(writeFile)(cacheEntry.cssFile, cssContent)
+    await writeFile(cacheEntry.contentFile, contents)
+    await writeFile(cacheEntry.cssFile, cssContent)
 
+    cacheFile[filename] = cacheEntry
+  }
+
+  async cacheResultsDef (
+    filename: string,
+    defFile: string,
+    defContent: string,
+    cacheFile: Record<string, CacheEntry>
+  ): Promise<void> {
+    // We got results, let's cache them.
+    const cacheEntry: CacheEntry = cacheFile[filename]
+    cacheEntry.defFile = defFile
+    cacheEntry.defContent = defContent
     cacheFile[filename] = cacheEntry
   }
 
@@ -370,12 +398,14 @@ class SveltePlugin {
       })
     }
 
-    const outDir = dirname(cacheEntry.defFile)
-    if (!existsSync(outDir)) {
-      mkdirSync(outDir, { mode: 0o744, recursive: true })
-    }
+    if (cacheEntry.defFile !== undefined && cacheEntry.defContent !== undefined) {
+      const outDir = dirname(cacheEntry.defFile)
+      if (!existsSync(outDir)) {
+        mkdirSync(outDir, { mode: 0o744, recursive: true })
+      }
 
-    await promisify(writeFile)(cacheEntry.defFile, cacheEntry.defContent)
+      await writeFile(cacheEntry.defFile, cacheEntry.defContent)
+    }
 
     return result
   }
@@ -391,50 +421,57 @@ export default function sveltePlugin (options?: esbuildSvelteOptions): Plugin {
   }
 }
 async function generateDefinitions (
-  filename: string,
-  code: CompiledSvelteCode,
-  parser: ComponentParser,
-  source: string,
-  jsSource: string,
-  outDir: string,
-  args: any,
-  build: any,
+  cacheDir: Set<string>,
+  components: Map<string, DefOptions>,
   genOptions: {
     logLevel?: LogLevel
   }
-): Promise<{ defContent: string, defFile: string }> {
-  let definition = ''
-  try {
-    const moduleName = basename(filename).replace('.svelte', '')
-    const parsed = parser.parseSvelteComponent(source, jsSource, code, { moduleName: moduleName, filePath: filename })
+): Promise<void> {
+  // Create type script programm
 
-    // Extend type information using typescript
-    await extendTypeInformation(source, parsed)
+  for (const o of cacheDir.values()) {
+    if (!existsSync(o)) {
+      mkdirSync(o, { mode: 0o744, recursive: true })
+    }
+  }
 
-    let outRelPath = join(outDir, relative(args.path, filename))
-    for (const s of build.initialOptions.entryPoints as string[]) {
-      const srcRel = dirname(s)
-      const r = dirname(relative(srcRel, filename))
-      if (r.length > 0) {
-        outRelPath = join(outDir, r)
+  const rootNames: string[] = []
+  // Write all files
+  for (const comp of components.values()) {
+    const fName = join(comp.cacheDir, comp.moduleName + '.ts')
+    rootNames.push(fName)
+    await writeFile(fName, comp.tsCode)
+  }
+
+  const prg = ts.createProgram(rootNames, opt)
+
+  for (const [filename, comp] of components.entries()) {
+    let definition = ''
+    try {
+      // Extend type information using typescript
+      const outFileName = join(comp.outRelPath, comp.moduleName + '.svelte.d.ts')
+      if (!existsSync(comp.outRelPath)) {
+        mkdirSync(comp.outRelPath, { mode: 0o744, recursive: true })
       }
-    }
-    const outFileName = join(outRelPath, moduleName + '.svelte.d.ts')
-    if (!existsSync(outRelPath)) {
-      mkdirSync(outRelPath, { mode: 0o744, recursive: true })
-    }
-    definition = writeTsDefinition(Object.assign(parsed, { filePath: filename, moduleName: moduleName }))
-    if ((genOptions.logLevel ?? '') !== 'silent') {
-      console.log('generate d.ts inside ', outFileName, definition.length)
-    }
 
-    const options = { parser: 'typescript', printWidth: 80 }
+      await extendTypeInformation(prg, comp.cacheDir, comp.moduleName + '.ts', comp.parsedComponent)
 
-    const formetted = prettier.format(definition, options)
-    await promisify(writeFile)(outFileName, formetted)
+      definition = writeTsDefinition(
+        Object.assign(comp.parsedComponent, { filePath: filename, moduleName: comp.moduleName })
+      )
+      if ((genOptions.logLevel ?? '') !== 'silent') {
+        console.log('generate d.ts inside ', outFileName, definition.length)
+      }
 
-    return { defContent: formetted, defFile: outFileName }
-  } catch (err) {
-    throw new Error(`failed to generate typings for ${filename} ${err as string} ${definition}`)
+      const options = { parser: 'typescript', printWidth: 80 }
+
+      const formetted = prettier.format(definition, options)
+      await writeFile(outFileName, formetted)
+
+      comp.defContent = formetted
+      comp.defFile = outFileName
+    } catch (err) {
+      throw new Error(`failed to generate typings for ${filename} ${err as string} ${definition}`)
+    }
   }
 }

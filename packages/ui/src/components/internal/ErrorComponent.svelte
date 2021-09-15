@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-<script>
-  export let error = null
+<script lang="ts">
+  export let error: any = null
 </script>
 
 <slot>
