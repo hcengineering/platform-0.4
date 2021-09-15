@@ -366,18 +366,18 @@
 }
 
 /* fakecss:src/components/Workbench.esbuild-svelte-fake-css */
-.mask.svelte-16bxu31.svelte-16bxu31 {
+.mask.svelte-1v1d8xi.svelte-1v1d8xi {
   position: absolute;
   width: 0;
   height: 0;
 }
-.container.svelte-16bxu31.svelte-16bxu31 {
+.container.svelte-1v1d8xi.svelte-1v1d8xi {
   display: flex;
   flex-direction: row;
   height: 100%;
   padding-bottom: 20px;
 }
-.container.svelte-16bxu31 .applications.svelte-16bxu31 {
+.container.svelte-1v1d8xi .applications.svelte-1v1d8xi {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -387,13 +387,13 @@
   align-items: center;
   min-width: 96px;
 }
-.container.svelte-16bxu31 .applications .profile.svelte-16bxu31 {
+.container.svelte-1v1d8xi .applications .profile.svelte-1v1d8xi {
   display: flex;
   align-items: center;
   height: 100px;
   min-height: 100px;
 }
-.container.svelte-16bxu31 .navigator.svelte-16bxu31 {
+.container.svelte-1v1d8xi .navigator.svelte-1v1d8xi {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -403,7 +403,7 @@
   min-width: 280px;
   margin-right: 20px;
 }
-.container.svelte-16bxu31 .component.svelte-16bxu31 {
+.container.svelte-1v1d8xi .component.svelte-1v1d8xi {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -413,12 +413,13 @@
   flex-grow: 1;
   margin-right: 20px;
 }
-.container.svelte-16bxu31 .aside.svelte-16bxu31 {
+.container.svelte-1v1d8xi .aside.svelte-1v1d8xi {
   display: flex;
   flex-direction: column;
   height: 100%;
   border-radius: 20px;
   background-color: var(--theme-bg-color);
+  width: 400px;
   min-width: 400px;
   margin-right: 20px;
   padding: 20px;
