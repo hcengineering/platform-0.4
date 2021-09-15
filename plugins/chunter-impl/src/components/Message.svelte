@@ -118,8 +118,8 @@
   }
 </script>
 
-<div class="message-container">
-  <div class="container" class:no-thread={!thread} class:isNew={isNew(message, notifications)} on:click={onClick}>
+<div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
+  <div class="container" on:click={onClick}>
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     {/if}
@@ -160,9 +160,7 @@
   {#if references.length > 0}
     <div class:references={!thread} class:references-thread={thread}>
       {#each references as ref}
-        <pre>
-          <RefControl reference={ref} />
-        </pre>
+        <RefControl reference={ref} />
       {/each}
     </div>
   {/if}
@@ -174,21 +172,24 @@
     flex-direction: column;
     padding-bottom: 20px;
 
+    &.isNew {
+      background-color: var(--theme-bg-accent-color);
+    }
+    &.no-thread {
+      padding: 20px;
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-radius: 12px;
+    }
     .references {
-      min-width: 466px;
       margin-left: 76px;
     }
     .references-thread {
-      min-width: 466px;
       margin-left: 50px;
     }
     .container {
       flex-shrink: 0;
       display: flex;
-
-      &.isNew {
-        background-color: var(--theme-bg-accent-color);
-      }
 
       .avatar {
         min-width: 36px;
@@ -241,12 +242,6 @@
           }
         }
       }
-    }
-    .no-thread {
-      padding: 20px;
-      background-color: transparent;
-      border: 1px solid transparent;
-      border-radius: 12px;
 
       .buttons {
         position: absolute;
@@ -272,6 +267,7 @@
         visibility: visible;
       }
     }
+
     &:hover {
       background-color: var(--theme-button-bg-enabled);
       border-color: var(--theme-bg-accent-color);
