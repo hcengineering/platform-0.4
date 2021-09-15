@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
@@ -41,7 +41,7 @@
 
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
-  let notifications: SpaceNotifications | undefined
+  let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
 
   let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
@@ -88,15 +88,20 @@
 
   let spaceQuery: QueryUpdater<Space> | undefined
   let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
+  notificationQuery = client.query<SpaceNotifications>(
+    notificationQuery,
+    notification.class.SpaceNotifications,
+    {},
+    (result) => {
+      notifications.clear()
+      result.forEach((p) => {
+        notifications.set(p.objectId as Ref<Space>, p)
+      })
+      notifications = notifications
+      console.log(notifications)
+    }
+  )
   $: if (currentRoute.space && navigatorModel) {
-    notificationQuery = client.query<SpaceNotifications>(
-      notificationQuery,
-      notification.class.SpaceNotifications,
-      { objectId: currentRoute.space },
-      (result) => {
-        notifications = result.shift()
-      }
-    )
     spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
       const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
       currentSpace = currentRoute.space === account.toString() ? buildUserSpace(account, target) : result[0]
@@ -127,7 +132,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active" />
-    <Applications active={currentRoute.app} />
+    <Applications {notifications} active={currentRoute.app} />
     <div class="profile">
       <Profile on:logout />
     </div>
@@ -143,10 +148,12 @@
       {#if spaceModel}
         <SpaceHeader space={currentSpace} {spaceModel} />
       {/if}
-      <Component
-        is={navigatorModel.spaceView}
-        props={{ currentSpace: currentRoute.space, notifications: notifications }}
-      />
+      {#if currentRoute.space}
+        <Component
+          is={navigatorModel.spaceView}
+          props={{ currentSpace: currentRoute.space, notifications: notifications.get(currentRoute.space) }}
+        />
+      {/if}
     {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
       <Component is={navigatorModel.specials[currentSpecial].component} />
     {/if}
