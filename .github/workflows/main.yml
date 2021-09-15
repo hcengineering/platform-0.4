@@ -85,6 +85,9 @@ jobs:
 
       - name: Installing...
         run: node common/scripts/install-run-rush.js install
+        
+      - name: Building...
+        run: node common/scripts/install-run-rush.js rebuild
 
       - uses: getong/elasticsearch-action@v1.2
         with:

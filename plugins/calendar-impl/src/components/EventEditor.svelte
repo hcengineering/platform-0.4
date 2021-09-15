@@ -18,7 +18,8 @@
   import type { Account, Doc } from '@anticrm/core'
   import type { Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
-  import { EditBox, TextArea, DatePicker, IPopupItem, UserInfo, SelectBox } from '@anticrm/ui'
+  import { EditBox, TextArea, DatePicker, UserInfo, SelectBox } from '@anticrm/ui'
+  import type { IPopupItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import { QueryUpdater } from '@anticrm/presentation'

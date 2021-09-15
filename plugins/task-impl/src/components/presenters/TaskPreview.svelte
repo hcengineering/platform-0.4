@@ -19,7 +19,7 @@
   import { getClient } from '@anticrm/workbench'
   import { QueryUpdater } from '@anticrm/presentation'
 
-  import { Task } from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
   import taskIds from '../../plugin'
 
   const client = getClient()

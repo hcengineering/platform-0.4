@@ -367,9 +367,11 @@ class SveltePlugin {
   ): Promise<void> {
     // We got results, let's cache them.
     const cacheEntry: CacheEntry = cacheFile[filename]
-    cacheEntry.defFile = defFile
-    cacheEntry.defContent = defContent
-    cacheFile[filename] = cacheEntry
+    if (cacheEntry !== undefined) {
+      cacheEntry.defFile = defFile
+      cacheEntry.defContent = defContent
+      cacheFile[filename] = cacheEntry
+    }
   }
 
   async getCachedResults (

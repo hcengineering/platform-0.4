@@ -41,8 +41,10 @@ export async function extractTypeInformation (
 
   const printer = ts.createPrinter()
 
-  const declFile = sourceFile
-  // const declFile = ts.createSourceFile('declaration.ts', result, ts.ScriptTarget.ESNext)
+  const result = emitCode(prg, sourceFile)
+
+  // const declFile = sourceFile
+  const declFile = ts.createSourceFile('declaration.ts', result, ts.ScriptTarget.ESNext)
 
   // We need to filter export declare let, since they will go into a proper place.
   ts.forEachChild(declFile, (node) => {
@@ -60,6 +62,23 @@ export async function extractTypeInformation (
       component.header.push(nde)
     }
   })
+}
+function emitCode (prg: ts.Program, sourceFile: ts.SourceFile | undefined): string {
+  let result = ''
+
+  const rr = prg.emit(
+    sourceFile,
+    (fileName, data) => {
+      result += data
+    },
+    undefined,
+    true
+  )
+
+  for (const d of rr.diagnostics) {
+    console.error('ERROR', d.messageText, d.file, d.start)
+  }
+  return result
 }
 function checkVariableStatement (
   node: ts.VariableStatement,

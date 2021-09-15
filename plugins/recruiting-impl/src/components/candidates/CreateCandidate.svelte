@@ -17,7 +17,8 @@
   import type { Data, Space } from '@anticrm/core'
   import { Dialog } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { Candidate, CandidateStatus } from '@anticrm/recruiting'
+  import type { Candidate } from '@anticrm/recruiting'
+  import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
 
   import CandidateEditor from './CandidateEditor.svelte'

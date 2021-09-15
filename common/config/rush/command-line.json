@@ -188,7 +188,8 @@
       "summary": "Formatting",
       "description": "Perform formatting of all projects",
       "enableParallelism": true,
-      "incremental": true
+      "incremental": true,
+      "ignoreDependencyOrder": true
     },
     {
       /**
