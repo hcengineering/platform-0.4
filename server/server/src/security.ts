@@ -1,15 +1,24 @@
 import core, {
-  Account, checkLikeQuery, Class,
+  Account,
+  checkLikeQuery,
+  Class,
   Doc,
   DocumentQuery,
   DOMAIN_MODEL,
   DOMAIN_TX,
   FindOptions,
   FindResult,
-  Hierarchy, ModelDb, ObjQueryType, Ref,
-  Space, Tx,
+  Hierarchy,
+  isEachArray,
+  ModelDb,
+  ObjQueryType,
+  Ref,
+  Space,
+  Tx,
   TxCreateDoc,
-  TxProcessor, TxRemoveDoc, TxUpdateDoc,
+  TxProcessor,
+  TxRemoveDoc,
+  TxUpdateDoc,
   WithAccountId
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
@@ -77,14 +86,24 @@ export class SecurityModel extends TxProcessor {
   }
 
   pushSpaceMembers (spaceTx: TxUpdateDoc<Space>): void {
-    const member = spaceTx.operations?.$push?.members
-    if (member !== undefined) {
-      const accountSpaces = this.allowedSpaces.get(member)
-      if (accountSpaces === undefined) {
-        this.allowedSpaces.set(member, new Set<Ref<Space>>([spaceTx.objectId]))
+    const members = spaceTx.operations?.$push?.members
+    if (members !== undefined) {
+      if (isEachArray(members)) {
+        for (const member of members.$each) {
+          this.pushSpaceMember(member, spaceTx.objectId)
+        }
       } else {
-        accountSpaces.add(spaceTx.objectId)
+        this.pushSpaceMember(members, spaceTx.objectId)
       }
+    }
+  }
+
+  pushSpaceMember (member: Ref<Account>, space: Ref<Space>): void {
+    const accountSpaces = this.allowedSpaces.get(member)
+    if (accountSpaces === undefined) {
+      this.allowedSpaces.set(member, new Set<Ref<Space>>([space]))
+    } else {
+      accountSpaces.add(space)
     }
   }
 
@@ -205,7 +224,11 @@ export class SecurityClientStorage implements WithAccountId {
       : await this.findInWorkspace<T>(query, _class, options)
   }
 
-  private async findInWorkspace<T extends Doc>(query: DocumentQuery<T>, _class: Ref<Class<T>>, options: FindOptions<T> | undefined): Promise<FindResult<T>> {
+  private async findInWorkspace<T extends Doc>(
+    query: DocumentQuery<T>,
+    _class: Ref<Class<T>>,
+    options: FindOptions<T> | undefined
+  ): Promise<FindResult<T>> {
     const querySpace = (query as DocumentQuery<Doc>).space
     const spaces = this.security.getUserSpaces(this.user.accountId)
     query.space =
@@ -215,13 +238,16 @@ export class SecurityClientStorage implements WithAccountId {
     return await this.workspace.findAll(_class, query, options)
   }
 
-  private async findInTxDomain<T extends Doc>(query: DocumentQuery<T>, _class: Ref<Class<T>>, options: FindOptions<T> | undefined): Promise<FindResult<T>> {
-    const txQuery = (query as DocumentQuery<Tx>)
+  private async findInTxDomain<T extends Doc>(
+    query: DocumentQuery<T>,
+    _class: Ref<Class<T>>,
+    options: FindOptions<T> | undefined
+  ): Promise<FindResult<T>> {
+    const txQuery = query as DocumentQuery<Tx>
     const querySpace = txQuery.objectSpace
 
     // Availabel spaces + model
-    const spaces = this.security.getUserSpaces(this.user.accountId)
-      .add(core.space.Model) // Every one capable to query model
+    const spaces = this.security.getUserSpaces(this.user.accountId).add(core.space.Model) // Every one capable to query model
 
     txQuery.objectSpace =
       querySpace !== undefined
@@ -261,6 +287,6 @@ export class SecurityClientStorage implements WithAccountId {
 }
 
 export const Code = component('security' as Component, {
-  AccessDenied: '' as StatusCode<{space?: Ref<Space>}>,
+  AccessDenied: '' as StatusCode<{ space?: Ref<Space> }>,
   TransactionSpaceDenied: '' as StatusCode
 })

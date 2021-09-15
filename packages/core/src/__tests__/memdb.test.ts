@@ -138,9 +138,24 @@ describe('memdb', () => {
       email: 'account@site.com',
       name: 'account'
     })
+    const account2 = await client.createDoc(core.class.Account, core.space.Model, {
+      email: 'account2@site.com',
+      name: 'account2'
+    })
+    const account3 = await client.createDoc(core.class.Account, core.space.Model, {
+      email: 'account3@site.com',
+      name: 'account3'
+    })
     await client.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id } })
     const txSpace = await client.findAll(core.class.Space, { _id: space._id })
     expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
+    expect(txSpace[0].members).toHaveLength(1)
+    await client.updateDoc(core.class.Space, core.space.Model, space._id, {
+      $push: { members: { $each: [account2._id, account3._id] } }
+    })
+    const result = await client.findAll(core.class.Space, { _id: space._id })
+    expect(result[0].members).toEqual(expect.arrayContaining([account._id, account2._id, account3._id]))
+    expect(result[0].members).toHaveLength(3)
   })
 
   it('check $push find', async () => {
