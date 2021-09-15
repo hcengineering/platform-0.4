@@ -64,6 +64,11 @@ export interface MappingRule {
 export interface CollectionRule {
   sourceField: string // A field reference to source object.
   targetField: string // A source field collection we need to push our _id inside.
+  /**
+   * A value pattern to match source field
+   * must capture id field
+   */
+  sourceFieldPattern?: RuleExpresson
 
   /**
    *  Allow to perform additional document mapping of source document fields to inserted embedded document fields.

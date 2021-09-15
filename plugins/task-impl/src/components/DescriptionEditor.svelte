@@ -14,60 +14,70 @@
 -->
 <script lang="ts">
   import core from '@anticrm/core'
-  import type { DocumentQuery, Title } from '@anticrm/core'
+  import type { Account, Ref, Space, Title } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
   import { MDRefEditor } from '@anticrm/ui'
   import type { CompletionItem, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
-  import type { QueryUpdater } from '@anticrm/presentation'
 
   export let lines = 10
   export let value: string = ''
   export let label: IntlString | undefined
   export let placeholder: IntlString | undefined
-
-  let currentPrefix = ''
+  export let currentSpace: Ref<Space>
 
   let completions: CompletionItem[] = []
 
   const client = getClient()
 
-  function query (prefix: string): DocumentQuery<Title> {
-    return {
-      title: { $like: prefix + '%' }
-    }
+  async function getTitles (prefix: string) {
+    const titles = await client.findAll(core.class.Title, { title: { $like: prefix + '%' } }, { limit: 50 })
+    completions = updateTitles(titles)
   }
 
-  let lq: QueryUpdater<Title> | undefined
-
-  $: if (currentPrefix !== '') {
-    lq = client.query(
-      lq,
-      core.class.Title,
-      query(currentPrefix),
-      (docs) => {
-        completions = updateTitles(docs)
-      },
-      { limit: 50 }
-    )
+  async function getAccounts (prefix: string) {
+    const docs = await client.findAll(core.class.Account, { name: { $like: '%' + prefix + '%' } }, { limit: 50 })
+    completions = updateAccounts(docs)
   }
 
   function updateTitles (docs: Title[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
-      // if (startsWith(value.title.toString(), currentPrefix)) {
       const kk = value.title
       items.push({
-        key: `${value.objectId}${value.title}`,
+        key: `${value._id}${value.title}`,
         completion: value.objectId,
         label: kk,
         title: `${kk} - ${value.objectClass}`,
         class: value.objectClass,
         id: value.objectId
       } as ExtendedCompletionItem)
-      // }
     }
     return items
+  }
+
+  function updateAccounts (docs: Account[]): CompletionItem[] {
+    const items: CompletionItem[] = []
+    for (const value of docs) {
+      items.push({
+        key: value._id,
+        completion: value._id,
+        label: value.email,
+        title: value.name,
+        class: core.class.Account,
+        id: `${currentSpace}-${value._id}`
+      } as ExtendedCompletionItem)
+    }
+    return items
+  }
+
+  async function getCompletions (currentPrefix: string): Promise<void> {
+    if (currentPrefix.length === 0) return
+    if (currentPrefix.startsWith('[[')) {
+      await getTitles(currentPrefix.substring(2))
+    } else if (currentPrefix.startsWith('@')) {
+      await getAccounts(currentPrefix.substring(1))
+    }
   }
 
   async function findTitle (title: string): Promise<ItemRefefence[]> {
@@ -97,7 +107,7 @@
   findFunction={findTitle}
   {completions}
   on:blur
-  on:prefix={(event) => {
-    currentPrefix = event.detail
+  on:prefix={async (event) => {
+    await getCompletions(event.detail)
   }}
 />

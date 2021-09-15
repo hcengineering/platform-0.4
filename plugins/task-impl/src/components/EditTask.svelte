@@ -33,7 +33,7 @@
   import type { WorkbenchRoute } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
   import task from '../plugin'
-  import core from '@anticrm/core'
+  import core, { Space } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   // import CheckList from './CheckList.svelte'
@@ -51,7 +51,8 @@
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
-  export let notifications: SpaceNotifications | undefined
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  let notification: SpaceNotifications | undefined
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
@@ -64,6 +65,7 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
+      notification = notifications.get(result[0].space)
       item = result[0]
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
@@ -76,15 +78,15 @@
   }
 
   onDestroy(async () => {
-    if (notifications !== undefined) {
-      notificationClient.readNow(notifications, id)
+    if (notification !== undefined) {
+      notificationClient.readNow(notification, id)
     }
   })
 
   afterUpdate(async () => {
     if (prevId !== id) {
-      if (prevId !== undefined && notifications !== undefined) {
-        notificationClient.readNow(notifications, prevId)
+      if (prevId !== undefined && notification !== undefined) {
+        notificationClient.readNow(notification, prevId)
       }
       prevId = id
     }
@@ -151,6 +153,7 @@
             />
             <Row>
               <DescriptionEditor
+                currentSpace={item.space}
                 label={task.string.TaskDescription}
                 placeholder={task.string.TaskDescription}
                 on:blur={(e) => {
@@ -162,7 +165,7 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView {notifications} currentSpace={item.space} taskId={item._id} />
+          <CommentsView notifications={notification} currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />

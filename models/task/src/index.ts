@@ -16,7 +16,9 @@
 import chunter, { CommentRef } from '@anticrm/chunter'
 import { Account, DocumentPresenter, Domain, PresentationMode, Ref, ShortRef } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
+import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
+import notification from '@anticrm/notification'
+
 import workbench from '@anticrm/model-workbench'
 import { CheckListItem, Project, Task, TaskStatus } from '@anticrm/task'
 import task from './plugin'
@@ -143,6 +145,22 @@ export function createModel (builder: Builder): void {
     },
     task.dd.ReplyOf
   )
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: task.class.Task,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'description',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
 
   // P R E S E N T E R S
   builder.createDoc<DocumentPresenter<Task>>(core.class.DocumentPresenter, {

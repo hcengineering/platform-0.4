@@ -29,7 +29,9 @@ import core, {
   DerivedData,
   registerMapper,
   ObjectTx,
-  isEachArray
+  isEachArray,
+  isPredicate,
+  createPredicates
 } from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
@@ -149,9 +151,22 @@ export default (): void => {
           objectId: ctx.objectId
         })
         if (ctx.operations.$pull?.members !== undefined) {
-          const pos = result.findIndex((p) => p.space.toString() === ctx.operations.$pull?.members)
-          if (pos !== -1) {
-            result = result.splice(pos, 1)
+          let pulled: any[] = []
+          if (isPredicate(ctx.operations.$pull.members)) {
+            const preds = createPredicates(ctx.operations.$pull.members, 'space')
+            let temp = Array.from(result) as Doc[]
+            for (const pred of preds) {
+              temp = pred(temp)
+            }
+            pulled = temp.map((p) => p.space.toString() as Ref<Account>)
+          } else {
+            pulled = [ctx.operations.$pull?.members]
+          }
+          for (const member of pulled) {
+            const pos = result.findIndex((p) => p.space.toString() === member)
+            if (pos !== -1) {
+              result = result.splice(pos, 1)
+            }
           }
         }
         const pushMembers = ctx.operations?.$push?.members

@@ -79,7 +79,8 @@
   })
 
   function isNew (message: WithMessage, notifications: SpaceNotifications | undefined): boolean {
-    if (notifications === undefined) return false
+    if (notifications === undefined || notifications.objectId !== message.space) return false
+    if (notifications.notificatedObjects.includes(message._id)) return true
     if (!thread) {
       if (message.modifiedOn > notifications.lastRead) return true
       const comments = (message as Message).comments
@@ -122,7 +123,12 @@
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     {/if}
-    <div class="message" data-modified={message.modifiedOn} data-lastmodified={getLastModified(message)}>
+    <div
+      class="message"
+      data-modified={message.modifiedOn}
+      data-lastmodified={getLastModified(message)}
+      data-id={message._id}
+    >
       <div class="header">
         {#if user}{user?.name ?? ''}{/if}<span
           ><DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} /></span
