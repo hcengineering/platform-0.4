@@ -58,7 +58,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 146fae79fffee30a166379a8e5e97beb4582e67af958ae0315dcb538af56cbac
         with:
-          coverageCommand: common/scripts/each-x.sh test
+          coverageCommand: node common/scripts/install-run-rush.js test
           coverageLocations: |
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
@@ -101,9 +101,9 @@ jobs:
       - name: Building...
         run: node common/scripts/install-run-rush.js build
 
-      - name: Check files formatting
+      - name: Check files formatting & linting
         run: |
-          common/scripts/each-x.sh format
+          node common/scripts/install-run-rush.js format
           echo '================================================================'
           echo 'Checking for diff files'
           echo '================================================================'

@@ -166,6 +166,42 @@
     //    */
     //   // "autoinstallerName": "my-task"
     // }
+    {
+      /**
+       * (Required) Determines the type of custom command.
+       * Rush's "global" commands are invoked once for the entire repo.
+       */
+      "commandKind": "bulk",
+      "name": "lint",
+      "summary": "Linting",
+      "description": "Perform linting of all projects",
+      "enableParallelism": true,
+      "incremental": true
+    },
+    {
+      /**
+       * (Required) Determines the type of custom command.
+       * Rush's "global" commands are invoked once for the entire repo.
+       */
+      "commandKind": "bulk",
+      "name": "format",
+      "summary": "Formatting",
+      "description": "Perform formatting of all projects",
+      "enableParallelism": true,
+      "incremental": true
+    },
+    {
+      /**
+       * (Required) Determines the type of custom command.
+       * Rush's "global" commands are invoked once for the entire repo.
+       */
+      "commandKind": "bulk",
+      "name": "test",
+      "summary": "Testing",
+      "description": "Perform testing of all projects",
+      "enableParallelism": true,
+      "incremental": true
+    }
   ],
 
   /**

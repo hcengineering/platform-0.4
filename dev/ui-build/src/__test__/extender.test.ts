@@ -50,7 +50,8 @@ describe('test extender', () => {
             svelte: '3.x'
           },
           devDependencies: {},
-          dependencies: {}
+          dependencies: {},
+          logLevel: 'silent'
         },
         {
           entryPoints: ['demo/src/index.ts'],

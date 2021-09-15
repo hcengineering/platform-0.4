@@ -256,11 +256,9 @@ export { status as default }
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface UIComponent {
-}
+export interface UIComponent {}
 
 /**
  * @public
  */
 export type AnyComponent = Resource<UIComponent>
-
