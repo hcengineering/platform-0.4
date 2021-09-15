@@ -17,39 +17,42 @@
 import type { Doc } from './classes'
 import { checkLikeQuery, nestedDotQueryCheck } from './query'
 
-type Predicate = (docs: Doc[]) => Doc[]
-type PredicateFactory = (pred: any, propertyKey: string) => Predicate
+/**
+ * @public
+ */
+export type Predicate = (docs: Doc[]) => Doc[]
+type PredicateFactory = (pred: any, propertyKey: string | undefined) => Predicate
 
 const predicates: Record<string, PredicateFactory> = {
-  $in: (o: any, propertyKey: string): Predicate => {
+  $in: (o: any, propertyKey: string | undefined): Predicate => {
     if (!Array.isArray(o)) {
       throw new Error('$in predicate requires array')
     }
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        if (o.includes((doc as any)[propertyKey])) result.push(doc)
+        if (o.includes(propertyKey !== undefined ? (doc as any)[propertyKey] : doc)) result.push(doc)
       }
       return result
     }
   },
 
-  $like: (query: string, propertyKey: string): Predicate => {
+  $like: (query: string, propertyKey: string | undefined): Predicate => {
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        const value = (doc as any)[propertyKey] as string
+        const value = propertyKey !== undefined ? (doc as any)[propertyKey] : doc
         if (checkLikeQuery(value, query)) result.push(doc)
       }
       return result
     }
   },
-  $ne: (query: any, propertyKey: string): Predicate => {
+  $ne: (query: any, propertyKey: string | undefined): Predicate => {
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        const value = (doc as any)[propertyKey] as string
-        if (query !== value && !nestedDotQueryCheck(propertyKey, doc, query)) {
+        const value = propertyKey !== undefined ? (doc as any)[propertyKey] : doc
+        if (query !== value && (propertyKey === undefined || !nestedDotQueryCheck(propertyKey, doc, query))) {
           result.push(doc)
         }
       }
@@ -59,7 +62,7 @@ const predicates: Record<string, PredicateFactory> = {
 }
 
 /**
- * @internal
+ * @public
  */
 export function isPredicate (o: Record<string, any>): boolean {
   const keys = Object.keys(o)
@@ -67,9 +70,9 @@ export function isPredicate (o: Record<string, any>): boolean {
 }
 
 /**
- * @internal
+ * @public
  */
-export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
+export function createPredicates (o: Record<string, any>, propertyKey: string | undefined): Predicate[] {
   const keys = Object.keys(o)
   const result: Predicate[] = []
   for (const key of keys) {

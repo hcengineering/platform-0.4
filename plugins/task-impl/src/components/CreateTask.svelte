@@ -159,6 +159,7 @@
         <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
         <Row>
           <DescriptionEditor
+            currentSpace={space._id}
             placeholder={task.string.TaskDescription}
             label={task.string.TaskDescription}
             lines={5}

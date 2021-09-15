@@ -20,7 +20,7 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
-  import { afterUpdate, beforeUpdate } from 'svelte'
+  import { tick } from 'svelte'
   import type { SpaceNotifications } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
 
@@ -46,22 +46,16 @@
   let query: QueryUpdater<Message> | undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, (result) => {
-      messages = result
+    query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
       notificationClient.setAutoscroll(div)
+      messages = result
+      await tick()
+      if (div && notifications) {
+        await notificationClient.before(div, notifications, currentSpace, false)
+      }
+      notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
     })
   }
-
-  beforeUpdate(async () => {
-    if (div && notifications) {
-      notificationClient.before(div, notifications, currentSpace, false)
-    }
-  })
-
-  afterUpdate(() => {
-    notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
-    scrollHandler()
-  })
 
   function scrollHandler () {
     notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
@@ -75,7 +69,7 @@
 </div>
 <div class="ref-input">
   {#if currentSpace}
-    <ReferenceInput on:message={(event) => addMessage(event.detail)} />
+    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail)} />
   {/if}
 </div>
 

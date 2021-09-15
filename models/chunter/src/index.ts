@@ -16,10 +16,11 @@
 import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
 import type { Domain, FullRefString, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
+import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
 import { Application } from '@anticrm/workbench'
 import chunter from './plugin'
+import notification from '@anticrm/notification'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
@@ -203,4 +204,36 @@ export function createModel (builder: Builder): void {
     },
     chunter.dd.ReplyOf
   )
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Message,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'message',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'message',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
 }

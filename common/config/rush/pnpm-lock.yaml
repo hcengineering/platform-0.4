@@ -11104,7 +11104,7 @@ packages:
     dev: false
 
   file:projects/calendar.tgz:
-    resolution: {integrity: sha512-yAwCVcdrjSt0hIK5Z19rP9NME6MJ0jjAyYfObhziNvVUSOYNpM3oOVDuLfxqJ1jk8h6Q26/aFYSA2edCODfjlg==, tarball: file:projects/calendar.tgz}
+    resolution: {integrity: sha512-jRTInEuAI27Fovnoi1ivjk8EB0wgj0/dFRVB+zIlPX1i1XHOjS6ARcIj1BiFAofzSmzwj9Whwo1/l5YK2kPP6w==, tarball: file:projects/calendar.tgz}
     name: '@rush-temp/calendar'
     version: 0.0.0
     dependencies:
@@ -11212,7 +11212,7 @@ packages:
     dev: false
 
   file:projects/core.tgz:
-    resolution: {integrity: sha512-HaMUMDULJ1+U7zYbQat9+PlAo5K5if3EV0HSoczUO53F2Vdf2uEeGLDoI7tDm8yW0z8QCaDF7yqyiTpkmB95Tw==, tarball: file:projects/core.tgz}
+    resolution: {integrity: sha512-s5fRP4N078N9MAkvJNgQKXNLnvKaXqFxFmKapjtQq7CkxrSW4hqLxwR1jxbFaae3cqxqw7psh5fWbCcFMOAibw==, tarball: file:projects/core.tgz}
     name: '@rush-temp/core'
     version: 0.0.0
     dependencies:
@@ -11227,6 +11227,7 @@ packages:
       eslint-plugin-import: 2.24.2_eslint@7.32.0
       eslint-plugin-node: 11.1.0_eslint@7.32.0
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      fast-copy: 2.1.1
       fast-equals: 2.0.3
       prettier: 2.3.2
       simplytyped: 3.3.0_typescript@4.3.5
@@ -11239,7 +11240,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-amAdSLqSzrNJ9zgiMhP7qQt0pkwc+vKJaWVkSb6GuRqh377S1DiomAv9eQt2THZKHidtDwG5YUhzUwPgieLv/Q==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-JyiMrgNN3hapcLUt1om3ep/YMuW6yznLdSjxvSDF+o4Ao9TnV9Bbq2PzseCjnnFKRAAJXWK7bHfFwTlc/t8Duw==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11371,7 +11372,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-MzapVi+e+W6fupVgjjR0GBLLaq51Qeul8eASiMooPABniDe2Ug5H7PlARKCjt0byBRHVnP6xLFxckUDpZU5OkA==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-sjeoTKD6lGmw0Wh6CQnwM6ELQoyysjjJtgw7KZf64mv9FudY3LqjQPKf793WbC1Zjiaz4qKpKeaGoayR8E1YEQ==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -11482,7 +11483,7 @@ packages:
     dev: false
 
   file:projects/login.tgz:
-    resolution: {integrity: sha512-aGHMx8rf/yese6+ZLwYkxpba1D8IZQp+k2VKsMJgYwrpBlHnqIAz+0QDvHIV2L9cBqw4C7hHLQ5J7wbwIseCNw==, tarball: file:projects/login.tgz}
+    resolution: {integrity: sha512-10NKugei/9pbQEcbx6dEb1zebtUAIFljJPDSht9iyY9OWZ76pB5YCs5W0ad1Vcwr02acCRBUdGBDHCBHaUPioA==, tarball: file:projects/login.tgz}
     name: '@rush-temp/login'
     version: 0.0.0
     dependencies:
@@ -11642,7 +11643,7 @@ packages:
     dev: false
 
   file:projects/model-chunter.tgz:
-    resolution: {integrity: sha512-Ga6uXd4ookIhjYJVKWTzFuMSziNiIRMTB5IBKpzon75s15PxDx8X34yMd7m7YHdFtK6JlcX0mN4XySqfeaoRWA==, tarball: file:projects/model-chunter.tgz}
+    resolution: {integrity: sha512-AxtqfTcn3TNwD+tdMOAV3/n5FxjAH6avcZyUWVYsgQcRpXLKlQkb+Mk+j1e9iqYD3acRUesQUyclVTaq/xfe0A==, tarball: file:projects/model-chunter.tgz}
     name: '@rush-temp/model-chunter'
     version: 0.0.0
     dependencies:
@@ -11824,7 +11825,7 @@ packages:
     dev: false
 
   file:projects/model-task.tgz:
-    resolution: {integrity: sha512-kqDu27l/ZA14tVWzudXOTSXNO1HyUNAkAFSTuX5QJTdMtQQkwjOW3NpIOZcLBurTbe7VeFz9JN3hncg77Y7RSg==, tarball: file:projects/model-task.tgz}
+    resolution: {integrity: sha512-h5MyyAjL10v/E//HQz3AXaZ1yUgeu6JEpQHr5wlGm2ZyimxXAuWnWh1c7NN1FNNsGeCFXJHqdqk4xhZRGgx0TQ==, tarball: file:projects/model-task.tgz}
     name: '@rush-temp/model-task'
     version: 0.0.0
     dependencies:
@@ -12004,16 +12005,21 @@ packages:
     dev: false
 
   file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461:
-    resolution: {integrity: sha512-1747b5D3l+NnLty8U9ZxTRumepP3LDxtE+6LT+5yUets1nV6Fm7C3ctn83IJ64Y+14gM1WpLj7hnCe8nRgxvqQ==, tarball: file:projects/notification.tgz}
+    resolution: {integrity: sha512-abWnp9Ry9lOnh7i8qgLkfjt062sqkrO70mrsphKyr0L+oF6CzGrD56igBVcrrtC4CBTKtqr5uXQmaaQu+uhcBg==, tarball: file:projects/notification.tgz}
     id: file:projects/notification.tgz
     name: '@rush-temp/notification'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.20_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
       '@types/jest': 26.0.24
       fast-copy: 2.1.1
       jest: 26.6.3_ts-node@10.2.1
       prettier: 2.3.2
+      svelte: 3.42.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
       typescript: 4.3.5
@@ -12331,7 +12337,7 @@ packages:
     dev: false
 
   file:projects/recruiting.tgz:
-    resolution: {integrity: sha512-9VnR0lhVLLQdFgOAoVmyCItBbhYIPb70sGK8gu4YPPA6h4KZTg3fbKPJS99kz03qlGptyzX8RWSdRCSugJUt9A==, tarball: file:projects/recruiting.tgz}
+    resolution: {integrity: sha512-Gzq3jf7DdMls9iuJUZD24U0ldCJTnNpDnbPkIRcqCB8/KdyeIxyvg2fLvLk2ajEyPnAe3b6obij7WQ6YuD5ZaQ==, tarball: file:projects/recruiting.tgz}
     name: '@rush-temp/recruiting'
     version: 0.0.0
     dependencies:
@@ -12464,7 +12470,7 @@ packages:
     dev: false
 
   file:projects/server-tools.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-drTNTn+/+zoUrcQbVdywnbzpB7dmGz1z4NMf/R97/iBV1Cvg5AkiQuekRqWqQep+PhH3BAxSD0FoTy04NFPUTA==, tarball: file:projects/server-tools.tgz}
+    resolution: {integrity: sha512-oepI11rnhKBv84AmUzbSx2CU082iCh+qYoWan2OT07e8CqAW4rWO7eF9/PpDPmM/ZtWXrQDugnc9BIrNb3zduA==, tarball: file:projects/server-tools.tgz}
     id: file:projects/server-tools.tgz
     name: '@rush-temp/server-tools'
     version: 0.0.0
@@ -12963,7 +12969,7 @@ packages:
     dev: false
 
   file:projects/workbench-assets.tgz_e2648ea3577eecbba3519a3bcb75d461:
-    resolution: {integrity: sha512-rTpVANTWWiZxNt7zSryEmZJPg5vtl5R4q5+dLUcClvw8Ty4VQnZMEJ0P2VhUBPiY4JTczcylJ7HvoR5f/4qIcg==, tarball: file:projects/workbench-assets.tgz}
+    resolution: {integrity: sha512-JmWvlUkj0P6EfoUvJ+yl4p1EL/sIiKEOlMy5ldc5ePhyUGrG/h5XxsABO+nIafB94xks/Kol4a40PI25WPkSTw==, tarball: file:projects/workbench-assets.tgz}
     id: file:projects/workbench-assets.tgz
     name: '@rush-temp/workbench-assets'
     version: 0.0.0
@@ -13031,7 +13037,7 @@ packages:
     dev: false
 
   file:projects/workbench.tgz:
-    resolution: {integrity: sha512-WYiBtbYXYpcpN3tNkFgjSyyxL6BJAcx5BpsD6qGWqhbxD4vMsOyQjabXE6X/Qvi+ixiF2XTAisIP/VNmFrhbUw==, tarball: file:projects/workbench.tgz}
+    resolution: {integrity: sha512-1d3sATi8f1Lu6d+G1XkF9dxw4Fhdbm0FQYiUNshKFKLEMof+Cr0878TjU1SY1wQiicbjZOEGU4Xqkg7vcjfeHw==, tarball: file:projects/workbench.tgz}
     name: '@rush-temp/workbench'
     version: 0.0.0
     dependencies:

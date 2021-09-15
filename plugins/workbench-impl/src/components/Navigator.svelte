@@ -13,6 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { Ref, Space } from '@anticrm/core'
+  import type { SpaceNotifications } from '@anticrm/notification'
   import type { NavigatorModel, SpecialNavModel } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
   import SpacesNav from './navigator/SpacesNav.svelte'
@@ -20,6 +22,7 @@
   import TreeSeparator from './navigator/TreeSeparator.svelte'
 
   export let model: NavigatorModel | undefined = undefined
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
   export let special: number = -1
 
   const dispatch = createEventDispatcher()
@@ -38,6 +41,6 @@
     <TreeSeparator />
   {/if}
   {#each model.spaces as space}
-    <SpacesNav model={space} />
+    <SpacesNav model={space} {notifications} />
   {/each}
 {/if}
