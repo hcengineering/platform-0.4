@@ -24,6 +24,7 @@ import core, {
   getFullRef,
   Ref,
   Reference,
+  Space,
   Title,
   Tx,
   _createClass as createClass,
@@ -34,8 +35,7 @@ import builder from '@anticrm/model-all'
 import { getMongoClient, mongoEscape, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { component, Component } from '@anticrm/status'
 import * as net from 'net'
-import { generateToken } from '../token'
-import { startServer } from '../wsserver'
+import { Server, startServer, generateToken } from '..'
 import { createClient } from './client'
 
 const SERVER_SECRET = 'secret'
@@ -63,10 +63,11 @@ const testIds = component('test' as Component, {
   }
 })
 
-async function prepareServer (): Promise<{
+async function prepareServer (enableLogging = true): Promise<{
   shutdown: () => Promise<void>
   address: net.AddressInfo
   workspaceId: string
+  server: Server
 }> {
   const client = await getMongoClient(MONGO_URI)
 
@@ -83,8 +84,8 @@ async function prepareServer (): Promise<{
   btx.push(
     createClass(testIds.class.Task, { extends: core.class.Doc, domain: 'task' as Domain }),
     createClass(testIds.class.Comment, { extends: core.class.Doc, domain: 'task' as Domain }),
-    createDoc(core.class.Account, { email: johnAccount, name: 'John Appleseed' }, johnAccount),
-    createDoc(core.class.Account, { email: johnAccount, name: 'Brian Appleseed' }, brianAccount),
+    // createDoc(core.class.Account, { email: johnAccount, name: 'John Appleseed' }, johnAccount),
+    createDoc(core.class.Account, { email: brianAccount, name: 'Brian Appleseed' }, brianAccount),
     createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
       sourceClass: core.class.Title,
       targetClass: core.class.Reference,
@@ -112,20 +113,25 @@ async function prepareServer (): Promise<{
   }
 
   // eslint-disable-next-line
-  const server = await startServer('localhost', 0, SERVER_SECRET, { logRequests: true, logTransactions: true })
+  const server = await startServer('localhost', 0, SERVER_SECRET, {
+    logRequests: enableLogging,
+    logTransactions: enableLogging
+  })
   console.log('server created')
   return {
     shutdown: async () => {
       server.shutdown()
     },
     address: server.address(),
-    workspaceId
+    workspaceId,
+    server
   }
 }
 
 describe('real-server', () => {
   let serverShutdown: () => Promise<void>
   let address: net.AddressInfo
+  let server: Server
   let workspaceId: string
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -151,6 +157,7 @@ describe('real-server', () => {
     serverShutdown = s.shutdown
     address = s.address
     workspaceId = s.workspaceId
+    server = s.server
   })
 
   afterEach(async () => {
@@ -161,7 +168,11 @@ describe('real-server', () => {
     console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: johnAccount,
+        firstName: 'John',
+        lastName: 'Applesseed'
+      })}`,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -169,7 +180,9 @@ describe('real-server', () => {
 
     const brainTxes: Tx[] = []
     const client2 = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId)}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
+        email: johnAccount
+      })}`,
       (tx) => {
         brainTxes.push(tx)
       }
@@ -201,7 +214,9 @@ describe('real-server', () => {
 
   it('failed client', async () => {
     const client = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: johnAccount
+      })}`,
       (tx) => {}
     )
     expect(client).toBeDefined()
@@ -211,7 +226,7 @@ describe('real-server', () => {
     expect(
       createClient(
         `${address.address}:${address.port}/${
-          'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId)
+          'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId, { email: johnAccount })
         }`,
         (tx) => {}
       )
@@ -221,7 +236,9 @@ describe('real-server', () => {
     console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId)}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: johnAccount
+      })}`,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -229,7 +246,9 @@ describe('real-server', () => {
 
     const brainTxes: Tx[] = []
     const client2 = await createClient(
-      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId)}`,
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
+        email: johnAccount
+      })}`,
       (tx) => {
         brainTxes.push(tx)
       }
@@ -261,4 +280,95 @@ describe('real-server', () => {
     expect(t12.length).toEqual(1)
     expect(t12[0].comments?.length).toEqual(2)
   })
+  it('test tx with error', async () => {
+    const client = await createClient(
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: 'vasya'
+      })}`,
+      (tx) => {}
+    )
+    await expect(client.tx({ _class: core.class.TxCreateDoc } as unknown as Tx<Doc>)).rejects.toThrow()
+  })
+  it('test find with error', async () => {
+    const client = await createClient(
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: 'vasya'
+      })}`,
+      (tx) => {}
+    )
+    // eslint-disable-next-line
+    await expect(client.findAll(core.class.ShortRef, { space: 'zzz' as Ref<Space> })).rejects.toThrow()
+  })
+
+  it('without logging', async () => {
+    ;({ serverShutdown, address, workspaceId } = await restartServer(false, serverShutdown, address, workspaceId))
+
+    try {
+      const client = await createClient(
+        `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+          email: johnAccount
+        })}`,
+        (tx) => {}
+      )
+      expect(client).toBeDefined()
+      console.info('try client with wrong token')
+
+      // eslint-disable-next-line
+      await expect(
+        createClient(
+          `${address.address}:${address.port}/${
+            'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId, { email: johnAccount })
+          }`,
+          (tx) => {}
+        )
+      ).rejects.toThrow()
+    } finally {
+      ;({ serverShutdown, address, workspaceId } = await restartServer(true, serverShutdown, address, workspaceId))
+    }
+  })
+  it('test empty token', async () => {
+    await expect(async () => await createClient(`${address.address}:${address.port}`, (tx) => {})).rejects.toThrow()
+  })
+
+  it('test client disconnect', async () => {
+    const client = await createClient(
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: 'vasya'
+      })}`,
+      (tx) => {}
+    )
+    client.shutdown()
+  })
+  it('test server error', async () => {
+    await createClient(
+      `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
+        email: 'vasya'
+      })}`,
+      (tx) => {}
+    )
+    Array.from(server.connections.values()).forEach((socket) => {
+      socket.emit('error', {
+        error: 'qwe',
+        message: 'qwe',
+        type: 'qwe',
+        target: socket
+      })
+    })
+    expect(server.connections.size).toEqual(0)
+  })
 })
+async function restartServer (
+  logging: boolean,
+  serverShutdown: () => Promise<void>,
+  address: net.AddressInfo,
+  workspaceId: string
+): Promise<{ serverShutdown: () => Promise<void>, address: net.AddressInfo, workspaceId: string }> {
+  await serverShutdown()
+  console.log('staring server')
+  const s = await prepareServer(logging)
+  console.log('new server ok')
+  serverShutdown = s.shutdown
+  address = s.address
+  workspaceId = s.workspaceId
+  return { serverShutdown, address, workspaceId }
+}

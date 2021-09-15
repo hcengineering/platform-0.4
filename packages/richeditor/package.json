@@ -9,7 +9,7 @@
   "svelte": "src/index.ts",
   "scripts": {
     "build": "rm -rf ./lib && node ./esbuild",
-    "test": "jest",
+    "test": "jest --silent",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
     "format": "prettier --write --plugin-search-dir=. src && eslint --fix src",
