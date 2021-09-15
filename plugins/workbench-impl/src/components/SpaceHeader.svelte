@@ -14,9 +14,9 @@
 -->
 <script lang="ts">
   import { Space } from '@anticrm/core'
-  import ui, { ActionIcon, Button, Component, Icon } from '@anticrm/ui'
+  import ui, { ActionIcon, Button, Component, Icon, showPopup } from '@anticrm/ui'
   import type { SpacesNavModel } from '@anticrm/workbench'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import MoreH from './icons/MoreH.svelte'
   import Star from './icons/Star.svelte'
 
@@ -26,7 +26,7 @@
   const client = getClient()
 
   const addAction = () => {
-    if (spaceModel?.item?.createComponent !== undefined) showModal(spaceModel.item.createComponent, { space })
+    if (spaceModel?.item?.createComponent !== undefined) showPopup(spaceModel.item.createComponent, { space }, 'right')
   }
   const changeStarred = () => {
     if (space !== undefined) {

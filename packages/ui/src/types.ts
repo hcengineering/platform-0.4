@@ -54,6 +54,8 @@ export interface IPopupItem {
   matcher?: (search: string) => boolean
 }
 
+export type PopupAlignment = HTMLElement | 'right' | 'float' | 'full'
+
 export type TooltipAligment = 'top' | 'bottom' | 'left' | 'right' | undefined
 
 export interface LabelAndProps {

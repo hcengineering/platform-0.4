@@ -35,111 +35,98 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<div class="container">
-  <div class="dialog">
-    <div class="header">
-      <div class="title"><Label {label} /></div>
-      <div
-        class="tool"
-        on:click={() => {
-          dispatch('close')
-        }}
-      >
-        <Close size={16} />
-      </div>
+<div class="dialog-container">
+  <div class="header">
+    <div class="title"><Label {label} /></div>
+    <div
+      class="tool"
+      on:click={() => {
+        dispatch('close')
+      }}
+    >
+      <Close size={16} />
     </div>
-    <div class="content">
-      <ScrollBox vertical><slot /></ScrollBox>
-    </div>
-    <div class="footer">
+  </div>
+  <div class="content">
+    <ScrollBox vertical><slot /></ScrollBox>
+  </div>
+  <div class="footer">
+    <Button
+      label={okLabel}
+      primary
+      on:click={() => {
+        okAction()
+        dispatch('close')
+      }}
+    />
+    {#if withCancel}
       <Button
-        label={okLabel}
-        primary
+        label={cancelLabel}
         on:click={() => {
-          okAction()
+          cancelAction()
           dispatch('close')
         }}
       />
-      {#if withCancel}
-        <Button
-          label={cancelLabel}
-          on:click={() => {
-            cancelAction()
-            dispatch('close')
-          }}
-        />
-      {/if}
-    </div>
+    {/if}
   </div>
 </div>
 
 <style lang="scss">
-  .container {
-    position: relative;
+  .dialog-container {
     display: flex;
-    justify-content: space-between;
-    flex-direction: row-reverse;
-    width: 100vw;
+    flex-direction: column;
+    width: auto;
     max-height: 100vh;
-    height: 100vh;
+    height: calc(100vh - 52px);
+    background-color: var(--theme-bg-color);
+    border-radius: 20px;
+    box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
 
-    .dialog {
+    .header {
       display: flex;
-      flex-direction: column;
-      margin: 32px 20px 20px 0;
-      width: auto;
-      max-height: 100vh;
-      height: calc(100vh - 52px);
-      background-color: var(--theme-bg-color);
-      border-radius: 20px;
-      box-shadow: 0px 50px 120px rgba(0, 0, 0, 0.4);
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 0 32px 0 40px;
+      height: 72px;
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-        padding: 0 32px 0 40px;
-        height: 72px;
+      .title {
+        flex-grow: 1;
+        font-weight: 500;
+        font-size: 18px;
+        color: var(--theme-caption-color);
+        user-select: none;
+      }
 
-        .title {
-          flex-grow: 1;
-          font-weight: 500;
-          font-size: 18px;
-          color: var(--theme-caption-color);
-          user-select: none;
-        }
-
-        .tool {
-          width: 16px;
-          height: 16px;
-          margin-left: 12px;
-          opacity: 0.4;
-          cursor: pointer;
-          &:hover {
-            opacity: 1;
-          }
+      .tool {
+        width: 16px;
+        height: 16px;
+        margin-left: 12px;
+        opacity: 0.4;
+        cursor: pointer;
+        &:hover {
+          opacity: 1;
         }
       }
+    }
 
-      .content {
-        flex-shrink: 0;
-        width: 640px;
-        margin: 0 40px;
-        height: calc(100vh - 168px - 52px);
-      }
+    .content {
+      flex-shrink: 0;
+      width: 640px;
+      margin: 0 40px;
+      height: calc(100vh - 168px - 52px);
+    }
 
-      .footer {
-        display: flex;
-        overflow: hidden;
-        flex-direction: row-reverse;
-        align-items: center;
-        flex-shrink: 0;
-        gap: 12px;
-        padding: 0 40px;
-        height: 96px;
-        mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 40px);
-      }
+    .footer {
+      display: flex;
+      overflow: hidden;
+      flex-direction: row-reverse;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 12px;
+      padding: 0 40px;
+      height: 96px;
+      mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 40px);
     }
   }
 </style>

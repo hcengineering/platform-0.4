@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Fixed Popup. New layout UserBox. Any fixes.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

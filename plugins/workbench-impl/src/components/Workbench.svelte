@@ -17,7 +17,7 @@
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, Splitter, TooltipInstance } from '@anticrm/ui'
+  import { Component, Splitter, TooltipInstance, Popup } from '@anticrm/ui'
   import { newRouter } from '@anticrm/ui'
   import type { NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
@@ -165,6 +165,7 @@
   {/if}
 </div>
 <Modal />
+<Popup />
 <TooltipInstance />
 
 <style lang="scss">
@@ -217,6 +218,7 @@
 
     .aside {
       @include panel(var(--theme-bg-color));
+      width: 400px;
       min-width: 400px;
       margin-right: 20px;
       padding: 20px;
