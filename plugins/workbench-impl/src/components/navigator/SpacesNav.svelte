@@ -99,7 +99,6 @@
   {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
     <TreeNode label={model.label} {actions}>
       {#each spaces as space}
-        {notifications.get(space._id)?.notificatedObjects.length}
         <TreeItem
           notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
           changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
