@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "$each for $push operator",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
