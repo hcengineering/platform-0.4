@@ -30,7 +30,7 @@ import { decodeToken, generateToken } from '@anticrm/server/src/token'
 import { assignWorkspace, closeWorkspace } from '@anticrm/server/src/workspaces'
 import { Component, component } from '@anticrm/status'
 import { createWorkspace, deleteWorkspace, shutdown } from '@anticrm/workspaces'
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it, beforeEach, afterAll, afterEach } from '@jest/globals'
 import builder from '@anticrm/model-all'
 
 // Will be used to hold security information.
@@ -137,7 +137,7 @@ describe('workspace', () => {
       const addr = (await serverAt).address()
       const client = withOperations(
         core.account.System,
-        await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId)}`)
+        await createClient(`${addr.address}:${addr.port}/${generateToken(TEST_SECRET, 'test', dbId, {})}`)
       )
 
       console.log('client connected')

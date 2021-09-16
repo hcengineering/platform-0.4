@@ -2,7 +2,7 @@ import chunter, { Channel, Comment, CommentRef, Message } from '@anticrm/chunter
 import core, { Account, getFullRef, Ref } from '@anticrm/core'
 import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
-import { Task } from '@anticrm/task'
+import type { Task } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
 

@@ -15,7 +15,7 @@
 -->
 <script lang="ts">
   import Component from './Component.svelte'
-  import { UIComponent } from '@anticrm/status'
+  import type { UIComponent } from '@anticrm/status'
   import type { PopupAlignment } from '../types'
   import { closePopup } from '..'
 

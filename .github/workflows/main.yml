@@ -27,17 +27,120 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ./common/temp
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Checking for mis-matching dependencies...
         run: node common/scripts/install-run-rush.js check
 
       - name: Checking for missing change logs...
-        run: node common/scripts/install-run-rush.js change -v
+        run: node common/scripts/install-run-rush.js change -v      
 
       - name: Installing...
-        run: node common/scripts/install-run-rush.js install
+        run: node common/scripts/install-run-rush.js install        
 
       - name: Building...
-        run: node common/scripts/install-run-rush.js rebuild --verbose
+        run: node common/scripts/install-run-rush.js rebuild -p 16
+      
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+  build-demo:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+
+      - name: Build Demo
+        run: |
+          cd ./dev/prod
+          node ../../common/scripts/install-run-rushx.js build-demo
+      
+      - name: Deploy Demo
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dev/prod/dist
+      
+      - name: Archive artifacts...
+        uses: actions/upload-artifact@v2
+        with:
+          name: hr-build
+          path: |
+            products/hr-build/dist
+  test:
+    needs: build
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
 
       - uses: getong/elasticsearch-action@v1.2
         with:
@@ -58,52 +161,43 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 146fae79fffee30a166379a8e5e97beb4582e67af958ae0315dcb538af56cbac
         with:
-          coverageCommand: common/scripts/each-x.sh test
+          coverageCommand: node common/scripts/install-run-rush.js test
           coverageLocations: |
             ${{github.workspace}}/packages/*/coverage/lcov.info:lcov
             ${{github.workspace}}/plugins/*/coverage/lcov.info:lcov
-            ${{github.workspace}}/server/*/coverage/lcov.info:lcov
-      
-      - name: Build Demo
-        run: |
-          cd ./dev/prod
-          node ../../common/scripts/install-run-rushx.js build-demo
-      
-      - name: Deploy Demo
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dev/prod/dist
-      
-      - name: Archive artifacts...
-        uses: actions/upload-artifact@v2
-        with:
-          name: hr-build
-          path: |
-            products/hr-build/dist
-          
+            ${{github.workspace}}/server/*/coverage/lcov.info:lcov       
 
-  lint_and_format:
+  check-formatting:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
         with:
-          node-version: 14.x
-
-      - name: Installing...
-        run: node common/scripts/install-run-rush.js install
-      
-      - name: Building...
-        run: node common/scripts/install-run-rush.js build
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
 
       - name: Check files formatting
         run: |
-          common/scripts/each-x.sh format
+          node common/scripts/install-run-rush.js format
           echo '================================================================'
           echo 'Checking for diff files'
           echo '================================================================'

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "enable rush test",
+      "type": "patch",
+      "packageName": "@anticrm/workspaces"
+    }
+  ],
+  "packageName": "@anticrm/workspaces",
+  "email": "haiodo@gmail.com"
+}

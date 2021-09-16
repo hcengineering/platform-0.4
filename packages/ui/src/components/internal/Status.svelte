@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Status } from '@anticrm/status'
+  import type { Status as StatusValue } from '@anticrm/status'
   import { Severity } from '@anticrm/status'
 
   import Info from './icons/Info.svelte'
   import Label from '../Label.svelte'
 
-  export let status: Status
+  export let status: StatusValue
 </script>
 
 <div class="status">

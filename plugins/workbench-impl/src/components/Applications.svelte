@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Class, Ref, Space } from '@anticrm/core'
-  import { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceNotifications } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getRouter } from '@anticrm/ui'
   import type { Application, WorkbenchRoute } from '@anticrm/workbench'

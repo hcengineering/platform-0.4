@@ -29,7 +29,7 @@ import core, {
   TxDb
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
-import { parseAddress, start } from '../server'
+import { convertAddress, parseAddress, start } from '../server'
 import { createClient } from './client'
 
 const txes = builder.getTxes()
@@ -91,6 +91,16 @@ describe('server', () => {
 
   it('check parseAddess', () => {
     expect(parseAddress('localhost:300')).toEqual({ family: 'IPv4', address: 'localhost', port: 300 })
+    expect(() => parseAddress('123qwe')).toThrow()
+  })
+
+  it('check convert address', () => {
+    expect(convertAddress('localhost:300', 'localhost', 5000)).toEqual({
+      family: 'IPv4',
+      address: 'localhost',
+      port: 300
+    })
+    expect(convertAddress(null, 'localhost', 5000)).toEqual({ family: 'IPv4', address: 'localhost', port: 5000 })
   })
 
   it('check server connection closed', async () => {

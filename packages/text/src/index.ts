@@ -30,7 +30,7 @@ export function parseMessage (message: string): MessageNode {
 /**
  * @public
  */
-export function parseMessageMarkdown (message: string): MessageNode {
+export function parseMessageMarkdown (message?: string): MessageNode {
   const parser = new MarkdownParser()
   return parser.parse(message ?? '')
 }
