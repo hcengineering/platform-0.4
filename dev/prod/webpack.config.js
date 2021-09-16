@@ -23,6 +23,18 @@ const NO_SVELTE = process.env.NO_SVELTE ?? false
 const prod = mode === 'production'
 const PUBLIC_PATH = process.env.PUBLIC_PATH ?? '/'
 
+const { readFileSync, existsSync } = require('fs')
+
+const CRT_FILE = '../../dev/certificates/cert.crt'
+const PRIV_FILE = '../../dev/certificates/cert.key'
+
+const config = existsSync(CRT_FILE) && existsSync(PRIV_FILE)
+  ? {
+      cert: readFileSync(CRT_FILE).toString(),
+      key: readFileSync(PRIV_FILE).toString()
+    }
+  : undefined
+
 module.exports = {
   entry: {
     bundle: [
@@ -133,6 +145,7 @@ module.exports = {
     publicPath: PUBLIC_PATH,
     historyApiFallback: {
       disableDotRule: true
-    }
+    },
+    https: config // true
   }
 }

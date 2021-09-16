@@ -17,9 +17,12 @@ import { Doc, generateId, Ref, Storage, Tx } from '@anticrm/core'
 import type { Request } from '@anticrm/rpc'
 import { Code, readRequest, serialize } from '@anticrm/rpc'
 import { PlatformError, Severity, Status, unknownStatus } from '@anticrm/status'
-import { createServer, IncomingMessage, Server as HttpServer } from 'http'
+import { createServer, Server as HttpServer } from 'http'
+import { createServer as createHttpsServer } from 'https'
+import { IncomingMessage } from 'http'
 import * as net from 'net'
 import WebSocket, { Server as WebSocketServer } from 'ws'
+import { SecurityOptions } from './tls_utils'
 
 /**
  * @public
@@ -65,8 +68,16 @@ export class Server {
   connections = new Map<string /* clientId */, WebSocket>()
   server: WebSocketServer
   httpServer: HttpServer
-  constructor (readonly host: string | undefined, readonly port: number, readonly provider: StorageProvider) {
-    this.httpServer = createServer()
+  constructor (
+    readonly host: string | undefined,
+    readonly port: number,
+    readonly provider: StorageProvider,
+    security?: SecurityOptions
+  ) {
+    this.httpServer =
+      security !== undefined
+        ? createHttpsServer({ key: security.key, cert: security.cert, ca: security.ca })
+        : createServer()
     this.server = new WebSocketServer({ noServer: true })
 
     this.httpServer.on('upgrade', (request, socket, head) => {
@@ -199,10 +210,15 @@ export class Server {
  *
  * @public
  */
-export async function start (host: string | undefined, port: number, provider: StorageProvider): Promise<Server> {
+export async function start (
+  host: string | undefined,
+  port: number,
+  provider: StorageProvider,
+  security?: SecurityOptions
+): Promise<Server> {
   console.log(`starting server on port ${port}...`)
 
-  const server = new Server(host, port, provider)
+  const server = new Server(host, port, provider, security)
   await server.listen()
   const addr = server.address()
   console.log(`server is listening on host: ${addr.address}: ${addr.port} `)

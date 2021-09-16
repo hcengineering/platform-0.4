@@ -13,11 +13,12 @@
 // limitations under the License.
 //
 
-import { getMongoClient } from '@anticrm/mongo'
-import { startServer } from '@anticrm/server'
-import { upgradeWorkspace } from '@anticrm/workspaces'
-import { newAuthServer } from './auth'
 import builder from '@anticrm/model-all'
+import { getMongoClient } from '@anticrm/mongo'
+import { SecurityOptions, startServer } from '@anticrm/server'
+import { upgradeWorkspace } from '@anticrm/workspaces'
+import { readFileSync } from 'fs'
+import { newAuthServer } from './auth'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -35,10 +36,25 @@ async function start (): Promise<void> {
 
   await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri, txes: builder.getTxes() })
 
-  const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true })
+  const security: SecurityOptions = {
+    key: readFileSync('../certificates/cert.key').toString(),
+    cert: readFileSync('../certificates/cert.crt').toString()
+  }
+
+  const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true, security })
 
   const addr = s.address()
-  const { accounts } = await newAuthServer(3000, db, { server: addr.address, port: addr.port, tokenSecret: 'secret' })
+  const { accounts } = await newAuthServer(
+    3000,
+    db,
+    {
+      protocol: 'wss',
+      server: addr.address,
+      port: addr.port,
+      tokenSecret: 'secret'
+    },
+    security
+  )
 
   // Create a demo account and workspace if it is missing.
 
