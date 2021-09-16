@@ -7,17 +7,7 @@ import { dtsPlugin } from 'esbuild-plugin-d.ts'
  * @public
  */
 export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<void> {
-  // Svelte compiler plugin
-  const svelte = sveltePlugin({
-    compileOptions: {
-      // Styles with component
-      css: false, // Will generate index.css
-      dev: true,
-      errorMode: 'throw'
-    }
-  })
-
-  const mainOptions: BuildOptions = {
+  let mainOptions: BuildOptions = {
     format: 'esm',
     bundle: true,
     minify: false,
@@ -26,22 +16,35 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
     legalComments: 'inline',
     color: true,
     keepNames: true,
-    plugins: [sassPlugin(), svelte, dtsPlugin()],
     loader: { '.png': 'dataurl', '.jpg': 'dataurl', '.svg': 'dataurl' },
 
     // Ignore dependencies и peerDependencies from package.json
     external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)]
   }
+  mainOptions = Object.assign(mainOptions, extra)
+
+  // Svelte compiler plugin
+  const svelte = sveltePlugin({
+    compileOptions: {
+      // Styles with component
+      css: false, // Will generate index.css
+      dev: true,
+      errorMode: 'throw'
+    },
+    logLevel: mainOptions.logLevel
+  })
+
+  mainOptions.plugins = [sassPlugin(), svelte, dtsPlugin()]
 
   // Build ES-module
-  await build(Object.assign(mainOptions, extra))
+  await build(mainOptions)
 }
 
 /**
  * @public
  */
-export default function (pkg: any, extra: Partial<BuildOptions>): void {
-  uiBuild(pkg, extra).catch((err) => {
+export default async function (pkg: any, extra: Partial<BuildOptions>): Promise<void> {
+  return await uiBuild(pkg, extra).catch((err) => {
     console.log(err)
   })
 }

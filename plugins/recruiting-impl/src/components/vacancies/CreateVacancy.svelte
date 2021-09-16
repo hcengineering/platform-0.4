@@ -13,29 +13,28 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core from '@anticrm/core'
   import type { Data } from '@anticrm/core'
-  import { getPlugin } from '@anticrm/platform'
-  import {
-    EditBox,
-    Dialog,
-    ToggleWithLabel,
-    TextArea,
-    Section,
-    Grid,
-    IconFile,
-    IconEdit,
-    DatePicker,
-    DropdownItem,
-    Dropdown
-  } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
-  import type { Vacancy, VacancySpace } from '@anticrm/recruiting'
-  import recruiting from '@anticrm/recruiting'
+  import core from '@anticrm/core'
   import type { FSM } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
+  import { getPlugin } from '@anticrm/platform'
   import type { QueryUpdater } from '@anticrm/presentation'
-
+  import type { Vacancy, VacancySpace } from '@anticrm/recruiting'
+  import recruiting from '@anticrm/recruiting'
+  import type { DropdownItem } from '@anticrm/ui'
+  import {
+    DatePicker,
+    Dialog,
+    Dropdown,
+    EditBox,
+    Grid,
+    IconEdit,
+    IconFile,
+    Section,
+    TextArea,
+    ToggleWithLabel
+  } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
   import Details from '../icons/Details.svelte'
 
   const client = getClient()

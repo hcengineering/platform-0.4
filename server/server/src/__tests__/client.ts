@@ -57,10 +57,11 @@ export class TestConnection extends RequestProcessor implements WithAccountId {
   }
 }
 
-export async function createClient (clientUrl: string, notify?: (tx: Tx) => void): Promise<Client & TxOperations> {
-  const client = await createCoreClient(async (tx) => {
-    const socket = new WebSocket(`ws://${clientUrl}`)
+export type ClientWithShutdown = Client & TxOperations & { shutdown: () => void }
 
+export async function createClient (clientUrl: string, notify?: (tx: Tx) => void): Promise<ClientWithShutdown> {
+  const socket = new WebSocket(`ws://${clientUrl}`)
+  const client: ClientWithShutdown = (await createCoreClient(async (tx) => {
     // Wait for connection to be established.
     await new Promise<any>((resolve, reject) => {
       socket.onopen = () => {
@@ -75,7 +76,11 @@ export async function createClient (clientUrl: string, notify?: (tx: Tx) => void
     })
 
     return new TestConnection(socket, tx)
-  }, notify)
+  }, notify)) as unknown as ClientWithShutdown
+  client.shutdown = () => {
+    socket.terminate()
+  }
+
   const accountId = await client.accountId()
   return withOperations(accountId, client)
 }

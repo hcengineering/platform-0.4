@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-import { getMongoClient, shutdown } from '@anticrm/mongo'
-import { createWorkspace, deleteWorkspace, upgradeWorkspace } from '..'
+import { getMongoClient } from '@anticrm/mongo'
+import { createWorkspace, deleteWorkspace, upgradeWorkspace, shutdown } from '..'
 import { DOMAIN_TX } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 
@@ -40,6 +40,12 @@ describe('workspaces', () => {
 
     const collections = await client.db('ws-my').collections()
     expect(collections.length).toEqual(0)
+  })
+
+  it('check workspace already exists', async () => {
+    await createWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
+    await expect(async () => await createWorkspace('my', { mongoDBUri, txes: builder.getTxes() })).rejects.toThrow()
+    await deleteWorkspace('my', { mongoDBUri, txes: [] })
   })
 
   it('upgrade workspace', async () => {

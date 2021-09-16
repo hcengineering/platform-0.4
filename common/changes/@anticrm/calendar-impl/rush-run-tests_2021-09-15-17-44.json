@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-impl",
+      "comment": "Fix type imports",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-impl"
+}

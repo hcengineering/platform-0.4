@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { UIComponent } from '@anticrm/status'
+import type { UIComponent } from '@anticrm/status'
 import Root from './components/internal/Root.svelte'
 
 import type { IntlString } from '@anticrm/platform'

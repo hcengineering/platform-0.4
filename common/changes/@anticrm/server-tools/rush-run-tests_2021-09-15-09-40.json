@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server-tools",
+      "comment": "rush test support",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server-tools"
+}

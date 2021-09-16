@@ -62,7 +62,7 @@ async function main (): Promise<void> {
         break
       }
       case 'generate-token': {
-        const token = generateToken(SECRET, arg1, arg2)
+        const token = generateToken(SECRET, arg1, arg2, {})
         console.log('TOKEN: ', token)
         break
       }

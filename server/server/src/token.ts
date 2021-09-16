@@ -8,8 +8,8 @@ import { Ref, Account } from '@anticrm/core'
  * @returns A valid token.
  * @public
  */
-export function generateToken (secret: string, accountId: string, workspaceId: string): string {
-  return encode({ accountId, workspaceId }, secret)
+export function generateToken (secret: string, accountId: string, workspaceId: string, details: any & {email?: string}): string {
+  return encode({ accountId, workspaceId, details }, secret)
 }
 
 /**
