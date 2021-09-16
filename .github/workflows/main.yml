@@ -27,27 +27,73 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ./common/temp
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Checking for mis-matching dependencies...
         run: node common/scripts/install-run-rush.js check
 
       - name: Checking for missing change logs...
-        run: node common/scripts/install-run-rush.js change -v
+        run: node common/scripts/install-run-rush.js change -v      
 
       - name: Installing...
-        run: node common/scripts/install-run-rush.js install
+        run: node common/scripts/install-run-rush.js install        
 
       - name: Building...
-        run: node common/scripts/install-run-rush.js rebuild
-
-      - uses: getong/elasticsearch-action@v1.2
-        with:
-          elasticsearch version: '7.12.0'
-          host port: 9200
-          container port: 9200
-          host node port: 9300
-          node port: 9300
-          discovery type: 'single-node'
+        run: node common/scripts/install-run-rush.js rebuild -p 16
       
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+  build-demo:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+
       - name: Build Demo
         run: |
           cd ./dev/prod
@@ -67,27 +113,34 @@ jobs:
           path: |
             products/hr-build/dist
   test:
+    needs: build
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Checking for mis-matching dependencies...
-        run: node common/scripts/install-run-rush.js check
-
-      - name: Checking for missing change logs...
-        run: node common/scripts/install-run-rush.js change -v
-
-      - name: Installing...
-        run: node common/scripts/install-run-rush.js install
-        
-      - name: Building...
-        run: node common/scripts/install-run-rush.js rebuild
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
+        with:
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
 
       - uses: getong/elasticsearch-action@v1.2
         with:
@@ -115,21 +168,32 @@ jobs:
             ${{github.workspace}}/server/*/coverage/lcov.info:lcov       
 
   check-formatting:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - name: Cache build results
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-build-results
         with:
-          node-version: 14.x
-
-      - name: Installing...
-        run: node common/scripts/install-run-rush.js install
-      
-      - name: Building ...
-        run: node common/scripts/install-run-rush.js build
+          path: |
+            common
+            dev
+            models
+            packages
+            plugins
+            products
+            server
+            tests
+            rush.json
+            .prettierrc
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
 
       - name: Check files formatting
         run: |
