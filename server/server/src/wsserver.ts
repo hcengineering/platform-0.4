@@ -67,9 +67,16 @@ function connectClient (
         return {
           findAll: async (_class, query) => {
             const resultTx = clientStorage.findAll(_class, query)
-            resultTx.catch(err => {
+            resultTx.catch((err) => {
               if (options.logRequests) {
-                console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)}`, err)
+                console.info(
+                  `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
+                    query,
+                    undefined,
+                    2
+                  )}`,
+                  err
+                )
               }
             })
             const result = await resultTx
@@ -78,20 +85,30 @@ function connectClient (
               if (Array.isArray(result)) {
                 printResult = result.slice(0, 5)
               }
-              console.info(`request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(query, undefined, 2)} result: ${JSON.stringify(printResult)}`)
+              console.info(
+                `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
+                  query,
+                  undefined,
+                  2
+                )} result: ${JSON.stringify(printResult)}`
+              )
             }
             return result
           },
           tx: async (tx) => {
             const resultTx = clientStorage.tx(tx)
-            resultTx.catch(err => {
+            resultTx.catch((err) => {
               if (options.logTransactions) {
                 console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)}`, err)
               }
             })
             const result = await resultTx
             if (options.logTransactions) {
-              console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(result)}`)
+              console.info(
+                `tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(
+                  result
+                )}`
+              )
             }
             return result
           },

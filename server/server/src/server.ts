@@ -46,7 +46,11 @@ export function parseAddress (addr: string): net.AddressInfo {
 /**
  * @public
  */
-export function convertAddress (addr: net.AddressInfo | string | null, host: string | undefined, port: number): net.AddressInfo {
+export function convertAddress (
+  addr: net.AddressInfo | string | null,
+  host: string | undefined,
+  port: number
+): net.AddressInfo {
   if (typeof addr === 'string') {
     return parseAddress(addr)
   } else {
@@ -139,16 +143,17 @@ export class Server {
       ws.send(
         serialize({
           id,
-          error: error instanceof PlatformError
-            ? new Status(error.status.severity, error.status.code, {
-              ...error.status.params,
-              message: error.message,
-              stack: error.stack
-            })
-            : new Status(Severity.ERROR, Code.BadRequest, {
-              message: error.message,
-              stack: error.stack
-            })
+          error:
+            error instanceof PlatformError
+              ? new Status(error.status.severity, error.status.code, {
+                ...error.status.params,
+                message: error.message,
+                stack: error.stack
+              })
+              : new Status(Severity.ERROR, Code.BadRequest, {
+                message: error.message,
+                stack: error.stack
+              })
         })
       )
     }

@@ -13,11 +13,10 @@
     "dev-server-bin": "cross-env CLIENT=server NO_SVELTE=true webpack serve --content-base public",
     "start": "cross-env CLIENT=server NODE_ENV=production webpack serve --content-base public",
     "test": "echo 'no tests'",
-    "preformat-svelte": "prettier -w src/**/*.svelte",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
     "deploy": "cp -p public/* dist && aws s3 sync dist s3://anticrm-platform --delete --acl public-read",
-    "format": "prettier --write --plugin-search-dir=. src/**/*.ts && eslint --fix src"
+    "format": "prettier --write --plugin-search-dir=. src && eslint --fix src"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

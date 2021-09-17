@@ -79,13 +79,13 @@ export interface ServerInfo {
  */
 export const Code = component('account' as Component, {
   status: {
-    WorkspaceNotFound: '' as StatusCode<{workspace: string}>,
-    AccountNotFound: '' as StatusCode<{email: string}>,
+    WorkspaceNotFound: '' as StatusCode<{ workspace: string }>,
+    AccountNotFound: '' as StatusCode<{ email: string }>,
     Unauthorized: '' as StatusCode<{}>,
-    DuplicateAccount: '' as StatusCode<{email: string}>,
-    DuplicateWorkspace: '' as StatusCode<{workspace: string}>,
-    WorkspaceNotAccessible: '' as StatusCode<{workspace: string, email: string}>,
-    WorkspaceAlreadyJoined: '' as StatusCode<{workspace: string, email: string}>,
+    DuplicateAccount: '' as StatusCode<{ email: string }>,
+    DuplicateWorkspace: '' as StatusCode<{ workspace: string }>,
+    WorkspaceNotAccessible: '' as StatusCode<{ workspace: string, email: string }>,
+    WorkspaceAlreadyJoined: '' as StatusCode<{ workspace: string, email: string }>,
     InvalidRequest: '' as StatusCode<{}>
   }
 })
@@ -103,7 +103,7 @@ function toAccountInfo (account: Account): AccountInfo {
   return result
 }
 
-function checkDefined (msg: string, ...params: (string|undefined)[]): void {
+function checkDefined (msg: string, ...params: (string | undefined)[]): void {
   for (const p of params) {
     if (p == null || p.trim().length === 0) {
       throw Error(msg)
@@ -116,7 +116,12 @@ function checkDefined (msg: string, ...params: (string|undefined)[]): void {
  */
 export class Accounts {
   methods: Record<string, any>
-  constructor (readonly db: Db, readonly workspaceCollection: string, readonly accountCollection: string, readonly server: ServerInfo) {
+  constructor (
+    readonly db: Db,
+    readonly workspaceCollection: string,
+    readonly accountCollection: string,
+    readonly server: ServerInfo
+  ) {
     // A list of allowed operations
     this.methods = {
       login: this.login.bind(this),
@@ -127,7 +132,6 @@ export class Accounts {
       updateAccount: this.updateAccount.bind(this)
     }
   }
-
 
   public async getWorkspace (workspace: string): Promise<Workspace> {
     const result = await this.workspaces().findOne<Workspace>({ workspace })
@@ -155,7 +159,6 @@ export class Accounts {
     await this.workspaces().createIndex({ workspace: 1 }, { unique: true })
   }
 
-
   async getAccount (email: string): Promise<Account> {
     const account = await this.accounts().findOne<Account>({ email })
     if (account != null) {
@@ -165,11 +168,13 @@ export class Accounts {
   }
 
   public async findAccount (email: string): Promise<AccountInfo | undefined> {
-    return await this.accounts().findOne<Account>({ email }).then(acc => acc !== null ? toAccountInfo(acc) : undefined)
+    return await this.accounts()
+      .findOne<Account>({ email })
+      .then((acc) => (acc !== null ? toAccountInfo(acc) : undefined))
   }
 
   public async findWorkspace (workspace: string): Promise<Workspace | undefined> {
-    return await this.workspaces().findOne<Workspace>({ workspace }) ?? undefined
+    return (await this.workspaces().findOne<Workspace>({ workspace })) ?? undefined
   }
 
   async getAccountVerify (email: string, password: string): Promise<Account> {
@@ -181,8 +186,14 @@ export class Accounts {
     return account
   }
 
-  wrapDuplicateError<T extends StatusCode<P>, P extends Record<string, any>> (err: any, code: T, vars: P): PlatformError<P | {}> {
-    return err.code === 11000 ? new PlatformError(new Status(Severity.ERROR, code, vars)) : new PlatformError(unknownError(err))
+  wrapDuplicateError<T extends StatusCode<P>, P extends Record<string, any>>(
+    err: any,
+    code: T,
+    vars: P
+  ): PlatformError<P | {}> {
+    return err.code === 11000
+      ? new PlatformError(new Status(Severity.ERROR, code, vars))
+      : new PlatformError(unknownError(err))
   }
 
   async createAccount (email: string, password: string, details?: AccountDetails): Promise<AccountInfo> {
@@ -193,10 +204,16 @@ export class Accounts {
 
     try {
       const accountDetails = { firstName: '', lastName: '', ...details }
-      const result = await this.accounts().insertOne({ _id: generateId(), email, hash: new Binary(hash), salt: new Binary(salt), workspaces: [], details: accountDetails })
+      const result = await this.accounts().insertOne({
+        _id: generateId(),
+        email,
+        hash: new Binary(hash),
+        salt: new Binary(salt),
+        workspaces: [],
+        details: accountDetails
+      })
 
       // We need to connect to server and create an Account entry with all required information for user.
-
 
       return { _id: result.insertedId, email, workspaces: [], details: accountDetails }
     } catch (err) {
@@ -231,13 +248,16 @@ export class Accounts {
     const workspaceInfo = await this.getWorkspace(workspace)
     const accountInfo = await this.getAccountVerify(email, password)
 
-    const ws = accountInfo.workspaces.find(w => w.equals(workspaceInfo._id))
+    const ws = accountInfo.workspaces.find((w) => w.equals(workspaceInfo._id))
     if (ws !== undefined) {
-      const token = encode({
-        accountId: accountInfo._id,
-        workspaceId: workspace,
-        details: { ...accountInfo.details, email }
-      }, this.server.tokenSecret)
+      const token = encode(
+        {
+          accountId: accountInfo._id,
+          workspaceId: workspace,
+          details: { ...accountInfo.details, email }
+        },
+        this.server.tokenSecret
+      )
       const result: LoginInfo = {
         workspace,
         clientUrl: `${this.server.server}:${this.server.port}/${token}`,
@@ -271,18 +291,20 @@ export class Accounts {
     return await this.login(email, password, workspace)
   }
 
-
   async updateAccount (email: string, password: string, newPassword: string): Promise<AccountInfo> {
     checkDefined('email and password should be specified', email, password)
 
     const account = await this.getAccountVerify(email, password)
 
     const hash = hashWithSalt(newPassword, account.salt.buffer)
-    await this.accounts().updateOne({ _id: account._id }, {
-      $set: {
-        hash: new Binary(hash)
+    await this.accounts().updateOne(
+      { _id: account._id },
+      {
+        $set: {
+          hash: new Binary(hash)
+        }
       }
-    })
+    )
     return toAccountInfo(account)
   }
 
@@ -290,7 +312,7 @@ export class Accounts {
     const { id, method, params } = request
     const methodOp = this.methods[method]
     if (methodOp === undefined) {
-      return { id, error: new Status(Severity.ERROR, Code.status.InvalidRequest, { }) }
+      return { id, error: new Status(Severity.ERROR, Code.status.InvalidRequest, {}) }
     }
     return { id, result: await reflectCall<P>(this, methodOp, params) }
   }
@@ -300,7 +322,10 @@ export class Accounts {
  * @public
  */
 export async function wrapCall<T extends any[], P> (accounts: Accounts, request: Request<T>): Promise<Response<P>> {
-  return await accounts.reflectCall<T, P>(request).then(result => result, (reason) => unwrapError(request.id, reason))
+  return await accounts.reflectCall<T, P>(request).then(
+    (result) => result,
+    (reason) => unwrapError(request.id, reason)
+  )
 }
 async function reflectCall<P> (accounts: Accounts, method: any, params: any): Promise<P> {
   return await (Reflect.apply(method, accounts, params) as Promise<P>)
@@ -310,5 +335,5 @@ function unwrapError<P> (id: ReqId | undefined, error: any): Response<P> {
   if (error instanceof PlatformError) {
     return { id, error: error.status }
   }
-  return { id, error: new Status(Severity.ERROR, Code.status.InvalidRequest, { }) }
+  return { id, error: new Status(Severity.ERROR, Code.status.InvalidRequest, {}) }
 }

@@ -16,7 +16,7 @@
     "test": "echo 'no tests'",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write --plugin-search-dir=. src/**/*.ts && eslint --fix src"
+    "format": "prettier --write --plugin-search-dir=. src && eslint --fix src"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

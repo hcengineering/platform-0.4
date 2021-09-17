@@ -13,7 +13,20 @@
 // limitations under the License.
 //
 
-import { Attribute, Class, Data, Doc, Domain, Obj, PropertyType, Ref, Tx, TxCreateDoc, TxProcessor, Type } from '@anticrm/core'
+import {
+  Attribute,
+  Class,
+  Data,
+  Doc,
+  Domain,
+  Obj,
+  PropertyType,
+  Ref,
+  Tx,
+  TxCreateDoc,
+  TxProcessor,
+  Type
+} from '@anticrm/core'
 import { ClassifierKind, DOMAIN_MODEL, generateId, Hierarchy } from '@anticrm/core'
 import toposort from 'toposort'
 import core from './component'

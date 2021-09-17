@@ -96,10 +96,15 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
  * Assign client to workspace, construct workspace if it is not yet started.
  * @param client
  */
-export async function assignWorkspace (client: ClientInfo): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo} > {
+export async function assignWorkspace (
+  client: ClientInfo
+): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo }> {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
-  return { clientStorage: new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client), workspace: ws }
+  return {
+    clientStorage: new SecurityClientStorage(ws.security, ws.workspace, ws.workspace.getHierarchy(), client),
+    workspace: ws
+  }
 }
 
 export async function closeWorkspace (clientId: string): Promise<void> {

@@ -8,7 +8,7 @@
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && eslint --fix src",
+    "format": "prettier --write src && eslint --fix src",
     "create-workspace": "ts-node src/index.ts create-workspace",
     "upgrade-workspace": "ts-node src/index.ts upgrade-workspace",
     "generate-token": "ts-node src/index.ts generate-token"

@@ -18,7 +18,7 @@ import { Matcher } from './router'
 /**
  * @public
  */
-export type QueryType = Record<string, string|null>
+export type QueryType = Record<string, string | null>
 
 /**
  * Describe a browser URI location parsed to path, query and fragment.
@@ -36,7 +36,6 @@ export interface Location {
 export function newLocation (): Location {
   return { path: [], query: undefined, fragment: undefined }
 }
-
 
 /**
  * @public
@@ -69,4 +68,3 @@ export interface ApplicationRouter<T> {
 
 export * from './location'
 export { Matcher, Route, Router } from './router'
-
