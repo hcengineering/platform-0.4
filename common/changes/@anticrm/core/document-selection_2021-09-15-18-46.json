@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Document selection support",
+      "type": "patch",
+      "packageName": "@anticrm/core"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "haiodo@gmail.com"
+}

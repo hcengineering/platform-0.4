@@ -16,7 +16,7 @@ const navigateOp = (loc: Location): void => {
 /**
  * @public
  */
-export function newRouter<T> (pattern: string, matcher: Matcher<T>, defaults: T): ApplicationRouter<T> {
+export function newRouter<T> (pattern: string, matcher: Matcher<T>, defaults?: T): ApplicationRouter<T> {
   const r: Router<QueryType> = getContext(CONTEXT_ROUTE_VALUE)
   let result: Router<T>
 

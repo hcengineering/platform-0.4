@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { mergeIds } from '@anticrm/status'
+import { IntlString, mergeIds } from '@anticrm/status'
 import task, { TaskStatus } from '@anticrm/task'
 import type { AnyComponent } from '@anticrm/status'
 
@@ -41,5 +41,8 @@ export default mergeIds(task, {
 
     TaskPreview: '' as AnyComponent,
     TaskRefView: '' as AnyComponent
+  },
+  string: {
+    PleaseSelectSpace: '' as IntlString
   }
 })

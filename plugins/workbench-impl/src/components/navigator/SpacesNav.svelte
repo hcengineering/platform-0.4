@@ -95,7 +95,7 @@
   $: actions = toolActions(model)
 
   function selectSpace (id: Ref<Space>) {
-    router.navigate({ space: id, itemId: undefined })
+    router.navigate({ space: id, special: undefined })
   }
 </script>
 

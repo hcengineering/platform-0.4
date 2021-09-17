@@ -17,6 +17,7 @@
 
   import { ActionIcon, Label } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
+  import workbench from '../plugin'
 
   export let title: IntlString = 'Company name' as IntlString
 </script>
@@ -25,7 +26,7 @@
   <div class="title">
     <span><Label label={title} /></span>
     <div class="tool">
-      <ActionIcon icon={MoreH} size={16} padding={4} label={'More...'} />
+      <ActionIcon icon={MoreH} size={16} padding={4} label={workbench.strings.More} />
     </div>
   </div>
 </div>

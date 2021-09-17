@@ -29,6 +29,7 @@
     "InProgress": "In progress",
     "Closed": "Closed",
     "Favorite": "Favorite",
-    "MyTasks": "My tasks"
+    "MyTasks": "My tasks",
+    "PleaseSelectSpace": "Space selection is required."
   }
 }

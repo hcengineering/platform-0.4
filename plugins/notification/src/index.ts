@@ -78,6 +78,9 @@ export class NotificationClient {
   }
 
   public initScroll (div: HTMLElement, lastRead: number, offset: boolean): void {
+    if (div == null) {
+      throw new Error('div should be defined')
+    }
     if (this.autoscroll) {
       div.scrollTo(0, div.scrollHeight)
       return

@@ -13,41 +13,36 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import {
-    EditBox,
-    UserBox,
-    ScrollBox,
-    IconClose,
-    DatePicker,
-    Tabs,
-    Section,
-    IconFile,
-    IconComments,
-    IconToDo,
-    Grid,
-    Row,
-    CheckBoxList
-  } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
-  import type { Task } from '@anticrm/task'
-  import task from '../plugin'
-  import core, { Space } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
-  import DescriptionEditor from './DescriptionEditor.svelte'
-  // import CheckList from './CheckList.svelte'
-  import CommentsView from './CommentsView.svelte'
-  import StatusPicker from './StatusPicker.svelte'
-  import type { QueryUpdater } from '@anticrm/presentation'
-  import type { IntlString } from '@anticrm/status'
-  import { onDestroy } from 'svelte'
-  import { afterUpdate } from 'svelte'
+  import core, { Space } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import type { IntlString } from '@anticrm/status'
+  import type { Task } from '@anticrm/task'
+  import {
+    CheckBoxList,
+    DatePicker,
+    EditBox,
+    Grid,
+    IconClose,
+    IconComments,
+    IconFile,
+    IconToDo,
+    Row,
+    ScrollBox,
+    Section,
+    Tabs,
+    UserBox
+  } from '@anticrm/ui'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { afterUpdate, onDestroy } from 'svelte'
+  import task from '../plugin'
+  import CommentsView from './CommentsView.svelte'
+  import DescriptionEditor from './DescriptionEditor.svelte'
+  import StatusPicker from './StatusPicker.svelte'
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
@@ -93,7 +88,7 @@
   })
 
   function close () {
-    router.navigate({ itemId: undefined })
+    selectDocument()
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
@@ -124,7 +119,7 @@
               label={task.string.TaskName}
               bind:value={item.name}
               on:blur={(e) => {
-                update('name', item.name)
+                update('name', item?.name)
               }}
             />
             <StatusPicker

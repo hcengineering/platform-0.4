@@ -27,6 +27,7 @@
     italic: boolean
     strike: boolean
     code: boolean
+    orderStart: number
 
     reference: {
       state: boolean
@@ -46,7 +47,7 @@
       italic: false,
       strike: false,
       code: false,
-      orderStart: '1',
+      orderStart: 1,
       link: {
         resolved: false,
         href: '',
@@ -69,7 +70,7 @@
     const result = newStyle()
 
     if (message.type === MessageNodeType.ordered_list) {
-      result.orderStart = message.attrs?.order ?? '1'
+      result.orderStart = parseInt(message.attrs?.order ?? '1')
     }
 
     for (const mark of marks) {

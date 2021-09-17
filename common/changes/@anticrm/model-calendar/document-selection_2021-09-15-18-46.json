@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Document selection support",
+      "type": "patch",
+      "packageName": "@anticrm/model-calendar"
+    }
+  ],
+  "packageName": "@anticrm/model-calendar",
+  "email": "haiodo@gmail.com"
+}

@@ -14,11 +14,10 @@
 -->
 <script lang="ts">
   import { Table, Label, UserInfo, DateTime } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
   import core, { DocumentQuery } from '@anticrm/core'
   import type { Ref, Doc, Account } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+
   import { deepEqual } from 'fast-equals'
   import TaskStatus from './TaskStatus.svelte'
 
@@ -48,7 +47,6 @@
   ]
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   let data: Doc[] = []
 
   let lq: QueryUpdater<Task> | undefined
@@ -65,7 +63,7 @@
   }
 
   function onClick (event: any) {
-    router.navigate({ itemId: event.detail.id })
+    selectDocument(event.detail)
   }
 
   async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {

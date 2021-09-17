@@ -73,7 +73,7 @@
       {/if}
       <tbody>
         {#each data as doc (doc._id)}
-          <tr class="tr-body" on:click={() => dispatch('rowClick', { id: doc._id })}>
+          <tr class="tr-body" on:click={() => dispatch('rowClick', doc)}>
             {#each docToRow(doc) as cell}
               <td><svelte:component this={cell.component} {...cell.props} /></td>
             {/each}

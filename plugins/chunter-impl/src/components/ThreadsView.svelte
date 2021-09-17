@@ -18,9 +18,7 @@
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconClose, Label } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import type { SpaceNotifications } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import chunter from '../plugin'
@@ -31,7 +29,6 @@
   import { tick } from 'svelte'
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Message>
@@ -61,9 +58,7 @@
   }
 
   function close () {
-    router.navigate({
-      itemId: undefined
-    })
+    selectDocument(undefined)
   }
 
   async function addMessage (text: string): Promise<void> {

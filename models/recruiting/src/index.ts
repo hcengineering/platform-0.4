@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-import { Builder, Model } from '@anticrm/model'
-import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
-import core, { TSpace } from '@anticrm/model-core'
-import { TPerson } from '@anticrm/model-contact'
 import contact from '@anticrm/contact'
-import { Account, Ref, Timestamp } from '@anticrm/core'
-import workbench from '@anticrm/model-workbench'
-import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
+import { Account, DocumentPresenter, PresentationMode, Ref, Timestamp } from '@anticrm/core'
 import fsm from '@anticrm/fsm'
+import { Builder, Model } from '@anticrm/model'
+import { TPerson } from '@anticrm/model-contact'
+import core, { TSpace } from '@anticrm/model-core'
+import { templateFSM, TFSMItem, TWithFSM } from '@anticrm/model-fsm'
+import workbench from '@anticrm/model-workbench'
+import type { Applicant, Candidate, CandidatePoolSpace, CandidateStatus, VacancySpace } from '@anticrm/recruiting'
 import recruiting from '@anticrm/recruiting'
 
 /**
@@ -107,6 +107,18 @@ export function createModel (builder: Builder): void {
     },
     recruiting.app.Recruiting
   )
+
+  // P R E S E N T E R S
+  builder.createDoc<DocumentPresenter<Candidate>>(core.class.DocumentPresenter, {
+    objectClass: recruiting.class.Candidate,
+    presentation: [
+      {
+        component: recruiting.component.EditCandidate,
+        description: 'Candidate editor',
+        mode: PresentationMode.Edit
+      }
+    ]
+  })
 
   const states = {
     rejected: { name: 'Rejected' },

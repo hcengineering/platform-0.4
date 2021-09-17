@@ -23,12 +23,12 @@
 
   export let model: NavigatorModel | undefined = undefined
   export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
-  export let special: number = -1
+  export let special: string | undefined
 
   const dispatch = createEventDispatcher()
 
   function selectSpecial (sp: SpecialNavModel): void {
-    special = model?.specials?.indexOf(sp) ?? -1
+    special = sp.id
     dispatch('special', special)
   }
 </script>

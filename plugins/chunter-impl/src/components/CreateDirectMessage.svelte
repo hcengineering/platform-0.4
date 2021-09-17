@@ -105,7 +105,9 @@
   }
 
   afterUpdate(() => {
-    notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+    if (div) {
+      notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+    }
     scrollHandler()
   })
 

@@ -59,11 +59,13 @@ export function createModel (builder: Builder): void {
       navigatorModel: {
         specials: [
           {
+            id: 'my-tasks',
             label: task.string.MyTasks,
             component: task.component.MyTasksView,
             icon: task.icon.Task
           },
           {
+            id: 'favourite',
             label: task.string.Favorite,
             component: task.component.FavoriteView,
             icon: task.icon.Star
@@ -165,17 +167,22 @@ export function createModel (builder: Builder): void {
   // P R E S E N T E R S
   builder.createDoc<DocumentPresenter<Task>>(core.class.DocumentPresenter, {
     objectClass: task.class.Task,
-    presentation: {
-      Link: {
+    presentation: [
+      {
         component: task.component.TaskRefView,
         description: 'Task Ref',
         mode: PresentationMode.Link
       },
-      Preview: {
+      {
         component: task.component.TaskPreview,
         description: 'Task Preview',
         mode: PresentationMode.Preview
+      },
+      {
+        component: task.component.EditTask,
+        description: 'Task editor',
+        mode: PresentationMode.Edit
       }
-    }
+    ]
   })
 }
