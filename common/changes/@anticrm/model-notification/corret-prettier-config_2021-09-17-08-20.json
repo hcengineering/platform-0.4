@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Correct Prettier config",
+      "type": "patch",
+      "packageName": "@anticrm/model-notification"
+    }
+  ],
+  "packageName": "@anticrm/model-notification",
+  "email": "haiodo@gmail.com"
+}

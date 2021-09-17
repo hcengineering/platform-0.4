@@ -15,7 +15,6 @@
 
 import { Location as PlatformLocation } from '.'
 
-
 /**
  * @public
  */
@@ -49,7 +48,7 @@ export function locationToUrl (location: PlatformLocation): string {
 /**
  * @public
  */
-export function parseLocation (location: Pick<Location, 'pathname'|'search' | 'hash'>): PlatformLocation {
+export function parseLocation (location: Pick<Location, 'pathname' | 'search' | 'hash'>): PlatformLocation {
   return {
     path: parsePath(location.pathname),
     query: parseQuery(location.search),

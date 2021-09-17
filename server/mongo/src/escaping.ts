@@ -14,7 +14,10 @@
 //
 
 function keyEscape (key: string, reverse: boolean): string {
-  const kkk = [['$', '\\$'], ['.', '%{dot}']]
+  const kkk = [
+    ['$', '\\$'],
+    ['.', '%{dot}']
+  ]
   for (const kk of kkk) {
     key = key.split(kk[reverse ? 1 : 0]).join(kk[reverse ? 0 : 1])
   }
@@ -60,7 +63,7 @@ export function mongoUnescape<T> (object: T): T {
 /**
  * Replaces nulls with undefined
  * @public
-*/
+ */
 export function mongoReplaceNulls<T> (x: T): T | undefined {
   if (Array.isArray(x)) {
     return (x as any).map(mongoReplaceNulls)
@@ -69,14 +72,11 @@ export function mongoReplaceNulls<T> (x: T): T | undefined {
   if (isObject(x)) {
     return Object.entries(x)
       .map(([k, v]) => [k, mongoReplaceNulls(v)])
-      .reduce<any>(
-      (res, [k, v]) => {
-        res[k] = v
-        return res
-      }, {}) as T
+      .reduce<any>((res, [k, v]) => {
+      res[k] = v
+      return res
+    }, {}) as T
   }
 
-  return x === null
-    ? undefined
-    : x
+  return x === null ? undefined : x
 }

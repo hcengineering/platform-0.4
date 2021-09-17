@@ -8,7 +8,12 @@ import { Ref, Account } from '@anticrm/core'
  * @returns A valid token.
  * @public
  */
-export function generateToken (secret: string, accountId: string, workspaceId: string, details: any & {email?: string}): string {
+export function generateToken (
+  secret: string,
+  accountId: string,
+  workspaceId: string,
+  details: any & { email?: string }
+): string {
   return encode({ accountId, workspaceId, details }, secret)
 }
 
@@ -24,6 +29,9 @@ export interface AccountDetails {
 /**
  * @public
  */
-export function decodeToken (secret: string, token: string): { accountId: Ref<Account>, workspaceId: string, details: AccountDetails } {
+export function decodeToken (
+  secret: string,
+  token: string
+): { accountId: Ref<Account>, workspaceId: string, details: AccountDetails } {
   return decode(token, secret)
 }

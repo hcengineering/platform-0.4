@@ -10,7 +10,7 @@
     "test": "heft test",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write 'src/**/*.ts' && eslint --fix src"
+    "format": "prettier --write src && eslint --fix src"
   },
   "devDependencies": {
     "@anticrm/platform-rig": "^0.4.0",

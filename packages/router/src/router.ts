@@ -77,7 +77,13 @@ export class Router<T> implements ApplicationRouter<T> {
   }
 
   addRoute<P>(patternText: string, matcher: Matcher<P>, defaults?: P): ApplicationRouter<P> {
-    const r = { patternText, pattern: parsePattern(patternText), matcher, defaults, variables: defaults ?? {} as unknown as P }
+    const r = {
+      patternText,
+      pattern: parsePattern(patternText),
+      matcher,
+      defaults,
+      variables: defaults ?? ({} as unknown as P)
+    }
     this.routes.push(r)
     return new RouteRouter(this, () => {
       this.selectRoute(r)

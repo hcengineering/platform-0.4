@@ -65,8 +65,8 @@ jobs:
             tests
             rush.json
             .prettierrc
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
   build-demo:
     needs: build
     runs-on: ubuntu-latest
@@ -91,8 +91,8 @@ jobs:
             tests
             rush.json
             .prettierrc
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
 
       - name: Build Demo
         run: |
@@ -101,7 +101,7 @@ jobs:
       
       - name: Deploy Demo
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.sha == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dev/prod/dist
@@ -139,8 +139,8 @@ jobs:
             tests
             rush.json
             .prettierrc
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
 
       - uses: getong/elasticsearch-action@v1.2
         with:
@@ -192,8 +192,8 @@ jobs:
             tests
             rush.json
             .prettierrc
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
 
       - name: Check files formatting
         run: |

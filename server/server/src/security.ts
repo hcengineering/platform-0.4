@@ -114,7 +114,9 @@ export class SecurityModel extends TxProcessor {
       let pulled: any[] = []
       if (isPredicate(spaceTx.operations.$pull.members)) {
         const preds = createPredicates(spaceTx.operations.$pull.members, 'members')
-        let temp = Array.from(this.allowedSpaces.keys()).map((p) => { return { members: p } }) as any[]
+        let temp = Array.from(this.allowedSpaces.keys()).map((p) => {
+          return { members: p }
+        }) as any[]
         for (const pred of preds) {
           temp = pred(temp)
         }

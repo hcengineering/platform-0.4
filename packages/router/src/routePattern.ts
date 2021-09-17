@@ -72,7 +72,11 @@ function extractFragment (lastPath: string, pattern: RoutePattern): string {
 }
 
 // Perform matching of current location with extraction of variables and constructing childLocation.
-export function matchLocation (pattern: RoutePattern, location: Location, defaults?: QueryType): {childLocation: Location, variables: QueryType, matched: boolean} {
+export function matchLocation (
+  pattern: RoutePattern,
+  location: Location,
+  defaults?: QueryType
+): { childLocation: Location, variables: QueryType, matched: boolean } {
   const variables: QueryType = {}
 
   const childLocation = newLocation()
@@ -89,19 +93,25 @@ export function matchLocation (pattern: RoutePattern, location: Location, defaul
   // Update fragment
   updateFragment(pattern, location, variables, childLocation)
 
-  childLocation.query = { }
+  childLocation.query = {}
 
   // Update Query
   updateQueries(pattern, location, variables, childLocation)
   return { variables, childLocation, matched: true }
 }
-function matchSegments (pattern: RoutePattern, path: string[], defaults: QueryType | undefined, variables: QueryType): number {
+function matchSegments (
+  pattern: RoutePattern,
+  path: string[],
+  defaults: QueryType | undefined,
+  variables: QueryType
+): number {
   let matched = 0
   for (const s of pattern.segments) {
     if (path.length > 0) {
       const value = path.splice(0, 1)[0]
       const msegm = matchSegment(s, value)
-      if (matchOrDefault(msegm, defaults)) { // Check if matched or has defaults
+      if (matchOrDefault(msegm, defaults)) {
+        // Check if matched or has defaults
         variables[msegm.key] = msegm.value
       }
     }
@@ -114,12 +124,12 @@ function matchOrDefault (msegm: { matched: boolean, key: string }, defaults?: Qu
   return msegm.matched || defaults?.[msegm.key] !== undefined
 }
 
-function hasVarDefaults (s: string, variables: QueryType, defaults?: QueryType): 0|1 {
+function hasVarDefaults (s: string, variables: QueryType, defaults?: QueryType): 0 | 1 {
   // Check if we had default value, then mark as matched
   const key = s.startsWith(':') ? s.substring(1) : ''
   const varVal = variables[key] !== undefined
   const defVal = defaults?.[key] !== undefined
-  return (varVal || defVal) ? 1 : 0
+  return varVal || defVal ? 1 : 0
 }
 
 function updateQueries (pattern: RoutePattern, location: Location, variables: QueryType, childLocation: Location): void {
@@ -137,7 +147,12 @@ function updateQueries (pattern: RoutePattern, location: Location, variables: Qu
   }
 }
 
-function updateFragment (pattern: RoutePattern, location: Location, variables: QueryType, childLocation: Location): void {
+function updateFragment (
+  pattern: RoutePattern,
+  location: Location,
+  variables: QueryType,
+  childLocation: Location
+): void {
   if (pattern.fragmentName !== '' && location.fragment !== undefined) {
     variables[pattern.fragmentName] = location.fragment
   } else {
@@ -149,7 +164,7 @@ function matchSegment (s: string, value: string): { matched: boolean, key: strin
   if (s.startsWith(':')) {
     return { matched: true, key: s.substring(1), value }
   }
-  return { matched: (s === value || regExpTest(s, value)), key: '', value: '' }
+  return { matched: s === value || regExpTest(s, value), key: '', value: '' }
 }
 
 function regExpTest (s: string, value: string): boolean {
@@ -159,4 +174,3 @@ function regExpTest (s: string, value: string): boolean {
     return false
   }
 }
-
