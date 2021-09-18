@@ -138,9 +138,24 @@ describe('memdb', () => {
       email: 'account@site.com',
       name: 'account'
     })
+    const account2 = await client.createDoc(core.class.Account, core.space.Model, {
+      email: 'account2@site.com',
+      name: 'account2'
+    })
+    const account3 = await client.createDoc(core.class.Account, core.space.Model, {
+      email: 'account3@site.com',
+      name: 'account3'
+    })
     await client.updateDoc(core.class.Space, core.space.Model, space._id, { $push: { members: account._id } })
     const txSpace = await client.findAll(core.class.Space, { _id: space._id })
     expect(txSpace[0].members).toEqual(expect.arrayContaining([account._id]))
+    expect(txSpace[0].members).toHaveLength(1)
+    await client.updateDoc(core.class.Space, core.space.Model, space._id, {
+      $push: { members: { $each: [account2._id, account3._id] } }
+    })
+    const result = await client.findAll(core.class.Space, { _id: space._id })
+    expect(result[0].members).toEqual(expect.arrayContaining([account._id, account2._id, account3._id]))
+    expect(result[0].members).toHaveLength(3)
   })
 
   it('check $push find', async () => {
@@ -189,16 +204,32 @@ describe('memdb', () => {
       email: 'account2@site.com',
       name: 'account2'
     })
+    const account3 = await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account3@site.com',
+      name: 'account3'
+    })
+    const account4 = await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account4@site.com',
+      name: 'account4'
+    })
     const space = await model.createDoc(core.class.Space, core.space.Model, {
       name: 'name',
       description: 'desc',
       private: false,
-      members: [account1._id, account2._id]
+      members: [account1._id, account2._id, account3._id, account4._id]
     })
     await model.updateDoc(core.class.Space, core.space.Model, space._id, { $pull: { members: account1._id } })
     const txSpace = await model.findAll(core.class.Space, { _id: space._id })
-    expect(txSpace[0].members).toEqual(expect.arrayContaining([account2._id]))
+    expect(txSpace[0].members).toEqual(expect.arrayContaining([account2._id, account3._id, account4._id]))
     expect(txSpace[0].members).not.toEqual(expect.arrayContaining([account1._id]))
+    await model.updateDoc(core.class.Space, core.space.Model, space._id, {
+      $pull: { members: { $in: [account3._id, account4._id] } }
+    })
+    const res = await model.findAll(core.class.Space, { _id: space._id })
+    expect(res[0].members).toEqual(expect.arrayContaining([account2._id]))
+    expect(res[0].members).not.toEqual(expect.arrayContaining([account1._id]))
+    expect(res[0].members).not.toEqual(expect.arrayContaining([account3._id]))
+    expect(res[0].members).not.toEqual(expect.arrayContaining([account4._id]))
   })
 
   it('limit and sorting', async () => {

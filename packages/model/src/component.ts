@@ -15,7 +15,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { Attribute, Class, PropertyType, Ref, Type } from '@anticrm/core'
+import type { Class, Ref, Type } from '@anticrm/core'
 import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 

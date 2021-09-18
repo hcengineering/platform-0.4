@@ -19,6 +19,7 @@ import recruiting from '@anticrm/recruiting'
 
 import CreateCandidatePool from './components/candidates/CreateCandidatePool.svelte'
 import CreateVacancy from './components/vacancies/CreateVacancy.svelte'
+import CreateApplication from './components/vacancies/CreateApplication.svelte'
 import CreateCandidate from './components/candidates/CreateCandidate.svelte'
 import EditCandidate from './components/candidates/EditCandidate.svelte'
 import Workspace from './components/Workspace.svelte'
@@ -29,6 +30,7 @@ export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.CreateCandidate, CreateCandidate)
   setResource(recruiting.component.EditCandidate, EditCandidate)
   setResource(recruiting.component.WorkspaceComponent, Workspace)
+  setResource(recruiting.component.CreateApplication, CreateApplication)
 
   return {}
 }

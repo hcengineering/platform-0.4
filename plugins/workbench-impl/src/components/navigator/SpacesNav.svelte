@@ -17,18 +17,22 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
   import { IconAdd } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
+  import { getRouter, showPopup } from '@anticrm/ui'
   import type { SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import workbench from '../../plugin'
   import MoreH from '../icons/MoreH.svelte'
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
+  import type { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
 
   export let model: SpacesNavModel
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
 
   let spaces: Space[] = []
+  let spaceInfo: Map<Ref<Space>, SpaceInfo> = new Map<Ref<Space>, SpaceInfo>()
   const client = getClient()
   const router = getRouter<WorkbenchRoute>()
   const accountId = client.accountId()
@@ -44,6 +48,20 @@
     })
   }
 
+  let lastModifiedQuery: QueryUpdater<SpaceInfo> | undefined
+  $: if (spaces.length > 0) {
+    lastModifiedQuery = client.query<SpaceInfo>(
+      lastModifiedQuery,
+      notification.class.SpaceInfo,
+      { objectId: { $in: spaces.map((p) => p._id) } },
+      (result) => {
+        spaceInfo.clear()
+        result.forEach((p) => spaceInfo.set(p.objectId as Ref<Space>, p))
+        spaceInfo = spaceInfo
+      }
+    )
+  }
+
   function toolActions (model: SpacesNavModel): Action[] {
     const result: Action[] = []
     const create = model.createComponent
@@ -52,7 +70,7 @@
         label: model.addSpaceLabel,
         icon: IconAdd,
         action: async (): Promise<void> => {
-          showModal(create, {})
+          showPopup(create, {}, 'right')
         }
       })
     }
@@ -60,11 +78,15 @@
       label: model.label,
       icon: MoreH,
       action: async (): Promise<void> => {
-        showModal(workbench.component.Spaces, {
-          _class: model.spaceClass,
-          spaceQuery: model.spaceQuery ?? {},
-          label: model.label
-        })
+        showPopup(
+          workbench.component.Spaces,
+          {
+            _class: model.spaceClass,
+            spaceQuery: model.spaceQuery ?? {},
+            label: model.label
+          },
+          'right'
+        )
       }
     })
     return result
@@ -73,25 +95,26 @@
   $: actions = toolActions(model)
 
   function selectSpace (id: Ref<Space>) {
-    router.navigate({ space: id, itemId: undefined })
+    router.navigate({ space: id, special: undefined })
   }
 </script>
 
 <div>
-  <!-- {#if !(model.hideIfEmpty ?? false) || spaces.length > 0} -->
-  <TreeNode label={model.label} {actions}>
-    {#each spaces as space}
-      <TreeItem
-        notifications={5}
-        component={model.spaceItem}
-        props={{ space: space }}
-        title={space.name}
-        icon={model.spaceIcon}
-        on:click={() => {
-          selectSpace(space._id)
-        }}
-      />
-    {/each}
-  </TreeNode>
-  <!-- {/if} -->
+  {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
+    <TreeNode label={model.label} {actions}>
+      {#each spaces as space}
+        <TreeItem
+          notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
+          changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
+          component={model.spaceItem}
+          props={{ space: space }}
+          title={space.name}
+          icon={model.spaceIcon}
+          on:click={() => {
+            selectSpace(space._id)
+          }}
+        />
+      {/each}
+    </TreeNode>
+  {/if}
 </div>

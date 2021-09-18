@@ -13,7 +13,8 @@
 // limitations under the License.
 //
 
-import { Component, component, mergeIds, parseId, StatusCode, Id } from '..'
+import { Component, component, mergeIds, parseId, StatusCode, Id, unknownStatus } from '..'
+import { unknownError } from '../index'
 
 describe('status', () => {
   it('should identify resources', () => {
@@ -77,5 +78,24 @@ describe('status', () => {
 
   it('should parse id without kind', () => {
     expect(parseId('comp.X' as Id)).toEqual({ component: 'comp', name: 'X' })
+  })
+
+  it('check unknown status', () => {
+    expect(unknownStatus('status')).toEqual({
+      code: 'status:status.UnknownError',
+      params: {
+        message: 'status'
+      },
+      severity: 'ERROR'
+    })
+  })
+  it('check unknown error', () => {
+    expect(unknownError(new Error('status'))).toEqual({
+      code: 'status:status.UnknownError',
+      params: {
+        message: 'status'
+      },
+      severity: 'ERROR'
+    })
   })
 })

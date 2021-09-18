@@ -14,14 +14,15 @@
 
   import { parseMessage } from '@anticrm/text'
   import MessageViewer from './MessageViewer.svelte'
-
-  interface DocRef {
-    _class: string
-    id: string
-  }
+  import type { ItemRefefence } from '../../types'
+  import { MessageNode } from '@anticrm/text'
 
   export let message: string
-  export let refAction: (doc: DocRef) => void = () => {}
+  export let refAction: (doc: ItemRefefence) => void = () => {}
+
+  let msg: MessageNode | undefined
+
+  $: msg = parseMessage(message)
 </script>
 
-<MessageViewer message={parseMessage(message)} {refAction} />
+<MessageViewer message={msg} {refAction} />

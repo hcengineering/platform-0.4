@@ -54,6 +54,8 @@ export interface IPopupItem {
   matcher?: (search: string) => boolean
 }
 
+export type PopupAlignment = HTMLElement | 'right' | 'float' | 'full'
+
 export type TooltipAligment = 'top' | 'bottom' | 'left' | 'right' | undefined
 
 export interface LabelAndProps {
@@ -92,3 +94,14 @@ export interface IconGroupItem {
 }
 
 export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
+
+export interface DropdownItem {
+  id: string
+  label: IntlString | string
+}
+
+export interface Person {
+  firstName?: string
+  lastName?: string
+  avatar?: string
+}

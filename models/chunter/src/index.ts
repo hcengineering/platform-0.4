@@ -14,12 +14,13 @@
 //
 
 import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
-import type { Domain, FullRefString, Ref } from '@anticrm/core'
+import { Domain, FullRefString, PresentationMode, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-import core, { MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
+import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
 import { Application } from '@anticrm/workbench'
 import chunter from './plugin'
+import notification from '@anticrm/notification'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
@@ -67,11 +68,13 @@ export function createModel (builder: Builder): void {
       navigatorModel: {
         specials: [
           {
+            id: 'direct',
             label: chunter.string.MessagesSpecial,
             component: chunter.component.CreateMessage,
             icon: chunter.icon.Chunter
           },
           {
+            id: 'threads',
             label: chunter.string.ThreadsSpecial,
             component: chunter.component.ThreadsView,
             icon: chunter.icon.Hashtag
@@ -96,10 +99,7 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: chunter.string.CreateChannel,
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader,
-            item: {
-              editComponent: chunter.component.ThreadsView
-            }
+            spaceHeader: chunter.component.SpaceHeader
           },
           {
             label: chunter.string.DirectMessages,
@@ -108,10 +108,7 @@ export function createModel (builder: Builder): void {
             spaceQuery: { direct: true, 'account.starred': { $ne: true } },
             addSpaceLabel: chunter.string.CreateDirectMessage,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader,
-            item: {
-              editComponent: chunter.component.ThreadsView
-            }
+            spaceHeader: chunter.component.SpaceHeader
           }
         ],
         spaceView: chunter.component.ChannelView
@@ -119,6 +116,23 @@ export function createModel (builder: Builder): void {
     },
     chunter.app.Chunter as Ref<Application>
   )
+
+  // Threads presenter
+  builder.createDoc(
+    core.class.DocumentPresenter,
+    {
+      objectClass: chunter.class.Message,
+      presentation: [
+        {
+          description: '',
+          mode: PresentationMode.Edit,
+          component: chunter.component.ThreadsView
+        }
+      ]
+    },
+    chunter.presenter.Threads
+  )
+
   builder.createDoc(
     chunter.class.Channel,
     {
@@ -192,6 +206,10 @@ export function createModel (builder: Builder): void {
             {
               sourceField: 'modifiedBy',
               targetField: 'userId'
+            },
+            {
+              sourceField: 'modifiedOn',
+              targetField: 'lastModified'
             }
           ]
         }
@@ -199,4 +217,36 @@ export function createModel (builder: Builder): void {
     },
     chunter.dd.ReplyOf
   )
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Message,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'message',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: chunter.class.Comment,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'message',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
 }

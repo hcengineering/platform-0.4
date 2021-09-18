@@ -73,7 +73,12 @@ export class TTitle extends TDerivedData implements Title {
 /**
  * @public
  */
-export const MARKDOWN_REFERENCE_PATTERN = /\[([a-zA-Z-\d]+)\]\(ref:\/\/([a-zA-Z.]+)#([a-zA-Z\d]+)\)/g
+export const MARKDOWN_REFERENCE_PATTERN = /\[([a-zA-Z-\d]+)\]\(ref:\/\/([a-zA-Z.]+)#([a-zA-Z-\d]+)\)/g
+
+/**
+ * @public
+ */
+export const MARKDOWN_MENTION_PATTERN = /\(ref:\/\/core.Account#([\w:.-]+)\)/g
 
 /**
  * @public

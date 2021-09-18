@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Introduce initial dropdown impl and person summary",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

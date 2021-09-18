@@ -13,19 +13,34 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import type { Data } from '@anticrm/core'
   import core from '@anticrm/core'
-  import type { Doc } from '@anticrm/core'
-  import { getPlugin } from '@anticrm/platform'
-  import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
-  import type { VacancySpace } from '@anticrm/recruiting'
-  import recruiting from '@anticrm/recruiting'
   import type { FSM } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
+  import { getPlugin } from '@anticrm/platform'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import type { Vacancy, VacancySpace } from '@anticrm/recruiting'
+  import recruiting from '@anticrm/recruiting'
+  import type { DropdownItem } from '@anticrm/ui'
+  import {
+    DatePicker,
+    Dialog,
+    Dropdown,
+    EditBox,
+    Grid,
+    IconEdit,
+    IconFile,
+    Section,
+    TextArea,
+    ToggleWithLabel
+  } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
+  import Details from '../icons/Details.svelte'
 
   const client = getClient()
   let selectedFSM: FSM | undefined = undefined
+  $: selectedFSM = fsmTmpls.find((x) => x._id === selectedFSMId)
+
   let fsmTmpls: FSM[] = []
   let lq: QueryUpdater<FSM> | undefined
   lq = client.query(lq, fsmPlugin.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
@@ -35,14 +50,20 @@
     }
   })
 
-  const vacancy: Omit<VacancySpace, keyof Doc> = {
+  const vacancy: Data<VacancySpace & Required<Vacancy>> = {
     name: '',
     description: '',
+    details: {
+      summary: '',
+      qualification: '',
+      experience: ''
+    },
     company: '',
     location: '',
+    type: '',
+    dueDate: new Date().getTime(),
     fsm: '' as VacancySpace['fsm'],
-    private: false,
-    salary: 0,
+    private: true,
     members: [client.accountId()]
   }
 
@@ -63,25 +84,44 @@
       fsm: dFSM._id
     })
   }
+
+  function onDateChange (event: any) {
+    vacancy.dueDate = event.details.getTime()
+  }
+
+  let fsmItems: DropdownItem[] = []
+  $: fsmItems = fsmTmpls.map((x, i) => ({
+    id: x._id,
+    label: x.name
+  }))
+  let selectedFSMId: string | undefined
 </script>
 
 <Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
-  <div class="content">
-    <EditBox label={recruiting.string.Name} bind:value={vacancy.name} />
-    <TextArea label={recruiting.string.Description} bind:value={vacancy.description} />
-    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} />
-    <ToggleWithLabel
-      label={recruiting.string.MakePrivate}
-      description={recruiting.string.MakePrivateDescription}
-      bind:on={vacancy.private}
-    />
-  </div>
+  <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
+    <Grid column={2}>
+      <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} />
+      <EditBox label={recruiting.string.Company} bind:value={vacancy.company} />
+      <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
+      <DatePicker selected={new Date(vacancy.dueDate)} on:change={onDateChange} title={recruiting.string.Due} />
+      <ToggleWithLabel
+        label={recruiting.string.MakePrivate}
+        description={recruiting.string.MakePrivateDescription}
+        bind:on={vacancy.private}
+      />
+    </Grid>
+  </Section>
+  <Section label={recruiting.string.VacancyNotes} icon={IconEdit}>
+    <Grid column={1}>
+      <TextArea label={recruiting.string.Summary} bind:value={vacancy.details.summary} />
+      <TextArea label={recruiting.string.Qualification} bind:value={vacancy.details.qualification} />
+      <TextArea label={recruiting.string.Experience} bind:value={vacancy.details.experience} />
+    </Grid>
+  </Section>
+  <Section label={recruiting.string.VacancyDetails} icon={Details}>
+    <Grid column={2}>
+      <EditBox label={recruiting.string.Location} bind:value={vacancy.location} />
+      <EditBox label={recruiting.string.VacancyType} bind:value={vacancy.type} />
+    </Grid>
+  </Section>
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-</style>

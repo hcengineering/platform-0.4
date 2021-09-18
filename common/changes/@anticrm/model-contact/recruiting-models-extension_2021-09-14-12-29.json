@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-contact",
+      "comment": "Introduce contact plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/model-contact"
+}

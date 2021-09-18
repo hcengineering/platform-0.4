@@ -20,8 +20,10 @@
   import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
   import Message from './Message.svelte'
+  import type { SpaceNotifications } from '@anticrm/notification'
 
   export let message: MessageModel
+  export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
   let query: QueryUpdater<Comment> | undefined
@@ -49,7 +51,7 @@
 
 <div class="channel-container">
   {#each comments as m (m._id)}
-    <Message thread message={m} />
+    <Message {notifications} thread message={m} />
   {/each}
 </div>
 

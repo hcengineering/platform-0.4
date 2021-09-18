@@ -15,8 +15,14 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import TaskView from './TaskView.svelte'
+  import task from '../plugin'
+  import { Label } from '@anticrm/ui'
 
   export let currentSpace: Ref<Space>
 </script>
 
-<TaskView query={{ space: currentSpace }} />
+{#if currentSpace}
+  <TaskView query={{ space: currentSpace }} />
+{:else}
+  <Label label={task.string.PleaseSelectSpace} />
+{/if}

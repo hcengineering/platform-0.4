@@ -13,10 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, getRouter } from '@anticrm/ui'
+  import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -26,24 +25,18 @@
 
   const columns = [
     {
-      label: recruiting.string.Name,
-      properties: [{ key: 'name', property: 'label' }],
+      label: recruiting.string.FirstName,
+      properties: [{ key: 'firstName', property: 'label' }],
       component: Label
     },
     {
-      label: recruiting.string.Position,
-      properties: [{ key: 'position', property: 'label' }],
-      component: Label
-    },
-    {
-      label: recruiting.string.Location,
-      properties: [{ key: 'location', property: 'label' }],
+      label: recruiting.string.LastName,
+      properties: [{ key: 'lastName', property: 'label' }],
       component: Label
     }
   ]
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   let data: Candidate[] = []
   let lq: QueryUpdater<Candidate> | undefined
   $: if (currentSpace !== prevSpace) {
@@ -55,7 +48,7 @@
   }
 
   function onClick (event: any) {
-    router.navigate({ itemId: event.detail.id })
+    selectDocument(event.detail)
   }
 </script>
 

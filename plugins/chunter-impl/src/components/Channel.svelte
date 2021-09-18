@@ -13,25 +13,18 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Message as MessageModel } from '@anticrm/chunter'
-  import type { Account, Ref, Timestamp } from '@anticrm/core'
+  import type { WithMessage } from '@anticrm/chunter'
+  import type { SpaceNotifications } from '@anticrm/notification'
   import Message from './Message.svelte'
 
-  export let messages: MessageData[] = []
+  export let messages: WithMessage[] = []
+  export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
   let div: HTMLElement
-
-  interface MessageData {
-    _id: Ref<MessageModel>
-    message: string
-    modifiedOn: Timestamp
-    createOn: Timestamp
-    modifiedBy: Ref<Account>
-  }
 </script>
 
 <div class="flex-col" bind:this={div}>
   {#each messages as m (m._id)}
-    <Message message={m} {thread} />
+    <Message message={m} {thread} {notifications} />
   {/each}
 </div>

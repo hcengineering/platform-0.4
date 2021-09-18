@@ -21,8 +21,10 @@ import {
   DerivedData,
   DerivedDataDescriptor,
   Doc,
+  DocumentPresenter,
   Domain,
   DOMAIN_MODEL,
+  PresentationMode,
   Ref,
   Timestamp
 } from '@anticrm/core'
@@ -112,4 +114,16 @@ export function createModel (builder: Builder): void {
     },
     calendar.dd.NameTitleIndex
   )
+
+  // P R E S E N T E R S
+  builder.createDoc<DocumentPresenter<Event>>(core.class.DocumentPresenter, {
+    objectClass: calendar.class.Event,
+    presentation: [
+      {
+        component: calendar.component.EditEvent,
+        description: 'Event editor',
+        mode: PresentationMode.Edit
+      }
+    ]
+  })
 }

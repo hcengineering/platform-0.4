@@ -15,7 +15,8 @@
 //
 
 import type { Doc, PropertyType } from './classes'
-import { deepEqual } from 'fast-equals'
+import { createPredicates, isPredicate } from './predicate'
+import copy from 'fast-copy'
 
 /**
  * @public
@@ -25,11 +26,19 @@ export type OperatorFunc = (doc: Doc, op: object) => void
 function $push (document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
   for (const key in keyval) {
+    let pushed: any[] = []
+    if (keyval[key].$each !== undefined) {
+      for (const item of keyval[key].$each) {
+        pushed.push(item)
+      }
+    } else {
+      pushed = [keyval[key]]
+    }
     const arr: Array<any> = doc[key]
     if (arr === undefined) {
-      doc[key] = [keyval[key]]
+      doc[key] = pushed
     } else {
-      arr.push(keyval[key])
+      arr.push(...pushed)
     }
   }
 }
@@ -38,7 +47,18 @@ function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
   for (const key in keyval) {
     const arr: Array<any> = doc[key]
     if (arr !== undefined) {
-      doc[key] = arr.filter((k) => !deepEqual(k, keyval[key]))
+      let pulled: any[] = []
+      if (isPredicate(keyval[key])) {
+        const preds = createPredicates(keyval[key], undefined)
+        let temp = copy(arr)
+        for (const pred of preds) {
+          temp = pred(temp)
+        }
+        pulled = temp
+      } else {
+        pulled = [keyval[key]]
+      }
+      doc[key] = arr.filter((k) => !pulled.includes(k))
     }
   }
 }

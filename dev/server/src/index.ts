@@ -17,6 +17,7 @@ import { getMongoClient } from '@anticrm/mongo'
 import { startServer } from '@anticrm/server'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { newAuthServer } from './auth'
+import builder from '@anticrm/model-all'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -32,7 +33,7 @@ async function start (): Promise<void> {
 
   const db = client.db('accounts')
 
-  await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri })
+  await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri, txes: builder.getTxes() })
 
   const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true })
 
@@ -47,13 +48,19 @@ async function start (): Promise<void> {
     }
   }
 
-  if ((await accounts.findWorkspace(defaultWorkspace)) === undefined) {
-    await accounts.createWorkspace(defaultWorkspace, defaultWorkspaceOrg)
-
-    await accounts.addWorkspace(john, defaultWorkspace)
-    await accounts.addWorkspace(brian, defaultWorkspace)
+  let workspaceId = (await accounts.findWorkspace(defaultWorkspace))?._id
+  if (workspaceId === undefined) {
+    workspaceId = await accounts.createWorkspace(defaultWorkspace, defaultWorkspaceOrg)
   }
 
+  for (const account of [john, brian]) {
+    const accountInfo = await accounts.findAccount(account)
+    if (accountInfo !== undefined) {
+      if (!accountInfo.workspaces.includes(workspaceId)) {
+        await accounts.addWorkspace(account, defaultWorkspace)
+      }
+    }
+  }
   console.log('Serve and Auth server are up and running')
 }
 console.log('Starting Server + Auth Server')

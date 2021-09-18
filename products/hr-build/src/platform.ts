@@ -22,6 +22,7 @@ import chunter from '@anticrm/chunter'
 import task from '@anticrm/task'
 import recruiting from '@anticrm/recruiting'
 import fsm from '@anticrm/fsm'
+import calendar from '@anticrm/calendar'
 
 import '@anticrm/ui-assets'
 import '@anticrm/chunter-assets'
@@ -29,6 +30,10 @@ import '@anticrm/task-assets'
 import '@anticrm/login-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
+import '@anticrm/calendar-assets'
+
+// import '@anticrm/meeting-assets'
+// import meeting from '@anticrm/meeting'
 
 export function configurePlatform (): void {
   addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
@@ -39,4 +44,8 @@ export function configurePlatform (): void {
   addLocation(task, async () => await import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
+
+  addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
+
+  // addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
 }

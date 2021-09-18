@@ -8,7 +8,7 @@
     "lint": "eslint src",
     "dev": "ts-node ./src/index.ts",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && eslint --fix src"
+    "format": "prettier --write src && eslint --fix src"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -49,6 +49,7 @@
     "@anticrm/status": "~0.4.2",
     "@anticrm/server": "~0.4.0",
     "@anticrm/workspaces": "~0.4.0",
-    "@anticrm/mongo": "~0.4.0"
+    "@anticrm/mongo": "~0.4.0",
+    "@anticrm/model-all": "~0.4.0"
   }
 }

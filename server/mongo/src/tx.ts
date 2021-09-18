@@ -44,11 +44,6 @@ export class TxStorage implements Storage {
     const total = await cursor.count()
     if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
     const resultArray = await cursor.toArray()
-    return Object.assign(
-      resultArray
-        .map(mongoUnescape)
-        .map(mongoReplaceNulls),
-      { total }
-    )
+    return Object.assign(resultArray.map(mongoUnescape).map(mongoReplaceNulls), { total })
   }
 }

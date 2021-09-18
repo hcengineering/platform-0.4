@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-import type { Class, Ref, Obj, Doc } from '@anticrm/core'
+import { Class, Ref, Obj, Doc, ClassifierKind, Domain, Space, Timestamp, Account, DOMAIN_MODEL } from '@anticrm/core'
 import { Model, Prop, TypeString, Builder } from '../dsl'
-import core from '../component'
+import core from '..'
 
 function removeIds (txes: Doc[]): void {
   txes.forEach((i) => {
@@ -159,5 +159,44 @@ describe('dsl', () => {
     const txes2 = builder2.getTxes()
     removeIds(txes2)
     expect(txes).toEqual(valid)
+  })
+
+  it('check document options', () => {
+    const builder = new Builder()
+
+    @Model(core.class.Obj, core.class.Obj, DOMAIN_MODEL)
+    class TObj implements Obj {
+      _class!: Ref<Class<this>>
+    }
+
+    const MyClassId = 'class:test.MyClass' as Ref<Class<Obj>>
+    @Model(MyClassId, core.class.Obj, DOMAIN_MODEL)
+    class MyClass extends TObj implements Class<Doc> {
+      @Prop(TypeString()) name!: string
+
+      _id!: Ref<this>
+      space!: Ref<Space>
+      modifiedOn!: Timestamp
+      modifiedBy!: Ref<Account>
+      createOn!: Timestamp
+      kind!: ClassifierKind
+      extends!: Ref<Class<Obj>>
+      domain!: Domain
+    }
+    builder.createModel(TObj, MyClass)
+
+    builder.createDoc(
+      MyClassId,
+      {
+        kind: ClassifierKind.CLASS
+      },
+      core.class.Class,
+      {
+        modifiedBy: core.account.System,
+        createOn: Date.now(),
+        modifiedOn: Date.now()
+      }
+    )
+    expect(builder.getTxes().length).toEqual(4)
   })
 })

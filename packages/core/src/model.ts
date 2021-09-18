@@ -38,7 +38,7 @@ export async function findModelTxs (storage: Storage, accountId: Ref<Account>): 
  * @public
  */
 export async function buildModel (existingTxes: Tx[]): Promise<{ hierarchy: Hierarchy, model: ModelDb }> {
-  existingTxes = existingTxes.filter(tx => tx.modifiedBy === core.account.System)
+  existingTxes = existingTxes.filter((tx) => tx.modifiedBy === core.account.System)
   const hierarchy = new Hierarchy()
   const model = new ModelDb(hierarchy)
   // Construct existing model
@@ -51,7 +51,7 @@ export async function buildModel (existingTxes: Tx[]): Promise<{ hierarchy: Hier
 
 function diffAttributes (doc: Data<Doc>, newDoc: Data<Doc>): DocumentUpdate<Doc> {
   const result: DocumentUpdate<any> = {}
-  const allDocuments = new Map((Object.entries(doc)))
+  const allDocuments = new Map(Object.entries(doc))
   const newDocuments = new Map(Object.entries(newDoc))
 
   for (const [key, value] of allDocuments) {
@@ -79,8 +79,8 @@ export async function generateModelDiff (existingTxes: Tx[], txes: Tx[]): Promis
   const { model } = await buildModel(existingTxes)
   const { model: newModel } = await buildModel(txes)
 
-  const allDocuments = new Map((await model.findAll(core.class.Doc, {})).map(d => [d._id, d]))
-  const newDocuments = new Map((await newModel.findAll(core.class.Doc, {})).map(d => [d._id, d]))
+  const allDocuments = new Map((await model.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
+  const newDocuments = new Map((await newModel.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
 
   const newTxes: Tx[] = []
 
@@ -151,4 +151,3 @@ function handleUpdateRemove (newDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx<Doc>[
     }
   }
 }
-

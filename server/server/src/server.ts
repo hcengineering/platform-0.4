@@ -46,6 +46,21 @@ export function parseAddress (addr: string): net.AddressInfo {
 /**
  * @public
  */
+export function convertAddress (
+  addr: net.AddressInfo | string | null,
+  host: string | undefined,
+  port: number
+): net.AddressInfo {
+  if (typeof addr === 'string') {
+    return parseAddress(addr)
+  } else {
+    return addr ?? { family: 'IPv4', address: host ?? 'locahost', port: port }
+  }
+}
+
+/**
+ * @public
+ */
 export class Server {
   connections = new Map<string /* clientId */, WebSocket>()
   server: WebSocketServer
@@ -69,7 +84,9 @@ export class Server {
     this.server.handleUpgrade(request, socket, head, (ws) => {
       this.handleConnection(ws, token).catch((err) => {
         this.traceError(err)
-        ws.close()
+        socket.write('HTTP/1.1 400 Bad Request\r\n\r\n')
+        socket.destroy()
+        // ws.close()
       })
     })
   }
@@ -94,12 +111,7 @@ export class Server {
   }
 
   address (): net.AddressInfo {
-    const addr = this.httpServer.address()
-    if (typeof addr === 'string') {
-      return parseAddress(addr)
-    } else {
-      return addr ?? { family: 'IPv4', address: this.host ?? 'locahost', port: this.port }
-    }
+    return convertAddress(this.httpServer.address(), this.host, this.port)
   }
 
   private async handleConnection (ws: WebSocket, token: string): Promise<void> {
@@ -117,6 +129,8 @@ export class Server {
 
     this.registerOnClose(ws, clientId)
     this.registerOnError(ws, clientId)
+
+    await storage
   }
 
   private async handleRequest (ws: WebSocket, storage: Storage, request: Request<any>): Promise<void> {
@@ -125,20 +139,21 @@ export class Server {
     try {
       const result = await Reflect.apply(callOp, storage, params)
       ws.send(serialize({ id, result }))
-    } catch (error) {
+    } catch (error: any) {
       ws.send(
         serialize({
           id,
-          error: error instanceof PlatformError
-            ? new Status(error.status.severity, error.status.code, {
-              ...error.status.params,
-              message: error.message,
-              stack: error.stack
-            })
-            : new Status(Severity.ERROR, Code.BadRequest, {
-              message: error.message,
-              stack: error.stack
-            })
+          error:
+            error instanceof PlatformError
+              ? new Status(error.status.severity, error.status.code, {
+                ...error.status.params,
+                message: error.message,
+                stack: error.stack
+              })
+              : new Status(Severity.ERROR, Code.BadRequest, {
+                message: error.message,
+                stack: error.stack
+              })
         })
       )
     }

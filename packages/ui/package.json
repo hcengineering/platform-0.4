@@ -7,12 +7,12 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "node ./esbuild",
+    "build": "node --max-old-space-size=4096 ./esbuild",
     "build:clean": "rm -rf ./lib && node ./esbuild",
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write --plugin-search-dir=. 'src/**/*.{ts*,js*,svelte}' && eslint --fix src",
+    "format": "prettier --write --plugin-search-dir=. src && eslint --fix src",
     "svelte-check": "svelte-check"
   },
   "peerDependencies": {
@@ -40,7 +40,9 @@
     "svelte-check": "^2.1.0",
     "eslint-svelte3-preprocess": "~0.0.5",
     "svelte-preprocess": "^4.7.0",
-    "svelte-loader": "^3.1.0"
+    "svelte-loader": "^3.1.0",
+
+    "@types/lodash.debounce": "~4.0.6"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
@@ -50,6 +52,7 @@
     "@anticrm/text": "~0.4.0",
     "@anticrm/richeditor": "~0.4.0",
     "@anticrm/core": "~0.4.0",    
-    "@anticrm/router": "~0.4.0"    
+    "@anticrm/router": "~0.4.0",
+    "lodash.debounce":"~4.0.8"
   }
 }

@@ -19,7 +19,6 @@ interface IState {
   quote: (str: string) => string
   repeat: (str: string, n: number) => string
   markString: (mark: MessageMark, open: boolean, parent: MessageNode, index: number) => string
-  getEnclosingWhitespace: (text: string) => { leading: string, trailing: string }
 }
 
 type NodeProcessor = (state: IState, node: MessageNode, parent: MessageNode, index: number) => void
@@ -249,7 +248,6 @@ export class MarkdownState implements IState {
   flushClose (size: number): void {
     if (this.closed) {
       if (!this.atBlank()) this.out += '\n'
-      if (size == null) size = 2
       if (size > 1) {
         this.addDelim(size)
       }
@@ -320,7 +318,6 @@ export class MarkdownState implements IState {
   // :: (Node)
   // Render the given node as a block.
   render (node: MessageNode, parent: MessageNode, index: number): void {
-    if (typeof parent === 'number') throw new Error('!')
     if (this.nodes[node.type] === undefined) {
       throw new Error('Token type `' + node.type + '` not supported by Markdown renderer')
     }
@@ -616,16 +613,5 @@ export class MarkdownState implements IState {
     const info = this.marks[mark.type]
     const value = open ? info.open : info.close
     return typeof value === 'string' ? value : value(this, mark, parent, index) ?? ''
-  }
-
-  // :: (string) → { leading: ?string, trailing: ?string }
-  // Get leading and trailing whitespace from a string. Values of
-  // leading or trailing property of the return object will be undefined
-  // if there is no match.
-  getEnclosingWhitespace (text: string): { leading: string, trailing: string } {
-    return {
-      leading: (text.match(/^(\s+)/) ?? [])[0],
-      trailing: (text.match(/(\s+)$/) ?? [])[0]
-    }
   }
 }

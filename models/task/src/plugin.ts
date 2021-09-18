@@ -17,6 +17,7 @@ import task, { Project } from '@anticrm/task'
 import { mergeIds, AnyComponent } from '@anticrm/status'
 
 import { Application } from '@anticrm/workbench'
+import {} from '@anticrm/platform'
 import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
 
 export default mergeIds(task, {
@@ -26,7 +27,13 @@ export default mergeIds(task, {
     MyTasksView: '' as AnyComponent,
     FavoriteView: '' as AnyComponent,
     CreateTask: '' as AnyComponent,
-    EditTask: '' as AnyComponent
+    EditTask: '' as AnyComponent,
+
+    // An preview to be inside channel
+    TaskPreview: '' as AnyComponent,
+
+    // An one line reference to be shown during editing, should allow to select different task
+    TaskRefView: '' as AnyComponent
   },
   ids: {
     Application: '' as Ref<Application>

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task",
+      "comment": "chunter notification",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task"
+}

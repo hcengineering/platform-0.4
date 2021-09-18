@@ -14,9 +14,10 @@
 //
 
 import chunter, { Channel } from '@anticrm/chunter'
-import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
+import { DerivedDataDescriptor, Doc, DocumentPresenter, Ref } from '@anticrm/core'
 import type { AnyComponent, IntlString } from '@anticrm/status'
 import { mergeIds } from '@anticrm/status'
+import {} from '@anticrm/platform'
 
 /**
  * NOTICE:
@@ -41,6 +42,9 @@ export default mergeIds(chunter, {
   channel: {
     General: '' as Ref<Channel>,
     Random: '' as Ref<Channel>
+  },
+  presenter: {
+    Threads: '' as Ref<DocumentPresenter<Doc>>
   },
   dd: {
     MessageReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,

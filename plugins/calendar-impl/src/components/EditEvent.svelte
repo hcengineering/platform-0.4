@@ -17,9 +17,8 @@
   import type { DerivedEvent, Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
-  import { getRouter, IconClose, ScrollBox } from '@anticrm/ui'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { IconClose, ScrollBox } from '@anticrm/ui'
 
   import EventEditor from './EventEditor.svelte'
   import EventViewer from './EventViewer.svelte'
@@ -27,7 +26,6 @@
   export let id: Ref<Event | DerivedEvent>
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
   let event: Event | undefined
   let prevEvent: Event | undefined
 
@@ -66,7 +64,7 @@
   }
 
   function onClose () {
-    router.navigate({ itemId: undefined })
+    selectDocument()
   }
 </script>
 

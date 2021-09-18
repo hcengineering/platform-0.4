@@ -50,13 +50,33 @@ export interface Response<R> {
  * @public
  */
 export function serialize (object: Request<any> | Response<any>): string {
-  return JSON.stringify(object)
+  return JSON.stringify(object, replacer)
 }
 /**
  * @public
  */
 export function readResponse<D> (response: string): Response<D> {
-  return JSON.parse(response)
+  return JSON.parse(response, reviver)
+}
+
+function replacer (key: string, value: any): any {
+  if (value instanceof Map) {
+    return {
+      dataType: 'Map',
+      value: Array.from(value.entries())
+    }
+  } else {
+    return value
+  }
+}
+
+function reviver (key: string, value: any): any {
+  if (typeof value === 'object' && value !== null) {
+    if (value.dataType === 'Map') {
+      return new Map(value.value)
+    }
+  }
+  return value
 }
 
 /**

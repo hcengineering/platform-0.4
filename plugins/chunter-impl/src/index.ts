@@ -23,6 +23,8 @@ import ThreadsView from './components/ThreadsView.svelte'
 import SpaceItem from './components/SpaceItem.svelte'
 import SpaceHeader from './components/SpaceHeader.svelte'
 import chunter from './plugin'
+import OembedPresenter from './components/presenters/Oembed.svelte'
+import Github_IssuePreview from './components/presenters/Github_IssuePreview.svelte'
 
 export { default as Channel } from './components/Channel.svelte'
 export { default as ReferenceInput } from './components/ReferenceInput.svelte'
@@ -36,6 +38,9 @@ export default async (): Promise<ChunterService> => {
   setResource(chunter.component.ThreadsView, ThreadsView)
   setResource(chunter.component.SpaceItem, SpaceItem)
   setResource(chunter.component.SpaceHeader, SpaceHeader)
+
+  setResource(chunter.component.OembedPreview, OembedPresenter)
+  setResource(chunter.component.GithubIssuePreview, Github_IssuePreview)
 
   return {}
 }

@@ -13,39 +13,42 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import {
-    EditBox,
-    UserBox,
-    ScrollBox,
-    IconClose,
-    DatePicker,
-    Tabs,
-    Section,
-    IconFile,
-    IconComments,
-    IconToDo,
-    Grid,
-    Row,
-    CheckBoxList
-  } from '@anticrm/ui'
-  import { getRouter } from '@anticrm/ui'
-  import { getClient } from '@anticrm/workbench'
-  import type { WorkbenchRoute } from '@anticrm/workbench'
-  import type { Task } from '@anticrm/task'
-  import task from '../plugin'
-  import core from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
-  import DescriptionEditor from './DescriptionEditor.svelte'
-  // import CheckList from './CheckList.svelte'
-  import CommentsView from './CommentsView.svelte'
-  import StatusPicker from './StatusPicker.svelte'
+  import core, { Space } from '@anticrm/core'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
+  import type { Task } from '@anticrm/task'
+  import {
+    CheckBoxList,
+    DatePicker,
+    EditBox,
+    Grid,
+    IconClose,
+    IconComments,
+    IconFile,
+    IconToDo,
+    Row,
+    ScrollBox,
+    Section,
+    Tabs,
+    UserBox
+  } from '@anticrm/ui'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { afterUpdate, onDestroy } from 'svelte'
+  import task from '../plugin'
+  import CommentsView from './CommentsView.svelte'
+  import DescriptionEditor from './DescriptionEditor.svelte'
+  import StatusPicker from './StatusPicker.svelte'
 
   const client = getClient()
-  const router = getRouter<WorkbenchRoute>()
+  const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
+  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  let notification: SpaceNotifications | undefined
+  let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
 
@@ -57,6 +60,7 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
+      notification = notifications.get(result[0].space)
       item = result[0]
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
@@ -68,8 +72,23 @@
     return item
   }
 
+  onDestroy(async () => {
+    if (notification !== undefined) {
+      notificationClient.readNow(notification, id)
+    }
+  })
+
+  afterUpdate(async () => {
+    if (prevId !== id) {
+      if (prevId !== undefined && notification !== undefined) {
+        notificationClient.readNow(notification, prevId)
+      }
+      prevId = id
+    }
+  })
+
   function close () {
-    router.navigate({ itemId: undefined })
+    selectDocument()
   }
 
   const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
@@ -100,7 +119,7 @@
               label={task.string.TaskName}
               bind:value={item.name}
               on:blur={(e) => {
-                update('name', item.name)
+                update('name', item?.name)
               }}
             />
             <StatusPicker
@@ -129,7 +148,9 @@
             />
             <Row>
               <DescriptionEditor
+                currentSpace={item.space}
                 label={task.string.TaskDescription}
+                placeholder={task.string.TaskDescription}
                 on:blur={(e) => {
                   update('description', item?.description)
                 }}
@@ -139,7 +160,7 @@
           </Grid>
         </Section>
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView currentSpace={item.space} taskId={item._id} />
+          <CommentsView notifications={notification} currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === task.string.Attachment}
         <Grid column={1} />

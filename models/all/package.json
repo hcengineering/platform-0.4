@@ -10,7 +10,7 @@
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && eslint --fix src",
+    "format": "prettier --write src && eslint --fix src",
     "gen-model": "ts-node src/genmodel.ts"
   },
   "devDependencies": {
@@ -38,9 +38,11 @@
     "@anticrm/model-chunter":"~0.4.0",
     "@anticrm/model-task":"~0.4.0",
     "@anticrm/model-core":"~0.4.0",
+    "@anticrm/model-contact": "~0.4.0",
     "@anticrm/model-meeting":"~0.4.0",
     "@anticrm/model-fsm":"~0.4.0",
     "@anticrm/model-recruiting":"~0.4.0",
-    "@anticrm/model-calendar": "~0.4.0"
+    "@anticrm/model-calendar": "~0.4.0",
+    "@anticrm/model-notification": "~0.4.0"
   }
 }

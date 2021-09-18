@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-impl",
+      "comment": "chunter notification",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-impl"
+}

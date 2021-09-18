@@ -14,24 +14,41 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { Doc, Ref, Space } from '@anticrm/core'
-  import { EditBox, Dialog, TextArea } from '@anticrm/ui'
+  import type { Data, Space } from '@anticrm/core'
+  import { Dialog } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { Candidate, Resume } from '@anticrm/recruiting'
+  import type { Candidate } from '@anticrm/recruiting'
+  import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
+
+  import CandidateEditor from './CandidateEditor.svelte'
 
   const dispatch = createEventDispatcher()
 
   export let space: Space
   const client = getClient()
 
-  const candidate: Omit<Candidate, keyof Doc> = {
-    name: '',
+  const candidate: Candidate & Data<Required<Candidate>> = {
+    firstName: '',
+    lastName: '',
+    avatar: 'https://robohash.org/prefix?set=set4',
+    email: '',
+    phone: '',
     bio: '',
-    position: '',
-    location: '',
-    resume: '' as Ref<Resume>
-  }
+    status: CandidateStatus.AvailableForHire,
+    employment: {
+      position: '',
+      experience: 0
+    },
+    address: {
+      city: '',
+      country: '',
+      street: '',
+      zip: ''
+    },
+    salaryExpectation: 0,
+    resume: ''
+  } as Candidate & Data<Required<Candidate>>
 
   async function create () {
     await client.createDoc(recruiting.class.Candidate, space._id, candidate)
@@ -44,18 +61,5 @@
   okAction={create}
   on:close={() => dispatch('close')}
 >
-  <div class="content">
-    <EditBox label={recruiting.string.Name} bind:value={candidate.name} />
-    <TextArea label={recruiting.string.Bio} bind:value={candidate.bio} />
-    <EditBox label={recruiting.string.Position} bind:value={candidate.position} />
-    <EditBox label={recruiting.string.Location} bind:value={candidate.location} />
-  </div>
+  <CandidateEditor {candidate} />
 </Dialog>
-
-<style lang="scss">
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-</style>

@@ -1,7 +1,7 @@
 {
   "name": "@anticrm/server",
   "version": "0.4.0",
-  "main": "lib/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "build": "heft build",
     "test": "heft test",
@@ -10,7 +10,7 @@
     "shutdown": "ts-node src/serverctl.ts",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write src/**/*.ts && eslint --fix src"
+    "format": "prettier --write src && eslint --fix src"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
@@ -47,6 +47,7 @@
     "@anticrm/workspace": "~0.4.0",
     "@anticrm/mongo": "~0.4.0",
     "gravatar": "^1.8.1",
-    "@anticrm/calendar-mappers": "~0.4.0"    
+    "@anticrm/calendar-mappers": "~0.4.0",
+    "@anticrm/notification-mappers": "~0.4.0"
   }
 }

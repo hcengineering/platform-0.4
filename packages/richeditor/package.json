@@ -9,10 +9,10 @@
   "svelte": "src/index.ts",
   "scripts": {
     "build": "rm -rf ./lib && node ./esbuild",
-    "test": "jest",
+    "test": "CI=true jest --silent",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
-    "format": "prettier --write --plugin-search-dir=. src/**/*.{ts*,svelte} && eslint --fix src",
+    "format": "prettier --write --plugin-search-dir=. src && eslint --fix src",
     "svelte-check": "svelte-check"
   },
   "peerDependencies": {

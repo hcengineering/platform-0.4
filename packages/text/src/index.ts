@@ -18,6 +18,7 @@ import { MarkdownParser } from './parser'
 import { MarkdownState } from './serializer'
 
 export * from './model'
+export { traverseAllMarks } from './node'
 
 /**
  * @public
@@ -29,7 +30,7 @@ export function parseMessage (message: string): MessageNode {
 /**
  * @public
  */
-export function parseMessageMarkdown (message: string): MessageNode {
+export function parseMessageMarkdown (message?: string): MessageNode {
   const parser = new MarkdownParser()
   return parser.parse(message ?? '')
 }

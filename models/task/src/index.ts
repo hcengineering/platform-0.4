@@ -13,16 +13,14 @@
 // limitations under the License.
 //
 
+import chunter, { CommentRef } from '@anticrm/chunter'
+import { Account, DocumentPresenter, Domain, PresentationMode, Ref, ShortRef } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
-
-import core, { TDoc, TSpace, MARKDOWN_REFERENCE_PATTERN } from '@anticrm/model-core'
-import { Project, CheckListItem, Task, TaskStatus } from '@anticrm/task'
-import { Account, Domain, Ref, ShortRef } from '@anticrm/core'
-import { Comment } from '@anticrm/chunter'
-import chunter from '@anticrm/chunter'
+import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
+import notification from '@anticrm/notification'
 
 import workbench from '@anticrm/model-workbench'
-
+import { CheckListItem, Project, Task, TaskStatus } from '@anticrm/task'
 import task from './plugin'
 
 const DOMAIN_TASK = 'task' as Domain
@@ -45,7 +43,7 @@ export class TTask extends TDoc implements Task {
   status!: TaskStatus
   dueTo!: Date
   checkItems!: CheckListItem[]
-  comments!: Array<Ref<Comment>>
+  comments!: CommentRef[]
 }
 
 /**
@@ -61,11 +59,13 @@ export function createModel (builder: Builder): void {
       navigatorModel: {
         specials: [
           {
+            id: 'my-tasks',
             label: task.string.MyTasks,
             component: task.component.MyTasksView,
             icon: task.icon.Task
           },
           {
+            id: 'favourite',
             label: task.string.Favorite,
             component: task.component.FavoriteView,
             icon: task.icon.Star
@@ -138,9 +138,51 @@ export function createModel (builder: Builder): void {
         {
           sourceField: 'replyOf',
           targetField: 'comments'
+        },
+        {
+          sourceField: 'modifiedOn',
+          targetField: 'lastModified'
         }
       ]
     },
     task.dd.ReplyOf
   )
+
+  builder.createDoc(core.class.DerivedDataDescriptor, {
+    sourceClass: task.class.Task,
+    targetClass: notification.class.SpaceNotifications,
+    collections: [
+      {
+        sourceField: 'description',
+        targetField: 'notificatedObjects',
+        sourceFieldPattern: {
+          pattern: MARKDOWN_MENTION_PATTERN.source,
+          multDoc: true,
+          group: 1
+        }
+      }
+    ]
+  })
+
+  // P R E S E N T E R S
+  builder.createDoc<DocumentPresenter<Task>>(core.class.DocumentPresenter, {
+    objectClass: task.class.Task,
+    presentation: [
+      {
+        component: task.component.TaskRefView,
+        description: 'Task Ref',
+        mode: PresentationMode.Link
+      },
+      {
+        component: task.component.TaskPreview,
+        description: 'Task Preview',
+        mode: PresentationMode.Preview
+      },
+      {
+        component: task.component.EditTask,
+        description: 'Task editor',
+        mode: PresentationMode.Edit
+      }
+    ]
+  })
 }

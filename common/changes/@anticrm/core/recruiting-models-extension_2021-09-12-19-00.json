@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Introduce Person model",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}

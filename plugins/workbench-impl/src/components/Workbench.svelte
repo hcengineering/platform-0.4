@@ -13,13 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Space } from '@anticrm/core'
+  import type { Ref, Space } from '@anticrm/core'
   import core, { matchDocument } from '@anticrm/core'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import { Component, Splitter, TooltipInstance } from '@anticrm/ui'
+  import { Component, TooltipInstance, Popup } from '@anticrm/ui'
   import { newRouter } from '@anticrm/ui'
-  import type { NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
+  import type { Application, NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { setContext } from 'svelte'
   import ActivityStatus from './ActivityStatus.svelte'
@@ -30,6 +30,10 @@
   import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   import { buildUserSpace } from './utils/space.utils'
+  import type { SpaceNotifications } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
+  import type { AnyComponent } from '@anticrm/status'
+  import AsideDocument from './AsideDocument.svelte'
 
   export let client: PresentationClient
   let account = client.accountId()
@@ -39,35 +43,35 @@
 
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
+  let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
 
   let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
   let spaceModel: SpacesNavModel | undefined
 
-  let currentSpecial: number = -1
-
   let currentRoute: WorkbenchRoute = {}
 
-  const router = newRouter<WorkbenchRoute>(
-    '?app&space&itemId',
-    (match) => {
-      if (currentRoute?.app !== undefined && currentRoute?.app !== match.app) {
-        // Remove itemId if app is switched
-        match.itemId = undefined
-        match.space = undefined
-        router.navigate({ itemId: undefined, space: undefined })
-      }
-      currentRoute = match
-      currentSpecial = -1
-    },
-    {}
-  )
+  let aside: AsideDocument
+
+  function updateApp (app?: Ref<Application>): void {
+    if (currentRoute?.app !== undefined && currentRoute?.app !== app) {
+      router.navigate({ space: undefined, special: undefined })
+    }
+    if (app !== currentRoute.app) {
+      spaceModel = undefined
+    }
+  }
+
+  const router = newRouter<WorkbenchRoute>('?app&space&browse&special', (match) => {
+    updateApp(match.app)
+    currentRoute = match
+
+    aside?.handleRoute(match.browse)
+  })
 
   function updateSpaceModel (space: Space, navigatorModel: NavigatorModel): SpacesNavModel | undefined {
     for (const sm of navigatorModel.spaces ?? []) {
       if (sm.spaceClass === space._class && matchDocument(space, sm.spaceQuery ?? {})) {
-        // TODO: Add inheritance check.
-        // We have space model matched, check query
         return sm
       }
     }
@@ -84,6 +88,19 @@
   })
 
   let spaceQuery: QueryUpdater<Space> | undefined
+  let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
+  notificationQuery = client.query<SpaceNotifications>(
+    notificationQuery,
+    notification.class.SpaceNotifications,
+    {},
+    (result) => {
+      notifications.clear()
+      result.forEach((p) => {
+        notifications.set(p.objectId as Ref<Space>, p)
+      })
+      notifications = notifications
+    }
+  )
   $: if (currentRoute.space && navigatorModel) {
     spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
       const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
@@ -96,15 +113,10 @@
     })
   }
 
-  let compHTML: HTMLElement
-  let asideHTML: HTMLElement
-  $: {
-    if (asideHTML) {
-      if (compHTML) compHTML.style.marginRight = '0'
-    } else {
-      if (compHTML) compHTML.style.marginRight = '20px'
-    }
+  function specialComponent (id: string): AnyComponent | undefined {
+    return navigatorModel?.specials?.find((x) => x.id === id)?.component
   }
+  let compHTML: HTMLElement | undefined = undefined
 </script>
 
 <svg class="mask">
@@ -115,7 +127,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active" />
-    <Applications active={currentRoute.app} />
+    <Applications {notifications} active={currentRoute.app} />
     <div class="profile">
       <Profile on:logout />
     </div>
@@ -123,27 +135,35 @@
   {#if navigator}
     <div class="navigator">
       <NavHeader title={navigatorModel?.navTitle ?? currentAppLabel ?? UndefinedApp} />
-      <Navigator model={navigatorModel} bind:special={currentSpecial} />
+      <Navigator
+        model={navigatorModel}
+        special={currentRoute.special}
+        on:special={(detail) => {
+          currentRoute.special = detail.detail
+          router.navigate({ space: undefined, special: currentRoute.special })
+        }}
+      />
     </div>
   {/if}
   <div bind:this={compHTML} class="component">
-    {#if navigatorModel && currentSpecial === -1}
+    {#if navigatorModel && currentRoute.special === undefined}
       {#if spaceModel}
         <SpaceHeader space={currentSpace} {spaceModel} />
       {/if}
-      <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
-    {:else if navigatorModel && navigatorModel.specials && currentSpecial !== -1}
-      <Component is={navigatorModel.specials[currentSpecial].component} />
+      {#if currentRoute.space}
+        <Component
+          is={navigatorModel.spaceView}
+          props={{ currentSpace: currentRoute.space, notifications: notifications.get(currentRoute.space) }}
+        />
+      {/if}
+    {:else if navigatorModel && navigatorModel.specials && currentRoute.special}
+      <Component is={specialComponent(currentRoute.special)} />
     {/if}
   </div>
-  {#if spaceModel?.item?.editComponent && currentRoute.itemId}
-    <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
-    <div bind:this={asideHTML} class="aside">
-      <Component is={spaceModel.item.editComponent} props={{ id: currentRoute.itemId }} />
-    </div>
-  {/if}
+  <AsideDocument bind:this={aside} bind:compHTML bind:currentRoute bind:notifications />
 </div>
 <Modal />
+<Popup />
 <TooltipInstance />
 
 <style lang="scss">
@@ -192,13 +212,6 @@
       min-width: 400px;
       flex-grow: 1;
       margin-right: 20px;
-    }
-
-    .aside {
-      @include panel(var(--theme-bg-color));
-      min-width: 400px;
-      margin-right: 20px;
-      padding: 20px;
     }
   }
 </style>

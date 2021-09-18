@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting",
+      "comment": "Enrich vacancy and candidate models",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting"
+}

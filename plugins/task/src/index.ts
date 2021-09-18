@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Comment } from '@anticrm/chunter'
+import type { CommentRef } from '@anticrm/chunter'
 import type { Account, Class, Doc, Ref, ShortRef, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
@@ -31,7 +31,7 @@ export interface Task extends Doc {
   status: TaskStatus
   checkItems: CheckListItem[]
   dueTo: Date
-  comments: Array<Ref<Comment>>
+  comments: CommentRef[]
 }
 
 export interface CheckListItem {

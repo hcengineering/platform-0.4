@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Add common intl string",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets"
+}

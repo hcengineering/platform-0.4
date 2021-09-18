@@ -13,37 +13,45 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref, Space } from '@anticrm/core'
+import type { Account, Class, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Person } from '@anticrm/contact'
 import type { FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 
-export interface Resume extends Doc {
-  description: string
+export enum CandidateStatus {
+  Employed = 'employed',
+  AvailableForHire = 'available-for-hire'
 }
 
-export interface Candidate extends Doc {
-  name: string
-  bio: string
-  position: string
-  location: string
+export interface Candidate extends Person {
+  status: CandidateStatus
+  employment: {
+    position: string
+    experience: number
+  }
   salaryExpectation?: number
-  resume: Ref<Resume>
+  resume: string
 }
 
-export interface Applicant extends FSMItem {}
+export interface Applicant extends FSMItem {
+  recruiter: Ref<Account>
+}
 
 export interface CandidatePoolSpace extends Space {}
 
 export interface Vacancy {
   company: string
-  description: string
+  details?: {
+    summary: string
+    qualification: string
+    experience: string
+  }
   location: string
-  salary?: number
-  salaryMin?: number
-  salaryMax?: number
+  type: string
+  dueDate: Timestamp
 }
 export interface VacancySpace extends WithFSM, Vacancy {}
 
@@ -61,13 +69,13 @@ export default plugin(PluginRecruiting, {}, {
   class: {
     Candidate: '' as Ref<Class<Candidate>>,
     CandidatePoolSpace: '' as Ref<Class<CandidatePoolSpace>>,
-    Resume: '' as Ref<Class<Resume>>,
     Applicant: '' as Ref<Class<Applicant>>,
     VacancySpace: '' as Ref<Class<VacancySpace>>
   },
   component: {
     CreatePool: '' as AnyComponent,
     CreateVacancy: '' as AnyComponent,
+    CreateApplication: '' as AnyComponent,
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent
@@ -76,19 +84,51 @@ export default plugin(PluginRecruiting, {}, {
     App: '' as IntlString,
     Candidates: '' as IntlString,
     Vacancies: '' as IntlString,
-
     Name: '' as IntlString,
+
+    GeneralInformation: '' as IntlString,
+    Details: '' as IntlString,
+    VacancyTitle: '' as IntlString,
     Description: '' as IntlString,
     MakePrivate: '' as IntlString,
     MakePrivateDescription: '' as IntlString,
+    Due: '' as IntlString,
+    VacancyType: '' as IntlString,
+    VacancyNotes: '' as IntlString,
+    VacancyDetails: '' as IntlString,
+    Summary: '' as IntlString,
+    Qualification: '' as IntlString,
+    VacationExperience: '' as IntlString,
+    Flow: '' as IntlString,
+    Location: '' as IntlString,
+
+    PersonalInformation: '' as IntlString,
+    FirstName: '' as IntlString,
+    LastName: '' as IntlString,
+    Email: '' as IntlString,
+    Phone: '' as IntlString,
+    SalaryExpectation: '' as IntlString,
+    Position: '' as IntlString,
+    Experience: '' as IntlString,
+    EmploymentStatus: '' as IntlString,
+    Address: '' as IntlString,
+    Street: '' as IntlString,
+    City: '' as IntlString,
+    Zip: '' as IntlString,
+    Country: '' as IntlString,
+    ApplicationInfo: '' as IntlString,
+    CreateApplication: '' as IntlString,
+    Unassign: '' as IntlString,
+
+    Candidate: '' as IntlString,
+    Recruiter: '' as IntlString,
+    SelectCandidate: '' as IntlString,
+    AssignRecruiter: '' as IntlString,
 
     AddPoolSpace: '' as IntlString,
 
     AddVacancy: '' as IntlString,
     Company: '' as IntlString,
-
-    Position: '' as IntlString,
-    Location: '' as IntlString,
 
     AddCandidate: '' as IntlString,
     Bio: '' as IntlString
