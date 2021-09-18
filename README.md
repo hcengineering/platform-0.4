@@ -1,12 +1,7 @@
 # Anticrm Platform [![Maintainability](https://api.codeclimate.com/v1/badges/5cb6d2d426619568816b/maintainability)](https://codeclimate.com/github/hardcoreeng/platform/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/5cb6d2d426619568816b/test_coverage)](https://codeclimate.com/github/hardcoreeng/platform/test_coverage)
 
-Business Applications Reimagined. Real time. Web first. Open source.
-
 
 **Description:** 
-
-The PLATFORM is an attempt to reimagine a concept of web platforms for business needs like WordPress, Bitrix, etc.
-We propose a new way to make web business applications in fast, flexible and efficient way.
 
 The project consists of multiple packages; all of them are located in this mono-repository. [Rush.js](https://rushjs.io/) 
 is used for fast build all parts of the project. 
@@ -50,7 +45,7 @@ is used for fast build all parts of the project.
     - [Format all changed files](#format-all-changed-files)
     - [Lint all changed files](#lint-all-changed-files)
     - [Execute tests on modified projects](#execute-tests-on-modified-projects)
-- [Known issues](#known-issues)
+- [Troubleshooting](#troubleshooting)
   - [MacOS on M1](#macos-on-m1)
 - [Getting help](#getting-help)
 - [Getting involved and contributing](#getting-involved-and-contributing)
@@ -162,48 +157,12 @@ PLATFORM
 │  ├─ git-hooks
 │  └─ scripts
 ├─ dev - contains local development server
-│  ├─ platform-rig
-│  ├─ prod - frontend part of the project
-│  ├─ server - backend part of the project
-│  └─ ui-build
 ├─ models - contains definitions for domain modals
-│  ├─ all
-│  ├─ calendar
-│  ├─ chunter
-│  ├─ core
-│  ├─ dev
-│  ├─ fsm
-│  ├─ meeting
-│  ├─ recruting
-│  ├─ task
-│  └─ workbench
 ├─ packages - contains code shared among client and server, except packages/platform which defines plugin architecture and client-side only. 
-│  ├─ core
-│  ├─ model
-│  ├─ platform
-│  ├─ query
-│  ├─ richeditor
-│  ├─ router
-│  ├─ rpc
-│  ├─ status
-│  ├─ text
-│  ├─ theme
-│  ├─ ui
-│  └─ webrtco
 ├─ plugins - contains client-side code packaged in form of Platform Plugins.
-│  └─ ...
 ├─ products - contains examples of business aplications
 │  └─ hr-build
 ├─ server - contains server-side code of the Platform
-│  ├─ accounts
-│  ├─ client
-│  ├─ elastic
-│  ├─ mongo
-│  ├─ server
-│  ├─ services
-│  ├─ tools
-│  ├─ workspace
-│  └─ workspaces
 └─ tests - contains automated tests for the Platform code
    └─ server
 ```
@@ -258,22 +217,23 @@ rush rebuild
 #### Format all changed files
 
 ```bash
-rushx format-diff
+rush format
 ```
 
 #### Lint all changed files
 
 ```bash
-rushx lint-diff
+rush lint
 ```
 
 #### Execute tests on modified projects
 
 ```bash
-rushx test-diff
+rush test
 ```
 
-## Known issues
+## Troubleshooting
+This section covers common issues that developers may encounter when executing this project.
 
 ### MacOS on M1
 
