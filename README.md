@@ -74,7 +74,10 @@ rush -h
 You can install [MongoDB 4.x](https://www.mongodb.com/try/download/community) locally or run it as a docker container
 
 ```bash
-docker run -d -p 127.0.0.1:27017:27017 mongo
+# run one time to create volume for MongoDB container
+docker volume create mongodbdata
+# run every time when you need to start MongoDB container
+docker run -d -p 27017:27017 -v mongodbdata:/data/db mongo
 ```
 
 ### ElasticSearch 7.x
