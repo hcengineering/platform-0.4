@@ -67,10 +67,10 @@
 
 {#if candidate}
   <div class="root">
-    <div class="header">
+    <div class="header" class:noContent={actions.length === 0}>
       <div class="candidate">
         <div class="candidate-avatar">
-          <img width="100%" height="100%" src={`https://robohash.org/${candidate.name}?set=set4`} alt="avatar" />
+          <img width="100%" height="100%" src={candidate.avatar} alt="avatar" />
         </div>
         <div class="candidate-info">
           <div class="candidate-title">
@@ -83,11 +83,13 @@
       </div>
       <ActionIcon icon={Dots} size={24} />
     </div>
-    <div class="content">
-      {#each actions as action (action._id)}
-        <ActionPresenter {action} target={doc} />
-      {/each}
-    </div>
+    {#if actions.length > 0}
+      <div class="content">
+        {#each actions as action (action._id)}
+          <ActionPresenter {action} target={doc} />
+        {/each}
+      </div>
+    {/if}
   </div>
 {/if}
 
@@ -114,6 +116,10 @@
     height: 70px;
     padding: 0 15px;
     background-color: var(--theme-button-bg-focused);
+
+    &.noContent {
+      border-radius: 12px;
+    }
   }
 
   .candidate {

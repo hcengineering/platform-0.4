@@ -18,11 +18,11 @@
 
   import type { Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
-  import { getClient, showModal } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
   import type { Action, ActionInstance } from '@anticrm/action-plugin'
-  import { Button } from '@anticrm/ui'
+  import { Button, showPopup } from '@anticrm/ui'
   import type { Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
   import type { Applicant } from '@anticrm/recruiting'
@@ -70,7 +70,11 @@
       return
     }
 
-    showModal(calendar.component.CreateEvent, { space: $space, onCreate: onEventCreate })
+    showPopup(calendar.component.CreateEvent, { space: $space, onCreate: onEventCreate }, 'right')
+  }
+
+  function onEventClick () {
+    selectDocument(event)
   }
 </script>
 
@@ -80,8 +84,7 @@
     {#if instance === undefined}
       <Button label={recruiting.string.ScheduleInterview} on:click={run} />
     {:else if event !== undefined}
-      <!-- TODO: open right panel with info -->
-      <div class="title">
+      <div class="title" on:click={onEventClick}>
         {event.name}
       </div>
     {/if}
