@@ -17,11 +17,10 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
   import type { Action, ActionInstance } from '@anticrm/action-plugin'
-  import { AnySvelteComponent } from '@anticrm/ui'
+  import { UIComponent } from '@anticrm/status'
   import type { Applicant } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
 
-  import FactorialAction from '../actions/FactorialAction.svelte'
   import InterviewAction from '../actions/InterviewAction.svelte'
 
   export let action: Action
@@ -44,12 +43,10 @@
   )
 
   const componentMap = new Map([
-    [recruiting.action.Factorial, FactorialAction as AnySvelteComponent],
-    [recruiting.action.RecurFactorial, FactorialAction as AnySvelteComponent],
-    [recruiting.action.Interview, InterviewAction as AnySvelteComponent]
+    [recruiting.action.Interview, InterviewAction as UIComponent]
   ])
 
-  let component: AnySvelteComponent | undefined
+  let component: UIComponent | undefined
   $: component = componentMap.get(action.resId)
 </script>
 

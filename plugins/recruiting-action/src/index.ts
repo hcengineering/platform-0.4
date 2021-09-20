@@ -23,49 +23,6 @@ import calendar from '@anticrm/calendar'
 import type { Event } from '@anticrm/calendar'
 import chunter from '@anticrm/chunter'
 
-const Factorial = new Action()
-  .exec(async () => [20, 1])
-  .exec(
-    async (ctx) => {
-      const [n, acc] = ctx.pop()
-
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
-      return [n - 1, acc * n]
-    },
-    'fact'
-  )
-  .goto(
-    'fact',
-    async (ctx) => {
-      const top = ctx.pop()
-      ctx.push(top)
-
-      return top[0] !== 0
-    }
-  )
-  .exec(async (ctx) => {
-    const [, acc] = ctx.pop()
-
-    return acc
-  })
-
-const RecurFactorial = new Action()
-  .exec(async () => [20, 1])
-  .exec(
-    async (ctx) => {
-      const [n, acc] = ctx.pop()
-
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
-      if (n === 0) {
-        return acc
-      }
-
-      return await ctx.recur([n - 1, acc * n])
-    }
-  )
-
 class DeferredPromise<T> {
   promise: Promise<T>
   resolve!: (value: T) => void
@@ -143,8 +100,6 @@ const Interview = new Action()
   })
 
 export default async (): Promise<RecruitingService> => {
-  setResource(recruiting.action.Factorial, Factorial)
-  setResource(recruiting.action.RecurFactorial, RecurFactorial)
   setResource(recruiting.action.Interview, Interview)
   return {}
 }

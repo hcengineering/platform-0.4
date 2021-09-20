@@ -199,28 +199,6 @@ export function createModel (builder: Builder): void {
   }, recruiting.presenter.FeedbackRequestPresenter)
 
   // Actions
-  const factorialId: Ref<Action> = generateId()
-  builder.createDoc(
-    action.class.Action,
-    {
-      name: 'Factorial',
-      description: 'Goto based factorial calculation',
-      resId: recruiting.action.Factorial
-    },
-    factorialId
-  )
-
-  const recurFactorialId: Ref<Action> = generateId()
-  builder.createDoc(
-    action.class.Action,
-    {
-      name: 'Recursive Factorial',
-      description: 'Recur based factorial calculation',
-      resId: recruiting.action.RecurFactorial
-    },
-    recurFactorialId
-  )
-
   const interviewId: Ref<Action> = generateId()
   builder.createDoc(
     action.class.Action,
@@ -234,13 +212,12 @@ export function createModel (builder: Builder): void {
   )
 
   // FSM
-
   const states: Record<string, PureState> = {
     rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] },
     applied: { name: 'Applied', requiredActions: [], optionalActions: [] },
-    hrInterview: { name: 'HR interview', requiredActions: [interviewId], optionalActions: [recurFactorialId] },
+    hrInterview: { name: 'HR interview', requiredActions: [interviewId], optionalActions: [] },
     testTask: { name: 'Test Task', requiredActions: [], optionalActions: [] },
-    techInterview: { name: 'Technical interview', requiredActions: [interviewId], optionalActions: [factorialId] },
+    techInterview: { name: 'Technical interview', requiredActions: [interviewId], optionalActions: [] },
     offer: { name: 'Offer', requiredActions: [], optionalActions: [] },
     contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] }
   }

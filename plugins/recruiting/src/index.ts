@@ -165,9 +165,7 @@ export default plugin(PluginRecruiting, {}, {
     DefaultVacancy: '' as Ref<FSM>
   },
   action: {
-    Interview: '' as Resource<ActionDef>,
-    Factorial: '' as Resource<ActionDef>,
-    RecurFactorial: '' as Resource<ActionDef>
+    Interview: '' as Resource<ActionDef>
   },
   dd: {
     Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
