@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/node-client",
+      "comment": "attachments",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/node-client"
+}
