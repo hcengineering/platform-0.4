@@ -72,7 +72,7 @@ const Interview = new Action()
     let update = new DeferredPromise<typeof feedbackAuthors>()
 
     const unsub = ctx.subscribe({ clazz: recruiting.class.Feedback }, async (tx) => {
-      if (tx._class === core.class.TxUpdateDoc) {
+      if (tx._class !== core.class.TxCreateDoc) {
         return
       }
 

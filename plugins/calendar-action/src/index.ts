@@ -60,7 +60,7 @@ const waitForEvent = new Action()
       let update = new DeferredPromise<number>()
 
       const unsub = ctx.subscribe({ id: event._id }, async (tx) => {
-        if (tx._class === core.class.TxCreateDoc) {
+        if (tx._class !== core.class.TxUpdateDoc) {
           return
         }
 

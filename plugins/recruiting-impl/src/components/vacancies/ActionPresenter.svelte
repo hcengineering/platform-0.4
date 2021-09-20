@@ -42,9 +42,7 @@
     }
   )
 
-  const componentMap = new Map([
-    [recruiting.action.Interview, InterviewAction as UIComponent]
-  ])
+  const componentMap = new Map([[recruiting.action.Interview, InterviewAction as UIComponent]])
 
   let component: UIComponent | undefined
   $: component = componentMap.get(action.resId)

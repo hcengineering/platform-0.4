@@ -1,5 +1,4 @@
-import type { Account, Class, Doc, Ref, Space, Storage, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
-import { nanoid } from 'nanoid'
+import { Account, Class, Doc, generateId, ObjectTx, Ref, Space, Storage, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
 
 /**
  * @public
@@ -13,7 +12,7 @@ export interface TxFilter {
 /**
  * @public
  */
-export type TxCallback = (tx: TxCreateDoc<Doc> | TxUpdateDoc<Doc>) => Promise<void>
+export type TxCallback = (tx: ObjectTx<Doc>) => Promise<void>
 
 /**
  * @public
@@ -141,8 +140,8 @@ export class Action {
       label
     )
 
-    const endLabel = nanoid()
-    const negLabel = nanoid()
+    const endLabel = generateId()
+    const negLabel = generateId()
 
     this.goto(negLabel, async (ctx: Context) => ctx.pop() === false)
 
