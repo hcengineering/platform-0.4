@@ -112,7 +112,7 @@
       items.push({
         key: value._id,
         completion: value._id,
-        label: value.email,
+        label: value.name,
         title: value.name,
         class: core.class.Account,
         id: `${currentSpace}-${value._id}`
