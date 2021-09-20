@@ -157,14 +157,7 @@ jobs:
           mongodb-version: 4.4
 
       - name: Minio Deploy
-        uses: hkdobrev/minio-deploy-action@v1
-        with:
-          endpoint: http://127.0.0.1:9000
-          access_key: minioadmin
-          secret_key: minioadmin
-          bucket: 'bucket'
-          source_dir: 'public'
-          target_dir: '/'
+        run: docker run -p 9000:9000 -p 9001:9001 quay.io/minio/minio server /data --console-address ":9001"
 
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
