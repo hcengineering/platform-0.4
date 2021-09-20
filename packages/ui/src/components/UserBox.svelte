@@ -41,7 +41,7 @@
       if (result !== selected) {
         selected = result
         dispatch('change', selected)
-      } 
+      }
     })
   }}
 >
