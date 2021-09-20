@@ -24,6 +24,7 @@ import task from '@anticrm/task'
 import meeting from '@anticrm/meeting'
 import recruiting from '@anticrm/recruiting'
 import fsm from '@anticrm/fsm'
+import attachment from '@anticrm/attachment'
 
 import '@anticrm/ui-assets'
 import '@anticrm/chunter-assets'
@@ -33,6 +34,7 @@ import '@anticrm/meeting-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
+import '@anticrm/attachment-assets'
 
 export function configurePlatform (): void {
   // platform.setMetadata(ui.metadata.LoginApplication, 'login')
@@ -54,4 +56,5 @@ export function configurePlatform (): void {
   addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
   addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
+  addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
 }

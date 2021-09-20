@@ -14,10 +14,9 @@
 //
 
 import type { Doc, Space, TxCreateDoc, TxOperations } from '@anticrm/core'
-import core, { createClient, SortingOrder, Storage, withOperations, _genMinModel as getModel } from '@anticrm/core'
-import { LiveQuery } from '..'
+import core, { createClient, SortingOrder, Client, withOperations, _genMinModel as getModel } from '@anticrm/core'
+import { LiveQuery, Queriable } from '..'
 import { connect } from './connection'
-export interface Client extends Storage, TxOperations, LiveQuery {}
 
 interface Channel extends Space {
   x: number
@@ -366,7 +365,7 @@ describe('query', () => {
   })
 })
 
-async function getClient (): Promise<Client & TxOperations> {
+async function getClient (): Promise<Client & TxOperations & Queriable> {
   // eslint-disable-next-line prefer-const
   let liveQuery: LiveQuery | undefined
 

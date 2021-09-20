@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { DerivedDataProcessor } from '.'
+import { DerivedDataProcessor, FileOp, FileStorage } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
@@ -34,10 +34,15 @@ export interface WithAccountId extends Storage {
 }
 
 /**
+ * @public
+ */
+export interface WithFiles extends WithAccountId, FileStorage {}
+
+/**
  * Client with hierarchy and model inside. Allow fast search for model, without accesing server.
  * @public
  */
-export interface Client extends WithAccountId {
+export interface Client extends WithFiles {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
 /**
@@ -49,7 +54,7 @@ class ClientImpl extends TxProcessor implements Client {
   readonly model = new ModelDb(this.hierarchy)
   extraTx?: (tx: Tx) => Promise<void>
 
-  constructor (readonly conn: WithAccountId, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
+  constructor (readonly conn: WithFiles, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
     super()
   }
 
@@ -92,6 +97,10 @@ class ClientImpl extends TxProcessor implements Client {
   async accountId (): Promise<Ref<Account>> {
     return this.connAccount
   }
+
+  async file (op: FileOp): Promise<string> {
+    return await this.conn.file(op)
+  }
 }
 
 /**
@@ -125,7 +134,7 @@ class TransactionBuffer {
  * @public
  */
 export async function createClient (
-  connect: (txHandler: TxHandler) => Promise<WithAccountId>,
+  connect: (txHandler: TxHandler) => Promise<WithFiles>,
   notify?: TxHandler
 ): Promise<Client> {
   const buffer = new TransactionBuffer()

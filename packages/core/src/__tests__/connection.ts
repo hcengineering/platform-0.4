@@ -23,6 +23,7 @@ import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { _genMinModel } from '../minmodel'
 import { isModelTx } from '../model'
+import { FileOp, WithFiles } from '..'
 
 class ClientImpl implements WithAccountId {
   constructor (
@@ -49,8 +50,13 @@ class ClientImpl implements WithAccountId {
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
   }
+
+  async file (op: FileOp): Promise<string> {
+    throw new Error('Not implemented')
+  }
 }
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
+
+export async function connect (handler: (tx: Tx) => void): Promise<WithFiles> {
   const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()

@@ -13,8 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Account, Ref } from '@anticrm/core'
-  import core, { Space } from '@anticrm/core'
+  import core, { Account, Ref, Space } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -38,9 +37,11 @@
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { afterUpdate, onDestroy } from 'svelte'
   import task from '../plugin'
-  import CommentsView from './CommentsView.svelte'
   import DescriptionEditor from './DescriptionEditor.svelte'
+  import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
+  import attachment from '@anticrm/attachment'
+  import { Attachments } from '@anticrm/attachment-impl'
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -91,7 +92,7 @@
     selectDocument()
   }
 
-  const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
+  const tabs = [task.string.General, attachment.string.Attachments, task.string.ToDos]
   let selectedTab: IntlString = task.string.General
 
   async function update (key: string, value: any): Promise<void> {
@@ -162,8 +163,10 @@
         <Section label={task.string.Comments} icon={IconComments}>
           <CommentsView notifications={notification} currentSpace={item.space} taskId={item._id} />
         </Section>
-      {:else if selectedTab === task.string.Attachment}
-        <Grid column={1} />
+      {:else if selectedTab === attachment.string.Attachments}
+        <Section label={attachment.string.Attachments} icon={IconFile}>
+          <Attachments id={item._id} space={item.space} editable />
+        </Section>
       {:else}
         <Section label={task.string.ToDos} icon={IconToDo}>
           <CheckBoxList

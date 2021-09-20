@@ -20,6 +20,8 @@ import {
   Doc,
   DocumentQuery,
   DocumentUpdate,
+  FileOp,
+  FileStorage,
   FindOptions,
   FindResult,
   Ref,
@@ -85,7 +87,7 @@ type UnsubscribeFunc = () => void
 export interface PresentationService extends Service {}
 const PluginPresentation = 'presentation' as Plugin<PresentationService>
 
-export class PresentationClient implements Storage, TxOperations {
+export class PresentationClient implements Storage, FileStorage, TxOperations {
   constructor (private readonly client: () => Promise<Client>, private readonly accountIdValue: Ref<Account>) {}
 
   static async create (accountId: Ref<Account>, client: () => Promise<Client>): Promise<PresentationClient> {
@@ -106,6 +108,10 @@ export class PresentationClient implements Storage, TxOperations {
 
   async notifyTx (tx: Tx): Promise<void> {
     return await (await this.client()).notifyTx(tx).catch((error) => this.handleError(error))
+  }
+
+  async file (op: FileOp): Promise<string> {
+    return await (await this.client()).file(op)
   }
 
   query<T extends Doc>(

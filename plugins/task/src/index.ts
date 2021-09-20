@@ -73,7 +73,6 @@ const task = plugin(
       GeneralInformation: '' as IntlString,
       IviteMember: '' as IntlString,
       General: '' as IntlString,
-      Attachment: '' as IntlString,
       ToDos: '' as IntlString,
       Due: '' as IntlString,
       PickDue: '' as IntlString,

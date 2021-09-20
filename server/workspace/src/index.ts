@@ -3,6 +3,8 @@ import core, {
   Doc,
   DocumentQuery,
   DOMAIN_TX,
+  FileOp,
+  FileStorage,
   FindResult,
   Hierarchy,
   isModelTx,
@@ -12,6 +14,7 @@ import core, {
   Tx
 } from '@anticrm/core'
 import { DocStorage, getMongoClient, mongoReplaceNulls, mongoUnescape, TxStorage } from '@anticrm/mongo'
+import { S3Storage } from '@anticrm/s3'
 import { MongoClientOptions } from 'mongodb'
 import { WorkspaceStorage } from './storage'
 
@@ -35,6 +38,9 @@ export type TxHandlerFactory = (hierarchy: Hierarchy, storage: Storage, model: M
 export interface WorkspaceOptions {
   mongoDBUri: string // Mongo DB URI.
   mongoOptions?: any // Any other mongo options, should be compatible with @{link MongoClientOptions}
+  s3Uri: string
+  s3AccessKey: string
+  s3Secret: string
 }
 
 /**
@@ -49,7 +55,7 @@ export interface WithWorkspaceTx extends Omit<Storage, 'tx'> {
  * Before find*, tx operations could be used, consider initialize Db with model transactions.
  * @public
  */
-export class Workspace implements WithWorkspaceTx {
+export class Workspace implements WithWorkspaceTx, FileStorage {
   static async create (workspaceId: string, options: WorkspaceOptions, txh?: TxHandlerFactory): Promise<Workspace> {
     const hierarchy: Hierarchy = new Hierarchy()
     const model = new ModelDb(hierarchy)
@@ -77,6 +83,7 @@ export class Workspace implements WithWorkspaceTx {
     }
 
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
+    const fileStorage = await S3Storage.create(options.s3AccessKey, options.s3Secret, options.s3Uri, workspaceId)
 
     const modelTx: TxHandler = {
       tx: async (clientId, tx) => {
@@ -88,13 +95,14 @@ export class Workspace implements WithWorkspaceTx {
     }
 
     const handlers: TxHandler[] = txh !== undefined ? [modelTx, ...(await txh(hierarchy, storage, model))] : [modelTx]
-    return new Workspace(workspaceId, hierarchy, storage, handlers, model)
+    return new Workspace(workspaceId, hierarchy, storage, fileStorage, handlers, model)
   }
 
   private constructor (
     readonly workspaceId: string,
     readonly hierarchy: Hierarchy,
     private readonly storage: WorkspaceStorage,
+    private readonly fileStorage: S3Storage,
     readonly txh: TxHandler[],
     readonly model: ModelDb
   ) {}
@@ -119,6 +127,10 @@ export class Workspace implements WithWorkspaceTx {
     // 3. process all other transaction handlers
     await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
     return result
+  }
+
+  async file (op: FileOp): Promise<string> {
+    return await this.fileStorage.file(op)
   }
 }
 

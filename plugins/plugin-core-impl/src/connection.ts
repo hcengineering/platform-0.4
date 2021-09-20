@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Account, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx, WithAccountId } from '@anticrm/core'
+import { Account, Class, Doc, DocumentQuery, FileOp, FindResult, Ref, Storage, Tx, WithFiles } from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 
 type TxHandler = (tx: Tx) => void
-class WebSocketConnection extends RequestProcessor implements Storage {
+
+class WebSocketConnection extends RequestProcessor implements Storage, WithFiles {
   socket: WebSocket
   handler: TxHandler
 
@@ -58,10 +59,14 @@ class WebSocketConnection extends RequestProcessor implements Storage {
     // Process on server and return result.
     this.handler(tx)
   }
+
+  async file (op: FileOp): Promise<string> {
+    return await this.request('file', op)
+  }
 }
 
 export interface Connection {
-  storage: WithAccountId
+  storage: WithFiles
   close: () => void
 }
 

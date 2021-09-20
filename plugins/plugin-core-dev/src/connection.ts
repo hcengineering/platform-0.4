@@ -87,4 +87,8 @@ export class ClientImpl extends TxProcessor implements Client {
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
   }
+
+  async file (): Promise<string> {
+    throw new Error('Not implemented')
+  }
 }

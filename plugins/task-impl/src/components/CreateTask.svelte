@@ -35,14 +35,14 @@
   import core, { generateId, getFullRef, Timestamp } from '@anticrm/core'
   import type { Account, Ref, Space } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
-  // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
   import StatusPicker from './StatusPicker.svelte'
-  import { chunterIds as chunter } from '@anticrm/chunter-impl'
-  import type { Comment } from '@anticrm/chunter'
+  import chunter, { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
   import type { SpaceNotifications } from '@anticrm/notification'
   import notification from '@anticrm/notification'
+  import attachment from '@anticrm/attachment'
+  import { Attachments } from '@anticrm/attachment-impl'
 
   const dispatch = createEventDispatcher()
 
@@ -127,7 +127,7 @@
     })
   }
 
-  const tabs = [task.string.General, task.string.Attachment, task.string.ToDos]
+  const tabs = [task.string.General, attachment.string.Attachments, task.string.ToDos]
   let selectedTab: IntlString = task.string.General
 </script>
 
@@ -170,11 +170,18 @@
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
       <Grid column={1}>
-        <Comments messages={comments} currentSpace={space} on:message={(event) => addMessage(event.detail)} />
+        <Comments
+          messages={comments}
+          notifications={undefined}
+          currentSpace={space._id}
+          on:message={(event) => addMessage(event.detail)}
+        />
       </Grid>
     </Section>
-  {:else if selectedTab === task.string.Attachment}
-    <Grid column={1} />
+  {:else if selectedTab === attachment.string.Attachments}
+    <Section label={attachment.string.Attachments} icon={IconFile}>
+      <Attachments {id} space={space._id} editable />
+    </Section>
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>
       <CheckBoxList bind:items={checkItems} label={task.string.AddCheckItem} editable />

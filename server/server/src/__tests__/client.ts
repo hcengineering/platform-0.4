@@ -5,18 +5,19 @@ import {
   createClient as createCoreClient,
   Doc,
   DocumentQuery,
+  FileOp,
   FindResult,
   Ref,
   Tx,
   TxOperations,
-  WithAccountId,
+  WithFiles,
   withOperations
 } from '@anticrm/core'
 import { readResponse, Request, RequestProcessor, Response, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
 
-export class TestConnection extends RequestProcessor implements WithAccountId {
+export class TestConnection extends RequestProcessor implements WithFiles {
   socket: WebSocket
   handler: (tx: Tx) => void
 
@@ -54,6 +55,10 @@ export class TestConnection extends RequestProcessor implements WithAccountId {
 
   async accountId (): Promise<Ref<Account>> {
     return await this.request('accountId')
+  }
+
+  async file (op: FileOp): Promise<string> {
+    return await this.request('file', op)
   }
 }
 

@@ -25,6 +25,7 @@ import { createModel as meetingModel } from '@anticrm/model-meeting'
 import { createModel as recruitingModel } from '@anticrm/model-recruiting'
 import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
+import { createModel as attachmentModel } from '@anticrm/model-attachment'
 
 /**
  * @public
@@ -41,6 +42,7 @@ taskModel(builder)
 meetingModel(builder)
 calendarModel(builder)
 notificationModel(builder)
+attachmentModel(builder)
 
 /**
  * @public

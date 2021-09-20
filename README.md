@@ -75,6 +75,13 @@ rushx dev
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch/elasticsearch:7.13.1
 ```
 
+### Running Minio in docker
+
+```bash
+
+docker run -p 9000:9000 -p 9001:9001 quay.io/minio/minio server /data --console-address ":9001"
+```
+
 ## Dev tasks
 
 All dev required tasks could be execured from root of project using rushx tool.

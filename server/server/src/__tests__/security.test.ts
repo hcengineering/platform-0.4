@@ -83,6 +83,9 @@ describe('security', () => {
           hierarchy.tx(tx)
           await db.tx(tx)
           await security.tx(tx)
+        },
+        file: async (op) => {
+          throw new Error('Not implemented')
         }
       },
       hierarchy,

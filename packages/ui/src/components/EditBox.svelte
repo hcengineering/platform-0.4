@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { afterUpdate } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
@@ -34,7 +34,7 @@
     target.style.width = text.clientWidth + 8 + 'px'
   }
 
-  onMount(() => {
+  afterUpdate(() => {
     computeSize(input)
   })
 </script>

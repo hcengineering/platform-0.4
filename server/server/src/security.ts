@@ -19,9 +19,11 @@ import core, {
   TxProcessor,
   TxRemoveDoc,
   TxUpdateDoc,
-  WithAccountId,
   isPredicate,
-  createPredicates
+  createPredicates,
+  WithFiles,
+  FileOp,
+  FileStorage
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 import { WithWorkspaceTx } from '@anticrm/workspace'
@@ -215,13 +217,17 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
   return querySpace
 }
 
-export class SecurityClientStorage implements WithAccountId {
+export class SecurityClientStorage implements WithFiles {
   constructor (
     readonly security: SecurityModel,
-    readonly workspace: WithWorkspaceTx,
+    readonly workspace: WithWorkspaceTx & FileStorage,
     readonly hierarchy: Hierarchy,
     readonly user: ClientInfo
   ) {}
+
+  async file (op: FileOp): Promise<string> {
+    return await this.workspace.file(op)
+  }
 
   async findAll<T extends Doc>(
     _class: Ref<Class<T>>,

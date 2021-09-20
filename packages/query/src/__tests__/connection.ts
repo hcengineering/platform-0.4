@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, WithAccountId } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, WithFiles } from '@anticrm/core'
 import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 import { _genMinModel } from '@anticrm/core'
 
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
+export async function connect (handler: (tx: Tx) => void): Promise<WithFiles> {
   const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()
@@ -45,6 +45,9 @@ export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId
       await Promise.all([model.tx(tx), transactions.tx(tx)])
       handler(tx)
     },
-    accountId: async () => await Promise.resolve(core.account.System)
+    accountId: async () => await Promise.resolve(core.account.System),
+    file: async () => {
+      throw new Error('Not implemented')
+    }
   }
 }

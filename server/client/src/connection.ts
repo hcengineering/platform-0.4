@@ -12,7 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Account, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx, WithAccountId } from '@anticrm/core'
+import {
+  Account,
+  Class,
+  Doc,
+  DocumentQuery,
+  FileOp,
+  FileStorage,
+  FindResult,
+  Ref,
+  Storage,
+  Tx,
+  WithFiles
+} from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
@@ -20,7 +32,7 @@ import WebSocket from 'ws'
 
 type TxHandler = (tx: Tx) => void
 
-export class WebSocketConnection extends RequestProcessor implements Storage {
+export class WebSocketConnection extends RequestProcessor implements Storage, FileStorage {
   socket: WebSocket
   handler: TxHandler
 
@@ -60,9 +72,13 @@ export class WebSocketConnection extends RequestProcessor implements Storage {
     // Process on server and return result.
     this.handler(tx)
   }
+
+  async file (op: FileOp): Promise<string> {
+    return await this.request('file', op)
+  }
 }
 
-export async function connect (clientUrl: string, handler: TxHandler): Promise<WithAccountId> {
+export async function connect (clientUrl: string, handler: TxHandler): Promise<WithFiles> {
   const socket = new WebSocket(`ws://${clientUrl}`)
 
   // Wait for connection to be established.
