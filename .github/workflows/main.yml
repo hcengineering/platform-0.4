@@ -163,7 +163,7 @@ jobs:
           access_key: minioadmin
           secret_key: minioadmin
           bucket: 'bucket'
-          source_dir 'public'
+          source_dir: 'public'
           target_dir: '/'
 
       - name: Testing...
