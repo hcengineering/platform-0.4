@@ -48,9 +48,9 @@ const Interview = new Action()
       ctx.create({
         space: user.toString() as Ref<Space>,
         clazz: chunter.class.Message,
+        account: chunter.account.Chunterbot,
         attributes: {
-          message: `[${event.name}](ref://calendar.Event#${event._id}) has finished. Your [feedback](ref://recruiting.FeedbackRequest#${id}) is required.`,
-          isChunterbot: true
+          message: `[${event.name}](ref://calendar.Event#${event._id}) has finished. Your [feedback](ref://recruiting.FeedbackRequest#${id}) is required.`
         }
       })
     })

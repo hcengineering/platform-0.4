@@ -30,7 +30,6 @@ const DOMAIN_CHUNTER = 'chunter' as Domain
 @Model(chunter.class.Channel, core.class.Space)
 export class TChannel extends TSpace implements Channel {
   direct!: boolean
-  isChunterbot!: boolean
 
   topic!: string
   favourite!: boolean
@@ -43,7 +42,6 @@ export class TChannel extends TSpace implements Channel {
  */
 @Model(chunter.class.Message, core.class.Doc, DOMAIN_CHUNTER)
 export class TMessage extends TDoc implements Message {
-  isChunterbot!: boolean
   message!: string
   comments!: CommentRef[]
 }
@@ -53,7 +51,6 @@ export class TMessage extends TDoc implements Message {
  */
 @Model(chunter.class.Comment, core.class.Doc, DOMAIN_CHUNTER)
 export class TComment extends TDoc implements Comment {
-  isChunterbot!: boolean
   replyOf!: FullRefString
   message!: string
 }
@@ -77,8 +74,7 @@ export function createModel (builder: Builder): void {
       topic: 'Your best friend here',
       members: [],
       private: true,
-      direct: true,
-      isChunterbot: true
+      direct: true
     }
   }
 

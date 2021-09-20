@@ -26,7 +26,6 @@ export interface ChannelAccountPreferences {
 
 export interface Channel extends Space {
   direct: boolean // <-- Identify if it is a direct messaging channel
-  isChunterbot?: boolean
 
   topic?: string
 
@@ -42,7 +41,6 @@ export interface CommentRef {
 }
 
 export interface WithMessage extends Doc {
-  isChunterbot?: boolean
   message: string
 }
 
@@ -112,6 +110,9 @@ export default plugin(
       ThreadsView: '' as AnyComponent,
       ReferenceInput: '' as AnyComponent,
       Channel: '' as AnyComponent
+    },
+    account: {
+      Chunterbot: '' as Ref<Account>
     }
   }
 )

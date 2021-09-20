@@ -21,6 +21,7 @@
   import { QueryUpdater } from '@anticrm/presentation'
 
   import { getClient } from '@anticrm/workbench'
+  import { chunterbotAcc } from '../chunterbot'
 
   export let space: Channel | undefined
   export let headerSize = false
@@ -38,15 +39,8 @@
   let memberQuery: QueryUpdater<Account> | undefined
 
   $: if (space) {
-    if (space.isChunterbot) {
-      accounts = [
-        {
-          _id: 'chunterbot',
-          name: 'Chunterbot',
-          email: 'chunterbot@hc.engineering',
-          avatar: 'https://robohash.org/chunterbot'
-        } as Account
-      ]
+    if (space._id === client.accountId().toString()) {
+      accounts = [chunterbotAcc]
     } else {
       memberQuery = client.query<Account>(memberQuery, core.class.Account, { _id: { $in: members } }, (result) => {
         accounts = result

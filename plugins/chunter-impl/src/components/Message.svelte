@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
+  import chunter from '@anticrm/chunter'
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import type { MessageNode } from '@anticrm/text'
@@ -31,6 +32,7 @@
   import RefControl from './RefControl.svelte'
   import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
+  import { chunterbotAcc } from '../chunterbot'
 
   export let message: WithMessage
   export let notifications: SpaceNotifications | undefined
@@ -53,13 +55,8 @@
   const client = getClient()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
-    if (message.isChunterbot) {
-      return {
-        _id: 'chunterbot',
-        name: 'Chunterbot',
-        email: 'chunterbot@hc.engineering',
-        avatar: 'https://robohash.org/chunterbot'
-      } as Account
+    if (message.modifiedBy === chunter.account.Chunterbot) {
+      return chunterbotAcc
     }
 
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
