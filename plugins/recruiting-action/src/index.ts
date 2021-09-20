@@ -14,7 +14,7 @@
 //
 
 import type { Ref, Space } from '@anticrm/core'
-import core, { generateId } from '@anticrm/core'
+import core, { generateId, DeferredPromise } from '@anticrm/core'
 import type { RecruitingService } from '@anticrm/recruiting'
 import { setResource } from '@anticrm/platform'
 import { Action } from '@anticrm/action'
@@ -22,18 +22,6 @@ import recruiting from '@anticrm/recruiting'
 import calendar from '@anticrm/calendar'
 import type { Event } from '@anticrm/calendar'
 import chunter from '@anticrm/chunter'
-
-class DeferredPromise<T> {
-  promise: Promise<T>
-  resolve!: (value: T) => void
-  reject!: (reason?: any) => void
-  constructor () {
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve
-      this.reject = reject
-    })
-  }
-}
 
 const Interview = new Action()
   .call(calendar.action.waitForEvent)

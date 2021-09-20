@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { DeferredPromise } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 
 /**
@@ -107,19 +108,6 @@ export const Code = component('rpc' as Component, {
   UnknownMethod: '' as StatusCode<{ method: string }>
 })
 
-class DeferredPromise {
-  promise: Promise<any>
-  resolve!: <T>(value: T) => void
-  reject!: (reason?: any) => void
-  constructor () {
-    // eslint-disable-next-line promise/param-names
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve
-      this.reject = reject
-    })
-  }
-}
-
 /**
  * Process requests and handle responses.
  * Also allow to handle non identified results passed from other side.
@@ -130,7 +118,7 @@ class DeferredPromise {
  */
 export abstract class RequestProcessor {
   private reqIndex: number = 0
-  private readonly requests = new Map<ReqId, DeferredPromise>()
+  private readonly requests = new Map<ReqId, DeferredPromise<any>>()
 
   protected abstract send (request: Request<any>): void
   protected abstract notify (response: Response<any>): void
@@ -170,7 +158,7 @@ export abstract class RequestProcessor {
 
   protected async request (method: string, ...params: any[]): Promise<any> {
     const id = ++this.reqIndex
-    const promise = new DeferredPromise()
+    const promise = new DeferredPromise<any>()
     this.requests.set(id, promise)
 
     // Send request

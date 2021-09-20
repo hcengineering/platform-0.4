@@ -14,7 +14,7 @@
 //
 
 import type { Ref, TxUpdateDoc } from '@anticrm/core'
-import core from '@anticrm/core'
+import core, { DeferredPromise } from '@anticrm/core'
 import type { CalendarService, Event } from '@anticrm/calendar'
 import { setResource } from '@anticrm/platform'
 import calendar from '@anticrm/calendar'
@@ -44,18 +44,6 @@ const wait = async <T>(p: Promise<T>, delay: number): Promise<null | T> => {
   }
 
   return res
-}
-
-class DeferredPromise<T> {
-  promise: Promise<T>
-  resolve!: (value: T) => void
-  reject!: (reason?: any) => void
-  constructor () {
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve
-      this.reject = reject
-    })
-  }
 }
 
 const waitForEvent = new Action()
