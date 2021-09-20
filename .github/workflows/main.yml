@@ -156,6 +156,16 @@ jobs:
         with:
           mongodb-version: 4.4
 
+      - name: Minio Deploy
+        uses: hkdobrev/minio-deploy-action@v1
+        with:
+          endpoint: http://127.0.0.1:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+          bucket: 'bucket'
+          source_dir 'public'
+          target_dir: '/'
+
       - name: Testing...
         uses: paambaati/codeclimate-action@v2.7.5
         env:
