@@ -155,7 +155,8 @@ export default plugin(PluginRecruiting, {}, {
     ScheduleInterview: '' as IntlString,
 
     Applications: '' as IntlString,
-    Interviews: '' as IntlString
+    Interviews: '' as IntlString,
+    SubmitFeedback: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,

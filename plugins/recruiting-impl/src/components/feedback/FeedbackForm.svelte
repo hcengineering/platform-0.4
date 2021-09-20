@@ -60,7 +60,7 @@
 {:else if request !== undefined}
   <div class="root">
     <TextArea bind:value={feedbackMsg} />
-    <Button label="Submit feedback" on:click={create} />
+    <Button label={recruiting.string.SubmitFeedback} on:click={create} />
   </div>
 {/if}
 

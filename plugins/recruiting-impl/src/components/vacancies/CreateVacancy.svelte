@@ -90,7 +90,7 @@
   }
 
   let fsmItems: DropdownItem[] = []
-  $: fsmItems = fsmTmpls.map((x, i) => ({
+  $: fsmItems = fsmTmpls.map((x) => ({
     id: x._id,
     label: x.name
   }))

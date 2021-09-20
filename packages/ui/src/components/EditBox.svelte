@@ -19,7 +19,8 @@
 
   export let label: IntlString | undefined = undefined
   export let width: string | undefined = undefined
-  export let value: string | undefined = undefined
+  // Number is not really necessary to be here, just a quick fix until we implement some NumericEditBox
+  export let value: string | number | undefined = undefined
   export let password: boolean | undefined = undefined
   export let id: string | undefined = undefined
   export let placeholder: string = 'Start typing...'
