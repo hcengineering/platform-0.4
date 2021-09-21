@@ -24,8 +24,8 @@
 <span class="container" on:click>
   {#if icon}
     <span class="icon">
-      {#if typeof (icon) === 'string'}
-        <Icon {icon} size={12}/>
+      {#if typeof icon === 'string'}
+        <Icon {icon} size={12} />
       {:else}
         <svelte:component this={icon} size={12} />
       {/if}
@@ -42,9 +42,13 @@
 
     .icon {
       margin-right: 4px;
-      opacity: .6;
+      opacity: 0.6;
     }
-    &:hover .icon { opacity: 1; }
-    &:active .icon { opacity: .6; }
+    &:hover .icon {
+      opacity: 1;
+    }
+    &:active .icon {
+      opacity: 0.6;
+    }
   }
 </style>

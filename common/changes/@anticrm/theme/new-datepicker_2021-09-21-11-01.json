@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "New DatePicker, add Link",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}

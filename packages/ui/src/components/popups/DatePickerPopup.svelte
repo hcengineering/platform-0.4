@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString } from '@anticrm/platform'
   import Label from '../Label.svelte'
@@ -124,8 +123,12 @@
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      &:hover { background-color: var(--theme-bg-accent-hover); }
-      &:active { background-color: var(--theme-bg-accent-color); }
+      &:hover {
+        background-color: var(--theme-bg-accent-hover);
+      }
+      &:active {
+        background-color: var(--theme-bg-accent-color);
+      }
     }
 
     .calendar {
@@ -148,7 +151,9 @@
           background-color: var(--theme-button-bg-focused);
           color: var(--theme-caption-color);
         }
-        &:hover { background-color: var(--theme-bg-accent-hover); }
+        &:hover {
+          background-color: var(--theme-bg-accent-hover);
+        }
       }
     }
   }

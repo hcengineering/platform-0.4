@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { IntlString, translate } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
