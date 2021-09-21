@@ -18,7 +18,7 @@
   import Label from './Label.svelte'
   import UserInfo from './UserInfo.svelte'
   import { showPopup } from '..'
-  import UserBoxPopup from './UserBoxPopup.svelte'
+  import UserBoxPopup from './popups/UserBoxPopup.svelte'
   import IconAvatar from './icons/Avatar.svelte'
   import { createEventDispatcher } from 'svelte'
 

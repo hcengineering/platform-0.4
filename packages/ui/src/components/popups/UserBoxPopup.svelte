@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import { IntlString, translate } from '@anticrm/platform'
   import type { Account, Ref } from '@anticrm/core'
-  import Label from './Label.svelte'
-  import EditWithIcon from './EditWithIcon.svelte'
-  import PopupItem from './PopupItem.svelte'
-  import UserInfo from './UserInfo.svelte'
-  import ui from '../component'
-  import Search from './icons/Search.svelte'
+  import Label from '../Label.svelte'
+  import EditWithIcon from '../EditWithIcon.svelte'
+  import PopupItem from '../PopupItem.svelte'
+  import UserInfo from '../UserInfo.svelte'
+  import ui from '../../component'
+  import Search from '../icons/Search.svelte'
   import { createEventDispatcher } from 'svelte'
 
   export let label: IntlString | undefined
@@ -91,8 +92,6 @@
     backdrop-filter: blur(30px);
 
     .header {
-      display: flex;
-      flex-direction: column;
       padding: 8px 8px 0;
       .title {
         margin-bottom: 12px;
