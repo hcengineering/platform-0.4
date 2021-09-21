@@ -29,7 +29,7 @@
   import notification from '@anticrm/notification'
 
   export let model: SpacesNavModel
-  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  export let notifications: Map<Ref<Space>, SpaceNotifications>
 
   let spaces: Space[] = []
   let spaceInfo: Map<Ref<Space>, SpaceInfo> = new Map<Ref<Space>, SpaceInfo>()
