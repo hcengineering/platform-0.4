@@ -41,11 +41,11 @@ export class S3Storage {
 
   static async create (accessKey: string, secret: string, endpoint: string, bucket: string): Promise<S3Storage> {
     const storage = new S3Storage(accessKey, secret, endpoint, bucket)
-    await storage.getBucket()
+    await storage.createBucket()
     return storage
   }
 
-  private async getBucket (): Promise<void> {
+  private async createBucket (): Promise<void> {
     return await new Promise((resolve, reject) => {
       this.client.createBucket({ Bucket: this.bucket }, () => {
         resolve()
