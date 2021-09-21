@@ -147,6 +147,9 @@
   label={attachment.string.AddAttachment}
   okLabel={attachment.string.AddAttachment}
   cancelLabel={ui.string.Cancel}
+  cancelAction={() => {
+    clear()
+  }}
   on:close={() => {
     dispatch('close')
   }}

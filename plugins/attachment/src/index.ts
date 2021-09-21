@@ -25,7 +25,7 @@ export interface Attachment extends Doc {
 }
 
 export function nameToFormat (name: string): string {
-  return name.slice(name.lastIndexOf('.') + 1)
+  return name.slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
 }
 
 export function sizeToString (size: number): string {
