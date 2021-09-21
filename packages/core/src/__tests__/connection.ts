@@ -14,7 +14,7 @@
 //
 
 import type { Account, Class, Doc, Ref } from '../classes'
-import { WithAccountId } from '../client'
+import { CoreClient } from '../client'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
@@ -23,9 +23,9 @@ import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { _genMinModel } from '../minmodel'
 import { isModelTx } from '../model'
-import { FileOp, WithFiles } from '..'
+import { FileOp } from '../fileStorage'
 
-class ClientImpl implements WithAccountId {
+class ClientImpl implements CoreClient {
   constructor (
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,
@@ -56,7 +56,7 @@ class ClientImpl implements WithAccountId {
   }
 }
 
-export async function connect (handler: (tx: Tx) => void): Promise<WithFiles> {
+export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
   const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()

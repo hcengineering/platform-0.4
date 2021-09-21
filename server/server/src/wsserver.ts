@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import core, { Account, FileOp, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
+import core, { Account, FileOp, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
@@ -51,7 +51,7 @@ export async function startServer (
 function connectClient (
   serverToken: string,
   options: ServerOptions = { logRequests: false, logTransactions: false }
-): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<WithAccountId> {
+): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<CoreClient> {
   return async (clientId, token, sendTx) => {
     try {
       const { accountId, workspaceId, details } = decodeToken(serverToken, token)

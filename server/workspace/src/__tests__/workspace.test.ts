@@ -32,7 +32,7 @@ import core, {
   TxCreateDoc,
   TxOperations,
   TxUpdateDoc,
-  WithFiles,
+  CoreClient,
   withOperations,
   _createClass,
   _genMinModel
@@ -323,7 +323,7 @@ describe('workspace', () => {
 })
 
 async function newWorkspaceClient (workspace: Workspace): Promise<Client & TxOperations> {
-  const clientStorage = asStorage(workspace) as WithFiles
+  const clientStorage = asStorage(workspace) as CoreClient
   clientStorage.accountId = async (): Promise<Ref<Account>> => {
     return core.account.System
   }

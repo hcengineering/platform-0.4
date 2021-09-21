@@ -1,4 +1,4 @@
-import core, { DerivedDataProcessor, Storage, Tx, WithFiles } from '@anticrm/core'
+import core, { DerivedDataProcessor, Storage, Tx, CoreClient } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
@@ -106,7 +106,7 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
  */
 export async function assignWorkspace (
   client: ClientInfo
-): Promise<{ clientStorage: WithFiles, workspace: WorkspaceInfo }> {
+): Promise<{ clientStorage: CoreClient, workspace: WorkspaceInfo }> {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
   return {

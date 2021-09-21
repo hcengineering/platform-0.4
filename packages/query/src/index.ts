@@ -35,7 +35,7 @@ import {
   TxProcessor,
   TxRemoveDoc,
   TxUpdateDoc,
-  WithFiles
+  CoreClient
 } from '@anticrm/core'
 import copy from 'fast-copy'
 
@@ -66,7 +66,7 @@ export interface Queriable {
 /**
  * @public
  */
-export class LiveQuery extends TxProcessor implements Storage, Queriable, WithFiles {
+export class LiveQuery extends TxProcessor implements Storage, Queriable, CoreClient {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
 
   constructor (readonly client: Client) {

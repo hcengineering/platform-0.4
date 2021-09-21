@@ -23,7 +23,7 @@ import {
   Ref,
   Storage,
   Tx,
-  WithFiles
+  CoreClient
 } from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
@@ -78,7 +78,7 @@ export class WebSocketConnection extends RequestProcessor implements Storage, Fi
   }
 }
 
-export async function connect (clientUrl: string, handler: TxHandler): Promise<WithFiles> {
+export async function connect (clientUrl: string, handler: TxHandler): Promise<CoreClient> {
   const socket = new WebSocket(`ws://${clientUrl}`)
 
   // Wait for connection to be established.

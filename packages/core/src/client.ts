@@ -29,20 +29,15 @@ export type TxHandler = (tx: Tx) => void
 /**
  * @public
  */
-export interface WithAccountId extends Storage {
+export interface CoreClient extends Storage, FileStorage {
   accountId: () => Promise<Ref<Account>>
 }
-
-/**
- * @public
- */
-export interface WithFiles extends WithAccountId, FileStorage {}
 
 /**
  * Client with hierarchy and model inside. Allow fast search for model, without accesing server.
  * @public
  */
-export interface Client extends WithFiles {
+export interface Client extends CoreClient {
   isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
 }
 /**
@@ -54,7 +49,7 @@ class ClientImpl extends TxProcessor implements Client {
   readonly model = new ModelDb(this.hierarchy)
   extraTx?: (tx: Tx) => Promise<void>
 
-  constructor (readonly conn: WithFiles, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
+  constructor (readonly conn: CoreClient, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
     super()
   }
 
@@ -134,7 +129,7 @@ class TransactionBuffer {
  * @public
  */
 export async function createClient (
-  connect: (txHandler: TxHandler) => Promise<WithFiles>,
+  connect: (txHandler: TxHandler) => Promise<CoreClient>,
   notify?: TxHandler
 ): Promise<Client> {
   const buffer = new TransactionBuffer()

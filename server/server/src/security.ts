@@ -21,7 +21,7 @@ import core, {
   TxUpdateDoc,
   isPredicate,
   createPredicates,
-  WithFiles,
+  CoreClient,
   FileOp,
   FileStorage
 } from '@anticrm/core'
@@ -217,7 +217,7 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
   return querySpace
 }
 
-export class SecurityClientStorage implements WithFiles {
+export class SecurityClientStorage implements CoreClient {
   constructor (
     readonly security: SecurityModel,
     readonly workspace: WithWorkspaceTx & FileStorage,
