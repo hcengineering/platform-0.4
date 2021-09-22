@@ -14,8 +14,9 @@
 //
 
 import { plugin, Metadata } from '@anticrm/platform'
-import type { Asset, IntlString } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
 import type { Plugin, Service } from '@anticrm/platform'
+import { Application } from '@anticrm/workbench'
 import type { Class, Ref, Space } from '@anticrm/core'
 
 export interface RoomSpace extends Space {}
@@ -25,6 +26,9 @@ export interface MeetingService extends Service {}
 const PluginMeeting = 'meeting' as Plugin<MeetingService>
 
 export default plugin(PluginMeeting, {}, {
+  app: {
+    Meeting: '' as Ref<Application>
+  },
   metadata: {
     ClientUrl: '' as Metadata<string>
   },
@@ -36,6 +40,24 @@ export default plugin(PluginMeeting, {}, {
     RoomSpace: '' as Ref<Class<RoomSpace>>
   },
   string: {
-    Rooms: '' as IntlString
+    App: '' as IntlString,
+    Rooms: '' as IntlString,
+    CreateRoom: '' as IntlString,
+    Name: '' as IntlString,
+    Description: '' as IntlString,
+    MakeRoomPrivate: '' as IntlString,
+    Join: '' as IntlString,
+    Leave: '' as IntlString,
+    ShareScreen: '' as IntlString,
+    StopSharing: '' as IntlString,
+    Mute: '' as IntlString,
+    Unmute: '' as IntlString,
+    EnableCam: '' as IntlString,
+    DisableCam: '' as IntlString,
+    Fullscreen: '' as IntlString
+  },
+  component: {
+    CreateRoom: '' as AnyComponent,
+    WorkspaceComponent: '' as AnyComponent
   }
 })

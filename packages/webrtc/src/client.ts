@@ -21,10 +21,16 @@ type Subscriber = (x: OutgoingNotifications) => Promise<void> | void
 export class Client extends RequestProcessor {
   private readonly subs = new Map<NotificationMethod, Subscriber[]>()
   private ws: Promise<WebSocket>
+  private isClosed = false
 
   constructor (url: string) {
     super()
     this.ws = this.initWS(url)
+  }
+
+  async close (): Promise<void> {
+    this.isClosed = true
+    await this.ws.then(ws => ws.close())
   }
 
   protected send (request: Request<any>): void {
@@ -50,6 +56,10 @@ export class Client extends RequestProcessor {
     return await new Promise((resolve) => {
       const ws = new WebSocket(url)
       const onClose = (): void => {
+        if (this.isClosed) {
+          return
+        }
+
         this.ws = new Promise<WebSocket>(() => {})
         setTimeout(() => {
           this.ws = this.initWS(url)

@@ -15,18 +15,34 @@ limitations under the License.
 <script type="ts">
   import { onDestroy } from 'svelte'
 
+  import type { Ref } from '@anticrm/core'
   import { Button } from '@anticrm/ui'
+  import meeting from '@anticrm/meeting'
+  import type { RoomSpace } from '@anticrm/meeting'
 
   import PeerStream from './PeerStream.svelte'
   import { initGridStore, makeGridSizeStore } from './grid.layout'
 
   import { getScreenOwner } from '@anticrm/webrtc'
 
-  import { roomMgr } from '..'
+  import { createRoomMgr } from '..'
   import type { Peer } from '..'
 
+  export let currentSpace: Ref<RoomSpace> | undefined
+  let prevSpace: Ref<RoomSpace> | undefined
+
+  const roomMgr = createRoomMgr()
   const { user, screen, peers, status, gains } = roomMgr
   let container: Element
+
+  $: if (currentSpace !== prevSpace) {
+    console.log(currentSpace, prevSpace)
+    prevSpace = currentSpace
+
+    if ($status !== 'left') {
+      roomMgr.leave()
+    }
+  }
 
   let { amount, size, containerSize: cSize } = initGridStore()
   $: if (container && peers) {
@@ -49,7 +65,11 @@ limitations under the License.
   $: peersArray = [...$peers.values()]
 
   async function join () {
-    roomMgr.join('common')
+    if (currentSpace === undefined) {
+      return
+    }
+
+    roomMgr.join(currentSpace)
   }
 
   function leave () {
@@ -78,6 +98,8 @@ limitations under the License.
     container?.requestFullscreen()
   }
 
+  onDestroy(() => roomMgr.close())
+
   let videoStyle = ''
   $: videoStyle = isScreenShared ? '' : `width: ${$size.width}px; height: ${$size.height}px`
 
@@ -104,19 +126,19 @@ limitations under the License.
   <div class="controls">
     {#if $status === 'left'}
       {#if $user.isMediaReady}
-        <Button on:click={join} label="Join" />
+        <Button on:click={join} label={meeting.string.Join} />
       {/if}
     {:else}
-      <Button on:click={leave} label="Leave" />
+      <Button on:click={leave} label={meeting.string.Leave} />
       {#if !isScreenShared}
-        <Button on:click={shareScreen} label="Share screen" />
+        <Button on:click={shareScreen} label={meeting.string.ShareScreen} />
       {:else if getScreenOwner($screen.internalID) === $user.internalID}
-        <Button on:click={stopSharing} label="Stop sharing" />
+        <Button on:click={stopSharing} label={meeting.string.StopSharing} />
       {/if}
     {/if}
-    <Button on:click={toggleMute} label={$user.muted ? 'Unmute' : 'Mute'} />
-    <Button on:click={toggleCam} label={$user.camEnabled ? 'Disable cam' : 'Enable cam'} />
-    <Button on:click={requestFullscreen} label="Fullscreen" />
+    <Button on:click={toggleMute} label={$user.muted ? meeting.string.Unmute : meeting.string.Mute} />
+    <Button on:click={toggleCam} label={$user.camEnabled ? meeting.string.DisableCam : meeting.string.EnableCam} />
+    <Button on:click={requestFullscreen} label={meeting.string.Fullscreen} />
   </div>
 </div>
 

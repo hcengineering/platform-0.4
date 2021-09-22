@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/webrtc",
+      "comment": "Apply multiple fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/webrtc"
+}

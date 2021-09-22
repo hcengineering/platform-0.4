@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting-assets",
+      "comment": "Apply multiple fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting-assets"
+}
