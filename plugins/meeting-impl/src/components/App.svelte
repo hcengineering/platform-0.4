@@ -16,6 +16,8 @@ limitations under the License.
   import { onDestroy } from 'svelte'
 
   import { Button } from '@anticrm/ui'
+  import meeting from '@anticrm/meeting'
+  import type { RoomSpace } from '@anticrm/meeting'
 
   import PeerStream from './PeerStream.svelte'
   import { initGridStore, makeGridSizeStore } from './grid.layout'
@@ -27,6 +29,7 @@ limitations under the License.
 
   const { user, screen, peers, status, gains } = roomMgr
   let container: Element
+  let space: RoomSpace | undefined
 
   let { amount, size, containerSize: cSize } = initGridStore()
   $: if (container && peers) {
@@ -49,7 +52,11 @@ limitations under the License.
   $: peersArray = [...$peers.values()]
 
   async function join () {
-    roomMgr.join('common')
+    if (space === undefined) {
+      return
+    }
+
+    roomMgr.join(space._id)
   }
 
   function leave () {
@@ -104,19 +111,19 @@ limitations under the License.
   <div class="controls">
     {#if $status === 'left'}
       {#if $user.isMediaReady}
-        <Button on:click={join} label="Join" />
+        <Button on:click={join} label={meeting.string.Join} />
       {/if}
     {:else}
-      <Button on:click={leave} label="Leave" />
+      <Button on:click={leave} label={meeting.string.Leave} />
       {#if !isScreenShared}
-        <Button on:click={shareScreen} label="Share screen" />
+        <Button on:click={shareScreen} label={meeting.string.ShareScreen} />
       {:else if getScreenOwner($screen.internalID) === $user.internalID}
-        <Button on:click={stopSharing} label="Stop sharing" />
+        <Button on:click={stopSharing} label={meeting.string.StopSharing} />
       {/if}
     {/if}
-    <Button on:click={toggleMute} label={$user.muted ? 'Unmute' : 'Mute'} />
-    <Button on:click={toggleCam} label={$user.camEnabled ? 'Disable cam' : 'Enable cam'} />
-    <Button on:click={requestFullscreen} label="Fullscreen" />
+    <Button on:click={toggleMute} label={$user.muted ? meeting.string.Unmute : meeting.string.Mute} />
+    <Button on:click={toggleCam} label={$user.camEnabled ? meeting.string.DisableCam : meeting.string.EnableCam} />
+    <Button on:click={requestFullscreen} label={meeting.string.Fullscreen} />
   </div>
 </div>
 
