@@ -30,9 +30,12 @@ import core, {
 } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { convertAddress, parseAddress, start } from '../server'
+import { selfSignedAuth } from '../tls_utils'
 import { createClient } from './client'
 
 const txes = builder.getTxes()
+
+const securityCertificate = selfSignedAuth()
 
 async function prepareInMemServer (): Promise<{
   hierarchy: Hierarchy
@@ -61,19 +64,24 @@ async function prepareInMemServer (): Promise<{
 describe('server', () => {
   it('client connect server', async () => {
     const { findAll } = await prepareInMemServer()
-    const serverAt = start('localhost', 0, {
-      connect: async () => {
-        return {
-          findAll,
-          tx: async (tx: Tx): Promise<void> => {},
-          accountId: async () => await Promise.resolve(core.account.System)
-        }
+    const serverAt = start(
+      'localhost',
+      0,
+      {
+        connect: async () => {
+          return {
+            findAll,
+            tx: async (tx: Tx): Promise<void> => {},
+            accountId: async () => await Promise.resolve(core.account.System)
+          }
+        },
+        close: async () => {}
       },
-      close: async () => {}
-    })
+      await securityCertificate
+    )
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.address}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`, (await securityCertificate).cert)
 
       const result = await client.findAll(core.class.Class, {})
       expect(result.length).toBeGreaterThan(1)
@@ -84,7 +92,7 @@ describe('server', () => {
 
   it('check non existing server', async () => {
     // eslint-disable-next-line
-    ;(await expect(createClient('localhost:10'))).rejects.toThrowError(
+    ;(await expect(createClient('localhost:10', (await securityCertificate).cert))).rejects.toThrowError(
       'Failed to connect to localhost:10: reason: connect ECONNREFUSED 127.0.0.1:10'
     )
   })
@@ -107,30 +115,35 @@ describe('server', () => {
     const { hierarchy, model, transactions } = await prepareInMemServer()
 
     let req = 0
-    const serverAt = start('localhost', 0, {
-      connect: async (clientId, token, tx, close) => {
-        return {
-          // Create never complete promise. ,
-          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
-            req++
-            if (req === 2) {
-              close()
-              return await new Promise<FindResult<T>>(() => {})
-            }
-            const domain = hierarchy.getClass(_class).domain
-            if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-            return await model.findAll(_class, query)
-          },
-          tx: async (tx: Tx): Promise<void> => {},
-          accountId: async () => await Promise.resolve(core.account.System)
-        }
+    const serverAt = start(
+      'localhost',
+      0,
+      {
+        connect: async (clientId, token, tx, close) => {
+          return {
+            // Create never complete promise. ,
+            findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
+              req++
+              if (req === 2) {
+                close()
+                return await new Promise<FindResult<T>>(() => {})
+              }
+              const domain = hierarchy.getClass(_class).domain
+              if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+              return await model.findAll(_class, query)
+            },
+            tx: async (tx: Tx): Promise<void> => {},
+            accountId: async () => await Promise.resolve(core.account.System)
+          }
+        },
+        close: async () => {}
       },
-      close: async () => {}
-    })
+      await securityCertificate
+    )
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.address}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`, (await securityCertificate).cert)
       await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: status:status.UnknownError') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
@@ -141,29 +154,34 @@ describe('server', () => {
     const { hierarchy, model, transactions } = await prepareInMemServer()
 
     let req = 0
-    const serverAt = start('localhost', 0, {
-      connect: async (clientId, token, tx, close) => {
-        return {
-          // Create never complete promise. ,
-          findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
-            req++
-            if (req === 2) {
-              throw new Error('Some error happened')
-            }
-            const domain = hierarchy.getClass(_class).domain
-            if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-            return await model.findAll(_class, query)
-          },
-          tx: async (tx: Tx): Promise<void> => {},
-          accountId: async () => await Promise.resolve(core.account.System)
-        }
+    const serverAt = start(
+      'localhost',
+      0,
+      {
+        connect: async (clientId, token, tx, close) => {
+          return {
+            // Create never complete promise. ,
+            findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
+              req++
+              if (req === 2) {
+                throw new Error('Some error happened')
+              }
+              const domain = hierarchy.getClass(_class).domain
+              if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
+              return await model.findAll(_class, query)
+            },
+            tx: async (tx: Tx): Promise<void> => {},
+            accountId: async () => await Promise.resolve(core.account.System)
+          }
+        },
+        close: async () => {}
       },
-      close: async () => {}
-    })
+      await securityCertificate
+    )
 
     try {
       const addr = (await serverAt).address()
-      const client = await createClient(`${addr.address}:${addr.port}/t1`)
+      const client = await createClient(`${addr.address}:${addr.port}/t1`, (await securityCertificate).cert)
       await expect(client.findAll(core.class.Tx, {})).rejects.toThrowError('ERROR: rpc.BadRequest') // eslint-disable-line
     } finally {
       ;(await serverAt).shutdown()
@@ -174,17 +192,22 @@ describe('server', () => {
     const { findAll } = await prepareInMemServer()
     const transactions: Tx[] = []
     let sendTx!: (tx: Tx) => void
-    const serverAt = start('localhost', 0, {
-      connect: async (clientId, token, clientSendTx) => {
-        sendTx = clientSendTx
-        return {
-          findAll,
-          tx: async (tx: Tx): Promise<void> => {},
-          accountId: async () => await Promise.resolve(core.account.System)
-        }
+    const serverAt = start(
+      'localhost',
+      0,
+      {
+        connect: async (clientId, token, clientSendTx) => {
+          sendTx = clientSendTx
+          return {
+            findAll,
+            tx: async (tx: Tx): Promise<void> => {},
+            accountId: async () => await Promise.resolve(core.account.System)
+          }
+        },
+        close: async () => {}
       },
-      close: async () => {}
-    })
+      await securityCertificate
+    )
     try {
       const addr = (await serverAt).address()
       const tx: TxCreateDoc<Doc> = {
@@ -199,8 +222,9 @@ describe('server', () => {
         objectSpace: core.space.Model,
         attributes: {}
       }
+      const cert = (await securityCertificate).cert
       await new Promise((resolve) => {
-        createClient(`${addr.address}:${addr.port}/t1`, (tx) => {
+        createClient(`${addr.address}:${addr.port}/t1`, cert, (tx) => {
           transactions.push(tx)
           resolve(null)
         })

@@ -70,3 +70,4 @@ common/autoinstallers/*/.npmrc
 .ui-build
 tsdoc-metadata.json
 dist
+dev/certificates

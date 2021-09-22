@@ -35,9 +35,6 @@ import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
 
 export function configurePlatform (): void {
-  // platform.setMetadata(ui.metadata.LoginApplication, 'login')
-  // platform.setMetadata(ui.metadata.DefaultApplication, 'workbench')
-
   if (process.env.CLIENT !== 'server') {
     console.info('use in memory DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))

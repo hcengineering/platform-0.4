@@ -101,6 +101,7 @@ specifiers:
   '@types/markdown-it': ^12.0.2
   '@types/mongodb': ^3.6.18
   '@types/node': ^14.14.40
+  '@types/pem': ~1.9.6
   '@types/prettier': ^2.3.2
   '@types/prosemirror-commands': ^1.0.3
   '@types/prosemirror-history': ^1.0.1
@@ -157,6 +158,7 @@ specifiers:
   markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   mongodb: ^3.6.9
+  pem: ^1.14.4
   postcss: ~8.3.6
   prettier: ^2.2.1
   prettier-plugin-svelte: ^2.2.0
@@ -292,6 +294,7 @@ dependencies:
   '@types/markdown-it': 12.2.0
   '@types/mongodb': 3.6.20
   '@types/node': 14.17.11
+  '@types/pem': 1.9.6
   '@types/prettier': 2.3.2
   '@types/prosemirror-commands': 1.0.4
   '@types/prosemirror-history': 1.0.3
@@ -348,6 +351,7 @@ dependencies:
   markdown-it: 12.2.0
   mini-css-extract-plugin: 1.6.2_webpack@5.51.1
   mongodb: 3.6.11
+  pem: 1.14.4
   postcss: 8.3.6
   prettier: 2.3.2
   prettier-plugin-svelte: 2.3.1_prettier@2.3.2
@@ -1881,6 +1885,12 @@ packages:
     resolution: {integrity: sha512-dxKo80TqYx3YtBipHwA/SdFmMMyLCnP+5mkEqN0eMjcTBzHkiiX0ES118DsjDBjvD+zeSsSU9jULTZ+frog+Gw==}
     dev: false
 
+  /@types/pem/1.9.6:
+    resolution: {integrity: sha512-IC67SxacM9fxEi/w7hf98dTun83OwUMeLMo1NS2gE0wdM9MHeg73iH/Pp9nB02OUCQ7Zb2UuKE/IpFCmQw9jxw==}
+    dependencies:
+      '@types/node': 14.17.11
+    dev: false
+
   /@types/prettier/1.19.1:
     resolution: {integrity: sha512-5qOlnZscTn4xxM5MeGXAMOsIOIKIbh9e85zJWfBRVPlRMEVawzoPhINYbRGkBZCI8LxvBe7tJCdWiarA99OZfQ==}
     dev: false
@@ -3070,6 +3080,10 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /charenc/0.0.2:
+    resolution: {integrity: sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=}
+    dev: false
+
   /chokidar/2.1.8:
     resolution: {integrity: sha512-ZmZUazfOzf0Nve7duiCKD23PFSCs4JPoYyccjUFF3aQkQadqBhfzhjkwBH2mNOG9cTBwhamM37EIsIkZw3nRgg==}
     deprecated: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
@@ -3395,6 +3409,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+    dev: false
+
+  /crypt/0.0.2:
+    resolution: {integrity: sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=}
     dev: false
 
   /css-loader/5.2.7_webpack@5.51.1:
@@ -3782,6 +3800,11 @@ packages:
       webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
+  /dotenv/10.0.0:
+    resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
+    engines: {node: '>=10'}
+    dev: false
+
   /dotenv/8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
@@ -3931,6 +3954,10 @@ packages:
       is-callable: 1.2.4
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+    dev: false
+
+  /es6-promisify/6.1.1:
+    resolution: {integrity: sha512-HBL8I3mIki5C1Cc9QjKUenHtnG0A5/xA8Q/AllRcfiwl2CZFXGK7ddBiCoRwAix4i2KxcQfjtIVcrVbB3vbmwg==}
     dev: false
 
   /esbuild-plugin-d.ts/1.0.6_ts-node@10.2.1+typescript@4.3.5:
@@ -7357,6 +7384,14 @@ packages:
       uc.micro: 1.0.6
     dev: false
 
+  /md5/2.3.0:
+    resolution: {integrity: sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==}
+    dependencies:
+      charenc: 0.0.2
+      crypt: 0.0.2
+      is-buffer: 1.1.6
+    dev: false
+
   /mdn-data/2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
     dev: false
@@ -8113,6 +8148,16 @@ packages:
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /pem/1.14.4:
+    resolution: {integrity: sha512-v8lH3NpirgiEmbOqhx0vwQTxwi0ExsiWBGYh0jYNq7K6mQuO4gI6UEFlr6fLAdv9TPXRt6GqiwE37puQdIDS8g==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      es6-promisify: 6.1.1
+      md5: 2.3.0
+      os-tmpdir: 1.0.2
+      which: 2.0.2
     dev: false
 
   /performance-now/2.1.0:
@@ -11398,7 +11443,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-sjeoTKD6lGmw0Wh6CQnwM6ELQoyysjjJtgw7KZf64mv9FudY3LqjQPKf793WbC1Zjiaz4qKpKeaGoayR8E1YEQ==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-B7QxMJ0qTcwiW8WlOeTSZogJ+rY1cp001CBwAxHX+ivHFt/AgQK5OM3G0o+n4lgZBrlojNHMeWo2W/V9zKpQ9Q==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -11410,6 +11455,7 @@ packages:
       copy-webpack-plugin: 9.0.1_webpack@5.51.1
       cross-env: 7.0.3
       css-loader: 5.2.7_webpack@5.51.1
+      dotenv: 10.0.0
       dotenv-webpack: 7.0.3_webpack@5.51.1
       eslint: 7.32.0
       eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
@@ -12555,7 +12601,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-sDA3QU2fkfLzNqPYI2be9zlHMBmN4+14PTf0pUuCEQpQez6PfbC/+c6hRZ4gQLTRP9BH6axS50UfNKaU+bKfig==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-qwwHWpgMDOHQTeRMvN1w9w5TN1qVF/hzN5Fa+du1OUoU4pMHWVY2ubvfWo157aRznGIv5LTSo98OWcx7Tol6lw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -12566,6 +12612,7 @@ packages:
       '@types/heft-jest': 1.0.2
       '@types/jwt-simple': 0.5.33
       '@types/node': 14.17.11
+      '@types/pem': 1.9.6
       '@types/ws': 7.4.7
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
@@ -12576,6 +12623,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       gravatar: 1.8.2
       jwt-simple: 0.5.6
+      pem: 1.14.4
       prettier: 2.3.2
       ts-node: 10.2.1_a3da7f9f56afe7b98c9382c63365a60d
       ts-node-dev: 1.1.8_typescript@4.3.5
@@ -13048,7 +13096,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-U8WrXlAXsHxbdsWC379lTzFyqCUaisk6knm7l3NQPosgHctPzU1MT1K43dQS5w6V2whhWfLCuCBvPCQ0W9cW/Q==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-HSlvvIjwgEpU7fnyiXzTYYkoBPTfJKsDcqssdFf+QGPTKPFhJGWIK1b5EbSMQTVl5PqXENsftJcWPDtrOwnMyg==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0

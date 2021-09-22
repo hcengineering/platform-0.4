@@ -37,7 +37,7 @@ module.exports = {
     mainFields: (prod || NO_SVELTE) ? ['browser', 'module', 'main'] : ['svelte', 'browser', 'module', 'main']
   },
   output: {
-    path: path.join(__dirname, 'dist/dist'),
+    path: path.join(__dirname, 'dist/web'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
     publicPath: '/'
@@ -127,7 +127,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: './public', to: '.' },
-        { from: './launcher.sh.template', to: '..' }
+        { from: './config.env.template', to: '../config' }
       ]
     })
   ],

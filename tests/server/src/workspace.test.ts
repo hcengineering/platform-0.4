@@ -32,6 +32,7 @@ import { Component, component } from '@anticrm/status'
 import { createWorkspace, deleteWorkspace, shutdown } from '@anticrm/workspaces'
 import { describe, expect, it, beforeEach, afterAll, afterEach } from '@jest/globals'
 import builder from '@anticrm/model-all'
+import { selfSignedAuth } from '@anticrm/server'
 
 // Will be used to hold security information.
 const TEST_SECRET = 'test-secret'
@@ -101,37 +102,47 @@ describe('workspace', () => {
   it('connect to workspace', async () => {
     console.log('start connecting')
     // Initialize workspace
-    const serverAt = await start('localhost', 0, {
-      connect: async (clientId, token) => {
-        console.log('server accepted client')
-        try {
-          const { accountId, workspaceId } = decodeToken(TEST_SECRET, token)
-          const { clientStorage: storage } = await assignWorkspace({ clientId, accountId, workspaceId, tx: (tx) => {} })
-          console.log('workspace assigned')
-          return {
-            findAll: async (_class, query) => {
-              // console.log('findAll', _class, query)
-              const result = await storage.findAll(_class, query)
-              // console.log('findAll result', result)
-              return result
-            },
-            tx: async (tx) => {
-              // console.log('tx', tx)
-              await storage.tx(tx)
-            },
-            accountId: async () => {
-              await Promise.resolve(core.account.System)
+    const serverAt = await start(
+      'localhost',
+      0,
+      {
+        connect: async (clientId, token) => {
+          console.log('server accepted client')
+          try {
+            const { accountId, workspaceId } = decodeToken(TEST_SECRET, token)
+            const { clientStorage: storage } = await assignWorkspace({
+              clientId,
+              accountId,
+              workspaceId,
+              tx: (tx) => {}
+            })
+            console.log('workspace assigned')
+            return {
+              findAll: async (_class, query) => {
+                // console.log('findAll', _class, query)
+                const result = await storage.findAll(_class, query)
+                // console.log('findAll result', result)
+                return result
+              },
+              tx: async (tx) => {
+                // console.log('tx', tx)
+                await storage.tx(tx)
+              },
+              accountId: async () => {
+                await Promise.resolve(core.account.System)
+              }
             }
+          } catch (err) {
+            console.error(err)
+            throw new Error('invalid token')
           }
-        } catch (err) {
-          console.error(err)
-          throw new Error('invalid token')
+        },
+        close: async (clientId) => {
+          await closeWorkspace(clientId)
         }
       },
-      close: async (clientId) => {
-        await closeWorkspace(clientId)
-      }
-    })
+      await selfSignedAuth()
+    )
 
     try {
       const addr = (await serverAt).address()

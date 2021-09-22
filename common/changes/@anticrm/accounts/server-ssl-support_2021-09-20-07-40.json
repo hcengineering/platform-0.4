@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/accounts",
+      "comment": "Support of TLS",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/accounts"
+}

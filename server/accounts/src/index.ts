@@ -69,6 +69,7 @@ export interface LoginInfo {
  * @public
  */
 export interface ServerInfo {
+  protocol: string
   server: string
   port: number
   tokenSecret: string
@@ -260,7 +261,7 @@ export class Accounts {
       )
       const result: LoginInfo = {
         workspace,
-        clientUrl: `${this.server.server}:${this.server.port}/${token}`,
+        clientUrl: `${this.server.protocol}://${this.server.server}:${this.server.port}/${token}`,
         email
       }
       return result

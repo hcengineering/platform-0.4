@@ -33,6 +33,7 @@ describe('server', () => {
     db = conn.db(DB_NAME)
     await db.dropDatabase()
     accounts = new Accounts(conn.db(DB_NAME), 'workspace', 'account', {
+      protocol: 'ws',
       server: 'localhost',
       port: 18180,
       tokenSecret: 'secret'
