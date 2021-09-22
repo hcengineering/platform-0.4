@@ -15,6 +15,7 @@ limitations under the License.
 <script type="ts">
   import { onDestroy } from 'svelte'
 
+  import type { Ref } from '@anticrm/core';
   import { Button } from '@anticrm/ui'
   import meeting from '@anticrm/meeting'
   import type { RoomSpace } from '@anticrm/meeting'
@@ -27,10 +28,21 @@ limitations under the License.
   import { createRoomMgr } from '..'
   import type { Peer } from '..'
 
+  export let currentSpace: Ref<RoomSpace> | undefined
+  let prevSpace: Ref<RoomSpace> | undefined
+
   const roomMgr = createRoomMgr()
   const { user, screen, peers, status, gains } = roomMgr
   let container: Element
-  let space: RoomSpace | undefined
+
+  $: if (currentSpace !== prevSpace) {
+    console.log(currentSpace, prevSpace)
+    prevSpace = currentSpace
+
+    if ($status !== 'left') {
+      roomMgr.leave()
+    }
+  }
 
   let { amount, size, containerSize: cSize } = initGridStore()
   $: if (container && peers) {
@@ -53,11 +65,11 @@ limitations under the License.
   $: peersArray = [...$peers.values()]
 
   async function join () {
-    if (space === undefined) {
+    if (currentSpace === undefined) {
       return
     }
 
-    roomMgr.join(space._id)
+    roomMgr.join(currentSpace)
   }
 
   function leave () {
