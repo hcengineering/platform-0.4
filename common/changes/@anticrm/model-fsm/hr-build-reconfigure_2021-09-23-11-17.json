@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "HR build re-configuration",
+      "type": "patch",
+      "packageName": "@anticrm/model-fsm"
+    }
+  ],
+  "packageName": "@anticrm/model-fsm",
+  "email": "haiodo@gmail.com"
+}

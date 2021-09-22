@@ -13,12 +13,11 @@
 // limitations under the License.
 //
 
-import { Builder, Model } from '@anticrm/model'
-import type { FSM, Transition, WithFSM, FSMItem, State } from '@anticrm/fsm'
+import { Class, Doc, Domain, DOMAIN_MODEL, Ref } from '@anticrm/core'
+import type { FSM, FSMItem, State, Transition, WithFSM } from '@anticrm/fsm'
 import fsmPlugin from '@anticrm/fsm'
-
+import { Builder, Model } from '@anticrm/model'
 import core, { TDoc, TSpace } from '@anticrm/model-core'
-import { Class, Doc, Domain, DOMAIN_MODEL, generateId, Ref } from '@anticrm/core'
 
 const DOMAIN_FSM = 'fsm' as Domain
 
@@ -89,15 +88,11 @@ export type PureState = Omit<State, keyof Doc | 'fsm' | 'color'> & {
  * @public
  */
 export class FSMBuilder {
-  private readonly name: string
-  private readonly clazz: Ref<Class<Doc>>
   private readonly states = new Map<string, PureState>()
   private readonly transitions: Array<[string, string]> = []
+  private readonly ids = new Set<Ref<Doc>>()
 
-  constructor (name: string, clazz: Ref<Class<Doc>>) {
-    this.name = name
-    this.clazz = clazz
-  }
+  constructor (readonly name: string, readonly clazz: Ref<Class<Doc>>, readonly fsmId: Ref<FSM>) {}
 
   private getState (a: PureState): PureState | undefined {
     if (!this.states.has(a.name)) {
@@ -140,8 +135,16 @@ export class FSMBuilder {
     }
   })()
 
+  makeId<T extends Doc>(key: string, name: string): Ref<T> {
+    const id = (this.fsmId + `-${key}-` + name.toLowerCase()) as Ref<T>
+    if (this.ids.has(id)) {
+      throw new Error(`Non uniq ID for FSM detected:${id}, ${Array.from(this.ids.keys()).toString()}`)
+    }
+    this.ids.add(id)
+    return id
+  }
+
   build (S: Builder): Ref<FSM> {
-    const id: Ref<FSM> = generateId()
     S.createDoc(
       fsmPlugin.class.FSM,
       {
@@ -149,20 +152,20 @@ export class FSMBuilder {
         clazz: this.clazz,
         isTemplate: true
       },
-      id
+      this.fsmId
     )
 
     const stateIDs = new Map<string, Ref<State>>()
 
     this.states.forEach((state) => {
       const color = state.color ?? this.genColor.next().value
-      const sID: Ref<State> = generateId()
+      const sID: Ref<State> = this.makeId('st', state.name)
       S.createDoc(
         fsmPlugin.class.State,
         {
           ...state,
           color,
-          fsm: id
+          fsm: this.fsmId
         },
         sID
       )
@@ -180,13 +183,13 @@ export class FSMBuilder {
         return
       }
 
-      const tID: Ref<Transition> = generateId()
+      const tID: Ref<Transition> = this.makeId('tr', fromName + '-' + toName)
       S.createDoc(
         fsmPlugin.class.Transition,
         {
           from,
           to,
-          fsm: id
+          fsm: this.fsmId
         },
         tID
       )
@@ -194,11 +197,12 @@ export class FSMBuilder {
       transitions.push(tID)
     })
 
-    return id
+    return this.fsmId
   }
 }
 
 /**
  * @public
  */
-export const templateFSM = (name: string, clazz: Ref<Class<Doc>>): FSMBuilder => new FSMBuilder(name, clazz)
+export const templateFSM = (name: string, clazz: Ref<Class<Doc>>, fsmId: Ref<FSM>): FSMBuilder =>
+  new FSMBuilder(name, clazz, fsmId)

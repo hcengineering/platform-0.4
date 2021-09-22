@@ -18,8 +18,9 @@ import { ReqId, Request, Response } from '@anticrm/rpc'
 import { Component, component, PlatformError, Severity, Status, StatusCode, unknownError } from '@anticrm/status'
 import { Buffer } from 'buffer'
 import { pbkdf2Sync, randomBytes } from 'crypto'
-import { encode } from 'jwt-simple'
 import { Binary, Collection, Db, ObjectId } from 'mongodb'
+import { decodeToken, generateToken } from './token'
+export * from './token'
 
 /**
  * @public
@@ -30,7 +31,7 @@ export interface Account {
   details: AccountDetails
   hash: Binary
   salt: Binary
-  workspaces: ObjectId[]
+  workspaces: string[]
 }
 
 /**
@@ -62,17 +63,7 @@ export interface Workspace {
 export interface LoginInfo {
   email: string
   workspace: string
-  clientUrl: string
-}
-
-/**
- * @public
- */
-export interface ServerInfo {
-  protocol: string
-  server: string
-  port: number
-  tokenSecret: string
+  token: string
 }
 
 /**
@@ -107,7 +98,7 @@ function toAccountInfo (account: Account): AccountInfo {
 function checkDefined (msg: string, ...params: (string | undefined)[]): void {
   for (const p of params) {
     if (p == null || p.trim().length === 0) {
-      throw Error(msg)
+      throw Error(`${msg} ${params.toString()}`)
     }
   }
 }
@@ -121,15 +112,12 @@ export class Accounts {
     readonly db: Db,
     readonly workspaceCollection: string,
     readonly accountCollection: string,
-    readonly server: ServerInfo
+    readonly serverToken: string
   ) {
     // A list of allowed operations
     this.methods = {
       login: this.login.bind(this),
       signup: this.signup.bind(this),
-      createAccount: this.createAccount.bind(this),
-      createWorkspace: this.createWorkspace.bind(this),
-      addWorkspace: this.addWorkspace.bind(this),
       updateAccount: this.updateAccount.bind(this)
     }
   }
@@ -239,8 +227,14 @@ export class Accounts {
     const ws = await this.getWorkspace(workspace)
     const account = await this.getAccount(email)
 
+    const wid = ws._id.toString()
+    if (account.workspaces.includes(wid)) {
+      // Workspace is already exists
+      throw new PlatformError(new Status(Severity.ERROR, Code.status.WorkspaceAlreadyJoined, { workspace, email }))
+    }
+
     await this.workspaces().updateOne({ _id: ws._id }, { $push: { accounts: account._id } })
-    await this.accounts().updateOne({ _id: account._id }, { $push: { workspaces: ws._id } })
+    await this.accounts().updateOne({ _id: account._id }, { $push: { workspaces: wid } })
   }
 
   async login (email: string, password: string, workspace: string): Promise<LoginInfo> {
@@ -249,19 +243,13 @@ export class Accounts {
     const workspaceInfo = await this.getWorkspace(workspace)
     const accountInfo = await this.getAccountVerify(email, password)
 
-    const ws = accountInfo.workspaces.find((w) => w.equals(workspaceInfo._id))
+    const wid = workspaceInfo._id.toString()
+    const ws = accountInfo.workspaces.find((w) => w === wid)
     if (ws !== undefined) {
-      const token = encode(
-        {
-          accountId: accountInfo._id,
-          workspaceId: workspace,
-          details: { ...accountInfo.details, email }
-        },
-        this.server.tokenSecret
-      )
+      const token = generateToken(this.serverToken, accountInfo._id, workspace, { ...accountInfo.details, email })
       const result: LoginInfo = {
         workspace,
-        clientUrl: `${this.server.protocol}://${this.server.server}:${this.server.port}/${token}`,
+        token,
         email
       }
       return result
@@ -280,11 +268,9 @@ export class Accounts {
       accountInfo = await this.createAccount(email, password, details)
     }
 
-    for (const w of accountInfo.workspaces) {
-      if (w.equals(workspaceInfo._id)) {
-        // Workspace is already exists
-        throw new PlatformError(new Status(Severity.ERROR, Code.status.WorkspaceAlreadyJoined, { workspace, email }))
-      }
+    if (accountInfo.workspaces.includes(workspaceInfo._id.toString())) {
+      // Workspace is already exists
+      throw new PlatformError(new Status(Severity.ERROR, Code.status.WorkspaceAlreadyJoined, { workspace, email }))
     }
     // Add workspace
     await this.addWorkspace(email, workspace)
@@ -292,10 +278,11 @@ export class Accounts {
     return await this.login(email, password, workspace)
   }
 
-  async updateAccount (email: string, password: string, newPassword: string): Promise<AccountInfo> {
-    checkDefined('email and password should be specified', email, password)
+  async updateAccount (token: string, password: string, newPassword: string): Promise<AccountInfo> {
+    const { details } = decodeToken(this.serverToken, token)
+    checkDefined('email and password should be specified', details.email, password)
 
-    const account = await this.getAccountVerify(email, password)
+    const account = await this.getAccountVerify(details?.email ?? '', password)
 
     const hash = hashWithSalt(newPassword, account.salt.buffer)
     await this.accounts().updateOne(

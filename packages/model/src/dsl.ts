@@ -170,7 +170,7 @@ export class Builder {
   createDoc<T extends Doc>(
     _class: Ref<Class<T>>,
     attributes: Data<T>,
-    objectId?: Ref<T>,
+    objectId: Ref<T>, // ObjectID should be not uniq for model instance values, for upgrade procedure to work properly.
     docOptions?: Partial<Doc>
   ): T {
     const tx = txCreateDoc(_class, this.hierarchy.getDomain(_class), attributes, objectId, docOptions)

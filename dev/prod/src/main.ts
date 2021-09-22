@@ -26,13 +26,15 @@ configurePlatform()
 const accountsUrl = process.env.APP_ACCOUNTS_URL
 const meetingHost = process.env.MEETING_WSHOST ?? 'localhost'
 const meetingPort = process.env.MEETING_WSPORT ?? 18081
+const clientUri = process.env.CLIENT_URL ?? 'wss://localhost:18080'
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
 setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
+setMetadata(pluginCore.metadata.ClientUrl, clientUri)
 
 const loginInfo = currentAccount()
 if (loginInfo !== undefined) {
-  setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
+  setMetadata(pluginCore.metadata.Token, loginInfo.token)
 }
 
 createApp(document.body)

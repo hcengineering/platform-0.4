@@ -34,5 +34,5 @@ Server is looking for ./config/config.env file for following parameters.
 Running server as background process could be achived with.
 
 ```bash
-notail node ./server.js &
+node ./server.js
 ```

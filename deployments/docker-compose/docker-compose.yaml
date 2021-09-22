@@ -1,0 +1,33 @@
+version: '3.9' # optional since v1.27.0
+services:
+  server:
+    image: hardcoreeng/hr-build
+    ports:
+      - 443:8080
+      - 18080:18080
+    links:
+      - mongodb
+    environment:
+      - WEB_HOST=${WEB_HOST} # Should be
+      - SERVER_SECRET=${SERVER_SECRET}
+      - MONGODB_URI=mongodb://mongodb:27017
+      - ACCOUNTS_URI=https://${WEB_HOST}/auth
+      - CLIENT_URI=wss://${WEB_HOST}:18080
+      - SECURITY_CERT_FILE=/etc/letsencrypt/live/${WEB_HOST}/cert.pem
+      - SECURITY_KEY_FILE=/etc/letsencrypt/live/${WEB_HOST}/privkey.pem
+      - SECURITY_CA_FILE=/etc/letsencrypt/live/${WEB_HOST}/chain.pem
+      - WORKSPACE=${WORKSPACE}
+      - WORKSPACE_ORGANIZATION=${WORKSPACE_ORGANIZATION}
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./db/:/data/db
+    expose:
+      - 27017
+    restart: unless-stopped

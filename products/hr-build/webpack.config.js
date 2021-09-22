@@ -131,7 +131,7 @@ module.exports = {
       ]
     })
   ],
-  devtool: prod ? false : 'eval-source-map',
+  devtool: 'eval-source-map',
   devServer: {
     publicPath: '/',
     historyApiFallback: {

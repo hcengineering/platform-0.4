@@ -72,38 +72,46 @@ export class TDerivedEvent extends TEvent implements DerivedEvent {
 export function createModel (builder: Builder): void {
   builder.createModel(TCalendar, TEvent, TDerivedEvent)
 
-  builder.createDoc(workbench.class.Application, {
-    label: calendar.string.App,
-    icon: calendar.icon.Calendar,
-    navigatorModel: {
-      spaces: [
-        {
-          label: calendar.string.Calendar,
-          spaceIcon: calendar.icon.Calendar,
-          spaceClass: calendar.class.Calendar,
-          addSpaceLabel: calendar.string.AddCalendar,
-          createComponent: calendar.component.CreateCalendar,
-          userSpace: {
-            name: 'Personal',
-            description: 'Personal calendar',
-            members: [],
-            private: true
-          },
-          item: {
-            createComponent: calendar.component.CreateEvent,
-            editComponent: calendar.component.EditEvent
+  builder.createDoc(
+    workbench.class.Application,
+    {
+      label: calendar.string.App,
+      icon: calendar.icon.Calendar,
+      navigatorModel: {
+        spaces: [
+          {
+            label: calendar.string.Calendar,
+            spaceIcon: calendar.icon.Calendar,
+            spaceClass: calendar.class.Calendar,
+            addSpaceLabel: calendar.string.AddCalendar,
+            createComponent: calendar.component.CreateCalendar,
+            userSpace: {
+              name: 'Personal',
+              description: 'Personal calendar',
+              members: [],
+              private: true
+            },
+            item: {
+              createComponent: calendar.component.CreateEvent,
+              editComponent: calendar.component.EditEvent
+            }
           }
-        }
-      ],
-      spaceView: calendar.component.Workspace
-    }
-  })
+        ],
+        spaceView: calendar.component.Workspace
+      }
+    },
+    calendar.app.Calendar
+  )
 
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    targetClass: calendar.class.DerivedEvent,
-    sourceClass: calendar.class.Event,
-    mapper: calendar.mapper.defaultMapper
-  })
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      targetClass: calendar.class.DerivedEvent,
+      sourceClass: calendar.class.Event,
+      mapper: calendar.mapper.defaultMapper
+    },
+    calendar.dd.EventDD
+  )
 
   builder.createDoc(
     core.class.DerivedDataDescriptor,
@@ -116,14 +124,18 @@ export function createModel (builder: Builder): void {
   )
 
   // P R E S E N T E R S
-  builder.createDoc<DocumentPresenter<Event>>(core.class.DocumentPresenter, {
-    objectClass: calendar.class.Event,
-    presentation: [
-      {
-        component: calendar.component.EditEvent,
-        description: 'Event editor',
-        mode: PresentationMode.Edit
-      }
-    ]
-  })
+  builder.createDoc<DocumentPresenter<Event>>(
+    core.class.DocumentPresenter,
+    {
+      objectClass: calendar.class.Event,
+      presentation: [
+        {
+          component: calendar.component.EditEvent,
+          description: 'Event editor',
+          mode: PresentationMode.Edit
+        }
+      ]
+    },
+    calendar.presenter.EventPresenter
+  )
 }
