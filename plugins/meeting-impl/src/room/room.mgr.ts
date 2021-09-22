@@ -335,6 +335,7 @@ export class RoomMgr {
         releaseMedia(p)
       })
     })
+
     this._peers.set(new Map())
     ;[...this.gainMeters.values()].forEach(({ timeoutHandler, meter }) => {
       clearInterval(timeoutHandler)
@@ -344,11 +345,7 @@ export class RoomMgr {
     this.gainMeters.clear()
     this._gains.set(new Map())
 
-    const screen = this._screen.get()
-    const user = this._user.get()
-    if (screen.owner === user.internalID) {
-      await this.handleScreenSharingFinished()
-    }
+    await this.handleScreenSharingFinished()
 
     this._status.set('left')
 
@@ -526,7 +523,9 @@ export class RoomMgr {
       owner: undefined
     }))
 
-    if (this._status.get() === 'joined') {
+    const user = this._user.get()
+
+    if (this._status.get() === 'joined' && user.internalID === screen.owner) {
       await this.client.sendRequest({
         method: ReqMethod.StopScreenSharing,
         params: []
