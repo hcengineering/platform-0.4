@@ -15,7 +15,7 @@ limitations under the License.
 <script type="ts">
   import { onDestroy } from 'svelte'
 
-  import type { Ref } from '@anticrm/core';
+  import type { Ref } from '@anticrm/core'
   import { Button } from '@anticrm/ui'
   import meeting from '@anticrm/meeting'
   import type { RoomSpace } from '@anticrm/meeting'

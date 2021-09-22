@@ -15,7 +15,7 @@
 <script lang="ts">
   import core from '@anticrm/core'
   import type { Data } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench';
+  import { getClient } from '@anticrm/workbench'
   import { EditBox, Dialog, Grid, TextArea, ToggleWithLabel } from '@anticrm/ui'
   import meeting from '@anticrm/meeting'
   import { RoomSpace } from '@anticrm/meeting'

@@ -37,6 +37,5 @@ export default async (): Promise<MeetingService> => {
   return {}
 }
 
-export const createRoomMgr = (): RoomMgr => new RoomMgr(
-  new Client(`ws://${getMetadata(meeting.metadata.ClientUrl) ?? 'localhost:18081'}/ws`)
-)
+export const createRoomMgr = (): RoomMgr =>
+  new RoomMgr(new Client(`ws://${getMetadata(meeting.metadata.ClientUrl) ?? 'localhost:18081'}/ws`))
