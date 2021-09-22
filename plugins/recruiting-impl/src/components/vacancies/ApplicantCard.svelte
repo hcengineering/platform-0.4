@@ -32,7 +32,6 @@
 
   const client = getClient()
 
-  console.log(doc)
   let candidate: Candidate | undefined
   let candidateQ: QueryUpdater<Candidate> | undefined
   $: candidateQ = client.query(
@@ -47,7 +46,6 @@
   let state: State | undefined
   let stateQ: QueryUpdater<State> | undefined
   $: stateQ = client.query(stateQ, fsm.class.State, { _id: doc.state }, (res) => {
-    console.log(res)
     state = res[0]
   })
 

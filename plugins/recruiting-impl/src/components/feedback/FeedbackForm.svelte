@@ -13,10 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Class, Ref } from '@anticrm/core'
+  import type { Class, Ref } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { Button, TextArea } from '@anticrm/ui'
-  import { QueryUpdater } from '@anticrm/presentation'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import type { Feedback, FeedbackRequest } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
 
