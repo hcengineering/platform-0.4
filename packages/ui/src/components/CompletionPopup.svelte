@@ -142,8 +142,5 @@
         margin-bottom: 0;
       }
     }
-    .separator {
-      height: 8px;
-    }
   }
 </style>
