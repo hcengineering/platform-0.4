@@ -146,6 +146,10 @@ export class RoomMgr {
     this.client.subscribe(NotificationMethod.PeerUpdated, boundHandler)
   }
 
+  async close (): Promise<void> {
+    await this.client.close()
+  }
+
   private async initMedia (): Promise<void> {
     const media = await navigator.mediaDevices.getUserMedia({
       audio: true,

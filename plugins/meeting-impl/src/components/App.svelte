@@ -24,9 +24,10 @@ limitations under the License.
 
   import { getScreenOwner } from '@anticrm/webrtc'
 
-  import { roomMgr } from '..'
+  import { createRoomMgr } from '..'
   import type { Peer } from '..'
 
+  const roomMgr = createRoomMgr()
   const { user, screen, peers, status, gains } = roomMgr
   let container: Element
   let space: RoomSpace | undefined
@@ -84,6 +85,8 @@ limitations under the License.
   function requestFullscreen () {
     container?.requestFullscreen()
   }
+
+  onDestroy(() => roomMgr.close())
 
   let videoStyle = ''
   $: videoStyle = isScreenShared ? '' : `width: ${$size.width}px; height: ${$size.height}px`
