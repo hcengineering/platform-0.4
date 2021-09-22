@@ -46,7 +46,7 @@
   $: {
     popupStyle = `
       left: ${pos.left}px;
-      top: ${pos.top - (ontop ? clientHeight : 0)}px;
+      top: ${pos.top - (ontop ? clientHeight : 0) - 8}px;
       margin-bottom:-${clientHeight + 2}px;
       margin-right:-${clientWidth}px;
       z-index: 100000;
@@ -79,8 +79,7 @@
 </script>
 
 <div class="presentation-completion-popup" style={popupStyle} bind:clientHeight bind:clientWidth on:blur>
-  <div class="separator" />
-  <ScrollBox vertical>
+  <ScrollBox vertical noShift>
     <!-- scrollPosition={selOffset} -->
     <div bind:this={listElement}>
       {#each items as item (item.key)}
@@ -107,23 +106,22 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    border-radius: 4px;
+    padding: 8px;
     height: 150px;
     width: 300px;
-
-    background-color: var(--theme-bg-color);
-    color: var(--theme-content-color);
-    border: 1px solid var(--theme-bg-dark-color);
-    box-shadow: var(--theme-shadow);
+    background-color: var(--theme-popup-bg);
+    border: var(--theme-popup-border);
+    border-radius: 8px;
+    box-shadow: var(--theme-popup-shadow);
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
 
     .item {
-      font-size: 15px;
+      // font-size: 15px;
       white-space: no-wrap;
-      margin: 4px 0;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 6px 8px;
+      border-radius: 8px;
       cursor: pointer;
-      color: var(--theme-content-dark-color);
       transition: background-color 0.2s;
 
       &.selected {
@@ -133,7 +131,7 @@
 
       &:focus {
         outline: none;
-        border-color: var(--theme-doclink-color);
+        background-color: var(--theme-button-bg-focused);
         box-shadow: inset 0px 0px 2px 0px var(--theme-doclink-color);
         color: var(--theme-caption-color);
       }

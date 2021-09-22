@@ -112,6 +112,7 @@
     border: var(--theme-popup-border);
     border-radius: 20px;
     box-shadow: var(--theme-popup-shadow);
+    -webkit-backdrop-filter: blur(30px);
     backdrop-filter: blur(30px);
 
     .title {
