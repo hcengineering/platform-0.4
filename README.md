@@ -59,6 +59,10 @@ is used for fast build all parts of the project.
 ### Node.js 14.17 or later
 We propose to use [Node Version Manager](https://github.com/nvm-sh/nvm) for installation Node.js version 14.17+.
 
+#### MacOS on M1
+
+If you have MacOS on M1 it needs to use Node.js 16.x for the project.
+
 ### Rush.js
 We use [rush.js - a scalable monorepo manager](https://rushjs.io/) in the project 
 ```bash
@@ -235,12 +239,7 @@ rush lint
 rush test
 ```
 
-## Troubleshooting
-This section covers common issues that developers may encounter when executing this project.
 
-### MacOS on M1
-
-If you have MacOS on M1 it needs to use Node.js 16.x for the project.
 
 ## Getting help
 
