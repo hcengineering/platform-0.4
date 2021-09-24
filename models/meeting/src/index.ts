@@ -17,9 +17,9 @@ import { Builder, Model } from '@anticrm/model'
 
 import core, { TSpace } from '@anticrm/model-core'
 import type { RoomSpace } from '@anticrm/meeting'
+import meeting from '@anticrm/meeting'
 
 import workbench from '@anticrm/model-workbench'
-import meeting from './plugin'
 
 /**
  * @public
@@ -35,7 +35,7 @@ export function createModel (builder: Builder): void {
   builder.createDoc(
     workbench.class.Application,
     {
-      label: meeting.string.ApplicationLabelMeeting,
+      label: meeting.string.App,
       icon: meeting.icon.Meeting,
       navigatorModel: {
         spaces: [
@@ -43,23 +43,13 @@ export function createModel (builder: Builder): void {
             label: meeting.string.Rooms,
             spaceIcon: meeting.icon.Hashtag,
             spaceClass: meeting.class.RoomSpace,
-            addSpaceLabel: meeting.string.CreateChannel,
-            createComponent: meeting.component.CreateChannel
+            addSpaceLabel: meeting.string.CreateRoom,
+            createComponent: meeting.component.CreateRoom
           }
         ],
         spaceView: meeting.component.WorkspaceComponent
       }
     },
     meeting.app.Meeting
-  )
-  builder.createDoc(
-    meeting.class.RoomSpace,
-    {
-      name: 'Kitchen',
-      description: 'Kitchen Talks',
-      private: false,
-      members: []
-    },
-    meeting.room.Kitchen
   )
 }

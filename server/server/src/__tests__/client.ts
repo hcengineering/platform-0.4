@@ -64,8 +64,17 @@ export class TestConnection extends RequestProcessor implements CoreClient {
 
 export type ClientWithShutdown = Client & TxOperations & { shutdown: () => void }
 
-export async function createClient (clientUrl: string, notify?: (tx: Tx) => void): Promise<ClientWithShutdown> {
-  const socket = new WebSocket(`ws://${clientUrl}`)
+export async function createClient (
+  clientUrl: string,
+  certificate: string,
+  notify?: (tx: Tx) => void
+): Promise<ClientWithShutdown> {
+  const socket = new WebSocket(`wss://${clientUrl}`, {
+    ca: certificate,
+    checkServerIdentity: (host, cert) => {
+      return false
+    }
+  })
   const client: ClientWithShutdown = (await createCoreClient(async (tx) => {
     // Wait for connection to be established.
     await new Promise<any>((resolve, reject) => {

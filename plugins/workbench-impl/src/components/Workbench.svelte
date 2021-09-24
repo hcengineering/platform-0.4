@@ -138,6 +138,7 @@
       <Navigator
         model={navigatorModel}
         special={currentRoute.special}
+        {notifications}
         on:special={(detail) => {
           currentRoute.special = detail.detail
           router.navigate({ space: undefined, special: currentRoute.special })

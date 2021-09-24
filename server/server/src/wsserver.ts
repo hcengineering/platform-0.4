@@ -20,6 +20,7 @@ import * as gravatar from 'gravatar'
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
 import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
+import { SecurityOptions } from './tls_utils'
 
 /**
  * @public
@@ -27,6 +28,7 @@ import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
 export interface ServerOptions {
   logTransactions: boolean
   logRequests: boolean
+  security?: SecurityOptions
 }
 /**
  * @public
@@ -35,22 +37,27 @@ export async function startServer (
   host: string | undefined,
   port: number,
   serverToken: string,
-  options?: ServerOptions
+  options: ServerOptions
 ): Promise<Server> {
   regCalendarMappers()
   regNotificationMappers()
 
-  const instance = await start(host, port, {
-    connect: connectClient(serverToken, options),
-    close: async (clientId) => {
-      await closeWorkspace(clientId)
-    }
-  })
+  const instance = await start(
+    host,
+    port,
+    {
+      connect: connectClient(serverToken, options),
+      close: async (clientId) => {
+        await closeWorkspace(clientId)
+      }
+    },
+    options.security
+  )
   return instance
 }
 function connectClient (
   serverToken: string,
-  options: ServerOptions = { logRequests: false, logTransactions: false }
+  options: ServerOptions
 ): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<CoreClient> {
   return async (clientId, token, sendTx) => {
     try {

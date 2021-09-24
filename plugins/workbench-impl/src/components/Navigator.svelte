@@ -22,7 +22,7 @@
   import TreeSeparator from './navigator/TreeSeparator.svelte'
 
   export let model: NavigatorModel | undefined = undefined
-  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  export let notifications: Map<Ref<Space>, SpaceNotifications>
   export let special: string | undefined
 
   const dispatch = createEventDispatcher()

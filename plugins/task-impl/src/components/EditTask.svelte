@@ -52,6 +52,7 @@
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
+  let desription: string = ''
 
   $: {
     getItem(id)
@@ -63,6 +64,7 @@
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       notification = notifications.get(result[0].space)
       item = result[0]
+      desription = item.description
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
         projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
@@ -133,7 +135,6 @@
               selected={item.assignee}
               users={projectMembers}
               title={task.string.Assignee}
-              caption={task.string.ProjectMembers}
               label={task.string.AssignTask}
               on:change={(e) => {
                 update('assignee', e.detail)
@@ -153,9 +154,11 @@
                 label={task.string.TaskDescription}
                 placeholder={task.string.TaskDescription}
                 on:blur={(e) => {
-                  update('description', item?.description)
+                  if (item?.description !== desription) {
+                    update('description', desription)
+                  }
                 }}
-                bind:value={item.description}
+                bind:value={desription}
               />
             </Row>
           </Grid>

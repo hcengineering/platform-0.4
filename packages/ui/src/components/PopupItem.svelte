@@ -74,7 +74,7 @@
     }
 
     &:hover {
-      background-color: var(--theme-button-bg-pressed);
+      background-color: var(--theme-button-bg-focused);
       .title {
         color: var(--theme-caption-color);
       }

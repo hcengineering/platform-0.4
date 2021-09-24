@@ -79,15 +79,17 @@ export class WebSocketConnection extends RequestProcessor implements Storage, Fi
 }
 
 export async function connect (clientUrl: string, handler: TxHandler): Promise<CoreClient> {
-  const socket = new WebSocket(`ws://${clientUrl}`)
+  const socket = new WebSocket(`wss://${clientUrl}`)
 
   // Wait for connection to be established.
   await new Promise((resolve, reject) => {
     socket.onopen = resolve
     socket.onerror = (reason) => {
+      console.log('Error connecting:', clientUrl)
       reject(new Error(`Failed to connect to ${clientUrl}: reason: ${reason.message}`))
     }
     socket.onclose = (reason) => {
+      console.log('Close of connection:', clientUrl)
       reject(new Error(`Failed to connect to ${clientUrl}: reason: ${reason.reason}`))
     }
   })

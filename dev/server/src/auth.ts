@@ -1,6 +1,8 @@
 import { Accounts, ServerInfo, wrapCall } from '@anticrm/accounts'
 import { Request, serialize } from '@anticrm/rpc'
+import { SecurityOptions } from '@anticrm/server'
 import cors from '@koa/cors'
+import { createServer } from 'https'
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import Router from 'koa-router'
@@ -11,7 +13,7 @@ interface AuthServer {
   accounts: Accounts
 }
 
-export function newAuthServer (port: number, db: Db, serverInfo: ServerInfo): AuthServer {
+export function newAuthServer (port: number, db: Db, serverInfo: ServerInfo, security: SecurityOptions): AuthServer {
   const app = new Koa()
   const router = new Router()
 
@@ -28,8 +30,11 @@ export function newAuthServer (port: number, db: Db, serverInfo: ServerInfo): Au
   app.use(bodyParser())
   app.use(router.routes()).use(router.allowedMethods())
 
-  const server = app.listen(port, () => {
-    console.log('auth server is started at ', server.address())
+  const callback = app.callback()
+
+  const server = createServer(security, callback)
+  server.listen(port, () => {
+    console.log('Anticrm Platform Web server is started at ', port)
   })
   return {
     shutdown: server.close.bind(server),

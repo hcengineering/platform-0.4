@@ -37,7 +37,12 @@ process.on('exit', () => {
 async function main (): Promise<void> {
   const client = await getMongoClient(MONGO_URI)
   const db = client.db('accounts')
-  const accounts = new Accounts(db, 'workspace', 'account', { server: 'localhost', port: 0, tokenSecret: '' })
+  const accounts = new Accounts(db, 'workspace', 'account', {
+    protocol: 'ws',
+    server: 'localhost',
+    port: 0,
+    tokenSecret: ''
+  })
 
   async function initAccounts (): Promise<void> {
     if ((await db.collections()).length === 0) {

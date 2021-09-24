@@ -18,8 +18,9 @@
   import Label from './Label.svelte'
   import UserInfo from './UserInfo.svelte'
   import { showPopup } from '..'
-  import UserBoxPopup from './UserBoxPopup.svelte'
+  import UserBoxPopup from './popups/UserBoxPopup.svelte'
   import IconAvatar from './icons/Avatar.svelte'
+  import { createEventDispatcher } from 'svelte'
 
   export let title: IntlString
   export let label: IntlString
@@ -27,6 +28,7 @@
   export let selected: Ref<Account> | undefined
   export let users: Account[] = []
   export let showSearch: boolean = false
+  const dispatch = createEventDispatcher()
 
   $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
   let btn: HTMLElement
@@ -36,7 +38,10 @@
   class="userbox-container"
   on:click={(ev) => {
     showPopup(UserBoxPopup, { label: title, users, selected, showSearch }, btn, (result) => {
-      if (result) selected = result
+      if (result !== selected) {
+        selected = result
+        dispatch('change', selected)
+      }
     })
   }}
 >

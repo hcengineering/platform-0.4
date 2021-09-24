@@ -35,12 +35,4 @@ if (loginInfo !== undefined) {
   setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
 }
 
-// async function boot (): Promise<void> {
-//   uiService.createApp(document.body)
-// }
-
-// boot().catch(err => {
-//   new ErrorPage({ target: document.body, props: { error: err.message } })
-// })
-
 createApp(document.body)

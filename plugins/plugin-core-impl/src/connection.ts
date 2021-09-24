@@ -71,13 +71,21 @@ export interface Connection {
 }
 
 export async function connect (clientUrl: string, handler: TxHandler): Promise<Connection> {
-  const socket = new WebSocket(`ws://${clientUrl}`)
+  const socket = new WebSocket(`${clientUrl}`)
   // Wait for connection to be established.
   await new Promise((resolve, reject) => {
     socket.onopen = resolve
 
-    socket.onerror = reject.bind(new Error(`Failed to connect to ${clientUrl}`))
-    setTimeout(() => reject.bind(new Error(`Failed to connect to ${clientUrl}`)), 5000)
+    socket.onerror = () => {
+      const e = new Error(`Failed to connect to ${clientUrl}`)
+      console.error(e)
+      reject(e)
+    }
+    setTimeout(() => {
+      const e = new Error(`Failed to connect to ${clientUrl}`)
+      console.error(e)
+      reject(e)
+    }, 5000)
   })
 
   return { storage: new WebSocketConnection(socket, handler), close: socket.close.bind(socket) }

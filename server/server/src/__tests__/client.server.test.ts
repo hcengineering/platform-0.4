@@ -36,6 +36,7 @@ import { getMongoClient, mongoEscape, shutdown, _dropAllDBWithPrefix } from '@an
 import { component, Component } from '@anticrm/status'
 import * as net from 'net'
 import { Server, startServer, generateToken } from '..'
+import { selfSignedAuth } from '../tls_utils'
 import { createClient } from './client'
 
 const SERVER_SECRET = 'secret'
@@ -43,6 +44,7 @@ const MONGO_URI = 'mongodb://localhost:27017'
 
 const johnAccount = 'john@appleseed.com' as Ref<Account>
 const brianAccount = 'brian@appleseed.com' as Ref<Account>
+const securityCertificate = selfSignedAuth()
 
 interface Task extends Doc {
   shortId: string
@@ -115,7 +117,8 @@ async function prepareServer (enableLogging = true): Promise<{
   // eslint-disable-next-line
   const server = await startServer('localhost', 0, SERVER_SECRET, {
     logRequests: enableLogging,
-    logTransactions: enableLogging
+    logTransactions: enableLogging,
+    security: await securityCertificate
   })
   console.log('server created')
   return {
@@ -173,6 +176,9 @@ describe('real-server', () => {
         firstName: 'John',
         lastName: 'Applesseed'
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -183,6 +189,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
         email: johnAccount
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {
         brainTxes.push(tx)
       }
@@ -217,6 +226,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: johnAccount
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {}
     )
     expect(client).toBeDefined()
@@ -228,6 +240,7 @@ describe('real-server', () => {
         `${address.address}:${address.port}/${
           'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId, { email: johnAccount })
         }`,
+        (await securityCertificate).cert,
         (tx) => {}
       )
     ).rejects.toThrow()
@@ -239,6 +252,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: johnAccount
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {
         johnTxes.push(tx)
       }
@@ -249,6 +265,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
         email: johnAccount
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {
         brainTxes.push(tx)
       }
@@ -285,6 +304,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: 'vasya'
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {}
     )
     await expect(client.tx({ _class: core.class.TxCreateDoc } as unknown as Tx<Doc>)).rejects.toThrow()
@@ -294,6 +316,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: 'vasya'
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {}
     )
     // eslint-disable-next-line
@@ -308,6 +333,9 @@ describe('real-server', () => {
         `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
           email: johnAccount
         })}`,
+        (
+          await securityCertificate
+        ).cert,
         (tx) => {}
       )
       expect(client).toBeDefined()
@@ -319,6 +347,9 @@ describe('real-server', () => {
           `${address.address}:${address.port}/${
             'qwe' + generateToken(SERVER_SECRET, johnAccount as string, workspaceId, { email: johnAccount })
           }`,
+          (
+            await securityCertificate
+          ).cert,
           (tx) => {}
         )
       ).rejects.toThrow()
@@ -327,7 +358,9 @@ describe('real-server', () => {
     }
   })
   it('test empty token', async () => {
-    await expect(async () => await createClient(`${address.address}:${address.port}`, (tx) => {})).rejects.toThrow()
+    await expect(
+      async () => await createClient(`${address.address}:${address.port}`, (await securityCertificate).cert, (tx) => {})
+    ).rejects.toThrow()
   })
 
   it('test client disconnect', async () => {
@@ -335,6 +368,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: 'vasya'
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {}
     )
     client.shutdown()
@@ -344,6 +380,9 @@ describe('real-server', () => {
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
         email: 'vasya'
       })}`,
+      (
+        await securityCertificate
+      ).cert,
       (tx) => {}
     )
     Array.from(server.connections.values()).forEach((socket) => {

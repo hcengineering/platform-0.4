@@ -1,5 +1,19 @@
 {
   "string": {
-    "Rooms": "Rooms"
+    "App": "Meeting",
+    "Rooms": "Rooms",
+    "CreateRoom": "Create Room",
+    "Name": "Name",
+    "Description": "Description",
+    "MakeRoomPrivate": "Make Room Private",
+    "Join": "Join",
+    "Leave": "Leave",
+    "ShareScreen": "Share screen",
+    "StopSharing": "Stop sharing",
+    "Mute": "Mute",
+    "Unmute": "Unmute",
+    "EnableCam": "Enable cam",
+    "DisableCam": "Disable cam",
+    "Fullscreen": "Fullscreen"
   }
 }

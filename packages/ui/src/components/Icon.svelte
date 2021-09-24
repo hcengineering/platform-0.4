@@ -17,7 +17,7 @@
   import { getMetadata } from '@anticrm/platform'
 
   export let icon: Asset
-  export let size: 16 | 20 | 24 | 28
+  export let size: 12 | 16 | 20 | 24 | 28
   export let fill = 'var(--theme-caption-color)'
 
   let url: string
