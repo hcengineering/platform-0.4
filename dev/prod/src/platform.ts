@@ -40,9 +40,11 @@ export function configurePlatform (): void {
   if (process.env.CLIENT !== 'server') {
     console.info('use in memory DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
+    addLocation(attachment, async () => await import(/* webpackChunkName: "attachment-dev" */ '@anticrm/attachment-dev'))
   } else {
     console.info('use server DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
+    addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
   }
 
   addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
@@ -53,5 +55,4 @@ export function configurePlatform (): void {
   addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
   addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
-  addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
 }

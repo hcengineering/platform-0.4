@@ -4,5 +4,6 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "types": ["browser-or-node", "heft-jest", "node"],
+    "esModuleInterop": true
   }
 }

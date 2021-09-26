@@ -29,6 +29,8 @@ export class TAttachment extends TDoc implements Attachment {
   objectClass!: Ref<Class<Doc>>
   name!: string
   format!: string
+  mime!: string
+  url!: string
   size!: number
 }
 

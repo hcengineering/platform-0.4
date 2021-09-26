@@ -73,9 +73,6 @@ function asStorage (ws: Workspace): Storage {
 
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
-  const s3Uri = process.env.S3_URI ?? 'http://127.0.0.1:9000'
-  const s3AccessKey = process.env.S3_ACCESS_KEY ?? 'minioadmin'
-  const s3Secret = process.env.S3_SECRET ?? 'minioadmin'
 
   let dbId: string = generateId()
   let mongoDbClient!: MongoClient
@@ -109,7 +106,7 @@ describe('workspace', () => {
   it('connect to workspace', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
@@ -120,14 +117,10 @@ describe('workspace', () => {
   it('connect to workspace, check processing', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create(
-      'test-' + dbId,
-      { mongoDBUri, s3AccessKey, s3Secret, s3Uri },
-      async (hierarchy, storage, model) => {
-        expect(model.getObject(core.class.Class)).toBeDefined()
-        return []
-      }
-    )
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri }, async (hierarchy, storage, model) => {
+      expect(model.getObject(core.class.Class)).toBeDefined()
+      return []
+    })
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
@@ -138,13 +131,13 @@ describe('workspace', () => {
   it('reconnect to workspace', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // We should be able to fill all model now.
     const resultTxs = await workspace.findAll(core.class.Tx, {})
     expect(resultTxs.length).toEqual(txes.length)
 
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
     expect(workspace.getHierarchy().getDomain(core.class.Class)).toEqual(DOMAIN_MODEL)
 
     const tx2 = await workspace.findAll(core.class.Tx, {})
@@ -154,7 +147,7 @@ describe('workspace', () => {
   it('create custom class', async () => {
     // Initialize workspace
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx('c1', createMyTaskClass)
@@ -175,7 +168,7 @@ describe('workspace', () => {
 
   it('create custom classes', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx('c1', createMyTaskClass)
@@ -202,7 +195,7 @@ describe('workspace', () => {
 
   it('create custom tx', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx('c1', myTx)
@@ -231,7 +224,7 @@ describe('workspace', () => {
 
   it('check update document', async () => {
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx('c1', createMyTaskClass)
@@ -272,7 +265,7 @@ describe('workspace', () => {
   it('check create ShortRef', async () => {
     jest.setTimeout(500000)
     await createDatabase(dbId, txes)
-    workspace = await Workspace.create('test-' + dbId, { mongoDBUri, s3AccessKey, s3Secret, s3Uri })
+    workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
     // Register a new class
     await workspace.tx('c1', createMyTaskClass)

@@ -5,7 +5,6 @@ import {
   createClient as createCoreClient,
   Doc,
   DocumentQuery,
-  FileOp,
   FindResult,
   Ref,
   Tx,
@@ -55,10 +54,6 @@ export class TestConnection extends RequestProcessor implements CoreClient {
 
   async accountId (): Promise<Ref<Account>> {
     return await this.request('accountId')
-  }
-
-  async file (op: FileOp): Promise<string> {
-    return await this.request('file', op)
   }
 }
 

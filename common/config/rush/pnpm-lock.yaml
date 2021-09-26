@@ -8,6 +8,7 @@ specifiers:
   '@rush-temp/accounts': file:./projects/accounts.tgz
   '@rush-temp/attachment': file:./projects/attachment.tgz
   '@rush-temp/attachment-assets': file:./projects/attachment-assets.tgz
+  '@rush-temp/attachment-dev': file:./projects/attachment-dev.tgz
   '@rush-temp/attachment-impl': file:./projects/attachment-impl.tgz
   '@rush-temp/calendar': file:./projects/calendar.tgz
   '@rush-temp/calendar-assets': file:./projects/calendar-assets.tgz
@@ -82,12 +83,14 @@ specifiers:
   '@rush-temp/workspace': file:./projects/workspace.tgz
   '@rush-temp/workspaces': file:./projects/workspaces.tgz
   '@rushstack/heft': ^0.35.0
+  '@rushstack/heft-jest-plugin': ^0.1.14
   '@rushstack/heft-node-rig': ^1.1.13
   '@testing-library/svelte': ^3.0.3
   '@types/browser-or-node': ^1.3.0
   '@types/estree': ^0.0.50
   '@types/faker': ^5.5.7
   '@types/gravatar': ~1.8.3
+  '@types/heft-jest': ^1.0.2
   '@types/jest': ^26.0.23
   '@types/jwt-simple': ^0.5.33
   '@types/koa': ^2.13.1
@@ -104,6 +107,7 @@ specifiers:
   '@types/markdown-it': ^12.0.2
   '@types/mongodb': ^3.6.18
   '@types/node': ^14.14.40
+  '@types/pem': ~1.9.6
   '@types/prettier': ^2.3.2
   '@types/prosemirror-commands': ^1.0.3
   '@types/prosemirror-history': ^1.0.1
@@ -126,6 +130,7 @@ specifiers:
   core-js: ^3.10.1
   cross-env: ^7.0.3
   css-loader: ^5.2.1
+  dotenv: ~10.0.0
   dotenv-webpack: ^7.0.2
   esbuild: ^0.12.16
   esbuild-plugin-d.ts: ^1.0.6
@@ -161,6 +166,7 @@ specifiers:
   markdown-it: ^12.0.6
   mini-css-extract-plugin: ^1.4.1
   mongodb: ^3.6.9
+  pem: ^1.14.4
   postcss: ~8.3.6
   prettier: ^2.2.1
   prettier-plugin-svelte: ^2.2.0
@@ -203,6 +209,7 @@ dependencies:
   '@rush-temp/accounts': file:projects/accounts.tgz
   '@rush-temp/attachment': file:projects/attachment.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/attachment-assets': file:projects/attachment-assets.tgz_@typescript-eslint+parser@4.29.3
+  '@rush-temp/attachment-dev': file:projects/attachment-dev.tgz_postcss@8.3.6
   '@rush-temp/attachment-impl': file:projects/attachment-impl.tgz_postcss@8.3.6
   '@rush-temp/calendar': file:projects/calendar.tgz
   '@rush-temp/calendar-assets': file:projects/calendar-assets.tgz
@@ -277,12 +284,14 @@ dependencies:
   '@rush-temp/workspace': file:projects/workspace.tgz
   '@rush-temp/workspaces': file:projects/workspaces.tgz
   '@rushstack/heft': 0.35.1
+  '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
   '@rushstack/heft-node-rig': 1.2.4_@rushstack+heft@0.35.1
   '@testing-library/svelte': 3.0.3
   '@types/browser-or-node': 1.3.0
   '@types/estree': 0.0.50
   '@types/faker': 5.5.8
   '@types/gravatar': 1.8.3
+  '@types/heft-jest': 1.0.2
   '@types/jest': 26.0.24
   '@types/jwt-simple': 0.5.33
   '@types/koa': 2.13.4
@@ -299,6 +308,7 @@ dependencies:
   '@types/markdown-it': 12.2.0
   '@types/mongodb': 3.6.20
   '@types/node': 14.17.11
+  '@types/pem': 1.9.6
   '@types/prettier': 2.3.2
   '@types/prosemirror-commands': 1.0.4
   '@types/prosemirror-history': 1.0.3
@@ -321,6 +331,7 @@ dependencies:
   core-js: 3.16.3
   cross-env: 7.0.3
   css-loader: 5.2.7_webpack@5.51.1
+  dotenv: 10.0.0
   dotenv-webpack: 7.0.3_webpack@5.51.1
   esbuild: 0.12.22
   esbuild-plugin-d.ts: 1.0.6_ts-node@10.2.1+typescript@4.3.5
@@ -356,6 +367,7 @@ dependencies:
   markdown-it: 12.2.0
   mini-css-extract-plugin: 1.6.2_webpack@5.51.1
   mongodb: 3.6.11
+  pem: 1.14.4
   postcss: 8.3.6
   prettier: 2.3.2
   prettier-plugin-svelte: 2.3.1_prettier@2.3.2
@@ -894,14 +906,14 @@ packages:
       '@jest/console': 25.5.0
       '@jest/reporters': 25.4.0
       '@jest/test-result': 25.5.0
-      '@jest/transform': 25.4.0
+      '@jest/transform': 25.5.1
       '@jest/types': 25.5.0
       ansi-escapes: 4.3.2
       chalk: 3.0.0
       exit: 0.1.2
       graceful-fs: 4.2.8
       jest-changed-files: 25.5.0
-      jest-config: 25.4.0
+      jest-config: 25.5.4
       jest-haste-map: 25.5.1
       jest-message-util: 25.5.0
       jest-regex-util: 25.2.6
@@ -909,7 +921,7 @@ packages:
       jest-resolve-dependencies: 25.5.4
       jest-runner: 25.5.4
       jest-runtime: 25.5.4
-      jest-snapshot: 25.4.0
+      jest-snapshot: 25.5.1
       jest-util: 25.5.0
       jest-validate: 25.5.0
       jest-watcher: 25.5.0
@@ -1064,7 +1076,7 @@ packages:
       '@bcoe/v8-coverage': 0.2.3
       '@jest/console': 25.5.0
       '@jest/test-result': 25.5.0
-      '@jest/transform': 25.4.0
+      '@jest/transform': 25.5.1
       '@jest/types': 25.5.0
       chalk: 3.0.0
       collect-v8-coverage: 1.0.1
@@ -1938,6 +1950,12 @@ packages:
 
   /@types/orderedmap/1.0.0:
     resolution: {integrity: sha512-dxKo80TqYx3YtBipHwA/SdFmMMyLCnP+5mkEqN0eMjcTBzHkiiX0ES118DsjDBjvD+zeSsSU9jULTZ+frog+Gw==}
+    dev: false
+
+  /@types/pem/1.9.6:
+    resolution: {integrity: sha512-IC67SxacM9fxEi/w7hf98dTun83OwUMeLMo1NS2gE0wdM9MHeg73iH/Pp9nB02OUCQ7Zb2UuKE/IpFCmQw9jxw==}
+    dependencies:
+      '@types/node': 14.17.11
     dev: false
 
   /@types/prettier/1.19.1:
@@ -3157,6 +3175,10 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /charenc/0.0.2:
+    resolution: {integrity: sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=}
+    dev: false
+
   /chokidar/2.1.8:
     resolution: {integrity: sha512-ZmZUazfOzf0Nve7duiCKD23PFSCs4JPoYyccjUFF3aQkQadqBhfzhjkwBH2mNOG9cTBwhamM37EIsIkZw3nRgg==}
     deprecated: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
@@ -3482,6 +3504,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+    dev: false
+
+  /crypt/0.0.2:
+    resolution: {integrity: sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=}
     dev: false
 
   /css-loader/5.2.7_webpack@5.51.1:
@@ -3869,6 +3895,11 @@ packages:
       webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
+  /dotenv/10.0.0:
+    resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
+    engines: {node: '>=10'}
+    dev: false
+
   /dotenv/8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
@@ -4018,6 +4049,10 @@ packages:
       is-callable: 1.2.4
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+    dev: false
+
+  /es6-promisify/6.1.1:
+    resolution: {integrity: sha512-HBL8I3mIki5C1Cc9QjKUenHtnG0A5/xA8Q/AllRcfiwl2CZFXGK7ddBiCoRwAix4i2KxcQfjtIVcrVbB3vbmwg==}
     dev: false
 
   /esbuild-plugin-d.ts/1.0.6_ts-node@10.2.1+typescript@4.3.5:
@@ -7458,6 +7493,14 @@ packages:
       uc.micro: 1.0.6
     dev: false
 
+  /md5/2.3.0:
+    resolution: {integrity: sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==}
+    dependencies:
+      charenc: 0.0.2
+      crypt: 0.0.2
+      is-buffer: 1.1.6
+    dev: false
+
   /mdn-data/2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
     dev: false
@@ -8214,6 +8257,16 @@ packages:
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /pem/1.14.4:
+    resolution: {integrity: sha512-v8lH3NpirgiEmbOqhx0vwQTxwi0ExsiWBGYh0jYNq7K6mQuO4gI6UEFlr6fLAdv9TPXRt6GqiwE37puQdIDS8g==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      es6-promisify: 6.1.1
+      md5: 2.3.0
+      os-tmpdir: 1.0.2
+      which: 2.0.2
     dev: false
 
   /performance-now/2.1.0:
@@ -11162,8 +11215,46 @@ packages:
       - supports-color
     dev: false
 
+  file:projects/attachment-dev.tgz_postcss@8.3.6:
+    resolution: {integrity: sha512-nEWqAFu18BJiIA92FmAnUzxlbZf7bNkB9TW+zT2ug0/qmt6gRr/ATwF/JtZp2oXso2m0ipHQo7+Zi6763swUow==, tarball: file:projects/attachment-dev.tgz}
+    id: file:projects/attachment-dev.tgz
+    name: '@rush-temp/attachment-dev'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@types/browser-or-node': 1.3.0
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0+svelte@3.42.3
+      eslint-svelte3-preprocess: 0.0.5_svelte@3.42.3
+      prettier: 2.3.2
+      prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.3
+      svelte: 3.42.3
+      svelte-check: 2.2.5_postcss@8.3.6+svelte@3.42.3
+      svelte-loader: 3.1.2_svelte@3.42.3
+      svelte-preprocess: 4.8.0_de13032659dbc45f75dea0e9a3a663a9
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - coffeescript
+      - less
+      - node-sass
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+    dev: false
+
   file:projects/attachment-impl.tgz_postcss@8.3.6:
-    resolution: {integrity: sha512-83Vr9jY9q92qUi3kZ7W4xdhJfC1oBj26UgKfb8q0QWrrDk1Kzo1PjmB9dY2MOfN0IFJMukYgUoEvrd4Ve8WK4Q==, tarball: file:projects/attachment-impl.tgz}
+    resolution: {integrity: sha512-XffxX0MyL9TBvUS+xGY5lonREDNNLciZ0YWlFc8Y4Lf4t9C1DvgDkq1+ShmLZYFQ8GjwWi9LiNsMA2aVRnZKlg==, tarball: file:projects/attachment-impl.tgz}
     id: file:projects/attachment-impl.tgz
     name: '@rush-temp/attachment-impl'
     version: 0.0.0
@@ -11462,7 +11553,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-JyiMrgNN3hapcLUt1om3ep/YMuW6yznLdSjxvSDF+o4Ao9TnV9Bbq2PzseCjnnFKRAAJXWK7bHfFwTlc/t8Duw==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-d0MRttlKqtXND6QWAXnNILOg1OywKKGZ5rkpu0oaKCLcD/U2ZR7D8ZeBeN6F6MjMXf4Z0Pyj75Ktfz7Vr4RXNA==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11594,7 +11685,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-sjeoTKD6lGmw0Wh6CQnwM6ELQoyysjjJtgw7KZf64mv9FudY3LqjQPKf793WbC1Zjiaz4qKpKeaGoayR8E1YEQ==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-B7QxMJ0qTcwiW8WlOeTSZogJ+rY1cp001CBwAxHX+ivHFt/AgQK5OM3G0o+n4lgZBrlojNHMeWo2W/V9zKpQ9Q==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -11606,6 +11697,7 @@ packages:
       copy-webpack-plugin: 9.0.1_webpack@5.51.1
       cross-env: 7.0.3
       css-loader: 5.2.7_webpack@5.51.1
+      dotenv: 10.0.0
       dotenv-webpack: 7.0.3_webpack@5.51.1
       eslint: 7.32.0
       eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
@@ -11792,7 +11884,7 @@ packages:
     dev: false
 
   file:projects/meeting.tgz_@typescript-eslint+parser@4.29.3:
-    resolution: {integrity: sha512-AToy/jL6iXDV3XkP2m0Ysg292+NhXV6kBZQsozsw8dwRi3sR47irdBb+UxW3gL1JBDcUPe5nNLYa/QORCFF+jg==, tarball: file:projects/meeting.tgz}
+    resolution: {integrity: sha512-CjbTVs5/L97EMO5ncAPmA1pO5EbmFjOQIG9pQdgP3RYsOdoQ9XO9yr5MEdit1dBh/pAIduCqHA3LMCRe1VMbzw==, tarball: file:projects/meeting.tgz}
     id: file:projects/meeting.tgz
     name: '@rush-temp/meeting'
     version: 0.0.0
@@ -12474,7 +12566,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-mvsW7+JlKIHvXFjUFpcRKb/EjI9m1ITpTtaZm1HsIl/7o0PdUQ1IG8H0pm2XcxemDhM8KgWqnB1wADwp2ZPx6A==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-kxlBCHLAFbLVxj/6y0BCh720Jmhu7mB7kJ8Adcf9xchRM9SSoRa/ZvabFwA4r7vqpLWZADsi8wvzTmQLsQqi/g==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -12745,14 +12837,19 @@ packages:
     dev: false
 
   file:projects/s3.tgz:
-    resolution: {integrity: sha512-sB0uMELnNe75K8pizBKZ0S3eFWeJFdTnHJoy9rB9mNzbrktKsxMJ3MHzEx0Q09CTc26YwVGYm7S2PqbluADuUQ==, tarball: file:projects/s3.tgz}
+    resolution: {integrity: sha512-nTxkBmYUMv3tCwVl+sUzuzBLzrcVOWxZdqu38LFREYlrlYPt9ptAzfTuhwZntvWQwWPaOrSFnt0fAH412N0cPg==, tarball: file:projects/s3.tgz}
     name: '@rush-temp/s3'
     version: 0.0.0
     dependencies:
+      '@koa/cors': 3.1.0
       '@rushstack/heft': 0.35.1
       '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
       '@types/browser-or-node': 1.3.0
       '@types/heft-jest': 1.0.2
+      '@types/koa': 2.13.4
+      '@types/koa__cors': 3.0.3
+      '@types/koa-bodyparser': 4.3.3
+      '@types/koa-router': 7.4.4
       '@types/node': 14.17.11
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
@@ -12762,6 +12859,9 @@ packages:
       eslint-plugin-import: 2.24.2_eslint@7.32.0
       eslint-plugin-node: 11.1.0_eslint@7.32.0
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      koa: 2.13.1
+      koa-bodyparser: 4.3.0
+      koa-router: 10.1.1
       prettier: 2.3.2
       ts-node: 10.2.1_a3da7f9f56afe7b98c9382c63365a60d
       ts-node-dev: 1.1.8_typescript@4.3.5
@@ -12808,7 +12908,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-sDA3QU2fkfLzNqPYI2be9zlHMBmN4+14PTf0pUuCEQpQez6PfbC/+c6hRZ4gQLTRP9BH6axS50UfNKaU+bKfig==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-qwwHWpgMDOHQTeRMvN1w9w5TN1qVF/hzN5Fa+du1OUoU4pMHWVY2ubvfWo157aRznGIv5LTSo98OWcx7Tol6lw==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
@@ -12819,6 +12919,7 @@ packages:
       '@types/heft-jest': 1.0.2
       '@types/jwt-simple': 0.5.33
       '@types/node': 14.17.11
+      '@types/pem': 1.9.6
       '@types/ws': 7.4.7
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
@@ -12829,6 +12930,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       gravatar: 1.8.2
       jwt-simple: 0.5.6
+      pem: 1.14.4
       prettier: 2.3.2
       ts-node: 10.2.1_a3da7f9f56afe7b98c9382c63365a60d
       ts-node-dev: 1.1.8_typescript@4.3.5
@@ -12845,7 +12947,7 @@ packages:
     dev: false
 
   file:projects/services.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-VNij8qf3wMJVnkMnuoHnywHzI5ToXvaOFQdD2Bg/3SV2eGFlSeqwmaMDtonPiQ0b21UsYqTAeHXoBWaRXbQAcQ==, tarball: file:projects/services.tgz}
+    resolution: {integrity: sha512-242sqe0d6+uDCg165xDmyiMjlQVpQfRO/4DAOPgElGmjtcj7zFDO3S/W9nGGPLFvZH5V3xfaAWe9uETZwpCK8w==, tarball: file:projects/services.tgz}
     id: file:projects/services.tgz
     name: '@rush-temp/services'
     version: 0.0.0
@@ -13372,7 +13474,7 @@ packages:
     dev: false
 
   file:projects/workspace.tgz:
-    resolution: {integrity: sha512-6pwUufCQo04/0SlnUQz+1rk2CIwPGTx9H/FzPSV7ME4VICYQapH4Zx6BSaP+xEGwb2Htn/o8PpipdykcPNlcQg==, tarball: file:projects/workspace.tgz}
+    resolution: {integrity: sha512-ARV+fXi63bzjr+SKgmjE60W4V81ozOQ/V4YtZuH5I3DaeCzqJv8/4WfwUZfEOTAIdqFFxGUp2KZxCBRw5k8m9g==, tarball: file:projects/workspace.tgz}
     name: '@rush-temp/workspace'
     version: 0.0.0
     dependencies:

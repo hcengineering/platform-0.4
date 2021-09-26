@@ -25,6 +25,7 @@
   <div class="info">
     <div class="label">{item.name}</div>
     <div class="size">{sizeToString(item.size)}</div>
+    <img src={item.url} alt={item.name} />
   </div>
 </div>
 

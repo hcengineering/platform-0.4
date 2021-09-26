@@ -23,7 +23,6 @@ import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 import { _genMinModel } from '../minmodel'
 import { isModelTx } from '../model'
-import { FileOp } from '../fileStorage'
 
 class ClientImpl implements CoreClient {
   constructor (
@@ -49,10 +48,6 @@ class ClientImpl implements CoreClient {
 
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
-  }
-
-  async file (op: FileOp): Promise<string> {
-    throw new Error('Not implemented')
   }
 }
 

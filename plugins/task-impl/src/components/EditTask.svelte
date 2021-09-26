@@ -168,7 +168,7 @@
         </Section>
       {:else if selectedTab === attachment.string.Attachments}
         <Section label={attachment.string.Attachments} icon={IconFile}>
-          <Attachments id={item._id} space={item.space} editable />
+          <Attachments objectId={item._id} space={item.space} editable />
         </Section>
       {:else}
         <Section label={task.string.ToDos} icon={IconToDo}>

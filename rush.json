@@ -749,6 +749,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/attachment-dev",
+      "projectFolder": "plugins/attachment-dev",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/model-attachment",
       "projectFolder": "models/attachment",
       "shouldPublish": true

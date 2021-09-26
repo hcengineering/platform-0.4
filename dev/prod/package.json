@@ -78,6 +78,7 @@
     "@anticrm/calendar-assets": "~0.4.0",
     "@anticrm/attachment-assets": "~0.4.0",
     "@anticrm/attachment-impl": "~0.4.0",
+    "@anticrm/attachment-dev": "~0.4.0",
     "@anticrm/attachment": "~0.4.0"
   }
 }

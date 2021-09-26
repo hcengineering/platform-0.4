@@ -16,6 +16,7 @@
 import builder from '@anticrm/model-all'
 import { getMongoClient } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
+import { newFileServer } from './file'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { newAuthServer } from './auth'
@@ -49,6 +50,17 @@ async function start (): Promise<void> {
     db,
     {
       protocol: 'wss',
+      server: addr.address,
+      port: addr.port,
+      tokenSecret: 'secret'
+    },
+    security
+  )
+
+  newFileServer(
+    18082,
+    {
+      protocol: 'https',
       server: addr.address,
       port: addr.port,
       tokenSecret: 'secret'

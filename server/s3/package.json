@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@anticrm/core": "~0.4.0",
+    "@anticrm/server": "~0.4.0",
     "@anticrm/status": "~0.4.2",
     "aws-sdk": "~2.990.0"
   }

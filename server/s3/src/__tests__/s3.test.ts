@@ -13,15 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { S3Storage } from '../index'
+import { S3Storage } from '..'
 import * as fs from 'fs'
 import * as http from 'http'
 import * as url from 'url'
-import { DownloadFile, RemoveFile, UploadFile } from '@anticrm/core'
 
 describe('s3', () => {
-  const accessKey: string = process.env.S3_ACCESS_KEY ?? 'minioadmin'
-  const secret: string = process.env.S3_SECRET ?? 'minioadmin'
+  const accessKey: string = process.env.S3_ACCESS_KEY ?? 'minio'
+  const secret: string = process.env.S3_SECRET ?? 'miniosecret'
   const endpoit: string = process.env.S3_URI ?? 'http://127.0.0.1:9000'
   let client: S3Storage
   const bucket = 'bucket'
@@ -37,12 +36,7 @@ describe('s3', () => {
     expect.assertions(4)
     fs.writeFileSync(fileName, 'testText')
     const file = fs.readFileSync(`./${fileName}`)
-    const uploadParam: UploadFile = {
-      type: 'Upload',
-      fileType: '',
-      key: fileName
-    }
-    const uploadLink = await client.file(uploadParam)
+    const uploadLink = await client.getUploadLink(fileName, '')
     const path = new url.URL(uploadLink)
     expect(uploadLink.length).toBeGreaterThan(0)
 
@@ -55,12 +49,7 @@ describe('s3', () => {
         'Content-Length': Buffer.byteLength(file)
       }
     }
-    const downloadParam: DownloadFile = {
-      type: 'Download',
-      fileName: 'simple',
-      key: fileName
-    }
-    const downloadLink = await client.file(downloadParam)
+    const downloadLink = await client.getDownloadLink(fileName, 'simple')
     const req = http.request(options, (res) => {
       expect(downloadLink.length).toBeGreaterThan(0)
       const resultStream = fs.createWriteStream('resultFile')
@@ -89,17 +78,8 @@ describe('s3', () => {
   it('check remove', async (done) => {
     expect.assertions(1)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
-    const param: RemoveFile = {
-      type: 'Remove',
-      key: fileName
-    }
-    await client.file(param)
-    const downloadParam: DownloadFile = {
-      type: 'Download',
-      fileName: 'simple',
-      key: fileName
-    }
-    const downloadLink = await client.file(downloadParam)
+    await client.remove(fileName)
+    const downloadLink = await client.getDownloadLink(fileName, 'simple')
     const getLink = new url.URL(downloadLink)
     const getOptions: http.RequestOptions = {
       host: getLink.hostname,

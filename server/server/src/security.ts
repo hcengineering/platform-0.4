@@ -21,9 +21,7 @@ import core, {
   TxUpdateDoc,
   isPredicate,
   createPredicates,
-  CoreClient,
-  FileOp,
-  FileStorage
+  CoreClient
 } from '@anticrm/core'
 import { component, Component, PlatformError, Severity, Status, StatusCode } from '@anticrm/status'
 import { WithWorkspaceTx } from '@anticrm/workspace'
@@ -32,6 +30,9 @@ function accountTxSpace (user: Ref<Account>): Ref<Space> {
   return (core.space.Tx + '#' + user) as Ref<Space>
 }
 
+/**
+ * @public
+ */
 export class SecurityModel extends TxProcessor {
   private readonly hierarchy: Hierarchy
   private readonly allowedSpaces: Map<Ref<Account>, Set<Ref<Space>>> = new Map<Ref<Account>, Set<Ref<Space>>>()
@@ -192,6 +193,9 @@ export class SecurityModel extends TxProcessor {
   }
 }
 
+/**
+ * @public
+ */
 export interface ClientInfo {
   clientId: string
   accountId: Ref<Account>
@@ -217,17 +221,16 @@ function checkQuerySpaces (spaces: Set<Ref<Space>>, querySpace: ObjQueryType<Ref
   return querySpace
 }
 
+/**
+ * @public
+ */
 export class SecurityClientStorage implements CoreClient {
   constructor (
     readonly security: SecurityModel,
-    readonly workspace: WithWorkspaceTx & FileStorage,
+    readonly workspace: WithWorkspaceTx,
     readonly hierarchy: Hierarchy,
     readonly user: ClientInfo
   ) {}
-
-  async file (op: FileOp): Promise<string> {
-    return await this.workspace.file(op)
-  }
 
   async findAll<T extends Doc>(
     _class: Ref<Class<T>>,
@@ -308,6 +311,9 @@ export class SecurityClientStorage implements CoreClient {
   }
 }
 
+/**
+ * @public
+ */
 export const Code = component('security' as Component, {
   AccessDenied: '' as StatusCode<{ space?: Ref<Space> }>,
   TransactionSpaceDenied: '' as StatusCode

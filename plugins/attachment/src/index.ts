@@ -11,16 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Class, Doc, Ref } from '@anticrm/core'
+import { Class, Doc, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { IntlString } from '@anticrm/status'
+import type { IntlString, Metadata, StatusCode } from '@anticrm/status'
 
 export interface Attachment extends Doc {
   objectId: Ref<Doc>
   objectClass: Ref<Class<Doc>>
   name: string
   format: string
+  mime: string
+  url: string
   size: number
 }
 
@@ -29,7 +31,7 @@ export function nameToFormat (name: string): string {
 }
 
 export function sizeToString (size: number): string {
-  const sizes = ['bytes', 'KB', 'MB', 'GB']
+  const sizes = ['bytes', 'KiB', 'MiB', 'GiB']
   let i = 0
 
   for (i = 0; i < sizes.length; i++) {
@@ -39,7 +41,11 @@ export function sizeToString (size: number): string {
   return size.toFixed(1) + ' ' + sizes[i]
 }
 
-export interface AttachmentService extends Service {}
+export interface AttachmentService extends Service {
+  upload: (file: File, key: string, space: Ref<Space>, progressCallback?: (progress: number) => void) => Promise<void>
+  remove: (key: string, space: Ref<Space>) => Promise<void>
+  generateLink: (key: string, space: Ref<Space>, name: string, format: string) => string
+}
 
 const PluginAttachment = 'attachment' as Plugin<AttachmentService>
 
@@ -54,6 +60,12 @@ const attachment = plugin(
       Attachment: '' as IntlString,
       Attachments: '' as IntlString,
       AddAttachment: '' as IntlString
+    },
+    metadata: {
+      FilesUrl: '' as Metadata<string>
+    },
+    status: {
+      NoFileServerUri: '' as StatusCode
     }
   }
 )

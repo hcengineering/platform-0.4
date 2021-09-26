@@ -1,4 +1,4 @@
-import { FileOp, CoreClient } from '..'
+import { CoreClient } from '..'
 import { Account, Class, Doc, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
@@ -32,10 +32,6 @@ class TxModelStorage implements CoreClient {
     await this.doc.tx(tx)
 
     await this.txStore.tx(tx) // In any case send into transaction storage.
-  }
-
-  async file (op: FileOp): Promise<string> {
-    throw new Error('Not implemented')
   }
 }
 

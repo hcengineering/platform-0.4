@@ -77,6 +77,8 @@ export default async (): Promise<LoginService> => {
       }
       if (result.result !== undefined) {
         setLoginInfo(result.result)
+        const token = result.result.clientUrl.split('/')[1]
+        await authorizeFileServer(token, 'https://localhost:18082')
       }
       return OK
     } catch (err) {
@@ -106,6 +108,8 @@ export default async (): Promise<LoginService> => {
       const status = result.error ?? OK
       if (result.result !== undefined) {
         setLoginInfo(result.result)
+        const token = result.result.clientUrl.split('/')[1]
+        await authorizeFileServer(token, 'https://localhost:18082')
       }
       return status
     } catch (err) {
@@ -137,6 +141,8 @@ export default async (): Promise<LoginService> => {
       const status = result.error ?? OK
       if (result.result !== undefined) {
         setLoginInfo(result.result)
+        const token = result.result.clientUrl.split('/')[1]
+        await authorizeFileServer(token, 'https://localhost:18082')
       }
       return status
     } catch (err) {
@@ -147,6 +153,17 @@ export default async (): Promise<LoginService> => {
   async function doLogout (): Promise<void> {
     clearLoginInfo()
     return await Promise.resolve()
+  }
+
+  async function authorizeFileServer (token: string, fileServerUrl: string): Promise<void> {
+    await fetch(fileServerUrl, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Token: token
+      },
+    })
   }
 
   return {

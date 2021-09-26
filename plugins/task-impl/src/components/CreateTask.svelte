@@ -180,7 +180,7 @@
     </Section>
   {:else if selectedTab === attachment.string.Attachments}
     <Section label={attachment.string.Attachments} icon={IconFile}>
-      <Attachments {id} space={space._id} editable />
+      <Attachments objectId={id} space={space._id} editable />
     </Section>
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>

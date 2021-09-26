@@ -45,9 +45,6 @@ export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
       await Promise.all([model.tx(tx), transactions.tx(tx)])
       handler(tx)
     },
-    accountId: async () => await Promise.resolve(core.account.System),
-    file: async () => {
-      throw new Error('Not implemented')
-    }
+    accountId: async () => await Promise.resolve(core.account.System)
   }
 }

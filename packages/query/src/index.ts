@@ -14,12 +14,10 @@
 //
 
 import {
-  Account,
   Class,
   Client,
   Doc,
   DocumentQuery,
-  FileOp,
   FindOptions,
   findProperty,
   FindResult,
@@ -34,8 +32,7 @@ import {
   TxCreateDoc,
   TxProcessor,
   TxRemoveDoc,
-  TxUpdateDoc,
-  CoreClient
+  TxUpdateDoc
 } from '@anticrm/core'
 import copy from 'fast-copy'
 
@@ -66,15 +63,11 @@ export interface Queriable {
 /**
  * @public
  */
-export class LiveQuery extends TxProcessor implements Storage, Queriable, CoreClient {
+export class LiveQuery extends TxProcessor implements Storage, Queriable {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
 
   constructor (readonly client: Client) {
     super()
-  }
-
-  async accountId (): Promise<Ref<Account>> {
-    return await this.client.accountId()
   }
 
   isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): boolean {
@@ -230,10 +223,6 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable, CoreCl
 
   async notifyTx (tx: Tx): Promise<void> {
     await super.tx(tx)
-  }
-
-  async file (op: FileOp): Promise<string> {
-    return await this.client.file(op)
   }
 
   doUpdateDoc (doc: Doc, tx: TxUpdateDoc<Doc>): Doc {

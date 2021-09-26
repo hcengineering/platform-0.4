@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Class, Doc, DownloadFile, Ref, Space } from '@anticrm/core'
+  import type { Class, Doc, Ref, Space } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconAdd, Label, showPopup } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
@@ -37,16 +37,8 @@
     showPopup(AddAttachment, { objectId: objectId, objectClass: objectClass, space: space })
   }
 
-  async function download (item: Attachment): Promise<void> {
-    const regex = RegExp(`${item.format}$`)
-    const name = regex.test(item.name) ? item.name : item.name + '.' + item.format
-    const params: DownloadFile = {
-      type: 'Download',
-      fileName: name,
-      key: item._id
-    }
-    const url = await client.file(params)
-    window.open(url, '_blank')
+  function download (item: Attachment): void {
+    window.open(item.url, '_blank')
   }
 </script>
 

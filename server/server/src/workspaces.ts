@@ -2,6 +2,9 @@ import core, { DerivedDataProcessor, Storage, Tx, CoreClient } from '@anticrm/co
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
+/**
+ * @public
+ */
 export interface WorkspaceInfo {
   workspace: Workspace
   clients: Map<string, ClientInfo>
@@ -12,9 +15,6 @@ const workspaces = new Map<string, WorkspaceInfo>()
 const clients = new Map<string, ClientInfo>()
 
 const MONGO_URI = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
-const S3_URI = process.env.S3_URI ?? 'http://127.0.0.1:9000'
-const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY ?? 'minioadmin'
-const S3_SECRET = process.env.S3_SECRET ?? 'minioadmin'
 
 async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   let security!: SecurityModel
@@ -30,10 +30,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   const workspace = await Workspace.create(
     workspaceId,
     {
-      mongoDBUri: MONGO_URI,
-      s3AccessKey: S3_ACCESS_KEY,
-      s3Secret: S3_SECRET,
-      s3Uri: S3_URI
+      mongoDBUri: MONGO_URI
     },
     async (hierarchy, storage, model) => {
       security = await SecurityModel.create(hierarchy, model)
@@ -102,7 +99,8 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
 
 /**
  * Assign client to workspace, construct workspace if it is not yet started.
- * @param client
+ * @public
+ * @param client - ClientInfo
  */
 export async function assignWorkspace (
   client: ClientInfo
@@ -115,6 +113,9 @@ export async function assignWorkspace (
   }
 }
 
+/**
+ * @public
+ */
 export async function closeWorkspace (clientId: string): Promise<void> {
   const info = clients.get(clientId)
   clients.delete(clientId)

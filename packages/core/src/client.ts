@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { DerivedDataProcessor, FileOp, FileStorage } from '.'
+import { DerivedDataProcessor } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
@@ -29,7 +29,7 @@ export type TxHandler = (tx: Tx) => void
 /**
  * @public
  */
-export interface CoreClient extends Storage, FileStorage {
+export interface CoreClient extends Storage {
   accountId: () => Promise<Ref<Account>>
 }
 
@@ -91,10 +91,6 @@ class ClientImpl extends TxProcessor implements Client {
 
   async accountId (): Promise<Ref<Account>> {
     return this.connAccount
-  }
-
-  async file (op: FileOp): Promise<string> {
-    return await this.conn.file(op)
   }
 }
 

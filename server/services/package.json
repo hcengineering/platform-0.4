@@ -44,11 +44,14 @@
     "esbuild": "^0.12.16"
   },
   "dependencies": {
-    "@anticrm/accounts": "~0.4.0",    
+    "@anticrm/accounts": "~0.4.0",
     "mongodb": "^3.6.9",
     "@anticrm/rpc": "~0.4.1",
     "@anticrm/status": "~0.4.2",
     "@anticrm/mongo": "~0.4.0",
+    "@anticrm/server": "~0.4.0",
+    "@anticrm/core": "~0.4.0",
+    "@anticrm/s3": "~0.4.0",
 
     "@koa/cors": "^3.1.0",
     "koa": "^2.13.1",

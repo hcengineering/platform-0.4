@@ -20,14 +20,17 @@ import pluginCore from '@anticrm/plugin-core'
 import meetingPlugin from '@anticrm/meeting'
 
 import { configurePlatform } from './platform'
+import attachment from '@anticrm/attachment'
 
 configurePlatform()
 
 const accountsUrl = process.env.APP_ACCOUNTS_URL
 const meetingHost = process.env.MEETING_WSHOST ?? 'localhost'
 const meetingPort = process.env.MEETING_WSPORT ?? 18081
+const fileServerUrl = process.env.APP_FILES_URL ?? 'https://localhost:18082/'
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)
+setMetadata(attachment.metadata.FilesUrl, fileServerUrl)
 setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
 
 const loginInfo = currentAccount()

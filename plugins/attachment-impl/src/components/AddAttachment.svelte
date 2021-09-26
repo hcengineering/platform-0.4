@@ -14,11 +14,12 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { Class, Doc, generateId, Ref, RemoveFile, Space, UploadFile } from '@anticrm/core'
+  import { Class, Doc, generateId, Ref, Space } from '@anticrm/core'
   import ui, { Dialog, EditBox, IconFile, Progress } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import attachment, { Attachment, nameToFormat } from '@anticrm/attachment'
   import AttachmentView from './Attachment.svelte'
+  import { getPlugin } from '@anticrm/platform'
 
   export let objectId: Ref<Doc>
   export let objectClass: Ref<Class<Doc>>
@@ -35,6 +36,9 @@
   async function confirm (): Promise<void> {
     if (item === undefined) return
 
+    const fileService = await getPlugin(attachment.id)
+    const url = fileService.generateLink(item._id, space, name, item.format)
+
     await client.createDoc(
       attachment.class.Attachment,
       space,
@@ -43,42 +47,12 @@
         objectId: item.objectId,
         name: name,
         size: item.size,
-        format: item.format
+        format: item.format,
+        mime: item.mime,
+        url: url
       },
       item._id
     )
-  }
-
-  async function uploadProgress (
-    url: string,
-    file: File,
-    progressCallback: (percent: number) => void
-  ): Promise<XMLHttpRequest> {
-    return new Promise(function (resolve, reject) {
-      const xhr = new XMLHttpRequest()
-
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(xhr)
-          } else {
-            reject(xhr)
-          }
-        }
-      }
-
-      if (progressCallback) {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const percentComplete = (e.loaded / file.size) * 100
-            progressCallback(percentComplete)
-          }
-        }
-      }
-
-      xhr.open('PUT', url)
-      xhr.send(file)
-    })
   }
 
   async function drop (e: DragEvent): Promise<void> {
@@ -93,30 +67,19 @@
   }
 
   async function createAttachment (): Promise<void> {
+    const fileService = await getPlugin(attachment.id)
     name = file?.name ?? ''
     if (file === undefined) {
       if (item !== undefined) {
-        const params: RemoveFile = {
-          type: 'Remove',
-          key: item._id
-        }
-
-        await client.file(params)
+        fileService.remove(item._id, item.space)
       }
       item = undefined
     } else {
-      const id = generateId()
-      const params: UploadFile = {
-        type: 'Upload',
-        key: id,
-        fileType: file.type
-      }
-
-      const url = await client.file(params)
-
-      await uploadProgress(url, file, (percent) => {
+      const key = generateId() + '.' + nameToFormat(file.name)
+      await fileService.upload(file, key, space, (percent) => {
         progress = percent
       })
+
       progress = 0
 
       item = {
@@ -125,12 +88,14 @@
         name: file.name,
         size: file.size,
         format: nameToFormat(file.name),
+        mime: file.type,
+        url: '',
         space: space,
         modifiedBy: client.accountId(),
         modifiedOn: Date.now(),
         createOn: Date.now(),
         _class: attachment.class.Attachment,
-        _id: id as Ref<Attachment>
+        _id: key as Ref<Attachment>
       }
     }
   }

@@ -15,10 +15,10 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Metadata, Service, Plugin } from '@anticrm/platform'
-import type { Account, FileStorage, Ref, Storage, TxOperations } from '@anticrm/core'
+import type { Account, Ref, Storage, TxOperations } from '@anticrm/core'
 import type { Queriable } from '@anticrm/query'
 
-export interface Client extends Storage, TxOperations, Queriable, FileStorage {}
+export interface Client extends Storage, TxOperations, Queriable {}
 
 export interface CoreService extends Service {
   /**

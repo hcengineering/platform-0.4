@@ -13,7 +13,6 @@
 // limitations under the License.
 //
 
-import { DownloadFile, FileOp, UploadFile } from '@anticrm/core'
 import { S3 } from 'aws-sdk'
 
 /**
@@ -53,18 +52,7 @@ export class S3Storage {
     })
   }
 
-  async file (op: FileOp): Promise<string> {
-    switch (op.type) {
-      case 'Upload':
-        return await this.getUploadLink(op.key, (op as UploadFile).fileType)
-      case 'Download':
-        return await this.getDownloadLink(op.key, (op as DownloadFile).fileName)
-      case 'Remove':
-        return await this.remove(op.key)
-    }
-  }
-
-  private async remove (key: string): Promise<string> {
+  async remove (key: string): Promise<string> {
     const params = {
       Bucket: this.bucket,
       Key: key
@@ -73,7 +61,7 @@ export class S3Storage {
     return key
   }
 
-  private async getUploadLink (key: string, type: string): Promise<string> {
+  async getUploadLink (key: string, type: string): Promise<string> {
     const params = {
       Expires: 300,
       Bucket: this.bucket,
@@ -83,7 +71,7 @@ export class S3Storage {
     return await this.client.getSignedUrlPromise('putObject', params)
   }
 
-  private async getDownloadLink (key: string, filename: string): Promise<string> {
+  async getDownloadLink (key: string, filename: string): Promise<string> {
     const params = {
       Expires: 300,
       Bucket: this.bucket,

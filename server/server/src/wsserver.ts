@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import core, { Account, FileOp, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
+import core, { Account, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
@@ -119,8 +119,7 @@ function connectClient (
             }
             return result
           },
-          accountId: async () => await clientStorage.accountId(),
-          file: async (op: FileOp) => await clientStorage.file(op)
+          accountId: async () => await clientStorage.accountId()
         }
       }
 
