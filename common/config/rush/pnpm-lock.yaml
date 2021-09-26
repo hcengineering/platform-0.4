@@ -126,6 +126,7 @@ specifiers:
   autoprefixer: ~10.2.6
   aws-sdk: ~2.990.0
   comment-parser: ^1.2.3
+  compression-webpack-plugin: ~9.0.0
   copy-webpack-plugin: ~9.0.1
   core-js: ^3.10.1
   cross-env: ^7.0.3
@@ -327,6 +328,7 @@ dependencies:
   autoprefixer: 10.2.6_postcss@8.3.6
   aws-sdk: 2.990.0
   comment-parser: 1.2.4
+  compression-webpack-plugin: 9.0.0_webpack@5.51.1
   copy-webpack-plugin: 9.0.1_webpack@5.51.1
   core-js: 3.16.3
   cross-env: 7.0.3
@@ -3376,6 +3378,17 @@ packages:
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.49.0
+    dev: false
+
+  /compression-webpack-plugin/9.0.0_webpack@5.51.1:
+    resolution: {integrity: sha512-V2KmQqaUkErPT+ZcUGHa8zWpIw1oTYaC7wjGewJm053GWAoY04GfU5B/NZ/JSz1eFp9MggMdLQpEHe1TJAQY1A==}
+    engines: {node: '>= 12.13.0'}
+    peerDependencies:
+      webpack: ^5.1.0
+    dependencies:
+      schema-utils: 3.1.1
+      serialize-javascript: 6.0.0
+      webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
   /compression/1.7.4:
@@ -11403,7 +11416,7 @@ packages:
     dev: false
 
   file:projects/calendar.tgz:
-    resolution: {integrity: sha512-jRTInEuAI27Fovnoi1ivjk8EB0wgj0/dFRVB+zIlPX1i1XHOjS6ARcIj1BiFAofzSmzwj9Whwo1/l5YK2kPP6w==, tarball: file:projects/calendar.tgz}
+    resolution: {integrity: sha512-fhLZsPmb9S//XetlQVQQqE9AN0lzOm1+phyFsbGmTUPAaKhREV5qz8EeSQzuQykS4rF1RblionGKfMGLuiG65w==, tarball: file:projects/calendar.tgz}
     name: '@rush-temp/calendar'
     version: 0.0.0
     dependencies:
@@ -11553,7 +11566,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-d0MRttlKqtXND6QWAXnNILOg1OywKKGZ5rkpu0oaKCLcD/U2ZR7D8ZeBeN6F6MjMXf4Z0Pyj75Ktfz7Vr4RXNA==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-RWRFJP1GvJJp0j2JU3fcDrVq8DBni96jNDF4bbM0tYe9+kBY7BJ8ZDvE7ydDhzd2G08uS4qjMedaU62uJ9COJw==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11567,6 +11580,7 @@ packages:
       '@types/koa': 2.13.4
       '@types/koa__cors': 3.0.3
       '@types/koa-bodyparser': 4.3.3
+      '@types/koa-logger': 3.1.1
       '@types/koa-router': 7.4.4
       '@types/mongodb': 3.6.20
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
@@ -11578,6 +11592,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       koa: 2.13.1
       koa-bodyparser: 4.3.0
+      koa-logger: 3.2.1
       koa-router: 10.1.1
       mongodb: 3.6.11
       prettier: 2.3.2
@@ -11685,7 +11700,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-B7QxMJ0qTcwiW8WlOeTSZogJ+rY1cp001CBwAxHX+ivHFt/AgQK5OM3G0o+n4lgZBrlojNHMeWo2W/V9zKpQ9Q==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-dUcRk3bKXgMmTg0nrH5azZGpQ7mYljkCabscr8RRxFfjeKWXw3DSUSXP39OvyWfOyvwcSjRAKyYewNBd4pUziQ==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -11694,6 +11709,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
       autoprefixer: 10.2.6_postcss@8.3.6
+      compression-webpack-plugin: 9.0.0_webpack@5.51.1
       copy-webpack-plugin: 9.0.1_webpack@5.51.1
       cross-env: 7.0.3
       css-loader: 5.2.7_webpack@5.51.1
@@ -13050,7 +13066,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-IfhboVQDYycau6KanR7xweCVLCD9Rw7F5lYUibFhRQcCW1MVybajHdNY6ubbNL1pOuST9i/Rhe3nZNsJVXYRNw==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-8btN6rjobJ29YGdVlxPjF3oykA5tJRxYubCaFDa+k/+dxPkJSSMSVZj0pkLvzY+ahoYdImNVn3bsPK0Bs7InBA==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0

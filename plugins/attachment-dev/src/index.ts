@@ -30,7 +30,6 @@ export default async (): Promise<AttachmentService> => {
     })
   }
 
-
   async function remove (key: string, space: Ref<Space>): Promise<void> {
     return await new Promise(function (resolve, reject) {
       files.delete(key)
@@ -40,7 +39,7 @@ export default async (): Promise<AttachmentService> => {
 
   function generateLink (key: string, space: Ref<Space>, name: string, format: string): string {
     const item = files.get(key)
-    if (item != undefined) {
+    if (item !== null) {
       return URL.createObjectURL(item)
     }
     return ''

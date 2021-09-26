@@ -16,9 +16,9 @@
 import type { AttachmentService } from '@anticrm/attachment'
 import attachment from '@anticrm/attachment'
 import { Ref, Space } from '@anticrm/core'
-import { getMetadata, getPlugin } from '@anticrm/platform'
+import { getMetadata } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
-import login from '@anticrm/login'
+import pluginCore from '@anticrm/plugin-core'
 
 export { default as Attachments } from './components/Attachments.svelte'
 
@@ -27,10 +27,7 @@ export default async (): Promise<AttachmentService> => {
   if (fileServerURL === '') {
     throw new PlatformError(new Status(Severity.ERROR, attachment.status.NoFileServerUri, {}))
   }
-  const loginPlugin = getPlugin(login.id)
-  const loginInfo = await (await loginPlugin).getLoginInfo()
-  const data = loginInfo?.clientUrl.split('/')
-  const token = data?.pop() ?? ''
+  const token = getMetadata(pluginCore.metadata.Token)
 
   async function upload (
     file: File,
@@ -38,7 +35,6 @@ export default async (): Promise<AttachmentService> => {
     space: Ref<Space>,
     progressCallback?: (progress: number) => void
   ): Promise<void> {
-    console.log('try upload')
     const params = {
       key,
       space,
@@ -51,7 +47,7 @@ export default async (): Promise<AttachmentService> => {
         'Content-Type': 'application/json;charset=utf-8',
         Token: token
       },
-      body: JSON.stringify(params),
+      body: JSON.stringify(params)
     })
     const url = await req.text()
     await uploadS3(url, file, progressCallback)

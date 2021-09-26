@@ -51,16 +51,7 @@ async function start (): Promise<void> {
   process.on('SIGTERM', close)
   process.on('exit', close)
 
-  newFileServer(
-    18082,
-    {
-      protocol: 'https',
-      server: addr.address,
-      port: addr.port,
-      tokenSecret: 'secret'
-    },
-    security
-  )
+  newFileServer(18082, 'secret', security)
 
   // Create a demo account and workspace if it is missing.
 

@@ -83,11 +83,11 @@ function connectClient (
 }
 
 function withLogging (
-  clientStorage: WithAccountId,
+  clientStorage: CoreClient,
   options: ServerOptions,
   accountId: Ref<Account>,
   details: AccountDetails
-): WithAccountId {
+): CoreClient {
   return {
     findAll: async (_class, query) => {
       const resultTx = clientStorage.findAll(_class, query)

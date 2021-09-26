@@ -20,16 +20,15 @@ import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import Router from 'koa-router'
 import { newFileServer as createFileServer } from '@anticrm/services'
-import { ServerInfo } from '@anticrm/accounts'
 
 interface FileServer {
   shutdown: () => void
 }
 
-export function newFileServer (port: number, serverInfo: ServerInfo, security: SecurityOptions): FileServer {
+export function newFileServer (port: number, token: string, security: SecurityOptions): FileServer {
   const app = new Koa()
   const router = new Router()
-  createFileServer(app, router, serverInfo.tokenSecret)
+  createFileServer(app, router, token)
 
   app.use(cors({ exposeHeaders: 'Set-Cookie', credentials: true }))
   app.use(bodyParser())

@@ -40,7 +40,10 @@ export function configurePlatform (): void {
   if (process.env.CLIENT !== 'server') {
     console.info('use in memory DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
-    addLocation(attachment, async () => await import(/* webpackChunkName: "attachment-dev" */ '@anticrm/attachment-dev'))
+    addLocation(
+      attachment,
+      async () => await import(/* webpackChunkName: "attachment-dev" */ '@anticrm/attachment-dev')
+    )
   } else {
     console.info('use server DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))

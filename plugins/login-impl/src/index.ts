@@ -77,7 +77,7 @@ export default async (): Promise<LoginService> => {
       }
       if (result.result !== undefined) {
         setLoginInfo(result.result)
-        const token = result.result.clientUrl.split('/')[1]
+        const token = result.result.token
         await authorizeFileServer(token, 'https://localhost:18082')
       }
       return OK
@@ -108,7 +108,7 @@ export default async (): Promise<LoginService> => {
       const status = result.error ?? OK
       if (result.result !== undefined) {
         setLoginInfo(result.result)
-        const token = result.result.clientUrl.split('/')[1]
+        const token = result.result.token
         await authorizeFileServer(token, 'https://localhost:18082')
       }
       return status
@@ -141,7 +141,7 @@ export default async (): Promise<LoginService> => {
       const status = result.error ?? OK
       if (result.result !== undefined) {
         setLoginInfo(result.result)
-        const token = result.result.clientUrl.split('/')[1]
+        const token = result.result.token
         await authorizeFileServer(token, 'https://localhost:18082')
       }
       return status
@@ -162,7 +162,7 @@ export default async (): Promise<LoginService> => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         Token: token
-      },
+      }
     })
   }
 
