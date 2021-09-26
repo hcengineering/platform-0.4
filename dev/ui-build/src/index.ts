@@ -28,7 +28,7 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
     compileOptions: {
       // Styles with component
       css: false, // Will generate index.css
-      dev: true,
+      dev: (process.env.SVELTE_DEV_MODE ?? 'true') === 'true',
       errorMode: 'throw'
     },
     logLevel: mainOptions.logLevel

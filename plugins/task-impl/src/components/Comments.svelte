@@ -13,10 +13,11 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Channel, ReferenceInput } from '@anticrm/chunter-impl'
+  import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { SpaceNotifications } from '@anticrm/notification'
   import type { Ref, Space } from '@anticrm/core'
+  import { Component } from '@anticrm/ui'
 
   export let messages: Comment[] = []
   export let notifications: SpaceNotifications | undefined
@@ -24,9 +25,10 @@
 </script>
 
 <div class="msg-board">
-  <Channel {messages} {notifications} thread />
+  <!-- <Channel {messages} {notifications} thread /> -->
+  <Component is={chunter.component.Channel} props={{ messages, notifications, thread: true }} />
 </div>
-<ReferenceInput {currentSpace} on:message />
+<Component is={chunter.component.ReferenceInput} props={{ currentSpace, notifications, thread: true }} on:message />
 
 <style lang="scss">
   .msg-board {

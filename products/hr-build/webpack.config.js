@@ -42,9 +42,21 @@ module.exports = {
     chunkFilename: '[name].[id].js',
     publicPath: '/'
   },
-  // optimization: {
-  //   minimize: true
-  // },
+  optimization: {
+    minimize: prod,
+    splitChunks: {
+      chunks: 'all',
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      cacheGroups: {
+        vendors: {
+          name: 'vendors',
+          test: /[\\/]node_modules[\\/]/,
+          priority: 20
+        }
+      }
+    }
+  },
   module: {
     rules: [
       {
@@ -58,6 +70,7 @@ module.exports = {
           loader: 'svelte-loader',
           options: {
             emitCss: true,
+            minimize: prod,
             preprocess: require('svelte-preprocess')()
           }
         }

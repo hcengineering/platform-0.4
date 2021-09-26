@@ -14,26 +14,24 @@
 //
 
 import calendar from '@anticrm/calendar'
+import '@anticrm/calendar-assets'
 import chunter from '@anticrm/chunter'
+import '@anticrm/chunter-assets'
 import fsm from '@anticrm/fsm'
 import login from '@anticrm/login'
 import '@anticrm/login-assets'
 import meeting from '@anticrm/meeting'
+import '@anticrm/meeting-assets'
 import { addLocation } from '@anticrm/platform'
 import core from '@anticrm/plugin-core'
 import recruiting from '@anticrm/recruiting'
+import '@anticrm/recruiting-assets'
 import task from '@anticrm/task'
+import '@anticrm/task-assets'
 import '@anticrm/ui-assets'
 import workbench from '@anticrm/workbench'
 import '@anticrm/workbench-assets'
 import { PlatformConfiguration } from './config'
-
-// asserts
-import '@anticrm/chunter-assets'
-import '@anticrm/task-assets'
-import '@anticrm/recruiting-assets'
-import '@anticrm/calendar-assets'
-import '@anticrm/meeting-assets'
 
 export function configurePlatform (config: PlatformConfiguration): void {
   addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
@@ -67,7 +65,7 @@ export function configurePlatform (config: PlatformConfiguration): void {
 
   if (config.meeting) {
     addLocation(meeting, async () => {
-      return await import(/* webpackChunkName: "calendar" */ '@anticrm/meeting-impl')
+      return await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl')
     })
   }
 }

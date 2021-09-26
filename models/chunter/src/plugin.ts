@@ -30,8 +30,6 @@ export default mergeIds(chunter, {
   component: {
     CreateChannel: '' as AnyComponent,
     CreateMessage: '' as AnyComponent,
-    ChannelView: '' as AnyComponent,
-    ThreadsView: '' as AnyComponent,
     AllThreadsView: '' as AnyComponent,
     SpaceItem: '' as AnyComponent,
     SpaceHeader: '' as AnyComponent

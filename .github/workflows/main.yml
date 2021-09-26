@@ -48,6 +48,8 @@ jobs:
 
       - name: Building...
         run: node common/scripts/install-run-rush.js rebuild -p 16
+        env:
+          SVELTE_DEV_MODE: false
       
       - name: Cache build results
         uses: actions/cache@v2
@@ -239,7 +241,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: 'Build HR docker image and publish to github docker registry.'
-        #if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
            cd ./products/hr-build
            node ../../common/scripts/install-run-rushx.js docker

@@ -38,7 +38,7 @@
   // import CheckList from './CheckList.svelte'
   import Comments from './Comments.svelte'
   import StatusPicker from './StatusPicker.svelte'
-  import { chunterIds as chunter } from '@anticrm/chunter-impl'
+  import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
   import type { SpaceNotifications } from '@anticrm/notification'
