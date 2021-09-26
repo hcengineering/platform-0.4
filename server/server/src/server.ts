@@ -111,7 +111,7 @@ export class Server {
   }
 
   shutdown (): void {
-    console.log('Shutting down server:', this.httpServer.address())
+    console.log('Shutting down http server')
 
     for (const conn of this.connections.entries()) {
       this.provider.close(conn[0]).catch(this.traceError)

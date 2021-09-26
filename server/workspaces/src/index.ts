@@ -1,5 +1,5 @@
-import core, { DOMAIN_TX, generateModelDiff, Tx } from '@anticrm/core'
-import { getMongoClient, mongoEscape } from '@anticrm/mongo'
+import core, { DOMAIN_TX, generateModelDiff, Tx, txObjectClass } from '@anticrm/core'
+import { getMongoClient, mongoEscape, mongoUnescape } from '@anticrm/mongo'
 
 /**
  * Workspace connection options.
@@ -42,9 +42,13 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   // Find all system transactions.
   const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
 
-  const updateTxes = await generateModelDiff(existingTxes, options.txes)
+  const updateTxes = await generateModelDiff(
+    existingTxes.map((t) => mongoUnescape(t)),
+    options.txes
+  )
 
   for (const tx of updateTxes) {
+    console.info('updating:', txObjectClass(tx) ?? tx.objectId, JSON.stringify(tx, undefined, 2))
     await txes.insertOne(mongoEscape(tx))
   }
 }

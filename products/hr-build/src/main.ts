@@ -17,18 +17,40 @@ import { setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login, { currentAccount } from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
+import meetingPlugin from '@anticrm/meeting'
 
 import { configurePlatform } from './platform'
+import { PlatformConfiguration } from './config'
 
-configurePlatform()
-
-const accountsUrl = (window as any).APP_ACCOUNTS_URL ?? 'http://localhost:3000/rpc'
-
-setMetadata(login.metadata.AccountsUrl, accountsUrl)
-
-const loginInfo = currentAccount()
-if (loginInfo !== undefined) {
-  setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
+async function loadConfiguration (): Promise<PlatformConfiguration> {
+  return await new Promise<PlatformConfiguration>((resolve) => {
+    const xmlHttp = new XMLHttpRequest()
+    xmlHttp.onreadystatechange = function () {
+      if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+        const config = JSON.parse(xmlHttp.responseText) as PlatformConfiguration
+        resolve(config)
+      }
+    }
+    xmlHttp.open('GET', '/env.json', true)
+    xmlHttp.send(null)
+  })
 }
 
-createApp(document.body)
+async function init (): Promise<void> {
+  const config = await loadConfiguration()
+  configurePlatform(config)
+  setMetadata(login.metadata.AccountsUrl, config.accountsUri)
+  setMetadata(pluginCore.metadata.ClientUrl, config.clientUri)
+
+  setMetadata(login.metadata.AccountsUrl, config.accountsUri)
+  setMetadata(meetingPlugin.metadata.ClientUrl, config.meetingsUri)
+  setMetadata(pluginCore.metadata.ClientUrl, config.clientUri)
+
+  const loginInfo = currentAccount()
+  if (loginInfo !== undefined) {
+    setMetadata(pluginCore.metadata.Token, loginInfo.token)
+  }
+
+  createApp(document.body)
+}
+void init()

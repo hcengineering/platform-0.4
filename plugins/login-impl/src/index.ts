@@ -33,13 +33,13 @@ export default async (): Promise<LoginService> => {
   function setLoginInfo (loginInfo: LoginInfo): void {
     localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
 
-    setMetadata(pluginCore.metadata.ClientUrl, loginInfo.clientUrl)
+    setMetadata(pluginCore.metadata.Token, loginInfo.token)
   }
 
   function clearLoginInfo (): void {
     localStorage.removeItem(ACCOUNT_KEY)
 
-    setMetadata(pluginCore.metadata.ClientUrl, undefined)
+    setMetadata(pluginCore.metadata.Token, undefined)
     setMetadata(pluginCore.metadata.AccountId, undefined)
   }
 
@@ -108,7 +108,7 @@ export default async (): Promise<LoginService> => {
         setLoginInfo(result.result)
       }
       return status
-    } catch (err) {
+    } catch (err: any) {
       return unknownError(err)
     }
   }

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "HR build re-configuration",
+      "type": "patch",
+      "packageName": "@anticrm/core"
+    }
+  ],
+  "packageName": "@anticrm/core",
+  "email": "haiodo@gmail.com"
+}

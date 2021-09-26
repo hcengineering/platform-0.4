@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, Doc, DocumentPresenter, Ref, Space, Timestamp } from '@anticrm/core'
 import type { Person } from '@anticrm/contact'
-import type { FSMItem, WithFSM } from '@anticrm/fsm'
+import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
@@ -132,5 +132,12 @@ export default plugin(PluginRecruiting, {}, {
 
     AddCandidate: '' as IntlString,
     Bio: '' as IntlString
+  },
+  presenter: {
+    CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>
+  },
+  fsm: {
+    DefaultVacancy: '' as Ref<FSM>,
+    AnotherDefaultVacancy: '' as Ref<FSM>
   }
 })

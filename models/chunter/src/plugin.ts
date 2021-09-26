@@ -49,6 +49,8 @@ export default mergeIds(chunter, {
   dd: {
     MessageReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     CommentReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    MessageSpaceNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    CommentSpaceNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   }
 })

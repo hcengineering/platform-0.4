@@ -109,16 +109,20 @@ export function createModel (builder: Builder): void {
   )
 
   // P R E S E N T E R S
-  builder.createDoc<DocumentPresenter<Candidate>>(core.class.DocumentPresenter, {
-    objectClass: recruiting.class.Candidate,
-    presentation: [
-      {
-        component: recruiting.component.EditCandidate,
-        description: 'Candidate editor',
-        mode: PresentationMode.Edit
-      }
-    ]
-  })
+  builder.createDoc<DocumentPresenter<Candidate>>(
+    core.class.DocumentPresenter,
+    {
+      objectClass: recruiting.class.Candidate,
+      presentation: [
+        {
+          component: recruiting.component.EditCandidate,
+          description: 'Candidate editor',
+          mode: PresentationMode.Edit
+        }
+      ]
+    },
+    recruiting.presenter.CandidatePresenter
+  )
 
   const states = {
     rejected: { name: 'Rejected' },
@@ -130,16 +134,15 @@ export function createModel (builder: Builder): void {
     contract: { name: 'Contract signing' }
   }
 
-  templateFSM('Default developer vacancy', recruiting.class.VacancySpace)
+  templateFSM('Default developer vacancy', recruiting.class.VacancySpace, recruiting.fsm.DefaultVacancy)
     .transition(states.applied, [states.hrInterview, states.rejected])
     .transition(states.hrInterview, [states.testTask, states.rejected])
     .transition(states.testTask, [states.techInterview, states.rejected])
     .transition(states.techInterview, [states.offer, states.rejected])
     .transition(states.offer, [states.contract, states.rejected])
-    .transition(states.offer, states.rejected)
     .build(builder)
 
-  templateFSM('Another default vacancy', recruiting.class.VacancySpace)
+  templateFSM('Another default vacancy', recruiting.class.VacancySpace, recruiting.fsm.AnotherDefaultVacancy)
     .transition(states.applied, [states.techInterview, states.rejected])
     .transition(states.techInterview, [states.offer, states.rejected])
     .transition(states.offer, states.rejected)

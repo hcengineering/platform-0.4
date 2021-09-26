@@ -71,3 +71,4 @@ common/autoinstallers/*/.npmrc
 tsdoc-metadata.json
 dist
 dev/certificates
+temp
