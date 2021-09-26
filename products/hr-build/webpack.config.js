@@ -16,6 +16,7 @@
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 const mode = process.env.NODE_ENV || 'development'
 const NO_SVELTE = process.env.NO_SVELTE ?? false
@@ -42,9 +43,21 @@ module.exports = {
     chunkFilename: '[name].[id].js',
     publicPath: '/'
   },
-  // optimization: {
-  //   minimize: true
-  // },
+  optimization: {
+    minimize: prod,
+    splitChunks: {
+      chunks: 'all',
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      cacheGroups: {
+        vendors: {
+          name: 'vendors',
+          test: /[\\/]node_modules[\\/]/,
+          priority: 20
+        }
+      }
+    }
+  },
   module: {
     rules: [
       {
@@ -58,6 +71,7 @@ module.exports = {
           loader: 'svelte-loader',
           options: {
             emitCss: true,
+            minimize: prod,
             preprocess: require('svelte-preprocess')()
           }
         }
@@ -123,7 +137,7 @@ module.exports = {
   },
   mode,
   plugins: [
-    new MiniCssExtractPlugin(),
+    ...(prod ? [new CompressionPlugin(), new MiniCssExtractPlugin()] : []),
     new CopyPlugin({
       patterns: [
         { from: './public', to: '.' },
@@ -131,7 +145,7 @@ module.exports = {
       ]
     })
   ],
-  devtool: prod ? false : 'eval-source-map',
+  devtool: 'eval-source-map',
   devServer: {
     publicPath: '/',
     historyApiFallback: {

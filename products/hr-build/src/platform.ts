@@ -13,39 +13,59 @@
 // limitations under the License.
 //
 
-import { addLocation } from '@anticrm/platform'
-
-import login from '@anticrm/login'
-import workbench from '@anticrm/workbench'
-import core from '@anticrm/plugin-core'
-import chunter from '@anticrm/chunter'
-import task from '@anticrm/task'
-import recruiting from '@anticrm/recruiting'
-import fsm from '@anticrm/fsm'
 import calendar from '@anticrm/calendar'
-
-import '@anticrm/ui-assets'
-import '@anticrm/chunter-assets'
-import '@anticrm/task-assets'
-import '@anticrm/login-assets'
-import '@anticrm/recruiting-assets'
-import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
+import chunter from '@anticrm/chunter'
+import '@anticrm/chunter-assets'
+import fsm from '@anticrm/fsm'
+import login from '@anticrm/login'
+import '@anticrm/login-assets'
+import meeting from '@anticrm/meeting'
+import '@anticrm/meeting-assets'
+import { addLocation } from '@anticrm/platform'
+import core from '@anticrm/plugin-core'
+import recruiting from '@anticrm/recruiting'
+import '@anticrm/recruiting-assets'
+import task from '@anticrm/task'
+import '@anticrm/task-assets'
+import '@anticrm/ui-assets'
+import workbench from '@anticrm/workbench'
+import '@anticrm/workbench-assets'
+import { PlatformConfiguration } from './config'
 
-// import '@anticrm/meeting-assets'
-// import meeting from '@anticrm/meeting'
-
-export function configurePlatform (): void {
+export function configurePlatform (config: PlatformConfiguration): void {
   addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
 
   addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
   addLocation(workbench, async () => await import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
-  addLocation(chunter, async () => await import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
-  addLocation(task, async () => await import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
-  addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
 
-  addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
+  if (config.chunter) {
+    addLocation(chunter, async () => {
+      return await import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl')
+    })
+  }
+  if (config.tasks) {
+    addLocation(task, async () => {
+      return await import(/* webpackChunkName: "task" */ '@anticrm/task-impl')
+    })
+  }
 
-  // addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
+  if (config.recrutting) {
+    addLocation(recruiting, async () => {
+      return await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl')
+    })
+  }
+
+  if (config.calendar) {
+    addLocation(calendar, async () => {
+      return await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl')
+    })
+  }
+
+  if (config.meeting) {
+    addLocation(meeting, async () => {
+      return await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl')
+    })
+  }
 }

@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-import task, { Project } from '@anticrm/task'
+import task, { Project, Task } from '@anticrm/task'
 import { mergeIds, AnyComponent } from '@anticrm/status'
 
 import { Application } from '@anticrm/workbench'
 import {} from '@anticrm/platform'
-import { DerivedDataDescriptor, Doc, Ref } from '@anticrm/core'
+import { DerivedDataDescriptor, Doc, DocumentPresenter, Ref } from '@anticrm/core'
 
 export default mergeIds(task, {
   component: {
@@ -44,6 +44,10 @@ export default mergeIds(task, {
   dd: {
     NameTitleIndex: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     ReferencesIndex: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    TaskNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+  },
+  presenter: {
+    TaskPresenter: '' as Ref<DocumentPresenter<Task>>
   }
 })

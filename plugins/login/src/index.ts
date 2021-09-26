@@ -26,7 +26,7 @@ import type { AnyComponent } from '@anticrm/status'
 export interface LoginInfo {
   email: string
   workspace: string
-  clientUrl: string
+  token: string
 }
 
 /**

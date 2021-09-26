@@ -218,35 +218,43 @@ export function createModel (builder: Builder): void {
     chunter.dd.ReplyOf
   )
 
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Message,
-    targetClass: notification.class.SpaceNotifications,
-    collections: [
-      {
-        sourceField: 'message',
-        targetField: 'notificatedObjects',
-        sourceFieldPattern: {
-          pattern: MARKDOWN_MENTION_PATTERN.source,
-          multDoc: true,
-          group: 1
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Message,
+      targetClass: notification.class.SpaceNotifications,
+      collections: [
+        {
+          sourceField: 'message',
+          targetField: 'notificatedObjects',
+          sourceFieldPattern: {
+            pattern: MARKDOWN_MENTION_PATTERN.source,
+            multDoc: true,
+            group: 1
+          }
         }
-      }
-    ]
-  })
+      ]
+    },
+    chunter.dd.MessageSpaceNotifications
+  )
 
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: chunter.class.Comment,
-    targetClass: notification.class.SpaceNotifications,
-    collections: [
-      {
-        sourceField: 'message',
-        targetField: 'notificatedObjects',
-        sourceFieldPattern: {
-          pattern: MARKDOWN_MENTION_PATTERN.source,
-          multDoc: true,
-          group: 1
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: notification.class.SpaceNotifications,
+      collections: [
+        {
+          sourceField: 'message',
+          targetField: 'notificatedObjects',
+          sourceFieldPattern: {
+            pattern: MARKDOWN_MENTION_PATTERN.source,
+            multDoc: true,
+            group: 1
+          }
         }
-      }
-    ]
-  })
+      ]
+    },
+    chunter.dd.CommentSpaceNotifications
+  )
 }

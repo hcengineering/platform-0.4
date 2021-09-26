@@ -19,7 +19,8 @@
   import type { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
   import task from '../plugin'
-  import chunter, { Comment } from '@anticrm/chunter'
+  import chunter from '@anticrm/chunter'
+  import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { SpaceNotifications } from '@anticrm/notification'
 

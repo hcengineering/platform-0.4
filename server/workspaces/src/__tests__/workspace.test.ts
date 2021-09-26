@@ -17,6 +17,7 @@ import { getMongoClient } from '@anticrm/mongo'
 import { createWorkspace, deleteWorkspace, upgradeWorkspace, shutdown } from '..'
 import { DOMAIN_TX } from '@anticrm/core'
 import builder from '@anticrm/model-all'
+import core, { _createDoc } from '@anticrm/core'
 
 describe('workspaces', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
@@ -50,7 +51,8 @@ describe('workspaces', () => {
 
   it('upgrade workspace', async () => {
     const client = await getMongoClient(mongoDBUri)
-    await createWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
+    const txes = builder.getTxes()
+    await createWorkspace('my', { mongoDBUri, txes })
 
     expect(
       await client
@@ -60,7 +62,15 @@ describe('workspaces', () => {
         .count()
     ).toBeGreaterThan(0)
 
-    await upgradeWorkspace('my', { mongoDBUri, txes: builder.getTxes() })
+    // Just one DD instance.
+    txes.push(
+      _createDoc(core.class.DerivedDataDescriptor, {
+        sourceClass: core.class.Class,
+        targetClass: core.class.Title
+      })
+    )
+
+    await upgradeWorkspace('my', { mongoDBUri, txes })
     expect(
       await client
         .db('ws-my')

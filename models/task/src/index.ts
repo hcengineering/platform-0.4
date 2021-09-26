@@ -148,41 +148,49 @@ export function createModel (builder: Builder): void {
     task.dd.ReplyOf
   )
 
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    sourceClass: task.class.Task,
-    targetClass: notification.class.SpaceNotifications,
-    collections: [
-      {
-        sourceField: 'description',
-        targetField: 'notificatedObjects',
-        sourceFieldPattern: {
-          pattern: MARKDOWN_MENTION_PATTERN.source,
-          multDoc: true,
-          group: 1
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: task.class.Task,
+      targetClass: notification.class.SpaceNotifications,
+      collections: [
+        {
+          sourceField: 'description',
+          targetField: 'notificatedObjects',
+          sourceFieldPattern: {
+            pattern: MARKDOWN_MENTION_PATTERN.source,
+            multDoc: true,
+            group: 1
+          }
         }
-      }
-    ]
-  })
+      ]
+    },
+    task.dd.TaskNotifications
+  )
 
   // P R E S E N T E R S
-  builder.createDoc<DocumentPresenter<Task>>(core.class.DocumentPresenter, {
-    objectClass: task.class.Task,
-    presentation: [
-      {
-        component: task.component.TaskRefView,
-        description: 'Task Ref',
-        mode: PresentationMode.Link
-      },
-      {
-        component: task.component.TaskPreview,
-        description: 'Task Preview',
-        mode: PresentationMode.Preview
-      },
-      {
-        component: task.component.EditTask,
-        description: 'Task editor',
-        mode: PresentationMode.Edit
-      }
-    ]
-  })
+  builder.createDoc<DocumentPresenter<Task>>(
+    core.class.DocumentPresenter,
+    {
+      objectClass: task.class.Task,
+      presentation: [
+        {
+          component: task.component.TaskRefView,
+          description: 'Task Ref',
+          mode: PresentationMode.Link
+        },
+        {
+          component: task.component.TaskPreview,
+          description: 'Task Preview',
+          mode: PresentationMode.Preview
+        },
+        {
+          component: task.component.EditTask,
+          description: 'Task editor',
+          mode: PresentationMode.Edit
+        }
+      ]
+    },
+    task.presenter.TaskPresenter
+  )
 }

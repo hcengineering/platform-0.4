@@ -13,11 +13,12 @@
 // limitations under the License.
 //
 
-import type { Account, Class, DerivedDataDescriptor, Doc, DocumentMapper, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, DerivedDataDescriptor, Doc, DocumentMapper, DocumentPresenter, Ref, Space, Timestamp } from '@anticrm/core'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { DerivedData } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
+import { Application } from '@anticrm/workbench'
 
 export interface Calendar extends Space {}
 
@@ -39,6 +40,9 @@ export interface CalendarService extends Service {}
 const PluginCalendar = 'calendar' as Plugin<CalendarService>
 
 export default plugin(PluginCalendar, {}, {
+  app: {
+    Calendar: '' as Ref<Application>
+  },
   icon: {
     Calendar: '' as Asset
   },
@@ -71,6 +75,10 @@ export default plugin(PluginCalendar, {}, {
     defaultMapper: '' as Resource<DocumentMapper>
   },
   dd: {
-    NameTitleIndex: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    NameTitleIndex: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    EventDD: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+  },
+  presenter: {
+    EventPresenter: '' as Ref<DocumentPresenter<Doc>>
   }
 })

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "HR build re-configuration",
+      "type": "patch",
+      "packageName": "@anticrm/model-recruiting"
+    }
+  ],
+  "packageName": "@anticrm/model-recruiting",
+  "email": "haiodo@gmail.com"
+}

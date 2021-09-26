@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Use proper Deps from Chunter",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

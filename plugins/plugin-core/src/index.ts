@@ -40,6 +40,7 @@ export default plugin(
   {
     metadata: {
       ClientUrl: '' as Metadata<string>, // A URI to connect to server.
+      Token: '' as Metadata<string>, // An a token to use for client connection.
       AccountId: '' as Metadata<Ref<Account>>
     }
   }

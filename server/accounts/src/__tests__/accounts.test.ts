@@ -32,12 +32,7 @@ describe('server', () => {
     conn = await MongoClient.connect(dbUri, options)
     db = conn.db(DB_NAME)
     await db.dropDatabase()
-    accounts = new Accounts(conn.db(DB_NAME), 'workspace', 'account', {
-      protocol: 'ws',
-      server: 'localhost',
-      port: 18180,
-      tokenSecret: 'secret'
-    })
+    accounts = new Accounts(conn.db(DB_NAME), 'workspace', 'account', 'secret')
   })
 
   const workspace = (): Collection => db.collection('workspace')
@@ -59,10 +54,7 @@ describe('server', () => {
   })
 
   it('should create workspace', async () => {
-    const request: Request<[string, string]> = { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] }
-
-    const result = await wrapCall(accounts, request)
-    expect(result.result).toBeDefined()
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
 
     const ws = await workspace().find({}).toArray()
     expect(ws.length).toEqual(1)
@@ -72,19 +64,13 @@ describe('server', () => {
   })
 
   it('should not create duplicate workspace', async () => {
-    const request: Request<[string, string]> = { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] }
-
     await workspace().insertOne({ workspace: 'workspace', organisation: 'Bull Inc', accounts: [] })
-
-    const result = await wrapCall(accounts, request)
-    expect(result.error).toBeDefined()
+    await expect(async () => await accounts.createWorkspace('workspace', 'OOO Horse Inc')).rejects.toThrow()
   })
 
   it('should create account', async () => {
-    const request: Request<[string, string]> = { method: 'createAccount', params: ['andrey2', '123'] }
-
-    const result = await wrapCall(accounts, request)
-    expect(result.result).toBeDefined()
+    const result = await accounts.createAccount('andrey2', '123')
+    expect(result).toBeDefined()
 
     expect(accounts.findAccount('andrey2')).toBeDefined()
   })
@@ -103,36 +89,26 @@ describe('server', () => {
   })
 
   it('should not create account', async () => {
-    const request: Request<[string, string]> = { method: 'createAccount', params: ['', '123'] }
-
-    const result = await wrapCall(accounts, request)
-    expect(result.result).toBeUndefined()
-    expect(result.error).toBeDefined()
+    await expect(async () => await accounts.createAccount('', '123')).rejects.toThrow()
   })
 
   it('should not create duplicate account', async () => {
     await account().insertOne({ email: 'andrey2', workspaces: [] })
-
-    const request: Request<[string, string]> = { method: 'createAccount', params: ['andrey2', '123'] }
-    const result = await wrapCall(accounts, request)
-    expect(result.error).toBeDefined()
+    await expect(async () => await accounts.createAccount('andrey2', '123')).rejects.toThrow()
   })
 
   it('should add workspace', async () => {
-    await account().insertOne({ email: 'andrey2', workspaces: [] })
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
 
-    const request: Request<[string, string]> = { method: 'addWorkspace', params: ['andrey2', 'workspace'] }
-
-    const result = await wrapCall(accounts, request)
-    expect(result.error).toBeUndefined()
+    await accounts.addWorkspace('andrey2', 'workspace')
   })
 
   it('should login', async () => {
     // Prepare account.
-    await wrapCall(accounts, { method: 'createAccount', params: ['andrey2', '123'] })
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
-    await wrapCall(accounts, { method: 'addWorkspace', params: ['andrey2', 'workspace'] })
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
+    await accounts.addWorkspace('andrey2', 'workspace')
 
     const request: Request<[string, string, string]> = {
       method: 'login',
@@ -146,9 +122,9 @@ describe('server', () => {
 
   it('should not login, wrong password', async () => {
     // Prepare account.
-    await wrapCall(accounts, { method: 'createAccount', params: ['andrey2', '123'] })
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
-    await wrapCall(accounts, { method: 'addWorkspace', params: ['andrey2', 'workspace'] })
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
+    await accounts.addWorkspace('andrey2', 'workspace')
 
     const request: Request<[string, string, string]> = { method: 'login', params: ['andrey2', '1234', 'workspace'] }
 
@@ -158,7 +134,7 @@ describe('server', () => {
   })
 
   it('should not login, unknown user', async () => {
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
 
     const request: Request<[string, string, string]> = { method: 'login', params: ['andrey22', '1234', 'workspace'] }
 
@@ -169,7 +145,7 @@ describe('server', () => {
 
   it('should not login, wrong workspace', async () => {
     // Prepare account.
-    await wrapCall(accounts, { method: 'createAccount', params: ['andrey2', '123'] })
+    await accounts.createAccount('andrey2', '123')
 
     const request: Request<[string, string, string]> = {
       method: 'login',
@@ -181,13 +157,31 @@ describe('server', () => {
     expect(result.error?.code).toBe(Code.status.WorkspaceNotFound)
   })
 
+  it('should not join, already joined', async () => {
+    // Prepare account.
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'ws1')
+
+    await accounts.addWorkspace('andrey2', 'workspace')
+
+    await expect(async () => await accounts.addWorkspace('andrey2', 'workspace')).rejects.toThrow()
+  })
+
+  it('should not signup, already joined', async () => {
+    // Prepare account.
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'ws1')
+    await accounts.addWorkspace('andrey2', 'workspace')
+
+    await expect(async () => await accounts.signup('andrey2', '123', 'workspace', {})).rejects.toThrow()
+  })
+
   it('should not login, workspace not accessible', async () => {
     // Prepare account.
-    await wrapCall(accounts, { method: 'createAccount', params: ['andrey2', '123'] })
-
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace2', 'OOO Horse Inc'] })
-    await wrapCall(accounts, { method: 'addWorkspace', params: ['andrey2', 'workspace2'] })
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
+    await accounts.createWorkspace('workspace2', 'OOO Horse Inc')
+    await accounts.addWorkspace('andrey2', 'workspace2')
 
     const request: Request<[string, string, string]> = {
       method: 'login',
@@ -201,13 +195,16 @@ describe('server', () => {
 
   it('should update password', async () => {
     // Prepare account.
-    await wrapCall(accounts, { method: 'createAccount', params: ['andrey2', '123'] })
-    await wrapCall(accounts, { method: 'createWorkspace', params: ['workspace', 'OOO Horse Inc'] })
-    await wrapCall(accounts, { method: 'addWorkspace', params: ['andrey2', 'workspace'] })
+    await accounts.createAccount('andrey2', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
+    await accounts.addWorkspace('andrey2', 'workspace')
 
-    const request: Request<[string, string, string]> = { method: 'updateAccount', params: ['andrey2', '123', '1234'] }
+    const { token } = await accounts.login('andrey2', '123', 'workspace')
+
+    const request: Request<[string, string, string]> = { method: 'updateAccount', params: [token, '123', '1234'] }
 
     const result = await wrapCall(accounts, request)
+    expect(result.error).toBeUndefined()
     expect(result.result).toBeDefined()
   })
 
@@ -215,8 +212,7 @@ describe('server', () => {
     // Prepare account.
     const s: string | undefined = undefined
 
-    const result = await wrapCall(accounts, { method: 'createAccount', params: [s as unknown as string, '123'] })
-    expect(result.error).toBeDefined()
+    await expect(async () => await accounts.createAccount(s as unknown as string, '123')).rejects.toThrow()
   })
 
   it('should now allow undefined method', async () => {

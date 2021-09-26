@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Accounts, ServerInfo, wrapCall } from '@anticrm/accounts'
+import { Accounts, wrapCall } from '@anticrm/accounts'
 import { getMongoClient } from '@anticrm/mongo'
 import { Request, serialize } from '@anticrm/rpc'
 import Koa from 'koa'
@@ -31,21 +31,18 @@ export interface AuthServer {
 /**
  * @public
  */
-export async function newAuthServer (
-  dbUri: string,
-  app: Koa,
-  router: Router,
-  serverInfo: ServerInfo
-): Promise<AuthServer> {
+export async function newAuthServer (dbUri: string, app: Koa, router: Router, serverToken: string): Promise<AuthServer> {
   const client = await getMongoClient(dbUri)
 
   const db = client.db('accounts')
-  const accounts = new Accounts(db, 'workspace', 'account', serverInfo)
+  const accounts = new Accounts(db, 'workspace', 'account', serverToken)
 
-  router.post('rpc', '/auth', async (ctx: any) => {
+  router.post('auth', '/auth', async (ctx: any) => {
     const request = ctx.request.body as unknown as Request<any>
     const response = await wrapCall(accounts, request)
     ctx.body = serialize(response)
+    ctx.set('Content-Type', 'application/json')
+    ctx.set('Content-Encoding', 'identity')
     console.log(response)
   })
 

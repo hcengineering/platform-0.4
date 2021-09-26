@@ -70,18 +70,23 @@ export async function connect (clientUrl: string, handler: TxHandler): Promise<C
   const socket = new WebSocket(`${clientUrl}`)
   // Wait for connection to be established.
   await new Promise((resolve, reject) => {
-    socket.onopen = resolve
-
-    socket.onerror = () => {
-      const e = new Error(`Failed to connect to ${clientUrl}`)
-      console.error(e)
-      reject(e)
-    }
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       const e = new Error(`Failed to connect to ${clientUrl}`)
       console.error(e)
       reject(e)
     }, 5000)
+
+    socket.onopen = () => {
+      clearTimeout(timerId)
+      resolve(null)
+    }
+
+    socket.onerror = () => {
+      const e = new Error(`Failed to connect to ${clientUrl}`)
+      console.error(e)
+      clearTimeout(timerId)
+      reject(e)
+    }
   })
 
   return { storage: new WebSocketConnection(socket, handler), close: socket.close.bind(socket) }

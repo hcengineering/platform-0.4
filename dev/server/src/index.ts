@@ -14,12 +14,12 @@
 //
 
 import builder from '@anticrm/model-all'
-import { getMongoClient } from '@anticrm/mongo'
+import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
 import { newFileServer } from './file'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
-import { newAuthServer } from './auth'
+import { startAuthServer } from './auth'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -31,10 +31,6 @@ const defaultWorkspace = 'workspace'
 const defaultWorkspaceOrg = 'Horses inc'
 
 async function start (): Promise<void> {
-  const client = await getMongoClient(dbUri)
-
-  const db = client.db('accounts')
-
   await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri, txes: builder.getTxes() })
 
   const security: SecurityOptions = {
@@ -44,18 +40,16 @@ async function start (): Promise<void> {
 
   const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true, security })
 
-  const addr = s.address()
-  const { accounts } = await newAuthServer(
-    3000,
-    db,
-    {
-      protocol: 'wss',
-      server: addr.address,
-      port: addr.port,
-      tokenSecret: 'secret'
-    },
-    security
-  )
+  const { accounts, shutdown: authShutdown } = await startAuthServer(3000, dbUri, 'secret', security)
+
+  const close = (): void => {
+    s.shutdown()
+    void shutdown()
+    void authShutdown()
+  }
+  process.on('SIGINT', close)
+  process.on('SIGTERM', close)
+  process.on('exit', close)
 
   newFileServer(
     18082,
@@ -76,16 +70,20 @@ async function start (): Promise<void> {
     }
   }
 
-  let workspaceId = (await accounts.findWorkspace(defaultWorkspace))?._id
+  let workspaceId = (await accounts.findWorkspace(defaultWorkspace))?._id.toString()
   if (workspaceId === undefined) {
-    workspaceId = await accounts.createWorkspace(defaultWorkspace, defaultWorkspaceOrg)
+    workspaceId = (await accounts.createWorkspace(defaultWorkspace, defaultWorkspaceOrg)).toString()
   }
 
   for (const account of [john, brian]) {
     const accountInfo = await accounts.findAccount(account)
     if (accountInfo !== undefined) {
       if (!accountInfo.workspaces.includes(workspaceId)) {
-        await accounts.addWorkspace(account, defaultWorkspace)
+        try {
+          await accounts.addWorkspace(account, defaultWorkspace)
+        } catch (ee: any) {
+          console.log(ee, accountInfo, workspaceId)
+        }
       }
     }
   }

@@ -24,8 +24,12 @@ let clientClose: (() => void) | undefined
 let liveQuery: LiveQuery | undefined
 
 async function doConnect (tx: TxHandler): Promise<CoreClient> {
-  const clientUrl = getMetadata(pluginCore.metadata.ClientUrl) ?? 'localhost:18080'
-  const { storage, close } = await connectBrowser(clientUrl, tx)
+  const clientUrl = getMetadata(pluginCore.metadata.ClientUrl)
+  const token = getMetadata(pluginCore.metadata.Token)
+  if (token === undefined || clientUrl === undefined) {
+    throw new Error('No authentication token specified...')
+  }
+  const { storage, close } = await connectBrowser(clientUrl + '/' + token, tx)
   clientClose = close
   return storage
 }

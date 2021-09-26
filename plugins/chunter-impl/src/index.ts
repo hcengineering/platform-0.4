@@ -26,10 +26,8 @@ import chunter from './plugin'
 import OembedPresenter from './components/presenters/Oembed.svelte'
 import Github_IssuePreview from './components/presenters/Github_IssuePreview.svelte'
 
-export { default as Channel } from './components/Channel.svelte'
-export { default as ReferenceInput } from './components/ReferenceInput.svelte'
-
-export { ThreadsView, ChannelView }
+import Channel from './components/Channel.svelte'
+import ReferenceInput from './components/ReferenceInput.svelte'
 
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
@@ -41,6 +39,9 @@ export default async (): Promise<ChunterService> => {
 
   setResource(chunter.component.OembedPreview, OembedPresenter)
   setResource(chunter.component.GithubIssuePreview, Github_IssuePreview)
+
+  setResource(chunter.component.Channel, Channel)
+  setResource(chunter.component.ReferenceInput, ReferenceInput)
 
   return {}
 }

@@ -16,7 +16,7 @@
 import type { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Asset, IntlString } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
 
 export interface ChannelAccountPreferences {
   favourite: boolean
@@ -104,6 +104,12 @@ export default plugin(
       Chunter: '' as Asset,
       Hashtag: '' as Asset,
       Lock: '' as Asset
+    },
+    component: {
+      ChannelView: '' as AnyComponent,
+      ThreadsView: '' as AnyComponent,
+      ReferenceInput: '' as AnyComponent,
+      Channel: '' as AnyComponent
     }
   }
 )
