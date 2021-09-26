@@ -16,6 +16,7 @@
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 const mode = process.env.NODE_ENV || 'development'
 const NO_SVELTE = process.env.NO_SVELTE ?? false
@@ -136,7 +137,7 @@ module.exports = {
   },
   mode,
   plugins: [
-    new MiniCssExtractPlugin(),
+    ...(prod ? [new CompressionPlugin(), new MiniCssExtractPlugin()] : []),
     new CopyPlugin({
       patterns: [
         { from: './public', to: '.' },

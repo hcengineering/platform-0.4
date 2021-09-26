@@ -45,7 +45,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "prettier": "^2.2.1",
-    "copy-webpack-plugin": "~9.0.1"
+    "copy-webpack-plugin": "~9.0.1",
+    "compression-webpack-plugin": "~9.0.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",

@@ -3,6 +3,7 @@ import sassPlugin from 'esbuild-plugin-sass'
 import sveltePlugin from './svelte'
 import { dtsPlugin } from 'esbuild-plugin-d.ts'
 
+const DEV_MODE = (process.env.SVELTE_DEV_MODE ?? 'true') === 'true'
 /**
  * @public
  */
@@ -10,7 +11,7 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
   let mainOptions: BuildOptions = {
     format: 'esm',
     bundle: true,
-    minify: false,
+    minify: !DEV_MODE,
     allowOverwrite: true,
     sourcemap: 'inline',
     legalComments: 'inline',
@@ -28,7 +29,7 @@ export async function uiBuild (pkg: any, extra: Partial<BuildOptions>): Promise<
     compileOptions: {
       // Styles with component
       css: false, // Will generate index.css
-      dev: (process.env.SVELTE_DEV_MODE ?? 'true') === 'true',
+      dev: DEV_MODE,
       errorMode: 'throw'
     },
     logLevel: mainOptions.logLevel

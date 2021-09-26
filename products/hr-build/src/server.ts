@@ -53,6 +53,8 @@ async function start (): Promise<void> {
 
   // Handle client information loading
   router.get('env.json', '/env.json', async (ctx: any) => {
+    ctx.set('Content-Type', 'application/json')
+    ctx.set('Content-Encoding', 'identity')
     ctx.body = JSON.stringify(config.platform, undefined, 2)
   })
 

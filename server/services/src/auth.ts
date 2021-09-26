@@ -41,6 +41,8 @@ export async function newAuthServer (dbUri: string, app: Koa, router: Router, se
     const request = ctx.request.body as unknown as Request<any>
     const response = await wrapCall(accounts, request)
     ctx.body = serialize(response)
+    ctx.set('Content-Type', 'application/json')
+    ctx.set('Content-Encoding', 'identity')
     console.log(response)
   })
 
