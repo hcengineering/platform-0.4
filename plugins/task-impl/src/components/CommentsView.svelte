@@ -19,7 +19,7 @@
   import type { Task } from '@anticrm/task'
   import Comments from './Comments.svelte'
   import task from '../plugin'
-  import { chunterIds as chunter } from '@anticrm/chunter-impl'
+  import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { SpaceNotifications } from '@anticrm/notification'

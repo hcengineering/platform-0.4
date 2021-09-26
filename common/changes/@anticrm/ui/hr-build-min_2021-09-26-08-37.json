@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Allow to pass on:messages from Component",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

@@ -7,14 +7,14 @@
     "build-server": "rushx check && rushx lint && esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error",
     "build": "rm -rf ./dist && cross-env NODE_ENV=production webpack && rushx build-server",
     "build-dev": "rm -rf ./dist && cross-env NODE_ENV=development webpack && rushx build-server",
-    "rebuild-dev": "cross-env NODE_ENV=development webpack --progress && rushx build-server",
+    "rebuild-dev": "rm -rf ./dist/web && cross-env NODE_ENV=development webpack --progress && rushx build-server",
     "dev": "webpack serve --content-base public",
     "compose": "DOCKER_BUILDKIT=1 docker compose build",
     "docker": "DOCKER_BUILDKIT=1 docker build . -t hardcoreeng/hr-build",
     "docker-push": "docker push hardcoreeng/hr-build",
     "docker-run": "docker run -p 8080:8080 hardcoreeng/hr-build",
-    "analyze": "cross-env NODE_ENV=production webpack --json > stats.json",
-    "show": "webpack-bundle-analyzer stats.json dist",
+    "analyze": "rm -rf ./dist && cross-env NODE_ENV=production webpack --json > stats.json",
+    "show": "webpack-bundle-analyzer stats.json dist/web",
     "test": "echo 'no tests'",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
@@ -45,7 +45,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "prettier": "^2.2.1",
-    "copy-webpack-plugin": "~9.0.1"
+    "copy-webpack-plugin": "~9.0.1",
+    "compression-webpack-plugin": "~9.0.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
