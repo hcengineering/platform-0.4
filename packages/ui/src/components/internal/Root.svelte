@@ -85,7 +85,7 @@
 
     .status-bar {
       min-height: $status-bar-height;
-      min-width: 1200px;
+      min-width: 800px;
 
       .container {
         display: flex;
@@ -129,7 +129,7 @@
 
     .app {
       height: calc(100vh - #{$status-bar-height});
-      min-width: 1200px;
+      min-width: 800px;
       min-height: 600px;
     }
   }
