@@ -70,8 +70,6 @@ export class ActionRuntime {
     if (this.hierarchy.isDerived(tx.objectClass, plugin.class.ActionInstance)) {
       const instance = tx.attributes as PureActionInst
 
-      await this.storage.findAll(plugin.class.ActionInstance, { _id: instance._id })
-
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.runAction({
         ...instance,
