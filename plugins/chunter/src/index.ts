@@ -110,6 +110,9 @@ export default plugin(
       ThreadsView: '' as AnyComponent,
       ReferenceInput: '' as AnyComponent,
       Channel: '' as AnyComponent
+    },
+    account: {
+      Chunterbot: '' as Ref<Account>
     }
   }
 )

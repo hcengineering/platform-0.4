@@ -1,0 +1,40 @@
+{
+  "name": "@anticrm/model-action",
+  "version": "0.4.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "author": "Anticrm Platform Contributors",
+  "license": "EPL-2.0",
+  "scripts": {
+    "build": "heft build",
+    "test": "echo 'no tests'",
+    "lint": "eslint --max-warnings=0 src",
+    "lint:fix": "eslint --fix src",
+    "format": "prettier --write src/**/*.ts && eslint --fix src"
+  },
+  "devDependencies": {
+    "@anticrm/platform-rig": "^0.4.0",
+    "@rushstack/heft-jest-plugin": "^0.1.14",
+    "@rushstack/heft": "^0.35.0",
+    "@types/heft-jest": "^1.0.2",
+    "@types/browser-or-node": "^1.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint-config-standard-with-typescript": "^20.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint": "^7.25.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@anticrm/model":"~0.4.0",
+    "@anticrm/core":"~0.4.0",
+    "@anticrm/status":"~0.4.2",
+    "@anticrm/model-workbench":"~0.4.0",
+    "@anticrm/model-core":"~0.4.0",
+    "@anticrm/action":"~0.4.0",
+    "@anticrm/action-plugin":"~0.4.0"
+  }
+}

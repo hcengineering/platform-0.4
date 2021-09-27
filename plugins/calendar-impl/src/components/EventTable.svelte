@@ -17,8 +17,8 @@
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, selectDocument } from '@anticrm/workbench'
-  import calendar from '@anticrm/calendar'
   import type { Event } from '@anticrm/calendar'
+  import calendar from '@anticrm/calendar'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined

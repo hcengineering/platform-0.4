@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter",
+      "comment": "Add chunterbot",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/chunter"
+}

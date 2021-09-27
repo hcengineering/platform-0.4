@@ -56,3 +56,19 @@ export function getFullRef<T extends Doc> (_id: Ref<T>, _class: Ref<Class<T>>): 
 export function parseFullRef<T extends Doc> (fullRef: FullRefString): FullRef<T> {
   return JSON.parse(fullRef)
 }
+
+/**
+ * @public
+ */
+
+export class DeferredPromise<T> {
+  promise: Promise<T>
+  resolve!: (value: T) => void
+  reject!: (reason?: any) => void
+  constructor () {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve
+      this.reject = reject
+    })
+  }
+}

@@ -1,5 +1,6 @@
 import core, { WithAccountId, DerivedDataProcessor, Storage, Tx } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
+import { ActionRuntime } from './actions/runtime'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
 export interface WorkspaceInfo {
@@ -24,11 +25,19 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
     }
   }
 
-  const workspace = await Workspace.create(
+  let resActionRuntime: (x: ActionRuntime) => void
+  const actionRuntimeP: Promise<ActionRuntime> = new Promise((resolve) => {
+    resActionRuntime = resolve
+  })
+
+  const workspace: Workspace = await Workspace.create(
     workspaceId,
     { mongoDBUri: MONGO_URI },
     async (hierarchy, storage, model) => {
       security = await SecurityModel.create(hierarchy, model)
+      const actionRuntime = new ActionRuntime(hierarchy, model, storage)
+
+      resActionRuntime(actionRuntime)
 
       const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage)
       return [
@@ -39,12 +48,15 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
             const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
             return await processor.tx(tx)
           }
-        } // If dd produce more tx, they also will be send.
+        }, // If dd produce more tx, they also will be send.
+        actionRuntime
         // <<---- Placeholder: Add triggers here
         // hierarchy and storage are available
       ]
     }
   )
+
+  await actionRuntimeP.then(async (runtime) => await runtime.init(workspace.tx.bind(workspace)))
 
   return {
     workspace,
@@ -116,8 +128,5 @@ export async function closeWorkspace (clientId: string): Promise<void> {
   const ws = workspaces.get(info.workspaceId)
   if (ws !== undefined) {
     ws.clients.delete(clientId)
-    if (ws.clients.size === 0) {
-      workspaces.delete(info.workspaceId)
-    }
   }
 }

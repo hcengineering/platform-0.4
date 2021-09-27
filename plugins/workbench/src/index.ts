@@ -34,18 +34,18 @@ export interface Application extends Doc {
 /**
  * @public
  */
-export interface SpacesNavModel {
+export interface SpacesNavModel<T extends Space = Space> {
   label: IntlString
   spaceIcon: Asset
-  spaceClass: Ref<Class<Space>>
-  spaceQuery?: DocumentQuery<Space>
+  spaceClass: Ref<Class<T>>
+  spaceQuery?: DocumentQuery<T>
   addSpaceLabel: IntlString
   createComponent?: AnyComponent
   component?: AnyComponent
   spaceItem?: AnyComponent // An component to display a space selectable item. param {space: Space}
   spaceHeader?: AnyComponent // An component to display a space header. param {space: Space}
   hideIfEmpty?: boolean // If defined and true, category will be not visible
-  userSpace?: Data<Space>
+  userSpace?: Data<T>
   item?: {
     createComponent?: AnyComponent
     createLabel?: IntlString

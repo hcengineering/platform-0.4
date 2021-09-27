@@ -25,6 +25,7 @@
   const dispatch = createEventDispatcher()
 
   export let space: Space
+  export let onCreate: (event: Event) => Promise<void> = async () => {}
   const client = getClient()
 
   const owner = client.accountId()
@@ -39,7 +40,9 @@
   }
 
   async function create () {
-    await client.createDoc(calendar.class.Event, space._id, event)
+    const doc = await client.createDoc(calendar.class.Event, space._id, event)
+
+    onCreate(doc)
   }
 </script>
 

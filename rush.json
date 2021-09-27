@@ -649,6 +649,26 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/action",
+      "projectFolder": "packages/action",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/action-plugin",
+      "projectFolder": "plugins/action",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/action-impl",
+      "projectFolder": "plugins/action-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-action",
+      "projectFolder": "models/action",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/model-fsm",
       "projectFolder": "models/fsm",
       "shouldPublish": true
@@ -684,6 +704,16 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/recruiting-action",
+      "projectFolder": "plugins/recruiting-action",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/recruiting-mappers",
+      "projectFolder": "plugins/recruiting-mappers",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/presentation",
       "projectFolder": "plugins/presentation",
       "shouldPublish": true
@@ -714,6 +744,11 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@anticrm/calendar-action",
+      "projectFolder": "plugins/calendar-action",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@anticrm/services",
       "projectFolder": "server/services",
       "shouldPublish": false
@@ -740,6 +775,7 @@
       "projectFolder": "products/hr-build",
       "shouldPublish": false
     }
+
 
     // {
     //   /**
