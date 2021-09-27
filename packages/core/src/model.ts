@@ -37,16 +37,26 @@ export async function findModelTxs (storage: Storage, accountId: Ref<Account>): 
 /**
  * @public
  */
-export async function buildModel (existingTxes: Tx[]): Promise<{ hierarchy: Hierarchy, model: ModelDb }> {
+export async function buildModel (existingTxes: Tx[]): Promise<{ hierarchy: Hierarchy, model: ModelDb, dropTx: Tx[] }> {
   existingTxes = existingTxes.filter((tx) => tx.modifiedBy === core.account.System)
+  const dropTx: Tx[] = []
   const hierarchy = new Hierarchy()
   const model = new ModelDb(hierarchy)
   // Construct existing model
   existingTxes.forEach(hierarchy.tx.bind(hierarchy))
   for (const tx of existingTxes) {
-    await model.tx(tx)
+    await applyTx(model, tx, dropTx)
   }
-  return { hierarchy, model }
+  return { hierarchy, model, dropTx }
+}
+
+async function applyTx (model: ModelDb, tx: Tx<Doc>, dropTx: Tx<Doc>[]): Promise<void> {
+  try {
+    await model.tx(tx)
+  } catch (err: any) {
+    dropTx.push(tx)
+    console.info('Found issue during processing of tx. Transaction', tx, 'is dropped...')
+  }
 }
 
 function toUndef (value: any): any {
@@ -79,19 +89,19 @@ function diffAttributes (doc: Data<Doc>, newDoc: Data<Doc>): DocumentUpdate<Doc>
  * Generate a set of transactions to upgrade from one model to another.
  * @public
  */
-export async function generateModelDiff (existingTxes: Tx[], txes: Tx[]): Promise<Tx[]> {
-  const { model } = await buildModel(existingTxes)
+export async function generateModelDiff (existingTxes: Tx[], txes: Tx[]): Promise<{ diffTx: Tx[], dropTx: Tx[] }> {
+  const { model, dropTx } = await buildModel(existingTxes)
   const { model: newModel } = await buildModel(txes)
 
   const allDocuments = new Map((await model.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
   const newDocuments = new Map((await newModel.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
 
-  const newTxes: Tx[] = []
+  const diffTx: Tx[] = []
 
   // Find same documents.
-  allDocuments.forEach(handleUpdateRemove(newDocuments, newTxes))
-  newDocuments.forEach(handleAdd(allDocuments, newTxes))
-  return newTxes
+  allDocuments.forEach(handleUpdateRemove(newDocuments, diffTx))
+  newDocuments.forEach(handleAdd(allDocuments, diffTx))
+  return { diffTx, dropTx }
 }
 function handleAdd (allDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx[]): (value: Doc, key: Ref<Doc>) => void {
   return (doc, key) => {

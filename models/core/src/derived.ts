@@ -18,9 +18,11 @@ import {
   Data,
   DerivedData,
   DerivedDataDescriptor,
+  DerivedDataDescriptorState,
   Doc,
   DocumentMapper,
   Domain,
+  DOMAIN_DERIVED_DATA,
   DOMAIN_MODEL,
   DOMAIN_REFERENCES,
   MappingRule,
@@ -60,6 +62,15 @@ export class TDerivedDataDescriptor<T extends Doc = Doc, D extends DerivedData =
   initiValue!: Data<D>
   mapping!: MappingRule[] | Resource<DocumentMapper>
   multiRule?: MappingRule
+}
+
+/**
+ * @public
+ */
+@Model(core.class.DerivedDataDescriptorState, core.class.Doc, DOMAIN_DERIVED_DATA)
+export class TDerivedDataDescriptorState extends TDoc implements DerivedDataDescriptorState {
+  descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  version!: string
 }
 
 /**

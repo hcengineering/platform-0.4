@@ -108,6 +108,11 @@ export class MemDb extends TxProcessor implements Storage {
     if (options?.sort !== undefined) resultSort(result, options?.sort)
 
     const total = result.length
+
+    // Process skip
+    if (options?.skip !== undefined && options?.skip > 0) {
+      result = result.slice(options.skip)
+    }
     result = result.slice(0, options?.limit)
     return Object.assign(result as T[], { total })
   }

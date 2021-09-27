@@ -42,12 +42,17 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   // Find all system transactions.
   const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
 
-  const updateTxes = await generateModelDiff(
+  const { diffTx, dropTx } = await generateModelDiff(
     existingTxes.map((t) => mongoUnescape(t)),
     options.txes
   )
 
-  for (const tx of updateTxes) {
+  // Drop broken transactions.
+  for (const dtx of dropTx) {
+    await txes.deleteOne({ _id: dtx._id })
+  }
+
+  for (const tx of diffTx) {
     console.info('updating:', txObjectClass(tx) ?? tx.objectId, JSON.stringify(tx, undefined, 2))
     await txes.insertOne(mongoEscape(tx))
   }

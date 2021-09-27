@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspaces",
+      "comment": "Drop broken model transactions",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspaces"
+}

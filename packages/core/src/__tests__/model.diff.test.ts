@@ -112,7 +112,7 @@ describe('model-diff', () => {
     const tx1 = genTx(1)
     const tx2 = genTx(2)
 
-    const result = await generateModelDiff(tx1, tx2)
+    const { diffTx: result } = await generateModelDiff(tx1, tx2)
     expect(result.length).toEqual(7)
     ;[0, 1, 2].forEach((i) => {
       expect(result[i]._class).toEqual(core.class.TxRemoveDoc)
