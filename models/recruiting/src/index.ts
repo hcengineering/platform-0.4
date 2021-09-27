@@ -187,16 +187,20 @@ export function createModel (builder: Builder): void {
     recruiting.presenter.CandidatePresenter
   )
 
-  builder.createDoc<DocumentPresenter<FeedbackRequest>>(core.class.DocumentPresenter, {
-    objectClass: recruiting.class.FeedbackRequest,
-    presentation: [
-      {
-        component: recruiting.component.Feedback,
-        description: 'Feedback request',
-        mode: PresentationMode.Preview
-      }
-    ]
-  }, recruiting.presenter.FeedbackRequestPresenter)
+  builder.createDoc<DocumentPresenter<FeedbackRequest>>(
+    core.class.DocumentPresenter,
+    {
+      objectClass: recruiting.class.FeedbackRequest,
+      presentation: [
+        {
+          component: recruiting.component.Feedback,
+          description: 'Feedback request',
+          mode: PresentationMode.Preview
+        }
+      ]
+    },
+    recruiting.presenter.FeedbackRequestPresenter
+  )
 
   // Actions
   const interviewId: Ref<Action> = generateId()
@@ -231,9 +235,13 @@ export function createModel (builder: Builder): void {
     .build(builder)
 
   // Derived data
-  builder.createDoc(core.class.DerivedDataDescriptor, {
-    targetClass: recruiting.class.DerivedFeedback,
-    sourceClass: recruiting.class.Feedback,
-    mapper: recruiting.mapper.Feedback
-  }, recruiting.dd.Feedback)
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      targetClass: recruiting.class.DerivedFeedback,
+      sourceClass: recruiting.class.Feedback,
+      mapper: recruiting.mapper.Feedback
+    },
+    recruiting.dd.Feedback
+  )
 }
