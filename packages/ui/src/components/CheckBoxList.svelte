@@ -31,10 +31,11 @@
   {#each items as item}
     <div class="list-item">
       <CheckBoxWithLabel
-        bind:label={item.description}
+        bind:value={item.description}
         bind:checked={item.done}
         {editable}
         on:change={() => {
+          items = items.filter((i) => i.description !== '')
           dispatch('change', item)
         }}
       />
@@ -44,7 +45,7 @@
     <div
       class="add-item"
       on:click={() => {
-        items.push({ description: 'New item', done: false })
+        items.push({ description: '', done: false })
         items = items
       }}
     >

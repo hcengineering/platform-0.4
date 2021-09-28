@@ -51,7 +51,7 @@
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
-  let desription: string = ''
+  let desсription: string = ''
 
   $: {
     getItem(id)
@@ -62,8 +62,8 @@
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       notification = notifications.get(result[0].space)
+      desсription = result[0].description
       item = result[0]
-      desription = item.description
       const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
       if (members !== undefined) {
         projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
@@ -99,7 +99,7 @@
   async function update (key: string, value: any): Promise<void> {
     if (item !== undefined) {
       const operations = {
-        [key]: value
+        [key]: value === null ? undefined : value
       }
       client.updateDoc(item._class, item.space, item._id, operations)
     }
@@ -141,8 +141,8 @@
               showSearch
             />
             <DatePicker
-              selected={new Date(item.dueTo)}
-              title={task.string.PickDue}
+              value={new Date(item.dueTo)}
+              label={task.string.PickDue}
               on:change={(e) => {
                 update('dueTo', e.detail)
               }}
@@ -153,11 +153,11 @@
                 label={task.string.TaskDescription}
                 placeholder={task.string.TaskDescription}
                 on:blur={(e) => {
-                  if (item?.description !== desription) {
-                    update('description', desription)
+                  if (item?.description !== desсription) {
+                    update('description', desсription)
                   }
                 }}
-                bind:value={desription}
+                bind:value={desсription}
               />
             </Row>
           </Grid>

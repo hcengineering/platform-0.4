@@ -20,7 +20,7 @@
   import task from '@anticrm/task'
   import { getStatusColor } from '../plugin'
   import core, { Account, Ref } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
 
   export let card: Task
 
@@ -36,6 +36,10 @@
   async function getUser (assignee: Ref<Account> | undefined): Promise<Account | undefined> {
     if (assignee === undefined) return undefined
     return (await client.findAll(core.class.Account, { _id: assignee })).pop()
+  }
+
+  function select () {
+    selectDocument(card)
   }
 </script>
 
@@ -55,9 +59,9 @@
       <UserInfo {user} size={24} avatarOnly />
     {/await}
     <div class="action">
-      <ActionIcon size={24} icon={Chat} label={task.string.Comments} />
+      <ActionIcon size={24} icon={Chat} label={task.string.Comments} action={() => select()} />
       <div class="counter">{card.comments.length}</div>
-      <ActionIcon size={24} icon={MoreH} label={ui.string.More} />
+      <ActionIcon size={24} icon={MoreH} label={ui.string.More} action={() => select()} />
     </div>
   </div>
 </div>

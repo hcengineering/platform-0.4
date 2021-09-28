@@ -150,13 +150,12 @@
           <UserBox
             bind:selected={assignee}
             {users}
-            caption={task.string.ProjectMembers}
             title={task.string.Assignee}
             label={task.string.AssignTask}
             showSearch
           />
         {/await}
-        <DatePicker bind:selected={dueTo} title={task.string.PickDue} />
+        <DatePicker bind:value={dueTo} label={task.string.PickDue} />
         <Row>
           <DescriptionEditor
             currentSpace={space._id}
@@ -170,7 +169,12 @@
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
       <Grid column={1}>
-        <Comments messages={comments} currentSpace={space} on:message={(event) => addMessage(event.detail)} />
+        <Comments
+          messages={comments}
+          notifications={undefined}
+          currentSpace={space._id}
+          on:message={(event) => addMessage(event.detail)}
+        />
       </Grid>
     </Section>
   {:else if selectedTab === task.string.Attachment}
