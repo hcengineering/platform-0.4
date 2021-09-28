@@ -18,6 +18,7 @@
     "UserTo": "User:",
     "MessageTo": "Message to:",
     "MessageToLabel": "Person",
-    "Starred": "Starred"
+    "Starred": "Starred",
+    "ReplyInThread": "Reply in thread..."
   }
 }

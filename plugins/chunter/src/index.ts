@@ -98,7 +98,9 @@ export default plugin(
       MessageTo: '' as IntlString,
       MessageToLabel: '' as IntlString,
 
-      Starred: '' as IntlString
+      Starred: '' as IntlString,
+
+      ReplyInThread: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,

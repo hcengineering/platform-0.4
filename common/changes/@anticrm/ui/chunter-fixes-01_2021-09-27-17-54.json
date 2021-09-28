@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Chunter fixes",
+      "type": "patch",
+      "packageName": "@anticrm/ui"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "haiodo@gmail.com"
+}

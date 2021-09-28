@@ -18,8 +18,11 @@
   import core from '@anticrm/core'
   import chunter from '../plugin'
   import { Label } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
 
   const client = getClient()
+
+  const dispatcher = createEventDispatcher()
 
   export let replies: Ref<Account>[] = []
 
@@ -31,7 +34,14 @@
 </script>
 
 <div class="replies-container">
-  <div class="counter">{replies.length}<Label label={chunter.string.Replies} /></div>
+  <div
+    class="counter"
+    on:click={() => {
+      dispatcher('click')
+    }}
+  >
+    {replies.length}<Label label={chunter.string.Replies} />
+  </div>
   <div class="replies">
     {#await getUsers() then users}
       {#each users as reply}
@@ -56,6 +66,17 @@
       line-height: 150%;
       color: var(--theme-content-color);
       white-space: nowrap;
+      opacity: 0.6;
+    }
+    &:hover .counter {
+      opacity: 1;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    &:active .counter {
+      opacity: 1;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
     .replies {

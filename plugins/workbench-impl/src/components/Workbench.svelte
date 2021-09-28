@@ -203,14 +203,14 @@
 
     .navigator {
       @include panel(var(--theme-bg-color));
-      width: 280px;
-      min-width: 280px;
+      max-width: 280px;
+      min-width: 200px;
       margin-right: 20px;
     }
 
     .component {
       @include panel(var(--theme-bg-color));
-      min-width: 400px;
+      min-width: 550px;
       flex-grow: 1;
       margin-right: 20px;
     }
