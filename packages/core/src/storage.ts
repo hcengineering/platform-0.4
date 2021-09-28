@@ -52,6 +52,7 @@ NestedDotQuery
  */
 export type FindOptions<T extends Doc> /* eslint-disable-line @typescript-eslint/consistent-type-definitions */ = {
   limit?: number
+  skip?: number
   sort?: SortingQuery<T>
 }
 

@@ -1,10 +1,10 @@
 import { Resource } from '@anticrm/status'
-import { DocumentQuery, Storage } from '../storage'
-import { Class, Data, Doc, Ref } from '../classes'
+import { Class, Data, Doc, Domain, Ref } from '../classes'
 import { Hierarchy } from '../hierarchy'
-import { Tx } from '../tx'
-import { DescriptorMap, Descr } from './descriptors'
 import { ModelDb } from '../memdb'
+import { DocumentQuery, Storage } from '../storage'
+import { Tx } from '../tx'
+import { Descr, DescriptorMap } from './descriptors'
 
 /**
  * @public
@@ -108,6 +108,15 @@ export interface DerivedDataDescriptor<T extends Doc, D extends Doc> extends Doc
    * An collection rules.
    */
   collections?: CollectionRule[]
+
+  /**
+   * Version of descriptor, if changed will trigger update of all derived data produced with previous version.
+   * Required for offline DB structure updates.
+   *
+   * Required with mapper, to inform about mapper version is changed.
+   * If version is not defined, hash of descriptor will be used.
+   */
+  version?: string
 }
 
 /**
@@ -120,5 +129,19 @@ export interface DerivedData extends Doc {
   objectClass: Ref<Class<Doc>> // <-- source object class.
 }
 
-export { registerMapper, DerivedDataProcessor } from './processor'
+/**
+ * @public
+ * Processing state for Derived Data
+ * */
+export interface DerivedDataDescriptorState extends Doc {
+  descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  version: string
+}
+
+/**
+ * @public
+ */
+export const DOMAIN_DERIVED_DATA = 'derived-data' as Domain
+
+export { DerivedDataProcessor, registerMapper } from './processor'
 export { DescriptorMap, Descr }

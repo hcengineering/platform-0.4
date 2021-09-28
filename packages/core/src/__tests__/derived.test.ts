@@ -22,12 +22,11 @@ import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMappe
 import { newDerivedData } from '../derived/utils'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
+import { _createClass, _createDoc, _createTestTxAndDocStorage, _genMinModel } from '../minmodel'
+import { Reference } from '../reference'
 import { Title } from '../title'
 import { Tx } from '../tx'
 import { connect } from './connection'
-import { _createClass, _createDoc, _genMinModel } from '../minmodel'
-import { _createTestTxAndDocStorage } from '../minmodel'
-import { Reference } from '../reference'
 
 const txes = _genMinModel()
 
@@ -130,14 +129,17 @@ const pageTitleDD = _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.De
 })
 
 describe('deried data', () => {
-  async function prepare (txes: Tx[]): Promise<{
-    hierarchy: Hierarchy
-    model: ModelDb
-    processor: DerivedDataProcessor
-    operations: Storage & TxOperations
-    storage: Storage
-    counter: Counter
-  }> {
+  async function prepare (
+    txes: Tx[],
+    allowRebuildDD = false
+  ): Promise<{
+      hierarchy: Hierarchy
+      model: ModelDb
+      processor: DerivedDataProcessor
+      operations: Storage & TxOperations
+      storage: Storage
+      counter: Counter
+    }> {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
@@ -147,9 +149,10 @@ describe('deried data', () => {
 
     const storage = _createTestTxAndDocStorage(hierarchy, txDb, model)
 
+    const counter = { txes: 0 }
     const countModel: Storage = {
-      findAll: async (_class, query) => {
-        return await storage.findAll(_class, query)
+      findAll: async (_class, query, options) => {
+        return await storage.findAll(_class, query, options)
       },
       tx: async (tx) => {
         await storage.tx(tx)
@@ -157,9 +160,8 @@ describe('deried data', () => {
       }
     }
 
-    const processor = await DerivedDataProcessor.create(model, hierarchy, countModel)
+    const processor = await DerivedDataProcessor.create(model, hierarchy, countModel, allowRebuildDD)
 
-    const counter = { txes: 0 }
     const countStorage: Storage = {
       findAll: async (_class, query) => await storage.findAll(_class, query),
       tx: async (tx) => {
@@ -211,7 +213,7 @@ describe('deried data', () => {
   it('check DD updated appear after being updated', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes])
+    const { operations, model, storage } = await prepare([...dtxes], true)
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -243,7 +245,7 @@ describe('deried data', () => {
   it('check DD remove appear after being removed', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes])
+    const { operations, model, storage } = await prepare([...dtxes], true)
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -456,10 +458,10 @@ describe('deried data', () => {
       members: []
     })
 
-    expect(transactions.length - count).toEqual(2) // 1 space + 1 title
+    expect(transactions.length - count).toEqual(3) // 1 space + 1 title
 
     const titles = await client.findAll(core.class.Title, {})
-    expect(titles.length).toEqual(3)
+    expect(titles.length).toEqual(4)
   })
 
   it('check collection rule', async () => {
@@ -558,7 +560,7 @@ describe('deried data', () => {
   it('check DD over DD', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes])
+    const { operations, model, storage } = await prepare([...dtxes], true)
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -574,5 +576,29 @@ describe('deried data', () => {
     const titles = await model.findAll(core.class.Title, {})
     expect(titles.length).toEqual(1)
     expect(titles[0].title).toEqual('T-101')
+  })
+
+  it('check rebuild of DD', async () => {
+    // We need few descriptors to be available
+
+    const ops = [...dtxes, taskTitleDD]
+
+    for (let i = 0; i < 997; i++) {
+      // Create tasks
+      ops.push(
+        _createDoc(testIds.class.Task, {
+          title: `my-task-${i}`,
+          shortId: `T-${i}`,
+          description: ''
+        })
+      )
+    }
+
+    const { model } = await prepare(ops, true)
+
+    // Check for Title to be created
+
+    const titles = await model.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(997)
   })
 })

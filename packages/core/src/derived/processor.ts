@@ -1,5 +1,13 @@
 import { Resource } from '@anticrm/status'
-import { CollectionRule, DerivedData, DerivedDataDescriptor, DocumentMapper, MappingRule, RuleExpresson } from '.'
+import {
+  CollectionRule,
+  DerivedData,
+  DerivedDataDescriptor,
+  DerivedDataDescriptorState,
+  DocumentMapper,
+  MappingRule,
+  RuleExpresson
+} from '.'
 import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
 import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
@@ -58,27 +66,45 @@ export class DerivedDataProcessor extends TxProcessor {
     readonly descrs: DescriptorMap,
     readonly model: ModelDb,
     readonly hierarchy: Hierarchy,
-    readonly storage: Storage
+    readonly storage: Storage,
+    readonly allowRebuildDD: boolean
   ) {
     super()
   }
 
   public clone (storage: Storage): DerivedDataProcessor {
-    return new DerivedDataProcessor(this.descrs, this.model, this.hierarchy, storage)
+    return new DerivedDataProcessor(this.descrs, this.model, this.hierarchy, storage, this.allowRebuildDD)
   }
 
   /**
    * Obtain initial set of descriptors and have derived data up to date.
    */
-  static async create (model: ModelDb, hierarchy: Hierarchy, storage: Storage): Promise<DerivedDataProcessor> {
+  static async create (
+    model: ModelDb,
+    hierarchy: Hierarchy,
+    storage: Storage,
+    allowRebuildDD = false
+  ): Promise<DerivedDataProcessor> {
     const ddStorage = new DDStorage(storage)
-    const processor = new DerivedDataProcessor(new DescriptorMap(hierarchy), model, hierarchy, ddStorage)
+    const processor = new DerivedDataProcessor(
+      new DescriptorMap(hierarchy),
+      model,
+      hierarchy,
+      ddStorage,
+      allowRebuildDD
+    )
     ddStorage.processor = processor
     const descriptors = await model.findAll(core.class.DerivedDataDescriptor, {})
 
     for (const d of descriptors) {
       processor.descrs.update(d)
     }
+
+    if (allowRebuildDD) {
+      const descriptorsState = await model.findAll(core.class.DerivedDataDescriptorState, {})
+      await processor.refreshDescriptors(descriptors, descriptorsState)
+    }
+
     return processor
   }
 
@@ -204,7 +230,9 @@ export class DerivedDataProcessor extends TxProcessor {
     const descr = this.model.getObject(objectId)
     this.descrs.update(descr)
 
-    await this.refreshDerivedData(descr, modifiedBy, true)
+    if (this.allowRebuildDD) {
+      await this.refreshDerivedData(descr, true)
+    }
   }
 
   private async updateData<T extends Doc>(
@@ -278,7 +306,9 @@ export class DerivedDataProcessor extends TxProcessor {
     const descr = this.descrs.descriptors.get(tx.objectId)
     if (descr != null) {
       this.descrs.remove(tx.objectId as Ref<Descr>)
-      await this.refreshDerivedData(descr, tx.modifiedBy, false)
+      if (this.allowRebuildDD) {
+        await this.refreshDerivedData(descr, false)
+      }
     }
   }
 
@@ -394,31 +424,134 @@ export class DerivedDataProcessor extends TxProcessor {
     }
   }
 
-  private async refreshDerivedData (d: Descr, modifiedBy: Ref<Account>, apply: boolean): Promise<void> {
+  ddHash (str: string, seed = 327): number {
+    let h1 = 0xdeadbeef ^ seed
+    let h2 = 0x41c6ce57 ^ seed
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i)
+      h1 = Math.imul(h1 ^ ch, 2654435761)
+      h2 = Math.imul(h2 ^ ch, 1597334677)
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0)
+  }
+
+  private async refreshDescriptors (
+    descriptors: Descr[],
+    descriptorsState: DerivedDataDescriptorState[]
+  ): Promise<void> {
+    const states = new Map(descriptorsState.map((d) => [d.descriptorId, d]))
+
+    for (const d of descriptors) {
+      let needUpdate = true
+      const state = states.get(d._id)
+      const version = this.getDDVersion(d)
+      if (state !== undefined) {
+        needUpdate = version !== d.version
+      }
+      if (needUpdate) {
+        await this.refreshDerivedData(d, true)
+
+        await this.updateDDState(state, d, version)
+      }
+    }
+  }
+
+  private getDDVersion (d: Descr): string {
+    let version = d.version
+    if (version === undefined) {
+      version = this.ddHash(JSON.stringify(d)).toString(16)
+    }
+    return version
+  }
+
+  private async updateDDState (state: DerivedDataDescriptorState | undefined, d: Descr, version: string): Promise<void> {
+    if (state === undefined) {
+      const ctx: TxCreateDoc<DerivedDataDescriptorState> = {
+        _id: generateId(),
+        modifiedBy: core.account.System,
+        modifiedOn: Date.now(),
+        createOn: Date.now(),
+        _class: core.class.TxCreateDoc,
+        objectClass: core.class.DerivedDataDescriptorState,
+        objectId: generateId(),
+        space: core.space.Tx,
+        objectSpace: core.space.Model,
+        attributes: {
+          descriptorId: d._id,
+          version
+        }
+      }
+      await this.storage.tx(ctx)
+    } else {
+      const ctx: TxUpdateDoc<DerivedDataDescriptorState> = {
+        _id: generateId(),
+        createOn: Date.now(),
+        modifiedBy: core.account.System,
+        modifiedOn: Date.now(),
+        _class: core.class.TxUpdateDoc,
+        objectClass: core.class.DerivedDataDescriptorState,
+        objectId: state._id,
+        space: core.space.Tx,
+        objectSpace: state.space,
+        operations: {
+          version
+        }
+      }
+      await this.storage.tx(ctx)
+    }
+  }
+
+  /**
+   * Perform iterable update of all source class to derived Data mapping, should be performed without active clients on DB.
+   */
+  private async refreshDerivedData (d: Descr, apply: boolean): Promise<void> {
     // Perform a full rebuild of derived data of required type.
     // we need to find all objects affected
 
-    const allDD = await this.storage.findAll(d.sourceClass, {})
+    const partSize = 25
+    try {
+      this.hierarchy.getDomain(d.sourceClass)
+    } catch (err: any) {
+      // If we had an generic class without domain, we could not rebuild DD for it.
+      console.info('DD rebuild for ', d.sourceClass, d.targetClass, 'is skipped...')
+      return
+    }
+    let allDD = await this.storage.findAll(d.sourceClass, {}, { limit: partSize })
+    const total = allDD.total
+    let processed = 0
 
-    for (const dbDoc of allDD) {
-      const dbDD = await this.storage.findAll(core.class.DerivedData, { objectId: dbDoc._id, descriptorId: d._id })
-      const doc: CachedDoc = {
-        resolve: async () => await Promise.resolve(dbDoc)
+    while (processed < total) {
+      for (const dbDoc of allDD) {
+        try {
+          const dbDD = await this.storage.findAll<DerivedData>(d.targetClass, {
+            objectId: dbDoc._id,
+            descriptorId: d._id
+          })
+          const doc: CachedDoc = {
+            resolve: async () => await Promise.resolve(dbDoc)
+          }
+          const tx: TxCreateDoc<Doc> = {
+            _id: generateId(),
+            modifiedBy: dbDoc.modifiedBy,
+            modifiedOn: dbDoc.modifiedOn,
+            createOn: dbDoc.createOn,
+            _class: core.class.TxCreateDoc,
+            objectClass: dbDoc._class,
+            objectId: dbDoc._id,
+            space: core.space.Tx,
+            objectSpace: dbDoc.space,
+            attributes: dbDoc
+          }
+          const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
+          await this.applyDerivedData(Array.from(dbDD), results, tx.modifiedBy)
+        } catch (err: any) {
+          console.error('Error processing DD', err)
+        }
       }
-      const tx: TxCreateDoc<Doc> = {
-        _id: generateId(),
-        modifiedBy: dbDoc.modifiedBy,
-        modifiedOn: dbDoc.modifiedOn,
-        createOn: dbDoc.createOn,
-        _class: core.class.TxCreateDoc,
-        objectClass: dbDoc._class,
-        objectId: dbDoc._id,
-        space: core.space.Tx,
-        objectSpace: dbDoc.space,
-        attributes: dbDoc
-      }
-      const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
-      await this.applyDerivedData(Array.from(dbDD), results, tx.modifiedBy)
+      processed += allDD.length
+      allDD = await this.storage.findAll(d.sourceClass, {}, { limit: partSize, skip: processed })
     }
   }
 }

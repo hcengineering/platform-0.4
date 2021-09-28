@@ -39,7 +39,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 
       resActionRuntime(actionRuntime)
 
-      const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage)
+      const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage, true)
       return [
         sendTo, // Send to clients of passed tx
         { tx: async (clientId, tx) => await security.tx(tx) },

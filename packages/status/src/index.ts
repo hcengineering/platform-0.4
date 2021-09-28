@@ -160,7 +160,8 @@ const status = component('status' as Component, {
   status: {
     OK: '' as StatusCode,
     UnknownError: '' as StatusCode<{ message: string }>,
-    InvalidId: '' as StatusCode<{ id: Id }>
+    InvalidId: '' as StatusCode<{ id: Id }>,
+    NotImplemented: '' as StatusCode
   }
 })
 

@@ -76,7 +76,7 @@ function connectClient (
 
       return clientStorage
     } catch (err: any) {
-      console.error('FAILED to accept client:', err.message)
+      console.error('FAILED to accept client:', err)
       throw new Error('invalid token')
     }
   }

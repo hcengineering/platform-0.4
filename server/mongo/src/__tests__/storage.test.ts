@@ -272,6 +272,24 @@ describe('mongo operations', () => {
     const d1 = mongoUnescape(await db.collection('tx').findOne({ 'operations.a.b': 23 }))
     expect(d1._id).toEqual('60f58968abd82692921c51b4')
   })
+
+  it('check skip', async () => {
+    for (let i = 0; i < 50; i++) {
+      await client.createDoc(taskIds.class.Task, '' as Ref<Space>, {
+        name: `my-task-${i}`,
+        description: `${i * i}`,
+        rate: 20 + i,
+        comments: []
+      })
+    }
+
+    const it = await client.findAll(taskIds.class.Task, {}, { skip: 39 })
+    expect(it.total).toEqual(50)
+    expect(it.length).toEqual(11)
+
+    const txes = await client.findAll(core.class.Tx, {}, { skip: 10 })
+    expect(txes.total).toEqual(txes.length + 10)
+  })
 })
 
 async function createComments (client: Client, t1: Task): Promise<void> {
