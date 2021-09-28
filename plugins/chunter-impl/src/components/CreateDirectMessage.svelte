@@ -80,7 +80,7 @@
     }
   })
 
-  async function addMessage (message: string): Promise<void> {
+  async function addMessage (message: string, notifications: SpaceNotifications | undefined): Promise<void> {
     if (to.length === 0) {
       return
     }
@@ -161,7 +161,7 @@
     <ReferenceInput
       currentSpace={currentSpace?._id}
       on:message={(event) => {
-        addMessage(event.detail)
+        addMessage(event.detail, notifications)
       }}
     />
   </div>

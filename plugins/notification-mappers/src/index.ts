@@ -98,35 +98,116 @@ function createSpaceInfo<T extends Space> (
   return data
 }
 
+function addSpaceMember (
+  ctx: TxUpdateDoc<Space> | TxCreateDoc<Space>,
+  options: MappingOptions,
+  member: Ref<Account>,
+  result: SpaceNotifications[]
+): void {
+  const spaceNotification = createSpaceNotification(ctx, options, member)
+  if (result.findIndex((p) => p._id === spaceNotification._id) === -1) {
+    result.push(spaceNotification)
+  }
+}
+
+async function createDocSpaceInfoHandler (ctx: TxCreateDoc<Doc>, options: MappingOptions): Promise<SpaceInfo[]> {
+  if (options.hierarchy.isDerived(ctx.objectClass, core.class.Space)) {
+    return [createSpaceInfo(ctx as TxCreateDoc<Space>, options.descriptor._id)]
+  }
+  await tryUpdateSpaceInfo(ctx, options)
+  return []
+}
+
+async function updateDocSpaceInfoHandler (ctx: TxUpdateDoc<Doc>, options: MappingOptions): Promise<SpaceInfo[]> {
+  if (options.hierarchy.isDerived(ctx.objectClass, core.class.Space)) {
+    const result = await options.storage.findAll(notification.class.SpaceInfo, { objectId: ctx.objectId })
+    return result.length > 0 ? result : [createSpaceInfo(ctx as TxUpdateDoc<Space>, options.descriptor._id)]
+  }
+  await tryUpdateSpaceInfo(ctx, options)
+  return []
+}
+
+async function tryUpdateSpaceInfo (ctx: TxUpdateDoc<Doc> | TxCreateDoc<Doc>, options: MappingOptions): Promise<void> {
+  if (ctx.objectSpace !== core.space.Model && !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)) {
+    await updateSpaceInfo(ctx, options)
+  }
+}
+
+async function createSpaceHandler (ctx: TxCreateDoc<Space>, options: MappingOptions): Promise<SpaceNotifications[]> {
+  const result: SpaceNotifications[] = []
+  const doc = TxProcessor.createDoc2Doc(ctx) as Space
+  for (const member of doc.members) {
+    addSpaceMember(ctx, options, member, result)
+  }
+  return result
+}
+
+async function updateSpaceHandler (ctx: TxUpdateDoc<Space>, options: MappingOptions): Promise<SpaceNotifications[]> {
+  let result: SpaceNotifications[] = await options.storage.findAll(notification.class.SpaceNotifications, {
+    objectId: ctx.objectId
+  })
+  pullMembers(result, ctx)
+  pushMembers(result, ctx, options)
+  if (ctx.operations.members !== undefined) {
+    for (let i = 0; i < result.length; i++) {
+      const member = result[i].space.toString() as Ref<Account>
+      if (!ctx.operations.members.includes(member)) {
+        result = result.splice(i, 1)
+      }
+    }
+    for (const member of ctx.operations.members) {
+      addSpaceMember(ctx, options, member, result)
+    }
+  }
+  return result
+}
+
+function pushMembers (result: SpaceNotifications[], ctx: TxUpdateDoc<Space>, options: MappingOptions): void {
+  const pushMembers = ctx.operations?.$push?.members
+  if (pushMembers !== undefined) {
+    if (isEachArray(pushMembers)) {
+      for (const member of pushMembers.$each) {
+        addSpaceMember(ctx, options, member, result)
+      }
+    } else {
+      addSpaceMember(ctx, options, pushMembers, result)
+    }
+  }
+}
+
+function pullMembers (result: SpaceNotifications[], ctx: TxUpdateDoc<Space>): void {
+  if (ctx.operations.$pull?.members !== undefined) {
+    let pulled: any[] = []
+    if (isPredicate(ctx.operations.$pull.members)) {
+      const preds = createPredicates(ctx.operations.$pull.members, 'space')
+      let temp = Array.from(result) as Doc[]
+      for (const pred of preds) {
+        temp = pred(temp)
+      }
+      pulled = temp.map((p) => p.space.toString() as Ref<Account>)
+    } else {
+      pulled = [ctx.operations.$pull?.members]
+    }
+    for (const member of pulled) {
+      const pos = result.findIndex((p) => p.space.toString() === member)
+      if (pos !== -1) {
+        result = result.splice(pos, 1)
+      }
+    }
+  }
+}
+
 export default (): void => {
   registerMapper(notification.mappers.SpaceInfo, {
     map: async (tx: Tx, options: MappingOptions): Promise<SpaceInfo[]> => {
       if (tx._class === core.class.TxCreateDoc) {
         const ctx = tx as TxCreateDoc<Doc>
-        if (options.hierarchy.isDerived(ctx.objectClass, core.class.Space)) {
-          return [createSpaceInfo(ctx as TxCreateDoc<Space>, options.descriptor._id)]
-        } else if (
-          ctx.objectSpace !== core.space.Model &&
-          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
-        ) {
-          await updateSpaceInfo(ctx, options)
-        }
+        return await createDocSpaceInfoHandler(ctx, options)
       }
 
       if (tx._class === core.class.TxUpdateDoc) {
         const ctx = tx as TxUpdateDoc<Doc>
-        if (options.hierarchy.isDerived(ctx.objectClass, core.class.Space)) {
-          const result = await options.storage.findAll(notification.class.SpaceInfo, { objectId: ctx.objectId })
-          if (result.length === 0) {
-            return [createSpaceInfo(ctx as TxUpdateDoc<Space>, options.descriptor._id)]
-          }
-          return result
-        } else if (
-          ctx.objectSpace !== core.space.Model &&
-          !options.hierarchy.isDerived(ctx.objectClass, core.class.DerivedData)
-        ) {
-          await updateSpaceInfo(ctx, options)
-        }
+        return await updateDocSpaceInfoHandler(ctx, options)
       }
 
       return []
@@ -136,64 +217,13 @@ export default (): void => {
   registerMapper(notification.mappers.SpaceNotification, {
     map: async (tx: Tx, options: MappingOptions): Promise<SpaceNotifications[]> => {
       if (tx._class === core.class.TxCreateDoc) {
-        const result: SpaceNotifications[] = []
         const ctx = tx as TxCreateDoc<Space>
-        const doc = TxProcessor.createDoc2Doc(ctx) as Space
-        for (const member of doc.members) {
-          result.push(createSpaceNotification(ctx, options, member))
-        }
-        return result
+        return await createSpaceHandler(ctx, options)
       }
 
       if (tx._class === core.class.TxUpdateDoc) {
         const ctx = tx as TxUpdateDoc<Space>
-        let result: SpaceNotifications[] = await options.storage.findAll(notification.class.SpaceNotifications, {
-          objectId: ctx.objectId
-        })
-        if (ctx.operations.$pull?.members !== undefined) {
-          let pulled: any[] = []
-          if (isPredicate(ctx.operations.$pull.members)) {
-            const preds = createPredicates(ctx.operations.$pull.members, 'space')
-            let temp = Array.from(result) as Doc[]
-            for (const pred of preds) {
-              temp = pred(temp)
-            }
-            pulled = temp.map((p) => p.space.toString() as Ref<Account>)
-          } else {
-            pulled = [ctx.operations.$pull?.members]
-          }
-          for (const member of pulled) {
-            const pos = result.findIndex((p) => p.space.toString() === member)
-            if (pos !== -1) {
-              result = result.splice(pos, 1)
-            }
-          }
-        }
-        const pushMembers = ctx.operations?.$push?.members
-        if (pushMembers !== undefined) {
-          if (isEachArray(pushMembers)) {
-            for (const member of pushMembers.$each) {
-              result.push(createSpaceNotification(ctx, options, member))
-            }
-          } else {
-            result.push(createSpaceNotification(ctx, options, pushMembers))
-          }
-        }
-        if (ctx.operations.members !== undefined) {
-          for (let i = 0; i < result.length; i++) {
-            const member = result[i].space.toString() as Ref<Account>
-            if (!ctx.operations.members.includes(member)) {
-              result = result.splice(i, 1)
-            }
-          }
-          const currentMembers = new Set(result.map((p) => p.space.toString()))
-          for (const member of ctx.operations.members) {
-            if (!currentMembers.has(member)) {
-              result.push(createSpaceNotification(ctx, options, member))
-            }
-          }
-        }
-        return result
+        return await updateSpaceHandler(ctx, options)
       }
 
       return []

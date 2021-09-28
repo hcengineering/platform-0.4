@@ -61,7 +61,7 @@
     selectDocument(undefined)
   }
 
-  async function addMessage (text: string): Promise<void> {
+  async function addMessage (text: string, notification: SpaceNotifications | undefined): Promise<void> {
     await client.createDoc(chunter.class.Comment, message!.space, {
       replyOf: getFullRef(message!._id, message!._class),
       message: text
@@ -92,7 +92,7 @@
   {/if}
 </div>
 <div class="ref-input">
-  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail)} />
+  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail, notification)} />
 </div>
 
 <style lang="scss">
