@@ -203,16 +203,16 @@ describe('real-server', () => {
       description: 'test space',
       private: true
     })
-    expect(johnTxes.length).toEqual(4)
-    expect(brainTxes.length).toEqual(3)
+    expect(johnTxes.length).toEqual(1)
+    expect(brainTxes.length).toEqual(1)
     await client.createDoc(core.class.Title, sp1._id, {
       title: 't1',
       objectId: 'id1' as Ref<Doc>,
       objectClass: 'c1' as Ref<Class<Doc>>,
       descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Title>>
     })
-    expect(johnTxes.length).toEqual(6)
-    expect(brainTxes.length).toEqual(5)
+    expect(johnTxes.length).toEqual(3)
+    expect(brainTxes.length).toEqual(3)
     const c2t = await client2.findAll(core.class.Title, {})
     expect(c2t.length).toEqual(1)
 
