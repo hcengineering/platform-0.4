@@ -16,7 +16,7 @@
 import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
-import { newFileServer } from './file'
+import { startFileServer } from './file'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
@@ -51,7 +51,7 @@ async function start (): Promise<void> {
   process.on('SIGTERM', close)
   process.on('exit', close)
 
-  newFileServer(18082, 'secret', security)
+  startFileServer(18082, 'secret', security)
 
   // Create a demo account and workspace if it is missing.
 

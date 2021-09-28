@@ -50,10 +50,10 @@ export default async (): Promise<AttachmentService> => {
       body: JSON.stringify(params)
     })
     const url = await req.text()
-    await uploadS3(url, file, progressCallback)
+    await uploadToServer(url, file, progressCallback)
   }
 
-  async function uploadS3 (
+  async function uploadToServer (
     url: string,
     file: File,
     progressCallback?: (progress: number) => void
@@ -106,9 +106,30 @@ export default async (): Promise<AttachmentService> => {
     return `${fileServerURL}file/${space}/${key}/${downloadName}`
   }
 
+  async function authorizeFileServer (token: string): Promise<void> {
+    await fetch(fileServerURL, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Token: token
+      }
+    })
+  }
+
+  async function tryAuthorize (): Promise<void> {
+    const token = getMetadata(pluginCore.metadata.Token)
+    if (token !== undefined) {
+      await authorizeFileServer(token)
+    } else {
+      setTimeout(tryAuthorize, 1000)
+    }
+  }
+
   return {
     upload,
     remove,
-    generateLink
+    generateLink,
+    tryAuthorize
   }
 }

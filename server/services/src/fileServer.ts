@@ -35,7 +35,7 @@ export interface FileServer {
 /**
  * @public
  */
-export function newFileServer (app: Koa, router: Router, tokenSecret: string): FileServer {
+export function createFileServer (app: Koa, router: Router, tokenSecret: string): FileServer {
   router.post('/file', async (ctx: Context) => {
     const token = (ctx.header.token ?? '') as string
     const expires = new Date(new Date().setFullYear(new Date().getFullYear() + 1))

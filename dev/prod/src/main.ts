@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { setMetadata } from '@anticrm/platform'
+import { getPlugin, setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login, { currentAccount } from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
@@ -39,5 +39,7 @@ const loginInfo = currentAccount()
 if (loginInfo !== undefined) {
   setMetadata(pluginCore.metadata.Token, loginInfo.token)
 }
+
+void getPlugin(attachment.id).then(async (p) => await p.tryAuthorize())
 
 createApp(document.body)
