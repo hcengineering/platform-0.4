@@ -477,7 +477,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectClass: core.class.DerivedDataDescriptorState,
         objectId: generateId(),
         space: core.space.Tx,
-        objectSpace: core.space.Model,
+        objectSpace: core.space.DerivedData,
         attributes: {
           descriptorId: d._id,
           version
@@ -494,7 +494,7 @@ export class DerivedDataProcessor extends TxProcessor {
         objectClass: core.class.DerivedDataDescriptorState,
         objectId: state._id,
         space: core.space.Tx,
-        objectSpace: state.space,
+        objectSpace: core.space.DerivedData,
         operations: {
           version
         }

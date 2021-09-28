@@ -51,7 +51,8 @@ export default component(ComponentCore, {
   },
   space: {
     Tx: '' as Ref<Space>, // A special space for all transactions
-    Model: '' as Ref<Space> // A special space for all model transactions.
+    Model: '' as Ref<Space>, // A special space for all model transactions.
+    DerivedData: '' as Ref<Space> // A special space for derived data states.
   },
   account: {
     System: '' as Ref<Account>

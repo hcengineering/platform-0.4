@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Fix DD State space",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}
