@@ -6,11 +6,15 @@ specifiers:
   '@koa/cors': ^3.1.0
   '@microsoft/api-extractor': ^7.13.4
   '@rush-temp/accounts': file:./projects/accounts.tgz
+  '@rush-temp/action': file:./projects/action.tgz
+  '@rush-temp/action-impl': file:./projects/action-impl.tgz
+  '@rush-temp/action-plugin': file:./projects/action-plugin.tgz
   '@rush-temp/attachment': file:./projects/attachment.tgz
   '@rush-temp/attachment-assets': file:./projects/attachment-assets.tgz
   '@rush-temp/attachment-dev': file:./projects/attachment-dev.tgz
   '@rush-temp/attachment-impl': file:./projects/attachment-impl.tgz
   '@rush-temp/calendar': file:./projects/calendar.tgz
+  '@rush-temp/calendar-action': file:./projects/calendar-action.tgz
   '@rush-temp/calendar-assets': file:./projects/calendar-assets.tgz
   '@rush-temp/calendar-impl': file:./projects/calendar-impl.tgz
   '@rush-temp/calendar-mappers': file:./projects/calendar-mappers.tgz
@@ -31,6 +35,7 @@ specifiers:
   '@rush-temp/meeting-assets': file:./projects/meeting-assets.tgz
   '@rush-temp/meeting-impl': file:./projects/meeting-impl.tgz
   '@rush-temp/model': file:./projects/model.tgz
+  '@rush-temp/model-action': file:./projects/model-action.tgz
   '@rush-temp/model-all': file:./projects/model-all.tgz
   '@rush-temp/model-attachment': file:./projects/model-attachment.tgz
   '@rush-temp/model-calendar': file:./projects/model-calendar.tgz
@@ -57,8 +62,10 @@ specifiers:
   '@rush-temp/prod': file:./projects/prod.tgz
   '@rush-temp/query': file:./projects/query.tgz
   '@rush-temp/recruiting': file:./projects/recruiting.tgz
+  '@rush-temp/recruiting-action': file:./projects/recruiting-action.tgz
   '@rush-temp/recruiting-assets': file:./projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:./projects/recruiting-impl.tgz
+  '@rush-temp/recruiting-mappers': file:./projects/recruiting-mappers.tgz
   '@rush-temp/richeditor': file:./projects/richeditor.tgz
   '@rush-temp/router': file:./projects/router.tgz
   '@rush-temp/rpc': file:./projects/rpc.tgz
@@ -208,11 +215,15 @@ dependencies:
   '@koa/cors': 3.1.0
   '@microsoft/api-extractor': 7.18.6
   '@rush-temp/accounts': file:projects/accounts.tgz
+  '@rush-temp/action': file:projects/action.tgz
+  '@rush-temp/action-impl': file:projects/action-impl.tgz_ts-node@10.2.1
+  '@rush-temp/action-plugin': file:projects/action-plugin.tgz
   '@rush-temp/attachment': file:projects/attachment.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/attachment-assets': file:projects/attachment-assets.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/attachment-dev': file:projects/attachment-dev.tgz_postcss@8.3.6
   '@rush-temp/attachment-impl': file:projects/attachment-impl.tgz_postcss@8.3.6
   '@rush-temp/calendar': file:projects/calendar.tgz
+  '@rush-temp/calendar-action': file:projects/calendar-action.tgz_ts-node@10.2.1
   '@rush-temp/calendar-assets': file:projects/calendar-assets.tgz
   '@rush-temp/calendar-impl': file:projects/calendar-impl.tgz_postcss@8.3.6+ts-node@10.2.1
   '@rush-temp/calendar-mappers': file:projects/calendar-mappers.tgz_ts-node@10.2.1
@@ -233,6 +244,7 @@ dependencies:
   '@rush-temp/meeting-assets': file:projects/meeting-assets.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/meeting-impl': file:projects/meeting-impl.tgz_postcss@8.3.6+ts-node@10.2.1
   '@rush-temp/model': file:projects/model.tgz
+  '@rush-temp/model-action': file:projects/model-action.tgz
   '@rush-temp/model-all': file:projects/model-all.tgz_@types+node@14.17.11
   '@rush-temp/model-attachment': file:projects/model-attachment.tgz
   '@rush-temp/model-calendar': file:projects/model-calendar.tgz
@@ -259,8 +271,10 @@ dependencies:
   '@rush-temp/prod': file:projects/prod.tgz_postcss@8.3.6+typescript@4.3.5
   '@rush-temp/query': file:projects/query.tgz
   '@rush-temp/recruiting': file:projects/recruiting.tgz
+  '@rush-temp/recruiting-action': file:projects/recruiting-action.tgz_ts-node@10.2.1
   '@rush-temp/recruiting-assets': file:projects/recruiting-assets.tgz
   '@rush-temp/recruiting-impl': file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1
+  '@rush-temp/recruiting-mappers': file:projects/recruiting-mappers.tgz_ts-node@10.2.1
   '@rush-temp/richeditor': file:projects/richeditor.tgz_postcss@8.3.6+ts-node@10.2.1
   '@rush-temp/router': file:projects/router.tgz
   '@rush-temp/rpc': file:projects/rpc.tgz
@@ -11214,6 +11228,81 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/action-impl.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-QPU8lNOSd4FopaUVidV/4eymNuIrRxTmOfM6PCA3e/8+OvJ1dpOtCqQBwQvQt8KN7/fBc3dBEHqxpZfRhsdB7w==, tarball: file:projects/action-impl.tgz}
+    id: file:projects/action-impl.tgz
+    name: '@rush-temp/action-impl'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
+    dev: false
+
+  file:projects/action-plugin.tgz:
+    resolution: {integrity: sha512-kNJGkFL+xwvk2AhjTPDvHLz3fB/vjoS5ZoBX6T94Sq9kTIb/BBkTWqMcU1Vl1hBOTKZtw0jFX+Ksz9hv1W28Ng==, tarball: file:projects/action-plugin.tgz}
+    name: '@rush-temp/action-plugin'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  file:projects/action.tgz:
+    resolution: {integrity: sha512-bRWen4J4kU8WkWbcNUZ7QBOfl3BID5J01JtnbFLdUxldUrZEqWJjGeZy+aKd/GJJ7T1CBBojiBUei0LTLTcDQA==, tarball: file:projects/action.tgz}
+    name: '@rush-temp/action'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   file:projects/attachment-assets.tgz_@typescript-eslint+parser@4.29.3:
     resolution: {integrity: sha512-5NGbcng5AToxQ/h4F9FOdltBCTJ7i8FCl5T9VH8NVZV0LNRv1v1R93tudZu0KNaQ7PIo8BMghSKwuOTUoVpqzg==, tarball: file:projects/attachment-assets.tgz}
     id: file:projects/attachment-assets.tgz
@@ -11267,7 +11356,7 @@ packages:
     dev: false
 
   file:projects/attachment-impl.tgz_postcss@8.3.6:
-    resolution: {integrity: sha512-XffxX0MyL9TBvUS+xGY5lonREDNNLciZ0YWlFc8Y4Lf4t9C1DvgDkq1+ShmLZYFQ8GjwWi9LiNsMA2aVRnZKlg==, tarball: file:projects/attachment-impl.tgz}
+    resolution: {integrity: sha512-TrTdpF1ORuc9+b48H12/KBy3VMFKxH8RHCXI/KOZ0M+UI5upxwxsLxVZGPjIQ6ly4mEVLJeaIKaM9CsOhV0e6g==, tarball: file:projects/attachment-impl.tgz}
     id: file:projects/attachment-impl.tgz
     name: '@rush-temp/attachment-impl'
     version: 0.0.0
@@ -11316,6 +11405,38 @@ packages:
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - supports-color
+    dev: false
+
+  file:projects/calendar-action.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-Vi5r/dK0PD2LfKFkabs5J6z9+BgRX7VqQ22ZA1awnbZDBHPbkgwaJvLp+nZKdKXhkAIWljMKdh4OH3ChTFgXPg==, tarball: file:projects/calendar-action.tgz}
+    id: file:projects/calendar-action.tgz
+    name: '@rush-temp/calendar-action'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
     dev: false
 
   file:projects/calendar-assets.tgz:
@@ -11416,7 +11537,7 @@ packages:
     dev: false
 
   file:projects/calendar.tgz:
-    resolution: {integrity: sha512-fhLZsPmb9S//XetlQVQQqE9AN0lzOm1+phyFsbGmTUPAaKhREV5qz8EeSQzuQykS4rF1RblionGKfMGLuiG65w==, tarball: file:projects/calendar.tgz}
+    resolution: {integrity: sha512-qVWSo3o7XE6VFjxRpYsOjTVYQgEEljeeqL3IzckVueOjT+/mm9T20B31k1aovg4j8dJO9iDaLPHHfzrOgkH2zQ==, tarball: file:projects/calendar.tgz}
     name: '@rush-temp/calendar'
     version: 0.0.0
     dependencies:
@@ -11566,7 +11687,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-RWRFJP1GvJJp0j2JU3fcDrVq8DBni96jNDF4bbM0tYe9+kBY7BJ8ZDvE7ydDhzd2G08uS4qjMedaU62uJ9COJw==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-5QPHKBemPXbcHDm3A+FowVfX24xLpgF+a9QVcUyd61Tt2PEqP7MHFnXFxJ1wQ5oyqKAw8vJGayVE6WPk8DUndw==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11686,7 +11807,7 @@ packages:
     dev: false
 
   file:projects/fsm.tgz_@typescript-eslint+parser@4.29.3:
-    resolution: {integrity: sha512-7seDq3Hooq8DwgkHTsZmK9MmGnmOhtuYIyGE11JpvnqI5YLTUKJT9WGQDEZgUDYFQV+pUmU4Pg7p6Pm6IcgkuQ==, tarball: file:projects/fsm.tgz}
+    resolution: {integrity: sha512-frzW5J3mcLaG6pUCrxO4Rmyt+0voUBegY29/egP+LJ6ldJcUliw2j81C64h9oX1enQ37jcE484rH/JxcwXvbhg==, tarball: file:projects/fsm.tgz}
     id: file:projects/fsm.tgz
     name: '@rush-temp/fsm'
     version: 0.0.0
@@ -11917,8 +12038,33 @@ packages:
       - supports-color
     dev: false
 
+  file:projects/model-action.tgz:
+    resolution: {integrity: sha512-JLn5tIqOz6WFXqJG2op3KxMQUMRyTFySRjdZcvR4XFkS/bjU+ck6syc72lKybAX/wuLHbGQOWRIUcr6yl1TBtQ==, tarball: file:projects/model-action.tgz}
+    name: '@rush-temp/model-action'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      prettier: 2.3.2
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   file:projects/model-all.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-+4Kqt+Yfbzv1UUcyZUr3JZiIDuqml4Cffwep2nWwLllbQBhhd1Rpuz3zSVEZBrG8m1ELeJjyq1cyGmEHn1BsoQ==, tarball: file:projects/model-all.tgz}
+    resolution: {integrity: sha512-/3goEFsWbPujNddiREhaF2r5B4b2iljzcfF/QMrd5p4kH7yLMFr45auEyBDAD2FBMBO2pwXfYoV9piX/I5k/Gg==, tarball: file:projects/model-all.tgz}
     id: file:projects/model-all.tgz
     name: '@rush-temp/model-all'
     version: 0.0.0
@@ -12105,7 +12251,7 @@ packages:
     dev: false
 
   file:projects/model-fsm.tgz:
-    resolution: {integrity: sha512-k92wYwgbmDrBcfvGkFx5+ApGVuiC8F6kXncbq2qKUGhpq3wJhOexAcyEwO1vufZaCZK2r7JswHQO0aV7+wDTqQ==, tarball: file:projects/model-fsm.tgz}
+    resolution: {integrity: sha512-WJM7XufLi5jpMUuocXxgDboNtWWKLaKM/bGdkDQQMwexIcDbdJcOm6trUSeFClRLg9/lODWg6rc+xJ7riLcNww==, tarball: file:projects/model-fsm.tgz}
     name: '@rush-temp/model-fsm'
     version: 0.0.0
     dependencies:
@@ -12180,7 +12326,7 @@ packages:
     dev: false
 
   file:projects/model-recruiting.tgz:
-    resolution: {integrity: sha512-wc2iosncXKBp7MtPrjl4V1r4jFjAssJ8ndrPn1CcASKuIWg1/hsi31JIf8/+A4h46xPqlUYRfaXXYYxEQWaYWg==, tarball: file:projects/model-recruiting.tgz}
+    resolution: {integrity: sha512-wZQiE3LAnBO85V71d8iphQKXAAC0n56C1rYhDGZOtK00sQsAbQUeJUInGIncho2EoA5FGYzNgoxybFCY6lSGVg==, tarball: file:projects/model-recruiting.tgz}
     name: '@rush-temp/model-recruiting'
     version: 0.0.0
     dependencies:
@@ -12481,7 +12627,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz:
-    resolution: {integrity: sha512-TRpA57+iubClgOq1pCzBcYBq3ddaMVodjBBBeEV25o182fggDzkXIfEnQWPAsjGq58RB6tuYlt0dkArVaJvPrQ==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-w1TX6RZ3oDqzLRBydXYnBFHZboME9Qp66hF56mfn8BRO+OJMmnboo1ihT89oIOlQyysAgVezqx0j1H2Nnh8WPA==, tarball: file:projects/plugin-core-dev.tgz}
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
     dependencies:
@@ -12507,7 +12653,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-impl.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-hME8P8ERoEhjtK0rCdBrgCpIx+CN0nTIYJp/p3Dv0csNmZIDinh/Xf5S9A4gYUCfI7C7+Mcm+mqmbScVlCDXJA==, tarball: file:projects/plugin-core-impl.tgz}
+    resolution: {integrity: sha512-cYmzUS6yOCZTQGN7NygYeqGtsTqsDgIFH3OKbtzEEmv+OXrpXasbeCvssts299itWc9Zdj/VxV7gBgy/Byrj8Q==, tarball: file:projects/plugin-core-impl.tgz}
     id: file:projects/plugin-core-impl.tgz
     name: '@rush-temp/plugin-core-impl'
     version: 0.0.0
@@ -12582,7 +12728,7 @@ packages:
     dev: false
 
   file:projects/prod.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-kxlBCHLAFbLVxj/6y0BCh720Jmhu7mB7kJ8Adcf9xchRM9SSoRa/ZvabFwA4r7vqpLWZADsi8wvzTmQLsQqi/g==, tarball: file:projects/prod.tgz}
+    resolution: {integrity: sha512-zBfh/vTYHK6Qfoz7h3I0F/jzir1PFJIjB26keSxkFctIDEUDXBMYMQrkWziz2aQtByQtSQCRVTkXFBAQbGaLJw==, tarball: file:projects/prod.tgz}
     id: file:projects/prod.tgz
     name: '@rush-temp/prod'
     version: 0.0.0
@@ -12651,6 +12797,38 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/recruiting-action.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-MVqji3z+/FgcbnAVDVhW0z4YBT8rm9nQ8Qm970Ifa3Pb0XbFnN6nyz9Sg13Bi1EHqm84YZOttcyRXL1Kb352Ew==, tarball: file:projects/recruiting-action.tgz}
+    id: file:projects/recruiting-action.tgz
+    name: '@rush-temp/recruiting-action'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/recruiting-assets.tgz:
     resolution: {integrity: sha512-FksVKkLfwoDQ6SwrDwAt2pZaxUN7ZOCEeXKzC+PSQbDdwtplGKZgvwbYqTNr+QFAqW0qermKv5uhoUUnnAQX+w==, tarball: file:projects/recruiting-assets.tgz}
     name: '@rush-temp/recruiting-assets'
@@ -12671,7 +12849,7 @@ packages:
     dev: false
 
   file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-2Enc5pfWq5F0rXHPkJigvEzlrultRmHGuz6oEFQkNSRaN2eryWx+sl3stIMKPz4ZQWf/fqF/b1Ov7t+SVBf7vA==, tarball: file:projects/recruiting-impl.tgz}
+    resolution: {integrity: sha512-TqRERY5n+6Te9VOAdiDn0gsmE0ZhhgLHu0MXF9u/ryqf/f3b4oT/JlNHQd+JxZ3ZhTiBCFeJBwnZdowssC9oyg==, tarball: file:projects/recruiting-impl.tgz}
     id: file:projects/recruiting-impl.tgz
     name: '@rush-temp/recruiting-impl'
     version: 0.0.0
@@ -12719,8 +12897,40 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/recruiting-mappers.tgz_ts-node@10.2.1:
+    resolution: {integrity: sha512-MenTLqJ/negEQRrNt2GGAeqHAdsbNLav3bozybpPd7hkyNsrkmlVj3Wgo1EQzOdQzrZndQqLBohkm2nr3c2A+Q==, tarball: file:projects/recruiting-mappers.tgz}
+    id: file:projects/recruiting-mappers.tgz
+    name: '@rush-temp/recruiting-mappers'
+    version: 0.0.0
+    dependencies:
+      '@microsoft/api-extractor': 7.18.6
+      '@rushstack/heft': 0.35.1
+      '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
+      '@types/browser-or-node': 1.3.0
+      '@types/heft-jest': 1.0.2
+      '@types/jest': 26.0.24
+      '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
+      '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      core-js: 3.16.3
+      eslint: 7.32.0
+      eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
+      eslint-plugin-import: 2.24.2_eslint@7.32.0
+      eslint-plugin-node: 11.1.0_eslint@7.32.0
+      eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
+      jest: 26.6.3_ts-node@10.2.1
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - svelte
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/recruiting.tgz:
-    resolution: {integrity: sha512-qWqXtofgqLoVvzblD58Yj0VkZgDWmp+5cTdIcxxanT2BG+sNYm9S6TbUf9NMbF5Qy5SAoL74O0pPVVMkFQnrHg==, tarball: file:projects/recruiting.tgz}
+    resolution: {integrity: sha512-iRt62RNyUqh98B8AWbEjxMbLoG8HCWbAkGEYsi8k6hS5By3eG0h1BDLc4FwrAW6Zu5fPW90vR6lkJ82GrAqGVg==, tarball: file:projects/recruiting.tgz}
     name: '@rush-temp/recruiting'
     version: 0.0.0
     dependencies:
@@ -12828,7 +13038,7 @@ packages:
     dev: false
 
   file:projects/rpc.tgz:
-    resolution: {integrity: sha512-fl/aLdi7voroEnk9JoW7qqAfHVnAIOzsgGuPb9BwtYjXZGldpef3WJ2A0H4Zz4zNT6y/TAp3eI5sZzgOt2LKvw==, tarball: file:projects/rpc.tgz}
+    resolution: {integrity: sha512-VmN+La/2FgOOOUkyJJsiAsbpony6LkvxxMT4sctGddUuzSFFSxKgmfKwvrMdxG8P8WY9+Zd4LJKBKF+m0Y18uw==, tarball: file:projects/rpc.tgz}
     name: '@rush-temp/rpc'
     version: 0.0.0
     dependencies:
@@ -12924,7 +13134,7 @@ packages:
     dev: false
 
   file:projects/server.tgz:
-    resolution: {integrity: sha512-qwwHWpgMDOHQTeRMvN1w9w5TN1qVF/hzN5Fa+du1OUoU4pMHWVY2ubvfWo157aRznGIv5LTSo98OWcx7Tol6lw==, tarball: file:projects/server.tgz}
+    resolution: {integrity: sha512-2CTBadASnTKcvycjBbyQOYwTeLzsoGVcQR+CIMtGHS7jJr7xarnRxgkTk4qVDX40WaV+BWrKx71OLaPpj6Za9g==, tarball: file:projects/server.tgz}
     name: '@rush-temp/server'
     version: 0.0.0
     dependencies:
