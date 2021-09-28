@@ -11,6 +11,7 @@ import { createModel as meetingModel } from '@anticrm/model-meeting'
 import { createModel as recruitingModel } from '@anticrm/model-recruiting'
 import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
+import { createModel as actionModel } from '@anticrm/model-action'
 
 /**
  * @public
@@ -19,6 +20,8 @@ const builder = new Builder()
 
 coreModel(builder)
 workbenchModel(builder)
+
+actionModel(builder)
 
 if (config.platform.chunter) {
   chunterModel(builder)
