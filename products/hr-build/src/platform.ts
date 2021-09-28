@@ -32,6 +32,7 @@ import '@anticrm/ui-assets'
 import workbench from '@anticrm/workbench'
 import '@anticrm/workbench-assets'
 import { PlatformConfiguration } from './config'
+import action from '@anticrm/action-plugin'
 
 export function configurePlatform (config: PlatformConfiguration): void {
   addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
@@ -39,6 +40,7 @@ export function configurePlatform (config: PlatformConfiguration): void {
   addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
   addLocation(workbench, async () => await import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
+  addLocation(action, async () => await import(/* webpackChunkName: "action" */ '@anticrm/action-impl'))
 
   if (config.chunter) {
     addLocation(chunter, async () => {

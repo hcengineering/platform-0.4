@@ -100,6 +100,10 @@
     "@anticrm/model-calendar": "~0.4.0",
     "@anticrm/model-notification": "~0.4.0",
     "@anticrm/model": "~0.4.0",
-    "dotenv": "~10.0.0"
+    "dotenv": "~10.0.0",
+    "@anticrm/action-impl": "~0.4.0",
+    "@anticrm/action": "~0.4.0",
+    "@anticrm/model-action": "~0.4.0",
+    "@anticrm/action-plugin": "~0.4.0"
   }
 }
