@@ -17,10 +17,8 @@
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
-  import { fsmPlugin } from '@anticrm/fsm-impl'
   import type { WithFSM } from '@anticrm/fsm'
-  import { getPlugin } from '@anticrm/platform'
-  import { Button, PopupItem, PopupMenu } from '@anticrm/ui'
+  import { Button } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   const client = getClient()
@@ -40,26 +38,9 @@
   })
 
   let appliedVacancies: VacancySpace[] = []
-  let availableVacancies: VacancySpace[] = []
 
   $: {
     appliedVacancies = vacancies.filter((x) => applications.has(x._id))
-    availableVacancies = vacancies.filter((x) => !applications.has(x._id))
-  }
-
-  async function assign (vacancy: VacancySpace) {
-    if (!candidate) {
-      return
-    }
-
-    const fsmP = await getPlugin(fsmPlugin.id)
-    await fsmP.addItem(vacancy, {
-      _class: recruiting.class.Applicant,
-      obj: {
-        item: candidate._id,
-        clazz: recruiting.class.Candidate
-      }
-    })
   }
 </script>
 
@@ -68,16 +49,6 @@
     <div class="label">{vacancy.name}</div>
     <Button label={recruiting.string.Unassign} />
   {/each}
-  {#if availableVacancies.length > 0}
-    <div class="create">
-      <PopupMenu auto={true}>
-        <Button primary label={recruiting.string.CreateApplication} slot="trigger" />
-        {#each availableVacancies as v}
-          <PopupItem action={() => assign(v)} title={v.name} />
-        {/each}
-      </PopupMenu>
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -90,11 +61,5 @@
   .label {
     display: flex;
     align-items: center;
-  }
-
-  .create {
-    display: flex;
-    align-items: center;
-    width: 100%;
   }
 </style>

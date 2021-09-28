@@ -44,6 +44,7 @@
     "@anticrm/model-recruiting":"~0.4.0",
     "@anticrm/model-calendar": "~0.4.0",
     "@anticrm/model-notification": "~0.4.0",
-    "@anticrm/model-attachment": "~0.4.0"
+    "@anticrm/model-attachment": "~0.4.0",
+    "@anticrm/model-action":"~0.4.0"
   }
 }

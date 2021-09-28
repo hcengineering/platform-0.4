@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/presentation",
+      "comment": "Add chunterbot",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/presentation"
+}

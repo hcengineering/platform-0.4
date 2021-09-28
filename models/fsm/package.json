@@ -32,6 +32,7 @@
     "@anticrm/model":"~0.4.0",
     "@anticrm/core":"~0.4.0",
     "@anticrm/fsm":"~0.4.0",
-    "@anticrm/model-core":"~0.4.0"
+    "@anticrm/model-core":"~0.4.0",
+    "@anticrm/action-plugin":"~0.4.0"
   }
 }

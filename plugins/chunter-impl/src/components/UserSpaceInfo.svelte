@@ -21,6 +21,7 @@
   import { QueryUpdater } from '@anticrm/presentation'
 
   import { getClient } from '@anticrm/workbench'
+  import { chunterbotAcc } from '../chunterbot'
 
   export let space: Channel | undefined
   export let headerSize = false
@@ -38,9 +39,13 @@
   let memberQuery: QueryUpdater<Account> | undefined
 
   $: if (space) {
-    memberQuery = client.query<Account>(memberQuery, core.class.Account, { _id: { $in: members } }, (result) => {
-      accounts = result
-    })
+    if (space._id === client.accountId().toString()) {
+      accounts = [chunterbotAcc]
+    } else {
+      memberQuery = client.query<Account>(memberQuery, core.class.Account, { _id: { $in: members } }, (result) => {
+        accounts = result
+      })
+    }
   }
 
   let user: Account | undefined

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/server",
+      "comment": "Use DD with recreate",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/server"
+}

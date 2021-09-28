@@ -13,10 +13,9 @@
 // limitations under the License.
 //
 
-import core, { Account, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
-import regCalendarMappers from '@anticrm/calendar-mappers'
-import regNotificationMappers from '@anticrm/notification-mappers'
 import * as gravatar from 'gravatar'
+import core, { Account, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
+
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
 import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
@@ -30,6 +29,7 @@ export interface ServerOptions {
   logRequests: boolean
   security?: SecurityOptions
 }
+
 /**
  * @public
  */
@@ -39,9 +39,6 @@ export async function startServer (
   serverToken: string,
   options: ServerOptions
 ): Promise<Server> {
-  regCalendarMappers()
-  regNotificationMappers()
-
   const instance = await start(
     host,
     port,
@@ -55,6 +52,7 @@ export async function startServer (
   )
   return instance
 }
+
 function connectClient (
   serverToken: string,
   options: ServerOptions
@@ -76,7 +74,7 @@ function connectClient (
 
       return clientStorage
     } catch (err: any) {
-      console.error('FAILED to accept client:', err.message)
+      console.error('FAILED to accept client:', err)
       throw new Error('invalid token')
     }
   }

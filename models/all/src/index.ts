@@ -26,6 +26,7 @@ import { createModel as recruitingModel } from '@anticrm/model-recruiting'
 import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
 import { createModel as attachmentModel } from '@anticrm/model-attachment'
+import { createModel as actionModel } from '@anticrm/model-action'
 
 /**
  * @public
@@ -33,6 +34,7 @@ import { createModel as attachmentModel } from '@anticrm/model-attachment'
 const builder = new Builder()
 
 coreModel(builder)
+actionModel(builder)
 workbenchModel(builder)
 contactModel(builder)
 chunterModel(builder)

@@ -1,3 +1,4 @@
+import { DOMAIN_DERIVED_DATA } from '..'
 import { Account, Class, ClassifierKind, Data, Doc, Domain, DOMAIN_MODEL, Obj, Ref } from '../classes'
 import core from '../component'
 import { DOMAIN_REFERENCES } from '../reference'
@@ -67,6 +68,7 @@ export function _genMinModel (): Tx[] {
   txes.push(_createClass(core.class.Reference, { extends: core.class.Doc }, DOMAIN_REFERENCES))
   txes.push(_createClass(core.class.DerivedData, { extends: core.class.Doc }))
   txes.push(_createClass(core.class.DerivedDataDescriptor, { extends: core.class.Doc }))
+  txes.push(_createClass(core.class.DerivedDataDescriptorState, { extends: core.class.Doc }, DOMAIN_DERIVED_DATA))
   txes.push(_createClass(core.class.Title, { extends: core.class.DerivedData }))
   txes.push(_createClass(core.class.ShortRef, { extends: core.class.Doc }, DOMAIN_REFERENCES))
 

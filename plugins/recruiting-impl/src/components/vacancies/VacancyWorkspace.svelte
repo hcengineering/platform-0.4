@@ -13,42 +13,36 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString, UIComponent } from '@anticrm/status'
-  import ui, { IconGroup, IconList, IconKanban } from '@anticrm/ui'
+  import { setContext } from 'svelte'
+  import { writable } from 'svelte/store'
+  import recruiting from '@anticrm/recruiting'
+  import calendar from '@anticrm/calendar'
   import type { VacancySpace } from '@anticrm/recruiting'
-
-  import ApplicantTable from './ApplicantTable.svelte'
-  import VacancyKanban from './VacancyKanban.svelte'
+  import { Component, Tabs } from '@anticrm/ui'
 
   export let space: VacancySpace
+  const spaceS = writable(space)
 
-  type IDs = 'list' | 'kanban'
+  $: spaceS.set(space)
 
-  const items: {
-    icon: UIComponent
-    tooltip: IntlString
-    id: IDs
-  }[] = [
-    { icon: IconList, tooltip: ui.string.List, id: 'list' },
-    { icon: IconKanban, tooltip: ui.string.Kanban, id: 'kanban' }
-  ]
-  let selected: IDs = 'list'
+  setContext('space', spaceS)
 
-  const views = new Map([
-    ['list', ApplicantTable],
-    ['kanban', VacancyKanban]
+  let selectedTab = recruiting.string.Applications
+  const tabs = new Map([
+    [recruiting.string.Applications, recruiting.component.Applications],
+    [recruiting.string.Interviews, calendar.component.EventTable]
   ])
-  let view: UIComponent | undefined = ApplicantTable
-  $: view = views.get(selected)
+  const tabOpts = [...tabs.keys()]
+
+  let content = recruiting.component.Applications
+  $: content = tabs.get(selectedTab) ?? recruiting.component.Applications
 </script>
 
 <div class="root">
-  <div class="selector">
-    <IconGroup {items} bind:selected />
+  <div class="tabs">
+    <Tabs tabs={tabOpts} bind:selected={selectedTab} />
   </div>
-  {#if view !== undefined}
-    <svelte:component this={view} {space} />
-  {/if}
+  <Component is={content} props={{ space, currentSpace: space._id }} />
 </div>
 
 <style lang="scss">
@@ -57,19 +51,11 @@
     flex-direction: column;
     align-items: stretch;
 
-    flex-grow: 1;
-
     width: 100%;
     height: 100%;
   }
 
-  .selector {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 20px 40px;
-    min-height: 40px;
-
-    width: 100%;
+  .tabs {
+    padding: 0 30px;
   }
 </style>

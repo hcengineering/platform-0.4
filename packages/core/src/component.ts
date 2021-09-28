@@ -15,7 +15,7 @@
 import type { Component, StatusCode } from '@anticrm/status'
 import { component } from '@anticrm/status'
 import type { Account, Attribute, Class, Doc, Obj, PropertyType, Ref, Space } from './classes'
-import { DerivedData, DerivedDataDescriptor } from './derived'
+import { DerivedData, DerivedDataDescriptor, DerivedDataDescriptorState } from './derived'
 import { DocumentPresenter } from './presentation'
 import { Reference } from './reference'
 import { ShortRef } from './shortref'
@@ -43,6 +43,7 @@ export default component(ComponentCore, {
 
     DerivedData: '' as Ref<Class<DerivedData>>,
     DerivedDataDescriptor: '' as Ref<Class<DerivedDataDescriptor<Doc, DerivedData>>>,
+    DerivedDataDescriptorState: '' as Ref<Class<DerivedDataDescriptorState>>,
     Title: '' as Ref<Class<Title>>,
     Reference: '' as Ref<Class<Reference>>,
 

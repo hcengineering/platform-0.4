@@ -18,6 +18,7 @@ import { addLocation } from '@anticrm/platform'
 import login from '@anticrm/login'
 import workbench from '@anticrm/workbench'
 import core from '@anticrm/plugin-core'
+import action from '@anticrm/action-plugin'
 import chunter from '@anticrm/chunter'
 import calendar from '@anticrm/calendar'
 import task from '@anticrm/task'
@@ -58,4 +59,5 @@ export function configurePlatform (): void {
   addLocation(meeting, async () => await import(/* webpackChunkName: "meeting" */ '@anticrm/meeting-impl'))
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
   addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
+  addLocation(action, async () => await import(/* webpackChunkName: "action" */ '@anticrm/action-impl'))
 }

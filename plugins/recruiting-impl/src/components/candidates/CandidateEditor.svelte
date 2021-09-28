@@ -20,7 +20,7 @@
   import recruiting from '@anticrm/recruiting'
 
   import Address from '../icons/Address.svelte'
-  import CandidateApplication from './CanidateApplication.svelte'
+  import CandidateApplication from './CandidateApplication.svelte'
 
   const dispatch = createEventDispatcher()
 

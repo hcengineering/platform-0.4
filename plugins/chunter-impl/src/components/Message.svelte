@@ -14,22 +14,22 @@
 -->
 <script lang="ts">
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
+  import chunter from '@anticrm/chunter'
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import type { MessageNode } from '@anticrm/text'
   import { parseMessage } from '@anticrm/text'
-  import { ActionIcon, DateTime, MessageViewer } from '@anticrm/ui'
   import type { ItemRefefence } from '@anticrm/ui'
-  import { selectDocument } from '@anticrm/workbench'
-  import { getClient } from '@anticrm/workbench'
+  import { ActionIcon, DateTime, MessageViewer } from '@anticrm/ui'
+  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
   import { findReferences } from '../messages'
   import Bookmark from './icons/Bookmark.svelte'
-  import Emoji from './icons/Emoji.svelte'
+  import ChatIcon from './icons/Chat.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
   import RefControl from './RefControl.svelte'
-  import Reactions from './Reactions.svelte'
   import Replies from './Replies.svelte'
 
   export let message: WithMessage
@@ -53,6 +53,10 @@
   const client = getClient()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
+    if (message.modifiedBy === chunter.account.Chunterbot) {
+      return chunterbotAcc
+    }
+
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
 
@@ -120,7 +124,7 @@
 </script>
 
 <div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
-  <div class="container" on:click={onClick}>
+  <div class="container">
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     {/if}
@@ -144,7 +148,9 @@
             <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
-            <div class="tool"><ActionIcon icon={Emoji} size={20} /></div>
+            <div class="tool">
+              <ActionIcon label={chunter.string.ReplyInThread} icon={ChatIcon} size={20} action={() => onClick()} />
+            </div>
           </div>
         {/if}
       </div>
@@ -154,10 +160,10 @@
       {#if replyIds.length > 0 && !thread}
         <div class="footer">
           <div>
-            <Reactions />
+            <!-- <Reactions /> -->
           </div>
           <div>
-            {#if replyIds.length > 0}<Replies replies={replyIds} />{/if}
+            {#if replyIds.length > 0}<Replies replies={replyIds} on:click={onClick} />{/if}
           </div>
         </div>
       {/if}
@@ -177,15 +183,16 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
+    border-radius: 12px;
+    padding: 20px;
 
     &.isNew {
       background-color: var(--theme-bg-accent-color);
     }
     &.no-thread {
-      padding: 20px;
+      padding: 10px;
       background-color: transparent;
       border: 1px solid transparent;
-      border-radius: 12px;
     }
     .references {
       margin-left: 76px;

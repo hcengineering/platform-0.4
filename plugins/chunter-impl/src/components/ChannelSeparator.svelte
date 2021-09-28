@@ -14,13 +14,16 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
+  import { Label } from '@anticrm/ui'
 
   export let label: IntlString
   export let line: boolean = false
 </script>
 
 <div class="flex-center container" class:line>
-  <div class="label">{label}</div>
+  <div class="label">
+    <Label {label} />
+  </div>
 </div>
 
 <style lang="scss">

@@ -31,7 +31,7 @@
       <div class="icon">
         <Icon icon={space.private ? chunter.icon.Lock : chunter.icon.Hashtag} size={16} />
       </div>
-      <span>
+      <span class="span-eclipses">
         {space.name}
       </span>
     </div>
@@ -46,5 +46,11 @@
     margin: 0 16px 0 0;
     border-radius: 4px;
     opacity: 0.3;
+  }
+  .span-eclipses {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

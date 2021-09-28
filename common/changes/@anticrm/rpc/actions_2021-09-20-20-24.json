@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/rpc",
+      "comment": "Extract DeferredPromise",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/rpc"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-mappers",
+      "comment": "Add feedback mappers",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-mappers"
+}

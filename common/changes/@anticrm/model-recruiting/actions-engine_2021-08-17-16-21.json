@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-recruiting",
+      "comment": "Add sample actions to recruiting plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/model-recruiting"
+}

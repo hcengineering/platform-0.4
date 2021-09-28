@@ -13,6 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
   import { showPopup } from '..'
   import DatePickerPopup from './popups/DatePickerPopup.svelte'
@@ -22,14 +23,19 @@
   export let label: IntlString
   export let value: Date = new Date(Date.now())
 
+  const dispatch = createEventDispatcher()
+
   let btn: HTMLElement
 </script>
 
 <div
   class="datepicker-container"
-  on:click={(ev) => {
+  on:click={() => {
     showPopup(DatePickerPopup, { label, value }, btn, (result) => {
-      if (result) value = result
+      if (result) {
+        value = result
+        dispatch('change', result)
+      }
     })
   }}
 >

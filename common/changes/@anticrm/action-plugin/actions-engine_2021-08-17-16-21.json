@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/action-plugin",
+      "comment": "Introduce action plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/action-plugin"
+}

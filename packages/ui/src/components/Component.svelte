@@ -30,7 +30,7 @@
   <div class="spinner-container"><div class="inner"><Spinner /></div></div>
 {:then Ctor}
   <ErrorBoundary>
-    <Ctor {...props} on:change on:close on:open on:message />
+    <svelte:component this={Ctor} {...props} on:change on:close on:open on:message />
   </ErrorBoundary>
 {:catch err}
   ERROR: {console.log(err, JSON.stringify(component))}

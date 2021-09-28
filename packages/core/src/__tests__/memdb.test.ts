@@ -244,6 +244,9 @@ describe('memdb', () => {
     const limit = await model.findAll(core.class.Space, {}, { limit: 1 })
     expect(limit).toHaveLength(1)
 
+    const skip = await model.findAll(core.class.Space, {}, { skip: 1 })
+    expect(skip).toHaveLength(1)
+
     const sortAsc = await model.findAll(core.class.Space, {}, { limit: 1, sort: { name: SortingOrder.Ascending } })
     expect(sortAsc[0].name).toMatch('Sp1')
 

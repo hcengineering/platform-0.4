@@ -126,6 +126,10 @@ export class PresentationClient implements Storage, TxOperations {
     return this.accountIdValue
   }
 
+  userSpace (): Ref<Space> {
+    return this.accountIdValue.toString() as Ref<Space>
+  }
+
   async createDoc<T extends Doc>(
     _class: Ref<Class<T>>,
     space: Ref<Space>,

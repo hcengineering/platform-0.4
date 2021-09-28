@@ -13,11 +13,13 @@
 // limitations under the License.
 //
 
-import { Class, Doc, Domain, DOMAIN_MODEL, Ref } from '@anticrm/core'
+import { DOMAIN_MODEL } from '@anticrm/core'
+import type { Class, Doc, Domain, Ref } from '@anticrm/core'
 import type { FSM, FSMItem, State, Transition, WithFSM } from '@anticrm/fsm'
 import fsmPlugin from '@anticrm/fsm'
 import { Builder, Model } from '@anticrm/model'
 import core, { TDoc, TSpace } from '@anticrm/model-core'
+import type { Action } from '@anticrm/action-plugin'
 
 const DOMAIN_FSM = 'fsm' as Domain
 
@@ -50,6 +52,8 @@ export class TState extends TDoc implements State {
   name!: string
   color!: string
   fsm!: Ref<FSM>
+  optionalActions!: Ref<Action>[]
+  requiredActions!: Ref<Action>[]
 }
 
 /**

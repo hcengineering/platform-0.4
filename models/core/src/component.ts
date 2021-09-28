@@ -14,7 +14,7 @@
 //
 
 import type { Class, Doc, Mixin, Ref } from '@anticrm/core'
-import core from '@anticrm/model'
+import core from '@anticrm/core'
 import { mergeIds } from '@anticrm/status'
 
 /**

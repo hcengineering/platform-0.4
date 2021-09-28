@@ -16,6 +16,7 @@
 import { plugin } from '@anticrm/platform'
 import type { Plugin, Service } from '@anticrm/platform'
 import type { Doc, Ref, Class, Space } from '@anticrm/core'
+import type { Action } from '@anticrm/action-plugin'
 
 export interface FSM extends Doc {
   name: string
@@ -44,6 +45,8 @@ export interface State extends Doc {
   name: string
   color: string
   fsm: Ref<FSM>
+  requiredActions: Array<Ref<Action>>
+  optionalActions: Array<Ref<Action>>
 }
 
 export interface FSMService extends Service {

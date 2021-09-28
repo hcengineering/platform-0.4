@@ -18,6 +18,11 @@ import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
 import { startFileServer } from './file'
 import { upgradeWorkspace } from '@anticrm/workspaces'
+import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regCalendarActions from '@anticrm/calendar-action'
+import regNotificationMappers from '@anticrm/notification-mappers'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 
@@ -31,6 +36,12 @@ const defaultWorkspace = 'workspace'
 const defaultWorkspaceOrg = 'Horses inc'
 
 async function start (): Promise<void> {
+  regCalendarMappers()
+  regRecruitingMappers()
+  regNotificationMappers()
+  await regCalendarActions()
+  await regRecruitingActions()
+
   await upgradeWorkspace(defaultWorkspace, { mongoDBUri: dbUri, txes: builder.getTxes() })
 
   const security: SecurityOptions = {

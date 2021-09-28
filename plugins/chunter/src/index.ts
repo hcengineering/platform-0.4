@@ -98,7 +98,9 @@ export default plugin(
       MessageTo: '' as IntlString,
       MessageToLabel: '' as IntlString,
 
-      Starred: '' as IntlString
+      Starred: '' as IntlString,
+
+      ReplyInThread: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,
@@ -110,6 +112,9 @@ export default plugin(
       ThreadsView: '' as AnyComponent,
       ReferenceInput: '' as AnyComponent,
       Channel: '' as AnyComponent
+    },
+    account: {
+      Chunterbot: '' as Ref<Account>
     }
   }
 )

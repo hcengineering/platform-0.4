@@ -30,6 +30,8 @@
     "@anticrm/status":"~0.4.2",
     "@anticrm/platform":"~0.4.2",
     "@anticrm/fsm":"~0.4.0",
-    "@anticrm/workbench": "~0.4.0"
+    "@anticrm/workbench": "~0.4.0",
+    "@anticrm/ui":"~0.4.1",
+    "@anticrm/action":"~0.4.0"
   }
 }

@@ -62,7 +62,7 @@ export class DocStorage extends TxProcessor implements Storage {
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     try {
       await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
-    } catch (err) {
+    } catch (err: any) {
       // Convert error to platform known ones.
       if (err.code === 11000) {
         console.error(err)
@@ -106,7 +106,14 @@ export class DocStorage extends TxProcessor implements Storage {
   ): Promise<FindResult<T>> {
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     let cursor = this.collection(_class).find(mongoQuery)
-    if (options?.sort !== undefined) cursor = cursor.sort(options.sort)
+    if (options?.sort !== undefined) {
+      cursor = cursor.sort(options.sort)
+    }
+
+    if (options?.skip !== undefined && options?.skip > 0) {
+      cursor = cursor.skip(options.skip)
+    }
+
     const total = await cursor.count()
     if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
     return Object.assign((await cursor.toArray()).map(mongoReplaceNulls), { total })

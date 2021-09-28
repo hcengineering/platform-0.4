@@ -14,22 +14,25 @@
 //
 
 import type { Account, Class, Doc, Ref } from '../classes'
-import { CoreClient } from '../client'
+import { TxHandler, CoreClient } from '../client'
 import core from '../component'
+import { DerivedDataProcessor } from '../derived/processor'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import type { DocumentQuery, FindResult } from '../storage'
-import type { Tx } from '../tx'
-import { DOMAIN_TX } from '../tx'
 import { _genMinModel } from '../minmodel'
 import { isModelTx } from '../model'
+import type { DocumentQuery, FindResult } from '../storage'
+import { Storage } from '../storage'
+import type { Tx } from '../tx'
+import { DOMAIN_TX } from '../tx'
 
 class ClientImpl implements CoreClient {
   constructor (
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,
     private readonly transactions: TxDb,
-    private readonly handler: (tx: Tx) => void
+    private readonly handler: (tx: Tx) => void,
+    private readonly ddProcessor: DerivedDataProcessor
   ) {}
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
@@ -43,11 +46,26 @@ class ClientImpl implements CoreClient {
       this.hierarchy.tx(tx)
     }
     await Promise.all([this.model.tx(tx), this.transactions.tx(tx)])
+
+    await this.ddProcessor.tx(tx)
+
     this.handler(tx)
   }
 
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
+  }
+}
+function toIterableStorage (storage: Storage, handler: TxHandler): Storage {
+  return {
+    findAll: async (_class, query, options) => {
+      return await storage.findAll(_class, query, options)
+    },
+    tx: async (tx) => {
+      // Do not need for testing purpuse, it will be duplicate
+      // await storage.tx(tx)
+      handler(tx)
+    }
   }
 }
 
@@ -59,10 +77,13 @@ export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
 
   const transactions = new TxDb(hierarchy)
   const model = new ModelDb(hierarchy)
+
   for (const tx of txes) {
     await transactions.tx(tx)
     await model.tx(tx)
   }
 
-  return new ClientImpl(hierarchy, model, transactions, handler)
+  const ddProcessor = await DerivedDataProcessor.create(model, hierarchy, toIterableStorage(model, handler), true)
+
+  return new ClientImpl(hierarchy, model, transactions, handler, ddProcessor)
 }
