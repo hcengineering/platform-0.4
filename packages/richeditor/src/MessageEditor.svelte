@@ -231,7 +231,6 @@ function updateValue (content: MessageNode) {
     const newState = createState(content)
 
     view.updateState(newState)
-    view.focus()
   }
   isEmpty = checkEmpty(view.dom.innerHTML)
 }

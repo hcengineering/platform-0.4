@@ -15,20 +15,19 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { onMount } from 'svelte'
-  import type { IntlString } from '@anticrm/platform'
   import CheckBox from './CheckBox.svelte'
 
-  export let label: IntlString
+  export let value: string | undefined
   export let checked: boolean = false
   export let editable: boolean = false
 
   let text: HTMLElement
-  let input: HTMLInputElement
+  let input: HTMLTextAreaElement
   let onEdit: boolean = false
 
   $: {
     if (text && input) {
-      if (onEdit) {
+      if (onEdit || input.innerText === '') {
         text.style.visibility = 'hidden'
         input.style.visibility = 'visible'
         input.focus()
@@ -54,10 +53,10 @@
 
   function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
-    const value = target.value.charCodeAt(target.value.length - 1) === 10 ? 18 : 0
-    text.innerHTML = label.replaceAll(' ', '&nbsp;')
+    const val = target.value.charCodeAt(target.value.length - 1) === 10 ? 18 : 0
+    text.innerHTML = value?.split(' ').join('&nbsp;') ?? ''
     target.style.width = text.clientWidth + 6 + 'px'
-    target.style.height = text.clientHeight + value + 6 + 'px'
+    target.style.height = text.clientHeight + val + 6 + 'px'
   }
 
   onMount(() => {
@@ -66,7 +65,7 @@
 
   const dispatch = createEventDispatcher()
   function changeItem () {
-    dispatch('change', { checked, label })
+    dispatch('change', { checked, value })
   }
 </script>
 
@@ -86,12 +85,13 @@
     <textarea
       bind:this={input}
       type="text"
-      bind:value={label}
+      bind:value
+      placeholder="New item"
       class="edit-item"
       on:input={(ev) => ev.target && computeSize(ev.target)}
       on:change={changeItem}
     />
-    <div class="text" class:checked bind:this={text}>{label}</div>
+    <div class="text" class:checked bind:this={text}>{value}</div>
   </div>
 </div>
 

@@ -118,8 +118,11 @@ class MarkdownParseState {
 
     const node: MessageNode = {
       type: MessageNodeType.text,
-      text: text,
-      marks: this.convertReferences(this.marks)
+      text: text
+    }
+    const marks = this.convertReferences(this.marks)
+    if (marks !== undefined) {
+      node.marks = marks
     }
 
     const nodes = top.content

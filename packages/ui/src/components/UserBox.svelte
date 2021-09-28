@@ -38,7 +38,8 @@
   class="userbox-container"
   on:click={(ev) => {
     showPopup(UserBoxPopup, { label: title, users, selected, showSearch }, btn, (result) => {
-      if (result !== selected) {
+      // undefined passed when closed without changes, null passed when unselect
+      if (result !== undefined && result !== selected) {
         selected = result
         dispatch('change', selected)
       }
