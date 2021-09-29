@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Chunter references",
+      "type": "patch",
+      "packageName": "@anticrm/calendar"
+    }
+  ],
+  "packageName": "@anticrm/calendar",
+  "email": "haiodo@gmail.com"
+}

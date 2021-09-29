@@ -70,7 +70,9 @@ export default plugin(PluginCalendar, {}, {
     AddEvent: '' as IntlString,
     Title: '' as IntlString,
     StartTime: '' as IntlString,
+    NoStartTime: '' as IntlString,
     EndTime: '' as IntlString,
+    NoEndTime: '' as IntlString,
     Participants: '' as IntlString
   },
   mapper: {

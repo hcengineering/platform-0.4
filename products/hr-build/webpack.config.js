@@ -45,6 +45,7 @@ module.exports = {
   },
   optimization: {
     minimize: prod,
+    usedExports: prod,
     splitChunks: {
       chunks: 'all',
       maxAsyncRequests: 5,

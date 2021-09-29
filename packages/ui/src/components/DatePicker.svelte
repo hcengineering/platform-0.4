@@ -21,7 +21,8 @@
   import Calendar from './icons/Calendar.svelte'
 
   export let label: IntlString
-  export let value: Date = new Date(Date.now())
+  export let noLabel: IntlString
+  export let value: Date | undefined = undefined
 
   const dispatch = createEventDispatcher()
 
@@ -32,19 +33,21 @@
   class="datepicker-container"
   on:click={() => {
     showPopup(DatePickerPopup, { label, value }, btn, (result) => {
-      if (result) {
-        value = result
-        dispatch('change', result)
-      }
+      value = result
+      dispatch('change', result)
     })
   }}
 >
   <button class="btn" bind:this={btn}><Calendar size={16} /></button>
   <div class="selectDate">
     <div class="content-accent-color"><Label {label} /></div>
-    <div class="date">
-      {value.getMonth() + 1} / {value.getDate()} / {value.getFullYear()}
-    </div>
+    {#if value}
+      <div class="date">
+        {value.getMonth() + 1} / {value.getDate()} / {value.getFullYear()}
+      </div>
+    {:else}
+      <Label label={noLabel} />
+    {/if}
   </div>
 </div>
 

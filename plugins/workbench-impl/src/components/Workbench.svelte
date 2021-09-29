@@ -65,9 +65,9 @@
   const router = newRouter<WorkbenchRoute>('?app&space&browse&special', (match) => {
     updateApp(match.app)
     currentRoute = match
-
-    aside?.handleRoute(match.browse)
   })
+
+  $: aside?.handleRoute(currentRoute.browse)
 
   function updateSpaceModel (space: Space, navigatorModel: NavigatorModel): SpacesNavModel | undefined {
     for (const sm of navigatorModel.spaces ?? []) {

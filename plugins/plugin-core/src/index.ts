@@ -15,10 +15,12 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Metadata, Service, Plugin } from '@anticrm/platform'
-import type { Account, Ref, Storage, TxOperations } from '@anticrm/core'
+import type { Account, Class, Obj, Ref, Storage, TxOperations } from '@anticrm/core'
 import type { Queriable } from '@anticrm/query'
 
-export interface Client extends Storage, TxOperations, Queriable {}
+export interface Client extends Storage, TxOperations, Queriable {
+  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
+}
 
 export interface CoreService extends Service {
   /**

@@ -23,6 +23,7 @@
     "ToDos": "To Do's",
     "Due": "Due",
     "PickDue": "Pick due date",
+    "NoPickDue": "No due date",
     "Comments": "Comments",
     "Status": "Status",
     "Open": "Open",
@@ -30,6 +31,7 @@
     "Closed": "Closed",
     "Favorite": "Favorite",
     "MyTasks": "My tasks",
-    "PleaseSelectSpace": "Space selection is required."
+    "PleaseSelectSpace": "Space selection is required.",
+    "References": "References"
   }
 }

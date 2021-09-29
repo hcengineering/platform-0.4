@@ -76,8 +76,18 @@
 <div class="root">
   <EditBox label={calendar.string.Title} bind:value={event.name} on:blur={onUpdate} />
   <TextArea label={calendar.string.Description} bind:value={event.description} on:blur={onUpdate} />
-  <DatePicker label={calendar.string.StartTime} value={new Date(event.startsAt)} on:change={onDateUpdate('startsAt')} />
-  <DatePicker label={calendar.string.EndTime} value={new Date(event.endsAt)} on:change={onDateUpdate('endsAt')} />
+  <DatePicker
+    label={calendar.string.StartTime}
+    noLabel={calendar.string.NoStartTime}
+    value={event.startsAt !== undefined ? new Date(event.startsAt) : undefined}
+    on:change={onDateUpdate('startsAt')}
+  />
+  <DatePicker
+    label={calendar.string.EndTime}
+    noLabel={calendar.string.NoEndTime}
+    value={event.endsAt !== undefined ? new Date(event.endsAt) : undefined}
+    on:change={onDateUpdate('endsAt')}
+  />
   <SelectBox items={selectorItems} component={UserInfo} />
 </div>
 

@@ -35,6 +35,7 @@
   export let message: WithMessage
   export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
+  export let showReferences = true
 
   let parsedMessage: MessageNode
 
@@ -42,7 +43,7 @@
 
   $: parsedMessage = parseMessage(message.message)
 
-  $: references = findReferences(parsedMessage)
+  $: references = showReferences ? findReferences(parsedMessage) : []
 
   let replyIds: Ref<Account>[] = []
   $: {
@@ -157,6 +158,13 @@
       <div class="text">
         <MessageViewer message={parsedMessage} {refAction} />
       </div>
+      {#if references.length > 0}
+        <div class:references={!thread} class:references-thread={thread}>
+          {#each references as ref}
+            <RefControl reference={ref} />
+          {/each}
+        </div>
+      {/if}
       {#if replyIds.length > 0 && !thread}
         <div class="footer">
           <div>
@@ -169,22 +177,15 @@
       {/if}
     </div>
   </div>
-  {#if references.length > 0}
-    <div class:references={!thread} class:references-thread={thread}>
-      {#each references as ref}
-        <RefControl reference={ref} />
-      {/each}
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
   .message-container {
     display: flex;
     flex-direction: column;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     border-radius: 12px;
-    padding: 20px;
+    padding: 10px;
 
     &.isNew {
       background-color: var(--theme-bg-accent-color);
@@ -195,10 +196,10 @@
       border: 1px solid transparent;
     }
     .references {
-      margin-left: 76px;
+      margin-left: 0px;
     }
     .references-thread {
-      margin-left: 50px;
+      margin-left: 0px;
     }
 
     &:hover > .container .message .header .buttons {

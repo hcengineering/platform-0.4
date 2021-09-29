@@ -110,8 +110,10 @@ export default plugin(
     component: {
       ChannelView: '' as AnyComponent,
       ThreadsView: '' as AnyComponent,
+      MessageView: '' as AnyComponent,
       ReferenceInput: '' as AnyComponent,
-      Channel: '' as AnyComponent
+      Channel: '' as AnyComponent,
+      References: '' as AnyComponent
     },
     account: {
       Chunterbot: '' as Ref<Account>

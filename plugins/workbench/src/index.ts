@@ -139,8 +139,9 @@ export { store, CompAndProps }
  * @public
  */
 export function selectDocument (doc?: Pick<Doc, '_id' | '_class'>, shortId?: string | null): void {
-  currentDocument.set(doc === undefined ? doc : { document: doc, shortId })
+  currentDocument.set(doc === undefined ? null : { document: doc, shortId })
 }
+
 export { currentDocument, DocumentSelection }
 
 /**

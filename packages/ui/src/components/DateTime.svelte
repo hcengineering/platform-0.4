@@ -14,15 +14,21 @@
 -->
 <script lang="ts">
   import type { Timestamp } from '@anticrm/core'
-  export let value: Date | Timestamp
+  import ui from '../component'
+  import Label from './Label.svelte'
+  export let value: Date | Timestamp | undefined
   export let timeOnly = false
   export let dateOnly = false
 </script>
 
-{#if timeOnly}
-  {new Date(value).toLocaleTimeString()}
-{:else if dateOnly}
-  {new Date(value).toLocaleDateString()}
+{#if value}
+  {#if timeOnly}
+    {new Date(value).toLocaleTimeString()}
+  {:else if dateOnly}
+    {new Date(value).toLocaleDateString()}
+  {:else}
+    {new Date(value).toLocaleString()}
+  {/if}
 {:else}
-  {new Date(value).toLocaleString()}
+  <Label label={ui.string.NoDate} />
 {/if}

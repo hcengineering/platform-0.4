@@ -13,14 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { CheckBoxList, UserInfo, ActionIcon, IconMoreV } from '@anticrm/ui'
+  import { Progress, UserInfo, ActionIcon, IconMoreV } from '@anticrm/ui'
   import IconChat from '../icons/Chat.svelte'
   import core, { Class, Ref, Account } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import { QueryUpdater } from '@anticrm/presentation'
 
   import type { Task } from '@anticrm/task'
-  import taskIds from '../../plugin'
+
+  import { getStatusColor } from '../../plugin'
 
   const client = getClient()
 
@@ -33,6 +34,8 @@
   let taskUpdater: QueryUpdater<Task> | undefined
   let taskAssignee: QueryUpdater<Account> | undefined
 
+  type ProgressState = { max: number; value: number; color: string }
+
   $: taskUpdater = client.query(taskUpdater, objectClass, { _id: objectId }, (result) => {
     task = result.shift()
   })
@@ -42,23 +45,42 @@
       assignee = acc.shift()
     })
   }
+
+  function calcProgress (task?: Task): ProgressState | undefined {
+    if (task === undefined) {
+      return
+    }
+    return {
+      max: task.checkItems.length,
+      value: task.checkItems.filter((p) => p.done).length,
+      color: getStatusColor(task.status)
+    }
+  }
+
+  let progress: ProgressState | undefined
+
+  $: progress = calcProgress(task)
 </script>
 
 {#if task}
   <div class="header">
-    <div class="taskWithId">
-      <span>{task.shortRefId}</span>
-      <span>{task.name}</span>
+    <div class="taskWithProgress">
+      <div class="taskWithId">
+        <span>{task.shortRefId}</span>
+        <span>{task.name}</span>
+      </div>
+      {#if progress && progress.max > 0}
+        <div class="progress">
+          <Progress {...progress} />
+        </div>
+      {/if}
     </div>
     <ActionIcon size={24} icon={IconMoreV} direction={'left'} />
-  </div>
-  <div class="checklist">
-    <CheckBoxList label={taskIds.string.AddCheckItem} bind:items={task.checkItems} />
   </div>
   <div class="footer">
     <UserInfo user={assignee} />
     <div class="actions">
-      <ActionIcon size={24} icon={IconChat} direction={'left'} />
+      <ActionIcon size={24} icon={IconChat} direction={'left'} action={() => selectDocument(task, task?.shortRefId)} />
       <div class="counter">{task.comments.length}</div>
     </div>
   </div>
@@ -73,26 +95,36 @@
     align-items: center;
   }
   .header {
-    padding: 0 16px 0 24px;
-    height: 84px;
+    padding: 0 8px 0 12px;
+    height: 64px;
     span {
       margin-right: 16px;
       font-weight: 500;
       color: var(--theme-content-accent-color);
     }
+    .taskWithProgress {
+      margin-right: 10px;
+      flex-grow: 1;
+    }
     .taskWithId {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
     }
-  }
-  .checklist {
-    padding: 2px 24px 24px;
+    .progress {
+      span {
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 10px;
+        line-height: 13px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+    }
   }
   .footer {
     padding: 0 24px;
     height: 74px;
     border-top: 1px solid var(--theme-bg-accent-color);
-
     .actions {
       display: flex;
       flex-direction: row;

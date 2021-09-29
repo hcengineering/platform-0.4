@@ -16,6 +16,7 @@ export default component('ui' as Component, {
     List: '' as IntlString,
     Kanban: '' as IntlString,
     Cards: '' as IntlString,
-    None: '' as IntlString
+    None: '' as IntlString,
+    NoDate: '' as IntlString
   }
 })

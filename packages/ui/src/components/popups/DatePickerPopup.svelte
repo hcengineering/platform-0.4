@@ -16,13 +16,15 @@
   import { IntlString } from '@anticrm/platform'
   import Label from '../Label.svelte'
   import Back from '../icons/Back.svelte'
+  import Close from '../icons/Close.svelte'
   import Forward from '../icons/Forward.svelte'
   import { createEventDispatcher } from 'svelte'
 
   export let label: IntlString
-  export let value: Date = new Date(Date.now())
+  export let value: Date | undefined = undefined
 
-  let view: Date = value
+  let view: Date
+  $: view = value ?? new Date(Date.now())
   const months: Array<string> = [
     'January',
     'February',
@@ -56,7 +58,20 @@
 </script>
 
 <div class="datepicker-popup">
-  {#if label}<div class="title"><Label {label} /></div>{/if}
+  <div class="flex-between">
+    <div>
+      {#if label}<div class="title"><Label {label} /></div>{/if}
+    </div>
+    <div>
+      <button
+        class="arrow"
+        on:click|preventDefault={() => {
+          value = undefined
+          dispatch('close', value)
+        }}><Close size={16} /></button
+      >
+    </div>
+  </div>
   <div class="flex-between">
     <button
       class="arrow"
@@ -87,9 +102,9 @@
     {#each days as day, i}
       <div
         class="flex-center day"
-        class:selected={i + 1 === value.getDate() &&
-          view.getMonth() === value.getMonth() &&
-          view.getFullYear() === value.getFullYear()}
+        class:selected={i + 1 === value?.getDate() &&
+          view.getMonth() === value?.getMonth() &&
+          view.getFullYear() === value?.getFullYear()}
         style="grid-column: {day + 1}/{day + 2};"
         on:click={() => {
           value = new Date(view.getFullYear(), view.getMonth(), i + 1)

@@ -13,8 +13,9 @@
 // limitations under the License.
 //
 
-import { Doc } from '@anticrm/core'
+import { Doc, Ref, Space } from '@anticrm/core'
 import { writable } from 'svelte/store'
+import { Application } from '.'
 
 /**
  * @public
@@ -22,8 +23,12 @@ import { writable } from 'svelte/store'
 export interface DocumentSelection {
   document: Pick<Doc, '_id' | '_class'>
   shortId?: string | null
+
+  space?: Ref<Space>
+  app?: Ref<Application>
 }
+
 /**
  * @public
  */
-export const currentDocument = writable<DocumentSelection | undefined>()
+export const currentDocument = writable<DocumentSelection | undefined | null>()

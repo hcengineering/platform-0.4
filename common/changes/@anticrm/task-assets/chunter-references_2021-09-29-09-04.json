@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Chunter references",
+      "type": "patch",
+      "packageName": "@anticrm/task-assets"
+    }
+  ],
+  "packageName": "@anticrm/task-assets",
+  "email": "haiodo@gmail.com"
+}

@@ -137,10 +137,30 @@ export function createModel (builder: Builder): void {
           description: '',
           mode: PresentationMode.Edit,
           component: chunter.component.ThreadsView
+        },
+        {
+          description: '',
+          mode: PresentationMode.Preview,
+          component: chunter.component.MessageView
         }
       ]
     },
-    chunter.presenter.Threads
+    chunter.presenter.Message
+  )
+
+  builder.createDoc(
+    core.class.DocumentPresenter,
+    {
+      objectClass: chunter.class.Comment,
+      presentation: [
+        {
+          description: '',
+          mode: PresentationMode.Preview,
+          component: chunter.component.MessageView
+        }
+      ]
+    },
+    chunter.presenter.Comment
   )
 
   builder.createDoc(
