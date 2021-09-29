@@ -18,6 +18,8 @@
  * @packageDocumentation
  */
 
+import copy from 'fast-copy'
+
 /**
  * Status severity
  * @public
@@ -117,7 +119,7 @@ export function component<C extends Component, N extends Namespace> (
  * @public
  */
 export function mergeIds<C extends ComponentDescriptor<Component>, M extends Namespace> (component: C, merge: M): C & M {
-  return transform(Object.assign({}, component), component.id, merge) as C & M
+  return transform(copy(component), component.id, merge) as C & M
 }
 
 /**
