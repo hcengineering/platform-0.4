@@ -11687,7 +11687,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-5QPHKBemPXbcHDm3A+FowVfX24xLpgF+a9QVcUyd61Tt2PEqP7MHFnXFxJ1wQ5oyqKAw8vJGayVE6WPk8DUndw==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-YtVhPGSi3wmdbX1+0lffL3+SBY+odejt9ObQ0b+RhEUW1y2DFcTrFHJydSR23WV6BdbSgGzdA3Z3638oelMhjA==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11821,7 +11821,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-dUcRk3bKXgMmTg0nrH5azZGpQ7mYljkCabscr8RRxFfjeKWXw3DSUSXP39OvyWfOyvwcSjRAKyYewNBd4pUziQ==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-k0z7T4MaEoz0Jp0xQMgQuwSisl20DNuYWbcg15c8gxVcyE6BfNVadCEDvH4l07AwTVlb9Yx+FaMEi6eYl8Kc+w==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -13228,7 +13228,7 @@ packages:
     dev: false
 
   file:projects/status.tgz:
-    resolution: {integrity: sha512-UiWQs9M5YbNXPccnUxk5STFS93hqyrqr13OWgPYzEd6m5IytpBgvl+AmhMenlZcanSRGN/XGCGpCeEBFXgcxiw==, tarball: file:projects/status.tgz}
+    resolution: {integrity: sha512-wMoC6CXnziRdOB0CWfoe1IpPmLUaX7O2a32RRXE1nv0GouDSwUMV3dLzM39+VI9iiTqj8UGL946wc4Ayguavww==, tarball: file:projects/status.tgz}
     name: '@rush-temp/status'
     version: 0.0.0
     dependencies:
@@ -13243,6 +13243,7 @@ packages:
       eslint-plugin-import: 2.24.2_eslint@7.32.0
       eslint-plugin-node: 11.1.0_eslint@7.32.0
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
+      fast-copy: 2.1.1
       prettier: 2.3.2
       typescript: 4.3.5
     transitivePeerDependencies:

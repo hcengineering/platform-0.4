@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/status",
+      "comment": "Fix mergeIds",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/status"
+}
