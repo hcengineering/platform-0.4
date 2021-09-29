@@ -76,13 +76,15 @@ const task = plugin(
       ToDos: '' as IntlString,
       Due: '' as IntlString,
       PickDue: '' as IntlString,
+      NoPickDue: '' as IntlString,
       Comments: '' as IntlString,
       Status: '' as IntlString,
       Open: '' as IntlString,
       InProgress: '' as IntlString,
       Closed: '' as IntlString,
       Favorite: '' as IntlString,
-      MyTasks: '' as IntlString
+      MyTasks: '' as IntlString,
+      References: '' as IntlString
     }
   }
 )

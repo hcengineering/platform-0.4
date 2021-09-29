@@ -22,6 +22,7 @@ import {
   DocumentUpdate,
   FindOptions,
   FindResult,
+  Obj,
   Ref,
   Space,
   Storage,
@@ -90,6 +91,10 @@ export class PresentationClient implements Storage, TxOperations {
 
   static async create (accountId: Ref<Account>, client: () => Promise<Client>): Promise<PresentationClient> {
     return new PresentationClient(client, accountId)
+  }
+
+  async isDerived<T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>): Promise<boolean> {
+    return (await this.client()).isDerived(_class, from)
   }
 
   async findAll<T extends Doc>(

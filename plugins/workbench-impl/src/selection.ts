@@ -8,7 +8,7 @@ function docRef (doc: DocumentSelection): string {
 }
 
 export async function updateCurrentDocument (
-  selectedDocument: DocumentSelection | undefined,
+  selectedDocument: DocumentSelection | undefined | null,
   client: PresentationClient,
   browse?: string
 ): Promise<void> {
@@ -18,7 +18,7 @@ export async function updateCurrentDocument (
     return
   }
   // Check if we need update document on side
-  if (selectedDocument !== undefined && (selectedDocument.shortId === browse || docRef(selectedDocument) === browse)) {
+  if (selectedDocument != null && (selectedDocument.shortId === browse || docRef(selectedDocument) === browse)) {
     // Same document already selected.
     return
   }
@@ -56,17 +56,20 @@ export async function updateCurrentDocument (
 
 export async function handleCurrentDocumentChange (
   client: PresentationClient,
-  value: DocumentSelection | undefined,
+  value: DocumentSelection | undefined | null,
   router: ApplicationRouter<WorkbenchRoute>,
   currentRoute: WorkbenchRoute
 ): Promise<void> {
-  if (value === undefined) {
+  if (value === null) {
     router.navigate({ browse: undefined })
     return
   }
+  if (value === undefined) {
+    return
+  }
+
   // Handle document store updates, we need to update browse
   if (value.shortId != null && currentRoute.browse !== value.shortId) {
-    console.log('select shortId', value, currentRoute)
     router.navigate({ browse: value.shortId as unknown as string })
     return
   } else {
@@ -77,7 +80,6 @@ export async function handleCurrentDocumentChange (
   }
 
   if (value.shortId === undefined) {
-    console.log('find short Id')
     // try find short Id
     const refs = await client.findAll<ShortRef>(core.class.Title, {
       objectId: value.document._id,

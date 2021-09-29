@@ -42,19 +42,23 @@
 
   $: {
     lq = client.query(lq, chunter.class.Message, { _id: id }, async (result) => {
-      notification = notifications.get(result[0].space)
-      notificationClient.setAutoscroll(div)
+      if (result[0] !== undefined) {
+        notification = notifications.get(result[0].space)
+        notificationClient.setAutoscroll(div)
+      }
       message = result[0]
       messageLastRead = 0
       if (notification?.objectLastReads?.get !== undefined) {
-        messageLastRead = notification.objectLastReads.get(message._id) ?? 0
+        messageLastRead = notification.objectLastReads.get(message?._id) ?? 0
       }
       await tick()
       if (div && notification) {
         notificationClient.before(div, notification, message?._id, true)
       }
-      notificationClient.initScroll(div, messageLastRead, true)
     })
+  }
+  $: if (div !== undefined) {
+    notificationClient.initScroll(div, messageLastRead, true)
   }
 
   function close () {
@@ -85,7 +89,7 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} notifications={notification} thread />
+      <MsgView {message} notifications={notification} thread showReferences={false} />
       <ChannelSeparator label={chunter.string.RepliesText} line />
       <Comments {message} notifications={notification} />
     </div>

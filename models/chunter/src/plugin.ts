@@ -42,7 +42,8 @@ export default mergeIds(chunter, {
     Random: '' as Ref<Channel>
   },
   presenter: {
-    Threads: '' as Ref<DocumentPresenter<Doc>>
+    Message: '' as Ref<DocumentPresenter<Doc>>,
+    Comment: '' as Ref<DocumentPresenter<Doc>>
   },
   dd: {
     MessageReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,

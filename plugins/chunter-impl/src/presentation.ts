@@ -49,7 +49,6 @@ async function findExternalPresentation (
       r.addRoute<any>(
         '(www.)?github.com/:organization/:project/issues/:issueNumber',
         (match) => {
-          console.log(match)
           result = {
             component: chunter.component.GithubIssuePreview,
             props: { ...match, href: reference.href }

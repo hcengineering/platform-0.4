@@ -29,6 +29,9 @@ import Github_IssuePreview from './components/presenters/Github_IssuePreview.sve
 import Channel from './components/Channel.svelte'
 import ReferenceInput from './components/ReferenceInput.svelte'
 
+import References from './components/References.svelte'
+import MessageView from './components/MessageView.svelte'
+
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
   setResource(chunter.component.CreateMessage, CreateDirectMessage)
@@ -42,6 +45,9 @@ export default async (): Promise<ChunterService> => {
 
   setResource(chunter.component.Channel, Channel)
   setResource(chunter.component.ReferenceInput, ReferenceInput)
+
+  setResource(chunter.component.References, References)
+  setResource(chunter.component.MessageView, MessageView)
 
   return {}
 }

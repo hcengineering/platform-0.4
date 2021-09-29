@@ -10,7 +10,9 @@
     "AddEvent": "Add Event",
     "Title": "Title",
     "StartTime": "Start Time",
+    "NoStartTime": "No Time set",
     "EndTime": "End Time",
+    "NoEndTime": "No Time set",
     "Participants": "Participants"
   }
 }

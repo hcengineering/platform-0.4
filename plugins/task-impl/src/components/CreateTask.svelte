@@ -156,7 +156,7 @@
             showSearch
           />
         {/await}
-        <DatePicker bind:value={dueTo} label={task.string.PickDue} />
+        <DatePicker bind:value={dueTo} label={task.string.PickDue} noLabel={task.string.NoPickDue} />
         <Row>
           <DescriptionEditor
             currentSpace={space._id}

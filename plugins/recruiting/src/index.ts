@@ -113,6 +113,7 @@ export default plugin(PluginRecruiting, {}, {
     MakePrivate: '' as IntlString,
     MakePrivateDescription: '' as IntlString,
     Due: '' as IntlString,
+    NoDue: '' as IntlString,
     VacancyType: '' as IntlString,
     VacancyNotes: '' as IntlString,
     VacancyDetails: '' as IntlString,

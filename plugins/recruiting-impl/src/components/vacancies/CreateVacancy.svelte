@@ -103,7 +103,12 @@
       <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} />
       <EditBox label={recruiting.string.Company} bind:value={vacancy.company} />
       <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
-      <DatePicker value={new Date(vacancy.dueDate)} on:change={onDateChange} label={recruiting.string.Due} />
+      <DatePicker
+        value={vacancy.dueDate !== undefined ? new Date(vacancy.dueDate) : undefined}
+        on:change={onDateChange}
+        label={recruiting.string.Due}
+        noLabel={recruiting.string.NoDue}
+      />
       <ToggleWithLabel
         label={recruiting.string.MakePrivate}
         description={recruiting.string.MakePrivateDescription}

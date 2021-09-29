@@ -19,6 +19,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
   import type { Task } from '@anticrm/task'
+  import chunter from '@anticrm/chunter'
   import {
     CheckBoxList,
     DatePicker,
@@ -32,7 +33,8 @@
     ScrollBox,
     Section,
     Tabs,
-    UserBox
+    UserBox,
+    Component
   } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { afterUpdate, onDestroy } from 'svelte'
@@ -62,12 +64,16 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
-      notification = notifications.get(result[0].space)
-      desсription = result[0].description
+      notification = notifications.get(result[0]?.space)
+      desсription = result[0]?.description
       item = result[0]
-      const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
-      if (members !== undefined) {
-        projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
+      if (item !== undefined) {
+        const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
+        if (members !== undefined) {
+          projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
+        } else {
+          projectMembers = []
+        }
       } else {
         projectMembers = []
       }
@@ -142,8 +148,9 @@
               showSearch
             />
             <DatePicker
-              value={new Date(item.dueTo)}
+              value={item.dueTo !== undefined ? new Date(item.dueTo) : undefined}
               label={task.string.PickDue}
+              noLabel={task.string.NoPickDue}
               on:change={(e) => {
                 update('dueTo', e.detail)
               }}
@@ -163,6 +170,17 @@
             </Row>
           </Grid>
         </Section>
+
+        <Component
+          is={chunter.component.References}
+          props={{
+            label: task.string.References,
+            icon: IconComments,
+            closed: true,
+            docRef: item
+          }}
+        />
+
         <Section label={task.string.Comments} icon={IconComments}>
           <CommentsView notifications={notification} currentSpace={item.space} taskId={item._id} />
         </Section>

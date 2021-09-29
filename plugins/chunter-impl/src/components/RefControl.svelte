@@ -24,6 +24,8 @@
   export let reference: MessageReference
   let component: PresentationResult | undefined
 
+  export let componentOnly = false
+
   const client = getClient()
 
   $: findPresentation(client, reference, PresentationMode.Preview).then((ct) => {
@@ -34,7 +36,9 @@
 {#if component}
   <pre
     class="container">
+    {#if !componentOnly}
     <div class="line" />
+    {/if}
     <div class="content">
       <Component is={component.component} props={component.props} />
     </div>

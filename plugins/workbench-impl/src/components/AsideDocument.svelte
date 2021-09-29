@@ -18,9 +18,10 @@
 
   let currentDocumentPresentation: QueryUpdater<DocumentPresenter<Doc>> | undefined = undefined
   let editPresenter: PresentationFormat | undefined
-  let selectedDocument: DocumentSelection | undefined
+  let selectedDocument: DocumentSelection | undefined | null
 
   let asideHTML: HTMLElement | undefined = undefined
+  let splitter: Splitter
 
   $: {
     if (asideHTML !== undefined) {
@@ -38,7 +39,7 @@
 
   $: handleCurrentDocumentChange(client, selectedDocument, router, currentRoute)
 
-  $: if (selectedDocument !== undefined) {
+  $: if (selectedDocument != null) {
     currentDocumentPresentation = client.query<DocumentPresenter<Doc>>(
       currentDocumentPresentation,
       core.class.DocumentPresenter,
@@ -58,10 +59,21 @@
   export function handleRoute (browse?: string): void {
     updateCurrentDocument(selectedDocument, client, browse)
   }
+
+  $: if (compHTML != null) {
+    // Fix width, to prevent jumping of content.
+    const compHTMLRect = compHTML.getBoundingClientRect()
+    compHTML.style.width = `${compHTMLRect.width}px`
+  }
+  $: if (asideHTML != null) {
+    // Fix width, to prevent jumping of content.
+    const asideHTMLRect = asideHTML.getBoundingClientRect()
+    asideHTML.style.width = `${asideHTMLRect.width}px`
+  }
 </script>
 
 {#if editPresenter && selectedDocument}
-  <Splitter prevDiv={compHTML} nextDiv={asideHTML} />
+  <Splitter bind:this={splitter} prevDiv={compHTML} nextDiv={asideHTML} />
   <div bind:this={asideHTML} class="aside">
     <Component
       is={editPresenter.component}
