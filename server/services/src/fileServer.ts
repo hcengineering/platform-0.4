@@ -101,9 +101,8 @@ export function createFileServer (app: Koa, router: Router, tokenSecret: string)
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage('workspace')
+    const storage = await getStorage(workspaceId)
     const link = await storage.getDownloadLink(key, fileName)
-    // ctx.status = 301
     ctx.redirect(link)
   })
 
