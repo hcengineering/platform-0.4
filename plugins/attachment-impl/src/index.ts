@@ -106,7 +106,7 @@ export default async (): Promise<AttachmentService> => {
     return `${fileServerURL}file/${space}/${key}/${downloadName}`
   }
 
-  async function authorizeFileServer (token: string): Promise<void> {
+  async function authorize (token: string): Promise<void> {
     await fetch(fileServerURL, {
       method: 'POST',
       credentials: 'include',
@@ -117,19 +117,10 @@ export default async (): Promise<AttachmentService> => {
     })
   }
 
-  async function tryAuthorize (): Promise<void> {
-    const token = getMetadata(pluginCore.metadata.Token)
-    if (token !== undefined) {
-      await authorizeFileServer(token)
-    } else {
-      setTimeout(tryAuthorize, 1000)
-    }
-  }
-
   return {
     upload,
     remove,
     generateLink,
-    tryAuthorize
+    authorize
   }
 }

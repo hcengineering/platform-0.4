@@ -45,7 +45,7 @@ export interface AttachmentService extends Service {
   upload: (file: File, key: string, space: Ref<Space>, progressCallback?: (progress: number) => void) => Promise<void>
   remove: (key: string, space: Ref<Space>) => Promise<void>
   generateLink: (key: string, space: Ref<Space>, name: string, format: string) => string
-  tryAuthorize: () => Promise<void>
+  authorize: (token: string) => Promise<void>
 }
 
 const PluginAttachment = 'attachment' as Plugin<AttachmentService>

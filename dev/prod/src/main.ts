@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { getPlugin, setMetadata } from '@anticrm/platform'
+import { addEventListener, getPlugin, setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login, { currentAccount } from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
@@ -35,11 +35,14 @@ setMetadata(attachment.metadata.FilesUrl, fileServerUrl)
 setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
 setMetadata(pluginCore.metadata.ClientUrl, clientUri)
 
+addEventListener('Token', async (event, data) => {
+  const attachmentPlugin = await getPlugin(attachment.id)
+  await attachmentPlugin.authorize(data)
+})
+
 const loginInfo = currentAccount()
 if (loginInfo !== undefined) {
   setMetadata(pluginCore.metadata.Token, loginInfo.token)
 }
-
-void getPlugin(attachment.id).then(async (p) => await p.tryAuthorize())
 
 createApp(document.body)

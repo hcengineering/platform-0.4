@@ -45,7 +45,7 @@ export default async (): Promise<AttachmentService> => {
     return ''
   }
 
-  async function tryAuthorize (): Promise<void> {
+  async function authorize (token: string): Promise<void> {
     return await new Promise(function (resolve, reject) {
       resolve()
     })
@@ -55,6 +55,6 @@ export default async (): Promise<AttachmentService> => {
     upload,
     remove,
     generateLink,
-    tryAuthorize
+    authorize
   }
 }
