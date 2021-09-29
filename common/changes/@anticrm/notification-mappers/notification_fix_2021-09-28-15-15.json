@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/notification-mappers",
+      "comment": "notification fix",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/notification-mappers"
+}

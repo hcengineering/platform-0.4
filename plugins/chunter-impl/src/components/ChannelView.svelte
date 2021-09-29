@@ -34,7 +34,7 @@
 
   let messages: Message[] = []
 
-  async function addMessage (message: string): Promise<void> {
+  async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
     await client.createDoc(chunter.class.Message, currentSpace!, {
       message
     })
@@ -69,7 +69,7 @@
 </div>
 <div class="ref-input">
   {#if currentSpace}
-    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail)} />
+    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail, notifications)} />
   {/if}
 </div>
 
