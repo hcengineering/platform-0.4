@@ -80,7 +80,7 @@
     }
   })
 
-  async function addMessage (message: string, notifications: SpaceNotifications | undefined): Promise<void> {
+  async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
     if (to.length === 0) {
       return
     }

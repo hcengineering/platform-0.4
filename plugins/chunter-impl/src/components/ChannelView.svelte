@@ -34,7 +34,7 @@
 
   let messages: Message[] = []
 
-  async function addMessage (message: string, notifications: SpaceNotifications | undefined): Promise<void> {
+  async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
     await client.createDoc(chunter.class.Message, currentSpace!, {
       message
     })

@@ -61,7 +61,7 @@
     selectDocument(undefined)
   }
 
-  async function addMessage (text: string, notification: SpaceNotifications | undefined): Promise<void> {
+  async function addMessage (text: string, notification?: SpaceNotifications): Promise<void> {
     await client.createDoc(chunter.class.Comment, message!.space, {
       replyOf: getFullRef(message!._id, message!._class),
       message: text
