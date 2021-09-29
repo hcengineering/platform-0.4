@@ -16,11 +16,13 @@
 import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
 import { SecurityOptions, startServer } from '@anticrm/server'
+import { startFileServer } from './file'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import regRecruitingActions from '@anticrm/recruiting-action'
 import regCalendarActions from '@anticrm/calendar-action'
+import regNotificationMappers from '@anticrm/notification-mappers'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 
@@ -36,6 +38,7 @@ const defaultWorkspaceOrg = 'Horses inc'
 async function start (): Promise<void> {
   regCalendarMappers()
   regRecruitingMappers()
+  regNotificationMappers()
   await regCalendarActions()
   await regRecruitingActions()
 
@@ -58,6 +61,8 @@ async function start (): Promise<void> {
   process.on('SIGINT', close)
   process.on('SIGTERM', close)
   process.on('exit', close)
+
+  startFileServer(18082, 'secret', security)
 
   // Create a demo account and workspace if it is missing.
 

@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, WithAccountId } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, CoreClient } from '@anticrm/core'
 import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 import { _genMinModel } from '@anticrm/core'
 
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
+export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
   const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()

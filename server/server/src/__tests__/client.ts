@@ -9,14 +9,14 @@ import {
   Ref,
   Tx,
   TxOperations,
-  WithAccountId,
+  CoreClient,
   withOperations
 } from '@anticrm/core'
 import { readResponse, Request, RequestProcessor, Response, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
 import WebSocket from 'ws'
 
-export class TestConnection extends RequestProcessor implements WithAccountId {
+export class TestConnection extends RequestProcessor implements CoreClient {
   socket: WebSocket
   handler: (tx: Tx) => void
 

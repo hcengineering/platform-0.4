@@ -14,7 +14,7 @@
 //
 
 import type { Account, Class, Doc, Ref } from '../classes'
-import { TxHandler, WithAccountId } from '../client'
+import { TxHandler, CoreClient } from '../client'
 import core from '../component'
 import { DerivedDataProcessor } from '../derived/processor'
 import { Hierarchy } from '../hierarchy'
@@ -26,7 +26,7 @@ import { Storage } from '../storage'
 import type { Tx } from '../tx'
 import { DOMAIN_TX } from '../tx'
 
-class ClientImpl implements WithAccountId {
+class ClientImpl implements CoreClient {
   constructor (
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,
@@ -69,7 +69,7 @@ function toIterableStorage (storage: Storage, handler: TxHandler): Storage {
   }
 }
 
-export async function connect (handler: (tx: Tx) => void): Promise<WithAccountId> {
+export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
   const txes = _genMinModel()
 
   const hierarchy = new Hierarchy()

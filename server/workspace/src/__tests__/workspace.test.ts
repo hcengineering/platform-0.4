@@ -32,7 +32,7 @@ import core, {
   TxCreateDoc,
   TxOperations,
   TxUpdateDoc,
-  WithAccountId,
+  CoreClient,
   withOperations,
   _createClass,
   _genMinModel
@@ -73,6 +73,7 @@ function asStorage (ws: Workspace): Storage {
 
 describe('workspace', () => {
   const mongoDBUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
+
   let dbId: string = generateId()
   let mongoDbClient!: MongoClient
 
@@ -315,7 +316,7 @@ describe('workspace', () => {
 })
 
 async function newWorkspaceClient (workspace: Workspace): Promise<Client & TxOperations> {
-  const clientStorage = asStorage(workspace) as WithAccountId
+  const clientStorage = asStorage(workspace) as CoreClient
   clientStorage.accountId = async (): Promise<Ref<Account>> => {
     return core.account.System
   }

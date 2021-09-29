@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { createClient, TxHandler, WithAccountId, withOperations } from '@anticrm/core'
+import { createClient, TxHandler, CoreClient, withOperations } from '@anticrm/core'
 import { getMetadata } from '@anticrm/platform'
 import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
@@ -25,7 +25,7 @@ let client: Client | undefined
 let clientClose: (() => void) | undefined
 let liveQuery: LiveQuery | undefined
 
-async function doConnect (tx: TxHandler): Promise<WithAccountId> {
+async function doConnect (tx: TxHandler): Promise<CoreClient> {
   const clientUrl = getMetadata(pluginCore.metadata.ClientUrl)
   const token = getMetadata(pluginCore.metadata.Token)
   if (token === undefined || clientUrl === undefined) {

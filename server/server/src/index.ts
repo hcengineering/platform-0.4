@@ -14,6 +14,8 @@
 //
 
 export * from './wsserver'
+export * from './workspaces'
+export * from './security'
 export * from './server'
 export * from './token'
 export * from './tls_utils'

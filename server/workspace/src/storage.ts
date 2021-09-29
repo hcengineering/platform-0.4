@@ -19,10 +19,6 @@ import core, {
 export class WorkspaceStorage implements Storage {
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {}
 
-  txStorage (): Storage {
-    return this.txStore
-  }
-
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
     const domain = this.hierarchy.getDomain(_class)
     if (domain === DOMAIN_TX) {

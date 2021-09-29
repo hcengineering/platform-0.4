@@ -14,8 +14,7 @@
 //
 
 import * as gravatar from 'gravatar'
-import core, { Account, newTxCreateDoc, Ref, Tx, WithAccountId } from '@anticrm/core'
-import regNotificationMappers from '@anticrm/notification-mappers'
+import core, { Account, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
 
 import { Server, start } from './server'
 import { AccountDetails, decodeToken } from './token'
@@ -40,7 +39,6 @@ export async function startServer (
   serverToken: string,
   options: ServerOptions
 ): Promise<Server> {
-  regNotificationMappers()
   const instance = await start(
     host,
     port,
@@ -58,7 +56,7 @@ export async function startServer (
 function connectClient (
   serverToken: string,
   options: ServerOptions
-): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<WithAccountId> {
+): (clientId: string, token: string, sendTx: (tx: Tx) => void, close: () => void) => Promise<CoreClient> {
   return async (clientId, token, sendTx) => {
     try {
       const { accountId, workspaceId, details } = decodeToken(serverToken, token)
@@ -83,11 +81,11 @@ function connectClient (
 }
 
 function withLogging (
-  clientStorage: WithAccountId,
+  clientStorage: CoreClient,
   options: ServerOptions,
   accountId: Ref<Account>,
   details: AccountDetails
-): WithAccountId {
+): CoreClient {
   return {
     findAll: async (_class, query) => {
       const resultTx = clientStorage.findAll(_class, query)

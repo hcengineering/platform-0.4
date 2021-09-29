@@ -1,11 +1,11 @@
+import { CoreClient } from '..'
 import { Account, Class, Doc, Ref } from '../classes'
-import { WithAccountId } from '../client'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { DocumentQuery, FindOptions, FindResult, Storage } from '../storage'
 import { DOMAIN_TX, Tx } from '../tx'
 
-class TxModelStorage implements WithAccountId {
+class TxModelStorage implements CoreClient {
   constructor (readonly hierarchy: Hierarchy, readonly txStore: Storage, readonly doc: Storage) {}
 
   async accountId (): Promise<Ref<Account>> {
@@ -38,6 +38,6 @@ class TxModelStorage implements WithAccountId {
 /**
  * @internal
  */
-export function _createTestTxAndDocStorage (hierarchy: Hierarchy, txStore: Storage, doc: Storage): WithAccountId {
+export function _createTestTxAndDocStorage (hierarchy: Hierarchy, txStore: Storage, doc: Storage): CoreClient {
   return new TxModelStorage(hierarchy, txStore, doc)
 }

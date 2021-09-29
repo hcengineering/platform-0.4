@@ -4,6 +4,7 @@ import logger from 'koa-logger'
 
 export * from './auth'
 export * from './front'
+export * from './fileServer'
 
 /**
  * @public

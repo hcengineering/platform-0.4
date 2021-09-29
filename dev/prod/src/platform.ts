@@ -25,6 +25,7 @@ import task from '@anticrm/task'
 import meeting from '@anticrm/meeting'
 import recruiting from '@anticrm/recruiting'
 import fsm from '@anticrm/fsm'
+import attachment from '@anticrm/attachment'
 
 import '@anticrm/ui-assets'
 import '@anticrm/chunter-assets'
@@ -34,14 +35,20 @@ import '@anticrm/meeting-assets'
 import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
+import '@anticrm/attachment-assets'
 
 export function configurePlatform (): void {
   if (process.env.CLIENT !== 'server') {
     console.info('use in memory DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core-dev" */ '@anticrm/plugin-core-dev'))
+    addLocation(
+      attachment,
+      async () => await import(/* webpackChunkName: "attachment-dev" */ '@anticrm/attachment-dev')
+    )
   } else {
     console.info('use server DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
+    addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
   }
 
   addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))

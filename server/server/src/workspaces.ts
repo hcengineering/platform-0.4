@@ -1,8 +1,11 @@
-import core, { WithAccountId, DerivedDataProcessor, Storage, Tx } from '@anticrm/core'
+import core, { DerivedDataProcessor, Storage, Tx, CoreClient } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ActionRuntime } from './actions/runtime'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
 
+/**
+ * @public
+ */
 export interface WorkspaceInfo {
   workspace: Workspace
   clients: Map<string, ClientInfo>
@@ -32,7 +35,9 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 
   const workspace: Workspace = await Workspace.create(
     workspaceId,
-    { mongoDBUri: MONGO_URI },
+    {
+      mongoDBUri: MONGO_URI
+    },
     async (hierarchy, storage, model) => {
       security = await SecurityModel.create(hierarchy, model)
       const actionRuntime = new ActionRuntime(hierarchy, model, storage)
@@ -106,11 +111,12 @@ async function getCreateWorkspace (client: ClientInfo): Promise<WorkspaceInfo> {
 
 /**
  * Assign client to workspace, construct workspace if it is not yet started.
- * @param client
+ * @public
+ * @param client - ClientInfo
  */
 export async function assignWorkspace (
   client: ClientInfo
-): Promise<{ clientStorage: WithAccountId, workspace: WorkspaceInfo }> {
+): Promise<{ clientStorage: CoreClient, workspace: WorkspaceInfo }> {
   // Create a client storage associated with workspace
   const ws = await getCreateWorkspace(client)
   return {
@@ -119,6 +125,9 @@ export async function assignWorkspace (
   }
 }
 
+/**
+ * @public
+ */
 export async function closeWorkspace (clientId: string): Promise<void> {
   const info = clients.get(clientId)
   clients.delete(clientId)

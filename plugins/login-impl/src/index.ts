@@ -14,7 +14,7 @@
 //
 
 import login, { ACCOUNT_KEY, LoginInfo, LoginService, SignupDetails } from '@anticrm/login'
-import { getMetadata, setMetadata, setResource } from '@anticrm/platform'
+import { broadcastEvent, getMetadata, setMetadata, setResource } from '@anticrm/platform'
 import pluginCore from '@anticrm/plugin-core'
 import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
 import { Request, Response, serialize } from '@anticrm/rpc'
@@ -30,10 +30,11 @@ export default async (): Promise<LoginService> => {
   }
   setResource(login.component.SettingForm, SettingForm)
 
-  function setLoginInfo (loginInfo: LoginInfo): void {
+  async function setLoginInfo (loginInfo: LoginInfo): Promise<void> {
     localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
 
     setMetadata(pluginCore.metadata.Token, loginInfo.token)
+    await broadcastEvent('Token', loginInfo.token)
   }
 
   function clearLoginInfo (): void {
@@ -76,7 +77,7 @@ export default async (): Promise<LoginService> => {
         return result.error
       }
       if (result.result !== undefined) {
-        setLoginInfo(result.result)
+        await setLoginInfo(result.result)
       }
       return OK
     } catch (err) {
@@ -105,7 +106,7 @@ export default async (): Promise<LoginService> => {
       const result: Response<LoginInfo> = await response.json()
       const status = result.error ?? OK
       if (result.result !== undefined) {
-        setLoginInfo(result.result)
+        await setLoginInfo(result.result)
       }
       return status
     } catch (err: any) {
@@ -136,7 +137,7 @@ export default async (): Promise<LoginService> => {
       const result: Response<LoginInfo> = await response.json()
       const status = result.error ?? OK
       if (result.result !== undefined) {
-        setLoginInfo(result.result)
+        await setLoginInfo(result.result)
       }
       return status
     } catch (err) {
