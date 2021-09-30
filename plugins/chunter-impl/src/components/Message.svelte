@@ -62,8 +62,6 @@
 
   const client = getClient()
 
-  $: currentId = client.accountId()
-
   let editMode = false
   let newMessageValue: string = ''
 
@@ -160,7 +158,7 @@
         <div class="header">
           <div>
             {#if user}
-              {user?.name ?? ''}
+              {user.name}
             {/if}
             <span>
               <DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} />
@@ -178,7 +176,7 @@
             </div>
             <PopupMenu bind:show={showMore}>
               <PopupItem title={chunter.string.CopyLink} action={() => {}} />
-              {#if message.modifiedBy === currentId}
+              {#if message.modifiedBy === client.accountId()}
                 <PopupItem
                   component={IconEdit}
                   title={chunter.string.EditMessage}
