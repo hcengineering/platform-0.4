@@ -56,14 +56,16 @@ export function createFileServer (
     }
     const { accountId, workspaceId } = decodeToken(tokenSecret, token)
     const request = ctx.request.body
-    const allowed = await checkSecurity(accountId, workspaceId, request.space)
+    const space = request.space as Ref<Space>
+    const key = request.key as string
+    const allowed = await checkSecurity(accountId, workspaceId, space)
     if (!allowed) {
       ctx.status = 401
       ctx.body = 'Unauthorized'
       return
     }
     const storage = await getStorage(workspaceId, uri, accessKey, secret)
-    const link = await storage.getUploadLink(request.space + request.key, request.type)
+    const link = await storage.getUploadLink(space + key, request.type)
     ctx.status = 200
     ctx.set('Content-Type', 'text/plain')
     ctx.set('Content-Encoding', 'identity')
@@ -79,20 +81,22 @@ export function createFileServer (
     }
     const { accountId, workspaceId } = decodeToken(tokenSecret, token)
     const request = ctx.request.body
-    const allowed = await checkSecurity(accountId, workspaceId, request.space)
+    const space = request.space as Ref<Space>
+    const key = request.key as string
+    const allowed = await checkSecurity(accountId, workspaceId, space)
     if (!allowed) {
       ctx.status = 401
       ctx.body = 'Unauthorized'
       return
     }
     const storage = await getStorage(workspaceId, uri, accessKey, secret)
-    await storage.remove(request.space + request.key)
+    await storage.remove(space + key)
     ctx.status = 200
   })
 
   router.get('/file/:spaceId/:key/:fileName', async (ctx: Context) => {
-    const space = ctx.params.spaceId
-    const key = ctx.params.key
+    const space = ctx.params.spaceId as Ref<Space>
+    const key = ctx.params.key as string
     const fileName = ctx.params.fileName
     const token = ctx.cookies.get('token')
     if (token === undefined) {
