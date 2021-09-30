@@ -17,10 +17,17 @@
   import chunter from '@anticrm/chunter'
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
-  import type { MessageNode } from '@anticrm/text'
-  import { parseMessage } from '@anticrm/text'
-  import type { ItemRefefence } from '@anticrm/ui'
-  import { ActionIcon, DateTime, MessageViewer } from '@anticrm/ui'
+  import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
+  import {
+    ActionIcon,
+    Button,
+    DateTime,
+    IconEdit,
+    ItemRefefence,
+    MessageViewer,
+    PopupItem,
+    PopupMenu
+  } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
@@ -30,6 +37,7 @@
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
   import RefControl from './RefControl.svelte'
+  import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
 
   export let message: WithMessage
@@ -37,12 +45,13 @@
   export let thread: boolean = false
   export let showReferences = true
 
+  let showMore = false
+
   let parsedMessage: MessageNode
 
   let references: MessageReference[] = []
 
   $: parsedMessage = parseMessage(message.message)
-
   $: references = showReferences ? findReferences(parsedMessage) : []
 
   let replyIds: Ref<Account>[] = []
@@ -52,6 +61,11 @@
   }
 
   const client = getClient()
+
+  $: currentId = client.accountId()
+
+  let editMode = false
+  let newMessageValue: string = ''
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
     if (message.modifiedBy === chunter.account.Chunterbot) {
@@ -122,6 +136,13 @@
   function refAction (doc: ItemRefefence): void {
     selectDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
   }
+  async function updateMessage (message: WithMessage, newMessage: string): Promise<void> {
+    if (newMessageValue !== message.message) {
+      await client.updateDoc(message._class, message.space, message._id, {
+        message: newMessage
+      })
+    }
+  }
 </script>
 
 <div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
@@ -135,43 +156,103 @@
       data-lastmodified={getLastModified(message)}
       data-id={message._id}
     >
-      <div class="header">
-        <div>
-          {#if user}
-            {user?.name ?? ''}
-          {/if}
-          <span>
-            <DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} />
-          </span>
-        </div>
-        {#if !thread}
+      {#if !editMode}
+        <div class="header">
+          <div>
+            {#if user}
+              {user?.name ?? ''}
+            {/if}
+            <span>
+              <DateTime value={message.modifiedOn} timeOnly={isToday(message.modifiedOn)} />
+            </span>
+          </div>
           <div class="buttons">
-            <div class="tool"><ActionIcon icon={MoreH} size={20} /></div>
+            <div class="tool">
+              <ActionIcon
+                icon={MoreH}
+                size={20}
+                action={() => {
+                  showMore = !showMore
+                }}
+              />
+            </div>
+            <PopupMenu bind:show={showMore}>
+              <PopupItem title={chunter.string.CopyLink} action={() => {}} />
+              {#if message.modifiedBy === currentId}
+                <PopupItem
+                  component={IconEdit}
+                  title={chunter.string.EditMessage}
+                  action={() => {
+                    editMode = true
+                    showMore = false
+                  }}
+                />
+                <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
+              {/if}
+            </PopupMenu>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
-            <div class="tool">
-              <ActionIcon label={chunter.string.ReplyInThread} icon={ChatIcon} size={20} action={() => onClick()} />
+            {#if !thread}
+              <div class="tool">
+                <ActionIcon label={chunter.string.ReplyInThread} icon={ChatIcon} size={20} action={() => onClick()} />
+              </div>
+            {/if}
+          </div>
+        </div>
+        <div class="text">
+          <MessageViewer message={parsedMessage} {refAction} />
+          {#if message.modifiedOn !== message.createOn}
+            <div class="edited-placeholder">(edited)</div>
+          {/if}
+        </div>
+        {#if references.length > 0}
+          <div class:references={!thread} class:references-thread={thread}>
+            {#each references as ref}
+              <RefControl reference={ref} />
+            {/each}
+          </div>
+        {/if}
+        {#if replyIds.length > 0 && !thread}
+          <div class="footer">
+            <div>
+              <!-- <Reactions /> -->
+            </div>
+            <div>
+              {#if replyIds.length > 0}<Replies replies={replyIds} on:click={onClick} />{/if}
             </div>
           </div>
         {/if}
-      </div>
-      <div class="text">
-        <MessageViewer message={parsedMessage} {refAction} />
-      </div>
-      {#if references.length > 0}
-        <div class:references={!thread} class:references-thread={thread}>
-          {#each references as ref}
-            <RefControl reference={ref} />
-          {/each}
+      {:else}
+        // This is edit mode
+        <div class="text">
+          <ReferenceInput
+            submitEnabled={false}
+            lines={Math.min(message.message.split('\n').length + 3, 10)}
+            currentSpace={message.space}
+            editorContent={parseMessage(message.message)}
+            on:update={(detail) => {
+              newMessageValue = serializeMessage(detail.detail)
+            }}
+          />
         </div>
-      {/if}
-      {#if replyIds.length > 0 && !thread}
         <div class="footer">
-          <div>
-            <!-- <Reactions /> -->
-          </div>
-          <div>
-            {#if replyIds.length > 0}<Replies replies={replyIds} on:click={onClick} />{/if}
+          <div class="flex">
+            <Button
+              size={'small'}
+              label={chunter.string.CancelEdit}
+              on:click={() => {
+                editMode = false
+              }}
+            />
+            <Button
+              size={'small'}
+              label={chunter.string.SaveEdit}
+              on:click={() => {
+                updateMessage(message, newMessageValue)
+                message.message = newMessageValue
+                editMode = false
+              }}
+            />
           </div>
         </div>
       {/if}
@@ -250,6 +331,12 @@
         }
         .text {
           line-height: 150%;
+
+          .edited-placeholder {
+            opacity: 0.6;
+            display: flex;
+            flex-direction: row-reverse;
+          }
         }
         .footer {
           display: flex;

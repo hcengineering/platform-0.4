@@ -61,7 +61,7 @@
     completionEnd: '',
     inputHeight: 0
   }
-  let editorContent: MessageNode = newMessageDocument()
+  export let editorContent: MessageNode = newMessageDocument()
 
   let htmlEditor: MessageEditor & EditorActions
 

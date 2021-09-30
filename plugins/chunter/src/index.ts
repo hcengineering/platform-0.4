@@ -100,7 +100,13 @@ export default plugin(
 
       Starred: '' as IntlString,
 
-      ReplyInThread: '' as IntlString
+      ReplyInThread: '' as IntlString,
+
+      EditMessage: '' as IntlString,
+      CopyLink: '' as IntlString,
+      DeleteMessage: '' as IntlString,
+      CancelEdit: '' as IntlString,
+      SaveEdit: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,
