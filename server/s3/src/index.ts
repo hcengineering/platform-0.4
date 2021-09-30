@@ -33,6 +33,7 @@ export class S3Storage {
       accessKeyId: accessKey,
       secretAccessKey: secret,
       endpoint: endpoint,
+      s3BucketEndpoint: true,
       s3ForcePathStyle: true,
       signatureVersion: 'v4'
     })
