@@ -28,14 +28,20 @@ import core, {
   Ref,
   Tx,
   TxDb,
-  TxProcessor
+  TxProcessor,
+  DerivedDataProcessor
 } from '@anticrm/core'
 import builder from '@anticrm/model-dev'
 import copy from 'fast-copy'
 
 export class ClientImpl extends TxProcessor implements Client {
   handler: (tx: Tx) => void = () => {}
-  constructor (readonly hierarchy: Hierarchy, readonly model: ModelDb, readonly transactions: TxDb) {
+  constructor (
+    readonly hierarchy: Hierarchy,
+    readonly model: ModelDb,
+    readonly transactions: TxDb,
+    readonly ddProcessor: DerivedDataProcessor
+  ) {
     super()
   }
 
@@ -60,7 +66,25 @@ export class ClientImpl extends TxProcessor implements Client {
 
     // This is for debug, to check for current model inside browser.
     console.info('Model Build complete', model)
-    return new ClientImpl(hierarchy, model, transactions)
+
+    let clientImpl: ClientImpl
+
+    const ddProcessor = await DerivedDataProcessor.create(
+      model,
+      hierarchy,
+      {
+        findAll: async (_class, query, options) => {
+          return await model.findAll(_class, query, options)
+        },
+        tx: async (tx) => {
+          // Do not need for testing purpuse, it will be duplicate
+          await model.tx(tx)
+          clientImpl?.handler(tx)
+        }
+      },
+      true
+    )
+    return new ClientImpl(hierarchy, model, transactions, ddProcessor)
   }
 
   async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
@@ -78,10 +102,14 @@ export class ClientImpl extends TxProcessor implements Client {
     // 2. update transactions
     await this.transactions.tx(tx)
 
-    console.info('Model updated', this.model)
+    // 3. process server side DD.
 
-    // 3. process client handlers
+    await this.ddProcessor.tx(tx)
+
+    // 4. process client handlers
     this.handler(tx)
+
+    console.info('Model updated', this.model)
   }
 
   async accountId (): Promise<Ref<Account>> {
