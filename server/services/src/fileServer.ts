@@ -63,7 +63,7 @@ export function createFileServer (
       return
     }
     const storage = await getStorage(workspaceId, uri, accessKey, secret)
-    const link = await storage.getUploadLink(request.space+request.key, request.type)
+    const link = await storage.getUploadLink(request.space + request.key, request.type)
     ctx.status = 200
     ctx.set('Content-Type', 'text/plain')
     ctx.set('Content-Encoding', 'identity')
@@ -86,7 +86,7 @@ export function createFileServer (
       return
     }
     const storage = await getStorage(workspaceId, uri, accessKey, secret)
-    await storage.remove(request.space+request.key)
+    await storage.remove(request.space + request.key)
     ctx.status = 200
   })
 
@@ -108,7 +108,7 @@ export function createFileServer (
       return
     }
     const storage = await getStorage(workspaceId, uri, accessKey, secret)
-    const link = await storage.getDownloadLink(space+key, fileName)
+    const link = await storage.getDownloadLink(space + key, fileName)
     ctx.redirect(link)
   })
 
