@@ -13,17 +13,14 @@
 // limitations under the License.
 //
 import { S3Storage } from '@anticrm/s3'
-import { assignWorkspace, decodeToken } from '@anticrm/server'
+import { assignWorkspace, decodeToken, WorkspaceInfo } from '@anticrm/server'
 import { Account, generateId, Ref, Space } from '@anticrm/core'
 import Koa, { Context } from 'koa'
 import bodyParser from 'koa-bodyparser'
 import Router from 'koa-router'
 
-const S3_URI = process.env.S3_URI ?? 'http://127.0.0.1:9000'
-const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY ?? 'minio'
-const S3_SECRET = process.env.S3_SECRET ?? 'miniosecret'
-
 const storages: Map<string, S3Storage> = new Map<string, S3Storage>()
+const workspaces: Map<Ref<Account>, WorkspaceInfo> = new Map<Ref<Account>, WorkspaceInfo>()
 
 /**
  * @public
@@ -35,16 +32,23 @@ export interface FileServer {
 /**
  * @public
  */
-export function createFileServer (app: Koa, router: Router, tokenSecret: string): FileServer {
+export function createFileServer (
+  app: Koa,
+  router: Router,
+  tokenSecret: string,
+  uri: string,
+  accessKey: string,
+  secret: string
+): FileServer {
   router.post('/file', async (ctx: Context) => {
     const token = (ctx.header.token ?? '') as string
     const expires = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-    ctx.cookies.set('token', token, { sameSite: 'none', secure: true, httpOnly: false, expires: expires })
+    ctx.cookies.set('token', token, { sameSite: 'none', secure: true, httpOnly: true, expires: expires })
     ctx.status = 200
   })
 
   router.put('/file', async (ctx: Context) => {
-    const token = (ctx.header.token ?? '') as string
+    const token = ctx.cookies.get('token')
     if (token === undefined) {
       ctx.status = 401
       ctx.body = 'Unauthorized'
@@ -58,14 +62,16 @@ export function createFileServer (app: Koa, router: Router, tokenSecret: string)
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId)
-    const link = await storage.getUploadLink(request.key, request.type)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    const link = await storage.getUploadLink(request.space+request.key, request.type)
     ctx.status = 200
+    ctx.set('Content-Type', 'text/plain')
+    ctx.set('Content-Encoding', 'identity')
     ctx.body = link
   })
 
   router.delete('/file', async (ctx: Context) => {
-    const token = (ctx.header.token ?? '') as string
+    const token = ctx.cookies.get('token')
     if (token === undefined) {
       ctx.status = 401
       ctx.body = 'Unauthorized'
@@ -79,8 +85,8 @@ export function createFileServer (app: Koa, router: Router, tokenSecret: string)
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId)
-    await storage.remove(request.key)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    await storage.remove(request.space+request.key)
     ctx.status = 200
   })
 
@@ -101,8 +107,8 @@ export function createFileServer (app: Koa, router: Router, tokenSecret: string)
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId)
-    const link = await storage.getDownloadLink(key, fileName)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    const link = await storage.getDownloadLink(space+key, fileName)
     ctx.redirect(link)
   })
 
@@ -114,16 +120,21 @@ export function createFileServer (app: Koa, router: Router, tokenSecret: string)
 }
 
 async function checkSecurity (accountId: Ref<Account>, workspaceId: string, space: Ref<Space>): Promise<boolean> {
-  const clientId = generateId()
-  const { workspace } = await assignWorkspace({ clientId, accountId, workspaceId, tx: () => {} })
-  const allowed = workspace.security.getUserSpaces(accountId)
+  let currentWorkspace = workspaces.get(accountId)
+  if (currentWorkspace === undefined) {
+    const clientId = generateId()
+    const { workspace } = await assignWorkspace({ clientId, accountId, workspaceId, tx: () => {} })
+    workspaces.set(accountId, workspace)
+    currentWorkspace = workspace
+  }
+  const allowed = currentWorkspace.security.getUserSpaces(accountId)
   return allowed.has(space)
 }
 
-async function getStorage (workspaceId: string): Promise<S3Storage> {
+async function getStorage (workspaceId: string, uri: string, accessKey: string, secret: string): Promise<S3Storage> {
   let storage = storages.get(workspaceId)
   if (storage === undefined) {
-    storage = await S3Storage.create(S3_ACCESS_KEY, S3_SECRET, S3_URI, workspaceId)
+    storage = await S3Storage.create(accessKey, secret, uri, workspaceId)
     storages.set(workspaceId, storage)
   }
   return storage

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { setMetadata } from '@anticrm/platform'
+import { addEventListener, broadcastEvent, getPlugin, setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
 import login, { currentAccount } from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
@@ -21,6 +21,7 @@ import meetingPlugin from '@anticrm/meeting'
 
 import { configurePlatform } from './platform'
 import { PlatformConfiguration } from './config'
+import attachment from '@anticrm/attachment'
 
 async function loadConfiguration (): Promise<PlatformConfiguration> {
   return await new Promise<PlatformConfiguration>((resolve) => {
@@ -38,17 +39,23 @@ async function loadConfiguration (): Promise<PlatformConfiguration> {
 
 async function init (): Promise<void> {
   const config = await loadConfiguration()
+  console.log('config')
+  console.log(config)
   configurePlatform(config)
-  setMetadata(login.metadata.AccountsUrl, config.accountsUri)
-  setMetadata(pluginCore.metadata.ClientUrl, config.clientUri)
-
   setMetadata(login.metadata.AccountsUrl, config.accountsUri)
   setMetadata(meetingPlugin.metadata.ClientUrl, config.meetingsUri)
   setMetadata(pluginCore.metadata.ClientUrl, config.clientUri)
+  setMetadata(attachment.metadata.FilesUrl, config.fileServerUri)
+
+  addEventListener('Token', async (event, data) => {
+    const attachmentPlugin = await getPlugin(attachment.id)
+    await attachmentPlugin.authorize(data)
+  })
 
   const loginInfo = currentAccount()
   if (loginInfo !== undefined) {
     setMetadata(pluginCore.metadata.Token, loginInfo.token)
+    void broadcastEvent('Token', loginInfo.token)
   }
 
   createApp(document.body)

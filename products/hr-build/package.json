@@ -107,6 +107,10 @@
     "@anticrm/model-action": "~0.4.0",
     "@anticrm/action-plugin": "~0.4.0",
     "@anticrm/notification": "~0.4.0",
-    "@anticrm/core": "~0.4.0"
+    "@anticrm/core": "~0.4.0",
+    "@anticrm/attachment": "~0.4.0",
+    "@anticrm/attachment-assets": "~0.4.0",
+    "@anticrm/attachment-impl": "~0.4.0",
+    "@anticrm/model-attachment": "~0.4.0"
   }
 }

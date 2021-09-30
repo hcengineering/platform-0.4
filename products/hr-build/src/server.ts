@@ -1,7 +1,7 @@
 import { Accounts } from '@anticrm/accounts'
 import { getMongoClient, shutdown } from '@anticrm/mongo'
 import { Server, startServer } from '@anticrm/server'
-import { newApp, newAuthServer, newFrontServer } from '@anticrm/services'
+import { newApp, newAuthServer, createFileServer, newFrontServer } from '@anticrm/services'
 import { createWorkspace, upgradeWorkspace } from '@anticrm/workspaces'
 import { createServer } from 'https'
 import { config, readCertificates } from './config'
@@ -49,6 +49,7 @@ async function start (): Promise<void> {
   const port = appServer.address().port
 
   const auth = await newAuthServer(config.dbUri, koa, router, config.appSecret)
+  const file = createFileServer(koa, router, config.appSecret, config.s3Uri, config.s3AccessKey, config.s3Secret)
   const front = newFrontServer(koa, './web')
 
   // Handle client information loading
@@ -76,6 +77,7 @@ async function start (): Promise<void> {
     webServer.close()
     appServer.shutdown()
     front.shutdown()
+    file.shutdown()
     auth.shutdown()
     void shutdown().then(process.exit(0))
   }

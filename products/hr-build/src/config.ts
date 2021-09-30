@@ -17,6 +17,7 @@ export interface PlatformConfiguration {
   accountsUri: string // Account registration/authentication URL
   clientUri: string // Client URL to connect for
   meetingsUri: string // Meeting URI
+  fileServerUri: string // File server URI
 }
 
 export interface ProductConfiguration {
@@ -25,6 +26,9 @@ export interface ProductConfiguration {
   appPort: number
   appSecret: string
   dbUri: string
+  s3Uri: string
+  s3AccessKey: string
+  s3Secret: string
   workspace: string
   organization: string
   SECURITY_CERT_FILE: string
@@ -42,6 +46,9 @@ export const config: ProductConfiguration = {
   appSecret: process.env.SERVER_SECRET ?? 'secret',
 
   dbUri: process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
+  s3Uri: process.env.S3_URI ?? 'http://127.0.0.1:9000',
+  s3AccessKey: process.env.S3_ACCESS_KEY ?? 'minio',
+  s3Secret: process.env.S3_SECRET ?? 'miniosecret',
 
   workspace: process.env.WORKSPACE ?? 'workspace',
   organization: process.env.WORKSPACE_ORGANIZATION ?? 'workspace description',
@@ -59,7 +66,8 @@ export const config: ProductConfiguration = {
 
     accountsUri: process.env.ACCOUNTS_URI ?? '',
     clientUri: process.env.CLIENT_URI ?? '',
-    meetingsUri: process.env.MEETINGS_URI ?? ''
+    meetingsUri: process.env.MEETINGS_URI ?? '',
+    fileServerUri: process.env.FILES_URI ?? ''
   }
 }
 

@@ -18,7 +18,6 @@ import attachment from '@anticrm/attachment'
 import { Ref, Space } from '@anticrm/core'
 import { getMetadata } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
-import pluginCore from '@anticrm/plugin-core'
 
 export { default as Attachments } from './components/Attachments.svelte'
 
@@ -27,7 +26,7 @@ export default async (): Promise<AttachmentService> => {
   if (fileServerURL === '') {
     throw new PlatformError(new Status(Severity.ERROR, attachment.status.NoFileServerUri, {}))
   }
-  const token = getMetadata(pluginCore.metadata.Token)
+  const url = fileServerURL + '/file'
 
   async function upload (
     file: File,
@@ -40,17 +39,16 @@ export default async (): Promise<AttachmentService> => {
       space,
       type: file.type
     }
-    const req = await fetch(fileServerURL + 'file', {
+    const req = await fetch(url, {
       method: 'PUT',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Token: token
+        'Content-Type': 'application/json;charset=utf-8'
       },
       body: JSON.stringify(params)
     })
-    const url = await req.text()
-    await uploadToServer(url, file, progressCallback)
+    const result = await req.text()
+    await uploadToServer(result, file, progressCallback)
   }
 
   async function uploadToServer (
@@ -90,11 +88,10 @@ export default async (): Promise<AttachmentService> => {
       key,
       space
     }
-    await fetch(fileServerURL + 'file', {
+    await fetch(url, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Token: token
+        'Content-Type': 'application/json;charset=utf-8'
       },
       body: JSON.stringify(params)
     })
@@ -103,11 +100,11 @@ export default async (): Promise<AttachmentService> => {
   function generateLink (key: string, space: Ref<Space>, name: string, format: string): string {
     const regex = RegExp(`${format}$`)
     const downloadName = regex.test(name) ? name : name + '.' + format
-    return `${fileServerURL}file/${space}/${key}/${downloadName}`
+    return `${url}/${space}/${key}/${downloadName}`
   }
 
   async function authorize (token: string): Promise<void> {
-    await fetch(fileServerURL, {
+    await fetch(url, {
       method: 'POST',
       credentials: 'include',
       headers: {
