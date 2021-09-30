@@ -273,8 +273,26 @@
   <div class="buttons">
     <div class="tool"><Attach /></div>
     <div class="tool"><TextStyle /></div>
-    <div class="tool"><Bold /></div>
-    <div class="tool"><Italic /></div>
+    <div
+      class="tool"
+      class:active={styleState.bold}
+      on:click={() => {
+        htmlEditor.toggleBold()
+        htmlEditor.focus()
+      }}
+    >
+      <Bold />
+    </div>
+    <div
+      class="tool"
+      class:active={styleState.italic}
+      on:click={() => {
+        htmlEditor.toggleItalic()
+        htmlEditor.focus()
+      }}
+    >
+      <Italic />
+    </div>
     <div class="tool"><Brackets /></div>
     <div class="tool"><Mention /></div>
     <div class="tool"><Emoji /></div>
@@ -370,6 +388,11 @@
         height: 20px;
         opacity: 0.3;
         cursor: pointer;
+
+        &.active {
+          opacity: 0.6;
+        }
+
         &:hover {
           opacity: 1;
         }

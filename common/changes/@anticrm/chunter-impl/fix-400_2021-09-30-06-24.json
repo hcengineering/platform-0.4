@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Fix bold/italic styles",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl"
+}
