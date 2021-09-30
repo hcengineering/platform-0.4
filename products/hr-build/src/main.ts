@@ -39,8 +39,6 @@ async function loadConfiguration (): Promise<PlatformConfiguration> {
 
 async function init (): Promise<void> {
   const config = await loadConfiguration()
-  console.log('config')
-  console.log(config)
   configurePlatform(config)
   setMetadata(login.metadata.AccountsUrl, config.accountsUri)
   setMetadata(meetingPlugin.metadata.ClientUrl, config.meetingsUri)
