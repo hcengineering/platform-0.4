@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Enhance fsm to support ordering",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl"
+}
