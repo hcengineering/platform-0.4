@@ -76,7 +76,7 @@ jobs:
 
     services:
       minio:
-        image: bitnami/minio:latest
+        image: bitnami/minio:2021.6.17
         env:
           MINIO_ACCESS_KEY: minio
           MINIO_SECRET_KEY: miniosecret
