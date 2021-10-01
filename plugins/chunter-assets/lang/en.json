@@ -19,6 +19,11 @@
     "MessageTo": "Message to:",
     "MessageToLabel": "Person",
     "Starred": "Starred",
-    "ReplyInThread": "Reply in thread..."
+    "ReplyInThread": "Reply in thread...",
+    "EditMessage": "Edit",
+    "CopyLink": "Copy link",
+    "DeleteMessage": "Delete",
+    "CancelEdit": "Cancel",
+    "SaveEdit": "Save..."
   }
 }
