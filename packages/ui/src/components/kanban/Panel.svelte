@@ -13,20 +13,29 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { getContext } from 'svelte'
   import type { IntlString } from '@anticrm/status'
 
   import Label from '../Label.svelte'
-  import ScrollBox from '../ScrollBox.svelte'
   import Grid from '../Grid.svelte'
+
+  import { scrollable } from './scrollable'
+  import { hoverable } from './hoverable'
+  import DragWatcher from './drag.watcher'
+  import { ObjectType } from './object.types'
 
   export let title: IntlString
   export let counter: number | undefined
   export let color: string = '#F28469'
+  export let id: string = ''
+  export let disabled: boolean = false
+
+  const dragWatcher = getContext<DragWatcher>('dragWatcher')
 
   let collapsed: boolean = false
 </script>
 
-<section class="panel-kanban" on:dragover on:drop class:collapsed>
+<section class="panel-kanban" class:collapsed class:disabled>
   <div
     class="header"
     class:collapsed
@@ -39,12 +48,18 @@
     <div class="counter">{counter}</div>
   </div>
   {#if collapsed !== true}
-    <div class="scroll">
-      <ScrollBox vertical>
-        <Grid column={1} rowGap={12}>
+    <div class="scroll-container">
+      <div
+        class="scroll"
+        use:scrollable={{ watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
+        use:hoverable={{ id, type: ObjectType.Panel, watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
+        on:dragOver
+        on:dragOverEnd
+      >
+        <Grid column={1} rowGap={0}>
           <slot />
         </Grid>
-      </ScrollBox>
+      </div>
     </div>
   {/if}
 </section>
@@ -61,8 +76,15 @@
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
 
+    transition: opacity 500ms;
+
     &.collapsed {
+      min-width: 80px;
       width: 80px;
+    }
+
+    &.disabled {
+      opacity: 0.4;
     }
   }
 
@@ -103,8 +125,21 @@
     border-radius: 50%;
   }
 
-  .scroll {
-    margin: 12px;
+  .scroll-container {
+    position: relative;
+    width: 100%;
     height: 100%;
+  }
+
+  .scroll {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    padding: 12px;
+
+    overflow-y: auto;
   }
 </style>

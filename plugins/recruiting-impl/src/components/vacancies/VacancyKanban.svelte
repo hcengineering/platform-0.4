@@ -14,50 +14,119 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
+  import core from '@anticrm/core'
+  import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
-  import type { State } from '@anticrm/fsm'
-  import { fsmPlugin as fsm } from '@anticrm/fsm-impl'
+  import { fsmPlugin } from '@anticrm/fsm-impl'
+  import type { FSM, State, Transition } from '@anticrm/fsm'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
-
-  import { Kanban } from '@anticrm/ui'
-  import ApplicantCard from './ApplicantCard.svelte'
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
+  import { Kanban } from '@anticrm/ui'
+
+  import ApplicantCard from './ApplicantCard.svelte'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
 
   const client = getClient()
-
+  const fsmP = getPlugin(fsmPlugin.id)
   let lqApplicants: QueryUpdater<Applicant> | undefined
   let lqStates: QueryUpdater<State> | undefined
+  let lqTransitions: QueryUpdater<Transition> | undefined
+
+  let fsm: FSM | undefined
+  let lqFSM: QueryUpdater<FSM> | undefined
 
   $: if (space._id !== prevSpace) {
     prevSpace = space._id
 
     if (space !== undefined) {
       lqApplicants = client.query(lqApplicants, recruiting.class.Applicant, { space: space._id }, (result) => {
-        items = result
+        applicants = result.map((x) => ({
+          ...x,
+          id: x._id
+        }))
       })
 
-      lqStates = client.query(lqStates, fsm.class.State, { fsm: space.fsm }, (result) => {
-        states = result
+      lqStates = client.query(lqStates, fsmPlugin.class.State, { fsm: space.fsm }, (result) => {
+        rawStates = result
+      })
+
+      lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { _id: space.fsm }, (result) => {
+        fsm = result[0]
+      })
+
+      lqTransitions = client.query(lqTransitions, fsmPlugin.class.Transition, { fsm: space.fsm }, (result) => {
+        const updatedTransitions = new Map<string, Set<string>>()
+
+        result.forEach(({ from, to }) => {
+          const existing = updatedTransitions.get(from) ?? new Set()
+          existing.add(to)
+
+          updatedTransitions.set(from, existing)
+        })
+
+        transitions = updatedTransitions
       })
     }
   }
 
   async function onDrop (event: CustomEvent<any>) {
-    if (space === undefined) {
+    const { item, state, idx } = event.detail
+    const actualItem = applicants.find((x) => x._id === item)
+
+    if (!actualItem) {
       return
     }
 
-    const { item, state } = event.detail
+    const fsm = await fsmP
 
-    await client.updateDoc(recruiting.class.Applicant, space._id, item, { state })
+    await fsm.moveItem(actualItem, { prev: actualItem.state, actual: state }, idx)
   }
 
-  let items: Applicant[] = []
+  async function onStateReorder (event: CustomEvent<any>) {
+    if (fsm === undefined) {
+      return
+    }
+
+    const { item, idx } = event.detail
+    const filteredStates = fsm.states.filter((x) => x !== item)
+    const updatedStates = [...filteredStates.slice(0, idx), item, ...filteredStates.slice(idx)]
+
+    await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, space.fsm, {
+      states: updatedStates
+    })
+  }
+
+  let applicants: Applicant[] = []
+  let rawStates: State[] = []
+  let transitions: Map<string, Set<string>> = new Map()
+
+  let items = new Map<string, Applicant[]>()
+  $: items = new Map<string, Applicant[]>(
+    rawStates.map(
+      (state) =>
+        [
+          state._id,
+          state.items
+            .map((itemID) => applicants.find((x) => x._id === itemID))
+            .filter((item): item is Applicant => item !== undefined)
+        ] as [string, Applicant[]]
+    )
+  )
+
   let states: State[] = []
+  $: states =
+    fsm?.states.map((stateID) => rawStates.find((x) => x._id === stateID)).filter((x): x is State => x !== undefined) ??
+    []
 </script>
 
-<Kanban {items} {states} cardComponent={ApplicantCard} on:drop={onDrop} />
+<Kanban
+  {items}
+  {states}
+  {transitions}
+  cardComponent={ApplicantCard}
+  on:drop={onDrop}
+  on:stateReorder={onStateReorder}
+/>

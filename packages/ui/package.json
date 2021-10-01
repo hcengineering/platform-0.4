@@ -40,9 +40,7 @@
     "svelte-check": "^2.1.0",
     "eslint-svelte3-preprocess": "~0.0.5",
     "svelte-preprocess": "^4.7.0",
-    "svelte-loader": "^3.1.0",
-
-    "@types/lodash.debounce": "~4.0.6"
+    "svelte-loader": "^3.1.0"
   },
   "dependencies": {
     "@anticrm/platform": "~0.4.2",
@@ -52,7 +50,6 @@
     "@anticrm/text": "~0.4.0",
     "@anticrm/richeditor": "~0.4.0",
     "@anticrm/core": "~0.4.0",    
-    "@anticrm/router": "~0.4.0",
-    "lodash.debounce":"~4.0.8"
+    "@anticrm/router": "~0.4.0"
   }
 }

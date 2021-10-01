@@ -43,7 +43,7 @@
     prevQuery = query
 
     lq = client.query(lq, task.class.Task, query, (result) => {
-      items = result.map((item) => ({
+      tasks = result.map((item) => ({
         ...item,
         state: statusByName.get(item.status) ?? ''
       }))
@@ -53,14 +53,17 @@
   async function onDrop (event: CustomEvent<any>) {
     const { item, state } = event.detail
     const tState = state as keyof typeof TaskStatuses
-    const doc = items.find((p) => p._id === item)
+    const doc = tasks.find((p) => p._id === item)
 
     await client.updateDoc<Task>(doc!._class, doc!.space, item, {
       status: TaskStatuses[tState]
     })
   }
 
-  let items: (Task & { state: string })[] = []
+  type TaskItem = Task & { state: string }
+  let tasks: TaskItem[] = []
+  let items = new Map<string, TaskItem[]>()
+  $: items = new Map(states.map((state) => [state._id, tasks.filter((task) => task.state === state._id)]))
 </script>
 
-<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop} />
+<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop} panelDragDisabled={true} />
