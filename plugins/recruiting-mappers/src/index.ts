@@ -40,7 +40,7 @@ async function createFeedback (feedback: Feedback, d: DerivedDataDescriptor<Doc,
   ]
 }
 
-export default (): void => {
+export default async (): Promise<void> => {
   registerMapper(recruiting.mapper.Feedback, {
     map: async (tx: Tx, options: MappingOptions): Promise<DerivedData[]> => {
       if (tx._class === core.class.TxCreateDoc) {

@@ -64,6 +64,8 @@ export interface MappingRule {
 export interface CollectionRule {
   sourceField: string // A field reference to source object.
   targetField: string // A source field collection we need to push our _id inside.
+
+  lastModifiedField?: string // If specified, will update lastModified field in target class to value of modifiedOn of current document.
   /**
    * A value pattern to match source field
    * must capture id field
@@ -86,7 +88,7 @@ export interface CollectionRule {
  */
 export interface DerivedDataDescriptor<T extends Doc, D extends Doc> extends Doc {
   sourceClass: Ref<Class<T>> // Defined for instances of this class.
-  targetClass: Ref<Class<D>> // A derived data class to produce.
+  targetClass?: Ref<Class<D>> // A derived data class to produce. If not specified, only mappers are allowed.
 
   initiValue?: Partial<Data<D>> // Initial value for derived data instance.
   query?: DocumentQuery<T> // A query filter to match source object.

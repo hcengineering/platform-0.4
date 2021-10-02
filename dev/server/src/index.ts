@@ -36,9 +36,9 @@ const defaultWorkspace = 'workspace'
 const defaultWorkspaceOrg = 'Horses inc'
 
 async function start (): Promise<void> {
-  regCalendarMappers()
-  regRecruitingMappers()
-  regNotificationMappers()
+  await regCalendarMappers()
+  await regRecruitingMappers()
+  await regNotificationMappers()
   await regCalendarActions()
   await regRecruitingActions()
 
@@ -60,6 +60,7 @@ async function start (): Promise<void> {
     s.shutdown()
     void shutdown()
     void authShutdown()
+    fileServer.shutdown()
   }
   process.on('SIGINT', close)
   process.on('SIGTERM', close)

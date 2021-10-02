@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '@anticrm/core'
+import type { Account, Class, Doc, DocumentMapper, FullRefString, Ref, Space, Timestamp } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { AnyComponent, Asset, IntlString } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 
 export interface ChannelAccountPreferences {
   favourite: boolean
@@ -46,6 +46,9 @@ export interface WithMessage extends Doc {
 
 export interface Message extends WithMessage {
   comments?: CommentRef[]
+
+  // Derived value, updated by any comment add/modification.
+  lastModified?: Timestamp
 }
 
 export interface Comment extends WithMessage {
@@ -106,7 +109,8 @@ export default plugin(
       CopyLink: '' as IntlString,
       DeleteMessage: '' as IntlString,
       CancelEdit: '' as IntlString,
-      SaveEdit: '' as IntlString
+      SaveEdit: '' as IntlString,
+      MoreReplies: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,
@@ -119,10 +123,14 @@ export default plugin(
       MessageView: '' as AnyComponent,
       ReferenceInput: '' as AnyComponent,
       Channel: '' as AnyComponent,
-      References: '' as AnyComponent
+      References: '' as AnyComponent,
+      AllThreadsView: '' as AnyComponent
     },
     account: {
       Chunterbot: '' as Ref<Account>
+    },
+    mapper: {
+      MessageLastModified: '' as Resource<DocumentMapper>
     }
   }
 )

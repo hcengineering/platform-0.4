@@ -15,44 +15,59 @@
 //
 
 import type { Doc } from './classes'
-import { checkLikeQuery, nestedDotQueryCheck } from './query'
+import { checkLikeQuery, getNestedValue } from './query'
 
 /**
  * @public
  */
 export type Predicate = (docs: Doc[]) => Doc[]
-type PredicateFactory = (pred: any, propertyKey: string | undefined) => Predicate
+type PredicateFactory = (pred: any, propertyKey: string) => Predicate
 
 const predicates: Record<string, PredicateFactory> = {
-  $in: (o: any, propertyKey: string | undefined): Predicate => {
+  $in: (o: any, propertyKey: string): Predicate => {
     if (!Array.isArray(o)) {
       throw new Error('$in predicate requires array')
     }
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        if (o.includes(propertyKey !== undefined ? (doc as any)[propertyKey] : doc)) result.push(doc)
+        if (o.includes(getNestedValue(propertyKey, doc))) result.push(doc)
       }
       return result
     }
   },
 
-  $like: (query: string, propertyKey: string | undefined): Predicate => {
+  $like: (query: string, propertyKey: string): Predicate => {
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        const value = propertyKey !== undefined ? (doc as any)[propertyKey] : doc
+        const value = getNestedValue(propertyKey, doc)
         if (checkLikeQuery(value, query)) result.push(doc)
       }
       return result
     }
   },
-  $ne: (query: any, propertyKey: string | undefined): Predicate => {
+  $ne: (query: any, propertyKey: string): Predicate => {
     return (docs: Doc[]): Doc[] => {
       const result: Doc[] = []
       for (const doc of docs) {
-        const value = propertyKey !== undefined ? (doc as any)[propertyKey] : doc
-        if (query !== value && (propertyKey === undefined || !nestedDotQueryCheck(propertyKey, doc, query))) {
+        const value = getNestedValue(propertyKey, doc)
+        if (query !== value) {
+          result.push(doc)
+        }
+      }
+      return result
+    }
+  },
+  $exists: (query: boolean, propertyKey: string): Predicate => {
+    return (docs: Doc[]): Doc[] => {
+      const result: Doc[] = []
+      for (const doc of docs) {
+        const value = getNestedValue(propertyKey, doc)
+        if (query && value != null) {
+          result.push(doc)
+        }
+        if (!query && (value === null || value === undefined)) {
           result.push(doc)
         }
       }
@@ -72,7 +87,7 @@ export function isPredicate (o: Record<string, any>): boolean {
 /**
  * @public
  */
-export function createPredicates (o: Record<string, any>, propertyKey: string | undefined): Predicate[] {
+export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
   const keys = Object.keys(o)
   const result: Predicate[] = []
   for (const key of keys) {

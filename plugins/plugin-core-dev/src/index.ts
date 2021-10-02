@@ -19,6 +19,7 @@ import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { ClientImpl } from './connection'
 import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 
 /*!
@@ -49,8 +50,9 @@ export default async (): Promise<CoreService> => {
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)
-      regCalendarMappers()
-      regNotificationMappers()
+      await regCalendarMappers()
+      await regNotificationMappers()
+      await regRecruitingMappers()
     }
     return client
   }

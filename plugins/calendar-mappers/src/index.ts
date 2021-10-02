@@ -36,7 +36,7 @@ async function createEvent (event: Event, participant: Ref<Account>, d: DerivedD
   ]
 }
 
-export default (): void => {
+export default async (): Promise<void> => {
   registerMapper(calendar.mapper.defaultMapper, {
     map: async (tx: Tx, options: MappingOptions): Promise<DerivedData[]> => {
       if (tx._class === core.class.TxCreateDoc) {

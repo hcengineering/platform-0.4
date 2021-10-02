@@ -49,7 +49,7 @@ function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
     if (arr !== undefined) {
       let pulled: any[] = []
       if (isPredicate(keyval[key])) {
-        const preds = createPredicates(keyval[key], undefined)
+        const preds = createPredicates(keyval[key], '')
         let temp = copy(arr)
         for (const pred of preds) {
           temp = pred(temp)

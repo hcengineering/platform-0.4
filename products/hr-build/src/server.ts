@@ -7,6 +7,12 @@ import { createServer } from 'https'
 import { config, readCertificates } from './config'
 import builder from './model'
 
+import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regCalendarActions from '@anticrm/calendar-action'
+import regNotificationMappers from '@anticrm/notification-mappers'
+
 async function initWorkspace (): Promise<void> {
   const client = await getMongoClient(config.dbUri)
   const db = client.db('accounts')
@@ -36,6 +42,12 @@ async function start (): Promise<void> {
   await initWorkspace()
 
   const security = readCertificates()
+
+  await regCalendarMappers()
+  await regRecruitingMappers()
+  await regNotificationMappers()
+  await regCalendarActions()
+  await regRecruitingActions()
 
   const appServer: Server = await startServer(undefined, config.appPort, config.appSecret, {
     logRequests: false,

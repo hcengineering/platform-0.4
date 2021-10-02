@@ -38,6 +38,7 @@
     "@anticrm/query":"~0.4.0",
     "@anticrm/rpc":"~0.4.1",
     "@anticrm/calendar-mappers": "~0.4.0",
-    "@anticrm/notification-mappers": "~0.4.0"
+    "@anticrm/notification-mappers": "~0.4.0",
+    "@anticrm/recruiting-mappers": "~0.4.0"
   }
 }
