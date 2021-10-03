@@ -76,10 +76,10 @@ jobs:
 
     services:
       minio:
-        image: bitnami/minio:2021.6.17
+        image: minio/minio:2021.6.17
         env:
-          MINIO_ACCESS_KEY: minio
-          MINIO_SECRET_KEY: miniosecret
+          MINIO_ACCESS_KEY: minioadmin
+          MINIO_SECRET_KEY: minioadmin
         ports:
           - 9000:9000
         options: --name minio-server

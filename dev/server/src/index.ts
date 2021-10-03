@@ -46,14 +46,17 @@ async function start (): Promise<void> {
 
   const security: SecurityOptions = {
     key: readFileSync('../certificates/cert.key').toString(),
-    cert: readFileSync('../certificates/cert.crt').toString()
+    cert: readFileSync('../certificates/cert.crt').toString(),
+    ca: readFileSync('../certificates/RootCA.crt').toString()
   }
 
   const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true, security })
+  const fileServer = startFileServer(18082, 'secret', security)
 
   const { accounts, shutdown: authShutdown } = await startAuthServer(3000, dbUri, 'secret', security)
 
   const close = (): void => {
+    fileServer.shutdown()
     s.shutdown()
     void shutdown()
     void authShutdown()
@@ -62,7 +65,6 @@ async function start (): Promise<void> {
   process.on('SIGTERM', close)
   process.on('exit', close)
 
-  startFileServer(18082, 'secret', security)
 
   // Create a demo account and workspace if it is missing.
 

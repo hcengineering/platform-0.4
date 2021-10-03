@@ -79,7 +79,12 @@ docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsear
 
 ```bash
 
-docker run -p 9000:9000 -p 9001:9001 bitnami/minio:latest
+docker run -d -p 9000:9000 -p 9001:9001 \
+  -v {pathToRepos}/dev/certificates/cert.crt:/root/.minio/certs/public.crt \
+  -v {pathToRepos}/dev/certificates/cert.key:/root/.minio/certs/private.key \
+  -v {pathToRepos}/dev/certificates/cert.crt:/root/.minio/certs/CAs/public.crt \
+  minio/minio server /data \
+  --console-address ":9001"
 
 ```
 

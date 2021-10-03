@@ -46,9 +46,9 @@ export const config: ProductConfiguration = {
   appSecret: process.env.SERVER_SECRET ?? 'secret',
 
   dbUri: process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
-  s3Uri: process.env.S3_URI ?? 'http://127.0.0.1:9000',
-  s3AccessKey: process.env.S3_ACCESS_KEY ?? 'minio',
-  s3Secret: process.env.S3_SECRET ?? 'miniosecret',
+  s3Uri: process.env.S3_URI ?? 'https://127.0.0.1:9000',
+  s3AccessKey: process.env.S3_ACCESS_KEY ?? 'minioadmin',
+  s3Secret: process.env.S3_SECRET ?? 'minioadmin',
 
   workspace: process.env.WORKSPACE ?? 'workspace',
   organization: process.env.WORKSPACE_ORGANIZATION ?? 'workspace description',

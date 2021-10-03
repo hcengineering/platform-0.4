@@ -38,7 +38,8 @@ export function createFileServer (
   tokenSecret: string,
   uri: string,
   accessKey: string,
-  secret: string
+  secret: string,
+  ca?: string
 ): FileServer {
   router.post('/file', async (ctx: Context) => {
     const token = (ctx.header.token ?? '') as string
@@ -64,7 +65,7 @@ export function createFileServer (
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     const link = await storage.getUploadLink(space + key, request.type)
     ctx.status = 200
     ctx.set('Content-Type', 'text/plain')
@@ -89,7 +90,7 @@ export function createFileServer (
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     await storage.remove(space + key)
     ctx.status = 200
   })
@@ -111,7 +112,7 @@ export function createFileServer (
       ctx.body = 'Unauthorized'
       return
     }
-    const storage = await getStorage(workspaceId, uri, accessKey, secret)
+    const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     const link = await storage.getDownloadLink(space + key, fileName)
     ctx.redirect(link)
   })
@@ -135,10 +136,10 @@ async function checkSecurity (accountId: Ref<Account>, workspaceId: string, spac
   return allowed.has(space)
 }
 
-async function getStorage (workspaceId: string, uri: string, accessKey: string, secret: string): Promise<S3Storage> {
+async function getStorage (workspaceId: string, uri: string, accessKey: string, secret: string, ca?: string): Promise<S3Storage> {
   let storage = storages.get(workspaceId)
   if (storage === undefined) {
-    storage = await S3Storage.create(accessKey, secret, uri, workspaceId)
+    storage = await S3Storage.create(accessKey, secret, uri, workspaceId, ca)
     storages.set(workspaceId, storage)
   }
   return storage

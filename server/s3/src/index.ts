@@ -14,6 +14,7 @@
 //
 
 import { S3 } from 'aws-sdk'
+import https from 'https'
 
 /**
  * @public
@@ -27,9 +28,12 @@ export class S3Storage {
   private readonly client: S3
   private readonly bucket: string
 
-  private constructor (accessKey: string, secret: string, endpoint: string, bucket: string) {
+  private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca: string | undefined) {
     this.bucket = bucket
     this.client = new S3({
+      httpOptions: {
+        agent: new https.Agent({ ca: ca })
+      },
       accessKeyId: accessKey,
       secretAccessKey: secret,
       endpoint: endpoint,
@@ -39,15 +43,18 @@ export class S3Storage {
     })
   }
 
-  static async create (accessKey: string, secret: string, endpoint: string, bucket: string): Promise<S3Storage> {
-    const storage = new S3Storage(accessKey, secret, endpoint, bucket)
+  static async create (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string): Promise<S3Storage> {
+    const storage = new S3Storage(accessKey, secret, endpoint, bucket, ca)
     await storage.createBucket()
     return storage
   }
 
   private async createBucket (): Promise<void> {
     return await new Promise((resolve, reject) => {
-      this.client.createBucket({ Bucket: this.bucket }, () => {
+      this.client.createBucket({ Bucket: this.bucket }, (err, data) => {
+        if (err !== null && err.code !== 'BucketAlreadyOwnedByYou') {
+          reject(err.message)
+        }
         resolve()
       })
     })
