@@ -26,7 +26,7 @@ export function findProperty<P> (objects: Doc[], propertyKey: string, value: P):
     return objects
   }
   return isPredicate(value)
-    ? finPropertyPredicate<P>(value, propertyKey, objects)
+    ? findPropertyPredicate<P>(value, propertyKey, objects)
     : findPropertyValue<P>(objects, propertyKey, value)
 }
 
@@ -41,7 +41,7 @@ function findPropertyValue<P> (objects: Doc[], propertyKey: string, value: P): D
   return result
 }
 
-function finPropertyPredicate<P> (value: P, propertyKey: string, objects: Doc[]): Doc[] {
+function findPropertyPredicate<P> (value: P, propertyKey: string, objects: Doc[]): Doc[] {
   const preds = createPredicates(value, propertyKey)
   for (const pred of preds) {
     objects = pred(objects)
