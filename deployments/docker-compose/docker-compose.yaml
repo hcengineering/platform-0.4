@@ -37,6 +37,7 @@ services:
     restart: unless-stopped
   minio:
     image: 'minio/minio'
+    command: server /data --address ":9000" --console-address ":9001"
     ports:
       - 9000:9000
     volumes:
