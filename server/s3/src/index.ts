@@ -32,7 +32,7 @@ export class S3Storage {
     this.bucket = bucket
     this.client = new S3({
       httpOptions: {
-        agent: new https.Agent({ ca: ca })
+        agent: /* istanbul ignore next */ ca === undefined ? undefined : new https.Agent({ ca: ca })
       },
       accessKeyId: accessKey,
       secretAccessKey: secret,
@@ -58,6 +58,7 @@ export class S3Storage {
   private async createBucket (): Promise<void> {
     return await new Promise((resolve, reject) => {
       this.client.createBucket({ Bucket: this.bucket }, (err, data) => {
+        /* istanbul ignore next */
         if (err !== null && err.code !== 'BucketAlreadyOwnedByYou') {
           reject(err.message)
         }
