@@ -28,11 +28,19 @@ export class S3Storage {
   private readonly client: S3
   private readonly bucket: string
 
-  private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca: string | undefined) {
+  private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string) {
     this.bucket = bucket
     this.client = new S3({
       httpOptions: {
-        agent: /* istanbul ignore next */ ca === undefined ? undefined : new https.Agent({ ca: ca })
+        agent: /* istanbul ignore next */ ca === undefined
+          ? undefined
+          : new https.Agent({
+            ca: ca,
+            rejectUnauthorized: false,
+            checkServerIdentity: (host, cert) => {
+              return undefined
+            }
+          })
       },
       accessKeyId: accessKey,
       secretAccessKey: secret,

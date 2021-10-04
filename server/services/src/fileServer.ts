@@ -65,8 +65,10 @@ export function createFileServer (
       ctx.body = 'Unauthorized'
       return
     }
+    console.info('Contacting S3 at ', uri)
     const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     const link = await storage.getUploadLink(space + key, request.type)
+    console.info('S3 upload link at ', link)
     ctx.status = 200
     ctx.set('Content-Type', 'text/plain')
     ctx.set('Content-Encoding', 'identity')
