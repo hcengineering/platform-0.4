@@ -14,8 +14,7 @@
 //
 
 import login, { ACCOUNT_KEY, LoginInfo, LoginService, SignupDetails } from '@anticrm/login'
-import { broadcastEvent, getMetadata, setMetadata, setResource } from '@anticrm/platform'
-import pluginCore from '@anticrm/plugin-core'
+import { broadcastEvent, getMetadata, setResource } from '@anticrm/platform'
 import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
 import { Request, Response, serialize } from '@anticrm/rpc'
 import LoginApp from './components/LoginApp.svelte'
@@ -33,15 +32,12 @@ export default async (): Promise<LoginService> => {
   async function setLoginInfo (loginInfo: LoginInfo): Promise<void> {
     localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
 
-    setMetadata(pluginCore.metadata.Token, loginInfo.token)
     await broadcastEvent('Token', loginInfo.token)
   }
 
-  function clearLoginInfo (): void {
+  async function clearLoginInfo (): Promise<void> {
     localStorage.removeItem(ACCOUNT_KEY)
-
-    setMetadata(pluginCore.metadata.Token, undefined)
-    setMetadata(pluginCore.metadata.AccountId, undefined)
+    await broadcastEvent('Token', undefined)
   }
 
   async function getLoginInfo (): Promise<LoginInfo | undefined> {
@@ -146,8 +142,7 @@ export default async (): Promise<LoginService> => {
   }
 
   async function doLogout (): Promise<void> {
-    clearLoginInfo()
-    return await Promise.resolve()
+    return await clearLoginInfo()
   }
 
   return {

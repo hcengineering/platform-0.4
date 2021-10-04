@@ -36,13 +36,13 @@ setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
 setMetadata(pluginCore.metadata.ClientUrl, clientUri)
 
 addEventListener('Token', async (event, data) => {
+  setMetadata(pluginCore.metadata.Token, data)
   const attachmentPlugin = await getPlugin(attachment.id)
   await attachmentPlugin.authorize(data)
 })
 
 const loginInfo = currentAccount()
 if (loginInfo !== undefined) {
-  setMetadata(pluginCore.metadata.Token, loginInfo.token)
   void broadcastEvent('Token', loginInfo.token)
 }
 
