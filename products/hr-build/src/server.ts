@@ -61,15 +61,7 @@ async function start (): Promise<void> {
   const port = appServer.address().port
 
   const auth = await newAuthServer(config.dbUri, koa, router, config.appSecret)
-  const file = createFileServer(
-    koa,
-    router,
-    config.appSecret,
-    config.s3Uri,
-    config.s3AccessKey,
-    config.s3Secret,
-    security.ca
-  )
+  const file = createFileServer(koa, router, config.appSecret, config.s3Uri, config.s3AccessKey, config.s3Secret)
 
   koa.use(logger)
   koa.use(router.routes()).use(router.allowedMethods())
