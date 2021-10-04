@@ -59,12 +59,12 @@
   <MessageViewer {message} showReferences={false} thread={true} notifications={undefined} />
   <div class="flex-between">
     {#if channel}
-      <div class="channel msg-ref" on:click={() => router.navigate({ app: chunterApp, space: channel?._id })}>
+      <div class="channel link-text" on:click={() => router.navigate({ app: chunterApp, space: channel?._id })}>
         <SpaceItem space={channel} />
       </div>
     {/if}
     {#if replyOf}
-      <div class="msg-ref" on:click={() => selectDocument(replyOf)}>View conversation</div>
+      <div class="link-text" on:click={() => selectDocument(replyOf)}>View conversation</div>
     {/if}
   </div>
 {/if}
@@ -74,21 +74,5 @@
     margin: 10px;
     display: flex;
     flex-direction: column;
-  }
-  .msg-ref {
-    color: var(--theme-content-color);
-    white-space: nowrap;
-    opacity: 0.6;
-
-    &:hover {
-      opacity: 1;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    &:active {
-      opacity: 1;
-      text-decoration: underline;
-      cursor: pointer;
-    }
   }
 </style>

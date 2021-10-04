@@ -30,7 +30,6 @@ export default mergeIds(chunter, {
   component: {
     CreateChannel: '' as AnyComponent,
     CreateMessage: '' as AnyComponent,
-    AllThreadsView: '' as AnyComponent,
     SpaceItem: '' as AnyComponent,
     SpaceHeader: '' as AnyComponent
   },
@@ -50,6 +49,8 @@ export default mergeIds(chunter, {
     CommentReferences: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     MessageSpaceNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    CommentSpaceNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    CommentSpaceNotifications: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+
+    MessageLastModified: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   }
 })

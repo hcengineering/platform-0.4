@@ -22,8 +22,6 @@
   $: translation = translate(label, params)
 </script>
 
-{#await translation}
-  {label}
-{:then text}
+{#await translation then text}
   {text}
 {/await}

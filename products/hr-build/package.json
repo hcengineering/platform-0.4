@@ -111,6 +111,11 @@
     "@anticrm/attachment": "~0.4.0",
     "@anticrm/attachment-assets": "~0.4.0",
     "@anticrm/attachment-impl": "~0.4.0",
-    "@anticrm/model-attachment": "~0.4.0"
+    "@anticrm/model-attachment": "~0.4.0",
+    "@anticrm/calendar-mappers": "~0.4.0",
+    "@anticrm/recruiting-mappers": "~0.4.0",
+    "@anticrm/notification-mappers": "~0.4.0",
+    "@anticrm/recruiting-action": "~0.4.0",
+    "@anticrm/calendar-action": "~0.4.0"
   }
 }

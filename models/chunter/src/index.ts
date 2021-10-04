@@ -14,7 +14,7 @@
 //
 
 import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
-import { Domain, FullRefString, PresentationMode, Ref } from '@anticrm/core'
+import { Domain, FullRefString, PresentationMode, Ref, Timestamp } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
@@ -44,6 +44,7 @@ export class TChannel extends TSpace implements Channel {
 export class TMessage extends TDoc implements Message {
   message!: string
   comments!: CommentRef[]
+  lastModified!: Timestamp
 }
 
 /**
@@ -94,7 +95,7 @@ export function createModel (builder: Builder): void {
           {
             id: 'threads',
             label: chunter.string.ThreadsSpecial,
-            component: chunter.component.ThreadsView,
+            component: chunter.component.AllThreadsView,
             icon: chunter.icon.Hashtag
           }
         ],
@@ -205,6 +206,7 @@ export function createModel (builder: Builder): void {
     },
     chunter.dd.MessageReferences
   )
+
   builder.createDoc(
     core.class.DerivedDataDescriptor,
     {
@@ -232,6 +234,7 @@ export function createModel (builder: Builder): void {
         {
           sourceField: 'replyOf',
           targetField: 'comments',
+          lastModifiedField: 'lastModified',
           rules: [
             {
               sourceField: 'modifiedBy',

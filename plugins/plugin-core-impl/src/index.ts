@@ -19,6 +19,7 @@ import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { connect as connectBrowser } from './connection'
 import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
 
 let client: Client | undefined
@@ -38,6 +39,7 @@ async function doConnect (tx: TxHandler): Promise<CoreClient> {
 
 async function getClient (): Promise<Client> {
   if (client === undefined) {
+    console.log('Connecting to server')
     const storage = await createClient(doConnect, (tx) => {
       liveQuery?.notifyTx(tx).catch((err) => console.error(err))
     })
@@ -46,8 +48,10 @@ async function getClient (): Promise<Client> {
 
     liveQuery = new LiveQuery(storage)
     client = withOperations(accountId, liveQuery)
-    regCalendarMappers()
-    regNotificationMappers()
+    await regCalendarMappers()
+    await regNotificationMappers()
+    await regRecruitingMappers()
+    console.log('Registration complete')
   }
   return client
 }

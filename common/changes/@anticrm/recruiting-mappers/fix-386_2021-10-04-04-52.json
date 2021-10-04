@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Chunter Threads support",
+      "type": "patch",
+      "packageName": "@anticrm/recruiting-mappers"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-mappers",
+  "email": "haiodo@gmail.com"
+}
