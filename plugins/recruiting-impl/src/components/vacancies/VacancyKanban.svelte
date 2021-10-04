@@ -91,8 +91,9 @@
     }
 
     const { item, idx } = event.detail
-    const filteredStates = fsm.states.filter((x) => x !== item)
-    const updatedStates = [...filteredStates.slice(0, idx), item, ...filteredStates.slice(idx)]
+    const updatedStates = [...fsm.states.slice(0, idx), item, ...fsm.states.slice(idx)].filter(
+      (x, i) => x !== item || i === idx
+    )
 
     await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, space.fsm, {
       states: updatedStates

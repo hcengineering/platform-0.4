@@ -126,17 +126,40 @@
   function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
     const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
     const item = e.detail.hoveredItems.find((x) => x.type === ObjectType.Card)
-    const targetItems = items.get(panel?.id ?? '')
+    const targetState = panel?.id
+    const origState = cardDragData?.item.state
+
+    if (targetState === undefined || origState === undefined) {
+      cardDragData = undefined
+      e.detail.reset()
+      return
+    }
+
+    const targetItems = items.get(targetState)
+    const origItems = items.get(origState)
+    const targetItem = origItems?.find((x) => x._id === e.detail.id)
 
     cardDragData = undefined
 
-    if (panel === undefined || targetItems === undefined) {
+    if (panel === undefined || targetItems === undefined || origItems === undefined || targetItem === undefined) {
       e.detail.reset()
       return
     }
 
     const itemIdx = targetItems.findIndex((x) => x._id === item?.id)
     const idx = item === undefined || itemIdx < -1 ? targetItems.length : item.state.bottom ? itemIdx + 1 : itemIdx
+
+    if (targetState !== origState) {
+      const updatedOrigItems = origItems?.filter((x) => x._id !== targetItem._id)
+      items.set(origState, updatedOrigItems)
+    }
+
+    const updatedTargetItems = [...targetItems.slice(0, idx), targetItem, ...targetItems.slice(idx)].filter(
+      (x, i) => x._id !== targetItem._id || idx === i
+    )
+
+    items.set(targetState, updatedTargetItems)
+    items = items
 
     dispatch('drop', { item: e.detail.id, idx, state: panel.id })
   }
@@ -183,22 +206,18 @@
   function onPanelDragEnd (e: CustomEvent<DragEndEvent>) {
     const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
     const root = e.detail.hoveredItems.find((x) => x.type === ObjectType.Root)
+    const state = states.find((x) => x._id === panelDragData?.id)
 
-    if (panel === undefined) {
+    if (root === undefined || state === undefined) {
       panelDragData = undefined
-
-      if (root !== undefined) {
-        dispatch('stateReorder', { item: e.detail.id, idx: states.length - 1 })
-      } else {
-        e.detail.reset()
-      }
-
+      e.detail.reset()
       return
     }
 
-    // TODO: Adjust logic to be the same as for cards or vice versa
-    const itemIdx = states.filter((x) => x._id !== panelDragData?.id).findIndex((x) => x._id === panel.id)
-    const idx = panel.state.right ? itemIdx + 1 : itemIdx
+    const itemIdx = states.findIndex((x) => x._id === panel?.id)
+    const idx = itemIdx === -1 ? states.length : itemIdx + (panel?.state.right ?? false ? 1 : 0)
+
+    states = [...states.slice(0, idx), state, ...states.slice(idx)].filter((x, i) => x._id !== state._id || i === idx)
 
     dispatch('stateReorder', { item: e.detail.id, idx })
 
