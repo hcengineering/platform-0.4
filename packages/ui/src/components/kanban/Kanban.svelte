@@ -1,48 +1,39 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
-// 
+// Copyright © 2021 Anticrm Platform Contributors.
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
 <script lang="ts">
   import { createEventDispatcher, setContext } from 'svelte'
+  import { writable } from 'svelte/store'
 
   import { generateId } from '@anticrm/core'
-  import type { IntlString, UIComponent } from '@anticrm/status'
+  import type { UIComponent } from '@anticrm/status'
+
+  import type { KanbanItem, KanbanState } from '../../types'
+
+  import Panel from './Panel.svelte'
 
   import { draggable } from './draggable'
   import type { DragStartEvent, DragEndEvent } from './draggable'
   import { scrollable } from './scrollable'
-
-  import Panel from './Panel.svelte'
-  import Card from './Card.svelte'
   import DragWatcher from './drag.watcher'
   import type { DragOverEndEvent, DragOverEvent } from './hoverable'
   import { hoverable } from './hoverable'
   import type { State as HoverState } from './utils'
   import { ObjectType } from './object.types'
 
-  interface State {
-    _id: string
-    name: IntlString | string
-    color?: string
-  }
-
-  interface Item {
-    _id: string
-    state: string
-  }
-
-  export let items: Map<string, Item[]>
-  export let states: State[] = []
+  export let items: Map<string, KanbanItem[]>
+  export let states: KanbanState[] = []
   export let transitions: Map<string, Set<string>> | undefined = undefined
   export let cardComponent: UIComponent
 
@@ -52,23 +43,14 @@
   const dragWatcher = new DragWatcher()
   setContext('dragWatcher', dragWatcher)
 
+  const dragCardSize = writable({ width: 0, height: 0 })
+  setContext('dragCardSize', dragCardSize)
+
   const dispatch = createEventDispatcher()
 
-  let actualItems: Item[][] = []
+  let actualItems: KanbanItem[][] = []
   $: actualItems = states.map((state) => items.get(state._id) ?? [])
 
-  let cardDragData:
-    | {
-        id: string
-        item: Item
-        size: DragStartEvent['size']
-        over: {
-          card?: string
-          state?: HoverState
-          panel?: string
-        }
-      }
-    | undefined
   let panelDragData:
     | {
         id: string
@@ -79,20 +61,6 @@
         }
       }
     | undefined
-
-  let cardShiftIdx = Infinity
-  $: if (cardDragData?.over?.card !== undefined) {
-    const targetItems = items.get(cardDragData.over.panel ?? '') ?? []
-    const cardIdx = targetItems.findIndex((x) => x._id === cardDragData?.over.card)
-
-    if (cardIdx === -1) {
-      cardShiftIdx = Infinity
-    } else {
-      cardShiftIdx = cardIdx + (cardDragData?.over.state?.bottom ? 1 : 0)
-    }
-  } else {
-    cardShiftIdx = Infinity
-  }
 
   let panelShiftIdx = Infinity
   $: if (panelDragData?.over?.panel !== undefined) {
@@ -107,30 +75,21 @@
     panelShiftIdx = Infinity
   }
 
+  let dragItemState: string | undefined
+
   function onCardDragStart (e: CustomEvent<DragStartEvent>) {
-    const item = items.get(e.detail.ctx?.state)?.find((x) => x._id === e.detail.id)
-
-    if (item === undefined) {
-      return
-    }
-
-    cardDragData = {
-      ...(cardDragData ?? {}),
-      id: e.detail.id,
-      item,
-      size: e.detail.size,
-      over: {}
-    }
+    dragCardSize.set(e.detail.size)
+    dragItemState = e.detail.ctx.state
   }
 
   function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
+    dragItemState = undefined
     const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
     const item = e.detail.hoveredItems.find((x) => x.type === ObjectType.Card)
     const targetState = panel?.id
-    const origState = cardDragData?.item.state
+    const origState = e.detail.ctx.state
 
     if (targetState === undefined || origState === undefined) {
-      cardDragData = undefined
       e.detail.reset()
       return
     }
@@ -138,8 +97,6 @@
     const targetItems = items.get(targetState)
     const origItems = items.get(origState)
     const targetItem = origItems?.find((x) => x._id === e.detail.id)
-
-    cardDragData = undefined
 
     if (panel === undefined || targetItems === undefined || origItems === undefined || targetItem === undefined) {
       e.detail.reset()
@@ -162,36 +119,6 @@
     items = items
 
     dispatch('drop', { item: e.detail.id, idx, state: panel.id })
-  }
-
-  function onCardDragOver (e: CustomEvent<DragOverEvent>) {
-    if (cardDragData === undefined) {
-      return
-    }
-
-    cardDragData = {
-      ...cardDragData,
-      over: {
-        ...(cardDragData.over ?? {}),
-        card: e.detail.id,
-        state: e.detail.state
-      }
-    }
-  }
-
-  function onCardDragOverEnd (e: CustomEvent<DragOverEndEvent>) {
-    if (cardDragData === undefined || cardDragData.over.card !== e.detail.id) {
-      return
-    }
-
-    cardDragData = {
-      ...cardDragData,
-      over: {
-        ...(cardDragData.over ?? {}),
-        card: undefined,
-        state: undefined
-      }
-    }
   }
 
   function onPanelDragStart (e: CustomEvent<DragStartEvent>) {
@@ -225,72 +152,40 @@
   }
 
   function onPanelDragOver (e: CustomEvent<DragOverEvent>) {
-    if (e.detail.type === ObjectType.Card) {
-      if (cardDragData === undefined) {
-        return
-      }
-
-      cardDragData = {
-        ...cardDragData,
-        over: {
-          ...(cardDragData.over ?? {}),
-          panel: e.detail.id
-        }
-      }
+    if (panelDragData === undefined) {
+      return
     }
 
-    if (e.detail.type === ObjectType.Panel) {
-      if (panelDragData === undefined) {
-        return
-      }
-
-      panelDragData = {
-        ...panelDragData,
-        over: {
-          panel: e.detail.id,
-          state: e.detail.state
-        }
+    panelDragData = {
+      ...panelDragData,
+      over: {
+        panel: e.detail.id,
+        state: e.detail.state
       }
     }
   }
 
   function onPanelDragOverEnd (e: CustomEvent<DragOverEndEvent>) {
-    if (e.detail.type === ObjectType.Card) {
-      if (cardDragData === undefined || cardDragData.over.panel !== e.detail.id) {
-        return
-      }
-
-      cardDragData = {
-        ...cardDragData,
-        over: {
-          ...(cardDragData.over ?? {}),
-          panel: undefined
-        }
-      }
+    if (panelDragData === undefined || e.detail.id !== panelDragData.over.panel) {
+      return
     }
 
-    if (e.detail.type === ObjectType.Panel) {
-      if (panelDragData === undefined || e.detail.id !== panelDragData.over.panel) {
-        return
-      }
-
-      panelDragData = {
-        ...panelDragData,
-        over: {}
-      }
+    panelDragData = {
+      ...panelDragData,
+      over: {}
     }
   }
 
   let disabledPanels: Set<string> = new Set()
   $: if (transitions !== undefined) {
-    if (cardDragData === undefined) {
+    if (dragItemState === undefined) {
       disabledPanels = new Set()
     } else {
       disabledPanels = new Set(
         states
           .map((x) => x._id)
-          .filter((x) => x !== cardDragData?.item.state)
-          .filter((x) => !transitions?.get(cardDragData?.item.state ?? '')?.has(x))
+          .filter((x) => x !== dragItemState)
+          .filter((x) => !transitions?.get(dragItemState ?? '')?.has(x))
       )
     }
   }
@@ -325,46 +220,14 @@
       >
         <Panel
           title={state.name}
-          counter={actualItems[idx].length}
           color={state.color}
           id={state._id}
           disabled={disabledPanels.has(state._id)}
-          on:dragOver={onPanelDragOver}
-          on:dragOverEnd={onPanelDragOverEnd}
-        >
-          {#each actualItems[idx] as item, itemIdx (item._id)}
-            <div
-              class="card-container"
-              use:draggable={{ id: item._id, watcher: dragWatcher, ctx: { state: state._id }, type: ObjectType.Card }}
-              use:hoverable={{
-                id: item._id,
-                watcher: dragWatcher,
-                disabled: disabledPanels.has(state._id),
-                type: ObjectType.Card,
-                ctx: { group: state._id }
-              }}
-              on:dragOver={onCardDragOver}
-              on:dragOverEnd={onCardDragOverEnd}
-              on:dragStart={onCardDragStart}
-              on:dragEnd={onCardDragEnd}
-            >
-              <div
-                class="transformable-card"
-                style={cardDragData?.over !== undefined &&
-                cardDragData.over.panel === state._id &&
-                cardShiftIdx <= itemIdx &&
-                item._id !== cardDragData.id
-                  ? `transform: translate3d(0px, ${cardDragData.size.height}px, 0px);`
-                  : ''}
-              >
-                <Card component={cardComponent} doc={item} />
-              </div>
-            </div>
-          {/each}
-          {#if cardDragData?.over !== undefined && cardDragData.over.panel === state._id}
-            <div style={`height: ${cardDragData.size.height}px;`} />
-          {/if}
-        </Panel>
+          items={actualItems[idx]}
+          {cardComponent}
+          on:cardDragStart={onCardDragStart}
+          on:cardDragEnd={onCardDragEnd}
+        />
       </div>
     </div>
   {/each}
@@ -397,25 +260,9 @@
     }
   }
 
-  .card-container {
-    padding: 5px 0;
-
-    &:first-child {
-      padding-top: 0;
-    }
-
-    &:last-child {
-      padding-bottom: 0;
-    }
-  }
-
-  .transformable-card,
   .transformable-panel {
     transition-timing-function: ease-in;
     transition: transform 200ms;
-  }
-
-  .transformable-panel {
     height: 100%;
   }
 </style>
