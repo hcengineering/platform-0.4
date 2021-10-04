@@ -21,7 +21,7 @@
   import type { State } from '@anticrm/fsm'
   import fsm from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { Label, ActionIcon } from '@anticrm/ui'
+  import { Label, ActionIcon, Spinner } from '@anticrm/ui'
   import type { Applicant, Candidate } from '@anticrm/recruiting'
 
   import ActionPresenter from './ActionPresenter.svelte'
@@ -34,11 +34,13 @@
 
   let candidate: Candidate | undefined
   let candidateQ: QueryUpdater<Candidate> | undefined
+  let isLoading = true
   $: candidateQ = client.query(
     candidateQ,
     recruiting.class.Candidate,
     { _id: doc.item as Ref<Candidate> },
     ([first]) => {
+      isLoading = false
       candidate = first
     }
   )
@@ -63,8 +65,8 @@
   }
 </script>
 
-{#if candidate}
-  <div class="root">
+<div class="root">
+  {#if candidate}
     <div class="header" class:noContent={actions.length === 0}>
       <div class="candidate">
         <div class="candidate-avatar">
@@ -88,8 +90,12 @@
         {/each}
       </div>
     {/if}
-  </div>
-{/if}
+  {:else if isLoading}
+    <div class="spinner">
+      <Spinner />
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   .root {
@@ -103,6 +109,14 @@
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
   }
+
+  .spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+
   .header {
     display: flex;
     justify-content: space-between;

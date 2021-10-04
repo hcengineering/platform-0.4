@@ -22,6 +22,7 @@ export interface FSM extends Doc {
   name: string
   clazz: Ref<Class<Doc>>
   isTemplate: boolean
+  states: Array<Ref<State>>
 }
 
 export interface Transition extends Doc {
@@ -37,7 +38,7 @@ export interface WithFSM extends Space {
 export interface FSMItem extends Doc {
   fsm: Ref<WithFSM>
   state: Ref<State>
-  item: Ref<Doc> // TODO: Should be Ref<VDoc>, update as soon as it be introduced
+  item: Ref<Doc>
   clazz: Ref<Class<Doc>>
 }
 
@@ -47,17 +48,25 @@ export interface State extends Doc {
   fsm: Ref<FSM>
   requiredActions: Array<Ref<Action>>
   optionalActions: Array<Ref<Action>>
+  items: Array<Ref<FSMItem>>
 }
 
 export interface FSMService extends Service {
   getStates: (fsm: Ref<FSM>) => Promise<State[]>
   getTransitions: (fsm: Ref<FSM>) => Promise<Transition[]>
 
-  removeItem: (item: Ref<Doc>, fsmOwner: WithFSM) => Promise<void>
   addItem: <T extends FSMItem>(fsmOwner: WithFSM, item: {
     _class?: Ref<Class<T>>
     obj: Omit<T, keyof Doc | 'state' | 'fsm'> & {state?: Ref<State>}
   }) => Promise<FSMItem | undefined>
+  moveItem: (
+    item: FSMItem,
+    transition: {
+      prev: Ref<State>
+      actual: Ref<State>
+    },
+    idx: number
+  ) => Promise<void>
 
   duplicateFSM: (fsm: Ref<FSM>) => Promise<FSM | undefined>
 }

@@ -43,7 +43,7 @@ import type {
 } from '@anticrm/recruiting'
 import workbench from '@anticrm/model-workbench'
 import calendar from '@anticrm/calendar'
-import { templateFSM, TWithFSM, TFSMItem, PureState } from '@anticrm/model-fsm'
+import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
 import type { Action } from '@anticrm/action-plugin'
@@ -216,14 +216,14 @@ export function createModel (builder: Builder): void {
   )
 
   // FSM
-  const states: Record<string, PureState> = {
-    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] },
+  const states = {
     applied: { name: 'Applied', requiredActions: [], optionalActions: [] },
     hrInterview: { name: 'HR interview', requiredActions: [interviewId], optionalActions: [] },
     testTask: { name: 'Test Task', requiredActions: [], optionalActions: [] },
     techInterview: { name: 'Technical interview', requiredActions: [interviewId], optionalActions: [] },
     offer: { name: 'Offer', requiredActions: [], optionalActions: [] },
-    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] }
+    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] },
+    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] }
   }
 
   templateFSM('Default developer vacancy', recruiting.class.VacancySpace, recruiting.fsm.DefaultVacancy)

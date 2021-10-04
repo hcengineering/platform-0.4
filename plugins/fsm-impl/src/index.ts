@@ -26,7 +26,17 @@ export default async (): Promise<FSMService> => {
   const coreP = await getPlugin(corePlugin.id)
   const client: Client = await coreP.getClient()
 
-  const getStates = async (fsm: Ref<FSM>): Promise<State[]> => await client.findAll(fsmPlugin.class.State, { fsm })
+  const getStates = async (fsmID: Ref<FSM>): Promise<State[]> => {
+    const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }))[0]
+
+    if (fsm === undefined) {
+      return []
+    }
+
+    const states = await client.findAll(fsmPlugin.class.State, { fsm: fsmID })
+
+    return fsm.states.map((x) => states.find((state) => state._id === x)).filter((x): x is State => x !== undefined)
+  }
 
   const getTransitions = async (fsm: Ref<FSM>): Promise<Transition[]> =>
     await client
@@ -54,18 +64,59 @@ export default async (): Promise<FSMService> => {
         return
       }
 
-      const state = item.obj.state ?? (await getStates(fsm._id))[0]._id
+      const state = item.obj.state ?? fsm.states[0]
 
-      return await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space, {
+      const doc = await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space, {
         ...item.obj,
         fsm: fsmOwner._id,
         state
       })
-    },
-    removeItem: async (item: Ref<Doc>, fsmOwner: WithFSM) => {
-      const docs = await client.findAll(fsmPlugin.class.FSMItem, { item, fsm: fsmOwner._id })
 
-      await Promise.all(docs.map(async (x) => await client.removeDoc(x._class, core.space.Model, x._id)))
+      await client.updateDoc(fsmPlugin.class.State, core.space.Model, state, {
+        $push: {
+          items: doc._id
+        }
+      })
+
+      return doc
+    },
+    moveItem: async (
+      item: FSMItem,
+      transition: {
+        prev: Ref<State>
+        actual: Ref<State>
+      },
+      idx: number
+    ): Promise<void> => {
+      const updateItems = (items: Array<Ref<FSMItem>>): Array<Ref<FSMItem>> =>
+        [...items.slice(0, idx), item._id, ...items.slice(idx)].filter((x, i) => !(x === item._id && i !== idx))
+
+      const prevState = (await client.findAll(fsmPlugin.class.State, { _id: transition.prev }))[0]
+      const actualState = (await client.findAll(fsmPlugin.class.State, { _id: transition.actual }))[0]
+
+      if (prevState === undefined || actualState === undefined) {
+        return
+      }
+
+      if (prevState._id === actualState._id) {
+        await client.updateDoc(fsmPlugin.class.State, core.space.Model, actualState._id, {
+          items: updateItems(actualState.items)
+        })
+
+        return
+      }
+
+      await client.updateDoc(fsmPlugin.class.State, core.space.Model, prevState._id, {
+        items: prevState.items.filter((x) => x !== item._id)
+      })
+
+      await client.updateDoc(fsmPlugin.class.State, core.space.Model, actualState._id, {
+        items: updateItems(actualState.items)
+      })
+
+      await client.updateDoc(item._class, item.space, item._id, {
+        state: actualState._id
+      })
     },
     duplicateFSM: async (fsmRef: Ref<FSM>) => {
       const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmRef }))[0]
@@ -99,6 +150,10 @@ export default async (): Promise<FSMService> => {
             ] as [State, State]
         )
       ).then((xs) => new Map(xs.map(([x, y]) => [x._id, y._id] as [Ref<State>, Ref<State>])))
+
+      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, newFSM._id, {
+        states: fsm.states.map((x) => stateMap.get(x)).filter((x): x is Ref<State> => x !== undefined)
+      })
 
       await Promise.all(
         transitions.map(

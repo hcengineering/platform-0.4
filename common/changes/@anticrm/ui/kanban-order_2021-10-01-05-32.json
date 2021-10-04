@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Enhance kanban",
+      "type": "major"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

@@ -13,20 +13,102 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString } from '@anticrm/status'
+  import { createEventDispatcher, getContext } from 'svelte'
+  import type { Readable } from 'svelte/store'
+  import type { IntlString, UIComponent } from '@anticrm/status'
+
+  import type { KanbanItem } from '../../types'
 
   import Label from '../Label.svelte'
-  import ScrollBox from '../ScrollBox.svelte'
   import Grid from '../Grid.svelte'
 
+  import Card from './Card.svelte'
+
+  import { scrollable } from './scrollable'
+  import { hoverable } from './hoverable'
+  import type { DragOverEndEvent, DragOverEvent } from './hoverable'
+  import { draggable } from './draggable'
+  import type { DragEndEvent, DragStartEvent } from './draggable'
+  import DragWatcher from './drag.watcher'
+  import { ObjectType } from './object.types'
+  import type { State as HoverState } from './utils'
+
   export let title: IntlString
-  export let counter: number | undefined
   export let color: string = '#F28469'
+  export let id: string = ''
+  export let items: KanbanItem[] = []
+  export let cardComponent: UIComponent
+  export let disabled: boolean = false
+
+  const dispatch = createEventDispatcher()
+
+  const dragWatcher = getContext<DragWatcher>('dragWatcher')
+  const dragCardSize = getContext<Readable<{ width: number; height: number }>>('dragCardSize')
+
+  let dragID: string | undefined
+  function onCardDragStart (e: CustomEvent<DragStartEvent>) {
+    dragID = e.detail.id
+
+    dispatch('cardDragStart', e.detail)
+  }
+
+  function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
+    dragID = undefined
+
+    dispatch('cardDragEnd', e.detail)
+  }
+
+  let dragOverData:
+    | {
+        item: KanbanItem
+        state: HoverState
+      }
+    | undefined
+  function onCardDragOver (e: CustomEvent<DragOverEvent>) {
+    const item = items.find((x) => x._id === e.detail.id)
+
+    if (item === undefined) {
+      return
+    }
+
+    dragOverData = { item, state: e.detail.state }
+  }
+  function onCardDragOverEnd (e: CustomEvent<DragOverEndEvent>) {
+    if (dragOverData?.item._id !== e.detail.id) {
+      return
+    }
+
+    dragOverData = undefined
+  }
+
+  let shiftIdx = Infinity
+  $: if (dragOverData !== undefined) {
+    const actualDragOverData = dragOverData
+    const cardIdx = items.findIndex((x) => x._id === actualDragOverData.item._id)
+
+    if (cardIdx === -1) {
+      shiftIdx = Infinity
+    } else {
+      shiftIdx = cardIdx + (dragOverData.state.bottom ? 1 : 0)
+    }
+  } else {
+    shiftIdx = Infinity
+  }
+
+  let isHovered = false
+
+  function onPanelDragOver () {
+    isHovered = true
+  }
+
+  function onPanelDragOverEnd () {
+    isHovered = false
+  }
 
   let collapsed: boolean = false
 </script>
 
-<section class="panel-kanban" on:dragover on:drop class:collapsed>
+<section class="panel-kanban" class:collapsed class:disabled>
   <div
     class="header"
     class:collapsed
@@ -36,15 +118,54 @@
     }}
   >
     {#if collapsed !== true}<div class="title"><Label label={title} /></div>{/if}
-    <div class="counter">{counter}</div>
+    <div class="counter">{items.length}</div>
   </div>
   {#if collapsed !== true}
-    <div class="scroll">
-      <ScrollBox vertical>
-        <Grid column={1} rowGap={12}>
-          <slot />
+    <div class="scroll-container">
+      <div
+        class="scroll"
+        use:scrollable={{ watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
+        use:hoverable={{ id, type: ObjectType.Panel, watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
+        on:dragOver={onPanelDragOver}
+        on:dragOverEnd={onPanelDragOverEnd}
+      >
+        <Grid column={1} rowGap={0}>
+          {#each items as item, itemIdx (item._id)}
+            <div
+              class="card-container"
+              use:draggable={{
+                id: item._id,
+                watcher: dragWatcher,
+                ctx: { state: id },
+                type: ObjectType.Card
+              }}
+              use:hoverable={{
+                id: item._id,
+                watcher: dragWatcher,
+                disabled,
+                type: ObjectType.Card,
+                ctx: { state: id }
+              }}
+              on:dragOver={onCardDragOver}
+              on:dragOverEnd={onCardDragOverEnd}
+              on:dragStart={onCardDragStart}
+              on:dragEnd={onCardDragEnd}
+            >
+              <div
+                class="transformable-card"
+                style={shiftIdx <= itemIdx && item._id !== dragID
+                  ? `transform: translate3d(0px, ${$dragCardSize.height}px, 0px);`
+                  : ''}
+              >
+                <Card component={cardComponent} doc={item} />
+              </div>
+            </div>
+          {/each}
+          {#if isHovered}
+            <div style={`height: ${$dragCardSize.height}px;`} />
+          {/if}
         </Grid>
-      </ScrollBox>
+      </div>
     </div>
   {/if}
 </section>
@@ -61,8 +182,15 @@
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
 
+    transition: opacity 500ms;
+
     &.collapsed {
+      min-width: 80px;
       width: 80px;
+    }
+
+    &.disabled {
+      opacity: 0.4;
     }
   }
 
@@ -103,8 +231,38 @@
     border-radius: 50%;
   }
 
-  .scroll {
-    margin: 12px;
+  .scroll-container {
+    position: relative;
+    width: 100%;
     height: 100%;
+  }
+
+  .scroll {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    padding: 12px;
+
+    overflow-y: auto;
+  }
+
+  .card-container {
+    padding: 5px 0;
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  .transformable-card {
+    transition-timing-function: ease-in;
+    transition: transform 200ms;
   }
 </style>

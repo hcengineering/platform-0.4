@@ -105,3 +105,14 @@ export interface Person {
   lastName?: string
   avatar?: string
 }
+
+export interface KanbanState {
+  _id: string
+  name: IntlString | string
+  color?: string
+}
+
+export interface KanbanItem {
+  _id: string
+  state: string
+}
