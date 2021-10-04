@@ -37,7 +37,7 @@ export interface Person extends Doc {
 
 export interface ContactService extends Service {}
 
-const PluginContact = 'fsm' as Plugin<ContactService>
+const PluginContact = 'contact' as Plugin<ContactService>
 
 export default plugin(PluginContact, {}, {
   class: {
