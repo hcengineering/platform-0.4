@@ -65,7 +65,6 @@ async function start (): Promise<void> {
   process.on('SIGTERM', close)
   process.on('exit', close)
 
-
   // Create a demo account and workspace if it is missing.
 
   for (const account of [john, brian]) {

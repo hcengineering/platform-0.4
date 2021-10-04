@@ -43,7 +43,13 @@ export class S3Storage {
     })
   }
 
-  static async create (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string): Promise<S3Storage> {
+  static async create (
+    accessKey: string,
+    secret: string,
+    endpoint: string,
+    bucket: string,
+    ca?: string
+  ): Promise<S3Storage> {
     const storage = new S3Storage(accessKey, secret, endpoint, bucket, ca)
     await storage.createBucket()
     return storage

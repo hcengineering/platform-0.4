@@ -136,7 +136,13 @@ async function checkSecurity (accountId: Ref<Account>, workspaceId: string, spac
   return allowed.has(space)
 }
 
-async function getStorage (workspaceId: string, uri: string, accessKey: string, secret: string, ca?: string): Promise<S3Storage> {
+async function getStorage (
+  workspaceId: string,
+  uri: string,
+  accessKey: string,
+  secret: string,
+  ca?: string
+): Promise<S3Storage> {
   let storage = storages.get(workspaceId)
   if (storage === undefined) {
     storage = await S3Storage.create(accessKey, secret, uri, workspaceId, ca)

@@ -76,7 +76,7 @@ jobs:
 
     services:
       minio:
-        image: minio/minio:2021.6.17
+        image: minio/minio
         env:
           MINIO_ACCESS_KEY: minioadmin
           MINIO_SECRET_KEY: minioadmin

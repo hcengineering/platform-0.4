@@ -36,7 +36,7 @@ services:
       - 27017
     restart: unless-stopped
   minio:
-    image: 'minio/minio:2021.6.17'
+    image: 'minio/minio'
     ports:
       - 9000:9000
     volumes:
