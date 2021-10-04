@@ -76,8 +76,7 @@ jobs:
 
     services:
       minio:
-        image: minio/minio
-        command: server /data
+        image: minio/minio server /data
         env:
           MINIO_ACCESS_KEY: minioadmin
           MINIO_SECRET_KEY: minioadmin
