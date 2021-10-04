@@ -12,6 +12,7 @@ import { createModel as recruitingModel } from '@anticrm/model-recruiting'
 import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
 import { createModel as actionModel } from '@anticrm/model-action'
+import { createModel as attachmentModel } from '@anticrm/model-attachment'
 
 /**
  * @public
@@ -40,5 +41,6 @@ if (config.platform.calendar) {
   calendarModel(builder)
 }
 notificationModel(builder)
+attachmentModel(builder)
 
 export default builder

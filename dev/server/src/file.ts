@@ -21,6 +21,10 @@ import bodyParser from 'koa-bodyparser'
 import Router from 'koa-router'
 import { createFileServer } from '@anticrm/services'
 
+const S3_URI = process.env.S3_URI ?? 'https://127.0.0.1:9000'
+const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY ?? 'minioadmin'
+const S3_SECRET = process.env.S3_SECRET ?? 'minioadmin'
+
 interface FileServer {
   shutdown: () => void
 }
@@ -28,19 +32,21 @@ interface FileServer {
 export function startFileServer (port: number, token: string, security: SecurityOptions): FileServer {
   const app = new Koa()
   const router = new Router()
-  createFileServer(app, router, token)
+  const fileServer = createFileServer(app, router, token, S3_URI, S3_ACCESS_KEY, S3_SECRET, security.ca)
 
   app.use(cors({ exposeHeaders: 'Set-Cookie', credentials: true }))
   app.use(bodyParser())
   app.use(router.routes()).use(router.allowedMethods())
 
   const callback = app.callback()
-
   const server = createServer(security, callback)
   server.listen(port, () => {
     console.log('Anticrm Platform File server is started at ', port)
   })
   return {
-    shutdown: server.close.bind(server)
+    shutdown: () => {
+      server.close()
+      fileServer.shutdown()
+    }
   }
 }

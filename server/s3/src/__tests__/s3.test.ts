@@ -19,9 +19,9 @@ import * as http from 'http'
 import * as url from 'url'
 
 describe('s3', () => {
-  const accessKey: string = process.env.S3_ACCESS_KEY ?? 'minio'
-  const secret: string = process.env.S3_SECRET ?? 'miniosecret'
-  const endpoit: string = process.env.S3_URI ?? 'http://127.0.0.1:9000'
+  const accessKey: string = process.env.S3_ACCESS_KEY ?? 'minioadmin'
+  const secret: string = process.env.S3_SECRET ?? 'minioadmin'
+  const endpoit: string = process.env.S3_URI ?? 'http://localhost:9000'
   let client: S3Storage
   const bucket = 'bucket'
   const fileName = 'testFile'
