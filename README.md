@@ -88,6 +88,12 @@ docker run -d -p 9000:9000 -p 9001:9001 \
 
 ```
 
+#### Run minin locally on macos
+
+```
+MINIO_ACCESS_KEY=minioadmin MINIO_SECRET_KEY=minioadmin minio server ./data --address=":9000"
+```
+
 ## Dev tasks
 
 All dev required tasks could be execured from root of project using rushx tool.

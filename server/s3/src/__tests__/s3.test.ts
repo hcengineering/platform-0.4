@@ -92,4 +92,8 @@ describe('s3', () => {
       done()
     })
   })
+  it('fictive ca test', async () => {
+    // eslint-disable-next-line
+    expect(() => S3Storage.create(accessKey, secret, endpoit, bucket, 'will be ignored for http')).rejects.toThrow()
+  })
 })

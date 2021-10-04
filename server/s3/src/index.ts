@@ -31,22 +31,13 @@ export class S3Storage {
   private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string) {
     this.bucket = bucket
     this.client = new S3({
-      httpOptions: {
-        agent: /* istanbul ignore next */ ca === undefined
-          ? undefined
-          : new https.Agent({
-            ca: ca,
-            rejectUnauthorized: false,
-            checkServerIdentity: (host, cert) => {
-              return undefined
-            }
-          })
-      },
+      httpOptions: ca !== undefined ? { agent: new https.Agent({ ca }) } : undefined,
       accessKeyId: accessKey,
       secretAccessKey: secret,
       endpoint: endpoint,
       s3BucketEndpoint: true,
       s3ForcePathStyle: true,
+      sslEnabled: true,
       signatureVersion: 'v4'
     })
   }
@@ -66,9 +57,10 @@ export class S3Storage {
   private async createBucket (): Promise<void> {
     return await new Promise((resolve, reject) => {
       this.client.createBucket({ Bucket: this.bucket }, (err, data) => {
-        /* istanbul ignore next */
-        if (err !== null && err.code !== 'BucketAlreadyOwnedByYou') {
+        console.info(err)
+        if (err != null && err.code !== 'BucketAlreadyOwnedByYou') {
           reject(err.message)
+          return
         }
         resolve()
       })
