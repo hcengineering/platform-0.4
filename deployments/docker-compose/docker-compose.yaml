@@ -14,9 +14,10 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017
       - ACCOUNTS_URI=https://${WEB_HOST}/auth
       - CLIENT_URI=wss://${WEB_HOST}:18080
-      - S3_URI='https://127.0.0.1:9000',
-      - S3_ACCESS_KEY='${FILE_STORAGE_ACCESS_KEY}',
-      - S3_SECRET='${FILE_STORAGE_SECRET}',
+      - S3_URI=https://${WEB_HOST}:9000
+      - S3_ACCESS_KEY=${FILE_STORAGE_ACCESS_KEY}
+      - S3_SECRET=${FILE_STORAGE_SECRET}
+      - FILES_URI=https://${WEB_HOST}
       - SECURITY_CERT_FILE=/etc/letsencrypt/live/${WEB_HOST}/cert.pem
       - SECURITY_KEY_FILE=/etc/letsencrypt/live/${WEB_HOST}/privkey.pem
       - SECURITY_CA_FILE=/etc/letsencrypt/live/${WEB_HOST}/chain.pem
@@ -37,6 +38,7 @@ services:
     restart: unless-stopped
   minio:
     image: 'minio/minio'
+    command: server /data --address ":9000" --console-address ":9001"
     ports:
       - 9000:9000
     volumes:

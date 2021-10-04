@@ -70,6 +70,10 @@ async function start (): Promise<void> {
     config.s3Secret,
     security.ca
   )
+
+  koa.use(logger)
+  koa.use(router.routes()).use(router.allowedMethods())
+
   const front = newFrontServer(koa, './web')
 
   // Handle client information loading
@@ -78,9 +82,6 @@ async function start (): Promise<void> {
     ctx.set('Content-Encoding', 'identity')
     ctx.body = JSON.stringify(config.platform, undefined, 2)
   })
-
-  koa.use(logger)
-  koa.use(router.routes()).use(router.allowedMethods())
 
   const callback = koa.callback()
 
