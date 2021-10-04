@@ -3,6 +3,7 @@ import { Builder } from '@anticrm/model'
 import { config } from './config'
 
 import { createModel as coreModel } from '@anticrm/model-core'
+import { createModel as contactModel } from '@anticrm/model-contact'
 import { createModel as workbenchModel } from '@anticrm/model-workbench'
 import { createModel as chunterModel } from '@anticrm/model-chunter'
 import { createModel as fsmModel } from '@anticrm/model-fsm'
@@ -28,6 +29,7 @@ if (config.platform.chunter) {
   chunterModel(builder)
 }
 fsmModel(builder)
+contactModel(builder)
 if (config.platform.recrutting) {
   recruitingModel(builder)
 }
