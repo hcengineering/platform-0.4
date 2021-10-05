@@ -26,7 +26,7 @@ import type {
   Domain,
   Class
 } from '@anticrm/core'
-import { generateId, PresentationMode } from '@anticrm/core'
+import { PresentationMode } from '@anticrm/core'
 import fsm from '@anticrm/fsm'
 import { Builder, Model } from '@anticrm/model'
 import { TPerson } from '@anticrm/model-contact'
@@ -43,10 +43,9 @@ import type {
 } from '@anticrm/recruiting'
 import workbench from '@anticrm/model-workbench'
 import calendar from '@anticrm/calendar'
-import { templateFSM, TWithFSM, TFSMItem, PureState } from '@anticrm/model-fsm'
+import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
-import type { Action } from '@anticrm/action-plugin'
 
 const DOMAIN_RECRUITING = 'recruiting' as Domain
 
@@ -203,7 +202,6 @@ export function createModel (builder: Builder): void {
   )
 
   // Actions
-  const interviewId: Ref<Action> = generateId()
   builder.createDoc(
     action.class.Action,
     {
@@ -212,18 +210,22 @@ export function createModel (builder: Builder): void {
       resId: recruiting.action.Interview,
       input: calendar.class.Event
     },
-    interviewId
+    recruiting.actionRef.Interview
   )
 
   // FSM
-  const states: Record<string, PureState> = {
-    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] },
+  const states = {
     applied: { name: 'Applied', requiredActions: [], optionalActions: [] },
-    hrInterview: { name: 'HR interview', requiredActions: [interviewId], optionalActions: [] },
+    hrInterview: { name: 'HR interview', requiredActions: [recruiting.actionRef.Interview], optionalActions: [] },
     testTask: { name: 'Test Task', requiredActions: [], optionalActions: [] },
-    techInterview: { name: 'Technical interview', requiredActions: [interviewId], optionalActions: [] },
+    techInterview: {
+      name: 'Technical interview',
+      requiredActions: [recruiting.actionRef.Interview],
+      optionalActions: []
+    },
     offer: { name: 'Offer', requiredActions: [], optionalActions: [] },
-    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] }
+    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] },
+    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] }
   }
 
   templateFSM('Default developer vacancy', recruiting.class.VacancySpace, recruiting.fsm.DefaultVacancy)

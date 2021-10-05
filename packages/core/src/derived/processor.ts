@@ -22,6 +22,8 @@ const derivedDataMappers = new Map<Resource<DocumentMapper>, DocumentMapper>()
 const EMPTY_MAPPER = '' as Resource<DocumentMapper>
 
 type Descr = DerivedDataDescriptor<Doc, DerivedData>
+type DescrWithTarget = Exclude<Descr, 'targetClass'> & Required<Pick<Descr, 'targetClass'>>
+
 interface CachedDoc {
   doc?: Doc
   resolve: () => Promise<Doc>
@@ -123,9 +125,11 @@ export class DerivedDataProcessor extends TxProcessor {
     for (const d of descriptors) {
       let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       results = this.withDescrId(results, d._id, tx.objectId, tx.objectClass)
-      await this.applyDerivedData([], results, tx.modifiedBy)
+      if (d.targetClass !== undefined) {
+        await this.applyDerivedData([], results, tx.modifiedBy)
 
-      await this.applyCollectionRules(d, tx, true)
+        await this.applyCollectionRules(d as DescrWithTarget, tx, true)
+      }
     }
   }
 
@@ -155,15 +159,15 @@ export class DerivedDataProcessor extends TxProcessor {
   /**
    * Will update collection back references.
    */
-  private async applyCollectionRules (d: Descr, tx: Tx, push: boolean): Promise<void> {
+  private async applyCollectionRules (d: DescrWithTarget, tx: Tx, push: boolean): Promise<void> {
     for (const r of d.collections ?? []) {
       if (push) {
         const doc = TxProcessor.createDoc2Doc(tx as TxCreateDoc<Doc>)
         if (r.sourceFieldPattern === undefined) {
-          const target = await this.getTargetByRef(doc, d, r)
+          const target = await this.getTargetByRef(doc, d.targetClass, r)
           await this.pushToCollection(doc, target, r)
         } else {
-          const targets = await this.getTargetsByRegex(doc, d, r)
+          const targets = await this.getTargetsByRegex(doc, d.targetClass, r)
           for (const target of targets) {
             await this.pushToCollection(doc, target, r)
           }
@@ -181,18 +185,26 @@ export class DerivedDataProcessor extends TxProcessor {
     }
   }
 
-  private async getTargetsByRegex (doc: Doc, d: Descr, r: CollectionRule): Promise<Array<Doc>> {
+  private async getTargetsByRegex (
+    doc: Doc,
+    targetClass: Ref<Class<DerivedData>>,
+    r: CollectionRule
+  ): Promise<Array<Doc>> {
     if (r.sourceFieldPattern?.pattern === undefined) return []
     const source = (doc as any)[r.sourceField]
 
     const refs = this.processRulePattern(r.sourceFieldPattern, source)
-    return await this.storage.findAll(d.targetClass, { _id: { $in: refs } })
+    return await this.storage.findAll(targetClass, { _id: { $in: refs } })
   }
 
-  private async getTargetByRef (doc: Doc, d: Descr, r: CollectionRule): Promise<Doc | undefined> {
+  private async getTargetByRef (
+    doc: Doc,
+    targetClass: Ref<Class<DerivedData>>,
+    r: CollectionRule
+  ): Promise<Doc | undefined> {
     const parentDocRefString = (doc as any)[r.sourceField] as FullRefString
     const parentDocRef = parseFullRef(parentDocRefString)
-    if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, d.targetClass)) {
+    if (parentDocRef !== undefined && this.hierarchy.isDerived(parentDocRef._class, targetClass)) {
       return (await this.storage.findAll(parentDocRef._class, { _id: parentDocRef._id }, { limit: 1 })).shift()
     }
   }
@@ -201,8 +213,11 @@ export class DerivedDataProcessor extends TxProcessor {
     if (target === undefined) return
     try {
       const obj = this.extractEmbeddedDoc(doc, r.rules)
-      const operation = {
+      const operation: DocumentUpdate<Doc> = {
         $push: { [r.targetField]: obj }
+      }
+      if (r.lastModifiedField !== undefined) {
+        ;(operation as any)[r.lastModifiedField] = doc.modifiedOn
       }
       await this.updateData(operation, target.modifiedBy, target.modifiedOn, target._id, target._class, target.space)
     } catch (err) {
@@ -273,13 +288,15 @@ export class DerivedDataProcessor extends TxProcessor {
 
     for (const d of descriptors) {
       const results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
-      const oldData = await this.storage.findAll(d.targetClass, {
-        objectId: tx.objectId,
-        objectClass: tx.objectClass,
-        descriptorId: d._id
-      })
+      if (d.targetClass !== undefined) {
+        const oldData = await this.storage.findAll(d.targetClass, {
+          objectId: tx.objectId,
+          objectClass: tx.objectClass,
+          descriptorId: d._id
+        })
 
-      await this.applyDerivedData(oldData, results, tx.modifiedBy)
+        await this.applyDerivedData(oldData, results, tx.modifiedBy)
+      }
     }
   }
 
@@ -292,13 +309,15 @@ export class DerivedDataProcessor extends TxProcessor {
     const descriptors = this.descrs.getByClass(tx.objectClass)
 
     for (const d of descriptors) {
-      const oldData = await this.storage.findAll(d.targetClass, {
-        objectId: tx.objectId,
-        objectClass: tx.objectClass,
-        descriptorId: d._id
-      })
-      await this.applyDerivedData(oldData, [], tx.modifiedBy)
-      await this.applyCollectionRules(d, tx, false)
+      if (d.targetClass !== undefined) {
+        const oldData = await this.storage.findAll(d.targetClass, {
+          objectId: tx.objectId,
+          objectClass: tx.objectClass,
+          descriptorId: d._id
+        })
+        await this.applyDerivedData(oldData, [], tx.modifiedBy)
+        await this.applyCollectionRules(d as DescrWithTarget, tx, false)
+      }
     }
   }
 
@@ -510,7 +529,7 @@ export class DerivedDataProcessor extends TxProcessor {
     // Perform a full rebuild of derived data of required type.
     // we need to find all objects affected
 
-    const partSize = 25
+    const partSize = 100
     try {
       this.hierarchy.getDomain(d.sourceClass)
     } catch (err: any) {
@@ -525,10 +544,13 @@ export class DerivedDataProcessor extends TxProcessor {
     while (processed < total) {
       for (const dbDoc of allDD) {
         try {
-          const dbDD = await this.storage.findAll<DerivedData>(d.targetClass, {
-            objectId: dbDoc._id,
-            descriptorId: d._id
-          })
+          const dbDD =
+            d.targetClass !== undefined
+              ? await this.storage.findAll<DerivedData>(d.targetClass, {
+                objectId: dbDoc._id,
+                descriptorId: d._id
+              })
+              : []
           const doc: CachedDoc = {
             resolve: async () => await Promise.resolve(dbDoc)
           }
@@ -545,13 +567,16 @@ export class DerivedDataProcessor extends TxProcessor {
             attributes: dbDoc
           }
           const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
-          await this.applyDerivedData(Array.from(dbDD), results, tx.modifiedBy)
+          if (d.targetClass !== undefined) {
+            await this.applyDerivedData(Array.from(dbDD), results, tx.modifiedBy)
+          }
         } catch (err: any) {
           console.error('Error processing DD', err)
         }
       }
       processed += allDD.length
       allDD = await this.storage.findAll(d.sourceClass, {}, { limit: partSize, skip: processed })
+      console.info(`DD rebuild of ${d.sourceClass} (${processed}, ${total})`)
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-recruiting",
+      "comment": "Enhance fsm to support ordering",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/model-recruiting"
+}

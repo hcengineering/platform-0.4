@@ -15,12 +15,11 @@
 <script lang="ts">
   import type { UIComponent } from '@anticrm/status'
 
-  export let draggable: boolean = false
   export let component: UIComponent
   export let doc: any
 </script>
 
-<div class="root" {draggable} on:dragstart on:dragend>
+<div class="root">
   <svelte:component this={component} {doc} />
 </div>
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Fix draggable synthetic click target",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

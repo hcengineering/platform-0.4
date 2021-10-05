@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import { getFullRef, SortingOrder } from '@anticrm/core'
+  import type { DocumentQuery } from '@anticrm/core'
   import type { Message as MessageModel, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
@@ -24,6 +25,8 @@
 
   export let message: MessageModel
   export let notifications: SpaceNotifications | undefined
+
+  export let filter: DocumentQuery<Comment> | undefined = undefined
 
   const client = getClient()
   let query: QueryUpdater<Comment> | undefined
@@ -38,7 +41,9 @@
     query = client.query(
       query,
       chunter.class.Comment,
-      { replyOf: getFullRef(message._id, message._class) },
+      Object.assign(filter ?? {}, {
+        replyOf: getFullRef(message._id, message._class)
+      }),
       (result) => {
         comments = result
       },

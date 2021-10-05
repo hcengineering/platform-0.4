@@ -122,6 +122,15 @@ describe('memdb', () => {
       'account.starred': { $ne: true }
     })
     expect(nonStarred).toHaveLength(2)
+
+    const exists = await model.findAll(core.class.Account, {
+      email: { $exists: true }
+    })
+    expect(exists).toHaveLength(2)
+    const nonExists = await model.findAll(core.class.Account, {
+      'account.starred': { $exists: false }
+    })
+    expect(nonExists).toHaveLength(2)
   })
 
   it('should push to array', async () => {
@@ -258,6 +267,46 @@ describe('memdb', () => {
 
     const numberSort = await model.findAll(core.class.Doc, {}, { sort: { modifiedOn: SortingOrder.Ascending } })
     expect(numberSort[0].modifiedOn).toBeLessThanOrEqual(numberSort[numberSortDesc.length - 1].modifiedOn)
+  })
+  it('should exists in array', async () => {
+    interface MySpace extends Space {
+      someArray: { firstName: string, value: string }[]
+      someField2?: { someArray: { name: string }[], value: string }[]
+    }
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) await hierarchy.tx(tx)
+    const model = withOperations(core.account.System, new ModelDb(hierarchy))
+    for (const tx of txes) await model.tx(tx)
+    const account1 = await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account1@site.com',
+      name: 'account1'
+    })
+
+    await model.createDoc<MySpace>(core.class.Space, core.space.Model, {
+      name: 'name',
+      description: 'desc',
+      private: false,
+      members: [account1._id],
+      someArray: [{ firstName: 'varya1', value: '123' }]
+    })
+
+    await model.createDoc<MySpace>(core.class.Space, core.space.Model, {
+      name: 'name',
+      description: 'desc',
+      private: false,
+      members: [],
+      someArray: [
+        { firstName: 'petya', value: '2' },
+        { firstName: 'varya', value: '3' }
+      ],
+      someField2: [{ someArray: [{ name: 'qwe' }, { name: 'zxc' }], value: '1' }]
+    })
+
+    expect((await model.findAll(core.class.Space, { 'members.0': { $exists: false } })).length).toEqual(1)
+    expect((await model.findAll(core.class.Space, { 'members.0': { $exists: true } })).length).toEqual(3)
+
+    expect((await model.findAll<MySpace>(core.class.Space, { 'someArray.firstName': 'varya' })).length).toEqual(1)
+    expect((await model.findAll<MySpace>(core.class.Space, { 'someField2.someArray.name': 'zxc' })).length).toEqual(1)
   })
 })
 async function prepareModel (): Promise<{ model: ModelDb, hierarchy: Hierarchy, txDb: TxDb }> {

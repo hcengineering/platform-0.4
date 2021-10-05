@@ -197,7 +197,7 @@ function pullMembers (result: SpaceNotifications[], ctx: TxUpdateDoc<Space>): vo
   }
 }
 
-export default (): void => {
+export default async (): Promise<void> => {
   registerMapper(notification.mappers.SpaceInfo, {
     map: async (tx: Tx, options: MappingOptions): Promise<SpaceInfo[]> => {
       if (tx._class === core.class.TxCreateDoc) {

@@ -20,47 +20,80 @@ export function checkLikeQuery (value: string, query: string): boolean {
 /**
  * @public
  */
-export function findProperty (objects: Doc[], propertyKey: string, value: any): Doc[] {
+export function findProperty<P> (objects: Doc[], propertyKey: string, value: P): Doc[] {
   if (value === undefined) {
     // Skip if value is undefined, we pass all objects.
     return objects
   }
-  if (isPredicate(value)) {
-    const preds = createPredicates(value, propertyKey)
-    for (const pred of preds) {
-      objects = pred(objects)
-    }
-    return objects
-  }
+  return isPredicate(value)
+    ? findPropertyPredicate<P>(value, propertyKey, objects)
+    : findPropertyValue<P>(objects, propertyKey, value)
+}
+
+function findPropertyValue<P> (objects: Doc[], propertyKey: string, value: P): Doc[] {
   const result: Doc[] = []
   for (const object of objects) {
-    const val = (object as any)[propertyKey]
-    if (deepEqual(val, value) || nestedDotQueryCheck(propertyKey, object, value)) {
+    const val = getNestedValue(propertyKey, object)
+    if (deepEqual(val, value) || isArrayValueCheck(val, value)) {
       result.push(object)
     }
   }
   return result
 }
 
+function findPropertyPredicate<P> (value: P, propertyKey: string, objects: Doc[]): Doc[] {
+  const preds = createPredicates(value, propertyKey)
+  for (const pred of preds) {
+    objects = pred(objects)
+  }
+  return objects
+}
+
+function isArrayValueCheck<T, P> (val: T, value: P): boolean {
+  return Array.isArray(val) && !Array.isArray(value) && val.includes(value)
+}
+
 /**
  * @public
  */
-export function nestedDotQueryCheck (key: string, value: any, pattern: any): boolean {
+export function getNestedValue (key: string, doc: Doc): any {
   // Check dot notation
-
-  // Replace escapting, since memdb is not escape keys
+  if (key.length === 0) {
+    return doc
+  }
   key = key.split('\\$').join('$')
   const dots = key.split('.')
-  if (dots.length > 1) {
-    // We have dots, so iterate in depth
-    for (const d of dots) {
-      value = value?.[d]
+  // Replace escapting, since memdb is not escape keys
+
+  // We have dots, so iterate in depth
+  let pos = 0
+  let value = doc as any
+  for (const d of dots) {
+    if (Array.isArray(value) && isNestedArrayQuery(value, d)) {
+      // Array and d is not an indexed field.
+      // So return array of nested values.
+      return getNestedArrayValue(value, dots.slice(pos).join('.'))
     }
-    if (value === pattern) {
-      return true
-    }
+    value = value?.[d]
+    pos++
   }
-  return false
+  return value
+}
+
+function isNestedArrayQuery (value: any, d: string): boolean {
+  return Number.isNaN(Number.parseInt(d)) && value?.[d as any] === undefined
+}
+
+function getNestedArrayValue (value: any[], name: string): any[] {
+  const result = []
+  for (const v of value) {
+    result.push(...arrayOrValue(getNestedValue(name, v)))
+  }
+  return result
+}
+
+function arrayOrValue (vv: any): any[] {
+  return Array.isArray(vv) ? vv : [vv]
 }
 
 /**
@@ -98,6 +131,7 @@ export function shouldSkipId<T extends Doc> (key: string, query: DocumentQuery<T
   return (
     key === '_id' &&
     (query._id as QuerySelector<T>)?.$like === undefined &&
-    (query._id as QuerySelector<T>)?.$ne === undefined
+    (query._id as QuerySelector<T>)?.$ne === undefined &&
+    (query._id as QuerySelector<T>)?.$exists === undefined
   )
 }

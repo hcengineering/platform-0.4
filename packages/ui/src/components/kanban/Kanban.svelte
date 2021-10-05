@@ -1,110 +1,268 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
-// 
+// Copyright © 2021 Anticrm Platform Contributors.
+//
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
 // obtain a copy of the License at https://www.eclipse.org/legal/epl-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// 
+//
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, setContext } from 'svelte'
+  import { writable } from 'svelte/store'
 
-  import type { IntlString, UIComponent } from '@anticrm/status'
+  import { generateId } from '@anticrm/core'
+  import type { UIComponent } from '@anticrm/status'
+
+  import type { KanbanItem, KanbanState } from '../../types'
 
   import Panel from './Panel.svelte'
-  import Card from './Card.svelte'
-  import ScrollBox from '../ScrollBox.svelte'
 
-  interface State {
-    _id: string
-    name: IntlString | string
-    color?: string
-  }
+  import { draggable } from './draggable'
+  import type { DragStartEvent, DragEndEvent } from './draggable'
+  import { scrollable } from './scrollable'
+  import DragWatcher from './drag.watcher'
+  import type { DragOverEndEvent, DragOverEvent } from './hoverable'
+  import { hoverable } from './hoverable'
+  import type { State as HoverState } from './utils'
+  import { ObjectType } from './object.types'
 
-  interface Item {
-    _id: string
-    state: string
-  }
-
-  export let items: Item[] = []
-  export let states: State[] = []
+  export let items: Map<string, KanbanItem[]>
+  export let states: KanbanState[] = []
+  export let transitions: Map<string, Set<string>> | undefined = undefined
   export let cardComponent: UIComponent
+
+  // Temporary flag, need to remove as soon as tasks plugin be updated
+  export let panelDragDisabled = false
+
+  const dragWatcher = new DragWatcher()
+  setContext('dragWatcher', dragWatcher)
+
+  const dragCardSize = writable({ width: 0, height: 0 })
+  setContext('dragCardSize', dragCardSize)
 
   const dispatch = createEventDispatcher()
 
-  let itemMap = new Map<string, Item>()
-  $: itemMap = new Map(items.map((x) => [x._id, x]))
+  let actualItems: KanbanItem[][] = []
+  $: actualItems = states.map((state) => items.get(state._id) ?? [])
 
-  let groupedItems = new Map<string, Item[]>()
-  $: groupedItems = items.reduce((grouped, x) => {
-    grouped.set(x.state, [...(grouped.get(x.state) ?? []), x])
+  let panelDragData:
+    | {
+        id: string
+        size: DragStartEvent['size']
+        over: {
+          panel?: string
+          state?: HoverState
+        }
+      }
+    | undefined
 
-    return grouped
-  }, new Map<string, Item[]>())
+  let panelShiftIdx = Infinity
+  $: if (panelDragData?.over?.panel !== undefined) {
+    const panelIdx = states.findIndex((x) => x._id === panelDragData?.over.panel)
 
-  $: if (groupedItems) {
-    states = states
+    if (panelIdx === -1) {
+      panelShiftIdx = Infinity
+    } else {
+      panelShiftIdx = panelIdx + (panelDragData?.over.state?.right ? 1 : 0)
+    }
+  } else {
+    panelShiftIdx = Infinity
   }
 
-  let dragId: string | undefined
+  let dragItemState: string | undefined
 
-  function getItems (id: string): Item[] {
-    return groupedItems.get(id) ?? []
+  function onCardDragStart (e: CustomEvent<DragStartEvent>) {
+    dragCardSize.set(e.detail.size)
+    dragItemState = e.detail.ctx.state
+  }
+
+  function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
+    dragItemState = undefined
+    const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
+    const item = e.detail.hoveredItems.find((x) => x.type === ObjectType.Card)
+    const targetState = panel?.id
+    const origState = e.detail.ctx.state
+
+    if (targetState === undefined || origState === undefined) {
+      e.detail.reset()
+      return
+    }
+
+    const targetItems = items.get(targetState)
+    const origItems = items.get(origState)
+    const targetItem = origItems?.find((x) => x._id === e.detail.id)
+
+    if (panel === undefined || targetItems === undefined || origItems === undefined || targetItem === undefined) {
+      e.detail.reset()
+      return
+    }
+
+    const itemIdx = targetItems.findIndex((x) => x._id === item?.id)
+    const idx = item === undefined || itemIdx < -1 ? targetItems.length : item.state.bottom ? itemIdx + 1 : itemIdx
+
+    if (targetState !== origState) {
+      const updatedOrigItems = origItems?.filter((x) => x._id !== targetItem._id)
+      items.set(origState, updatedOrigItems)
+    }
+
+    const updatedTargetItems = [...targetItems.slice(0, idx), targetItem, ...targetItems.slice(idx)].filter(
+      (x, i) => x._id !== targetItem._id || idx === i
+    )
+
+    items.set(targetState, updatedTargetItems)
+    items = items
+
+    dispatch('drop', { item: e.detail.id, idx, state: panel.id })
+  }
+
+  function onPanelDragStart (e: CustomEvent<DragStartEvent>) {
+    panelDragData = {
+      ...(panelDragData ?? {}),
+      id: e.detail.id,
+      size: e.detail.size,
+      over: {}
+    }
+  }
+
+  function onPanelDragEnd (e: CustomEvent<DragEndEvent>) {
+    const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
+    const root = e.detail.hoveredItems.find((x) => x.type === ObjectType.Root)
+    const state = states.find((x) => x._id === panelDragData?.id)
+
+    if (root === undefined || state === undefined) {
+      panelDragData = undefined
+      e.detail.reset()
+      return
+    }
+
+    const itemIdx = states.findIndex((x) => x._id === panel?.id)
+    const idx = itemIdx === -1 ? states.length : itemIdx + (panel?.state.right ?? false ? 1 : 0)
+
+    states = [...states.slice(0, idx), state, ...states.slice(idx)].filter((x, i) => x._id !== state._id || i === idx)
+
+    dispatch('stateReorder', { item: e.detail.id, idx })
+
+    panelDragData = undefined
+  }
+
+  function onPanelDragOver (e: CustomEvent<DragOverEvent>) {
+    if (panelDragData === undefined) {
+      return
+    }
+
+    panelDragData = {
+      ...panelDragData,
+      over: {
+        panel: e.detail.id,
+        state: e.detail.state
+      }
+    }
+  }
+
+  function onPanelDragOverEnd (e: CustomEvent<DragOverEndEvent>) {
+    if (panelDragData === undefined || e.detail.id !== panelDragData.over.panel) {
+      return
+    }
+
+    panelDragData = {
+      ...panelDragData,
+      over: {}
+    }
+  }
+
+  let disabledPanels: Set<string> = new Set()
+  $: if (transitions !== undefined) {
+    if (dragItemState === undefined) {
+      disabledPanels = new Set()
+    } else {
+      disabledPanels = new Set(
+        states
+          .map((x) => x._id)
+          .filter((x) => x !== dragItemState)
+          .filter((x) => !transitions?.get(dragItemState ?? '')?.has(x))
+      )
+    }
   }
 </script>
 
-<div class="container">
-  <ScrollBox stretch hShrink>
-    <div class="content">
-      {#each states as state (state._id)}
+<div
+  class="root"
+  use:scrollable={{ watcher: dragWatcher }}
+  use:hoverable={{ id: generateId(), allowedTypes: [ObjectType.Panel], type: ObjectType.Root, watcher: dragWatcher }}
+>
+  {#each states as state, idx (state._id)}
+    <div
+      class="panel-container"
+      use:draggable={{ id: state._id, watcher: dragWatcher, disabled: panelDragDisabled, type: ObjectType.Panel }}
+      on:dragStart={onPanelDragStart}
+      on:dragEnd={onPanelDragEnd}
+      use:hoverable={{
+        id: state._id,
+        watcher: dragWatcher,
+        disabled: disabledPanels.has(state._id),
+        type: ObjectType.Panel,
+        allowedTypes: [ObjectType.Panel]
+      }}
+      on:dragOver={onPanelDragOver}
+      on:dragOverEnd={onPanelDragOverEnd}
+    >
+      <div
+        class="transformable-panel"
+        style={panelDragData !== undefined && panelShiftIdx <= idx && state._id !== panelDragData?.id
+          ? `transform: translate3d(${panelDragData.size.width}px, 0px, 0px);`
+          : ''}
+      >
         <Panel
           title={state.name}
-          counter={getItems(state._id).length}
           color={state.color}
-          on:dragover={(event) => {
-            event.preventDefault()
-          }}
-          on:drop={(event) => {
-            event.preventDefault()
-            const dragCard = itemMap.get(dragId ?? '')
-
-            if (dragCard !== undefined && state._id !== dragCard.state) {
-              dispatch('drop', { item: dragId, state: state._id })
-            }
-          }}
-        >
-          {#each getItems(state._id) as item (item._id)}
-            <Card
-              component={cardComponent}
-              draggable={true}
-              doc={item}
-              on:dragstart={() => {
-                dragId = item._id
-              }}
-            />
-          {/each}
-        </Panel>
-      {/each}
+          id={state._id}
+          disabled={disabledPanels.has(state._id)}
+          items={actualItems[idx]}
+          {cardComponent}
+          on:cardDragStart={onCardDragStart}
+          on:cardDragEnd={onCardDragEnd}
+        />
+      </div>
     </div>
-  </ScrollBox>
+  {/each}
+  {#if panelDragData !== undefined}
+    <div style={`min-width: ${panelDragData.size.width}px;`} />
+  {/if}
 </div>
 
 <style lang="scss">
-  .container {
-    flex-grow: 1;
-    position: relative;
-    margin-bottom: 20px;
-    height: max-content;
-  }
-  .content {
+  .root {
     display: flex;
-    padding: 0 40px 0 40px;
+    padding: 0 40px 10px 40px;
+    height: 100%;
+
+    overflow-x: auto;
+
+    margin-bottom: 20px;
+  }
+
+  .panel-container {
+    height: 100%;
+    padding: 0 5px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  .transformable-panel {
+    transition-timing-function: ease-in;
+    transition: transform 200ms;
     height: 100%;
   }
 </style>

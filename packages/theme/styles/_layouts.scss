@@ -174,6 +174,23 @@ table {
   }
 }
 
+.link-text {
+  color: var(--theme-content-color);
+  white-space: nowrap;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  &:active {
+    opacity: 1;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
 /* Backgrounds & Colors */
 .background-theme-bg-color { background-color: var(--theme-bg-color); }
 .background-highlight-red { background-color: var(--highlight-red); }

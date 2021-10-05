@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Use updated kanban",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}

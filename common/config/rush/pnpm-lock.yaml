@@ -11821,7 +11821,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-k0z7T4MaEoz0Jp0xQMgQuwSisl20DNuYWbcg15c8gxVcyE6BfNVadCEDvH4l07AwTVlb9Yx+FaMEi6eYl8Kc+w==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-yfSa2Su/wkvXDkzfsdxTSdtlECsjM3Jkhl2uGc7QF2trCsaAVtHFZL3xNwMIJaZy+ApoLaosdqq4nj3A1843NQ==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -12627,7 +12627,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz:
-    resolution: {integrity: sha512-w1TX6RZ3oDqzLRBydXYnBFHZboME9Qp66hF56mfn8BRO+OJMmnboo1ihT89oIOlQyysAgVezqx0j1H2Nnh8WPA==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-3lQShG4nFWnLzoWJm6Jg6eDnmcqniNjOdy/kMZ0DA80Yqx23sPrlVJrrhM33cpsfBHBOxeuKEmIB/qV1EIfnFQ==, tarball: file:projects/plugin-core-dev.tgz}
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
     dependencies:
@@ -12653,7 +12653,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-impl.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-cYmzUS6yOCZTQGN7NygYeqGtsTqsDgIFH3OKbtzEEmv+OXrpXasbeCvssts299itWc9Zdj/VxV7gBgy/Byrj8Q==, tarball: file:projects/plugin-core-impl.tgz}
+    resolution: {integrity: sha512-zoUVufsmOU6Teaw2nFN7oAMntF93dxryy/wk/BRRco3eJ6uE2TPffbRZZLdsJR5NXYlclZEdDcnZ7XpTb5PfVw==, tarball: file:projects/plugin-core-impl.tgz}
     id: file:projects/plugin-core-impl.tgz
     name: '@rush-temp/plugin-core-impl'
     version: 0.0.0

@@ -15,7 +15,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { Class, Doc, generateId, Ref, Space } from '@anticrm/core'
-  import ui, { Dialog, EditBox, IconFile, Progress } from '@anticrm/ui'
+  import ui, { Dialog, IconFile, Progress } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import attachment, { Attachment, nameToFormat } from '@anticrm/attachment'
   import AttachmentView from './Attachment.svelte'
@@ -25,84 +25,107 @@
   export let objectClass: Ref<Class<Doc>>
   export let space: Ref<Space>
 
+  interface UploadAttachmet extends Attachment {
+    progress: number
+    abort: () => void
+  }
+
   const dispatch = createEventDispatcher()
   const client = getClient()
-  let name: string = ''
   let input: HTMLElement
-  let file: File | undefined
-  let item: Attachment | undefined
-  let progress: number = 0
+  let items: UploadAttachmet[] = []
 
   async function confirm (): Promise<void> {
-    if (item === undefined) return
-
     const fileService = await getPlugin(attachment.id)
-    const url = fileService.generateLink(item._id, space, name, item.format)
+    for (const item of items) {
+      const url = fileService.generateLink(item._id, space, item.name, item.format)
 
-    await client.createDoc(
-      attachment.class.Attachment,
-      space,
-      {
-        objectClass: item.objectClass,
-        objectId: item.objectId,
-        name: name,
-        size: item.size,
-        format: item.format,
-        mime: item.mime,
-        url: url
-      },
-      item._id
-    )
+      await client.createDoc(
+        attachment.class.Attachment,
+        space,
+        {
+          objectClass: item.objectClass,
+          objectId: item.objectId,
+          name: item.name,
+          size: item.size,
+          format: item.format,
+          mime: item.mime,
+          url: url
+        },
+        item._id
+      )
+    }
   }
 
   async function drop (e: DragEvent): Promise<void> {
-    file = e.dataTransfer?.files?.item(0) ?? undefined
-    await createAttachment()
+    const list = e.dataTransfer?.files
+    if (list === undefined || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      createAttachment(file)
+    }
   }
 
   async function change (e: Event): Promise<void> {
     const elem = e.target as HTMLInputElement
-    file = elem.files?.item(0) ?? undefined
-    await createAttachment()
-  }
-
-  async function createAttachment (): Promise<void> {
-    const fileService = await getPlugin(attachment.id)
-    name = file?.name ?? ''
-    if (file === undefined) {
-      if (item !== undefined) {
-        fileService.remove(item._id, item.space)
-      }
-      item = undefined
-    } else {
-      const key = generateId() + '.' + nameToFormat(file.name)
-      await fileService.upload(file, key, space, (percent) => {
-        progress = percent
-      })
-
-      progress = 0
-
-      item = {
-        objectClass: objectClass,
-        objectId: objectId,
-        name: file.name,
-        size: file.size,
-        format: nameToFormat(file.name),
-        mime: file.type,
-        url: '',
-        space: space,
-        modifiedBy: client.accountId(),
-        modifiedOn: Date.now(),
-        createOn: Date.now(),
-        _class: attachment.class.Attachment,
-        _id: key as Ref<Attachment>
-      }
+    const list = elem.files
+    if (list === null || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      createAttachment(file)
     }
   }
 
-  async function clear (): Promise<void> {
-    file = undefined
-    await createAttachment()
+  async function createAttachment (file: File): Promise<void> {
+    const fileService = await getPlugin(attachment.id)
+    const key = (generateId() + '.' + nameToFormat(file.name)) as Ref<UploadAttachmet>
+    const item = {
+      objectClass: objectClass,
+      objectId: objectId,
+      name: file.name,
+      size: file.size,
+      format: nameToFormat(file.name),
+      mime: file.type,
+      url: '',
+      space: space,
+      modifiedBy: client.accountId(),
+      modifiedOn: Date.now(),
+      createOn: Date.now(),
+      _class: attachment.class.Attachment,
+      _id: key,
+      progress: 0,
+      abort: () => {}
+    }
+    item.abort = await fileService.upload(file, key, space, (percent) => {
+      item.progress = percent
+      items = items
+    })
+    items.push(item)
+    items = items
+  }
+
+  async function clear (item: UploadAttachmet): Promise<void> {
+    const fileService = await getPlugin(attachment.id)
+    if (item.progress < 100) {
+      item.abort()
+    } else {
+      await fileService.remove(item._id, item.space)
+    }
+    const index = items.findIndex((p) => p._id === item._id)
+    if (index > -1) {
+      items.splice(index, 1)
+      items = items
+    }
+  }
+
+  async function clearAll (): Promise<void> {
+    Promise.all(
+      items.map(async (item) => {
+        await clear(item)
+      })
+    )
   }
 
   let dragover: boolean = false
@@ -112,8 +135,9 @@
   label={attachment.string.AddAttachment}
   okLabel={attachment.string.AddAttachment}
   cancelLabel={ui.string.Cancel}
+  okDisabled={items.some((p) => p.progress < 100)}
   cancelAction={() => {
-    clear()
+    clearAll()
   }}
   on:close={() => {
     dispatch('close')
@@ -121,35 +145,42 @@
   okAction={confirm}
   withCancel={true}
 >
-  {#if item !== undefined}
-    <AttachmentView {item} on:click={clear} />
-  {:else if progress > 0}
-    <Progress value={progress} />
-  {:else}
+  {#each items as item (item._id)}
+    <div class:uploading={item.progress < 100 && item.progress > 0}>
+      <AttachmentView
+        editable={true}
+        bind:item
+        on:dblclick={() => {
+          clear(item)
+        }}
+      />
+    </div>
+    {#if item.progress < 100 && item.progress > 0}
+      <Progress value={item.progress} />
+    {/if}
+  {/each}
+  <div
+    class="container"
+    class:dragover
+    on:drop|preventDefault={drop}
+    on:dragover|preventDefault
+    on:dragenter={() => {
+      dragover = true
+    }}
+    on:dragleave={() => {
+      dragover = false
+    }}
+  >
+    <input class="hidden" bind:this={input} on:change={change} type="file" multiple={true} />
     <div
-      class="container"
-      class:dragover
-      on:drop|preventDefault={drop}
-      on:dragover|preventDefault
-      on:dragenter={() => {
-        dragover = true
-      }}
-      on:dragleave={() => {
-        dragover = false
+      class="icon"
+      on:click={() => {
+        input.click()
       }}
     >
-      <input class="hidden" bind:this={input} on:change={change} type="file" />
-      <div
-        class="icon"
-        on:click={() => {
-          input.click()
-        }}
-      >
-        <IconFile size={200} />
-      </div>
+      <IconFile size={200} />
     </div>
-  {/if}
-  <div class="name"><EditBox label={ui.string.Name} bind:value={name} /></div>
+  </div>
 </Dialog>
 
 <style lang="scss">
@@ -171,8 +202,7 @@
       display: none;
     }
   }
-
-  .name {
-    margin-top: 20px;
+  .uploading {
+    opacity: 0.6;
   }
 </style>

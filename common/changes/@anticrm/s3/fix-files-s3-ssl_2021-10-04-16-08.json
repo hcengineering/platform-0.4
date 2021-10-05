@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/s3",
+      "comment": "Fix S3 ssl for docker compose",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/s3"
+}

@@ -7,6 +7,12 @@ import { createServer } from 'https'
 import { config, readCertificates } from './config'
 import builder from './model'
 
+import regCalendarMappers from '@anticrm/calendar-mappers'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regCalendarActions from '@anticrm/calendar-action'
+import regNotificationMappers from '@anticrm/notification-mappers'
+
 async function initWorkspace (): Promise<void> {
   const client = await getMongoClient(config.dbUri)
   const db = client.db('accounts')
@@ -37,6 +43,12 @@ async function start (): Promise<void> {
 
   const security = readCertificates()
 
+  await regCalendarMappers()
+  await regRecruitingMappers()
+  await regNotificationMappers()
+  await regCalendarActions()
+  await regRecruitingActions()
+
   const appServer: Server = await startServer(undefined, config.appPort, config.appSecret, {
     logRequests: false,
     logTransactions: false,
@@ -49,15 +61,11 @@ async function start (): Promise<void> {
   const port = appServer.address().port
 
   const auth = await newAuthServer(config.dbUri, koa, router, config.appSecret)
-  const file = createFileServer(
-    koa,
-    router,
-    config.appSecret,
-    config.s3Uri,
-    config.s3AccessKey,
-    config.s3Secret,
-    security.ca
-  )
+  const file = createFileServer(koa, router, config.appSecret, config.s3Uri, config.s3AccessKey, config.s3Secret)
+
+  koa.use(logger)
+  koa.use(router.routes()).use(router.allowedMethods())
+
   const front = newFrontServer(koa, './web')
 
   // Handle client information loading
@@ -66,9 +74,6 @@ async function start (): Promise<void> {
     ctx.set('Content-Encoding', 'identity')
     ctx.body = JSON.stringify(config.platform, undefined, 2)
   })
-
-  koa.use(logger)
-  koa.use(router.routes()).use(router.allowedMethods())
 
   const callback = koa.callback()
 

@@ -16,14 +16,12 @@
   import type { IntlString } from '@anticrm/platform'
   import { translate } from '@anticrm/platform'
 
-  export let label: IntlString
+  export let label: IntlString | string
   export let params: Record<string, any> = {}
 
-  $: translation = translate(label, params)
+  $: translation = translate(label as IntlString, params)
 </script>
 
-{#await translation}
-  {label}
-{:then text}
+{#await translation then text}
   {text}
 {/await}

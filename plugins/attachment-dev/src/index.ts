@@ -23,10 +23,15 @@ export default async (): Promise<AttachmentService> => {
     key: string,
     space: Ref<Space>,
     progressCallback?: (progress: number) => void
-  ): Promise<void> {
+  ): Promise<() => void> {
+    if (progressCallback != null) {
+      progressCallback(100)
+    }
     return await new Promise(function (resolve, reject) {
       files.set(key, file)
-      resolve()
+      resolve(() => {
+        files.delete(key)
+      })
     })
   }
 

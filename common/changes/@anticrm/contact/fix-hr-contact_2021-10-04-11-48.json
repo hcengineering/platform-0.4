@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/contact",
+      "comment": "Rename plugin",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/contact"
+}

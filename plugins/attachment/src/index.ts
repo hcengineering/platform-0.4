@@ -42,7 +42,12 @@ export function sizeToString (size: number): string {
 }
 
 export interface AttachmentService extends Service {
-  upload: (file: File, key: string, space: Ref<Space>, progressCallback?: (progress: number) => void) => Promise<void>
+  upload: (
+    file: File,
+    key: string,
+    space: Ref<Space>,
+    progressCallback?: (progress: number) => void
+  ) => Promise<() => void>
   remove: (key: string, space: Ref<Space>) => Promise<void>
   generateLink: (key: string, space: Ref<Space>, name: string, format: string) => string
   authorize: (token: string) => Promise<void>
