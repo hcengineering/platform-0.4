@@ -14,16 +14,22 @@
 -->
 <script lang="ts">
   import { Attachment, sizeToString } from '@anticrm/attachment'
+  import { EditBox } from '@anticrm/ui'
 
   export let item: Attachment
+  export let editable: boolean = false
 </script>
 
-<div class="content" on:click>
+<div class="content" on:click on:dblclick>
   <div class="icon">
     <div>{item.format.toUpperCase()}</div>
   </div>
   <div class="info">
-    <div class="label">{item.name}</div>
+    {#if editable}
+      <EditBox bind:value={item.name} />
+    {:else}
+      <div class="label">{item.name}</div>
+    {/if}
     <div class="size">{sizeToString(item.size)}</div>
   </div>
 </div>
@@ -41,7 +47,7 @@
       width: 32px;
       height: 32px;
       border-radius: 25%;
-      background-color: #7c6fcd;
+      background-color: #4474f6;
       display: flex;
 
       div {

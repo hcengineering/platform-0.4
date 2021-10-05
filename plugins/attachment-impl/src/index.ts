@@ -33,7 +33,7 @@ export default async (): Promise<AttachmentService> => {
     key: string,
     space: Ref<Space>,
     progressCallback?: (progress: number) => void
-  ): Promise<void> {
+  ): Promise<() => void> {
     const params = {
       key,
       space,
@@ -48,39 +48,26 @@ export default async (): Promise<AttachmentService> => {
       body: JSON.stringify(params)
     })
     const result = await req.text()
-    await uploadToServer(result, file, progressCallback)
+    return uploadToServer(result, file, progressCallback)
   }
 
-  async function uploadToServer (
-    url: string,
-    file: File,
-    progressCallback?: (progress: number) => void
-  ): Promise<XMLHttpRequest> {
-    return await new Promise(function (resolve, reject) {
-      const xhr = new XMLHttpRequest()
+  function uploadToServer (url: string, file: File, progressCallback?: (progress: number) => void): () => void {
+    const xhr = new XMLHttpRequest()
 
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(xhr)
-          } else {
-            reject(xhr)
-          }
+    if (progressCallback != null) {
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / file.size) * 100
+          progressCallback(percentComplete)
         }
       }
+    }
 
-      if (progressCallback != null) {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const percentComplete = (e.loaded / file.size) * 100
-            progressCallback(percentComplete)
-          }
-        }
-      }
-
-      xhr.open('PUT', url)
-      xhr.send(file)
-    })
+    xhr.open('PUT', url, true)
+    xhr.send(file)
+    return () => {
+      xhr.abort()
+    }
   }
 
   async function remove (key: string, space: Ref<Space>): Promise<void> {
@@ -90,6 +77,7 @@ export default async (): Promise<AttachmentService> => {
     }
     await fetch(url, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
