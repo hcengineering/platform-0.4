@@ -27,6 +27,7 @@
 
   export let label: IntlString
   export let okLabel: IntlString
+  export let okDisabled: boolean = false
   export let cancelLabel: IntlString = ui.string.Cancel
   export let withCancel = true
   export let okAction: () => void
@@ -53,6 +54,7 @@
   <div class="footer">
     <Button
       label={okLabel}
+      disabled={okDisabled}
       primary
       on:click={() => {
         okAction()
