@@ -17,6 +17,7 @@ import type { Account, Class, Ref, Space, DocumentPresenter, Timestamp, Document
 import type { Person } from '@anticrm/contact'
 import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
 import { Action as ActionDef } from '@anticrm/action'
+import type { Action } from '@anticrm/action-plugin'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
@@ -168,6 +169,9 @@ export default plugin(PluginRecruiting, {}, {
   },
   action: {
     Interview: '' as Resource<ActionDef>
+  },
+  actionRef: {
+    Interview: '' as Ref<Action>
   },
   dd: {
     Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
