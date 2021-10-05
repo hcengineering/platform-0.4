@@ -15,15 +15,20 @@
 <script lang="ts">
   import core, { Account, Ref } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
-  import { Dialog, Section, Grid, IconFile, UserBox } from '@anticrm/ui'
+  import { Dialog, Section, Grid, IconFile, UserBox, DropdownItem, Dropdown } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
+  import type { FSM, State } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace
   const client = getClient()
+
+  let fsm: FSM | undefined
+  let fsmQ: QueryUpdater<FSM> | undefined
+  $: fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]))
 
   let existingCandidates: Set<Ref<Candidate>> | undefined
   let existingCandidatesQ: QueryUpdater<Applicant> | undefined
@@ -36,6 +41,11 @@
       existingCandidates = new Set(res.map((x) => x.item as Ref<Candidate>))
     }
   )
+
+  let states: State[] = []
+  let statesQ: QueryUpdater<State> | undefined
+
+  $: statesQ = client.query(statesQ, fsmPlugin.class.State, { fsm: space.fsm }, (res) => (states = res))
 
   let allCandidates: Candidate[] = []
   let allCandidatesQ: QueryUpdater<Candidate> | undefined
@@ -65,9 +75,21 @@
   )
 
   let recruiter: Ref<Account> | undefined
+  let stateItems: DropdownItem[] = []
+  $: if (fsm !== undefined) {
+    stateItems = fsm.states
+      .map((id) => states.find((s) => s._id === id))
+      .filter((s): s is State => s !== undefined)
+      .map((s) => ({
+        id: s._id,
+        label: s.name
+      }))
+  }
+
+  let stateID: string | undefined
 
   async function create () {
-    if (candidate === undefined || recruiter === undefined) {
+    if (candidate === undefined || recruiter === undefined || stateID === undefined) {
       return
     }
 
@@ -77,7 +99,8 @@
       obj: {
         item: candidate as never as Ref<Candidate>,
         clazz: recruiting.class.Candidate,
-        recruiter
+        recruiter,
+        state: stateID as Ref<State>
       }
     })
   }
@@ -105,6 +128,7 @@
         title={recruiting.string.SelectCandidate}
         showSearch
       />
+      <Dropdown items={stateItems} bind:selected={stateID} title={recruiting.string.State} />
     </Grid>
   </Section>
 </Dialog>
