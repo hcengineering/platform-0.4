@@ -87,6 +87,18 @@ class Draggable {
     return leaf
   }
 
+  private findClosestHTMLElement (leaf: Element | null, root: HTMLElement): HTMLElement | null {
+    if (leaf === null || leaf === root) {
+      return null
+    }
+
+    if (leaf instanceof HTMLElement) {
+      return leaf
+    }
+
+    return this.findClosestHTMLElement(leaf.parentElement, root)
+  }
+
   private readonly handleMouseDown = (e: MouseEvent): void => {
     // We must not handle mouse down if event is for inner draggable
     const targetDraggable = this.findClosestDraggable(e.target as HTMLElement)
@@ -114,7 +126,7 @@ class Draggable {
     window.removeEventListener('mouseup', this.handleMouseUp)
     // Click case
     if (!this.isMoved) {
-      const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null
+      const target = this.findClosestHTMLElement(document.elementFromPoint(e.clientX, e.clientY), this.node)
 
       if (target !== null) {
         this.isClick = true
