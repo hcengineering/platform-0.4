@@ -34,6 +34,8 @@
 
   let messages: Message[] = []
 
+  const loadLimit = 100
+
   async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
     await client.createDoc(chunter.class.Message, currentSpace!, {
       message
@@ -46,15 +48,21 @@
   let query: QueryUpdater<Message> | undefined
 
   $: if (currentSpace !== undefined) {
-    query = client.query(query, chunter.class.Message, { space: currentSpace }, async (result) => {
-      notificationClient.setAutoscroll(div)
-      messages = result
-      await tick()
-      if (div && notifications) {
-        await notificationClient.before(div, notifications, currentSpace, false)
-      }
-      notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
-    })
+    query = client.query(
+      query,
+      chunter.class.Message,
+      { space: currentSpace },
+      async (result) => {
+        notificationClient.setAutoscroll(div)
+        messages = result.reverse() // Since we sort of createOn -1
+        await tick()
+        if (div && notifications) {
+          await notificationClient.before(div, notifications, currentSpace, false)
+        }
+        notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+      },
+      { limit: loadLimit, sort: { createOn: -1 } }
+    )
   }
 
   function scrollHandler () {

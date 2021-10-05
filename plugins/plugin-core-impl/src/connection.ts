@@ -12,7 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { Account, Class, Doc, DocumentQuery, FindResult, Ref, Storage, Tx, CoreClient } from '@anticrm/core'
+import {
+  Account,
+  Class,
+  Doc,
+  DocumentQuery,
+  FindResult,
+  Ref,
+  Storage,
+  Tx,
+  CoreClient,
+  FindOptions
+} from '@anticrm/core'
 import type { Request, Response } from '@anticrm/rpc'
 import { readResponse, RequestProcessor, serialize } from '@anticrm/rpc'
 import { unknownStatus } from '@anticrm/status'
@@ -46,8 +57,12 @@ class WebSocketConnection extends RequestProcessor implements Storage, CoreClien
     }
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    return (await this.request('findAll', _class, query)) as FindResult<T>
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
+    return (await this.request('findAll', _class, query, options)) as FindResult<T>
   }
 
   async accountId (): Promise<Ref<Account>> {

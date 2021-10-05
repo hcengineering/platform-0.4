@@ -22,14 +22,14 @@ import service from '../'
 describe('client', () => {
   it('should create connection', async () => {
     const conn = await ClientImpl.create()
-    const txes = builder.getTxes()
+    const txes = await builder
     const result = await conn.findAll(core.class.Tx, {})
     expect(result.length).toEqual(txes.length)
   })
 
   it('should create client', async () => {
     const client = await ClientImpl.create()
-    const txes = builder.getTxes()
+    const txes = await builder
     const result = await client.findAll(core.class.Class, {})
     const expected = txes
       .filter(

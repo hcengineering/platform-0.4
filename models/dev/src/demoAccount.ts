@@ -1,28 +1,41 @@
 import core, { Account, Ref } from '@anticrm/core'
-import { Builder } from '@anticrm/model'
 import faker from 'faker'
+import { DemoBuilder } from './model'
 
+/**
+ * @public
+ */
 export const accountIds: Ref<Account>[] = []
-export function demoAccount (builder: Builder): void {
-  builder.createDoc(
+
+/**
+ * @public
+ */
+export async function demoAccount (builder: DemoBuilder, accounts = 11): Promise<void> {
+  await builder.createDoc(
     core.class.Account,
     {
       email: 'system',
       name: 'System user',
       avatar: faker.image.avatar()
     },
-    core.account.System
+    core.account.System,
+    {
+      space: core.space.Model
+    }
   )
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i < accounts; i++) {
     const accountId: Ref<Account> = `demo_account_id${i}` as Ref<Account>
-    builder.createDoc(
+    await builder.createDoc(
       core.class.Account,
       {
         email: faker.internet.email(),
         name: faker.internet.userName(),
         avatar: faker.image.avatar()
       },
-      accountId
+      accountId,
+      {
+        space: core.space.Model
+      }
     )
     accountIds.push(accountId)
   }

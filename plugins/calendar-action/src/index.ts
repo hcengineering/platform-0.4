@@ -50,7 +50,7 @@ const waitForEvent = new Action()
   .exec(
     async (ctx) => {
       const eventID: Ref<Event> = ctx.pop()
-      const event = (await ctx.findAll(calendar.class.Event, { _id: eventID }))[0]
+      const event = (await ctx.findAll(calendar.class.Event, { _id: eventID }, { limit: 1 }))[0]
 
       if (event === undefined) {
         throw Error(`Event is not found: ${eventID}`)

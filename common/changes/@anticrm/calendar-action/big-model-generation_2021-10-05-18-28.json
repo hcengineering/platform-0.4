@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Bug model data support",
+      "type": "patch",
+      "packageName": "@anticrm/calendar-action"
+    }
+  ],
+  "packageName": "@anticrm/calendar-action",
+  "email": "haiodo@gmail.com"
+}

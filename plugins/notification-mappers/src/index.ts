@@ -35,27 +35,45 @@ import core, {
 } from '@anticrm/core'
 import notification, { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
 
-async function updateSpaceInfo<T extends Doc> (tx: ObjectTx<T>, options: MappingOptions): Promise<void> {
-  const spaceInfo = (
-    await options.storage.findAll<SpaceInfo>(notification.class.SpaceInfo, { objectId: tx.objectSpace })
-  )[0]
-  if (spaceInfo === undefined) return
-  const updateTx: TxUpdateDoc<SpaceInfo> = {
-    objectId: spaceInfo._id,
-    objectSpace: spaceInfo.space,
-    objectClass: spaceInfo._class,
-    _id: generateId(),
-    _class: core.class.TxUpdateDoc,
-    space: core.space.Tx,
-    modifiedBy: tx.modifiedBy,
-    modifiedOn: tx.modifiedOn,
-    createOn: tx.createOn,
-    operations: {
-      lastModified: tx.modifiedOn
-    }
-  }
+const spaceInfoCache = new Map<Ref<Space>, SpaceInfo>()
+const spaceUpdateTimer = new Set<Ref<Space>>()
 
-  await options.storage.tx(updateTx)
+async function updateSpaceInfo<T extends Doc> (tx: ObjectTx<T>, options: MappingOptions): Promise<void> {
+  const spaceInfo =
+    spaceInfoCache.get(tx.objectSpace) ??
+    (
+      await options.storage.findAll<SpaceInfo>(notification.class.SpaceInfo, { objectId: tx.objectSpace }, { limit: 1 })
+    )[0]
+
+  if (spaceInfo === undefined) return
+
+  spaceInfoCache.set(tx.objectSpace, spaceInfo)
+
+  // Update last modified
+  spaceInfo.lastModified = tx.modifiedOn
+
+  if (!spaceUpdateTimer.has(tx.objectSpace)) {
+    setTimeout(async () => {
+      const updateTx: TxUpdateDoc<SpaceInfo> = {
+        objectId: spaceInfo._id,
+        objectSpace: spaceInfo.space,
+        objectClass: spaceInfo._class,
+        _id: generateId(),
+        _class: core.class.TxUpdateDoc,
+        space: core.space.Tx,
+        modifiedBy: tx.modifiedBy,
+        modifiedOn: tx.modifiedOn,
+        createOn: tx.createOn,
+        operations: {
+          lastModified: spaceInfo.lastModified
+        }
+      }
+
+      await options.storage.tx(updateTx)
+      spaceUpdateTimer.delete(tx.objectSpace)
+    }, 250)
+    spaceUpdateTimer.add(tx.objectSpace)
+  }
 }
 
 function createSpaceNotification<T extends Space> (

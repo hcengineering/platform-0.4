@@ -163,7 +163,7 @@ describe('deried data', () => {
     const processor = await DerivedDataProcessor.create(model, hierarchy, countModel, allowRebuildDD)
 
     const countStorage: Storage = {
-      findAll: async (_class, query) => await storage.findAll(_class, query),
+      findAll: async (_class, query, options) => await storage.findAll(_class, query, options),
       tx: async (tx) => {
         hierarchy.tx(tx)
         await countModel.tx(tx)
