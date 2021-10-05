@@ -201,7 +201,6 @@
     .hidden {
       display: none;
     }
-
   }
   .uploading {
     opacity: 0.6;

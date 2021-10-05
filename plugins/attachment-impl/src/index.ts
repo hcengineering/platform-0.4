@@ -51,11 +51,7 @@ export default async (): Promise<AttachmentService> => {
     return uploadToServer(result, file, progressCallback)
   }
 
-  function uploadToServer (
-    url: string,
-    file: File,
-    progressCallback?: (progress: number) => void
-  ): () => void {
+  function uploadToServer (url: string, file: File, progressCallback?: (progress: number) => void): () => void {
     const xhr = new XMLHttpRequest()
 
     if (progressCallback != null) {

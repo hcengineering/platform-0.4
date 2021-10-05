@@ -47,7 +47,7 @@
       width: 32px;
       height: 32px;
       border-radius: 25%;
-      background-color: #4474F6;
+      background-color: #4474f6;
       display: flex;
 
       div {
