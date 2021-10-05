@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core",
+      "comment": "Remove accountID metadata",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core"
+}
