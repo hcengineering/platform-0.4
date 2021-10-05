@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-recruiting",
+      "comment": "Make interview action persitstent",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/model-recruiting"
+}
