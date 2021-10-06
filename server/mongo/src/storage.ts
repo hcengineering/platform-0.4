@@ -20,6 +20,8 @@ import core, {
   FindOptions,
   FindResult,
   Hierarchy,
+  measure,
+  measureAsync,
   Ref,
   Storage,
   Tx,
@@ -51,7 +53,7 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    return await this.txHandlers[tx._class]?.(tx)
+    return await measureAsync('mongo.tx', async () => await this.txHandlers[tx._class]?.(tx))
   }
 
   private collection<T extends Doc>(_class: Ref<Class<T>>): Collection {
@@ -61,7 +63,10 @@ export class DocStorage extends TxProcessor implements Storage {
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     try {
-      await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
+      await measureAsync(
+        'mongo.txCreateDoc',
+        async () => await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
+      )
     } catch (err: any) {
       // Convert error to platform known ones.
       if (err.code === 11000) {
@@ -87,7 +92,10 @@ export class DocStorage extends TxProcessor implements Storage {
     if ($pull !== undefined) {
       op.$pull = $pull
     }
-    return await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
+    return await measureAsync(
+      'mongo.txUpdateDoc',
+      async () => await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
+    )
   }
 
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
@@ -96,7 +104,7 @@ export class DocStorage extends TxProcessor implements Storage {
       _class: tx.objectClass,
       space: tx.objectSpace
     }
-    await this.collection(tx.objectClass).deleteOne(deleteQuery)
+    await measureAsync('mongo.txRemoveDoc', async () => await this.collection(tx.objectClass).deleteOne(deleteQuery))
   }
 
   async findAll<T extends Doc>(
@@ -104,6 +112,7 @@ export class DocStorage extends TxProcessor implements Storage {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
+    const done = await measure('mongo.findAll')
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     let cursor = this.collection(_class).find(mongoQuery)
     if (options?.sort !== undefined) {
@@ -116,6 +125,8 @@ export class DocStorage extends TxProcessor implements Storage {
 
     const total = await cursor.count()
     if (options?.limit !== undefined) cursor = cursor.limit(options.limit)
-    return Object.assign((await cursor.toArray()).map(mongoReplaceNulls), { total })
+    const result = Object.assign((await cursor.toArray()).map(mongoReplaceNulls), { total })
+    done()
+    return result
   }
 }

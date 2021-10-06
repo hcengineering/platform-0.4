@@ -78,7 +78,7 @@ describe('security', () => {
     securityStorage = new SecurityClientStorage(
       security,
       {
-        findAll: async (_class, query) => await db.findAll(_class, query),
+        findAll: async (_class, query, options) => await db.findAll(_class, query, options),
         tx: async (clientId, tx) => {
           hierarchy.tx(tx)
           await db.tx(tx)

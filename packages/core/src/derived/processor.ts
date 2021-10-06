@@ -8,7 +8,7 @@ import {
   MappingRule,
   RuleExpresson
 } from '.'
-import core, { generateId, Storage, Tx, TxRemoveDoc, withOperations } from '..'
+import core, { generateId, measure, Storage, Tx, TxRemoveDoc, withOperations } from '..'
 import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
@@ -49,7 +49,7 @@ class DDStorage implements Storage {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    return await this.storage.findAll(_class, query)
+    return await this.storage.findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {
@@ -103,7 +103,7 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     if (allowRebuildDD) {
-      const descriptorsState = await model.findAll(core.class.DerivedDataDescriptorState, {})
+      const descriptorsState = await ddStorage.findAll(core.class.DerivedDataDescriptorState, {})
       await processor.refreshDescriptors(descriptors, descriptorsState)
     }
 
@@ -123,13 +123,19 @@ export class DerivedDataProcessor extends TxProcessor {
     }
 
     for (const d of descriptors) {
+      const done = measure('dd.' + d._id)
       let results = (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc))
       results = this.withDescrId(results, d._id, tx.objectId, tx.objectClass)
       if (d.targetClass !== undefined) {
+        const done2 = measure('dd.apply.' + d._id)
         await this.applyDerivedData([], results, tx.modifiedBy)
+        done2()
 
+        const done3 = measure('dd.collection.' + d._id)
         await this.applyCollectionRules(d as DescrWithTarget, tx, true)
+        done3()
       }
+      done()
     }
   }
 
@@ -283,7 +289,7 @@ export class DerivedDataProcessor extends TxProcessor {
 
     // We expect storage is alrady updated before derived data is being processed.
     const doc: CachedDoc = {
-      resolve: async () => (await this.storage.findAll(tx.objectClass, { _id: tx.objectId }))[0]
+      resolve: async () => (await this.storage.findAll(tx.objectClass, { _id: tx.objectId }, { limit: 1 }))[0]
     }
 
     for (const d of descriptors) {
@@ -467,9 +473,10 @@ export class DerivedDataProcessor extends TxProcessor {
       const state = states.get(d._id)
       const version = this.getDDVersion(d)
       if (state !== undefined) {
-        needUpdate = version !== d.version
+        needUpdate = version !== state.version
       }
       if (needUpdate) {
+        console.log('need update DD,', version, state?.version)
         await this.refreshDerivedData(d, true)
 
         await this.updateDDState(state, d, version)
@@ -539,6 +546,9 @@ export class DerivedDataProcessor extends TxProcessor {
     }
     let allDD = await this.storage.findAll(d.sourceClass, {}, { limit: partSize })
     const total = allDD.total
+    console.log(
+      `DD rebuild of ${d.sourceClass} part size:  ${partSize} returned segment: (${allDD.length} of ${total})`
+    )
     let processed = 0
 
     while (processed < total) {
@@ -576,7 +586,7 @@ export class DerivedDataProcessor extends TxProcessor {
       }
       processed += allDD.length
       allDD = await this.storage.findAll(d.sourceClass, {}, { limit: partSize, skip: processed })
-      console.info(`DD rebuild of ${d.sourceClass} (${processed}, ${total})`)
+      console.log(`DD rebuild of ${d.sourceClass} (${processed}, ${total})`)
     }
   }
 }

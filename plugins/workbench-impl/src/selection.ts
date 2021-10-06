@@ -26,7 +26,9 @@ export async function updateCurrentDocument (
   // New document selection
 
   // Check if we have short id reference.
-  const shortIds = (await client.findAll<ShortRef>(core.class.ShortRef, { _id: browse as Ref<ShortRef> })).shift()
+  const shortIds = (
+    await client.findAll<ShortRef>(core.class.ShortRef, { _id: browse as Ref<ShortRef> }, { limit: 1 })
+  ).shift()
   let shortId: string | undefined
   let objectClass: Ref<Class<Doc>> | undefined
   let objectId: Ref<Doc> | undefined
@@ -81,10 +83,14 @@ export async function handleCurrentDocumentChange (
 
   if (value.shortId === undefined) {
     // try find short Id
-    const refs = await client.findAll<ShortRef>(core.class.Title, {
-      objectId: value.document._id,
-      objectClass: value.document._class
-    })
+    const refs = await client.findAll<ShortRef>(
+      core.class.Title,
+      {
+        objectId: value.document._id,
+        objectClass: value.document._class
+      },
+      { limit: 1 }
+    )
 
     if (refs.length > 0) {
       if (currentRoute.browse !== refs[0]._id) {

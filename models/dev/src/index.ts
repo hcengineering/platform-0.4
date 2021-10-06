@@ -13,16 +13,39 @@
 // limitations under the License.
 //
 
-import builder from '@anticrm/model-all'
+import { Class, Data, Doc, Ref, Tx } from '@anticrm/core'
+import { createBuilder } from '@anticrm/model-all'
 import { demoAccount } from './demoAccount'
 import { demoChunter } from './demoChunter'
 import { demoTask } from './demoTask'
+import { DemoBuilder } from './model'
+export { DemoBuilder }
+export { demoAccount, demoTask, demoChunter }
 
-demoAccount(builder)
-const tasks = demoTask(builder)
-demoChunter(builder, tasks)
+async function buildTxes (): Promise<Tx[]> {
+  const builder = createBuilder()
+  console.info('GENERATE DEMO DATA...')
+  const db: DemoBuilder = {
+    createDoc: async <T extends Doc>(
+      _class: Ref<Class<T>>,
+      attributes: Data<T>,
+      objectId: Ref<T>, // ObjectID should be not uniq for model instance values, for upgrade procedure to work properly.
+      docOptions?: Partial<Doc>
+    ): Promise<T> => {
+      return builder.createDoc(_class, attributes, objectId, docOptions)
+    }
+  }
+  await demoAccount(db)
+  const tasks = await demoTask(db)
+  await demoChunter(db, tasks)
+  return builder.getTxes()
+}
 
 /**
  * @public
  */
-export default builder
+const txes = buildTxes()
+/**
+ * @public
+ */
+export default txes

@@ -34,7 +34,7 @@ describe('memdb.shortref', () => {
     const txStore = new TxDb(hierarchy)
 
     const storage: Storage = {
-      findAll: async (_class, query) => await model.findAll(_class, query),
+      findAll: async (_class, query, options) => await model.findAll(_class, query, options),
       tx: async (tx) => {
         if (tx.objectId === ('TASK-2' as Ref<Doc>)) {
           throw new PlatformError(

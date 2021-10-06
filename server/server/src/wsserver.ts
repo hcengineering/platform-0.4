@@ -87,8 +87,8 @@ function withLogging (
   details: AccountDetails
 ): CoreClient {
   return {
-    findAll: async (_class, query) => {
-      const resultTx = clientStorage.findAll(_class, query)
+    findAll: async (_class, query, foptions) => {
+      const resultTx = clientStorage.findAll(_class, query, foptions)
       resultTx.catch((err) => {
         if (options.logRequests) {
           console.info(
@@ -147,7 +147,7 @@ async function updateAccount (
   accountId: Ref<Account>,
   details: AccountDetails
 ): Promise<void> {
-  const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId })
+  const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId }, { limit: 1 })
   if (accountRef.length === 0) {
     // We need to create an account entry.
     await workspace.workspace.tx(

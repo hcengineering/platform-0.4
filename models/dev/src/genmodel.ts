@@ -1,3 +1,5 @@
 import builder from '.'
 
-console.log(JSON.stringify(builder.getTxes()))
+void builder.then((txes) => {
+  console.log(JSON.stringify(txes))
+})

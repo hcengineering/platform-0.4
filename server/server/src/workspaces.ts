@@ -23,6 +23,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 
   // Send transactions to clients.
   const sendTo: TxHandler = {
+    name: 'send.to',
     async tx (clientId: string, tx: Tx): Promise<void> {
       sendToClients(clientId, clients, tx, security)
     }
@@ -45,15 +46,21 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
       resActionRuntime(actionRuntime)
 
       const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage, true)
+      const ddRuntime: TxHandler = {
+        name: 'derived.data',
+        tx: async (clientId, tx) => {
+          const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
+          // We do not need to wait for DD.
+          void processor.tx(tx)
+        }
+      } // If dd produce more tx, they also will be send.
+
+      const securityRuntime: TxHandler = { name: 'security', tx: async (clientId, tx) => await security.tx(tx) }
+
       return [
         sendTo, // Send to clients of passed tx
-        { tx: async (clientId, tx) => await security.tx(tx) },
-        {
-          tx: async (clientId, tx) => {
-            const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
-            return await processor.tx(tx)
-          }
-        }, // If dd produce more tx, they also will be send.
+        securityRuntime,
+        ddRuntime,
         actionRuntime
         // <<---- Placeholder: Add triggers here
         // hierarchy and storage are available
@@ -73,8 +80,7 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
 function sendToClients (clientId: string, clients: Map<string, ClientInfo>, tx: Tx, security: SecurityModel): void {
   for (const cl of clients.entries()) {
     const differentAccount = cl[1].clientId !== clientId
-    const spaceOpAllowed = security.checkSecurity(cl[1].accountId, tx)
-    if (differentAccount && spaceOpAllowed) {
+    if (differentAccount && security.checkSecurity(cl[1].accountId, tx)) {
       // Only send if account is same, or space is allowed and space is not personalized.
       if (cl[1].accountId === tx.modifiedBy || tx.space === core.space.Tx) {
         cl[1].tx(tx)
@@ -86,7 +92,7 @@ function sendToClients (clientId: string, clients: Map<string, ClientInfo>, tx: 
 function createDerivedDataStorage (clientId: string, storage: Storage, sendTo: TxHandler): Storage {
   // Send derived data produced objects to clients.
   return {
-    findAll: async (_class, query) => await storage.findAll(_class, query),
+    findAll: async (_class, query, options) => await storage.findAll(_class, query, options),
     tx: async (tx) => {
       await storage.tx(tx)
 

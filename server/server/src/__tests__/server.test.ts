@@ -19,6 +19,7 @@ import core, {
   Doc,
   DocumentQuery,
   DOMAIN_TX,
+  FindOptions,
   FindResult,
   generateId,
   Hierarchy,
@@ -53,10 +54,14 @@ async function prepareInMemServer (): Promise<{
     await model.tx(tx)
   }
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+  async function findAll<T extends Doc> (
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const domain = hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-    return await model.findAll(_class, query)
+    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query, options)
+    return await model.findAll(_class, query, options)
   }
   return { hierarchy, findAll, transactions, model }
 }

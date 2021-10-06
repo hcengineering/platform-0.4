@@ -13,18 +13,18 @@
 // limitations under the License.
 //
 
+import regCalendarActions from '@anticrm/calendar-action'
+import regCalendarMappers from '@anticrm/calendar-mappers'
 import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
-import { SecurityOptions, startServer } from '@anticrm/server'
-import { startFileServer } from './file'
-import { upgradeWorkspace } from '@anticrm/workspaces'
-import regCalendarMappers from '@anticrm/calendar-mappers'
-import regRecruitingMappers from '@anticrm/recruiting-mappers'
-import regRecruitingActions from '@anticrm/recruiting-action'
-import regCalendarActions from '@anticrm/calendar-action'
 import regNotificationMappers from '@anticrm/notification-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
+import { SecurityOptions, startServer } from '@anticrm/server'
+import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
+import { startFileServer } from './file'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
