@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, Account, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc, Space } from '@anticrm/core'
+import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, Account, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc, Space, Class, Hierarchy } from '@anticrm/core'
 import core, { registerMapper } from '@anticrm/core'
 import type { DerivedEvent, Event } from '@anticrm/calendar'
 import calendar from '@anticrm/calendar'
@@ -36,13 +36,17 @@ async function createEvent (event: Event, participant: Ref<Account>, d: DerivedD
   ]
 }
 
+const isTarget = (hierarchy: Hierarchy, c: Ref<Class<Doc>>): boolean =>
+  hierarchy.isDerived(c, calendar.class.Event) &&
+  !hierarchy.isDerived(c, calendar.class.DerivedEvent)
+
 export default async (): Promise<void> => {
   registerMapper(calendar.mapper.defaultMapper, {
     map: async (tx: Tx, options: MappingOptions): Promise<DerivedData[]> => {
       if (tx._class === core.class.TxCreateDoc) {
         const ttx = tx as TxCreateDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, calendar.class.Event)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           const event = TxProcessor.createDoc2Doc(ttx) as Event
           const participants = event.participants.filter(x => x !== event.owner)
 
@@ -55,7 +59,7 @@ export default async (): Promise<void> => {
       if (tx._class === core.class.TxUpdateDoc) {
         const ttx = tx as TxUpdateDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, calendar.class.Event)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           const origEvent = (await options.storage.findAll(calendar.class.Event, { _id: ttx.objectId as Ref<Event> }))[0]
 
           if (origEvent === undefined) {
@@ -93,7 +97,7 @@ export default async (): Promise<void> => {
       if (tx._class === core.class.TxRemoveDoc) {
         const ttx = tx as TxRemoveDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, calendar.class.Event)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           return []
         }
       }
