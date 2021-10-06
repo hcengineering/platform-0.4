@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Add move threshold to draggables",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
