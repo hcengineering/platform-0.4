@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-mappers",
+      "comment": "Do not trigger mapper on derived data create/update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-mappers"
+}
