@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Ref } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import recruiting from '@anticrm/recruiting'
   import action from '@anticrm/action-plugin'
   import type { Action } from '@anticrm/action-plugin'
@@ -63,9 +63,13 @@
       }
     )
   }
+
+  function onClick (): void {
+    selectDocument(doc)
+  }
 </script>
 
-<div class="root">
+<div class="root" on:click={onClick}>
   {#if candidate}
     <div class="header" class:noContent={actions.length === 0}>
       <div class="candidate">

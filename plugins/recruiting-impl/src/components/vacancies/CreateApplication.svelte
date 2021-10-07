@@ -100,7 +100,8 @@
         item: candidate as never as Ref<Candidate>,
         clazz: recruiting.class.Candidate,
         recruiter,
-        state: stateID as Ref<State>
+        state: stateID as Ref<State>,
+        comments: []
       }
     })
   }

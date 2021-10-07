@@ -15,7 +15,7 @@
 <script lang="ts">
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient } from '@anticrm/workbench'
+  import { getClient, selectDocument } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -63,6 +63,16 @@
   }
 
   $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
+
+  function onClick (event: any) {
+    const applicant = applicants.find((x) => event.detail._id === x.item)
+
+    if (!applicant) {
+      return
+    }
+
+    selectDocument(applicant)
+  }
 </script>
 
-<Table {data} {columns} showHeader />
+<Table {data} {columns} on:rowClick={onClick} showHeader />
