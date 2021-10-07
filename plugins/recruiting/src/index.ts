@@ -44,7 +44,7 @@ export interface Applicant extends FSMItem {
 
 export interface CandidatePoolSpace extends Space {}
 
-export interface Vacancy {
+export interface Vacancy extends Doc {
   company: string
   details?: {
     summary: string
@@ -55,7 +55,9 @@ export interface Vacancy {
   type: string
   dueDate: Timestamp
 }
-export interface VacancySpace extends WithFSM, Vacancy {}
+export interface VacancySpace extends WithFSM {
+  vacancy: Ref<Vacancy>
+}
 
 export interface FeedbackRequest extends Doc {
   parent: Ref<Doc>
@@ -85,6 +87,7 @@ export default plugin(PluginRecruiting, {}, {
     Candidate: '' as Ref<Class<Candidate>>,
     CandidatePoolSpace: '' as Ref<Class<CandidatePoolSpace>>,
     Applicant: '' as Ref<Class<Applicant>>,
+    Vacancy: '' as Ref<Class<Vacancy>>,
     VacancySpace: '' as Ref<Class<VacancySpace>>,
     FeedbackRequest: '' as Ref<Class<FeedbackRequest>>,
     Feedback: '' as Ref<Class<Feedback>>,
@@ -98,6 +101,7 @@ export default plugin(PluginRecruiting, {}, {
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent,
     Applications: '' as AnyComponent,
+    VacancyDetails: '' as AnyComponent,
     Feedback: '' as AnyComponent
   },
   string: {

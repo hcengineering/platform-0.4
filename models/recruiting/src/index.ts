@@ -39,6 +39,7 @@ import type {
   DerivedFeedback,
   Feedback,
   FeedbackRequest,
+  Vacancy,
   VacancySpace
 } from '@anticrm/recruiting'
 import workbench from '@anticrm/model-workbench'
@@ -81,13 +82,21 @@ class TApplicant extends TFSMItem implements Applicant {
 /**
  * @public
  */
-@Model(recruiting.class.VacancySpace, fsm.class.WithFSM)
-class TVacancySpace extends TWithFSM implements VacancySpace {
+@Model(recruiting.class.Vacancy, core.class.Doc, DOMAIN_RECRUITING)
+class TVacancy extends TDoc implements Vacancy {
   company!: string
   description!: string
   location!: string
   type!: string
   dueDate!: Timestamp
+}
+
+/**
+ * @public
+ */
+@Model(recruiting.class.VacancySpace, fsm.class.WithFSM)
+class TVacancySpace extends TWithFSM implements VacancySpace {
+  vacancy!: Ref<Vacancy>
 }
 
 /**
@@ -127,6 +136,7 @@ export function createModel (builder: Builder): void {
     TApplicant,
     TCandidate,
     TCandidatePoolSpace,
+    TVacancy,
     TVacancySpace,
     TFeedbackRequest,
     TFeedback,
