@@ -122,7 +122,7 @@
     display: flex;
     flex-direction: column;
     padding: 16px;
-    height: 100%;
+    height: min-content;
     background-color: var(--theme-popup-bg);
     border: var(--theme-popup-border);
     border-radius: 20px;

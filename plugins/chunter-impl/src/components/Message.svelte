@@ -166,28 +166,29 @@
           </div>
           <div class="buttons">
             <div class="tool">
-              <ActionIcon
-                icon={MoreH}
-                size={20}
-                action={() => {
-                  showMore = !showMore
-                }}
-              />
-            </div>
-            <PopupMenu bind:show={showMore}>
-              <PopupItem title={chunter.string.CopyLink} action={() => {}} />
-              {#if message.modifiedBy === client.accountId()}
-                <PopupItem
-                  component={IconEdit}
-                  title={chunter.string.EditMessage}
+              <PopupMenu bind:show={showMore}>
+                <ActionIcon
+                  slot="trigger"
+                  icon={MoreH}
+                  size={20}
                   action={() => {
-                    editMode = true
-                    showMore = false
+                    showMore = !showMore
                   }}
                 />
-                <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
-              {/if}
-            </PopupMenu>
+                <PopupItem title={chunter.string.CopyLink} action={() => {}} />
+                {#if message.modifiedBy === client.accountId()}
+                  <PopupItem
+                    component={IconEdit}
+                    title={chunter.string.EditMessage}
+                    action={() => {
+                      editMode = true
+                      showMore = false
+                    }}
+                  />
+                  <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
+                {/if}
+              </PopupMenu>
+            </div>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
             {#if !thread}

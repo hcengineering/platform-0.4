@@ -13,6 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { afterUpdate, createEventDispatcher } from 'svelte'
   import { getResource } from '@anticrm/platform'
   import type { AnyComponent } from '@anticrm/status'
 
@@ -22,15 +23,34 @@
 
   export let is: AnyComponent
   export let props: any = {}
+  export let scrollable: boolean = false
 
   $: component = getResource(is)
+
+  const dispatch = createEventDispatcher()
+  afterUpdate(() => {
+    dispatch('update', Date.now())
+  })
 </script>
 
 {#await component}
   <div class="spinner-container"><div class="inner"><Spinner /></div></div>
 {:then Ctor}
   <ErrorBoundary>
-    <svelte:component this={Ctor} {...props} on:change on:close on:open on:message />
+    <svelte:component
+      this={Ctor}
+      {...props}
+      {scrollable}
+      on:change
+      on:open
+      on:message
+      on:close={(ev) => {
+        dispatch('close', ev.detail)
+      }}
+      on:update={(ev) => {
+        dispatch('update', ev.detail)
+      }}
+    />
   </ErrorBoundary>
 {:catch err}
   ERROR: {console.log(err, JSON.stringify(component))}

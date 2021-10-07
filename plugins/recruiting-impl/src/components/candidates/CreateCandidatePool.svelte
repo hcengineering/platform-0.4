@@ -13,14 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import core from '@anticrm/core'
   import type { Doc } from '@anticrm/core'
-  import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
+  import { EditBox, Card, ToggleWithLabel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
 
   const client = getClient()
+  const dispatch = createEventDispatcher()
 
   const pool: Omit<CandidatePoolSpace, keyof Doc> = {
     name: '',
@@ -34,17 +36,26 @@
   }
 </script>
 
-<Dialog label={recruiting.string.AddPoolSpace} okLabel={recruiting.string.AddPoolSpace} okAction={createPool} on:close>
+<Card
+  label={recruiting.string.AddPoolSpace}
+  okLabel={'Save'}
+  okAction={createPool}
+  on:close
+  canSave={pool.name}
+  on:update={(ev) => {
+    dispatch('update', ev.detail)
+  }}
+>
   <div class="content">
     <EditBox label={recruiting.string.Name} bind:value={pool.name} />
-    <TextArea label={recruiting.string.Description} bind:value={pool.description} />
+    <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->
     <ToggleWithLabel
       label={recruiting.string.MakePrivate}
       description={recruiting.string.MakePrivateDescription}
       bind:on={pool.private}
     />
   </div>
-</Dialog>
+</Card>
 
 <style lang="scss">
   .content {

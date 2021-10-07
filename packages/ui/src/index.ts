@@ -67,6 +67,7 @@ export { default as Dropdown } from './components/Dropdown.svelte'
 export { default as PersonSummary } from './components/PersonSummary.svelte'
 export { default as Link } from './components/Link.svelte'
 export { default as Spinner } from './components/Spinner.svelte'
+export { default as Card } from './components/Card.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconEdit } from './components/icons/Edit.svelte'
