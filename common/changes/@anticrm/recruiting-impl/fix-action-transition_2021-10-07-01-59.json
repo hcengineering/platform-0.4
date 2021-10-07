@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Cleanup interview event if no action instance found",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}
