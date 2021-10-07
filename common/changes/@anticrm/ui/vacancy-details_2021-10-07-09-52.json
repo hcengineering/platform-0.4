@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Propagate Toggle on:change event",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
