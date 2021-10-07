@@ -53,6 +53,9 @@
         event = first
       }
     )
+  } else {
+    eventQ?.unsubscribe()
+    event = undefined
   }
 
   const currentTime = currentTimeStore()
