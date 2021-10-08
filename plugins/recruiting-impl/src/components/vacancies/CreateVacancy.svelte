@@ -13,11 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Data, generateId } from '@anticrm/core'
   import core from '@anticrm/core'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import { getPlugin } from '@anticrm/platform'
-  import type { Vacancy, VacancySpace } from '@anticrm/recruiting'
+  import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import { Dialog } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
@@ -26,16 +25,12 @@
 
   const client = getClient()
 
-  const vacancyID = generateId<Vacancy>()
-  let space: VacancySpace = {
+  let vacancy: VacancySpace = {
     name: '',
     description: '',
     fsm: '' as VacancySpace['fsm'],
-    vacancy: vacancyID,
     private: true,
-    members: [client.accountId()]
-  } as VacancySpace
-  let vacancy: Vacancy & Data<Required<Vacancy>> = {
+    members: [client.accountId()],
     details: {
       summary: '',
       qualification: '',
@@ -44,30 +39,28 @@
     company: '',
     location: '',
     type: '',
-    dueDate: new Date().getTime()
-  } as Vacancy & Data<Required<Vacancy>>
+    dueDate: undefined
+  } as VacancySpace
 
   async function createVacancy () {
-    if (!space.fsm) {
+    if (!vacancy.fsm) {
       return
     }
 
     const fsmP = await getPlugin(fsmPlugin.id)
-    const dFSM = await fsmP.duplicateFSM(space.fsm)
+    const dFSM = await fsmP.duplicateFSM(vacancy.fsm)
 
     if (!dFSM) {
       return
     }
 
-    const sDoc = await client.createDoc(recruiting.class.VacancySpace, core.space.Model, {
-      ...space,
+    await client.createDoc(recruiting.class.VacancySpace, core.space.Model, {
+      ...vacancy,
       fsm: dFSM._id
     })
-
-    client.createDoc(recruiting.class.Vacancy, sDoc._id, vacancy, vacancyID)
   }
 </script>
 
 <Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
-  <VacancyEditor bind:vacancy bind:space />
+  <VacancyEditor bind:vacancy />
 </Dialog>
