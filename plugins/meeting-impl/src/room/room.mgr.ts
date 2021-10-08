@@ -368,12 +368,12 @@ export class RoomMgr {
 
     // https://github.com/microsoft/TypeScript/issues/33232
     // @ts-expect-error
-    const media = (await navigator.mediaDevices.getDisplayMedia({
+    const media = await navigator.mediaDevices.getDisplayMedia({
       audio: false,
       video: {
         frameRate: { ideal: 30 }
       }
-    })) as MediaStream
+    })
 
     media.getTracks()[0]?.addEventListener('ended', () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises

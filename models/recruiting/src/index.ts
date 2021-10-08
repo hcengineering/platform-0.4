@@ -276,6 +276,9 @@ export function createModel (builder: Builder): void {
     {
       sourceClass: chunter.class.Comment,
       targetClass: recruiting.class.Applicant,
+      query: {
+        replyOf: { $like: '%class:recruiting.Applicant%' }
+      },
       collections: [
         {
           sourceField: 'replyOf',

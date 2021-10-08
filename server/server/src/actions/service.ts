@@ -27,6 +27,7 @@ export const updateTx = <T extends Doc>(data: {
   const date = Date.now()
 
   return {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxUpdateDoc,
     modifiedBy: data.account ?? core.account.System,
@@ -50,6 +51,7 @@ const createTx = <T extends Doc>(data: {
   const date = Date.now()
 
   return {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     modifiedBy: data.account ?? core.account.System,

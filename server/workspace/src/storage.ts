@@ -1,4 +1,4 @@
-import core, {
+import {
   Class,
   Doc,
   DocumentQuery,
@@ -7,11 +7,11 @@ import core, {
   FindOptions,
   FindResult,
   Hierarchy,
+  isDerivedDataTx,
   isModelTx,
   Ref,
   Storage,
-  Tx,
-  txObjectClass
+  Tx
 } from '@anticrm/core'
 
 /**
@@ -37,9 +37,7 @@ export class WorkspaceStorage implements Storage {
       await this.doc.tx(tx)
     }
 
-    const objectClass = txObjectClass(tx)
-    // Do not store transaction for derived data objects.
-    if (objectClass !== undefined && this.hierarchy.isDerived(objectClass, core.class.DerivedData)) {
+    if (isDerivedDataTx(tx, this.hierarchy)) {
       return
     }
 

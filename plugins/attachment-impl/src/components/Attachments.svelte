@@ -17,7 +17,8 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconAdd, Label, showPopup } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import attachment, { Attachment } from '@anticrm/attachment'
+  import attachment from '@anticrm/attachment'
+  import type { Attachment } from '@anticrm/attachment'
   import AddAttachment from './AddAttachment.svelte'
   import AttachmentView from './Attachment.svelte'
 

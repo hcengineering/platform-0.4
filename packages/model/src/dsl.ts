@@ -59,6 +59,7 @@ export function Prop (type: Type<PropertyType>) {
   return function (target: any, propertyKey: string): void {
     const txes = getTxes(target)
     const tx: NoIDs<TxCreateDoc<Attribute<PropertyType>>> = {
+      sid: 0,
       _class: core.class.TxCreateDoc,
       space: core.space.Tx,
       modifiedBy: core.account.System,
@@ -104,6 +105,7 @@ function txCreateDoc<T extends Doc> (
   docOptions?: Partial<Doc>
 ): TxCreateDoc<T> {
   return {
+    sid: 0,
     _id: generateId<TxCreateDoc<T>>(),
     _class: core.class.TxCreateDoc,
     space: core.space.Tx,

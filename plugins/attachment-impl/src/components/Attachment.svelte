@@ -13,7 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Attachment, sizeToString } from '@anticrm/attachment'
+  import { sizeToString } from '@anticrm/attachment'
+  import type { Attachment } from '@anticrm/attachment'
   import { EditBox } from '@anticrm/ui'
 
   export let item: Attachment

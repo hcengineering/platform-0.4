@@ -15,6 +15,7 @@
 
 import { Class, Doc, DocumentQuery, Hierarchy, likeSymbol, Obj, Ref, Tx, QuerySelector } from '@anticrm/core'
 import { FilterQuery } from 'mongodb'
+import copy from 'fast-copy'
 
 export function toMongoIdQuery (tx: Tx): FilterQuery<Doc> {
   return {
@@ -34,7 +35,7 @@ export function toMongoQuery<T extends Doc> (
   objectClass: Ref<Class<T>>,
   query: DocumentQuery<T>
 ): FilterQuery<T> {
-  const mongoQuery: FilterQuery<Doc> = query as FilterQuery<Doc>
+  const mongoQuery: FilterQuery<Doc> = copy(query as FilterQuery<Doc>)
   for (const key in query) {
     const value = query[key]
     if (typeof value !== 'object') continue

@@ -1,4 +1,4 @@
-import chunter, { Comment, CommentRef } from '@anticrm/chunter'
+import chunter, { Comment } from '@anticrm/chunter'
 import core, { Account, DerivedDataDescriptor, Doc, getFullRef, Ref, ShortRef } from '@anticrm/core'
 import { component, Component } from '@anticrm/status'
 import task, { CheckListItem, Project, Task, TaskStatuses } from '@anticrm/task'
@@ -71,8 +71,6 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
       })
     }
 
-    const comments: CommentRef[] = []
-
     for (let j = 0; j < sComments[i % sComments.length]; j++) {
       const commentId = `t-cid-${commentIds++}` as Ref<Comment>
       const userId = faker.random.arrayElement(accountIds)
@@ -90,7 +88,6 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
           createOn: Date.now()
         }
       )
-      comments.push({ _id: commentId, userId, createOn: Date.now(), lastModified: Date.now() })
     }
 
     tasks.push(
@@ -103,7 +100,7 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
           shortRefId: shortRefId,
           checkItems: checkItems,
           assignee: faker.random.arrayElement(members),
-          comments: comments,
+          comments: [],
           dueTo: faker.date.soon()
         },
         id,

@@ -13,7 +13,6 @@
 // limitations under the License.
 //
 
-import { DerivedDataProcessor } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
@@ -31,6 +30,9 @@ export type TxHandler = (tx: Tx) => void
  */
 export interface CoreClient extends Storage {
   accountId: () => Promise<Ref<Account>>
+
+  // Perform connection close
+  close: () => Promise<void>
 }
 
 /**
@@ -92,6 +94,10 @@ class ClientImpl extends TxProcessor implements Client {
   async accountId (): Promise<Ref<Account>> {
     return this.connAccount
   }
+
+  async close (): Promise<void> {
+    return await this.conn.close()
+  }
 }
 
 /**
@@ -143,29 +149,5 @@ export async function createClient (
   // Apply all model transactions, including ones arrived during findAll is executed.
   buffer.flush((txs, bootstrap) => client.txHandler(txs, bootstrap))
 
-  return await withDerivedDataProcessor(client)
-}
-
-/**
- * @public
- */
-async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
-  // D E R I V E D   D A T A
-  const ddProcessor = await DerivedDataProcessor.create(client.model, client.hierarchy, newClientOnlyStorage(client))
-  client.extraTx = async (tx: Tx) => {
-    await ddProcessor.tx(tx)
-  }
-
   return client
-}
-/**
- * @internal
- */
-function newClientOnlyStorage (client: ClientImpl): Storage {
-  return {
-    findAll: async (_class, query, options) => await client.findAll(_class, query, options),
-    tx: async (tx) => {
-      client.txHandler([tx], false)
-    }
-  }
 }

@@ -25,12 +25,8 @@
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
-  import {
-    NotificationClient,
-    SpaceLastViews,
-    SpaceSubscribeUpdater,
-    ObjectSubscribeUpdater
-  } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
+  import type { SpaceLastViews, SpaceSubscribeUpdater, ObjectSubscribeUpdater } from '@anticrm/notification'
   import { onDestroy } from 'svelte'
 
   export let model: SpacesNavModel

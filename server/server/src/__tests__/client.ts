@@ -55,6 +55,10 @@ export class TestConnection extends RequestProcessor implements CoreClient {
   async accountId (): Promise<Ref<Account>> {
     return await this.request('accountId')
   }
+
+  async close (): Promise<void> {
+    this.socket.close()
+  }
 }
 
 export type ClientWithShutdown = Client & TxOperations & { shutdown: () => void }

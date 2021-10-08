@@ -80,7 +80,7 @@ export async function monitor<T> (status: Status, promise: Promise<T>): Promise<
     const result = await promise
     void setPlatformStatus(OK) // eslint-disable-line no-void
     return result
-  } catch (err) {
+  } catch (err: any) {
     void setPlatformStatus(err) // eslint-disable-line no-void
     throw err
   }

@@ -14,7 +14,8 @@
 //
 
 import { Component, component, Resource } from '@anticrm/status'
-import { getFullRef, Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations } from '..'
+import copy from 'fast-copy'
+import { getFullRef, Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations, withSID } from '..'
 import { Account, Class, Doc, FullRefString, Ref, Space } from '../classes'
 import { createClient } from '../client'
 import core from '../component'
@@ -22,8 +23,9 @@ import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMappe
 import { newDerivedData } from '../derived/utils'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import { _createClass, _createDoc, _createTestTxAndDocStorage, _genMinModel } from '../minmodel'
+import { _createClass, _createDoc, createTestTxAndDocStorage, _genMinModel } from '../minmodel'
 import { Reference } from '../reference'
+import { SortingOrder } from '../storage'
 import { Title } from '../title'
 import { Tx } from '../tx'
 import { connect } from './connection'
@@ -114,6 +116,7 @@ registerMapper(testIds.mapper.PageTitleMapper, {
 
 interface Counter {
   txes: number
+  txData: Tx[]
 }
 
 const taskTitleDD = _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.DerivedDataDescriptor, {
@@ -129,45 +132,63 @@ const pageTitleDD = _createDoc<DerivedDataDescriptor<Task, Title>>(core.class.De
 })
 
 describe('deried data', () => {
-  async function prepare (
-    txes: Tx[],
-    allowRebuildDD = false
-  ): Promise<{
-      hierarchy: Hierarchy
-      model: ModelDb
-      processor: DerivedDataProcessor
-      operations: Storage & TxOperations
-      storage: Storage
-      counter: Counter
-    }> {
+  async function prepare (txes: Tx[]): Promise<{
+    hierarchy: Hierarchy
+    model: ModelDb
+    processor: DerivedDataProcessor
+    operations: Storage & TxOperations
+    storage: Storage
+    counter: Counter
+  }> {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
     const model = new ModelDb(hierarchy)
     for (const tx of txes) await model.tx(tx)
     const txDb = new TxDb(hierarchy)
-    for (const tx of txes) await txDb.tx(tx)
+    const sidTx = withSID(txDb)
 
-    const storage = _createTestTxAndDocStorage(hierarchy, txDb, model)
+    for (let tx of txes) {
+      tx = await sidTx(tx)
+      await txDb.tx(tx)
+    }
 
-    const counter = { txes: 0 }
+    const storage = createTestTxAndDocStorage(hierarchy, txDb, model)
+
+    const counter: Counter = {
+      txes: 0,
+      txData: []
+    }
     const countModel: Storage = {
       findAll: async (_class, query, options) => {
         return await storage.findAll(_class, query, options)
       },
       tx: async (tx) => {
         await storage.tx(tx)
+        counter.txData.push(tx)
         counter.txes += 1
       }
     }
 
-    const processor = await DerivedDataProcessor.create(model, hierarchy, countModel, allowRebuildDD)
+    const promises: Promise<void>[] = []
+    const processor = await DerivedDataProcessor.create(model, hierarchy, countModel, (p) => {
+      promises.push(p)
+    })
+    await processor.waitComplete()
 
     const countStorage: Storage = {
       findAll: async (_class, query, options) => await storage.findAll(_class, query, options),
       tx: async (tx) => {
+        tx = await sidTx(tx)
+        // For test we need to update dates on processing, to be sequentially correct.
+        tx.createOn = Date.now()
+        tx.modifiedOn = tx.createOn
         hierarchy.tx(tx)
         await countModel.tx(tx)
         await processor.tx(tx)
+
+        // Wait for any DD event occured to be complete.
+        await Promise.all(promises)
+        promises.splice(0, promises.length)
       }
     }
 
@@ -213,7 +234,7 @@ describe('deried data', () => {
   it('check DD updated appear after being updated', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes], true)
+    const { operations, model, storage } = await prepare([...dtxes])
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -245,7 +266,7 @@ describe('deried data', () => {
   it('check DD remove appear after being removed', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes], true)
+    const { operations, model, storage } = await prepare([...dtxes])
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -316,7 +337,7 @@ describe('deried data', () => {
     await operations.updateDoc(testIds.class.Task, core.space.Model, doc1._id, {
       description: 'some-descr'
     })
-    expect(counter.txes).toEqual(3) // 3 - update doc
+    expect(counter.txes).toEqual(3) // 5 - update doc
   })
 
   it('create title for page', async () => {
@@ -435,36 +456,40 @@ describe('deried data', () => {
         transactions.push(tx)
       })
     )
+    try {
+      const result = await client.findAll(core.class.Space, {})
+      expect(result).toHaveLength(2)
 
-    const result = await client.findAll(core.class.Space, {})
-    expect(result).toHaveLength(2)
+      await client.createDoc<DerivedDataDescriptor<Space, Title>>(core.class.DerivedDataDescriptor, core.space.Model, {
+        sourceClass: core.class.Space,
+        targetClass: core.class.Title,
+        rules: [
+          {
+            sourceField: 'name',
+            targetField: 'title'
+          }
+        ]
+      })
 
-    await client.createDoc<DerivedDataDescriptor<Space, Title>>(core.class.DerivedDataDescriptor, core.space.Model, {
-      sourceClass: core.class.Space,
-      targetClass: core.class.Title,
-      rules: [
-        {
-          sourceField: 'name',
-          targetField: 'title'
-        }
-      ]
-    })
-    const count = transactions.length
+      const count = transactions.length
 
-    await client.createDoc<Space>(core.class.Space, core.space.Model, {
-      private: false,
-      name: 'NewSpace',
-      description: '',
-      members: []
-    })
+      await client.createDoc<Space>(core.class.Space, core.space.Model, {
+        private: false,
+        name: 'NewSpace',
+        description: '',
+        members: []
+      })
 
-    expect(transactions.length - count).toEqual(3) // 1 space + 1 title
+      expect(transactions.length - count).toEqual(2) // 1 space + 1 title
 
-    const titles = await client.findAll(core.class.Title, {})
-    expect(titles.length).toEqual(4)
+      const titles = await client.findAll(core.class.Title, {})
+      expect(titles.length).toEqual(3) // Sp1 + Sp2 + (NewSpace) from fake server, this is expected.
+    } finally {
+      await client.close()
+    }
   })
 
-  it('check collection rule', async () => {
+  it('check collection rule-add-remove', async () => {
     // We need few descriptors to be available
 
     const { operations, model } = await prepare([
@@ -560,7 +585,7 @@ describe('deried data', () => {
   it('check DD over DD', async () => {
     // We need few descriptors to be available
 
-    const { operations, model, storage } = await prepare([...dtxes], true)
+    const { operations, model, storage } = await prepare([...dtxes])
 
     await operations.createDoc(testIds.class.Task, core.space.Model, {
       title: 'my-task',
@@ -594,11 +619,83 @@ describe('deried data', () => {
       )
     }
 
-    const { model } = await prepare(ops, true)
+    const { model } = await prepare(ops)
+
+    const titles = await model.findAll(core.class.Title, {})
+    expect(titles.length).toEqual(997)
+  })
+
+  it('check DD with query', async () => {
+    // We need few descriptors to be available
+
+    const taskTitleQ = copy(taskTitleDD) as TxCreateDoc<DerivedDataDescriptor<Doc, Doc>>
+    taskTitleQ.attributes.query = {
+      shortId: { $like: 'T-1%' }
+    }
+    const ops = [...dtxes, taskTitleQ]
+
+    for (let i = 0; i < 997; i++) {
+      // Create tasks
+      ops.push(
+        _createDoc(testIds.class.Task, {
+          title: `my-task-${i}`,
+          shortId: `T-${i}`,
+          description: ''
+        })
+      )
+    }
+    const { model } = await prepare(ops)
 
     // Check for Title to be created
 
     const titles = await model.findAll(core.class.Title, {})
-    expect(titles.length).toEqual(997)
+    expect(titles.length).toEqual(111)
+  })
+
+  it('check sid tx findAll', async () => {
+    const ops = [...dtxes, taskTitleDD]
+
+    for (let i = 0; i < 997; i++) {
+      // Create tasks
+      ops.push(
+        _createDoc(testIds.class.Task, {
+          title: `my-task-${i}`,
+          shortId: `T-${i}`,
+          description: ''
+        })
+      )
+    }
+    const hierarchy = new Hierarchy()
+    for (const tx of ops) hierarchy.tx(tx)
+    const model1 = new ModelDb(hierarchy)
+    for (const tx of ops) await model1.tx(tx)
+    const txDb = new TxDb(hierarchy)
+
+    const sidTx = withSID(txDb)
+    for (const tx of ops) {
+      await sidTx(tx)
+      await txDb.tx(tx)
+    }
+
+    const storage = createTestTxAndDocStorage(hierarchy, txDb, model1)
+
+    const txes = await storage.findAll(
+      core.class.Tx,
+      { sid: { $gt: -1 } },
+      { limit: 1000, sort: { sid: SortingOrder.Ascending } }
+    )
+    expect(txes.length).toEqual(1000)
+    expect(txes[0].sid).toEqual(0)
+    expect(txes[999].sid).toEqual(999)
+
+    const txes2 = await storage.findAll(
+      core.class.Tx,
+      { sid: { $gt: 999 } },
+      { limit: 1000, sort: { createOn: SortingOrder.Ascending } }
+    )
+
+    expect(txes2.length).toEqual(21)
+    expect(txes2[0].sid).toEqual(1000)
+    expect(txes2[20].sid).toEqual(1020)
   })
 })

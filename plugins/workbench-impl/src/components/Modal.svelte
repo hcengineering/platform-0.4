@@ -15,7 +15,7 @@
 <script lang="ts">
   import { store as modal } from '@anticrm/workbench'
   import { Component } from '@anticrm/ui'
-  import { AnyComponent, UIComponent } from '@anticrm/status'
+  import type { AnyComponent, UIComponent } from '@anticrm/status'
 
   let modalHTML: HTMLElement
   let modalOHTML: HTMLElement

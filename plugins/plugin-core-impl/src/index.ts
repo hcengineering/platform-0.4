@@ -18,9 +18,6 @@ import { getMetadata } from '@anticrm/platform'
 import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { connect as connectBrowser } from './connection'
-import regCalendarMappers from '@anticrm/calendar-mappers'
-import regRecruitingMappers from '@anticrm/recruiting-mappers'
-import regNotificationMappers from '@anticrm/notification-mappers'
 import { NotificationClient } from '@anticrm/notification'
 
 let client: (Client & TxOperations) | undefined
@@ -52,9 +49,6 @@ async function getClient (): Promise<Client> {
     liveQuery = new LiveQuery(storage)
     client = withOperations(accountId, liveQuery)
     notificationClient = NotificationClient.get(client)
-    await regCalendarMappers()
-    await regNotificationMappers()
-    await regRecruitingMappers()
     console.log('Registration complete')
   }
   return client

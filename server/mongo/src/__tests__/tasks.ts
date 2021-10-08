@@ -102,6 +102,7 @@ export const doc1: Task = {
 
 function addClass<T extends Doc> (txes: Tx[], _id: Ref<Class<T>>): void {
   const doc: TxCreateDoc<Class<T>> = {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     objectId: _id,

@@ -60,10 +60,16 @@ export class WebSocketConnection extends RequestProcessor implements Storage {
     // Process on server and return result.
     this.handler(tx)
   }
+
+  async close (): Promise<void> {
+    this.socket.close()
+  }
 }
 
 export async function connect (clientUrl: string, handler: TxHandler): Promise<CoreClient> {
-  const socket = new WebSocket(`wss://${clientUrl}`)
+  const socket = new WebSocket(`wss://${clientUrl}`, {
+    rejectUnauthorized: false
+  })
 
   // Wait for connection to be established.
   await new Promise((resolve, reject) => {

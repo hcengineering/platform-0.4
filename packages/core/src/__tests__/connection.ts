@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { FindOptions } from '..'
+import { FindOptions, withSID } from '..'
 import type { Account, Class, Doc, Ref } from '../classes'
 import { TxHandler, CoreClient } from '../client'
 import core from '../component'
@@ -33,7 +33,8 @@ class ClientImpl implements CoreClient {
     private readonly model: ModelDb,
     private readonly transactions: TxDb,
     private readonly handler: (tx: Tx) => void,
-    private readonly ddProcessor: DerivedDataProcessor
+    private readonly ddProcessor: DerivedDataProcessor,
+    private readonly sidTx: (tx: Tx) => Promise<Tx>
   ) {}
 
   async findAll<T extends Doc>(
@@ -47,6 +48,7 @@ class ClientImpl implements CoreClient {
   }
 
   async tx (tx: Tx): Promise<void> {
+    tx = await this.sidTx(tx)
     if (isModelTx(tx)) {
       this.hierarchy.tx(tx)
     }
@@ -60,10 +62,16 @@ class ClientImpl implements CoreClient {
   async accountId (): Promise<Ref<Account>> {
     return core.account.System
   }
+
+  async close (): Promise<void> {
+    await this.ddProcessor.close()
+  }
 }
-function toIterableStorage (storage: Storage, handler: TxHandler): Storage {
+function toHandlerOnlyStorage (storage: Storage, transactions: TxDb, hierarchy: Hierarchy, handler: TxHandler): Storage {
   return {
     findAll: async (_class, query, options) => {
+      const domain = hierarchy.getClass(_class).domain
+      if (domain === DOMAIN_TX) return await transactions.findAll(_class, query, options)
       return await storage.findAll(_class, query, options)
     },
     tx: async (tx) => {
@@ -81,14 +89,20 @@ export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
   for (const tx of txes) hierarchy.tx(tx)
 
   const transactions = new TxDb(hierarchy)
+  const sidTx = withSID(transactions)
   const model = new ModelDb(hierarchy)
 
-  for (const tx of txes) {
+  for (let tx of txes) {
+    tx = await sidTx(tx)
     await transactions.tx(tx)
     await model.tx(tx)
   }
 
-  const ddProcessor = await DerivedDataProcessor.create(model, hierarchy, toIterableStorage(model, handler), true)
+  const ddProcessor = await DerivedDataProcessor.create(
+    model,
+    hierarchy,
+    toHandlerOnlyStorage(model, transactions, hierarchy, handler)
+  )
 
-  return new ClientImpl(hierarchy, model, transactions, handler, ddProcessor)
+  return new ClientImpl(hierarchy, model, transactions, handler, ddProcessor, sidTx)
 }

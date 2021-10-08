@@ -21,6 +21,7 @@ import { getOperator } from './operator'
 import { findProperty, resultSort, shouldSkipId } from './query'
 import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
+import { isDerivedDataTx } from './derived/index'
 
 /**
  * @public
@@ -167,8 +168,10 @@ export class ModelDb extends MemDb implements Storage {
         doc[key] = ops[key]
       }
     }
-    doc.modifiedBy = tx.modifiedBy
-    doc.modifiedOn = tx.modifiedOn
+    if (!isDerivedDataTx(tx, this.hierarchy)) {
+      doc.modifiedBy = tx.modifiedBy
+      doc.modifiedOn = tx.modifiedOn
+    }
   }
 
   protected async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {

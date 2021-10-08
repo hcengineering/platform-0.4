@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "DD-refactoring",
+      "type": "patch",
+      "packageName": "@anticrm/model-attachment"
+    }
+  ],
+  "packageName": "@anticrm/model-attachment",
+  "email": "haiodo@gmail.com"
+}

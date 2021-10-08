@@ -10,6 +10,7 @@ import { generateId } from '../utils'
  */
 export function _createClass<T extends Class<Obj>> (_id: Ref<T>, cl: Omit<Data<T>, 'kind'>, domain?: Domain): Tx {
   const result: TxCreateDoc<Doc> = {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     objectId: _id,
@@ -38,6 +39,7 @@ export function _createDoc<T extends Doc> (
   modifiedBy?: Ref<Account>
 ): Tx {
   const tx: TxCreateDoc<T> = {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     space: core.space.Tx,
@@ -98,4 +100,4 @@ export function _genMinModel (): Tx[] {
   return txes
 }
 
-export { _createTestTxAndDocStorage } from './txmodel'
+export { createTestTxAndDocStorage } from './txmodel'

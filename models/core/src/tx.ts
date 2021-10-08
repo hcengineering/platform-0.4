@@ -23,7 +23,8 @@ import type {
   Tx,
   TxCreateDoc,
   TxRemoveDoc,
-  TxUpdateDoc
+  TxUpdateDoc,
+  TransactionID
 } from '@anticrm/core'
 import { DOMAIN_TX } from '@anticrm/core'
 import { Model } from '@anticrm/model'
@@ -37,6 +38,7 @@ import { TDoc } from './core'
  */
 @Model(core.class.Tx, core.class.Doc, DOMAIN_TX)
 export class TTx<T extends Doc> extends TDoc implements Tx<T> {
+  sid!: TransactionID
   objectId!: Ref<T>
   objectSpace!: Ref<Space>
 }

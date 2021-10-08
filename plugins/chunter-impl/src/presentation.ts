@@ -1,6 +1,6 @@
 import core, { PresentationFormat, PresentationMode } from '@anticrm/core'
 import { PresentationClient } from '@anticrm/presentation'
-import { AnyComponent } from '@anticrm/status'
+import type { AnyComponent } from '@anticrm/status'
 import { DocumentReference, ExternalReference, MessageReference, ReferenceKind } from './messages'
 import chunter from './plugin'
 import { parseLocation, Router } from '@anticrm/router'

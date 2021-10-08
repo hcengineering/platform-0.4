@@ -50,6 +50,7 @@ describe('dsl', () => {
         objectId: 'class:test.MyClass',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
+        sid: 0,
         attributes: {
           kind: 0,
           extends: 'class:core.Doc'
@@ -64,6 +65,7 @@ describe('dsl', () => {
         createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
+        sid: 0,
         attributes: {
           type: {
             _class: 'class:core.TypeString'
@@ -95,6 +97,7 @@ describe('dsl', () => {
         objectId: 'class:test.MyClass',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
+        sid: 0,
         attributes: {
           kind: 0,
           extends: 'class:core.Doc'
@@ -109,6 +112,7 @@ describe('dsl', () => {
         createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
+        sid: 0,
         attributes: {
           type: {
             _class: 'class:core.TypeString'
@@ -125,6 +129,7 @@ describe('dsl', () => {
         objectId: 'class:test.MyClass2',
         objectClass: 'class:core.Class',
         objectSpace: 'space:core.Model',
+        sid: 0,
         attributes: {
           kind: 0,
           extends: 'class:test.MyClass'
@@ -139,6 +144,7 @@ describe('dsl', () => {
         createOn: 0,
         objectSpace: 'space:core.Model',
         objectClass: 'class:core.Attribute',
+        sid: 0,
         attributes: {
           type: {
             _class: 'class:core.TypeString'

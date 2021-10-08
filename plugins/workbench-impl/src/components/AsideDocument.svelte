@@ -6,7 +6,7 @@
   import type { WorkbenchRoute, DocumentSelection } from '@anticrm/workbench'
   import { onDestroy } from 'svelte'
   import { handleCurrentDocumentChange, updateCurrentDocument } from '../selection'
-  import { SpaceLastViews } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
 
   const client = getClient()
 

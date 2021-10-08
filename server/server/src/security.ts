@@ -309,6 +309,8 @@ export class SecurityClientStorage implements CoreClient {
   async accountId (): Promise<Ref<Account>> {
     return this.user.accountId
   }
+
+  async close (): Promise<void> {}
 }
 
 /**

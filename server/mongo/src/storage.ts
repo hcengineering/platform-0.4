@@ -20,6 +20,7 @@ import core, {
   FindOptions,
   FindResult,
   Hierarchy,
+  isDerivedDataTx,
   measure,
   measureAsync,
   Ref,
@@ -42,7 +43,7 @@ import { toMongoIdQuery, toMongoQuery } from './query'
 export class DocStorage extends TxProcessor implements Storage {
   txHandlers = {
     [core.class.TxCreateDoc]: async (tx: Tx) => await this.txCreateDoc(tx as TxCreateDoc<Doc>),
-    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDoc(tx as TxUpdateDoc<Doc>),
+    [core.class.TxUpdateDoc]: async (tx: Tx) => await this.txUpdateDocWith(tx as TxUpdateDoc<Doc>),
     [core.class.TxRemoveDoc]: async (tx: Tx) => await this.txRemoveDoc(tx as TxRemoveDoc<Doc>)
   }
 
@@ -77,15 +78,28 @@ export class DocStorage extends TxProcessor implements Storage {
     }
   }
 
-  async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<any> {
+  async txUpdateDocWith (tx: TxUpdateDoc<Doc>): Promise<any> {
     const { $push, $pull, ...leftAttrs } = tx.operations
-    const op: UpdateQuery<Doc> = {
-      $set: {
+    const op: UpdateQuery<Doc> = {}
+
+    if (Object.keys(leftAttrs).length > 0) {
+      op.$set = { ...leftAttrs }
+    }
+
+    const updateQuery = toMongoIdQuery(tx)
+
+    if (!isDerivedDataTx(tx, this.hierarchy)) {
+      // If not DD, we need update modified by and on
+      op.$set = {
         ...leftAttrs,
         modifiedBy: tx.modifiedBy,
         modifiedOn: tx.modifiedOn
       }
+    } else {
+      // We need to remove space, since it is DD update.
+      delete updateQuery.space
     }
+
     if ($push !== undefined) {
       op.$push = $push
     }
@@ -94,7 +108,7 @@ export class DocStorage extends TxProcessor implements Storage {
     }
     return await measureAsync(
       'mongo.txUpdateDoc',
-      async () => await this.collection(tx.objectClass).updateOne(toMongoIdQuery(tx), op)
+      async () => await this.collection(tx.objectClass).updateOne(updateQuery, op)
     )
   }
 

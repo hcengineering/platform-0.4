@@ -90,11 +90,11 @@ async function prepareServer (enableLogging = true): Promise<{
     // createDoc(core.class.Account, { email: johnAccount, name: 'John Appleseed' }, johnAccount),
     createDoc(core.class.Account, { email: brianAccount, name: 'Brian Appleseed' }, brianAccount),
     createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
-      sourceClass: core.class.Title,
+      sourceClass: core.class.Account,
       targetClass: core.class.Reference,
       rules: [
         {
-          sourceField: 'title',
+          sourceField: 'email',
           targetField: 'link'
         }
       ]
@@ -192,7 +192,7 @@ describe('real-server', () => {
       ).cert,
       (tx) => {
         brainTxes.push(tx)
-        if (brainTxes.length === 3) {
+        if (brainTxes.length === 5) {
           brain3tx.resolve(null)
         }
       }
@@ -206,17 +206,17 @@ describe('real-server', () => {
     })
     expect(johnTxes.length).toEqual(1)
     expect(brainTxes.length).toEqual(1)
-    await client.createDoc(core.class.Title, sp1._id, {
-      title: 't1',
-      objectId: 'id1' as Ref<Doc>,
-      objectClass: 'c1' as Ref<Class<Doc>>,
-      descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Title>>
+
+    // Create account inside space, to cause DD be in same space.
+    await client.createDoc(core.class.Account, sp1._id, {
+      email: 't1',
+      name: 't2'
     })
     await brain3tx.promise
-    expect(johnTxes.length).toEqual(3)
-    expect(brainTxes.length).toEqual(3)
-    const c2t = await client2.findAll(core.class.Title, {})
-    expect(c2t.length).toEqual(1)
+    expect(johnTxes.length).toEqual(5)
+    expect(brainTxes.length).toEqual(5)
+    const c2t = await client2.findAll(core.class.Account, {})
+    expect(c2t.length).toEqual(2)
 
     const c2r = await client2.findAll(core.class.Reference, {})
     expect(c2r.length).toEqual(1)
@@ -260,6 +260,8 @@ describe('real-server', () => {
     )
 
     const brainTxes: Tx[] = []
+
+    const brainAllTx = new DeferredPromise<void>()
     const client2 = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
         email: johnAccount
@@ -269,6 +271,9 @@ describe('real-server', () => {
       ).cert,
       (tx) => {
         brainTxes.push(tx)
+        if (brainTxes.length === 8) {
+          brainAllTx.resolve()
+        }
       }
     )
 
@@ -294,6 +299,7 @@ describe('real-server', () => {
       message: 'Comment 2'
     })
 
+    await brainAllTx.promise
     const t12 = await client2.findAll(testIds.class.Task, {})
     expect(t12.length).toEqual(1)
     expect(t12[0].comments?.length).toEqual(2)

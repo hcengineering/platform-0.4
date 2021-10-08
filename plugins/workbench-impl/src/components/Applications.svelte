@@ -16,7 +16,7 @@
   import { Class, Ref, Space } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getRouter } from '@anticrm/ui'
-  import { SpaceLastViews } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import type { Application, WorkbenchRoute } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
   import AppItem from './AppItem.svelte'

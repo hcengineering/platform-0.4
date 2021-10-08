@@ -18,16 +18,8 @@
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import {
-    ActionIcon,
-    Button,
-    DateTime,
-    IconEdit,
-    ItemRefefence,
-    MessageViewer,
-    PopupItem,
-    PopupMenu
-  } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, IconEdit, MessageViewer, PopupItem, PopupMenu } from '@anticrm/ui'
+  import type { ItemRefefence } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
