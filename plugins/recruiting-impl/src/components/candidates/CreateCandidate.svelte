@@ -54,6 +54,7 @@
   }
 
   let kl: boolean = false
+  $: candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
 </script>
 
 <Card
@@ -75,7 +76,7 @@
           <div class="bg-avatar">
             <img
               class="img-avatar"
-              src={`https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`}
+              src={candidate.avatar}
               alt="Avatar"
             />
           </div>
@@ -93,7 +94,7 @@
         {:else}
           <img
             class="img-avatar"
-            src={`https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`}
+            src={candidate.avatar}
             alt="Avatar"
           />
         {/if}
@@ -101,7 +102,7 @@
     </div>
 
     <div class="flex-col">
-      <div class="name"><EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} /></div>
+      <div class="name"><EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus /></div>
       <div class="name"><EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} /></div>
       <div class="title">
         <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.employment.position} />

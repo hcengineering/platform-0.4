@@ -41,18 +41,19 @@
     if (modalHTML) {
       if (element) {
         maxHeight = 0
+        showOverlay = false
         modalHTML.style.left = modalHTML.style.right = modalHTML.style.top = modalHTML.style.bottom = ''
         if (typeof element !== 'string') {
           const rect = element.getBoundingClientRect()
           const rectPopup = modalHTML.getBoundingClientRect()
           if (rect.bottom + rectPopup.height + 28 <= document.body.clientHeight) {
-            modalHTML.style.top = `calc(${rect.bottom}px + .75rem)`
+            modalHTML.style.top = `calc(${rect.bottom}px + 12px)`
             maxHeight = document.body.clientHeight - rect.bottom - 28
           } else if (rectPopup.height + 28 < rect.top) {
-            modalHTML.style.bottom = `calc(${document.body.clientHeight - rect.y}px + .75rem)`
+            modalHTML.style.bottom = `calc(${document.body.clientHeight - rect.y}px + 12px)`
             maxHeight = rect.top - 28
           } else {
-            modalHTML.style.top = modalHTML.style.bottom = '1rem'
+            modalHTML.style.top = modalHTML.style.bottom = '16px'
             maxHeight = document.body.clientHeight - 32
           }
 
@@ -65,6 +66,7 @@
           modalHTML.style.top = '32px'
           modalHTML.style.bottom = '20px'
           modalHTML.style.right = '20px'
+          showOverlay = true
         } else if (element === 'float') {
           modalHTML.style.top = '64px'
           modalHTML.style.bottom = '64px'
@@ -74,6 +76,7 @@
           modalHTML.style.bottom = '0'
           modalHTML.style.left = '0'
           modalHTML.style.right = '0'
+          showOverlay = true
         }
       } else {
         modalHTML.style.top = '50%'

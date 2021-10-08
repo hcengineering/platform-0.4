@@ -13,12 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label } from '@anticrm/ui'
+  import { Table, Label, showPopup, closePopup } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
+
+  import EditCandidate from './EditCandidate.svelte'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
@@ -48,7 +50,9 @@
   }
 
   function onClick (event: any) {
-    selectDocument(event.detail)
+    // selectDocument(event.detail)
+    showPopup(EditCandidate, {...event.detail}, 'full', (result) => { closePopup() })
+    console.log('SELECT!!!', event.detail)
   }
 </script>
 

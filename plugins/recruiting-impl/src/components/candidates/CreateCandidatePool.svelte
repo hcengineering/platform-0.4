@@ -47,7 +47,7 @@
   }}
 >
   <div class="content">
-    <EditBox label={recruiting.string.Name} bind:value={pool.name} />
+    <EditBox label={recruiting.string.Name} bind:value={pool.name} focus />
     <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->
     <ToggleWithLabel
       label={recruiting.string.MakePrivate}

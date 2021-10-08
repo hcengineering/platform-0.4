@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { afterUpdate } from 'svelte'
+  import { afterUpdate, onMount } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
@@ -25,6 +25,7 @@
   export let id: string | undefined = undefined
   export let placeholder: string = 'Start typing...'
   export let maxWidth: string | undefined
+  export let focus: boolean = false
 
   let text: HTMLElement
   let input: HTMLInputElement
@@ -39,9 +40,14 @@
     target.style.width = text.clientWidth + 8 + 'px'
   }
 
-  afterUpdate(() => {
+  onMount(() => {
+    if (focus) {
+      input.focus()
+      focus = false
+    }
     computeSize(input)
   })
+  afterUpdate(() => { computeSize(input) })
 </script>
 
 <div class="editbox" style={width ? 'width: ' + width : ''}>
