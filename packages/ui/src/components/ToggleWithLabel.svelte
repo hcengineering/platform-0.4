@@ -31,7 +31,7 @@
       <span><Label label={description} /></span>
     {/if}
   </div>
-  <Toggle bind:on />
+  <Toggle bind:on on:change />
 </div>
 
 <style lang="scss">

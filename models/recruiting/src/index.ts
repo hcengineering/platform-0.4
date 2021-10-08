@@ -41,6 +41,8 @@ import type {
   FeedbackRequest,
   VacancySpace
 } from '@anticrm/recruiting'
+import chunter from '@anticrm/chunter'
+import type { CommentRef } from '@anticrm/chunter'
 import workbench from '@anticrm/model-workbench'
 import calendar from '@anticrm/calendar'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
@@ -76,6 +78,7 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 @Model(recruiting.class.Applicant, fsm.class.FSMItem)
 class TApplicant extends TFSMItem implements Applicant {
   recruiter!: Ref<Account>
+  comments!: CommentRef[]
 }
 
 /**
@@ -87,7 +90,13 @@ class TVacancySpace extends TWithFSM implements VacancySpace {
   description!: string
   location!: string
   type!: string
-  dueDate!: Timestamp
+  details!: {
+    summary: string
+    qualification: string
+    experience: string
+  }
+
+  dueDate!: Timestamp | undefined
 }
 
 /**
@@ -186,6 +195,21 @@ export function createModel (builder: Builder): void {
     recruiting.presenter.CandidatePresenter
   )
 
+  builder.createDoc<DocumentPresenter<Applicant>>(
+    core.class.DocumentPresenter,
+    {
+      objectClass: recruiting.class.Applicant,
+      presentation: [
+        {
+          component: recruiting.component.ApplicantPresenter,
+          description: 'Applicant presenter',
+          mode: PresentationMode.Edit
+        }
+      ]
+    },
+    recruiting.presenter.ApplicantPresenter
+  )
+
   builder.createDoc<DocumentPresenter<FeedbackRequest>>(
     core.class.DocumentPresenter,
     {
@@ -245,5 +269,24 @@ export function createModel (builder: Builder): void {
       mapper: recruiting.mapper.Feedback
     },
     recruiting.dd.Feedback
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: recruiting.class.Applicant,
+      collections: [
+        {
+          sourceField: 'replyOf',
+          targetField: 'comments'
+        },
+        {
+          sourceField: 'modifiedOn',
+          targetField: 'lastModified'
+        }
+      ]
+    },
+    recruiting.dd.ReplyOf
   )
 }

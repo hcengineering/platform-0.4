@@ -30,7 +30,8 @@
   let selectedTab = recruiting.string.Applications
   const tabs = new Map([
     [recruiting.string.Applications, recruiting.component.Applications],
-    [recruiting.string.Interviews, calendar.component.EventTable]
+    [recruiting.string.Interviews, calendar.component.EventTable],
+    [recruiting.string.Details, recruiting.component.VacancyDetails]
   ])
   const tabOpts = [...tabs.keys()]
 
