@@ -24,7 +24,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import CandidateEditor from './CandidateEditor.svelte'
   import Contact from '../icons/Contact.svelte'
-  import Avatar from '../icons/Avatar.svelte'
+  import AvatarView from './AvatarView.svelte'
 
   export let id: Ref<Candidate>
 
@@ -84,15 +84,11 @@
   <Panel icon={Contact} title={candidate.firstName + ' ' + candidate.lastName} object={candidate} on:close={() => { dispatch('close') }}>
 
     <div class="flex-row-center">
-      <div class="avatar">
-        <div class="border"/>
-        <Avatar />
-      </div>
+      <AvatarView src={candidate.avatar} />
       <div class="flex-col">
         <div class="name"><EditBox placeholder="John" maxWidth="320px" bind:value={candidate.firstName} /></div>
         <div class="name"><EditBox placeholder="Appleseed" maxWidth="320px" bind:value={candidate.lastName} /></div>
         <div class="title"></div>
-        <!-- <div class="city"><AttributeEditor maxWidth="20rem" _class={recruit.class.Candidate} {object} key="city"/></div> -->
       </div>
     </div>
   
@@ -100,51 +96,13 @@
 {/if}
 
 <style lang="scss">
-  @import '../../../../../packages/theme/styles/mixins.scss';
-
-  .avatar {
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 1.5rem;
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
-    filter: drop-shadow(0px 14px 44px rgba(28, 23, 22, .8));
-    cursor: pointer;
-
-    &::after {
-      content: '';
-      @include bg-layer(var(--theme-avatar-hover), .5);
-      z-index: -1;
-    }
-    &::before {
-      content: '';
-      @include bg-layer(var(--theme-avatar-bg), .1);
-      backdrop-filter: blur(25px);
-      z-index: -2;
-    }
-    .border {
-      @include bg-fullsize;
-      border: 2px solid var(--theme-avatar-border);
-      border-radius: 50%;
-    }
-  }
-
   .name {
     font-weight: 500;
     font-size: 1.25rem;
     color: var(--theme-caption-color);
   }
   .title {
-    margin-top: .25rem;
+    margin-top: 4px;
     font-size: .75rem;
   }
-
-  // .attachments {
-  //   margin-top: 3.5rem;
-  // }
 </style>

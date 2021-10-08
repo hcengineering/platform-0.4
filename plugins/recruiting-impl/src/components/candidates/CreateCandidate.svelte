@@ -20,7 +20,7 @@
   import type { Candidate } from '@anticrm/recruiting'
   import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import Avatar from '../icons/Avatar.svelte'
+  import AvatarView from './AvatarView.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -68,39 +68,7 @@
   on:close={() => dispatch('close')}
 >
   <div class="flex-row-center">
-    <div class="avatar-container">
-      <div class="flex-center avatar-shadow">
-        {#if kl}
-          <div class="bg-avatar"><Avatar /></div>
-        {:else}
-          <div class="bg-avatar">
-            <img
-              class="img-avatar"
-              src={candidate.avatar}
-              alt="Avatar"
-            />
-          </div>
-        {/if}
-      </div>
-      <div
-        class="flex-center avatar"
-        on:click={() => {
-          kl = !kl
-        }}
-      >
-        <div class="border" />
-        {#if kl}
-          <Avatar />
-        {:else}
-          <img
-            class="img-avatar"
-            src={candidate.avatar}
-            alt="Avatar"
-          />
-        {/if}
-      </div>
-    </div>
-
+    <AvatarView src={candidate.avatar} />
     <div class="flex-col">
       <div class="name"><EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus /></div>
       <div class="name"><EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} /></div>
@@ -115,58 +83,6 @@
 </Card>
 
 <style lang="scss">
-  @import '../../../../../packages/theme/styles/mixins.scss';
-
-  .avatar-container {
-    flex-shrink: 0;
-    position: relative;
-    margin-right: 16px;
-    width: 96px;
-    height: 96px;
-    user-select: none;
-  }
-  .avatar-shadow {
-    position: absolute;
-    width: 96px;
-    height: 96px;
-
-    .bg-avatar {
-      transform: scale(1.1);
-      filter: blur(10px);
-      opacity: 0.5;
-    }
-  }
-  .avatar {
-    overflow: hidden;
-    position: absolute;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    filter: var(--theme-avatar-shadow);
-    cursor: pointer;
-
-    &::after {
-      content: '';
-      @include bg-layer(var(--theme-avatar-hover), 0.5);
-      z-index: -1;
-    }
-    &::before {
-      content: '';
-      @include bg-layer(var(--theme-avatar-bg), 0.1);
-      backdrop-filter: blur(25px);
-      z-index: -2;
-    }
-    .border {
-      @include bg-fullsize;
-      border: 2px solid var(--theme-avatar-border);
-      border-radius: 50%;
-    }
-  }
-  .img-avatar {
-    width: 96px;
-    height: 96px;
-  }
-
   .name {
     font-weight: 500;
     font-size: 1.25rem;
