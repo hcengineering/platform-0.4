@@ -25,7 +25,7 @@
   export let padding: number = 0
   export let filled: boolean = false
   export let size: 16 | 20 | 24
-  export let action: () => void = () => {}
+  export let action: (ev?: MouseEvent) => void = () => {}
   export let invisible: boolean = false
 </script>
 

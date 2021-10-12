@@ -59,7 +59,7 @@
     .bg-avatar {
       transform: scale(1.1);
       filter: blur(10px);
-      opacity: 0.5;
+      opacity: .3;
     }
   }
   .avatar {

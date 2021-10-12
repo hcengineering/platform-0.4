@@ -16,7 +16,7 @@
   import { createEventDispatcher } from 'svelte'
   import core from '@anticrm/core'
   import type { Doc } from '@anticrm/core'
-  import { EditBox, Card, ToggleWithLabel } from '@anticrm/ui'
+  import { EditBox, Card, Grid, ToggleWithLabel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
@@ -46,7 +46,7 @@
     dispatch('update', ev.detail)
   }}
 >
-  <div class="content">
+  <Grid column={1} rowGap={20}>
     <EditBox label={recruiting.string.Name} bind:value={pool.name} focus />
     <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->
     <ToggleWithLabel
@@ -54,13 +54,5 @@
       description={recruiting.string.MakePrivateDescription}
       bind:on={pool.private}
     />
-  </div>
+  </Grid>
 </Card>
-
-<style lang="scss">
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-</style>

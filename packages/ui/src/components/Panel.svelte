@@ -193,10 +193,11 @@
     border-right: 1px solid var(--theme-bg-accent-hover);
     .scroll-container {
       overflow: auto;
-      margin: 32px 32px 24px;
+      height: 100%;
+      padding: 32px 32px 24px;
       .content {
         flex-shrink: 0;
-        margin: 8px 8px 0;
+        padding: 8px 8px 0;
       }
     }
   }

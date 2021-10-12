@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
@@ -26,7 +27,8 @@
     ItemRefefence,
     MessageViewer,
     PopupItem,
-    PopupMenu
+    PopupMenu,
+    showPopup
   } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
@@ -39,6 +41,7 @@
   import RefControl from './RefControl.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
+  import MessagePopup from './MessagePopup.svelte'
 
   export let message: WithMessage
   export let notifications: SpaceNotifications | undefined
@@ -141,6 +144,15 @@
       })
     }
   }
+
+  let selElement: HTMLElement
+  const findNode = (el: Node, name: string): any => {
+    while (el.parentNode !== null) {
+      if (el.classList.contains(name)) return el
+      el = el.parentNode
+    }
+    return false
+  }
 </script>
 
 <div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
@@ -166,28 +178,18 @@
           </div>
           <div class="buttons">
             <div class="tool">
-              <PopupMenu bind:show={showMore}>
-                <ActionIcon
-                  slot="trigger"
-                  icon={MoreH}
-                  size={20}
-                  action={() => {
-                    showMore = !showMore
-                  }}
-                />
-                <PopupItem title={chunter.string.CopyLink} action={() => {}} />
-                {#if message.modifiedBy === client.accountId()}
-                  <PopupItem
-                    component={IconEdit}
-                    title={chunter.string.EditMessage}
-                    action={() => {
-                      editMode = true
-                      showMore = false
-                    }}
-                  />
-                  <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
-                {/if}
-              </PopupMenu>
+              <ActionIcon
+                icon={MoreH}
+                size={20}
+                action={(ev) => {
+                  selElement = findNode(ev.target, 'message-container')
+                  selElement.classList.add('selected')
+                  showPopup(MessagePopup, { message }, ev.target, (result) => {
+                    if (result && result === 'edit') editMode = true
+                    selElement.classList.remove('selected')
+                  })
+                }}
+              />
             </div>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
@@ -282,7 +284,8 @@
       margin-left: 0px;
     }
 
-    &:hover > .container .message .header .buttons {
+    &:hover > .container .message .header .buttons,
+    &.selected > .container .message .header .buttons {
       visibility: visible;
     }
 
