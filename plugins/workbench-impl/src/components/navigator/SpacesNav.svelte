@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import { Doc, Ref, Space, Timestamp } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
   import { IconAdd } from '@anticrm/ui'
@@ -25,41 +25,70 @@
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
-  import type { SpaceInfo, SpaceNotifications } from '@anticrm/notification'
-  import notification from '@anticrm/notification'
+  import {
+    NotificationClient,
+    SpaceLastViews,
+    SpaceSubscribeUpdater,
+    ObjectSubscribeUpdater
+  } from '@anticrm/notification'
+  import { onDestroy } from 'svelte'
 
   export let model: SpacesNavModel
-  export let notifications: Map<Ref<Space>, SpaceNotifications>
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews>
 
   let spaces: Space[] = []
-  let spaceInfo: Map<Ref<Space>, SpaceInfo> = new Map<Ref<Space>, SpaceInfo>()
   const client = getClient()
+  const notificationClient = NotificationClient.get(client)
   const router = getRouter<WorkbenchRoute>()
   const accountId = client.accountId()
   let query: QueryUpdater<Space> | undefined
+  let spacesLastModified: Map<Ref<Space>, Timestamp> = new Map<Ref<Space>, Timestamp>()
+  let itemsLastModifieds: Map<Ref<Doc>, Timestamp> = new Map<Ref<Doc>, Timestamp>()
+  let spacesSubscribe: SpaceSubscribeUpdater | undefined
+  let itemsSubscribe: ObjectSubscribeUpdater | undefined
+  let prevModel: SpacesNavModel | undefined
 
-  $: {
+  $: if (model !== prevModel) {
+    prevModel = model
     query = client.query(query, model.spaceClass, model.spaceQuery ?? {}, (result) => {
       const userSpace = buildUserSpace(accountId, model)
       spaces = [
         ...(userSpace === undefined ? [] : [userSpace]),
         ...result.filter((space) => space.members.includes(accountId))
       ]
+      if (model.notification?.spaceClass !== undefined) {
+        const targetClass = model.notification?.spaceClass
+        spacesSubscribe = notificationClient.subscribeSpaces(
+          spacesSubscribe,
+          spaces.map((s) => s._id),
+          targetClass,
+          (res) => {
+            spacesLastModified = res
+          }
+        )
+      }
     })
   }
 
-  let lastModifiedQuery: QueryUpdater<SpaceInfo> | undefined
-  $: if (spaces.length > 0) {
-    lastModifiedQuery = client.query<SpaceInfo>(
-      lastModifiedQuery,
-      notification.class.SpaceInfo,
-      { objectId: { $in: spaces.map((p) => p._id) } },
-      (result) => {
-        spaceInfo.clear()
-        result.forEach((p) => spaceInfo.set(p.objectId as Ref<Space>, p))
-        spaceInfo = spaceInfo
+  $: if (model.notification?.itemByIdClass !== undefined) {
+    const ids: Ref<Doc>[] = []
+    spacesLastViews.forEach((v) => {
+      if (v.objectLastReads instanceof Map) {
+        ids.push(...Array.from(v.objectLastReads.keys()))
       }
-    )
+    })
+    if (ids.length > 0) {
+      const targetClass = model.notification.itemByIdClass
+      itemsSubscribe = notificationClient.subscribeObjects(
+        itemsSubscribe,
+        ids,
+        targetClass,
+        (res) => {
+          itemsLastModifieds = res
+        },
+        model.notification.itemByIdField
+      )
+    }
   }
 
   function toolActions (model: SpacesNavModel): Action[] {
@@ -97,15 +126,47 @@
   function selectSpace (id: Ref<Space>) {
     router.navigate({ space: id, special: undefined })
   }
+
+  function hasNotification (space: Ref<Space>, spacesLastViews: Map<Ref<Space>, SpaceLastViews>): number {
+    return spacesLastViews.get(space)?.notificatedObjects.length ?? 0
+  }
+
+  function changed (
+    space: Ref<Space>,
+    spacesLastViews: Map<Ref<Space>, SpaceLastViews>,
+    spacesLastModified: Map<Ref<Space>, Timestamp>,
+    itemsLastModifieds: Map<Ref<Doc>, Timestamp>
+  ): boolean {
+    const spaceLastViews = spacesLastViews.get(space)
+    if (spaceLastViews === undefined) return false
+    if (spaceLastViews.notificatedObjects.length > 0) return true
+    if ((spacesLastModified.get(space) ?? 0) > spaceLastViews.lastRead) return true
+    if (spaceLastViews.objectLastReads instanceof Map) {
+      for (const object of spaceLastViews.objectLastReads) {
+        const id = object[0]
+        const lastRead = object[1]
+        const lastModified = itemsLastModifieds.get(id)
+        if (lastModified !== undefined) {
+          if (lastModified > lastRead) return true
+        }
+      }
+    }
+    return false
+  }
+
+  onDestroy(() => {
+    spacesSubscribe?.unsubscribe()
+    itemsSubscribe?.unsubscribe()
+  })
 </script>
 
 <div>
   {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
     <TreeNode label={model.label} {actions}>
-      {#each spaces as space}
+      {#each spaces as space (space._id)}
         <TreeItem
-          notifications={notifications.get(space._id)?.notificatedObjects.length ?? 0}
-          changed={(notifications.get(space._id)?.lastRead ?? 0) < (spaceInfo.get(space._id)?.lastModified ?? 0)}
+          notifications={hasNotification(space._id, spacesLastViews)}
+          changed={changed(space._id, spacesLastViews, spacesLastModified, itemsLastModifieds)}
           component={model.spaceItem}
           props={{ space: space }}
           title={space.name}

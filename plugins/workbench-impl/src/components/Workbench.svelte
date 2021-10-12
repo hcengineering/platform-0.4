@@ -30,7 +30,7 @@
   import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   import { buildUserSpace } from './utils/space.utils'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import notification from '@anticrm/notification'
   import type { AnyComponent } from '@anticrm/status'
   import AsideDocument from './AsideDocument.svelte'
@@ -43,7 +43,7 @@
 
   const UndefinedApp = 'undefined' as IntlString
   let currentAppLabel: IntlString = UndefinedApp
-  let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   let currentSpace: Space | undefined
   let navigatorModel: NavigatorModel | undefined
@@ -88,19 +88,14 @@
   })
 
   let spaceQuery: QueryUpdater<Space> | undefined
-  let notificationQuery: QueryUpdater<SpaceNotifications> | undefined
-  notificationQuery = client.query<SpaceNotifications>(
-    notificationQuery,
-    notification.class.SpaceNotifications,
-    {},
-    (result) => {
-      notifications.clear()
-      result.forEach((p) => {
-        notifications.set(p.objectId as Ref<Space>, p)
-      })
-      notifications = notifications
-    }
-  )
+  let lastViewQuery: QueryUpdater<SpaceLastViews> | undefined
+  lastViewQuery = client.query<SpaceLastViews>(lastViewQuery, notification.class.SpaceLastViews, {}, (result) => {
+    const res: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
+    result.forEach((p) => {
+      res.set(p.objectId as Ref<Space>, p)
+    })
+    spacesLastViews = res
+  })
   $: if (currentRoute.space && navigatorModel) {
     spaceQuery = client.query<Space>(spaceQuery, core.class.Space, { _id: currentRoute.space }, (result) => {
       const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
@@ -127,7 +122,7 @@
 <div class="container">
   <div class="applications">
     <ActivityStatus status="active" />
-    <Applications {notifications} active={currentRoute.app} />
+    <Applications {spacesLastViews} active={currentRoute.app} />
     <div class="profile">
       <Profile on:logout />
     </div>
@@ -138,7 +133,7 @@
       <Navigator
         model={navigatorModel}
         special={currentRoute.special}
-        {notifications}
+        {spacesLastViews}
         on:special={(detail) => {
           currentRoute.special = detail.detail
           router.navigate({ space: undefined, special: currentRoute.special })
@@ -154,14 +149,14 @@
       {#if currentRoute.space}
         <Component
           is={navigatorModel.spaceView}
-          props={{ currentSpace: currentRoute.space, notifications: notifications.get(currentRoute.space) }}
+          props={{ currentSpace: currentRoute.space, spaceLastViews: spacesLastViews.get(currentRoute.space) }}
         />
       {/if}
     {:else if navigatorModel && navigatorModel.specials && currentRoute.special}
       <Component is={specialComponent(currentRoute.special)} />
     {/if}
   </div>
-  <AsideDocument bind:this={aside} bind:compHTML bind:currentRoute bind:notifications />
+  <AsideDocument bind:this={aside} bind:compHTML bind:currentRoute bind:spacesLastViews />
 </div>
 <Modal />
 <Popup />

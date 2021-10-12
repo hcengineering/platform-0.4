@@ -39,6 +39,7 @@
     "@anticrm/calendar-mappers": "~0.4.0",
     "@anticrm/notification-mappers": "~0.4.0",
     "fast-copy":"~2.1.1",
+    "@anticrm/notification": "~0.4.0",
     "@anticrm/recruiting-mappers":"~0.4.0"
   }
 }

@@ -14,17 +14,17 @@
 -->
 <script lang="ts">
   import type { WithMessage } from '@anticrm/chunter'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import Message from './Message.svelte'
 
   export let messages: WithMessage[] = []
-  export let notifications: SpaceNotifications | undefined
+  export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   let div: HTMLElement
 </script>
 
 <div class="flex-col" bind:this={div}>
   {#each messages as m (m._id)}
-    <Message message={m} {thread} {notifications} />
+    <Message message={m} {thread} {spaceLastViews} />
   {/each}
 </div>

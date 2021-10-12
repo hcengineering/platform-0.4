@@ -18,6 +18,7 @@ import core, { createClient, withOperations } from '@anticrm/core'
 import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { ClientImpl } from './connection'
+import { NotificationClient } from '@anticrm/notification'
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import regNotificationMappers from '@anticrm/notification-mappers'
@@ -28,12 +29,15 @@ import regNotificationMappers from '@anticrm/notification-mappers'
  * Licensed under the Eclipse Public License, Version 2.0
  */
 export default async (): Promise<CoreService> => {
-  let client: Client | undefined
+  let client: (Client & TxOperations) | undefined
 
   async function getClient (): Promise<Client & TxOperations> {
     if (client === undefined) {
       // eslint-disable-next-line prefer-const
       let liveQuery: LiveQuery | undefined
+
+      // eslint-disable-next-line prefer-const
+      let notificationClient: NotificationClient | undefined
 
       const clientImpl = await ClientImpl.create()
 
@@ -45,11 +49,13 @@ export default async (): Promise<CoreService> => {
         (tx) => {
           void clientImpl.model.tx(tx) // eslint-disable-line no-void
           liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+          notificationClient?.tx(tx)
         }
       )
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)
+      notificationClient = NotificationClient.get(client)
       await regCalendarMappers()
       await regNotificationMappers()
       await regRecruitingMappers()

@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import core, { Account, Ref, Space } from '@anticrm/core'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
@@ -46,11 +46,11 @@
   import { Attachments } from '@anticrm/attachment-impl'
 
   const client = getClient()
-  const notificationClient = new NotificationClient(client)
+  const notificationClient = NotificationClient.get(client)
 
   export let id: Ref<Task>
-  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
-  let notification: SpaceNotifications | undefined
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
+  let spaceLastViews: SpaceLastViews | undefined
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
   let projectMembers: Account[] = []
@@ -64,7 +64,7 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
-      notification = notifications.get(result[0]?.space)
+      spaceLastViews = spacesLastViews.get(result[0]?.space)
       desсription = result[0]?.description
       item = result[0]
       if (item !== undefined) {
@@ -82,15 +82,15 @@
   }
 
   onDestroy(async () => {
-    if (notification !== undefined) {
-      notificationClient.readNow(notification, id)
+    if (spaceLastViews !== undefined) {
+      notificationClient.readNow(spaceLastViews, id)
     }
   })
 
   afterUpdate(async () => {
     if (prevId !== id) {
-      if (prevId !== undefined && notification !== undefined) {
-        notificationClient.readNow(notification, prevId)
+      if (prevId !== undefined && spaceLastViews !== undefined) {
+        notificationClient.readNow(spaceLastViews, prevId)
       }
       prevId = id
     }
@@ -182,7 +182,7 @@
         />
 
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView notifications={notification} currentSpace={item.space} taskId={item._id} />
+          <CommentsView {spaceLastViews} currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === attachment.string.Attachments}
         <Section label={attachment.string.Attachments} icon={IconFile}>

@@ -152,7 +152,7 @@ export function createModel (builder: Builder): void {
     core.class.DerivedDataDescriptor,
     {
       sourceClass: task.class.Task,
-      targetClass: notification.class.SpaceNotifications,
+      targetClass: notification.class.SpaceLastViews,
       collections: [
         {
           sourceField: 'description',
