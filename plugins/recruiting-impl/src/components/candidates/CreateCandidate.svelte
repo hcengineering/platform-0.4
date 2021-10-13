@@ -53,7 +53,6 @@
     await client.createDoc(recruiting.class.Candidate, space._id, candidate)
   }
 
-  let kl: boolean = false
   $: candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
 </script>
 

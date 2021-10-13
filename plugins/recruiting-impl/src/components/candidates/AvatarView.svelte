@@ -30,7 +30,12 @@
       </div>
     {/if}
   </div>
-  <div class="flex-center avatar" on:click={() => { kl = !kl }}>
+  <div
+    class="flex-center avatar"
+    on:click={() => {
+      kl = !kl
+    }}
+  >
     <div class="border" />
     {#if kl}
       <Avatar />
@@ -59,7 +64,7 @@
     .bg-avatar {
       transform: scale(1.1);
       filter: blur(10px);
-      opacity: .3;
+      opacity: 0.3;
     }
   }
   .avatar {

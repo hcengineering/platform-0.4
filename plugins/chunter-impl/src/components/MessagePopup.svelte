@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import chunter from '@anticrm/chunter'
@@ -33,7 +32,9 @@
     <PopupItem
       component={IconEdit}
       title={chunter.string.EditMessage}
-      action={() => { dispatch('close', 'edit') }}
+      action={() => {
+        dispatch('close', 'edit')
+      }}
     />
     <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
   {/if}

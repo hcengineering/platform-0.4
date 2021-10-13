@@ -15,7 +15,7 @@
 <script lang="ts">
   import { Table, Label, showPopup, closePopup } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -50,9 +50,9 @@
   }
 
   function onClick (event: any) {
-    // selectDocument(event.detail)
-    showPopup(EditCandidate, {...event.detail}, 'full', (result) => { closePopup() })
-    console.log('SELECT!!!', event.detail)
+    showPopup(EditCandidate, { ...event.detail }, 'full', (result) => {
+      closePopup()
+    })
   }
 </script>
 

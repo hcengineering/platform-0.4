@@ -47,7 +47,9 @@
     }
     computeSize(input)
   })
-  afterUpdate(() => { computeSize(input) })
+  afterUpdate(() => {
+    computeSize(input)
+  })
 </script>
 
 <div class="editbox" style={width ? 'width: ' + width : ''}>

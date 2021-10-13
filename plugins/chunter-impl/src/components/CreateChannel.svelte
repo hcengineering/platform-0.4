@@ -24,7 +24,7 @@
   const dispatch = createEventDispatcher()
 
   let name: string = ''
-  let description: string = ''
+  const description: string = ''
   let isPrivate: boolean = false
 
   const client = getClient()
@@ -42,10 +42,10 @@
 
 <Card
   label={chunter.string.CreateChannel}
-  okLabel={'Save'}
+  okLabel={chunter.string.Save}
   okAction={createChannel}
   on:close
-  canSave={name}
+  canSave={name ? true : false}
   on:update={(ev) => {
     dispatch('update', ev.detail)
   }}

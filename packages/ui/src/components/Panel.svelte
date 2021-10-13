@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { UIComponent, Asset } from '@anticrm/status'
@@ -32,83 +31,94 @@
   // export let object: any
 
   const dispatch = createEventDispatcher()
-
 </script>
 
-<div class="overlay" on:click={() => { dispatch('close') }}/>
+<div
+  class="overlay"
+  on:click={() => {
+    dispatch('close')
+  }}
+/>
 <div class="dialog-container" class:fullSize>
-
-{#if fullSize}
-  <div class="leftSection">
-    <div class="flex-row-center header">
-      <div class="icon">
-        {#if typeof (icon) === 'string'}
-          <Icon {icon} size={16} />
-        {:else}
-          <svelte:component this={icon} size={16} />
-        {/if}
+  {#if fullSize}
+    <div class="leftSection">
+      <div class="flex-row-center header">
+        <div class="icon">
+          {#if typeof icon === 'string'}
+            <Icon {icon} size={16} />
+          {:else}
+            <svelte:component this={icon} size={16} />
+          {/if}
+        </div>
+        <div class="title">{title}</div>
       </div>
-      <div class="title">{title}</div>
-    </div>
-    {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
-    <div class="flex-col scroll-container">
-      <div class="flex-col content">
-        <slot />
+      {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
+      <div class="flex-col scroll-container">
+        <div class="flex-col content">
+          <slot />
+        </div>
       </div>
     </div>
-  </div>
-  <div class="rightSection">
-    <div class="flex-row-center header">
-      <div class="icon"><Activity size={16} /></div>
-      <div class="title">Activity</div>
-    </div>
-    <div class="flex-col h-full content">
-      <ScrollBox vertical stretch>
-        <Grid column={1} rowGap={24}>
-          Activity
-        </Grid>
-      </ScrollBox>
-    </div>
-    <div class="ref-input">
-      ReferenceInput
-    </div>
-  </div>
-{:else}
-  <div class="unionSection">
-    <div class="flex-row-center header">
-      <div class="icon">
-        {#if typeof (icon) === 'string'}
-          <Icon {icon} size={16} />
-        {:else}
-          <svelte:component this={icon} size={16} />
-        {/if}
-      </div>
-      <div class="title">{title}</div>
-    </div>
-    {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
-    <ScrollBox vertical stretch noShift>
-      <div class="flex-col content">
-        <slot />
-      </div>
-      <div class="flex-row-center activity header">
+    <div class="rightSection">
+      <div class="flex-row-center header">
         <div class="icon"><Activity size={16} /></div>
         <div class="title">Activity</div>
       </div>
-      <div class="flex-col activity content">
-        <Grid column={1} rowGap={24}>
-          Activity
-        </Grid>
+      <div class="flex-col h-full content">
+        <ScrollBox vertical stretch>
+          <Grid column={1} rowGap={24}>Activity</Grid>
+        </ScrollBox>
       </div>
-    </ScrollBox>
-    <div class="ref-input">
-      ReferenceInput
+      <div class="ref-input">ReferenceInput</div>
     </div>
-  </div>
-{/if}
+  {:else}
+    <div class="unionSection">
+      <div class="flex-row-center header">
+        <div class="icon">
+          {#if typeof icon === 'string'}
+            <Icon {icon} size={16} />
+          {:else}
+            <svelte:component this={icon} size={16} />
+          {/if}
+        </div>
+        <div class="title">{title}</div>
+      </div>
+      {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
+      <ScrollBox vertical stretch noShift>
+        <div class="flex-col content">
+          <slot />
+        </div>
+        <div class="flex-row-center activity header">
+          <div class="icon"><Activity size={16} /></div>
+          <div class="title">Activity</div>
+        </div>
+        <div class="flex-col activity content">
+          <Grid column={1} rowGap={24}>Activity</Grid>
+        </div>
+      </ScrollBox>
+      <div class="ref-input">ReferenceInput</div>
+    </div>
+  {/if}
 
   <div class="tools">
-    <div class="tool" on:click={() => { fullSize = !fullSize }}><div class="icon">{#if fullSize}<CollapseWin size={16} />{:else}<ExpandWin size={16} />{/if}</div></div>
-    <div class="tool" on:click={() => { dispatch('close') }}><div class="icon"><Close size={16} /></div></div>
+    <div
+      class="tool"
+      on:click={() => {
+        fullSize = !fullSize
+      }}
+    >
+      <div class="icon">
+        {#if fullSize}<CollapseWin size={16} />{:else}<ExpandWin size={16} />{/if}
+      </div>
+    </div>
+    <div
+      class="tool"
+      on:click={() => {
+        dispatch('close')
+      }}
+    >
+      <div class="icon"><Close size={16} /></div>
+    </div>
   </div>
 </div>
 
@@ -126,7 +136,7 @@
     height: calc(100% - 56px);
     background: rgba(31, 31, 37, 0.7);
     border-radius: 20px;
-    box-shadow: 0px 44px 154px rgba(0, 0, 0, .75);
+    box-shadow: 0px 44px 154px rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(30px);
 
     .header {
@@ -135,7 +145,9 @@
       height: 72px;
       border-bottom: 1px solid var(--theme-card-divider);
 
-      .icon { opacity: .6; }
+      .icon {
+        opacity: 0.6;
+      }
       .title {
         flex-grow: 1;
         margin-left: 8px;
@@ -170,7 +182,9 @@
     }
     .activity {
       background-color: var(--theme-bg-accent-color);
-      &.header { border-bottom: none; }
+      &.header {
+        border-bottom: none;
+      }
       &.content {
         flex-grow: 1;
         padding-bottom: 0;
@@ -184,7 +198,8 @@
     left: 24px;
   }
 
-  .leftSection, .rightSection {
+  .leftSection,
+  .rightSection {
     flex-basis: 50%;
     display: flex;
     flex-direction: column;
@@ -203,7 +218,9 @@
   }
   .rightSection {
     background-color: transparent;
-    .header { border-bottom: 1px solid var(--theme-card-divider); }
+    .header {
+      border-bottom: 1px solid var(--theme-card-divider);
+    }
     .content {
       flex-grow: 1;
       padding: 40px 40px 0;
@@ -224,14 +241,16 @@
 
     .tool {
       margin-left: 12px;
-      opacity: .4;
+      opacity: 0.4;
       cursor: pointer;
 
       .icon {
         transform-origin: center center;
-        transform: scale(.75);
+        transform: scale(0.75);
       }
-      &:hover { opacity: 1; }
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -242,6 +261,6 @@
     width: 100%;
     height: 100%;
     background: var(--theme-menu-color);
-    opacity: .7;
+    opacity: 0.7;
   }
 </style>

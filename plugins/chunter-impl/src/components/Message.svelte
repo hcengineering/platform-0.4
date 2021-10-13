@@ -12,24 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceNotifications } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import {
-    ActionIcon,
-    Button,
-    DateTime,
-    IconEdit,
-    ItemRefefence,
-    MessageViewer,
-    PopupItem,
-    PopupMenu,
-    showPopup
-  } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, ItemRefefence, MessageViewer, showPopup } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
@@ -47,8 +36,6 @@
   export let notifications: SpaceNotifications | undefined
   export let thread: boolean = false
   export let showReferences = true
-
-  let showMore = false
 
   let parsedMessage: MessageNode
 

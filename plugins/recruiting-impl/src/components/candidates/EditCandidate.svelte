@@ -14,15 +14,15 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { deepEqual } from 'fast-equals'
+  // import { deepEqual } from 'fast-equals'
   import cloneDeep from 'lodash.clonedeep'
   import type { Data, Ref } from '@anticrm/core'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { getClient, selectDocument } from '@anticrm/workbench'
-  import { Panel, EditBox, IconClose, ScrollBox } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
+  import { Panel, EditBox } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import CandidateEditor from './CandidateEditor.svelte'
+  // import CandidateEditor from './CandidateEditor.svelte'
   import Contact from '../icons/Contact.svelte'
   import AvatarView from './AvatarView.svelte'
 
@@ -57,41 +57,46 @@
     prevCandidate = cloneDeep(adjustedRes)
   })
 
-  async function onUpdate () {
-    if (candidate === undefined || prevCandidate === undefined) {
-      return
-    }
+  // async function onUpdate () {
+  //   if (candidate === undefined || prevCandidate === undefined) {
+  //     return
+  //   }
 
-    const b: any = candidate
-    const a: any = prevCandidate
+  //   const b: any = candidate
+  //   const a: any = prevCandidate
 
-    const keys = Object.keys(candidate)
-    const update = keys.reduce((res, key) => (deepEqual(a[key], b[key]) ? res : { ...res, [key]: b[key] }), {})
+  //   const keys = Object.keys(candidate)
+  //   const update = keys.reduce((res, key) => (deepEqual(a[key], b[key]) ? res : { ...res, [key]: b[key] }), {})
 
-    if (Object.getOwnPropertyNames(update).length === 0) {
-      return
-    }
+  //   if (Object.getOwnPropertyNames(update).length === 0) {
+  //     return
+  //   }
 
-    await client.updateDoc(recruiting.class.Candidate, a.space, a._id, update)
-  }
+  //   await client.updateDoc(recruiting.class.Candidate, a.space, a._id, update)
+  // }
 
-  function onClose () {
-    selectDocument()
-  }
+  // function onClose () {
+  //   selectDocument()
+  // }
 </script>
 
 {#if candidate !== undefined}
-  <Panel icon={Contact} title={candidate.firstName + ' ' + candidate.lastName} object={candidate} on:close={() => { dispatch('close') }}>
-
+  <Panel
+    icon={Contact}
+    title={candidate.firstName + ' ' + candidate.lastName}
+    object={candidate}
+    on:close={() => {
+      dispatch('close')
+    }}
+  >
     <div class="flex-row-center">
       <AvatarView src={candidate.avatar} />
       <div class="flex-col">
         <div class="name"><EditBox placeholder="John" maxWidth="320px" bind:value={candidate.firstName} /></div>
         <div class="name"><EditBox placeholder="Appleseed" maxWidth="320px" bind:value={candidate.lastName} /></div>
-        <div class="title"></div>
+        <div class="title" />
       </div>
     </div>
-  
   </Panel>
 {/if}
 
@@ -103,6 +108,6 @@
   }
   .title {
     margin-top: 4px;
-    font-size: .75rem;
+    font-size: 0.75rem;
   }
 </style>
