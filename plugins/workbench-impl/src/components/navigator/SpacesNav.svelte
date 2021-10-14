@@ -69,8 +69,8 @@
       result.push({
         label: model.addSpaceLabel,
         icon: IconAdd,
-        action: async (ev: MouseEvent): Promise<void> => {
-          showPopup(create, {}, ev.target as HTMLElement)
+        action: async (ev?: Event): Promise<void> => {
+          showPopup(create, {}, ev?.currentTarget as HTMLElement)
         }
       })
     }

@@ -158,7 +158,8 @@ export default plugin(PluginRecruiting, {}, {
 
     Applications: '' as IntlString,
     Interviews: '' as IntlString,
-    SubmitFeedback: '' as IntlString
+    SubmitFeedback: '' as IntlString,
+    Save: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,

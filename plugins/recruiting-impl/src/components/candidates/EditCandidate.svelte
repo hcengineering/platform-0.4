@@ -84,7 +84,6 @@
   <Panel
     icon={Contact}
     title={candidate.firstName + ' ' + candidate.lastName}
-    object={candidate}
     on:close={() => {
       dispatch('close')
     }}

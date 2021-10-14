@@ -40,7 +40,7 @@ export interface DocumentProvider {
 export interface Action {
   label: IntlString
   icon: Asset | UIComponent
-  action: (ev?: MouseEvent) => Promise<void>
+  action: (ev?: Event) => Promise<void>
 }
 
 export interface IPopupItem {

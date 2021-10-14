@@ -38,10 +38,10 @@
 
 <Card
   label={recruiting.string.AddPoolSpace}
-  okLabel={'Save'}
+  okLabel={recruiting.string.Save}
   okAction={createPool}
   on:close
-  canSave={pool.name}
+  canSave={pool.name ? true : false}
   on:update={(ev) => {
     dispatch('update', ev.detail)
   }}

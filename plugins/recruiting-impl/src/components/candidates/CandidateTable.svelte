@@ -50,7 +50,7 @@
   }
 
   function onClick (event: any) {
-    showPopup(EditCandidate, { ...event.detail }, 'full', (result) => {
+    showPopup(EditCandidate, { ...event.detail }, 'full', () => {
       closePopup()
     })
   }

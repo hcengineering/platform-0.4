@@ -133,12 +133,20 @@
   }
 
   let selElement: HTMLElement
-  const findNode = (el: Node, name: string): any => {
+  const findNode = (el: HTMLElement, name: string): any => {
     while (el.parentNode !== null) {
       if (el.classList.contains(name)) return el
-      el = el.parentNode
+      el = el.parentNode as HTMLElement
     }
     return false
+  }
+  const showMsgPopup = (ev?: Event): void => {
+    selElement = findNode(ev?.currentTarget as HTMLElement, 'message-container')
+    selElement.classList.add('selected')
+    showPopup(MessagePopup, { message }, ev?.currentTarget as HTMLElement, (result) => {
+      if (result && result === 'edit') editMode = true
+      selElement.classList.remove('selected')
+    })
   }
 </script>
 
@@ -168,14 +176,7 @@
               <ActionIcon
                 icon={MoreH}
                 size={20}
-                action={(ev) => {
-                  selElement = findNode(ev.target, 'message-container')
-                  selElement.classList.add('selected')
-                  showPopup(MessagePopup, { message }, ev.target, (result) => {
-                    if (result && result === 'edit') editMode = true
-                    selElement.classList.remove('selected')
-                  })
-                }}
+                action={showMsgPopup}
               />
             </div>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
