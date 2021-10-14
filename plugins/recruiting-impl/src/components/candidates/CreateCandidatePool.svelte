@@ -41,7 +41,7 @@
   okLabel={recruiting.string.Save}
   okAction={createPool}
   on:close
-  canSave={pool.name ? true : false}
+  canSave={!!pool.name}
   on:update={(ev) => {
     dispatch('update', ev.detail)
   }}

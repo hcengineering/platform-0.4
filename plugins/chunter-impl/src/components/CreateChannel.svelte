@@ -45,7 +45,7 @@
   okLabel={chunter.string.Save}
   okAction={createChannel}
   on:close
-  canSave={name ? true : false}
+  canSave={!!name}
   on:update={(ev) => {
     dispatch('update', ev.detail)
   }}

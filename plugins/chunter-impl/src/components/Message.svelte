@@ -173,11 +173,7 @@
           </div>
           <div class="buttons">
             <div class="tool">
-              <ActionIcon
-                icon={MoreH}
-                size={20}
-                action={showMsgPopup}
-              />
+              <ActionIcon icon={MoreH} size={20} action={showMsgPopup} />
             </div>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
