@@ -22,6 +22,7 @@ import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
+import type { CommentRef } from '@anticrm/chunter'
 
 export enum CandidateStatus {
   Employed = 'employed',
@@ -40,20 +41,21 @@ export interface Candidate extends Person {
 
 export interface Applicant extends FSMItem {
   recruiter: Ref<Account>
+  comments: CommentRef[]
 }
 
 export interface CandidatePoolSpace extends Space {}
 
 export interface Vacancy {
   company: string
-  details?: {
+  details: {
     summary: string
     qualification: string
     experience: string
   }
   location: string
   type: string
-  dueDate: Timestamp
+  dueDate?: Timestamp
 }
 export interface VacancySpace extends WithFSM, Vacancy {}
 
@@ -97,7 +99,9 @@ export default plugin(PluginRecruiting, {}, {
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent,
+    ApplicantPresenter: '' as AnyComponent,
     Applications: '' as AnyComponent,
+    VacancyDetails: '' as AnyComponent,
     Feedback: '' as AnyComponent
   },
   string: {
@@ -159,10 +163,14 @@ export default plugin(PluginRecruiting, {}, {
     Applications: '' as IntlString,
     Interviews: '' as IntlString,
     SubmitFeedback: '' as IntlString,
-    Save: '' as IntlString
+    Save: '' as IntlString,
+    State: '' as IntlString,
+
+    Comments: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,
+    ApplicantPresenter: '' as Ref<DocumentPresenter<Doc>>,
     FeedbackRequestPresenter: '' as Ref<DocumentPresenter<Doc>>
   },
   fsm: {
@@ -175,7 +183,8 @@ export default plugin(PluginRecruiting, {}, {
     Interview: '' as Ref<Action>
   },
   dd: {
-    Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   },
   mapper: {
     Feedback: '' as Resource<DocumentMapper>

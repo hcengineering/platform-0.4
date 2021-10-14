@@ -1,10 +1,10 @@
 import chunter, { Comment, CommentRef } from '@anticrm/chunter'
 import core, { Account, DerivedDataDescriptor, Doc, getFullRef, Ref, ShortRef } from '@anticrm/core'
-import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import task, { CheckListItem, Project, Task, TaskStatuses } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
+import { DemoBuilder } from './model'
 
 const demoIds = component('demo-task' as Component, {
   project: {
@@ -15,10 +15,11 @@ const demoIds = component('demo-task' as Component, {
 /**
  * @public
  */
-export function demoTask (builder: Builder): Task[] {
+export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Task[]> {
   const members: Ref<Account>[] = [core.account.System, ...accountIds]
 
-  builder.createDoc(
+  console.error('generate demo project')
+  await builder.createDoc(
     task.class.Project,
     {
       name: 'PL-DEMO',
@@ -26,20 +27,25 @@ export function demoTask (builder: Builder): Task[] {
       members: members,
       private: false
     },
-    demoIds.project.DemoProject
+    demoIds.project.DemoProject,
+    {
+      space: core.space.Model
+    }
   )
 
-  const taskCount = 7
   const sTasks = [1, 4, 2, 0, 10, 1, 5]
   const sComments = [2, 5, 1, 0, 2, 0, 3]
   const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
   const tasks: Task[] = []
   let commentIds = 0
   for (let i = 0; i < taskCount; i++) {
+    if (i % 500 === 0) {
+      console.info('task creation', i, taskCount)
+    }
     const id: Ref<Task> = `tid-${i}` as Ref<Task>
     const shortRefId: Ref<ShortRef> = `TSK-${i}` as Ref<ShortRef>
     // Create short references
-    builder.createDoc(
+    await builder.createDoc(
       core.class.ShortRef,
       {
         title: `TSK-${i}`,
@@ -58,7 +64,7 @@ export function demoTask (builder: Builder): Task[] {
     )
 
     const checkItems: CheckListItem[] = []
-    for (let j = 0; j < sTasks[i]; j++) {
+    for (let j = 0; j < sTasks[i % sTasks.length]; j++) {
       checkItems.push({
         description: `do ${faker.commerce.productDescription()}`,
         done: faker.datatype.boolean()
@@ -67,10 +73,10 @@ export function demoTask (builder: Builder): Task[] {
 
     const comments: CommentRef[] = []
 
-    for (let j = 0; j < sComments[i]; j++) {
+    for (let j = 0; j < sComments[i % sComments.length]; j++) {
       const commentId = `t-cid-${commentIds++}` as Ref<Comment>
       const userId = faker.random.arrayElement(accountIds)
-      builder.createDoc(
+      await builder.createDoc(
         chunter.class.Comment,
         {
           message: faker.lorem.paragraphs(3),
@@ -88,7 +94,7 @@ export function demoTask (builder: Builder): Task[] {
     }
 
     tasks.push(
-      builder.createDoc<Task>(
+      await builder.createDoc<Task>(
         task.class.Task,
         {
           name: `Do ${faker.commerce.productName()}`,

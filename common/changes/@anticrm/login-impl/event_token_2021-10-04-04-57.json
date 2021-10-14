@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/login-impl",
+      "comment": "token event for set metadata",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/login-impl"
+}

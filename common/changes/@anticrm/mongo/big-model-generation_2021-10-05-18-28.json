@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Bug model data support",
+      "type": "patch",
+      "packageName": "@anticrm/mongo"
+    }
+  ],
+  "packageName": "@anticrm/mongo",
+  "email": "haiodo@gmail.com"
+}

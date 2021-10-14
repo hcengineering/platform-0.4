@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting",
+      "comment": "Make possible to provide state on application creation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting"
+}

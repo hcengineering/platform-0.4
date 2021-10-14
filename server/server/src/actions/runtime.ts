@@ -36,6 +36,8 @@ export class ActionRuntime {
   private _tx: ((tx: Tx<Doc>) => Promise<void>) | undefined
   private readonly updateTxSubs: Map<string, UpdateTxSub> = new Map()
 
+  name = 'action.runtime'
+
   constructor (
     private readonly hierarchy: Hierarchy,
     private readonly model: ModelDb,

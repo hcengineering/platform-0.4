@@ -46,13 +46,13 @@ async function init (): Promise<void> {
   setMetadata(attachment.metadata.FilesUrl, config.fileServerUri)
 
   addEventListener('Token', async (event, data) => {
+    setMetadata(pluginCore.metadata.Token, data)
     const attachmentPlugin = await getPlugin(attachment.id)
     await attachmentPlugin.authorize(data)
   })
 
   const loginInfo = currentAccount()
   if (loginInfo !== undefined) {
-    setMetadata(pluginCore.metadata.Token, loginInfo.token)
     void broadcastEvent('Token', loginInfo.token)
   }
 

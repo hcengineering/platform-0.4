@@ -29,9 +29,10 @@ import core, {
   Tx,
   TxDb,
   TxProcessor,
-  DerivedDataProcessor
+  DerivedDataProcessor,
+  FindOptions
 } from '@anticrm/core'
-import builder from '@anticrm/model-dev'
+import txesPromise from '@anticrm/model-dev'
 import copy from 'fast-copy'
 
 export class ClientImpl extends TxProcessor implements Client {
@@ -50,7 +51,7 @@ export class ClientImpl extends TxProcessor implements Client {
   }
 
   static async create (): Promise<ClientImpl> {
-    const txes = builder.getTxes()
+    const txes = await txesPromise
 
     const hierarchy = new Hierarchy()
     txes.forEach((tx) => hierarchy.tx(tx))
@@ -87,10 +88,14 @@ export class ClientImpl extends TxProcessor implements Client {
     return new ClientImpl(hierarchy, model, transactions, ddProcessor)
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
-    return copy(await this.model.findAll(_class, query))
+    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
+    return copy(await this.model.findAll(_class, query, options))
   }
 
   async tx (tx: Tx): Promise<void> {

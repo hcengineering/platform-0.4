@@ -40,6 +40,7 @@ class Draggable {
   private isClick = false
   private isMoved = false
   private downPos: [number, number] = [-1, -1]
+  private readonly moveThreshold = 10
 
   constructor (
     private readonly node: HTMLElement,
@@ -114,7 +115,15 @@ class Draggable {
 
   private readonly handleMouseMove = (e: MouseEvent): void => {
     if (!this.isMoved) {
-      this.onstart({ x: this.downPos[0], y: this.downPos[1] })
+      const x = this.downPos[0] - e.clientX
+      const y = this.downPos[1] - e.clientY
+      const length = Math.sqrt(x * x + y * y)
+
+      if (length < this.moveThreshold) {
+        return
+      }
+
+      this.onstart({ x: e.clientX, y: e.clientY })
       this.isMoved = true
     }
 

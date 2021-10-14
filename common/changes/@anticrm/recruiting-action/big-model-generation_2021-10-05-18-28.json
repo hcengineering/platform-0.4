@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Bug model data support",
+      "type": "patch",
+      "packageName": "@anticrm/recruiting-action"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-action",
+  "email": "haiodo@gmail.com"
+}

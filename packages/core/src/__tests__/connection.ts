@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { FindOptions } from '..'
 import type { Account, Class, Doc, Ref } from '../classes'
 import { TxHandler, CoreClient } from '../client'
 import core from '../component'
@@ -35,10 +36,14 @@ class ClientImpl implements CoreClient {
     private readonly ddProcessor: DerivedDataProcessor
   ) {}
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const domain = this.hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query)
-    return await this.model.findAll(_class, query)
+    if (domain === DOMAIN_TX) return await this.transactions.findAll(_class, query, options)
+    return await this.model.findAll(_class, query, options)
   }
 
   async tx (tx: Tx): Promise<void> {

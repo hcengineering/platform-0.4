@@ -58,6 +58,9 @@
     "@anticrm/action-plugin":"~0.4.0",
     "@anticrm/calendar":"~0.4.0",
     "lodash.clonedeep":"~4.5.0",
-    "fast-equals": "^2.0.1"
+    "fast-equals": "^2.0.1",
+    "@anticrm/attachment": "~0.4.0",
+    "@anticrm/attachment-impl": "~0.4.0",
+    "@anticrm/chunter": "~0.4.0"
   }
 }

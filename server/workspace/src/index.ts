@@ -3,9 +3,12 @@ import core, {
   Doc,
   DocumentQuery,
   DOMAIN_TX,
+  FindOptions,
   FindResult,
   Hierarchy,
   isModelTx,
+  measure,
+  measureAsync,
   ModelDb,
   Ref,
   Storage,
@@ -20,6 +23,7 @@ import { WorkspaceStorage } from './storage'
  * @public
  */
 export interface TxHandler {
+  name: string
   tx: (clientId: string, tx: Tx) => Promise<void>
 }
 
@@ -79,6 +83,7 @@ export class Workspace implements WithWorkspaceTx {
     const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
     const modelTx: TxHandler = {
+      name: 'model',
       tx: async (clientId, tx) => {
         // Update model only for global model transactions.
         if (isModelTx(tx)) {
@@ -103,21 +108,29 @@ export class Workspace implements WithWorkspaceTx {
     return this.hierarchy
   }
 
-  async findAll<T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
-    return await this.storage.findAll(_class, query)
+  async findAll<T extends Doc>(
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
+    return await this.storage.findAll(_class, query, options)
   }
 
   async tx (clientId: string, tx: Tx): Promise<void> {
     // 1. go to storage to check for potential object duplicate transactions.
+    const stx = measure('workspace.storage.tx')
     const result = await this.storage.tx(tx)
+    stx()
 
     // 2. update hierarchy only for global model transactions only.
     if (isModelTx(tx) && tx.space === core.space.Tx) {
+      const htx = measure('workspace.hierarchy.tx')
       this.hierarchy.tx(tx)
+      htx()
     }
 
     // 3. process all other transaction handlers
-    await Promise.all(this.txh.map(async (t) => await t.tx(clientId, tx)))
+    await Promise.all(this.txh.map(async (t) => await measureAsync(t.name, async () => await t.tx(clientId, tx))))
     return result
   }
 }

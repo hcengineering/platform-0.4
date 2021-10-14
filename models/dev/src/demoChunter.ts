@@ -1,10 +1,10 @@
 import chunter, { Channel, Comment, CommentRef, Message } from '@anticrm/chunter'
 import core, { Account, getFullRef, Ref } from '@anticrm/core'
-import { Builder } from '@anticrm/model'
 import { component, Component } from '@anticrm/status'
 import type { Task } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
+import { DemoBuilder } from './model'
 
 const demoIds = component('demo-task' as Component, {
   project: {
@@ -15,9 +15,9 @@ const demoIds = component('demo-task' as Component, {
 /**
  * @public
  */
-export function demoChunter (builder: Builder, tasks: Task[]): void {
+export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7, ri = 10): Promise<void> {
   const members: Ref<Account>[] = [core.account.System, ...accountIds]
-  builder.createDoc(
+  await builder.createDoc(
     chunter.class.Channel,
     {
       name: 'PL-CHANNEL',
@@ -26,18 +26,19 @@ export function demoChunter (builder: Builder, tasks: Task[]): void {
       direct: false,
       private: false
     },
-    demoIds.project.DemoChannel
+    demoIds.project.DemoChannel,
+    {
+      space: core.space.Model
+    }
   )
 
   // Create few direct message spaces
-
-  const dmc = 7
   for (let i = 0; i < dmc; i++) {
     let ms = faker.random.arrayElements(members, faker.datatype.number(members.length) + 1)
     if (!ms.includes(core.account.System)) {
       ms = [core.account.System, ...ms]
     }
-    builder.createDoc(
+    await builder.createDoc(
       chunter.class.Channel,
       {
         name: 'direct-message',
@@ -50,19 +51,20 @@ export function demoChunter (builder: Builder, tasks: Task[]): void {
     )
   }
 
-  const ri = 10
-
   const cii = [2, 0, 4, 7, 20, 30, 1, 2, 3, 1]
   let cind = 0
   for (let i = 0; i < ri; i++) {
+    if (i % 500 === 0) {
+      console.info('message creation', i, ri)
+    }
     const msgId: Ref<Message> = `mid-${i}` as Ref<Message>
     const comments: CommentRef[] = []
-    const ci = cii[i]
+    const ci = cii[i % cii.length]
     for (let j = 0; j < ci; j++) {
       const userId = faker.random.arrayElement(accountIds)
       const cid: Ref<Comment> = `cid-${cind++}` as Ref<Comment>
       comments.push({ _id: cid, userId, createOn: Date.now(), lastModified: Date.now() })
-      builder.createDoc(
+      await builder.createDoc(
         chunter.class.Comment,
         {
           replyOf: getFullRef(msgId, chunter.class.Message),
@@ -102,7 +104,7 @@ export function demoChunter (builder: Builder, tasks: Task[]): void {
       msgText += faker.lorem.paragraphs(1)
     }
 
-    builder.createDoc(
+    await builder.createDoc(
       chunter.class.Message,
       {
         message: msgText,

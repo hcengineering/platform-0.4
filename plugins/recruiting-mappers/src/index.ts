@@ -19,7 +19,7 @@ import type { DerivedFeedback, Feedback } from '@anticrm/recruiting'
 import recruiting from '@anticrm/recruiting'
 
 async function createFeedback (feedback: Feedback, d: DerivedDataDescriptor<Doc, DerivedData>, opts: MappingOptions): Promise<(DerivedFeedback & DerivedData)[]> {
-  const req = (await opts.storage.findAll(recruiting.class.FeedbackRequest, { _id: feedback.request }))[0]
+  const req = (await opts.storage.findAll(recruiting.class.FeedbackRequest, { _id: feedback.request }, { limit: 1 }))[0]
 
   if (req === undefined) {
     return []
@@ -55,7 +55,7 @@ export default async (): Promise<void> => {
         const ttx = tx as TxUpdateDoc<Doc>
 
         if (options.hierarchy.isDerived(ttx.objectClass, recruiting.class.Feedback)) {
-          const feedback = (await options.storage.findAll(recruiting.class.Feedback, { _id: ttx.objectId as Ref<Feedback> }))[0]
+          const feedback = (await options.storage.findAll(recruiting.class.Feedback, { _id: ttx.objectId as Ref<Feedback> }, { limit: 1 }))[0]
 
           if (feedback === undefined) {
             return []

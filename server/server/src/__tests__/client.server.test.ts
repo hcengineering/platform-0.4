@@ -16,6 +16,7 @@
 import core, {
   Account,
   Class,
+  DeferredPromise,
   DerivedDataDescriptor,
   Doc,
   DOMAIN_TX,
@@ -120,7 +121,6 @@ async function prepareServer (enableLogging = true): Promise<{
     logTransactions: enableLogging,
     security: await securityCertificate
   })
-  console.log('server created')
   return {
     shutdown: async () => {
       server.shutdown()
@@ -150,13 +150,10 @@ describe('real-server', () => {
   afterAll(async () => {
     await cleanDbs()
     await shutdown()
-    console.log('clean after all done')
   })
 
   beforeEach(async () => {
-    console.log('staring server')
     const s = await prepareServer()
-    console.log('server ok')
     serverShutdown = s.shutdown
     address = s.address
     workspaceId = s.workspaceId
@@ -168,7 +165,6 @@ describe('real-server', () => {
   })
 
   it('client connect server', async () => {
-    console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
@@ -184,16 +180,21 @@ describe('real-server', () => {
       }
     )
 
+    const brain3tx = new DeferredPromise()
+
     const brainTxes: Tx[] = []
     const client2 = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
-        email: johnAccount
+        email: brianAccount
       })}`,
       (
         await securityCertificate
       ).cert,
       (tx) => {
         brainTxes.push(tx)
+        if (brainTxes.length === 3) {
+          brain3tx.resolve(null)
+        }
       }
     )
 
@@ -211,6 +212,7 @@ describe('real-server', () => {
       objectClass: 'c1' as Ref<Class<Doc>>,
       descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Title>>
     })
+    await brain3tx.promise
     expect(johnTxes.length).toEqual(3)
     expect(brainTxes.length).toEqual(3)
     const c2t = await client2.findAll(core.class.Title, {})
@@ -218,7 +220,6 @@ describe('real-server', () => {
 
     const c2r = await client2.findAll(core.class.Reference, {})
     expect(c2r.length).toEqual(1)
-    console.info('TEST1 PASS')
   })
 
   it('failed client', async () => {
@@ -232,7 +233,6 @@ describe('real-server', () => {
       (tx) => {}
     )
     expect(client).toBeDefined()
-    console.info('try client with wrong token')
 
     // eslint-disable-next-line
     expect(
@@ -246,7 +246,6 @@ describe('real-server', () => {
     ).rejects.toThrow()
   })
   it('check comments dd', async () => {
-    console.log('connecting')
     const johnTxes: Tx[] = []
     const client = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, johnAccount as string, workspaceId, {
@@ -403,9 +402,7 @@ async function restartServer (
   workspaceId: string
 ): Promise<{ serverShutdown: () => Promise<void>, address: net.AddressInfo, workspaceId: string }> {
   await serverShutdown()
-  console.log('staring server')
   const s = await prepareServer(logging)
-  console.log('new server ok')
   serverShutdown = s.shutdown
   address = s.address
   workspaceId = s.workspaceId

@@ -15,7 +15,7 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Metadata, Service, Plugin } from '@anticrm/platform'
-import type { Account, Class, Obj, Ref, Storage, TxOperations } from '@anticrm/core'
+import type { Class, Obj, Ref, Storage, TxOperations } from '@anticrm/core'
 import type { Queriable } from '@anticrm/query'
 
 export interface Client extends Storage, TxOperations, Queriable {
@@ -42,8 +42,7 @@ export default plugin(
   {
     metadata: {
       ClientUrl: '' as Metadata<string>, // A URI to connect to server.
-      Token: '' as Metadata<string>, // An a token to use for client connection.
-      AccountId: '' as Metadata<Ref<Account>>
+      Token: '' as Metadata<string> // An a token to use for client connection.
     }
   }
 )

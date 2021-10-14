@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, CoreClient } from '@anticrm/core'
+import type { Class, Doc, DocumentQuery, FindResult, Ref, Tx, CoreClient, FindOptions } from '@anticrm/core'
 import core, { DOMAIN_TX, Hierarchy, ModelDb, TxDb } from '@anticrm/core'
 import { _genMinModel } from '@anticrm/core'
 
@@ -30,10 +30,14 @@ export async function connect (handler: (tx: Tx) => void): Promise<CoreClient> {
     await model.tx(tx)
   }
 
-  async function findAll<T extends Doc> (_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> {
+  async function findAll<T extends Doc> (
+    _class: Ref<Class<T>>,
+    query: DocumentQuery<T>,
+    options?: FindOptions<T>
+  ): Promise<FindResult<T>> {
     const domain = hierarchy.getClass(_class).domain
-    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query)
-    return await model.findAll(_class, query)
+    if (domain === DOMAIN_TX) return await transactions.findAll(_class, query, options)
+    return await model.findAll(_class, query, options)
   }
 
   return {

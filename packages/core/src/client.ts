@@ -163,7 +163,7 @@ async function withDerivedDataProcessor (client: ClientImpl): Promise<Client> {
  */
 function newClientOnlyStorage (client: ClientImpl): Storage {
   return {
-    findAll: async (_class, query) => await client.findAll(_class, query),
+    findAll: async (_class, query, options) => await client.findAll(_class, query, options),
     tx: async (tx) => {
       client.txHandler([tx], false)
     }

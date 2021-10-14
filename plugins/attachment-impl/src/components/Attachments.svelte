@@ -29,7 +29,7 @@
   let items: Array<Attachment> = []
 
   let lq: QueryUpdater<Attachment> | undefined
-  lq = client.query(lq, attachment.class.Attachment, { objectId: objectId }, async (result) => {
+  $: lq = client.query(lq, attachment.class.Attachment, { objectId: objectId }, (result) => {
     items = result
   })
 

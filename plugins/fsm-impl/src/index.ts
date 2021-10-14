@@ -27,7 +27,7 @@ export default async (): Promise<FSMService> => {
   const client: Client = await coreP.getClient()
 
   const getStates = async (fsmID: Ref<FSM>): Promise<State[]> => {
-    const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }))[0]
+    const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }, { limit: 1 }))[0]
 
     if (fsm === undefined) {
       return []

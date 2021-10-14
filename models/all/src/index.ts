@@ -31,21 +31,28 @@ import { createModel as actionModel } from '@anticrm/model-action'
 /**
  * @public
  */
-const builder = new Builder()
+export function createBuilder (): Builder {
+  const builder = new Builder()
 
-coreModel(builder)
-actionModel(builder)
-workbenchModel(builder)
-contactModel(builder)
-chunterModel(builder)
-fsmModel(builder)
-recruitingModel(builder)
-taskModel(builder)
-meetingModel(builder)
-calendarModel(builder)
-notificationModel(builder)
-attachmentModel(builder)
+  coreModel(builder)
+  actionModel(builder)
+  workbenchModel(builder)
+  contactModel(builder)
+  chunterModel(builder)
+  fsmModel(builder)
+  recruitingModel(builder)
+  taskModel(builder)
+  meetingModel(builder)
+  calendarModel(builder)
+  notificationModel(builder)
+  attachmentModel(builder)
+  return builder
+}
 
+/**
+ * @public
+ */
+const builder: Builder = createBuilder()
 /**
  * @public
  */

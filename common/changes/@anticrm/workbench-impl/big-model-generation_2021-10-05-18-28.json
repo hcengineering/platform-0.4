@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Bug model data support",
+      "type": "patch",
+      "packageName": "@anticrm/workbench-impl"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "haiodo@gmail.com"
+}
