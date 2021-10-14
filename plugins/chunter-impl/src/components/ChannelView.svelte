@@ -21,14 +21,14 @@
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
   import { tick } from 'svelte'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
 
   export let currentSpace: Ref<Space> | undefined
-  export let notifications: SpaceNotifications | undefined
+  export let spaceLastViews: SpaceLastViews | undefined
 
   const client = getClient()
-  const notificationClient = new NotificationClient(client)
+  const notificationClient = NotificationClient.get(client)
 
   let div: HTMLElement
 
@@ -36,12 +36,12 @@
 
   const loadLimit = 100
 
-  async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
+  async function addMessage (message: string, spaceLastViews?: SpaceLastViews): Promise<void> {
     await client.createDoc(chunter.class.Message, currentSpace!, {
       message
     })
-    if (notifications !== undefined) {
-      await notificationClient.readNow(notifications)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews)
     }
   }
 
@@ -56,28 +56,29 @@
         notificationClient.setAutoscroll(div)
         messages = result.reverse() // Since we sort of createOn -1
         await tick()
-        if (div && notifications) {
-          await notificationClient.before(div, notifications, currentSpace, false)
+        if (div && spaceLastViews) {
+          await notificationClient.before(div, spaceLastViews, currentSpace, false)
         }
-        notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+        notificationClient.initScroll(div, spaceLastViews?.lastRead ?? 0)
+        scrollHandler()
       },
       { limit: loadLimit, sort: { createOn: -1 } }
     )
   }
 
   function scrollHandler () {
-    notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
+    notificationClient.scrollHandler(div, spaceLastViews)
   }
 </script>
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
   {#if currentSpace}
-    <Channel {messages} {notifications} />
+    <Channel {messages} {spaceLastViews} />
   {/if}
 </div>
 <div class="ref-input">
   {#if currentSpace}
-    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail, notifications)} />
+    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail, spaceLastViews)} />
   {/if}
 </div>
 

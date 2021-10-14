@@ -13,16 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Class, Ref, Space } from '@anticrm/core'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import { Class, Ref, Space } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getRouter } from '@anticrm/ui'
+  import { SpaceLastViews } from '@anticrm/notification'
   import type { Application, WorkbenchRoute } from '@anticrm/workbench'
   import workbench, { getClient } from '@anticrm/workbench'
   import AppItem from './AppItem.svelte'
 
   export let active: Ref<Application> | undefined
-  export let notifications: Map<Ref<Space>, SpaceNotifications>
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews>
   let notificatedClasses: Set<Ref<Class<Space>>> = new Set<Ref<Class<Space>>>()
 
   let apps: Application[] = []
@@ -40,11 +40,12 @@
     router.navigate({ app })
   }
 
-  $: notificatedClasses = new Set(
-    Array.from(notifications.values())
-      .filter((s) => s.notificatedObjects.length > 0)
-      .map((s) => s.objectClass)
-  )
+  $: getNotificatedClasses(spacesLastViews)
+
+  async function getNotificatedClasses (spacesLastViews: Map<Ref<Space>, SpaceLastViews>): Promise<void> {
+    const notificatedSpaces = Array.from(spacesLastViews.values()).filter((s) => s.notificatedObjects.length > 0)
+    notificatedClasses = new Set(notificatedSpaces.map((s) => s.objectClass))
+  }
 
   function hasNotify (app: Application, notificatedClasses: Set<Ref<Class<Space>>>): boolean {
     const appSpaceClasses = new Set(app.navigatorModel?.spaces.map((p) => p.spaceClass))

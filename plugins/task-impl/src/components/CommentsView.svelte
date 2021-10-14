@@ -22,11 +22,11 @@
   import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
-  export let notifications: SpaceNotifications | undefined
+  export let spaceLastViews: SpaceLastViews | undefined
 
   const client = getClient()
   let messages: Comment[] = []
@@ -55,4 +55,4 @@
   }
 </script>
 
-<Comments {messages} {currentSpace} {notifications} on:message={(event) => addMessage(event.detail)} />
+<Comments {messages} {currentSpace} {spaceLastViews} on:message={(event) => addMessage(event.detail)} />

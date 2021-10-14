@@ -40,7 +40,7 @@
   import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import notification from '@anticrm/notification'
   import attachment from '@anticrm/attachment'
   import { Attachments } from '@anticrm/attachment-impl'
@@ -112,18 +112,18 @@
   }
 
   async function updateLastRead (): Promise<void> {
-    const notifications = (
-      await client.findAll(notification.class.SpaceNotifications, {
+    const spaceLastViews = (
+      await client.findAll(notification.class.SpaceLastViews, {
         objectId: space._id
       })
     ).shift()
-    if (notifications === undefined) return
-    if (notifications.objectLastReads.set === undefined) {
-      notifications.objectLastReads = new Map<Ref<Task>, Timestamp>()
+    if (spaceLastViews === undefined) return
+    if (spaceLastViews.objectLastReads instanceof Map) {
+      spaceLastViews.objectLastReads = new Map<Ref<Task>, Timestamp>()
     }
-    notifications.objectLastReads.set(id, Date.now())
+    spaceLastViews.objectLastReads.set(id, Date.now())
 
-    await client.updateDoc<SpaceNotifications>(notifications._class, notifications.space, notifications._id, {
+    await client.updateDoc<SpaceLastViews>(spaceLastViews._class, spaceLastViews.space, spaceLastViews._id, {
       lastRead: Date.now()
     })
   }
@@ -159,7 +159,6 @@
         <DatePicker bind:value={dueTo} label={task.string.PickDue} noLabel={task.string.NoPickDue} />
         <Row>
           <DescriptionEditor
-            currentSpace={space._id}
             placeholder={task.string.TaskDescription}
             label={task.string.TaskDescription}
             lines={5}
@@ -172,7 +171,7 @@
       <Grid column={1}>
         <Comments
           messages={comments}
-          notifications={undefined}
+          spaceLastViews={undefined}
           currentSpace={space._id}
           on:message={(event) => addMessage(event.detail)}
         />

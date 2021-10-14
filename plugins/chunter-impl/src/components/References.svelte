@@ -28,7 +28,6 @@
   export let closed: boolean = false
 
   export let docRef: Doc
-  // export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
   let query: QueryUpdater<Reference> | undefined

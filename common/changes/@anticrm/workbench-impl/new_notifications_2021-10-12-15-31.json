@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "new notification",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

@@ -51,6 +51,11 @@ export interface SpacesNavModel<T extends Space = Space> {
     createLabel?: IntlString
     editComponent?: AnyComponent
   }
+  notification?: {
+    spaceClass?: Ref<Class<Doc>>
+    itemByIdClass?: Ref<Class<Doc>>
+    itemByIdField?: string
+  }
 }
 
 /**

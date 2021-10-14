@@ -11687,7 +11687,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-YtVhPGSi3wmdbX1+0lffL3+SBY+odejt9ObQ0b+RhEUW1y2DFcTrFHJydSR23WV6BdbSgGzdA3Z3638oelMhjA==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-vwTGgMANJqiKE1o5N0x7acDlxvspxezxu6tuarTgGEx0Hn7PakOHa4oJGdooD8I2dc/gU/AZpkvnT+JTd5LRIw==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -11821,7 +11821,7 @@ packages:
     dev: false
 
   file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-yfSa2Su/wkvXDkzfsdxTSdtlECsjM3Jkhl2uGc7QF2trCsaAVtHFZL3xNwMIJaZy+ApoLaosdqq4nj3A1843NQ==, tarball: file:projects/hr-build.tgz}
+    resolution: {integrity: sha512-TfJ/qM53Rsr+v776KclfOVXzoZOJHzAnIZRSsWpDDxwRDnwHnl8QPH0PjJ0QiaULtMDy+rtm+SYMW9+nnHYg3A==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
@@ -11891,7 +11891,7 @@ packages:
     dev: false
 
   file:projects/login-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-Oezdly3ZbCFq1jgXZJnV+tOhBvb+6CWi74J+n89WZJo5x8P6nc6mI1osTPipDdlpyc3ZCtQGaShu/Ge3n7TqCg==, tarball: file:projects/login-impl.tgz}
+    resolution: {integrity: sha512-6p3cpCOTGg1mMQj5J52DakV1OOcNw0+C3jxWKFwY8pizFYsyUUy6CwWSW7dpoZbq0pzlnEhLX6PDCf9VIr555A==, tarball: file:projects/login-impl.tgz}
     id: file:projects/login-impl.tgz
     name: '@rush-temp/login-impl'
     version: 0.0.0
@@ -12326,7 +12326,7 @@ packages:
     dev: false
 
   file:projects/model-recruiting.tgz:
-    resolution: {integrity: sha512-wZQiE3LAnBO85V71d8iphQKXAAC0n56C1rYhDGZOtK00sQsAbQUeJUInGIncho2EoA5FGYzNgoxybFCY6lSGVg==, tarball: file:projects/model-recruiting.tgz}
+    resolution: {integrity: sha512-vKDpgqTGxwP0mTN8oDiJ5aWS3VVqi92sbkMrVCw1V946sByflTcZ6uxBvjylKf5we1PfEfjoybtNzrerqh5mqw==, tarball: file:projects/model-recruiting.tgz}
     name: '@rush-temp/model-recruiting'
     version: 0.0.0
     dependencies:
@@ -12519,7 +12519,6 @@ packages:
       eslint-plugin-svelte3: 3.2.0_eslint@7.32.0
       jest: 26.6.3_ts-node@10.2.1
       prettier: 2.3.2
-      ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
       typescript: 4.3.5
     transitivePeerDependencies:
       - bufferutil
@@ -12531,21 +12530,20 @@ packages:
     dev: false
 
   file:projects/notification.tgz_e2648ea3577eecbba3519a3bcb75d461:
-    resolution: {integrity: sha512-pUxeqlzJnFTxJDThZt+I96l0Ik192KdXtNnoRUJ66o6/bDnOYW720CtcBK1lmZqS1POtBSMh/AjWFcyGVzc15Q==, tarball: file:projects/notification.tgz}
+    resolution: {integrity: sha512-EOxhMvcuo5Bokn1s4EDKN1OnH/8cV3KbXNHHehFW1ItX3lAaTy96pJRR73f8ibUzevFYIcuXQu3dTRIxnWmK3Q==, tarball: file:projects/notification.tgz}
     id: file:projects/notification.tgz
     name: '@rush-temp/notification'
     version: 0.0.0
     dependencies:
-      '@microsoft/api-extractor': 7.18.6
       '@rushstack/heft': 0.35.1
       '@rushstack/heft-jest-plugin': 0.1.28_@rushstack+heft@0.35.1
       '@types/browser-or-node': 1.3.0
       '@types/heft-jest': 1.0.2
       '@types/jest': 26.0.24
       fast-copy: 2.1.1
+      fast-equals: 2.0.3
       jest: 26.6.3_ts-node@10.2.1
       prettier: 2.3.2
-      svelte: 3.42.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.3.5
       ts-standard: 10.0.0_36ee54255674b7f2ff6256528aff93a6
       typescript: 4.3.5
@@ -12627,7 +12625,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-dev.tgz:
-    resolution: {integrity: sha512-3lQShG4nFWnLzoWJm6Jg6eDnmcqniNjOdy/kMZ0DA80Yqx23sPrlVJrrhM33cpsfBHBOxeuKEmIB/qV1EIfnFQ==, tarball: file:projects/plugin-core-dev.tgz}
+    resolution: {integrity: sha512-jtZcVRBJajs7YvIsG0PfYstuYZRx1TCme6NHz4C70yhK61VN8ZLze9GVw7mrfv7BZx/kWGOIqg786IbuoOPxmQ==, tarball: file:projects/plugin-core-dev.tgz}
     name: '@rush-temp/plugin-core-dev'
     version: 0.0.0
     dependencies:
@@ -12653,7 +12651,7 @@ packages:
     dev: false
 
   file:projects/plugin-core-impl.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-zoUVufsmOU6Teaw2nFN7oAMntF93dxryy/wk/BRRco3eJ6uE2TPffbRZZLdsJR5NXYlclZEdDcnZ7XpTb5PfVw==, tarball: file:projects/plugin-core-impl.tgz}
+    resolution: {integrity: sha512-/PqTz/Iug+KLLiLzYcJFUZgRmBunEa+7iesqjQRPG4wV6PRBmjZOz7l35i9rl7g6MS/A3OQkyBelzZlsoHAbFg==, tarball: file:projects/plugin-core-impl.tgz}
     id: file:projects/plugin-core-impl.tgz
     name: '@rush-temp/plugin-core-impl'
     version: 0.0.0
@@ -12849,7 +12847,7 @@ packages:
     dev: false
 
   file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-TqRERY5n+6Te9VOAdiDn0gsmE0ZhhgLHu0MXF9u/ryqf/f3b4oT/JlNHQd+JxZ3ZhTiBCFeJBwnZdowssC9oyg==, tarball: file:projects/recruiting-impl.tgz}
+    resolution: {integrity: sha512-3NXispLrHSSzB1GZnb9hGyaFQj+i2I5IUt+FukKi+KYhCntfLRdmAO4S1IEm6VJ3Lsa7VdIUmkclxzemKjyXBg==, tarball: file:projects/recruiting-impl.tgz}
     id: file:projects/recruiting-impl.tgz
     name: '@rush-temp/recruiting-impl'
     version: 0.0.0
@@ -12930,7 +12928,7 @@ packages:
     dev: false
 
   file:projects/recruiting.tgz:
-    resolution: {integrity: sha512-iRt62RNyUqh98B8AWbEjxMbLoG8HCWbAkGEYsi8k6hS5By3eG0h1BDLc4FwrAW6Zu5fPW90vR6lkJ82GrAqGVg==, tarball: file:projects/recruiting.tgz}
+    resolution: {integrity: sha512-ZzPGon5GJm8MYtC4GpZTkNApjEGfjWI7GpE9nUHB4VaZRR4M0undukjJVhstncOsaiZNJwrN1N/jxlyMQG6MPw==, tarball: file:projects/recruiting.tgz}
     name: '@rush-temp/recruiting'
     version: 0.0.0
     dependencies:
@@ -13541,7 +13539,7 @@ packages:
     dev: false
 
   file:projects/ui.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-ijVKKx+8sDb8hPJTwuxU9+MT2NZqtoqdTj63AsblTaN6YyHVh68givA+1k2PgaJ6iJm0IPI1WoYk0TiFz/X7Dg==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-XPCHFYWEq73H+7K7a+NNj7ShO+OVM2twuRoEqv7ovwO/A32FWecwaDQzMd3tsluGKOHeeMk3IUgC8pFOgYNAsg==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0

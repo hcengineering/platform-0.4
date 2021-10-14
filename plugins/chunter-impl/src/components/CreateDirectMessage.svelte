@@ -24,12 +24,12 @@
   import Channel from './Channel.svelte'
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import notification, { NotificationClient } from '@anticrm/notification'
   import { afterUpdate } from 'svelte'
 
   const client = getClient()
-  const notificationClient = new NotificationClient(client)
+  const notificationClient = NotificationClient.get(client)
 
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []
@@ -37,7 +37,7 @@
 
   let div: HTMLElement
   let messages: Message[] = []
-  let notifications: SpaceNotifications | undefined
+  let spaceLastViews: SpaceLastViews | undefined
 
   let allAccounts: Account[] = []
 
@@ -56,7 +56,7 @@
 
   $: client.findAll<Account>(core.class.Account, { _id: { $in: to } }).then((acc) => {
     toAccount = acc
-    notifications = undefined
+    spaceLastViews = undefined
     messages = []
     query?.unsubscribe()
   })
@@ -71,8 +71,8 @@
         currentSpace = c
         if (currentSpace !== undefined) {
           client
-            .findAll(notification.class.SpaceNotifications, { objectId: currentSpace._id })
-            .then((result) => (notifications = result.shift()))
+            .findAll(notification.class.SpaceLastViews, { objectId: currentSpace._id })
+            .then((result) => (spaceLastViews = result.shift()))
         }
         return
       }
@@ -80,7 +80,7 @@
     }
   })
 
-  async function addMessage (message: string, notifications?: SpaceNotifications): Promise<void> {
+  async function addMessage (message: string, spaceLastViews?: SpaceLastViews): Promise<void> {
     if (to.length === 0) {
       return
     }
@@ -99,20 +99,20 @@
       message
     })
 
-    if (notifications !== undefined) {
-      notificationClient.readNow(notifications)
+    if (spaceLastViews !== undefined) {
+      notificationClient.readNow(spaceLastViews)
     }
   }
 
   afterUpdate(() => {
     if (div) {
-      notificationClient.initScroll(div, notifications?.lastRead ?? 0, false)
+      notificationClient.initScroll(div, spaceLastViews?.lastRead ?? 0)
     }
     scrollHandler()
   })
 
   function scrollHandler () {
-    notificationClient.scrollHandler(div, notifications, notifications?.lastRead ?? 0, false)
+    notificationClient.scrollHandler(div, spaceLastViews)
   }
 
   $: if (currentSpace !== undefined) {
@@ -154,14 +154,14 @@
   </div>
   <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
     {#if currentSpace}
-      <Channel {notifications} {messages} />
+      <Channel {spaceLastViews} {messages} />
     {/if}
   </div>
   <div class="message-input">
     <ReferenceInput
       currentSpace={currentSpace?._id}
       on:message={(event) => {
-        addMessage(event.detail, notifications)
+        addMessage(event.detail, spaceLastViews)
       }}
     />
   </div>
