@@ -27,7 +27,8 @@ import {
   Space,
   Storage,
   SortingOrder,
-  generateId
+  generateId,
+  ObjectTx
 } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
@@ -46,6 +47,7 @@ export interface NotificationService extends Service {}
 let instance: NotificationClient | undefined
 
 interface SpaceSubscribe {
+  targetClass: Ref<Class<Doc>>
   spaces: Map<Ref<Space>, Promise<Timestamp> | Timestamp>
   callback: (lastModified: Map<Ref<Space>, Timestamp>) => void
 }
@@ -78,6 +80,7 @@ export class SpaceNotification {
     const subscribe = {
       _id: generateId(),
       callback: this.callback,
+      targetClass,
       spaces: new Map(
         spaces.map((s) => [
           s,
@@ -377,6 +380,7 @@ async function awaitResults (
 }
 
 async function updateSpace (tx: Tx, subscribe: SpaceSubscribe): Promise<void> {
+  if ((tx as ObjectTx<Doc>)?.objectClass !== subscribe.targetClass) return
   let lastModified = subscribe.spaces.get(tx.objectSpace)
   if (lastModified !== undefined) {
     lastModified = await awaitValue(lastModified)
