@@ -58,19 +58,15 @@
 </script>
 
 <div class="datepicker-popup">
-  <div class="flex-between">
-    <div>
-      {#if label}<div class="title"><Label {label} /></div>{/if}
-    </div>
-    <div>
-      <button
-        class="arrow"
-        on:click|preventDefault={() => {
-          value = undefined
-          dispatch('close', value)
-        }}><Close size={16} /></button
-      >
-    </div>
+  <div class="flex-between title">
+    {#if label}<Label {label} />{/if}
+    <button
+      class="arrow"
+      on:click|preventDefault={() => {
+        value = undefined
+        dispatch('close', value)
+      }}><Close size={16} /></button
+    >
   </div>
   <div class="flex-between">
     <button
