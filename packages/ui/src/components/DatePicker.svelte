@@ -33,8 +33,10 @@
   class="datepicker-container"
   on:click={() => {
     showPopup(DatePickerPopup, { label, value }, btn, (result) => {
-      value = result
-      dispatch('change', result)
+      if (result !== undefined && result !== value) {
+        value = result
+        dispatch('update', result)
+      }
     })
   }}
 >

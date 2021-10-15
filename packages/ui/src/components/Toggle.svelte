@@ -24,8 +24,8 @@
 <style lang="scss">
   .toggle {
     display: inline-block;
-    height: 28px;
-    line-height: 28px;
+    height: 24px;
+    line-height: 24px;
     vertical-align: middle;
     font-size: inherit;
     user-select: none;
@@ -40,7 +40,7 @@
       overflow: hidden;
 
       &:checked + .toggle-switch {
-        background-color: var(--theme-on-color);
+        background-color: var(--primary-button-enabled);
         &:before {
           left: 26px;
         }
@@ -55,28 +55,29 @@
         }
       }
       &:focus-within + .toggle-switch {
-        border: 1px solid var(--primary-button-focused-border);
+        // border: 1px solid var(--primary-button-focused-border);
         box-shadow: 0 0 0 2px var(--primary-button-outline);
       }
     }
     &:active > .toggle-switch {
-      border: 1px solid var(--primary-button-focused-border);
+      // border: 1px solid var(--primary-button-focused-border);
       box-shadow: 0 0 0 2px var(--primary-button-outline);
     }
     .toggle-switch {
       position: relative;
       display: inline-block;
-      width: 56px;
-      height: 30px;
-      border-radius: 3.125rem;
-      background-color: var(--theme-off-color);
-      border: 1px solid transparent;
+      width: 52px;
+      height: 28px;
+      border-radius: 50px;
+      background-color: var(--theme-button-bg-pressed);
+      // border: 1px solid transparent;
+      box-shadow: 1px 2px 7px rgba(119, 129, 142, 0.101961);
       transition: left 0.2s;
       &:before {
         content: '';
         position: absolute;
         top: 2px;
-        left: 4px;
+        left: 3px;
         display: inline-block;
         width: 24px;
         height: 24px;

@@ -58,7 +58,6 @@
 
 <Card
   label={recruiting.string.AddCandidate}
-  okLabel={recruiting.string.Save}
   canSave={candidate.firstName.length > 0 && candidate.lastName.length > 0}
   okAction={create}
   on:update={(ev) => {

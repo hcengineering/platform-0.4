@@ -102,9 +102,9 @@
   }
 
   .transparent {
-    padding: 0 1.25rem;
+    padding: 0 20px;
     font-weight: 500;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     color: var(--theme-caption-color);
     background-color: var(--trans-button-bg);
     border-color: var(--theme-bg-accent-color);
@@ -138,20 +138,20 @@
       &:hover {
         background-color: var(--trans-primary-button-bg-hovered);
         border-color: var(--trans-primary-button-border-hovered);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, .3);
       }
       &:focus {
         background-color: var(--trans-primary-button-bg-hovered);
         border-color: var(--primary-button-focused-border);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, .3);
       }
       &:active {
         background-color: var(--trans-primary-button-bg);
         border-color: var(--trans-primary-button-border);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, .1);
       }
       &:disabled {
-        background-color: var(--trans-primary-button-bg);
+        background-color: var(--primary-button-disabled);
         border-color: var(--trans-primary-button-border);
       }
     }

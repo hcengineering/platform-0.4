@@ -22,7 +22,8 @@
   import Button from './Button.svelte'
 
   export let label: IntlString
-  export let okLabel: IntlString
+  // export let okLabel: IntlString
+  // export let cancelLabel: IntlString
   export let okAction: () => void
   export let canSave: boolean = false
 
@@ -32,28 +33,16 @@
   })
 </script>
 
-<form class="card-container">
+<form class="card-container" on:submit|preventDefault={ () => {} }>
   <div class="card-bg" />
   <div class="flex-between header">
     <div class="overflow-label label"><Label {label} /></div>
-    <div class="tool">
-      <Button
-        disabled={!canSave}
-        label={okLabel}
-        transparent
-        size={'small'}
-        on:click={() => {
-          okAction()
-          dispatch('close')
-        }}
-      />
-    </div>
+    {#if $$slots.error}
+      <div class="flex-grow error">
+        <slot name="error" />
+      </div>
+    {/if}
   </div>
-  {#if $$slots.error}
-    <div class="flex-center error">
-      <slot name="error" />
-    </div>
-  {/if}
   <div class="content" class:no-pool={!$$slots.pool}><slot /></div>
   {#if $$slots.pool}
     <div class="flex-col pool" class:shrink={$$slots.contacts}>
@@ -61,11 +50,10 @@
       <slot name="pool" />
     </div>
   {/if}
-  {#if $$slots.contacts}
-    <div class="flex-between contacts">
-      <slot name="contacts" />
-    </div>
-  {/if}
+  <div class="footer">
+    <Button disabled={!canSave} label={'Ok'} size={'small'} transparent primary on:click={() => { okAction(); dispatch('close') }} />
+    <Button label={'Cancel'} size={'small'} transparent on:click={() => { dispatch('close') }} />
+  </div>
 </form>
 
 <style lang="scss">
@@ -79,27 +67,26 @@
     border-radius: 20px;
 
     .header {
+      position: relative;
       flex-shrink: 0;
-      padding: 16px 20px 16px 28px;
+      padding: 28px;
+
       .label {
         font-weight: 500;
-        font-size: 16px;
+        font-size: 1rem;
         color: var(--theme-caption-color);
       }
-      .tool {
-        margin-left: 12px;
-      }
-    }
 
-    .error {
-      margin-bottom: 16px;
-      padding: 12px 0;
-      color: var(--system-error-color);
-      background-color: var(--theme-card-bg-accent);
-      &:empty {
-        visibility: hidden;
-        margin: 0;
-        padding: 0;
+      .error {
+        position: absolute;
+        display: flex;
+        top: 52px;
+        left: 28px;
+        right: 28px;
+        font-weight: 500;
+        font-size: .75rem;
+        color: var(--system-error-color);
+        &:empty { visibility: hidden; }
       }
     }
 
@@ -126,9 +113,18 @@
       }
     }
 
-    .contacts {
-      padding: 20px 28px;
-      background-color: var(--theme-card-bg-accent);
+    .footer {
+      flex-shrink: 0;
+      display: grid;
+      grid-auto-flow: column;
+      direction: rtl;
+      justify-content: start;
+      align-items: center;
+      column-gap: 12px;
+      padding: 16px 28px 28px;
+      height: 84px;
+      mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 40px);
+      overflow: hidden;
       border-radius: 0 0 20px 20px;
     }
 
@@ -140,7 +136,7 @@
       right: 0;
       background-color: var(--theme-card-bg);
       border-radius: 20px;
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(10px);
       box-shadow: var(--theme-card-shadow);
       z-index: -1;
     }
