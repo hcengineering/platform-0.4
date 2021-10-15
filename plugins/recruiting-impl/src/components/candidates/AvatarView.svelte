@@ -64,7 +64,7 @@
     .bg-avatar {
       transform: scale(1.1);
       filter: blur(10px);
-      opacity: .2;
+      opacity: 0.2;
     }
   }
   .avatar {

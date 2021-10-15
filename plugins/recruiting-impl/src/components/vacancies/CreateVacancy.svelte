@@ -19,7 +19,7 @@
   import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Card, Grid, EditBox } from '@anticrm/ui'
+  import { Card, Grid } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import VacancyEditor from './VacancyEditor.svelte'
@@ -69,7 +69,6 @@
 
 <Card
   label={recruiting.string.AddVacancy}
-  okLabel={recruiting.string.Save}
   canSave={true}
   okAction={createVacancy}
   on:update={(ev) => {

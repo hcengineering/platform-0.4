@@ -42,7 +42,6 @@
 
 <Card
   label={chunter.string.CreateChannel}
-  okLabel={chunter.string.Save}
   okAction={createChannel}
   on:close
   canSave={!!name}

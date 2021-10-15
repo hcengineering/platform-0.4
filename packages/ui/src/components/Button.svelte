@@ -138,17 +138,17 @@
       &:hover {
         background-color: var(--trans-primary-button-bg-hovered);
         border-color: var(--trans-primary-button-border-hovered);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, .3);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
       }
       &:focus {
         background-color: var(--trans-primary-button-bg-hovered);
         border-color: var(--primary-button-focused-border);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, .3);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
       }
       &:active {
         background-color: var(--trans-primary-button-bg);
         border-color: var(--trans-primary-button-border);
-        box-shadow: 0 0 1rem rgba(0, 0, 0, .1);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
       }
       &:disabled {
         background-color: var(--primary-button-disabled);

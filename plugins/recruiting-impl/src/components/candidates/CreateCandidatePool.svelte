@@ -38,7 +38,6 @@
 
 <Card
   label={recruiting.string.AddPoolSpace}
-  okLabel={recruiting.string.Save}
   okAction={createPool}
   on:close
   canSave={!!pool.name}

@@ -35,7 +35,7 @@
     showPopup(DatePickerPopup, { label, value }, btn, (result) => {
       if (result !== undefined && result !== value) {
         value = result
-        dispatch('update', result)
+        dispatch('change', result)
       }
     })
   }}

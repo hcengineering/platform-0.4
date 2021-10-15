@@ -84,10 +84,10 @@
 <!-- <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
   <Grid column={2}> -->
 
-    <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
-    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
-    
-    <!-- {#if vacancy._id === undefined}
+<EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
+<EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
+
+<!-- {#if vacancy._id === undefined}
       <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
     {:else}
       <div />
