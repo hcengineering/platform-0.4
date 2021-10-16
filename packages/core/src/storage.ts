@@ -24,6 +24,10 @@ export type QuerySelector<T> /* eslint-disable-line @typescript-eslint/consisten
   $like?: string
   $ne?: T
   $exists?: boolean
+  $gte?: T
+  $gt?: T
+  $lte?: T
+  $lt?: T
 }
 
 /**

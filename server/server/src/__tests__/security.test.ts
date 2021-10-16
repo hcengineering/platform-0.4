@@ -51,6 +51,7 @@ describe('security', () => {
 
   async function initDb (): Promise<void> {
     const objectClassTx: TxCreateDoc<Doc> = {
+      sid: 0,
       objectId: 'task' as Ref<Class<Doc>>,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -98,6 +99,7 @@ describe('security', () => {
     expect.assertions(5)
 
     const spaceTx: TxCreateDoc<Space> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -117,6 +119,7 @@ describe('security', () => {
     await securityStorage.tx(spaceTx)
 
     const objectTx: TxCreateDoc<Doc> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: spaceTx.objectId,
       _id: generateId(),
@@ -145,6 +148,7 @@ describe('security', () => {
       })
 
     const addMemberTx: TxUpdateDoc<Space> = {
+      sid: 0,
       objectId: spaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -172,6 +176,7 @@ describe('security', () => {
     expect.assertions(2)
 
     const spaceTx: TxCreateDoc<Space> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -191,6 +196,7 @@ describe('security', () => {
     await securityStorage.tx(spaceTx)
 
     const objectTx: TxCreateDoc<Doc> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: spaceTx.objectId,
       _id: generateId(),
@@ -208,6 +214,7 @@ describe('security', () => {
     })
 
     const addMemberTx: TxUpdateDoc<Space> = {
+      sid: 0,
       objectId: spaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -229,6 +236,7 @@ describe('security', () => {
     expect.assertions(3)
 
     const privateSpaceTx: TxCreateDoc<Space> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -248,6 +256,7 @@ describe('security', () => {
     await securityStorage.tx(privateSpaceTx)
 
     const addMembertoPrivateTx: TxUpdateDoc<Space> = {
+      sid: 0,
       objectId: privateSpaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -265,6 +274,7 @@ describe('security', () => {
     })
 
     const removePrivateTx: TxRemoveDoc<Space> = {
+      sid: 0,
       objectId: privateSpaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -281,6 +291,7 @@ describe('security', () => {
     })
 
     const publicSpaceTx: TxCreateDoc<Space> = {
+      sid: 0,
       objectId: generateId(),
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -300,6 +311,7 @@ describe('security', () => {
     await securityStorage.tx(publicSpaceTx)
 
     const addMemberTx: TxUpdateDoc<Space> = {
+      sid: 0,
       objectId: publicSpaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -315,6 +327,7 @@ describe('security', () => {
     await securityStorage.tx(addMemberTx)
 
     const removePublicTx: TxRemoveDoc<Space> = {
+      sid: 0,
       objectId: publicSpaceTx.objectId,
       objectSpace: core.space.Model,
       _id: generateId(),
@@ -356,6 +369,7 @@ describe('security', () => {
     expect(spaces.length).toEqual(2)
 
     const tx: TxUpdateDoc<Space> = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
       space: core.space.Tx,
@@ -390,6 +404,7 @@ describe('security', () => {
     expect(spaces.length).toEqual(2)
 
     let tx: TxUpdateDoc<Space> = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
       space: core.space.Tx,
@@ -406,6 +421,7 @@ describe('security', () => {
     await securityModel.tx(tx)
 
     tx = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
       space: core.space.Tx,
@@ -437,6 +453,7 @@ describe('security', () => {
     expect(spaces.length).toEqual(2)
 
     const tx: TxRemoveDoc<Space> = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxRemoveDoc,
       space: core.space.Tx,

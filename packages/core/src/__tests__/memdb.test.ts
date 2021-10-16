@@ -174,6 +174,7 @@ describe('memdb', () => {
       a: { b: number }
     }
     const doc: TxUpdateDoc<MyDoc> = {
+      sid: 0,
       _id: '60f58968abd82692921c51b4' as Ref<TxUpdateDoc<MyDoc>>,
       _class: core.class.TxUpdateDoc,
       space: core.space.Tx,

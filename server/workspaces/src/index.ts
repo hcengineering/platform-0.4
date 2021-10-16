@@ -1,4 +1,4 @@
-import core, { DOMAIN_TX, generateModelDiff, Tx, txObjectClass } from '@anticrm/core'
+import core, { DOMAIN_TX, generateModelDiff, Tx, txObjectClass, withSID } from '@anticrm/core'
 import { getMongoClient, mongoEscape, mongoUnescape } from '@anticrm/mongo'
 
 /**
@@ -23,9 +23,11 @@ export async function createWorkspace (workspaceId: string, options: WorkspaceOp
   if (collections.length > 0) {
     throw Error('workspace already exists')
   }
+
+  const sidTx = withSID(undefined, -1)
   const txes = db.collection(DOMAIN_TX as string)
   for (const tx of options.txes) {
-    await txes.insertOne(mongoEscape(tx))
+    await txes.insertOne(mongoEscape(await sidTx(tx)))
   }
 }
 
@@ -42,6 +44,9 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   // Find all system transactions.
   const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
 
+  const lastSID = (await txes.find<Tx>({}, { limit: 1, sort: { sid: 1 } }).toArray())[0].sid ?? -1
+  const sidTx = withSID(undefined, lastSID)
+
   const { diffTx, dropTx } = await generateModelDiff(
     existingTxes.map((t) => mongoUnescape(t)),
     options.txes
@@ -54,7 +59,7 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
 
   for (const tx of diffTx) {
     console.info('updating:', txObjectClass(tx) ?? tx.objectId, JSON.stringify(tx, undefined, 2))
-    await txes.insertOne(mongoEscape(tx))
+    await txes.insertOne(mongoEscape(await sidTx(tx)))
   }
 }
 

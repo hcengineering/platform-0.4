@@ -14,8 +14,8 @@
   "license": "EPL-2.0",
   "devDependencies": {
     "@anticrm/platform-rig": "^0.4.0",
-    "@rushstack/heft-jest-plugin": "^0.1.14",
-    "@rushstack/heft": "^0.35.0",
+    "@rushstack/heft-jest-plugin": "^0.1.42",
+    "@rushstack/heft": "^0.41.7",
     "@types/heft-jest": "^1.0.2",
     "@types/browser-or-node": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",

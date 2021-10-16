@@ -17,7 +17,8 @@
   import { Class, Doc, generateId, Ref, Space } from '@anticrm/core'
   import ui, { Dialog, IconFile, Progress } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import attachment, { Attachment, nameToFormat } from '@anticrm/attachment'
+  import attachment, { nameToFormat } from '@anticrm/attachment'
+  import type { Attachment } from '@anticrm/attachment'
   import AttachmentView from './Attachment.svelte'
   import { getPlugin } from '@anticrm/platform'
 

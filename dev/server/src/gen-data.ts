@@ -81,6 +81,15 @@ async function start (): Promise<void> {
     return val
   }
 
+  const printInfo = (): void => {
+    const val = getMeasurements()
+      .filter((m) => m.total > 1)
+      .map((m) => `${toLen(m.name)}: avg ${m.avg} total: ${m.total} ops: ${m.ops}`.trim())
+      .join('\n')
+    console.log('\nStatistics:\n', val)
+  }
+  setInterval(printInfo, 5000)
+
   const d1 = Date.now()
   console.info('Generate accounts')
   await demoAccount(db, 1000)
@@ -97,11 +106,8 @@ async function start (): Promise<void> {
   const d4 = Date.now()
   console.info('Done in', d4 - d3)
 
-  const val = getMeasurements()
-    .filter((m) => m.total > 1)
-    .map((m) => `${toLen(m.name)}: avg ${m.avg} total: ${m.total} ops: ${m.ops}`.trim())
-    .join('\n')
-  console.log('\nStatistics:\n', val)
+  await workspace.waitDDComplete()
+  printInfo()
   process.exit(0)
 }
 console.log('Starting Default workspace data generation...')

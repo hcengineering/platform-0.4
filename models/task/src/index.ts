@@ -134,6 +134,9 @@ export function createModel (builder: Builder): void {
     {
       sourceClass: chunter.class.Comment,
       targetClass: task.class.Task,
+      query: {
+        replyOf: { $like: '%class:task.Task%' }
+      },
       collections: [
         {
           sourceField: 'replyOf',

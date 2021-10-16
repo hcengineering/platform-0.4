@@ -22,8 +22,15 @@ import { generateId } from './utils'
 
 /**
  * @public
+ * Define server settable, sequential identifier of transaction apply.
+ */
+export type TransactionID = number
+
+/**
+ * @public
  */
 export interface Tx<T extends Doc = Doc> extends Doc {
+  sid: TransactionID
   objectId: Ref<T>
   objectSpace: Ref<Space>
 }
@@ -220,12 +227,13 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     userTxSpace?: boolean
   ): Promise<void> => {
     const tx: TxUpdateDoc<T> = {
+      sid: 0, // <-- Will be updated on server
       _id: generateId(),
       _class: core.class.TxUpdateDoc,
       space: txSpace(user, userTxSpace),
       modifiedBy: user,
-      modifiedOn: Date.now(),
-      createOn: Date.now(),
+      modifiedOn: Date.now(), // <-- Will be updated on server
+      createOn: Date.now(), // <-- Will be updated on server
       objectId,
       objectClass: _class,
       objectSpace: space,
@@ -241,12 +249,13 @@ export function withOperations<T extends Storage> (user: Ref<Account>, storage: 
     userTxSpace?: boolean
   ): Promise<void> => {
     const tx: TxRemoveDoc<T> = {
+      sid: 0, // <-- Will be updated on server
       _id: generateId(),
       _class: core.class.TxRemoveDoc,
       space: txSpace(user, userTxSpace),
       modifiedBy: user,
-      modifiedOn: Date.now(),
-      createOn: Date.now(),
+      modifiedOn: Date.now(), // <-- Will be updated on server
+      createOn: Date.now(), // <-- Will be updated on server
       objectId,
       objectClass: _class,
       objectSpace: space
@@ -270,12 +279,13 @@ export function newTxCreateDoc<T extends Doc> (
   userTxSpace?: boolean
 ): TxCreateDoc<T> {
   return {
+    sid: 0, // <-- Will be updated on server
     _id: generateId(),
     _class: core.class.TxCreateDoc,
     space: txSpace(user, userTxSpace),
     modifiedBy: user,
-    modifiedOn: Date.now(),
-    createOn: Date.now(),
+    modifiedOn: Date.now(), // <-- Will be updated on server
+    createOn: Date.now(), // <-- Will be updated on server
     objectId: objectId ?? generateId(),
     objectClass: _class,
     objectSpace: space,
@@ -295,4 +305,28 @@ export function isEachArray<T> (push: T | EachArray<T>): push is EachArray<T> {
     return true
   }
   return false
+}
+
+/**
+ * @public
+ * Return storage with sid auto-updater and transactio time update.
+ */
+export function withSID (storage: Storage | undefined, lastSid = -1): (tx: Tx) => Promise<Tx> {
+  // Last available sid
+  const init =
+    storage !== undefined
+      ? storage.findAll<Tx>(core.class.Tx, { space: core.space.Tx }, { sort: { sid: -1 }, limit: 1 }).then((tx) => {
+        lastSid = tx.shift()?.sid ?? -1
+      })
+      : Promise.resolve()
+
+  return async (tx) => {
+    await init
+    tx.sid = ++lastSid
+
+    tx.createOn = Date.now()
+    tx.modifiedOn = Date.now()
+
+    return tx
+  }
 }

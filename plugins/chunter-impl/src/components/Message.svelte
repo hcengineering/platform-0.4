@@ -18,16 +18,8 @@
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import {
-    ActionIcon,
-    Button,
-    DateTime,
-    IconEdit,
-    ItemRefefence,
-    MessageViewer,
-    PopupItem,
-    PopupMenu
-  } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, IconEdit, MessageViewer, PopupItem, PopupMenu } from '@anticrm/ui'
+  import type { ItemRefefence } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
@@ -97,22 +89,22 @@
     if (spaceLastViews === undefined || spaceLastViews.objectId !== message.space) return false
     if (!thread) {
       if (message.modifiedOn > spaceLastViews.lastRead) return true
-      const comments = (message as Message).comments
-      if (comments !== undefined) {
+      const lastModified = (message as Message).lastModified
+      if (lastModified !== undefined) {
         if (spaceLastViews.objectLastReads instanceof Map) {
-          const lastTime = spaceLastViews.objectLastReads.get(message._id)
-          if (lastTime !== undefined) {
-            for (const comment of comments) {
-              if (comment.lastModified > lastTime) return true
-            }
+          const lastRead = spaceLastViews.objectLastReads.get(message._id)
+          if (lastRead !== undefined) {
+            return lastModified > lastRead
           }
         }
       }
     } else if ((message as Comment).replyOf !== undefined) {
       if (spaceLastViews.objectLastReads instanceof Map) {
         const fullRef = parseFullRef((message as Comment).replyOf)
-        const lastTime = spaceLastViews.objectLastReads.get(fullRef._id) ?? 0
-        return message.modifiedOn > lastTime
+        const lastRead = spaceLastViews.objectLastReads.get(fullRef._id)
+        if (lastRead !== undefined) {
+          return message.modifiedOn > lastRead
+        }
       }
     }
     return false

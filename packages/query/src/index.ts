@@ -23,6 +23,7 @@ import {
   FindResult,
   generateId,
   getOperator,
+  isDerivedDataTx,
   Obj,
   Ref,
   resultSort,
@@ -236,8 +237,10 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
         ;(updatedDoc as any)[key] = copy(ops[key])
       }
     }
-    updatedDoc.modifiedBy = tx.modifiedBy
-    updatedDoc.modifiedOn = tx.modifiedOn
+    if (!isDerivedDataTx(tx, this.client)) {
+      updatedDoc.modifiedBy = tx.modifiedBy
+      updatedDoc.modifiedOn = tx.modifiedOn
+    }
     return updatedDoc
   }
 

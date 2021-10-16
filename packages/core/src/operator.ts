@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
+import copy from 'fast-copy'
 import type { Doc, PropertyType } from './classes'
 import { createPredicates, isPredicate } from './predicate'
-import copy from 'fast-copy'
 
 /**
  * @public
@@ -42,6 +42,25 @@ function $push (document: Doc, keyval: Record<string, PropertyType>): void {
     }
   }
 }
+
+function matchDoc (pulled: any[], value: any): boolean {
+  for (const p of pulled) {
+    if (p === value) {
+      return true
+    }
+    if (typeof p === 'object' && typeof value === 'object') {
+      // We need to match inner fields of p to match same fields in value
+      for (const [k, v] of Object.entries(p)) {
+        if (value[k] !== v) {
+          return false
+        }
+      }
+      // All fields of p are matched fiels in v.
+      return true
+    }
+  }
+  return false
+}
 function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
   const doc = document as any
   for (const key in keyval) {
@@ -58,7 +77,7 @@ function $pull (document: Doc, keyval: Record<string, PropertyType>): void {
       } else {
         pulled = [keyval[key]]
       }
-      doc[key] = arr.filter((k) => !pulled.includes(k))
+      doc[key] = arr.filter((k) => !matchDoc(pulled, k))
     }
   }
 }

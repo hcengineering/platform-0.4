@@ -13,15 +13,16 @@
 // limitations under the License.
 //
 
+import regCalendarMappers from '@anticrm/calendar-mappers'
 import type { TxOperations } from '@anticrm/core'
 import core, { createClient, withOperations } from '@anticrm/core'
+import { NotificationClient } from '@anticrm/notification'
+import regNotificationMappers from '@anticrm/notification-mappers'
 import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
-import { ClientImpl } from './connection'
-import { NotificationClient } from '@anticrm/notification'
-import regCalendarMappers from '@anticrm/calendar-mappers'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
-import regNotificationMappers from '@anticrm/notification-mappers'
+import { ClientImpl } from './connection'
+import txesPromise from '@anticrm/model-dev'
 
 /*!
  * Anticrm Platform™ Workbench Plugin
@@ -30,6 +31,7 @@ import regNotificationMappers from '@anticrm/notification-mappers'
  */
 export default async (): Promise<CoreService> => {
   let client: (Client & TxOperations) | undefined
+  let close: () => Promise<void> = async () => await Promise.resolve()
 
   async function getClient (): Promise<Client & TxOperations> {
     if (client === undefined) {
@@ -39,7 +41,11 @@ export default async (): Promise<CoreService> => {
       // eslint-disable-next-line prefer-const
       let notificationClient: NotificationClient | undefined
 
-      const clientImpl = await ClientImpl.create()
+      await regCalendarMappers()
+      await regNotificationMappers()
+      await regRecruitingMappers()
+
+      const clientImpl = await ClientImpl.create(await txesPromise, typeof window !== 'undefined')
 
       const storage = await createClient(
         async (handler) => {
@@ -47,24 +53,21 @@ export default async (): Promise<CoreService> => {
           return clientImpl
         },
         (tx) => {
-          void clientImpl.model.tx(tx) // eslint-disable-line no-void
           liveQuery?.notifyTx(tx).catch((err) => console.error(err))
           notificationClient?.tx(tx)
         }
       )
+      close = async () => await storage.close()
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)
       notificationClient = NotificationClient.get(client)
-      await regCalendarMappers()
-      await regNotificationMappers()
-      await regRecruitingMappers()
     }
     return client
   }
 
   return {
     getClient,
-    disconnect: async () => await Promise.resolve()
+    disconnect: async () => await close()
   }
 }

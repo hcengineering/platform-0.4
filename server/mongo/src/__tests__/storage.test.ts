@@ -28,7 +28,7 @@ import core, {
   TxUpdateDoc,
   withOperations,
   _genMinModel,
-  _createTestTxAndDocStorage
+  createTestTxAndDocStorage
 } from '@anticrm/core'
 import { MongoClient } from 'mongodb'
 import { _dropAllDBWithPrefix, getMongoClient, shutdown } from '..'
@@ -43,6 +43,7 @@ createTaskModel(txes)
 
 async function updateDoc<T extends Doc> (storage: Storage, doc: T, operations: DocumentUpdate<T>): Promise<void> {
   const tx: TxUpdateDoc<T> = {
+    sid: 0,
     _id: generateId(),
     _class: core.class.TxUpdateDoc,
     space: core.space.Tx,
@@ -102,7 +103,7 @@ describe('mongo operations', () => {
 
     docStorage = new DocStorage(db, hierarchy)
 
-    const clientStorage = _createTestTxAndDocStorage(hierarchy, txStorage, docStorage)
+    const clientStorage = createTestTxAndDocStorage(hierarchy, txStorage, docStorage)
 
     client = withOperations(
       core.account.System,

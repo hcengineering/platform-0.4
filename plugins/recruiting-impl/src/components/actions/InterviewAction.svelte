@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Readable } from 'svelte/store'
+  import type { Readable } from 'svelte/store'
   import { getContext } from 'svelte'
 
   import type { Ref, Space } from '@anticrm/core'

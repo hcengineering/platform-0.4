@@ -48,6 +48,7 @@ const taskIds = component('my-task' as Component, {
 })
 
 const createMyTaskClass: TxCreateDoc<Class<MyTask>> = {
+  sid: 0,
   _id: generateId(),
   _class: core.class.TxCreateDoc,
   objectId: taskIds.class.MyTask,
@@ -65,6 +66,7 @@ const createMyTaskClass: TxCreateDoc<Class<MyTask>> = {
 }
 
 const createMyTaskSpace: TxCreateDoc<Space> = {
+  sid: 0,
   _id: generateId(),
   _class: core.class.TxCreateDoc,
   objectId: 'sp1' as Ref<Space>,

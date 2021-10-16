@@ -15,16 +15,18 @@
 
 import regCalendarActions from '@anticrm/calendar-action'
 import regCalendarMappers from '@anticrm/calendar-mappers'
+import core from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import regRecruitingActions from '@anticrm/recruiting-action'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
-import { SecurityOptions, startServer } from '@anticrm/server'
+import { assignWorkspace, ClientInfo, SecurityOptions, startServer } from '@anticrm/server'
 import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 import { startFileServer } from './file'
+import { startInfoServer } from './info'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -55,11 +57,14 @@ async function start (): Promise<void> {
 
   const { accounts, shutdown: authShutdown } = await startAuthServer(3000, dbUri, 'secret', security)
 
+  const { shutdown: infoShutdown } = await startInfoServer(3001, security)
+
   const close = (): void => {
     fileServer.shutdown()
     s.shutdown()
     void shutdown()
     void authShutdown()
+    void infoShutdown()
     fileServer.shutdown()
   }
   process.on('SIGINT', close)
@@ -92,6 +97,14 @@ async function start (): Promise<void> {
     }
   }
   console.log('Serve and Auth server are up and running')
+
+  const systemInfo: ClientInfo = {
+    accountId: core.account.System,
+    clientId: 'system',
+    workspaceId: defaultWorkspace,
+    tx: () => {}
+  }
+  await assignWorkspace(systemInfo)
 }
 console.log('Starting Server + Auth Server')
 start().catch((err) => console.log(err))

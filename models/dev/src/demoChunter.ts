@@ -1,4 +1,4 @@
-import chunter, { Channel, Comment, CommentRef, Message } from '@anticrm/chunter'
+import chunter, { Channel, Comment, Message } from '@anticrm/chunter'
 import core, { Account, getFullRef, Ref } from '@anticrm/core'
 import { component, Component } from '@anticrm/status'
 import type { Task } from '@anticrm/task'
@@ -58,12 +58,10 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7,
       console.info('message creation', i, ri)
     }
     const msgId: Ref<Message> = `mid-${i}` as Ref<Message>
-    const comments: CommentRef[] = []
     const ci = cii[i % cii.length]
     for (let j = 0; j < ci; j++) {
       const userId = faker.random.arrayElement(accountIds)
       const cid: Ref<Comment> = `cid-${cind++}` as Ref<Comment>
-      comments.push({ _id: cid, userId, createOn: Date.now(), lastModified: Date.now() })
       await builder.createDoc(
         chunter.class.Comment,
         {
@@ -108,7 +106,7 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7,
       chunter.class.Message,
       {
         message: msgText,
-        comments
+        comments: []
       },
       msgId,
       {
