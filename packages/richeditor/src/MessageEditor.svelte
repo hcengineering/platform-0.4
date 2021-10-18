@@ -377,6 +377,12 @@ export function focus (): void {
         color: var(--theme-caption-color);
       }
     }
+    reference {
+      cursor: pointer;
+      background-color: var(--theme-bg-accent-color);
+      border-radius: 10px;
+      padding: 2px;
+    }
   }
 }
 

@@ -15,7 +15,7 @@
 <script lang="ts">
   import core from '@anticrm/core'
   import type { Account, Ref, Space, Title } from '@anticrm/core'
-  import type { EditorActions, EditorContentEvent } from '@anticrm/richeditor'
+  import type { EditorActions, EditorContentEvent, ItemRefefence } from '@anticrm/richeditor'
   import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
   import { schema } from '@anticrm/richeditor'
   import type { MessageNode } from '@anticrm/text'
@@ -67,11 +67,6 @@
 
   const triggers = ['@', '#', '[[']
 
-  interface ItemRefefence {
-    id: string
-    class: string
-  }
-
   interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
   let completions: CompletionItem[] = []
   let completionControl: CompletionPopup & CompletionPopupActions
@@ -85,8 +80,21 @@
     completions = updateTitles(titles)
   }
 
+  function getLabel (value: Account): { label: string; fln: string } {
+    const fln = ((value.firstName ?? '') + ' ' + (value.lastName ?? '')).trim()
+    return { label: '@' + (fln.length > 0 ? fln : value.name) + ' ', fln }
+  }
+
   async function getAccounts (prefix: string) {
-    const docs = await client.findAll(core.class.Account, { name: { $like: '%' + prefix + '%' } }, { limit: 50 })
+    // Since accounts is part of model, they all in user environemnt already.
+    let docs = (await client.findAll(core.class.Account, {})).filter((a) => {
+      const { fln } = getLabel(a)
+      const title = fln.length > 0 ? fln + `(${a.name})` : a.name
+      return title.startsWith(prefix) || title.indexOf(prefix) !== -1
+    })
+    if (docs.length > 50) {
+      docs = docs.slice(0, 50)
+    }
     completions = updateAccounts(docs)
   }
 
@@ -109,11 +117,12 @@
   function updateAccounts (docs: Account[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
+      const { label, fln } = getLabel(value)
       items.push({
         key: value._id,
         completion: value._id,
-        label: value.name,
-        title: value.name,
+        label,
+        title: fln.length > 0 ? fln + `(${value.name})` : value.name,
         class: core.class.Account,
         id: `${currentSpace}-${value._id}`
       } as ExtendedCompletionItem)
@@ -169,7 +178,7 @@
   function handlePopupSelected (value: CompletionItem) {
     const isMention = styleState.completionWord.startsWith('@')
     let extra = 0
-    if (styleState.completionEnd !== null && styleState.completionEnd.endsWith(']]')) {
+    if (styleState.completionEnd !== undefined) {
       extra = styleState.completionEnd.length
     }
     const vv = value as ExtendedCompletionItem
