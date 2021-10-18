@@ -18,6 +18,7 @@
 
   import { afterUpdate, createEventDispatcher } from 'svelte'
 
+  import ui from '..'
   import Label from './Label.svelte'
   import Button from './Button.svelte'
 
@@ -28,9 +29,8 @@
   export let canSave: boolean = false
 
   const dispatch = createEventDispatcher()
-  afterUpdate(() => {
-    dispatch('update', Date.now())
-  })
+  // Updated Card content
+  afterUpdate(() => { dispatch('update') })
 </script>
 
 <form class="card-container" on:submit|preventDefault={() => {}}>
@@ -45,7 +45,7 @@
   </div>
   <div class="content" class:no-pool={!$$slots.pool}><slot /></div>
   {#if $$slots.pool}
-    <div class="flex-col pool" class:shrink={$$slots.contacts}>
+    <div class="flex-col pool">
       <div class="separator" />
       <slot name="pool" />
     </div>
@@ -53,7 +53,7 @@
   <div class="footer">
     <Button
       disabled={!canSave}
-      label={'Ok'}
+      label={ui.string.Ok}
       size={'small'}
       transparent
       primary
@@ -63,7 +63,7 @@
       }}
     />
     <Button
-      label={'Cancel'}
+      label={ui.string.Cancel}
       size={'small'}
       transparent
       on:click={() => {
@@ -120,15 +120,12 @@
     }
 
     .pool {
-      margin: 0 28px 24px;
+      margin: 0 28px 16px;
       color: var(--theme-caption-color);
       .separator {
         margin: 16px 0;
         height: 1px;
         background-color: var(--theme-card-divider);
-      }
-      &.shrink {
-        margin: 0 28px 16px;
       }
     }
 
