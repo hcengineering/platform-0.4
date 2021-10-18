@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/s3",
+      "comment": "attachment preview",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/s3"
+}
