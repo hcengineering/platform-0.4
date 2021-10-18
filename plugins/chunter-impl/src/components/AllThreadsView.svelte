@@ -19,9 +19,9 @@
   import chunter from '../plugin'
   import EmbeddedThread from './EmbeddedThread.svelte'
   import SpaceItem from './SpaceItem.svelte'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
 
-  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   const client = getClient()
 
@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="flex-col">
-        <EmbeddedThread id={message._id} {notifications} />
+        <EmbeddedThread id={message._id} {spacesLastViews} />
       </div>
     </div>
   {/each}

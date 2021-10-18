@@ -18,7 +18,7 @@
   import { getClient } from '@anticrm/workbench'
   import { EditBox, Dialog, Grid, TextArea, ToggleWithLabel } from '@anticrm/ui'
   import meeting from '@anticrm/meeting'
-  import { RoomSpace } from '@anticrm/meeting'
+  import type { RoomSpace } from '@anticrm/meeting'
 
   const client = getClient()
   const room: Data<RoomSpace> = {

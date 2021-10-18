@@ -29,7 +29,8 @@ import {
   Ref,
   Reference,
   ShortRef,
-  Title
+  Title,
+  TransactionID
 } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import { Resource } from '@anticrm/status'
@@ -70,6 +71,7 @@ export class TDerivedDataDescriptor<T extends Doc = Doc, D extends DerivedData =
 @Model(core.class.DerivedDataDescriptorState, core.class.Doc, DOMAIN_DERIVED_DATA)
 export class TDerivedDataDescriptorState extends TDoc implements DerivedDataDescriptorState {
   descriptorId!: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  lastSID!: TransactionID
   version!: string
 }
 

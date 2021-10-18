@@ -6,7 +6,7 @@
   import type { WorkbenchRoute, DocumentSelection } from '@anticrm/workbench'
   import { onDestroy } from 'svelte'
   import { handleCurrentDocumentChange, updateCurrentDocument } from '../selection'
-  import { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
 
   const client = getClient()
 
@@ -14,7 +14,7 @@
 
   export let compHTML: HTMLElement | undefined = undefined
   export let currentRoute: WorkbenchRoute
-  export let notifications: Map<Ref<Space>, SpaceNotifications>
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews>
 
   let currentDocumentPresentation: QueryUpdater<DocumentPresenter<Doc>> | undefined = undefined
   let editPresenter: PresentationFormat | undefined
@@ -45,12 +45,17 @@
       core.class.DocumentPresenter,
       { objectClass: selectedDocument.document._class },
       (pr) => {
+        let found = false
         for (const p of pr) {
           for (const pp of p.presentation ?? []) {
             if (pp.mode === PresentationMode.Edit) {
               editPresenter = pp
+              found = true
             }
           }
+        }
+        if (!found) {
+          editPresenter = undefined
         }
       }
     )
@@ -80,7 +85,7 @@
       props={{
         id: selectedDocument.document._id,
         _class: selectedDocument.document._class,
-        notifications: notifications
+        spacesLastViews: spacesLastViews
       }}
     />
   </div>

@@ -18,7 +18,7 @@
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import chunter from '../plugin'
   import Comments from './Comments.svelte'
@@ -28,11 +28,11 @@
   import { Label } from '@anticrm/ui'
 
   const client = getClient()
-  const notificationClient = new NotificationClient(client)
+  const notificationClient = NotificationClient.get(client)
 
   export let id: Ref<Message>
-  export let notifications: Map<Ref<Space>, SpaceNotifications> = new Map<Ref<Space>, SpaceNotifications>()
-  let notification: SpaceNotifications | undefined
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
+  let spaceLastViews: SpaceLastViews | undefined
   let message: Message | undefined
   let div: HTMLElement
   let messageLastRead = 0
@@ -43,37 +43,36 @@
   $: {
     lq = client.query(lq, chunter.class.Message, { _id: id }, async (result) => {
       if (result[0] !== undefined) {
-        notification = notifications.get(result[0].space)
+        spaceLastViews = spacesLastViews.get(result[0].space)
         notificationClient.setAutoscroll(div)
       }
       message = result[0]
       messageLastRead = 0
-      if (notification?.objectLastReads?.get !== undefined) {
-        messageLastRead = notification.objectLastReads.get(message?._id) ?? 0
+      if (spaceLastViews?.objectLastReads instanceof Map) {
+        messageLastRead = spaceLastViews.objectLastReads.get(message?._id) ?? 0
       }
       await tick()
-      if (div && notification) {
-        notificationClient.before(div, notification, message?._id, true)
+      if (div && spaceLastViews) {
+        await notificationClient.before(div, spaceLastViews, message?._id, true)
       }
+      notificationClient.initScroll(div, messageLastRead)
+      scrollHandler()
     })
   }
-  $: if (div !== undefined) {
-    notificationClient.initScroll(div, messageLastRead, true)
-  }
 
-  async function addMessage (text: string, notification?: SpaceNotifications): Promise<void> {
+  async function addMessage (text: string, spaceLastViews?: SpaceLastViews): Promise<void> {
     await client.createDoc(chunter.class.Comment, message!.space, {
       replyOf: getFullRef(message!._id, message!._class),
       message: text
     })
-    if (notification !== undefined) {
-      await notificationClient.readNow(notification, message!._id)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, message!._id)
     }
   }
 
   function scrollHandler () {
     if (message !== undefined) {
-      notificationClient.scrollHandler(div, notification, messageLastRead, true, message!._id)
+      notificationClient.scrollHandler(div, spaceLastViews, message!._id)
     }
   }
   function lastMessageIds (message: Message): Ref<Comment>[] {
@@ -88,7 +87,7 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} notifications={notification} thread showReferences={false} />
+      <MsgView {message} {spaceLastViews} thread showReferences={false} />
       {#if message?.comments && message.comments.length > 2 && !showAllReplies}
         <div
           class="link-text"
@@ -99,16 +98,12 @@
           <Label label={chunter.string.MoreReplies} params={{ replies: message.comments.length - 2 }} />
         </div>
       {/if}
-      <Comments
-        {message}
-        notifications={notification}
-        filter={showAllReplies ? {} : { _id: { $in: lastMessageIds(message) } }}
-      />
+      <Comments {message} {spaceLastViews} filter={showAllReplies ? {} : { _id: { $in: lastMessageIds(message) } }} />
     </div>
   {/if}
 </div>
 <div class="ref-input">
-  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail, notification)} />
+  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail, spaceLastViews)} />
 </div>
 
 <style lang="scss">

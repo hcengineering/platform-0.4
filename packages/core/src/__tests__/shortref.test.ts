@@ -21,6 +21,7 @@ import { createShortRef } from '../shortref'
 import { Storage } from '../storage'
 import { _genMinModel } from '../minmodel'
 import { Severity, PlatformError, Status } from '@anticrm/status'
+import { withOperations } from '../tx'
 
 const txes = _genMinModel()
 
@@ -71,5 +72,10 @@ describe('memdb.shortref', () => {
     expect(t4).toBe('TASK-5')
 
     expect((await txStore.findAll(core.class.Tx, {})).length).toEqual(3)
+
+    const ops = withOperations('' as Ref<Account>, storage)
+
+    const t5 = await ops.createShortRef('TASK-4' as Ref<Doc>, core.class.Title, sp._id)
+    expect(t5).toEqual('SP1-1')
   })
 })

@@ -123,6 +123,7 @@
     class:code={style.code}
     class:italic={style.italic}
     class:resolved_reference={style.reference.resolved}
+    class:link-text={style.reference.resolved}
     class:unknown_reference={style.reference.state && !style.reference.resolved}
   >
     {#if style.reference.state}
@@ -179,7 +180,7 @@
 
 <style lang="scss">
   .inline_block {
-    display: inline;
+    display: inline-block;
     word-wrap: break-word;
     white-space: pre-wrap;
   }
@@ -205,9 +206,10 @@
   }
 
   .resolved_reference {
-    padding: 0px 5px 0px 5px;
-    color: #336699;
     cursor: pointer;
+    background-color: var(--theme-bg-accent-color);
+    border-radius: 10px;
+    padding: 2px;
     text-decoration-line: underline;
   }
 

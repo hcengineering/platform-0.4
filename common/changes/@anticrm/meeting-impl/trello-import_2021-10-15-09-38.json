@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "DD-refactoring",
+      "type": "patch",
+      "packageName": "@anticrm/meeting-impl"
+    }
+  ],
+  "packageName": "@anticrm/meeting-impl",
+  "email": "haiodo@gmail.com"
+}

@@ -108,7 +108,12 @@ export function createModel (builder: Builder): void {
             spaceQuery: { 'account.starred': true },
             addSpaceLabel: chunter.string.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            notification: {
+              spaceClass: chunter.class.Message,
+              itemByIdClass: chunter.class.Message,
+              itemByIdField: 'lastModified'
+            }
           },
           {
             label: chunter.string.Channels,
@@ -118,7 +123,12 @@ export function createModel (builder: Builder): void {
             addSpaceLabel: chunter.string.CreateChannel,
             createComponent: chunter.component.CreateChannel,
             spaceItem: chunter.component.SpaceItem,
-            spaceHeader: chunter.component.SpaceHeader
+            spaceHeader: chunter.component.SpaceHeader,
+            notification: {
+              spaceClass: chunter.class.Message,
+              itemByIdClass: chunter.class.Message,
+              itemByIdField: 'lastModified'
+            }
           },
           directMessagesModel
         ],
@@ -230,6 +240,9 @@ export function createModel (builder: Builder): void {
     {
       sourceClass: chunter.class.Comment,
       targetClass: chunter.class.Message,
+      query: {
+        replyOf: { $like: '%class:chunter.Message%' }
+      },
       collections: [
         {
           sourceField: 'replyOf',
@@ -255,7 +268,7 @@ export function createModel (builder: Builder): void {
     core.class.DerivedDataDescriptor,
     {
       sourceClass: chunter.class.Message,
-      targetClass: notification.class.SpaceNotifications,
+      targetClass: notification.class.SpaceLastViews,
       collections: [
         {
           sourceField: 'message',
@@ -275,7 +288,7 @@ export function createModel (builder: Builder): void {
     core.class.DerivedDataDescriptor,
     {
       sourceClass: chunter.class.Comment,
-      targetClass: notification.class.SpaceNotifications,
+      targetClass: notification.class.SpaceLastViews,
       collections: [
         {
           sourceField: 'message',

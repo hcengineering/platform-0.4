@@ -216,6 +216,7 @@ describe('server', () => {
     try {
       const addr = (await serverAt).address()
       const tx: TxCreateDoc<Doc> = {
+        sid: 0,
         _id: generateId(),
         _class: core.class.TxCreateDoc,
         space: core.space.Tx,

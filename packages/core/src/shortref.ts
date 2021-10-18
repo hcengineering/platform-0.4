@@ -68,6 +68,7 @@ export async function createShortRef<T extends Doc> (
       continue
     }
     const tx: TxCreateDoc<ShortRef> = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxCreateDoc,
       space: core.space.Tx,

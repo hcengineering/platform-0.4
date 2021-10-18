@@ -16,9 +16,10 @@
   import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
-  import type { SpaceNotifications } from '@anticrm/notification'
+  import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import { ActionIcon, Button, DateTime, ItemRefefence, MessageViewer, showPopup } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, MessageViewer, showPopup } from '@anticrm/ui'
+  import type { ItemRefefence } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
@@ -33,7 +34,7 @@
   import MessagePopup from './MessagePopup.svelte'
 
   export let message: WithMessage
-  export let notifications: SpaceNotifications | undefined
+  export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   export let showReferences = true
 
@@ -83,44 +84,31 @@
   }
   $: updaterUser(message)
 
-  function isNew (message: WithMessage, notifications: SpaceNotifications | undefined): boolean {
-    if (notifications === undefined || notifications.objectId !== message.space) return false
-    if (notifications.notificatedObjects.includes(message._id)) return true
+  function isNew (message: WithMessage, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined || spaceLastViews.objectId !== message.space) return false
     if (!thread) {
-      if (message.modifiedOn > notifications.lastRead) return true
-      const comments = (message as Message).comments
-      if (comments !== undefined) {
-        let lastTime = notifications.lastRead
-        if (notifications.objectLastReads.get !== undefined) {
-          lastTime = notifications.objectLastReads.get(message._id) ?? lastTime
-        }
-        for (const comment of comments) {
-          if (comment.lastModified > lastTime) return true
+      if (message.modifiedOn > spaceLastViews.lastRead) return true
+      const lastModified = (message as Message).lastModified
+      if (lastModified !== undefined) {
+        if (spaceLastViews.objectLastReads instanceof Map) {
+          const lastRead = spaceLastViews.objectLastReads.get(message._id)
+          if (lastRead !== undefined) {
+            return lastModified > lastRead
+          }
         }
       }
     } else if ((message as Comment).replyOf !== undefined) {
-      let lastTime = notifications.lastRead
-      if (notifications.objectLastReads.get !== undefined) {
+      if (spaceLastViews.objectLastReads instanceof Map) {
         const fullRef = parseFullRef((message as Comment).replyOf)
-        lastTime = notifications.objectLastReads.get(fullRef._id) ?? lastTime
+        const lastRead = spaceLastViews.objectLastReads.get(fullRef._id)
+        if (lastRead !== undefined) {
+          return message.modifiedOn > lastRead
+        }
       }
-      return message.modifiedOn > lastTime
     }
     return false
   }
 
-  function getLastModified (message: WithMessage): number {
-    let lastModified = message.modifiedOn
-    if (!thread) {
-      const comments = (message as Message).comments
-      if (comments !== undefined) {
-        for (const comment of comments) {
-          lastModified = lastModified > comment.lastModified ? lastModified : comment.lastModified
-        }
-      }
-    }
-    return lastModified
-  }
   function refAction (doc: ItemRefefence): void {
     selectDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
   }
@@ -150,17 +138,19 @@
   }
 </script>
 
-<div class="message-container" class:no-thread={!thread} class:isNew={isNew(message, notifications)}>
+<div
+  class="message-container"
+  class:no-thread={!thread}
+  class:isNew={isNew(message, spaceLastViews)}
+  data-created={message.createOn}
+  data-modified={message.modifiedOn}
+  data-id={message._id}
+>
   <div class="container">
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
     {/if}
-    <div
-      class="message"
-      data-modified={message.modifiedOn}
-      data-lastmodified={getLastModified(message)}
-      data-id={message._id}
-    >
+    <div class="message">
       {#if !editMode}
         <div class="header">
           <div>
@@ -258,7 +248,6 @@
     }
     &.no-thread {
       padding: 10px;
-      background-color: transparent;
       border: 1px solid transparent;
     }
     .references {

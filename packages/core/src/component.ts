@@ -61,5 +61,8 @@ export default component(ComponentCore, {
     ObjectNotFound: '' as StatusCode<{ _id: Ref<Doc> }>,
     ObjectAlreadyExists: '' as StatusCode<{ _id: Ref<Doc> }>,
     ItemNotFound: '' as StatusCode<{ _id: Ref<Doc>, _localId: string }>
+  },
+  dd: {
+    Global: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   }
 })

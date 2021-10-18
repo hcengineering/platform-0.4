@@ -74,6 +74,10 @@ class WebSocketConnection extends RequestProcessor implements Storage, CoreClien
     // Process on server and return result.
     this.handler(tx)
   }
+
+  async close (): Promise<void> {
+    this.socket.close()
+  }
 }
 
 export interface Connection {

@@ -204,6 +204,7 @@ describe('workspace', () => {
     const client = await newWorkspaceClient(workspace)
 
     const mytxOp: MyTx = {
+      sid: 0,
       _id: generateId(),
       modifiedBy: 'my-task' as Ref<Account>,
       createOn: Date.now(),
@@ -244,6 +245,7 @@ describe('workspace', () => {
     expect(q2.length).toEqual(0)
 
     const upd: TxUpdateDoc<MyTask> = {
+      sid: 0,
       _id: generateId(),
       modifiedBy: 'my-task' as Ref<Account>,
       createOn: Date.now(),
@@ -263,7 +265,6 @@ describe('workspace', () => {
   })
 
   it('check create ShortRef', async () => {
-    jest.setTimeout(500000)
     await createDatabase(dbId, txes)
     workspace = await Workspace.create('test-' + dbId, { mongoDBUri })
 
@@ -292,6 +293,7 @@ describe('workspace', () => {
     expect((await workspace.findAll(core.class.Tx, {})).length - initial).toEqual(2)
 
     const tx: TxCreateDoc<MyTask> = {
+      sid: 0,
       _id: generateId(),
       _class: core.class.TxCreateDoc,
       space: core.space.Tx,

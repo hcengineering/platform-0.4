@@ -1,4 +1,4 @@
-import core, { DerivedDataProcessor, Storage, Tx, CoreClient } from '@anticrm/core'
+import core, { DerivedDataProcessor, Storage, Tx, CoreClient, Hierarchy, isDerivedDataTx } from '@anticrm/core'
 import { TxHandler, Workspace } from '@anticrm/workspace'
 import { ActionRuntime } from './actions/runtime'
 import { ClientInfo, SecurityClientStorage, SecurityModel } from './security'
@@ -10,6 +10,8 @@ export interface WorkspaceInfo {
   workspace: Workspace
   clients: Map<string, ClientInfo>
   security: SecurityModel
+  waitDDComplete: () => Promise<void>
+  close: () => Promise<void>
 }
 
 const workspaces = new Map<string, WorkspaceInfo>()
@@ -22,17 +24,13 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   const clients = new Map<string, ClientInfo>()
 
   // Send transactions to clients.
-  const sendTo: TxHandler = {
-    name: 'send.to',
-    async tx (clientId: string, tx: Tx): Promise<void> {
-      sendToClients(clientId, clients, tx, security)
-    }
-  }
-
   let resActionRuntime: (x: ActionRuntime) => void
   const actionRuntimeP: Promise<ActionRuntime> = new Promise((resolve) => {
     resActionRuntime = resolve
   })
+
+  let waitDDComplete: () => Promise<void> = async () => await Promise.resolve()
+  let closeDD: () => Promise<void> = async () => await Promise.resolve()
 
   const workspace: Workspace = await Workspace.create(
     workspaceId,
@@ -40,18 +38,28 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
       mongoDBUri: MONGO_URI
     },
     async (hierarchy, storage, model) => {
+      const sendTo: TxHandler = {
+        name: 'send.to',
+        async tx (clientId: string, tx: Tx): Promise<void> {
+          sendToClients(clientId, clients, tx, security, hierarchy)
+        }
+      }
+
       security = await SecurityModel.create(hierarchy, model)
       const actionRuntime = new ActionRuntime(hierarchy, model, storage)
 
       resActionRuntime(actionRuntime)
 
-      const derivedData = await DerivedDataProcessor.create(model, hierarchy, storage, true)
+      const ddSendStorage = createDerivedDataStorage(storage, sendTo)
+      const derivedData = await DerivedDataProcessor.create(model, hierarchy, ddSendStorage)
+
+      waitDDComplete = async () => await derivedData.waitComplete()
+      closeDD = async () => await derivedData.close()
       const ddRuntime: TxHandler = {
         name: 'derived.data',
         tx: async (clientId, tx) => {
-          const processor = derivedData.clone(createDerivedDataStorage(clientId, storage, sendTo))
           // We do not need to wait for DD.
-          void processor.tx(tx)
+          void derivedData.tx(tx)
         }
       } // If dd produce more tx, they also will be send.
 
@@ -73,31 +81,39 @@ async function createWorkspace (workspaceId: string): Promise<WorkspaceInfo> {
   return {
     workspace,
     security,
-    clients
+    clients,
+    waitDDComplete,
+    close: async () => {
+      await closeDD()
+    }
   }
 }
 
-function sendToClients (clientId: string, clients: Map<string, ClientInfo>, tx: Tx, security: SecurityModel): void {
+function sendToClients (
+  clientId: string,
+  clients: Map<string, ClientInfo>,
+  tx: Tx,
+  security: SecurityModel,
+  hierarchy: Hierarchy
+): void {
   for (const cl of clients.entries()) {
     const differentAccount = cl[1].clientId !== clientId
     if (differentAccount && security.checkSecurity(cl[1].accountId, tx)) {
       // Only send if account is same, or space is allowed and space is not personalized.
-      if (cl[1].accountId === tx.modifiedBy || tx.space === core.space.Tx) {
+      if (cl[1].accountId === tx.modifiedBy || tx.space === core.space.Tx || isDerivedDataTx(tx, hierarchy)) {
         cl[1].tx(tx)
       }
     }
   }
 }
 
-function createDerivedDataStorage (clientId: string, storage: Storage, sendTo: TxHandler): Storage {
+function createDerivedDataStorage (storage: Storage, sendTo: TxHandler): Storage {
   // Send derived data produced objects to clients.
   return {
     findAll: async (_class, query, options) => await storage.findAll(_class, query, options),
     tx: async (tx) => {
       await storage.tx(tx)
-
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      sendTo.tx(clientId, tx)
+      void sendTo.tx('-', tx)
     }
   }
 }
@@ -142,6 +158,7 @@ export async function closeWorkspace (clientId: string): Promise<void> {
   }
   const ws = workspaces.get(info.workspaceId)
   if (ws !== undefined) {
+    await ws.close()
     ws.clients.delete(clientId)
   }
 }

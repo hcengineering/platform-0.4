@@ -15,7 +15,8 @@
 <script lang="ts">
   import core, { Account, Ref } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
-  import { Dialog, Section, Grid, IconFile, UserBox, DropdownItem, Dropdown } from '@anticrm/ui'
+  import { Dialog, Section, Grid, IconFile, UserBox, Dropdown } from '@anticrm/ui'
+  import type { DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'

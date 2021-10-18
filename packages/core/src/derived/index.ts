@@ -1,5 +1,7 @@
 import { Resource } from '@anticrm/status'
+import { Obj, TransactionID, txObjectClass } from '..'
 import { Class, Data, Doc, Domain, Ref } from '../classes'
+import core from '../component'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb } from '../memdb'
 import { DocumentQuery, Storage } from '../storage'
@@ -133,11 +135,15 @@ export interface DerivedData extends Doc {
 
 /**
  * @public
- * Processing state for Derived Data
+ * Processing state for Derived Data per individual object
  * */
 export interface DerivedDataDescriptorState extends Doc {
-  descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>
-  version: string
+  // Define an last transaction processed by this DD.
+  lastSID: TransactionID
+
+  // if 'core.dd.global' is set it is global descriptor state.
+  descriptorId?: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  version?: string
 }
 
 /**
@@ -147,3 +153,21 @@ export const DOMAIN_DERIVED_DATA = 'derived-data' as Domain
 
 export { DerivedDataProcessor, registerMapper } from './processor'
 export { DescriptorMap, Descr }
+
+/**
+ * @public
+ */
+export interface HierarchyBase {
+  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
+}
+/**
+ * Return true if object class is belong to derived data, and should not be stored with transactions.
+ *
+ * @public
+ */
+export function isDerivedDataTx (tx: Tx, hierarchy: HierarchyBase): boolean {
+  const objectClass = txObjectClass(tx)
+  // Do not store transaction for derived data objects.
+  const inheritDD = objectClass !== undefined && hierarchy.isDerived(objectClass, core.class.DerivedData)
+  return inheritDD || tx.space === core.space.DerivedData
+}

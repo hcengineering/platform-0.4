@@ -93,15 +93,26 @@ export async function generateModelDiff (existingTxes: Tx[], txes: Tx[]): Promis
   const { model, dropTx } = await buildModel(existingTxes)
   const { model: newModel } = await buildModel(txes)
 
-  const allDocuments = new Map((await model.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
-  const newDocuments = new Map((await newModel.findAll(core.class.Doc, {})).map((d) => [d._id, d]))
+  const diffTx = generateDocumentDiff(
+    await model.findAll(core.class.Doc, {}),
+    await newModel.findAll(core.class.Doc, {})
+  )
+  return { diffTx, dropTx }
+}
 
+/**
+ * @public
+ */
+export function generateDocumentDiff (oldDocs: Doc[], newDocs: Doc[]): Tx[] {
   const diffTx: Tx[] = []
+
+  const allDocuments = new Map(oldDocs.map((d) => [d._id, d]))
+  const newDocuments = new Map(newDocs.map((d) => [d._id, d]))
 
   // Find same documents.
   allDocuments.forEach(handleUpdateRemove(newDocuments, diffTx))
   newDocuments.forEach(handleAdd(allDocuments, diffTx))
-  return { diffTx, dropTx }
+  return diffTx
 }
 function handleAdd (allDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx[]): (value: Doc, key: Ref<Doc>) => void {
   return (doc, key) => {
@@ -109,6 +120,7 @@ function handleAdd (allDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx[]): (value: Do
       // Add is required
       const { _class, modifiedBy, modifiedOn, space, ...data } = doc
       const tx: TxCreateDoc<Doc> = {
+        sid: 0,
         _id: generateId(),
         _class: core.class.TxCreateDoc,
         space: core.space.Tx,
@@ -135,6 +147,7 @@ function handleUpdateRemove (newDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx<Doc>[
       const operations = diffAttributes(oldData, data)
       if (Object.keys(operations).length > 0) {
         const tx: TxUpdateDoc<Doc> = {
+          sid: 0,
           _id: generateId(),
           _class: core.class.TxUpdateDoc,
           space: core.space.Tx,
@@ -151,6 +164,7 @@ function handleUpdateRemove (newDocuments: Map<Ref<Doc>, Doc>, newTxes: Tx<Doc>[
     } else {
       // Delete is required
       const tx: TxRemoveDoc<Doc> = {
+        sid: 0,
         _id: generateId(),
         _class: core.class.TxRemoveDoc,
         space: core.space.Tx,

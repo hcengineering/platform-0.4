@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "DD-refactoring",
+      "type": "patch",
+      "packageName": "@anticrm/s3"
+    }
+  ],
+  "packageName": "@anticrm/s3",
+  "email": "haiodo@gmail.com"
+}

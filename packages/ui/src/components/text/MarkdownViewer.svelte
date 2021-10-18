@@ -25,4 +25,6 @@
   $: msg = parseMessage(message)
 </script>
 
-<MessageViewer message={msg} {refAction} />
+{#if msg}
+  <MessageViewer message={msg} {refAction} />
+{/if}

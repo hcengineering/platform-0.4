@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Fix @mentions and Document refs",
+      "type": "patch",
+      "packageName": "@anticrm/ui"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "haiodo@gmail.com"
+}

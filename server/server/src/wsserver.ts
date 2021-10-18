@@ -91,14 +91,7 @@ function withLogging (
       const resultTx = clientStorage.findAll(_class, query, foptions)
       resultTx.catch((err) => {
         if (options.logRequests) {
-          console.info(
-            `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
-              query,
-              undefined,
-              2
-            )}`,
-            err
-          )
+          console.log(`request from ${accountId}-${details?.email} find request: _class=${_class}`, query, err)
         }
       })
       const result = await resultTx
@@ -107,12 +100,10 @@ function withLogging (
         if (Array.isArray(result)) {
           printResult = result.slice(0, 5)
         }
-        console.info(
-          `request from ${accountId}-${details?.email} find request: _class=${_class} query=${JSON.stringify(
-            query,
-            undefined,
-            2
-          )} result: ${JSON.stringify(printResult)}`
+        console.log(
+          `request from ${accountId}-${details?.email} find request: _class=${_class} query=`,
+          query,
+          printResult
         )
       }
       return result
@@ -121,20 +112,17 @@ function withLogging (
       const resultTx = clientStorage.tx(tx)
       resultTx.catch((err) => {
         if (options.logTransactions) {
-          console.info(`tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)}`, err)
+          console.log(`tx from ${accountId}-${details?.email} tx=`, tx, err)
         }
       })
       const result = await resultTx
       if (options.logTransactions) {
-        console.info(
-          `tx from ${accountId}-${details?.email} tx=${JSON.stringify(tx, undefined, 2)} result: ${JSON.stringify(
-            result
-          )}`
-        )
+        console.log(`tx from ${accountId}-${details?.email} tx=`, tx, 'result:', result)
       }
       return result
     },
-    accountId: async () => await clientStorage.accountId()
+    accountId: async () => await clientStorage.accountId(),
+    close: async () => await clientStorage.close()
   }
 }
 

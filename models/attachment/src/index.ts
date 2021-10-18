@@ -16,7 +16,8 @@
 import { Class, Doc, Domain, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
-import attachment, { Attachment } from '@anticrm/attachment'
+import attachment from '@anticrm/attachment'
+import type { Attachment } from '@anticrm/attachment'
 
 const DOMAIN_ATTACHMENT = 'attachment' as Domain
 

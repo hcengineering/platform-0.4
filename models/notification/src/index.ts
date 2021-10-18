@@ -17,15 +17,15 @@ import type { Domain, Doc, Timestamp, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { TDerivedData } from '@anticrm/model-core'
 import notification from '@anticrm/notification'
-import type { SpaceNotifications, SpaceInfo } from '@anticrm/notification'
+import type { SpaceLastViews } from '@anticrm/notification'
 
 const DOMAIN_NOTIFICATION = 'notification' as Domain
 
 /**
  * @public
  */
-@Model(notification.class.SpaceNotifications, core.class.DerivedData, DOMAIN_NOTIFICATION)
-export class TSpaceNotifications extends TDerivedData implements SpaceNotifications {
+@Model(notification.class.SpaceLastViews, core.class.DerivedData, DOMAIN_NOTIFICATION)
+export class TSpaceNotifications extends TDerivedData implements SpaceLastViews {
   lastRead!: Timestamp
   objectLastReads!: Map<Ref<Doc>, Timestamp>
   notificatedObjects!: Array<Ref<Doc>>
@@ -34,36 +34,18 @@ export class TSpaceNotifications extends TDerivedData implements SpaceNotificati
 /**
  * @public
  */
-@Model(notification.class.SpaceInfo, core.class.DerivedData, DOMAIN_NOTIFICATION)
-export class TSpaceInfo extends TDerivedData implements SpaceInfo {
-  lastModified!: Timestamp
-}
-
-/**
- * @public
- */
 export function createModel (builder: Builder): void {
-  builder.createModel(TSpaceNotifications, TSpaceInfo)
+  builder.createModel(TSpaceNotifications)
 
   // D E R I V E D   D A T A
   builder.createDoc(
     core.class.DerivedDataDescriptor,
     {
-      sourceClass: core.class.Doc,
-      targetClass: notification.class.SpaceInfo,
-      mapper: notification.mappers.SpaceInfo
-    },
-    notification.dd.SpaceInfo
-  )
-
-  builder.createDoc(
-    core.class.DerivedDataDescriptor,
-    {
       sourceClass: core.class.Space,
-      targetClass: notification.class.SpaceNotifications,
-      mapper: notification.mappers.SpaceNotification
+      targetClass: notification.class.SpaceLastViews,
+      mapper: notification.mappers.SpaceLastViews
     },
-    notification.dd.SpaceNotifications
+    notification.dd.SpaceLastViews
   )
 }
 

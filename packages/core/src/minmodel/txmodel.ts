@@ -1,4 +1,4 @@
-import { CoreClient } from '..'
+import { CoreClient, isDerivedDataTx } from '..'
 import { Account, Class, Doc, Ref } from '../classes'
 import core from '../component'
 import { Hierarchy } from '../hierarchy'
@@ -16,6 +16,8 @@ class TxModelStorage implements CoreClient {
     return this.txStore
   }
 
+  async close (): Promise<void> {}
+
   async findAll<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
@@ -30,14 +32,16 @@ class TxModelStorage implements CoreClient {
 
   async tx (tx: Tx): Promise<void> {
     await this.doc.tx(tx)
-
+    if (isDerivedDataTx(tx, this.hierarchy)) {
+      return
+    }
     await this.txStore.tx(tx) // In any case send into transaction storage.
   }
 }
 
 /**
- * @internal
+ * @public
  */
-export function _createTestTxAndDocStorage (hierarchy: Hierarchy, txStore: Storage, doc: Storage): CoreClient {
+export function createTestTxAndDocStorage (hierarchy: Hierarchy, txStore: Storage, doc: Storage): CoreClient {
   return new TxModelStorage(hierarchy, txStore, doc)
 }

@@ -27,6 +27,10 @@ export class DescriptorMap {
     return result
   }
 
+  allDescriptors (): Descr[] {
+    return Array.from(this.descriptors.values())
+  }
+
   update (d: Descr): void {
     this.descriptors.set(d._id, d)
     let descriptors = this.class2Descr.get(d.sourceClass)

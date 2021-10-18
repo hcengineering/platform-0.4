@@ -15,7 +15,7 @@
 <script lang="ts">
   import core, { Doc, Reference, SortingOrder } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { IntlString, UIComponent } from '@anticrm/status'
+  import type { IntlString, UIComponent } from '@anticrm/status'
   import { Section } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, createEventDispatcher } from 'svelte'
@@ -28,7 +28,6 @@
   export let closed: boolean = false
 
   export let docRef: Doc
-  // export let notifications: SpaceNotifications | undefined
 
   const client = getClient()
   let query: QueryUpdater<Reference> | undefined

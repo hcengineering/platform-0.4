@@ -11,6 +11,7 @@ import core, {
   measureAsync,
   ModelDb,
   Ref,
+  withSID,
   Storage,
   Tx
 } from '@anticrm/core'
@@ -69,7 +70,7 @@ export class Workspace implements WithWorkspaceTx {
 
     // We only need model global transactions.
     const transactions: Tx[] = (
-      await txCollection.find({ space: core.space.Tx, objectSpace: core.space.Model }).toArray()
+      await txCollection.find({ space: core.space.Tx, objectSpace: core.space.Model }, { sort: { sid: 1 } }).toArray()
     )
       .map(mongoUnescape)
       .map(mongoReplaceNulls)
@@ -80,8 +81,9 @@ export class Workspace implements WithWorkspaceTx {
       await model.tx(tx)
     }
 
-    const storage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
+    const wsStorage = new WorkspaceStorage(hierarchy, txStorage, mongoDocStorage)
 
+    // Transaction corrector
     const modelTx: TxHandler = {
       name: 'model',
       tx: async (clientId, tx) => {
@@ -92,16 +94,19 @@ export class Workspace implements WithWorkspaceTx {
       }
     }
 
-    const handlers: TxHandler[] = txh !== undefined ? [modelTx, ...(await txh(hierarchy, storage, model))] : [modelTx]
-    return new Workspace(workspaceId, hierarchy, storage, handlers, model)
+    const handlers: TxHandler[] = txh !== undefined ? [modelTx, ...(await txh(hierarchy, wsStorage, model))] : [modelTx]
+
+    // We only need to update tx.sid if tx came from client.
+    return new Workspace(workspaceId, hierarchy, wsStorage, handlers, model, withSID(wsStorage))
   }
 
   private constructor (
     readonly workspaceId: string,
     readonly hierarchy: Hierarchy,
-    private readonly storage: WorkspaceStorage,
+    private readonly storage: Storage,
     readonly txh: TxHandler[],
-    readonly model: ModelDb
+    readonly model: ModelDb,
+    readonly sidTx: (tx: Tx) => Promise<Tx>
   ) {}
 
   getHierarchy (): Hierarchy {
@@ -117,6 +122,8 @@ export class Workspace implements WithWorkspaceTx {
   }
 
   async tx (clientId: string, tx: Tx): Promise<void> {
+    // 0. assign tx.sid and update create/modify times to be time on server
+    tx = await this.sidTx(tx)
     // 1. go to storage to check for potential object duplicate transactions.
     const stx = measure('workspace.storage.tx')
     const result = await this.storage.tx(tx)

@@ -10,6 +10,7 @@
   "scripts": {
     "build": "rm -rf ./lib && node ./esbuild",
     "test": "CI=true jest --silent",
+    "jest": "jest",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
     "format": "prettier --write --plugin-search-dir=. src && eslint --fix src",

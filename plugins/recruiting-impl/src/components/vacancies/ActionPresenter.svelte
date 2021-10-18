@@ -17,7 +17,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
   import type { Action, ActionInstance } from '@anticrm/action-plugin'
-  import { UIComponent } from '@anticrm/status'
+  import type { UIComponent } from '@anticrm/status'
   import type { Applicant } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
 
