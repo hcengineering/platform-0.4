@@ -50,6 +50,7 @@
       border-radius: 25%;
       background-color: #4474f6;
       display: flex;
+      flex-shrink: 0;
 
       div {
         margin: auto;

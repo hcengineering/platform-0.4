@@ -21,6 +21,7 @@
   import type { Attachment } from '@anticrm/attachment'
   import AddAttachment from './AddAttachment.svelte'
   import AttachmentView from './Attachment.svelte'
+  import AttachmentViewer from './AttachmentViewer.svelte'
 
   export let objectId: Ref<Doc>
   export let space: Ref<Space>
@@ -38,8 +39,8 @@
     showPopup(AddAttachment, { objectId: objectId, objectClass: objectClass, space: space })
   }
 
-  function download (item: Attachment): void {
-    window.open(item.url, '_blank')
+  function open (item: Attachment): void {
+    showPopup(AttachmentViewer, { item: item })
   }
 </script>
 
@@ -49,7 +50,7 @@
       <AttachmentView
         {item}
         on:click={() => {
-          download(item)
+          open(item)
         }}
       />
     </div>

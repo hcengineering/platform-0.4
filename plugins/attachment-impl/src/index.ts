@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-import type { AttachmentService } from '@anticrm/attachment'
-import attachment from '@anticrm/attachment'
+import attachment, { AttachmentService, nameToFormat } from '@anticrm/attachment'
 import { Ref, Space } from '@anticrm/core'
 import { getMetadata } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
@@ -86,8 +85,8 @@ export default async (): Promise<AttachmentService> => {
   }
 
   function generateLink (key: string, space: Ref<Space>, name: string, format: string): string {
-    const regex = RegExp(`${format}$`)
-    const downloadName = regex.test(name) ? name : name + '.' + format
+    const nameFormat = nameToFormat(name)
+    const downloadName = nameFormat === format ? name : name + '.' + format
     return `${url}/${space}/${key}/${downloadName}`
   }
 

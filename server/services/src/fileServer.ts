@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import { S3Storage } from '@anticrm/s3'
+import { File, S3Storage } from '@anticrm/s3'
 import { assignWorkspace, decodeToken, WorkspaceInfo } from '@anticrm/server'
 import { Account, generateId, Ref, Space } from '@anticrm/core'
 import Koa, { Context } from 'koa'
 import bodyParser from 'koa-bodyparser'
 import Router from 'koa-router'
+import sharp from 'sharp'
 
 const storages: Map<string, S3Storage> = new Map<string, S3Storage>()
 const workspaces: Map<Ref<Account>, WorkspaceInfo> = new Map<Ref<Account>, WorkspaceInfo>()
+const imageCache: Map<string, File> = new Map<string, File>()
 
 /**
  * @public
@@ -49,22 +51,11 @@ export function createFileServer (
   })
 
   router.put('/file', async (ctx: Context) => {
-    const token = ctx.cookies.get('token')
-    if (token === undefined) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
-    const { accountId, workspaceId } = decodeToken(tokenSecret, token)
     const request = ctx.request.body
     const space = request.space as Ref<Space>
     const key = request.key as string
-    const allowed = await checkSecurity(accountId, workspaceId, space)
-    if (!allowed) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
+    const workspaceId = await checkSecurity(ctx, space, tokenSecret)
+    if (workspaceId === undefined) return
     console.info('Contacting S3 at ', uri)
     const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     const link = await storage.getUploadLink(space + key, request.type)
@@ -76,22 +67,11 @@ export function createFileServer (
   })
 
   router.delete('/file', async (ctx: Context) => {
-    const token = ctx.cookies.get('token')
-    if (token === undefined) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
-    const { accountId, workspaceId } = decodeToken(tokenSecret, token)
     const request = ctx.request.body
     const space = request.space as Ref<Space>
     const key = request.key as string
-    const allowed = await checkSecurity(accountId, workspaceId, space)
-    if (!allowed) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
+    const workspaceId = await checkSecurity(ctx, space, tokenSecret)
+    if (workspaceId === undefined) return
     const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     await storage.remove(space + key)
     ctx.status = 200
@@ -100,21 +80,20 @@ export function createFileServer (
   router.get('/file/:spaceId/:key/:fileName', async (ctx: Context) => {
     const space = ctx.params.spaceId as Ref<Space>
     const key = ctx.params.key as string
-    const fileName = ctx.params.fileName
-    const token = ctx.cookies.get('token')
-    if (token === undefined) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
-    const { accountId, workspaceId } = decodeToken(tokenSecret, token)
-    const allowed = await checkSecurity(accountId, workspaceId, space)
-    if (!allowed) {
-      ctx.status = 401
-      ctx.body = 'Unauthorized'
-      return
-    }
+    const fileName = ctx.params.fileName as string
+    const width = Number(ctx.query.width as string)
+    const workspaceId = await checkSecurity(ctx, space, tokenSecret)
+    if (workspaceId === undefined) return
     const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
+    if (!isNaN(width)) {
+      const file = await getImage(storage, space + key, width)
+      ctx.status = 200
+      if (file.type !== undefined) {
+        ctx.set('Content-Type', file.type)
+      }
+      ctx.body = file.body
+      return
+    }
     const link = await storage.getDownloadLink(space + key, fileName)
     ctx.redirect(link)
   })
@@ -126,7 +105,37 @@ export function createFileServer (
   }
 }
 
-async function checkSecurity (accountId: Ref<Account>, workspaceId: string, space: Ref<Space>): Promise<boolean> {
+async function getImage (storage: S3Storage, key: string, width: number): Promise<File> {
+  const image = imageCache.get(key + width.toString())
+  if (image !== undefined) return image
+  const { body, type } = await storage.getFile(key)
+  const buffer = await sharp(body).resize({ width, withoutEnlargement: true }).toBuffer()
+  const res = {
+    body: buffer,
+    type
+  }
+  imageCache.set(key + width.toString(), res)
+  return res
+}
+
+async function checkSecurity (ctx: Context, space: Ref<Space>, tokenSecret: string): Promise<string | undefined> {
+  const token = ctx.cookies.get('token')
+  if (token === undefined) {
+    ctx.status = 401
+    ctx.body = 'Unauthorized'
+    return undefined
+  }
+  const { accountId, workspaceId } = decodeToken(tokenSecret, token)
+  const allowed = await checkSpaceSecurity(accountId, workspaceId, space)
+  if (!allowed) {
+    ctx.status = 401
+    ctx.body = 'Unauthorized'
+    return undefined
+  }
+  return workspaceId
+}
+
+async function checkSpaceSecurity (accountId: Ref<Account>, workspaceId: string, space: Ref<Space>): Promise<boolean> {
   let currentWorkspace = workspaces.get(accountId)
   if (currentWorkspace === undefined) {
     const clientId = generateId()

@@ -40,7 +40,7 @@ async function findExternalPresentation (
         matcher: () => {
           result = {
             component: chunter.component.OembedPreview,
-            props: { href: url, title: reference.title, oembedHost: 'http://www.youtube.com/oembed' }
+            props: { href: url, title: reference.title, oembedHost: 'https://www.youtube.com/oembed' }
           }
         }
       })

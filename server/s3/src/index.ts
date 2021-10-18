@@ -24,6 +24,14 @@ export type Body = Buffer | Uint8Array | Blob
 /**
  * @public
  */
+export interface File {
+  body: Buffer
+  type: string | undefined
+}
+
+/**
+ * @public
+ */
 export class S3Storage {
   private readonly client: S3
   private readonly bucket: string
@@ -94,5 +102,17 @@ export class S3Storage {
       ResponseContentDisposition: `attachment; filename =${filename}`
     }
     return await this.client.getSignedUrlPromise('getObject', params)
+  }
+
+  async getFile (key: string): Promise<File> {
+    const params = {
+      Bucket: this.bucket,
+      Key: key
+    }
+    const response = await this.client.getObject(params).promise()
+    return {
+      body: response.Body as Buffer,
+      type: response.Metadata?.['content-type']
+    }
   }
 }

@@ -75,6 +75,39 @@ describe('s3', () => {
     req.end()
   })
 
+  it('check download file', async (done) => {
+    const fileName = 'testFile2'
+    client = await S3Storage.create(accessKey, secret, endpoit, bucket)
+    expect.assertions(2)
+    fs.writeFileSync(fileName, 'testText')
+    const file = fs.readFileSync(`./${fileName}`)
+    const uploadLink = await client.getUploadLink(fileName, '')
+    const path = new url.URL(uploadLink)
+    expect(uploadLink.length).toBeGreaterThan(0)
+
+    const options: http.RequestOptions = {
+      host: path.hostname,
+      path: path.pathname + path.search,
+      port: path.port,
+      method: 'PUT',
+      headers: {
+        'Content-Length': Buffer.byteLength(file)
+      }
+    }
+
+    const req = http.request(options, () => {
+      // eslint-disable-next-line
+      void client.getFile(fileName).then((res) => {
+        expect(res).toEqual(file)
+        fs.unlinkSync(`./${fileName}`)
+        done()
+      })
+    })
+    req.write(file)
+    req.end()
+    await client.remove(fileName)
+  })
+
   it('check remove', async (done) => {
     expect.assertions(1)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)

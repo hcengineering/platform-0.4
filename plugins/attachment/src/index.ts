@@ -65,7 +65,8 @@ const attachment = plugin(
     string: {
       Attachment: '' as IntlString,
       Attachments: '' as IntlString,
-      AddAttachment: '' as IntlString
+      AddAttachment: '' as IntlString,
+      PreviewNotAvailable: '' as IntlString
     },
     metadata: {
       FilesUrl: '' as Metadata<string>
