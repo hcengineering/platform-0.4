@@ -30,6 +30,8 @@ export async function demoAccount (builder: DemoBuilder, accounts = 11): Promise
       {
         email: faker.internet.email(),
         name: faker.internet.userName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
         avatar: faker.image.avatar()
       },
       accountId,

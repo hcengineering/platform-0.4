@@ -36,9 +36,11 @@
 
   type ProgressState = { max: number; value: number; color: string }
 
-  $: taskUpdater = client.query(taskUpdater, objectClass, { _id: objectId }, (result) => {
-    task = result.shift()
-  })
+  $: if (objectClass !== undefined) {
+    taskUpdater = client.query(taskUpdater, objectClass, { _id: objectId }, (result) => {
+      task = result.shift()
+    })
+  }
 
   $: if (task?.assignee !== undefined) {
     taskAssignee = client.query(taskAssignee, core.class.Account, { _id: task.assignee }, (acc) => {

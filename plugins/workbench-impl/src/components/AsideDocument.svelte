@@ -45,12 +45,17 @@
       core.class.DocumentPresenter,
       { objectClass: selectedDocument.document._class },
       (pr) => {
+        let found = false
         for (const p of pr) {
           for (const pp of p.presentation ?? []) {
             if (pp.mode === PresentationMode.Edit) {
               editPresenter = pp
+              found = true
             }
           }
+        }
+        if (!found) {
+          editPresenter = undefined
         }
       }
     )
