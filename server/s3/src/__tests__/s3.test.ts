@@ -98,7 +98,7 @@ describe('s3', () => {
     const req = http.request(options, () => {
       // eslint-disable-next-line
       void client.getFile(fileName).then((res) => {
-        expect(res).toEqual(file)
+        expect(res.body).toEqual(file)
         fs.unlinkSync(`./${fileName}`)
         done()
       })
