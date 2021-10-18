@@ -13,15 +13,12 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import { EditBox, Card, Grid, ToggleWithLabel } from '@anticrm/ui'
 
   import { getClient } from '@anticrm/workbench'
 
   import chunter from '../plugin'
   import core from '@anticrm/core'
-
-  const dispatch = createEventDispatcher()
 
   let name: string = ''
   const description: string = ''
@@ -40,15 +37,7 @@
   }
 </script>
 
-<Card
-  label={chunter.string.CreateChannel}
-  okAction={createChannel}
-  on:close
-  canSave={!!name}
-  on:update={(ev) => {
-    dispatch('update', ev.detail)
-  }}
->
+<Card label={chunter.string.CreateChannel} okAction={createChannel} on:close canSave={!!name}>
   <Grid column={1} rowGap={20}>
     <EditBox label={chunter.string.ChannelName} bind:value={name} focus />
     <!-- <TextArea label={chunter.string.ChannelDescription} bind:value={description} /> -->

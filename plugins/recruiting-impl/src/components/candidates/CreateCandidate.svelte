@@ -60,9 +60,6 @@
   label={recruiting.string.AddCandidate}
   canSave={candidate.firstName.length > 0 && candidate.lastName.length > 0}
   okAction={create}
-  on:update={(ev) => {
-    dispatch('update', ev.detail)
-  }}
   on:close={() => dispatch('close')}
 >
   <div class="flex-row-center">

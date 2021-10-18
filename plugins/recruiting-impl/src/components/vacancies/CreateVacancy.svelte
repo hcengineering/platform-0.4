@@ -67,15 +67,7 @@
   <VacancyEditor bind:vacancy />
 </Dialog> -->
 
-<Card
-  label={recruiting.string.AddVacancy}
-  canSave={true}
-  okAction={createVacancy}
-  on:update={(ev) => {
-    dispatch('update', ev.detail)
-  }}
-  on:close={() => dispatch('close')}
->
+<Card label={recruiting.string.AddVacancy} canSave={true} okAction={createVacancy} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
     <VacancyEditor bind:vacancy />
   </Grid>

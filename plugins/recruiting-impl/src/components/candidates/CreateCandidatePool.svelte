@@ -13,7 +13,6 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import core from '@anticrm/core'
   import type { Doc } from '@anticrm/core'
   import { EditBox, Card, Grid, ToggleWithLabel } from '@anticrm/ui'
@@ -22,7 +21,6 @@
   import recruiting from '@anticrm/recruiting'
 
   const client = getClient()
-  const dispatch = createEventDispatcher()
 
   const pool: Omit<CandidatePoolSpace, keyof Doc> = {
     name: '',
@@ -36,15 +34,7 @@
   }
 </script>
 
-<Card
-  label={recruiting.string.AddPoolSpace}
-  okAction={createPool}
-  on:close
-  canSave={!!pool.name}
-  on:update={(ev) => {
-    dispatch('update', ev.detail)
-  }}
->
+<Card label={recruiting.string.AddPoolSpace} okAction={createPool} on:close canSave={!!pool.name}>
   <Grid column={1} rowGap={20}>
     <EditBox label={recruiting.string.Name} bind:value={pool.name} focus />
     <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->

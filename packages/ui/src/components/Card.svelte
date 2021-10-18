@@ -16,7 +16,7 @@
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
 
-  import { afterUpdate, createEventDispatcher } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
 
   import ui from '..'
   import Label from './Label.svelte'
@@ -29,8 +29,6 @@
   export let canSave: boolean = false
 
   const dispatch = createEventDispatcher()
-  // Updated Card content
-  afterUpdate(() => { dispatch('update') })
 </script>
 
 <form class="card-container" on:submit|preventDefault={() => {}}>

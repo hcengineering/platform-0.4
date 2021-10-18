@@ -30,7 +30,8 @@
   let modalOHTML: HTMLElement
   let showOverlay: boolean = false
   let maxHeight: number = 0
-  let lastUpdate: number = 0
+  let clientWidth: number = 0
+  let clientHeight: number = 0
 
   function close (result: any) {
     if (onClose !== undefined) onClose(result)
@@ -90,30 +91,14 @@
   afterUpdate(() => {
     fitPopup()
   })
-  $: if (lastUpdate) fitPopup()
+  $: if (clientWidth || clientHeight) fitPopup()
 </script>
 
-<div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
+<div class="popup" bind:this={modalHTML} bind:clientWidth bind:clientHeight style={`z-index: ${zIndex + 1};`}>
   {#if typeof is === 'string'}
-    <Component
-      {is}
-      {props}
-      {maxHeight}
-      on:update={(ev) => {
-        lastUpdate = ev.detail
-      }}
-      on:close={(ev) => close(ev.detail)}
-    />
+    <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
   {:else}
-    <svelte:component
-      this={is}
-      {...props}
-      {maxHeight}
-      on:update={(ev) => {
-        lastUpdate = ev.detail
-      }}
-      on:close={(ev) => close(ev.detail)}
-    />
+    <svelte:component this={is} {...props} {maxHeight} on:close={(ev) => close(ev.detail)} />
   {/if}
 </div>
 <div
