@@ -44,8 +44,13 @@ interface Query {
   result: Doc[] | Promise<FindResult<Doc>>
   total: number
   options?: FindOptions<Doc>
-  callback: (result: FindResult<Doc>) => void
+  callback: (result: FindResult<Doc>, reason?: any) => void
 }
+
+/**
+ * @public
+ */
+export type QueryRejectHandler = (reason?: any) => void
 
 /**
  * @public
@@ -54,12 +59,18 @@ export interface Queriable {
   query: <T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: FindResult<T>) => void,
-    options?: FindOptions<T>
+    callback: (result: FindResult<T>, reason?: any) => void,
+    options?: FindOptions<T>,
+    reject?: QueryRejectHandler
   ) => () => void
 
   notifyTx: (tx: Tx) => Promise<void>
 }
+
+/**
+ * @public
+ */
+export type QueryUnsubscribe = () => void
 
 /**
  * @public
@@ -100,10 +111,12 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   query<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: FindResult<T>) => void,
-    options?: FindOptions<T>
-  ): () => void {
+    callback: (result: FindResult<T>, reason?: any) => void,
+    options?: FindOptions<T>,
+    reject?: QueryRejectHandler
+  ): QueryUnsubscribe {
     const result = this.client.findAll(_class, query, options)
+    const createErr = new Error()
     const q: Query = {
       _id: generateId(),
       _class,
@@ -114,15 +127,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       callback: callback as (result: FindResult<Doc>) => void
     }
     this.queries.set(q._id, q)
-    result
-      .then((res) => {
-        q.result = copy(res)
-        q.total = res.total
-        q.callback(copy(res))
-      })
-      .catch((err) => {
-        console.log('failed to update Live Query: ', err)
-      })
+    result.then(newThenProcessor<T>(q)).catch(newCatchProcessor(q, reject, createErr))
 
     return () => {
       this.queries.delete(q._id)
@@ -283,5 +288,28 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
       }
     }
     q.callback(Object.assign(copy(q.result), { total: q.total }))
+  }
+}
+function newCatchProcessor (
+  q: Query,
+  reject: QueryRejectHandler | undefined,
+  createErr: Error
+): ((reason: any) => void | PromiseLike<void>) | null | undefined {
+  return (err) => {
+    if (reject !== undefined) {
+      reject?.(err)
+    } else {
+      console.error('Failed to update live query:', { _class: q._class, query: q.query, err }, createErr.stack)
+    }
+  }
+}
+
+function newThenProcessor<T extends Doc> (
+  q: Query
+): ((value: FindResult<T>) => void | PromiseLike<void>) | null | undefined {
+  return (res) => {
+    q.result = copy(res)
+    q.total = res.total
+    q.callback(copy(res))
   }
 }

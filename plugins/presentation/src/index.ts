@@ -40,7 +40,11 @@ class LiveQueryImpl<T extends Doc> {
   oldOptions: FindOptions<T> | undefined
   unsubscribe?: UnsubscribeFunc
 
-  constructor (private readonly client: () => Promise<Client>, private readonly callback: (result: T[]) => void) {
+  constructor (
+    private readonly client: () => Promise<Client>,
+    private readonly callback: (result: T[]) => void,
+    readonly stack?: string
+  ) {
     onDestroy(() => {
       this.unsubscribe?.()
       this.unsubscribe = undefined
@@ -58,10 +62,12 @@ class LiveQueryImpl<T extends Doc> {
     this.oldOptions = options
     this.client()
       .then((client) => {
-        this.unsubscribe = client.query(newClass, newQuery, this.callback, options)
+        this.unsubscribe = client.query(newClass, newQuery, this.callback, options, (reason) => {
+          console.error('Query failed:', reason, this.stack)
+        })
       })
       .catch((reason) => {
-        console.error(reason)
+        console.error('Query failed:', reason, this.stack)
       })
   }
 
@@ -185,7 +191,7 @@ export class PresentationClient implements Storage, TxOperations {
     callback: (result: T[]) => void,
     options?: FindOptions<T>
   ): QueryUpdater<T> {
-    const lQuery = new LiveQueryImpl<T>(this.client, callback)
+    const lQuery = new LiveQueryImpl<T>(this.client, callback, new Error().stack)
     lQuery.update(_class, query, options)
 
     return {

@@ -53,3 +53,22 @@ export async function startInfoServer (port: number, security: SecurityOptions):
     }
   }
 }
+
+function toLen (val: string, len = 50): string {
+  while (val.length < len) {
+    val += ' '
+  }
+  return val
+}
+
+let prevInfo = ''
+export function printInfo (): void {
+  const val = getMeasurements()
+    .filter((m) => m.total > 1)
+    .map((m) => `${toLen(m.name)}: avg ${m.avg} total: ${m.total} ops: ${m.ops}`.trim())
+    .join('\n')
+  if (prevInfo !== val) {
+    prevInfo = val
+    console.log('\nStatistics:\n', val)
+  }
+}

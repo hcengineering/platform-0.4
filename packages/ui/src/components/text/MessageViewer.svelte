@@ -153,6 +153,8 @@
     <svelte:self message={c} {refAction} />
   {/each}
   <!---->
+{:else if message.type === MessageNodeType.image}
+  <img src={message.attrs?.src} alt={message.attrs?.alt} width={'400px'} />
 {:else if message.type === MessageNodeType.ordered_list}
   <ol type="1" start={style.orderStart}>
     {#each messageContent(message) as c}

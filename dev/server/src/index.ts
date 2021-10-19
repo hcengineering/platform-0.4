@@ -26,9 +26,11 @@ import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 import { startFileServer } from './file'
-import { startInfoServer } from './info'
+import { printInfo, startInfoServer } from './info'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
+const LOG_TR = Boolean(process.env.LOG_TRANSACTIONS)
+const LOG_R = Boolean(process.env.LOG_REQUESTS)
 
 const john = 'john.appleseed@gmail.com'
 const brian = 'brian.appleseed@gmail.com'
@@ -52,20 +54,22 @@ async function start (): Promise<void> {
     ca: readFileSync('../certificates/RootCA.crt').toString()
   }
 
-  const s = await startServer('localhost', 18080, 'secret', { logRequests: true, logTransactions: true, security })
+  const s = await startServer('localhost', 18080, 'secret', { logRequests: LOG_R, logTransactions: LOG_TR, security })
   const fileServer = startFileServer(18082, 'secret', security)
 
   const { accounts, shutdown: authShutdown } = await startAuthServer(3000, dbUri, 'secret', security)
 
   const { shutdown: infoShutdown } = await startInfoServer(3001, security)
 
+  const cl = setInterval(printInfo, 10000)
   const close = (): void => {
+    clearInterval(cl)
     fileServer.shutdown()
     s.shutdown()
-    void shutdown()
     void authShutdown()
     void infoShutdown()
     fileServer.shutdown()
+    void shutdown().then(() => process.exit(0))
   }
   process.on('SIGINT', close)
   process.on('SIGTERM', close)

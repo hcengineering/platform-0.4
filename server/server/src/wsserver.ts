@@ -86,6 +86,9 @@ function withLogging (
   accountId: Ref<Account>,
   details: AccountDetails
 ): CoreClient {
+  if (options.logRequests || options.logTransactions) {
+    console.info('Logging enabled')
+  }
   return {
     findAll: async (_class, query, foptions) => {
       const resultTx = clientStorage.findAll(_class, query, foptions)

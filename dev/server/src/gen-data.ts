@@ -15,17 +15,7 @@
 
 import regCalendarActions from '@anticrm/calendar-action'
 import regCalendarMappers from '@anticrm/calendar-mappers'
-import core, {
-  Class,
-  Data,
-  Doc,
-  getMeasurements,
-  measureAsync,
-  newTxCreateDoc,
-  Ref,
-  Space,
-  TxProcessor
-} from '@anticrm/core'
+import core, { Class, Data, Doc, measureAsync, newTxCreateDoc, Ref, Space, TxProcessor } from '@anticrm/core'
 import { Account } from '@anticrm/core/src/classes'
 import builder from '@anticrm/model-all'
 import { demoAccount, DemoBuilder, demoChunter, demoTask } from '@anticrm/model-dev'
@@ -34,6 +24,7 @@ import regRecruitingActions from '@anticrm/recruiting-action'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import { assignWorkspace } from '@anticrm/server'
 import { createWorkspace, deleteWorkspace } from '@anticrm/workspaces'
+import { printInfo } from './info'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -74,21 +65,7 @@ async function start (): Promise<void> {
     }
   }
 
-  function toLen (val: string, len = 50): string {
-    while (val.length < len) {
-      val += ' '
-    }
-    return val
-  }
-
-  const printInfo = (): void => {
-    const val = getMeasurements()
-      .filter((m) => m.total > 1)
-      .map((m) => `${toLen(m.name)}: avg ${m.avg} total: ${m.total} ops: ${m.ops}`.trim())
-      .join('\n')
-    console.log('\nStatistics:\n', val)
-  }
-  setInterval(printInfo, 5000)
+  const cl = setInterval(printInfo, 5000)
 
   const d1 = Date.now()
   console.info('Generate accounts')
@@ -108,6 +85,7 @@ async function start (): Promise<void> {
 
   await workspace.waitDDComplete()
   printInfo()
+  clearInterval(cl)
   process.exit(0)
 }
 console.log('Starting Default workspace data generation...')
