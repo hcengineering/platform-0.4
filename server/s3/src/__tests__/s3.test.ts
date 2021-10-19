@@ -108,6 +108,38 @@ describe('s3', () => {
     await client.remove(fileName)
   })
 
+  it('check get image', async (done) => {
+    expect.assertions(2)
+    client = await S3Storage.create(accessKey, secret, endpoit, bucket)
+    const image = fs.readFileSync('./src/__tests__/testImage.jpg')
+    const uploadLink = await client.getUploadLink('testImage', 'image/jpeg')
+    const path = new url.URL(uploadLink)
+
+    const options: http.RequestOptions = {
+      host: path.hostname,
+      path: path.pathname + path.search,
+      port: path.port,
+      method: 'PUT',
+      headers: {
+        'Content-Length': Buffer.byteLength(image)
+      }
+    }
+
+    const req = http.request(options, () => {
+      // eslint-disable-next-line
+      void client.getImage('testImage', 100).then(async (file) => {
+        const hashedFile = await client.getImage('testImage', 100)
+        expect(file).toEqual(hashedFile)
+        const bigFile = await client.getImage('testImage', 200)
+        expect(file).not.toEqual(bigFile)
+        await client.remove('testImage')
+        done()
+      })
+    })
+    req.write(image)
+    req.end()
+  })
+
   it('check remove', async (done) => {
     expect.assertions(1)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
