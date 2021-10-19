@@ -98,7 +98,7 @@ describe('s3', () => {
     const req = http.request(options, () => {
       // eslint-disable-next-line
       void client.getFile(fileName).then((res) => {
-        expect(res.body).toEqual(file)
+        expect(res?.body).toEqual(file)
         fs.unlinkSync(`./${fileName}`)
         done()
       })
@@ -109,7 +109,7 @@ describe('s3', () => {
   })
 
   it('check get image', async (done) => {
-    expect.assertions(2)
+    expect.assertions(3)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     const image = fs.readFileSync('./src/__tests__/testImage.jpg')
     const uploadLink = await client.getUploadLink('testImage', 'image/jpeg')
@@ -125,6 +125,9 @@ describe('s3', () => {
       }
     }
 
+    const notFoundFile = await client.getImage('testImage', 100)
+    expect(notFoundFile).toBeUndefined()
+
     const req = http.request(options, () => {
       // eslint-disable-next-line
       void client.getImage('testImage', 100).then(async (file) => {
@@ -133,6 +136,8 @@ describe('s3', () => {
         const bigFile = await client.getImage('testImage', 200)
         expect(file).not.toEqual(bigFile)
         await client.remove('testImage')
+        await client.remove('testImage100')
+        await client.remove('testImage200')
         done()
       })
     })

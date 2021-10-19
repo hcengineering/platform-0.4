@@ -36,7 +36,6 @@ export interface File {
 export class S3Storage {
   private readonly client: S3
   private readonly bucket: string
-  private readonly imageCache: Map<string, File> = new Map<string, File>()
 
   private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string) {
     this.bucket = bucket
@@ -106,28 +105,44 @@ export class S3Storage {
     return await this.client.getSignedUrlPromise('getObject', params)
   }
 
-  async getFile (key: string): Promise<File> {
+  async getFile (key: string): Promise<File | undefined> {
     const params = {
       Bucket: this.bucket,
       Key: key
     }
-    const response = await this.client.getObject(params).promise()
-    return {
-      body: response.Body as Buffer,
-      type: response.Metadata?.['content-type']
+    try {
+      const response = await this.client.getObject(params).promise()
+      return {
+        body: response.Body as Buffer,
+        type: response.Metadata?.['content-type']
+      }
+    } catch (error: any) {
+      if (error.statusCode === 404) return undefined
+      throw error
     }
   }
 
-  async getImage (key: string, width: number): Promise<File> {
-    const image = this.imageCache.get(key + width.toString())
+  async uploadFile (key: string, file: File): Promise<void> {
+    const params = {
+      Bucket: this.bucket,
+      Key: key,
+      ContentType: file.type,
+      Body: file.body
+    }
+    await this.client.upload(params).promise()
+  }
+
+  async getImage (key: string, width: number): Promise<File | undefined> {
+    const image = await this.getFile(key + width.toString())
     if (image !== undefined) return image
-    const { body, type } = await this.getFile(key)
-    const buffer = await sharp(body).resize({ width, withoutEnlargement: true }).toBuffer()
+    const file = await this.getFile(key)
+    if (file === undefined) return undefined
+    const buffer = await sharp(file.body).resize({ width, withoutEnlargement: true }).toBuffer()
     const res = {
       body: buffer,
-      type
+      type: file.type
     }
-    this.imageCache.set(key + width.toString(), res)
+    await this.uploadFile(key + width.toString(), res)
     return res
   }
 }
