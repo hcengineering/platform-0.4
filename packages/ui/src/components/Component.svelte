@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { afterUpdate, createEventDispatcher } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { getResource } from '@anticrm/platform'
   import type { AnyComponent } from '@anticrm/status'
 
@@ -28,9 +28,6 @@
   $: component = getResource(is)
 
   const dispatch = createEventDispatcher()
-  afterUpdate(() => {
-    dispatch('update', Date.now())
-  })
 </script>
 
 {#await component}
@@ -46,9 +43,6 @@
       on:message
       on:close={(ev) => {
         dispatch('close', ev.detail)
-      }}
-      on:update={(ev) => {
-        dispatch('update', ev.detail)
       }}
     />
   </ErrorBoundary>

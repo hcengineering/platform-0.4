@@ -14,7 +14,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { afterUpdate } from 'svelte'
+  import { afterUpdate, onMount } from 'svelte'
   import Component from './Component.svelte'
   import type { UIComponent } from '@anticrm/status'
   import type { PopupAlignment } from '../types'
@@ -30,8 +30,6 @@
   let modalOHTML: HTMLElement
   let showOverlay: boolean = false
   let maxHeight: number = 0
-  let clientWidth: number = 0
-  let clientHeight: number = 0
 
   function close (result: any) {
     if (onClose !== undefined) onClose(result)
@@ -88,13 +86,17 @@
     }
   }
 
-  afterUpdate(() => {
-    fitPopup()
+  afterUpdate(() => fitPopup())
+  onMount(() => {
+    if (modalHTML) {
+      const resizeObserver = new ResizeObserver(() => fitPopup())
+      resizeObserver.observe(modalHTML)
+    }
   })
-  $: if (clientWidth || clientHeight) fitPopup()
 </script>
 
-<div class="popup" bind:this={modalHTML} bind:clientWidth bind:clientHeight style={`z-index: ${zIndex + 1};`}>
+<svelte:window on:resize={fitPopup} />
+<div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
   {#if typeof is === 'string'}
     <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
   {:else}
