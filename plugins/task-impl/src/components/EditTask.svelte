@@ -46,7 +46,7 @@
   import { Attachments } from '@anticrm/attachment-impl'
 
   const client = getClient()
-  const notificationClient = NotificationClient.get(client)
+  const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
   export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()

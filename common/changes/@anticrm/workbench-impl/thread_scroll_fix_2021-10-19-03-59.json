@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "separated notification client and notification handler ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

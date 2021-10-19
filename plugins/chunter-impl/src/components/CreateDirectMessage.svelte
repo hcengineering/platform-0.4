@@ -29,7 +29,7 @@
   import { afterUpdate } from 'svelte'
 
   const client = getClient()
-  const notificationClient = NotificationClient.get(client)
+  const notificationClient = new NotificationClient(client)
 
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []

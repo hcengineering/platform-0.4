@@ -28,7 +28,7 @@
   export let spaceLastViews: SpaceLastViews | undefined
 
   const client = getClient()
-  const notificationClient = NotificationClient.get(client)
+  const notificationClient = new NotificationClient(client)
 
   let div: HTMLElement
 

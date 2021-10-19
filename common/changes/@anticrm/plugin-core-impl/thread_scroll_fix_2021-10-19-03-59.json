@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/plugin-core-impl",
+      "comment": "separated notification client and notification handler ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/plugin-core-impl"
+}

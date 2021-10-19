@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "separated notification client and notification handler",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl"
+}
