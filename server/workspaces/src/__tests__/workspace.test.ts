@@ -84,6 +84,35 @@ describe('workspaces', () => {
     const collections = await client.db('ws-my').collections()
     expect(collections.length).toEqual(0)
   })
+
+  it('do not fail on upgrading empty ws', async () => {
+    const client = await getMongoClient(mongoDBUri)
+    const txes = builder.getTxes()
+    await createWorkspace('my', { mongoDBUri, txes: [] })
+
+    // Just one DD instance.
+    txes.push(
+      _createDoc(core.class.DerivedDataDescriptor, {
+        sourceClass: core.class.Class,
+        targetClass: core.class.Title
+      })
+    )
+
+    await upgradeWorkspace('my', { mongoDBUri, txes })
+    expect(
+      await client
+        .db('ws-my')
+        .collection(DOMAIN_TX as string)
+        .find({})
+        .count()
+    ).toBeGreaterThan(0)
+
+    await deleteWorkspace('my', { mongoDBUri, txes: [] })
+
+    const collections = await client.db('ws-my').collections()
+    expect(collections.length).toEqual(0)
+  })
+
   it('delete missing workspace', async () => {
     await deleteWorkspace('my-missing', { mongoDBUri, txes: [] })
   })
