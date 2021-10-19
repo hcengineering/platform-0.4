@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-action",
+      "comment": "Get rid of direct core-js dependency",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-action"
+}

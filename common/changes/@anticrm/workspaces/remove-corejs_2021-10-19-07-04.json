@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workspaces",
+      "comment": "Check first tx exists",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workspaces"
+}
