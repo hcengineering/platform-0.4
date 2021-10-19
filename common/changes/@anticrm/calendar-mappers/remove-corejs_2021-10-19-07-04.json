@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-mappers",
+      "comment": "Get rid of direct core-js dependency",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-mappers"
+}

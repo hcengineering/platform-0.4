@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/action-impl",
+      "comment": "Get rid of direct core-js dependency",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/action-impl"
+}
