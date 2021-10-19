@@ -68,6 +68,7 @@ module.exports = {
       },
       {
         test: /\.svelte$/,
+        exclude: /node_modules\/.*\.svelte/,
         use: {
           loader: 'svelte-loader',
           options: {
@@ -77,7 +78,16 @@ module.exports = {
           }
         }
       },
-
+      {
+        test: /node_modules\/.*\.svelte/,
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            emitCss: false,
+            preprocess: require('svelte-preprocess')()
+          }
+        }
+      },
       {
         test: /\.css$/,
         use: prod

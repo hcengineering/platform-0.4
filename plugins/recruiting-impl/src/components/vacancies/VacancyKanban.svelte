@@ -127,6 +127,7 @@
   {items}
   {states}
   {transitions}
+  cardDelay={100}
   cardComponent={ApplicantCard}
   on:drop={onDrop}
   on:stateReorder={onStateReorder}

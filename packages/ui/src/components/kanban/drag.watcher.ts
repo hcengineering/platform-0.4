@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 // Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@ import { generateId } from '@anticrm/core'
 interface BaseItem {
   id: string
   type: string
-  node: HTMLElement
+  node: HTMLElement | (() => HTMLElement | undefined)
 }
 
 export interface DragOverListener extends BaseItem {
@@ -28,7 +29,8 @@ interface CompleteDragOverListener extends DragOverListener {
   internalID: string
 }
 
-export type HoveredItems = BaseItem[]
+type HoveredItem = BaseItem & { node: HTMLElement }
+export type HoveredItems = HoveredItem[]
 
 export default class DragWatcher {
   private readonly listeners = new Map<string, CompleteDragOverListener>()
@@ -80,6 +82,14 @@ export default class DragWatcher {
     }
   }
 
+  getNode (item: BaseItem): HTMLElement | undefined {
+    if (typeof item.node === 'function') {
+      return item.node()
+    }
+
+    return item.node
+  }
+
   dragMove (dragged: string, x: number, y: number): void {
     const draggedItem = this.draggables.get(dragged)
 
@@ -92,7 +102,11 @@ export default class DragWatcher {
     this.dragged = dragged
 
     const candidates = [...this.listeners.values()].filter((c) => c.id !== draggedItem.id)
-    const target = candidates.filter((c) => this.isPointInside(c.node, x, y))
+    const target = candidates.filter((c) => {
+      const node = this.getNode(c)
+
+      return node !== undefined && this.isPointInside(node, x, y)
+    })
 
     const missing = [...this.hovered].filter((h) => !target.some((t) => t.internalID === h))
 
@@ -142,6 +156,14 @@ export default class DragWatcher {
   getHoveredItems (): HoveredItems {
     return [...this.hovered]
       .map((x) => this.listeners.get(x))
-      .filter((x): x is CompleteDragOverListener => x !== undefined)
+      .map((listener) =>
+        listener === undefined
+          ? undefined
+          : ({
+              ...listener,
+              node: this.getNode(listener)
+            } as HoveredItem)
+      )
+      .filter((x): x is HoveredItem => x?.node !== undefined)
   }
 }

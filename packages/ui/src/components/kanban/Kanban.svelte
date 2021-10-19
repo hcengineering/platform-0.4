@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher, setContext } from 'svelte'
+  import { createEventDispatcher, setContext, tick } from 'svelte'
   import { writable } from 'svelte/store'
 
   import { generateId } from '@anticrm/core'
@@ -36,6 +36,7 @@
   export let states: KanbanState[] = []
   export let transitions: Map<string, Set<string>> | undefined = undefined
   export let cardComponent: UIComponent
+  export let cardDelay: number = 0
 
   // Temporary flag, need to remove as soon as tasks plugin be updated
   export let panelDragDisabled = false
@@ -82,7 +83,7 @@
     dragItemState = e.detail.ctx.state
   }
 
-  function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
+  async function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
     dragItemState = undefined
     const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
     const item = e.detail.hoveredItems.find((x) => x.type === ObjectType.Card)
@@ -119,6 +120,9 @@
     items = items
 
     dispatch('drop', { item: e.detail.id, idx, state: panel.id })
+
+    await tick()
+    e.detail.reset()
   }
 
   function onPanelDragStart (e: CustomEvent<DragStartEvent>) {
@@ -130,7 +134,7 @@
     }
   }
 
-  function onPanelDragEnd (e: CustomEvent<DragEndEvent>) {
+  async function onPanelDragEnd (e: CustomEvent<DragEndEvent>) {
     const panel = e.detail.hoveredItems.find((x) => x.type === ObjectType.Panel)
     const root = e.detail.hoveredItems.find((x) => x.type === ObjectType.Root)
     const state = states.find((x) => x._id === panelDragData?.id)
@@ -149,6 +153,8 @@
     dispatch('stateReorder', { item: e.detail.id, idx })
 
     panelDragData = undefined
+    await tick()
+    e.detail.reset()
   }
 
   function onPanelDragOver (e: CustomEvent<DragOverEvent>) {
@@ -224,6 +230,7 @@
           id={state._id}
           disabled={disabledPanels.has(state._id)}
           items={actualItems[idx]}
+          {cardDelay}
           {cardComponent}
           on:cardDragStart={onCardDragStart}
           on:cardDragEnd={onCardDragEnd}

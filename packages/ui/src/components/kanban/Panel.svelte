@@ -15,13 +15,15 @@
 <script lang="ts">
   import { createEventDispatcher, getContext } from 'svelte'
   import type { Readable } from 'svelte/store'
+
   import type { IntlString, UIComponent } from '@anticrm/status'
 
   import type { KanbanItem } from '../../types'
 
   import Label from '../Label.svelte'
-  import Grid from '../Grid.svelte'
+  import VirtualList, { sty } from '../VirtualList.svelte'
 
+  import DelayedRenderer from './DelayedRenderer.svelte'
   import Card from './Card.svelte'
 
   import { scrollable } from './scrollable'
@@ -32,28 +34,47 @@
   import DragWatcher from './drag.watcher'
   import { ObjectType } from './object.types'
   import type { State as HoverState } from './utils'
+  import { HeightCache } from './height.cache'
 
-  export let title: IntlString
+  export let title: IntlString | string
   export let color: string = '#F28469'
   export let id: string = ''
   export let items: KanbanItem[] = []
   export let cardComponent: UIComponent
   export let disabled: boolean = false
+  export let cardDelay: number
 
   const dispatch = createEventDispatcher()
+  const heightCache = new HeightCache()
+  let dragPreview: HTMLElement
 
   const dragWatcher = getContext<DragWatcher>('dragWatcher')
   const dragCardSize = getContext<Readable<{ width: number; height: number }>>('dragCardSize')
 
   let dragID: string | undefined
-  function onCardDragStart (e: CustomEvent<DragStartEvent>) {
+  let dragInfo: DragEndEvent['dragInfo']
+  function onInitCardDragStart (e: CustomEvent<DragStartEvent>) {
     dragID = e.detail.id
 
     dispatch('cardDragStart', e.detail)
   }
 
+  function onInitCardDragEnd (e: CustomEvent<DragEndEvent>) {
+    if (e.detail.forced && e.detail.node.firstChild !== null) {
+      dragInfo = e.detail.dragInfo
+
+      const clone = e.detail.node.firstChild.cloneNode(true)
+      dragPreview.appendChild(clone)
+    }
+  }
+
   function onCardDragEnd (e: CustomEvent<DragEndEvent>) {
     dragID = undefined
+    dragInfo = undefined
+
+    while (dragPreview.firstChild) {
+      dragPreview.firstChild.remove()
+    }
 
     dispatch('cardDragEnd', e.detail)
   }
@@ -73,6 +94,7 @@
 
     dragOverData = { item, state: e.detail.state }
   }
+
   function onCardDragOverEnd (e: CustomEvent<DragOverEndEvent>) {
     if (dragOverData?.item._id !== e.detail.id) {
       return
@@ -84,7 +106,7 @@
   let shiftIdx = Infinity
   $: if (dragOverData !== undefined) {
     const actualDragOverData = dragOverData
-    const cardIdx = items.findIndex((x) => x._id === actualDragOverData.item._id)
+    const cardIdx = actualItems.findIndex((x) => x._id === actualDragOverData.item._id)
 
     if (cardIdx === -1) {
       shiftIdx = Infinity
@@ -106,6 +128,38 @@
   }
 
   let collapsed: boolean = false
+
+  const GAP_ID = 'GAP_ITEM'
+  let actualItems: KanbanItem[] = []
+  let draggedItem: KanbanItem | undefined
+  $: {
+    actualItems = items.filter((x) => x._id !== dragID)
+    draggedItem = dragID ? items.find((x) => x._id === dragID) : undefined
+
+    if (isHovered) {
+      actualItems = [
+        ...actualItems,
+        {
+          _id: GAP_ID,
+          state: ''
+        }
+      ]
+    }
+
+    actualItems = actualItems
+  }
+
+  const getScrollableNode = (node: HTMLElement): HTMLElement => node.children[1].children[0] as HTMLElement
+
+  let list: any
+  function setHeight (idx: number, height: number) {
+    heightCache.setHeight(idx, height + 10)
+    list.reset()
+  }
+
+  $: if (isHovered) {
+    setHeight(actualItems.length - 1, $dragCardSize.height)
+  }
 </script>
 
 <section class="panel-kanban" class:collapsed class:disabled>
@@ -121,50 +175,72 @@
     <div class="counter">{items.length}</div>
   </div>
   {#if collapsed !== true}
-    <div class="scroll-container">
+    <div class="container">
       <div
-        class="scroll"
-        use:scrollable={{ watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
+        class="full-size-container"
+        use:scrollable={{ watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card], getNode: getScrollableNode }}
         use:hoverable={{ id, type: ObjectType.Panel, watcher: dragWatcher, disabled, allowedTypes: [ObjectType.Card] }}
         on:dragOver={onPanelDragOver}
         on:dragOverEnd={onPanelDragOverEnd}
       >
-        <Grid column={1} rowGap={0}>
-          {#each items as item, itemIdx (item._id)}
-            <div
-              class="card-container"
-              use:draggable={{
-                id: item._id,
-                watcher: dragWatcher,
-                ctx: { state: id },
-                type: ObjectType.Card
-              }}
-              use:hoverable={{
-                id: item._id,
-                watcher: dragWatcher,
-                disabled,
-                type: ObjectType.Card,
-                ctx: { state: id }
-              }}
-              on:dragOver={onCardDragOver}
-              on:dragOverEnd={onCardDragOverEnd}
-              on:dragStart={onCardDragStart}
-              on:dragEnd={onCardDragEnd}
-            >
+        <div
+          bind:this={dragPreview}
+          use:draggable={{
+            id: draggedItem?._id ?? `preview-${id}`,
+            watcher: dragWatcher,
+            ctx: { state: id },
+            dragInfo,
+            type: ObjectType.Card
+          }}
+          on:dragEnd={onCardDragEnd}
+        />
+        <VirtualList bind:this={list} itemCount={actualItems.length} let:items getItemSize={heightCache.getHeight}>
+          {#each items.filter((x) => actualItems[x.index] !== undefined) as item (actualItems[item.index]._id)}
+            {#if actualItems[item.index]._id !== GAP_ID}
               <div
-                class="transformable-card"
-                style={shiftIdx <= itemIdx && item._id !== dragID
-                  ? `transform: translate3d(0px, ${$dragCardSize.height}px, 0px);`
-                  : ''}
+                class="card-container"
+                style={sty(item.style)}
+                use:draggable={{
+                  id: actualItems[item.index]._id,
+                  watcher: dragWatcher,
+                  ctx: { state: id },
+                  type: ObjectType.Card
+                }}
+                use:hoverable={{
+                  id: actualItems[item.index]._id,
+                  watcher: dragWatcher,
+                  disabled,
+                  type: ObjectType.Card,
+                  allowedTypes: [ObjectType.Card],
+                  ctx: { state: id }
+                }}
+                on:dragOver={onCardDragOver}
+                on:dragOverEnd={onCardDragOverEnd}
+                on:dragStart={onInitCardDragStart}
+                on:dragEnd={onInitCardDragEnd}
               >
-                <Card component={cardComponent} doc={item} />
+                <div
+                  class="transformable-card"
+                  style={shiftIdx <= item.index ? `transform: translate3d(0px, ${$dragCardSize.height}px, 0px);` : ''}
+                >
+                  <DelayedRenderer let:ready delay={cardDelay}>
+                    {#if ready}
+                      <Card
+                        component={cardComponent}
+                        doc={actualItems[item.index]}
+                        on:sizeChange={(ev) => {
+                          setHeight(item.index, ev.detail[1])
+                        }}
+                      />
+                    {/if}
+                  </DelayedRenderer>
+                </div>
               </div>
-            </div>
+            {:else}
+              <div style={`height: ${$dragCardSize.height}px;`} />
+            {/if}
           {/each}
-          {#if isHovered}
-            <div style={`height: ${$dragCardSize.height}px;`} />
-          {/if}
-        </Grid>
+        </VirtualList>
       </div>
     </div>
   {/if}
@@ -231,13 +307,13 @@
     border-radius: 50%;
   }
 
-  .scroll-container {
+  .container {
     position: relative;
     width: 100%;
     height: 100%;
   }
 
-  .scroll {
+  .full-size-container {
     position: absolute;
     left: 0;
     right: 0;
@@ -245,23 +321,14 @@
     bottom: 0;
 
     padding: 12px;
-
-    overflow-y: auto;
   }
 
   .card-container {
-    padding: 5px 0;
-
-    &:first-child {
-      padding-top: 0;
-    }
-
-    &:last-child {
-      padding-bottom: 0;
-    }
+    border: 1px;
   }
 
   .transformable-card {
+    height: 100%;
     transition-timing-function: ease-in;
     transition: transform 200ms;
   }
