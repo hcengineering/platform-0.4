@@ -15,6 +15,7 @@
 
 import { S3 } from 'aws-sdk'
 import https from 'https'
+import sharp from 'sharp'
 
 /**
  * @public
@@ -26,7 +27,7 @@ export type Body = Buffer | Uint8Array | Blob
  */
 export interface File {
   body: Buffer
-  type: string | undefined
+  type?: string
 }
 
 /**
@@ -35,6 +36,7 @@ export interface File {
 export class S3Storage {
   private readonly client: S3
   private readonly bucket: string
+  private readonly imageCache: Map<string, File> = new Map<string, File>()
 
   private constructor (accessKey: string, secret: string, endpoint: string, bucket: string, ca?: string) {
     this.bucket = bucket
@@ -114,5 +116,18 @@ export class S3Storage {
       body: response.Body as Buffer,
       type: response.Metadata?.['content-type']
     }
+  }
+
+  async getImage (key: string, width: number): Promise<File> {
+    const image = this.imageCache.get(key + width.toString())
+    if (image !== undefined) return image
+    const { body, type } = await this.getFile(key)
+    const buffer = await sharp(body).resize({ width, withoutEnlargement: true }).toBuffer()
+    const res = {
+      body: buffer,
+      type
+    }
+    this.imageCache.set(key + width.toString(), res)
+    return res
   }
 }
