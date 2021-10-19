@@ -85,11 +85,16 @@ export function createFileServer (
     const storage = await getStorage(workspaceId, uri, accessKey, secret, ca)
     if (!isNaN(width)) {
       const file = await storage.getImage(space + key, width)
-      ctx.status = 200
-      if (file.type !== undefined) {
-        ctx.set('Content-Type', file.type)
+      if (file !== undefined) {
+        ctx.status = 200
+        if (file.type !== undefined) {
+          ctx.set('Content-Type', file.type)
+        }
+        ctx.body = file.body
+      } else {
+        ctx.status = 404
+        ctx.body = 'Not found'
       }
-      ctx.body = file.body
       return
     }
     const link = await storage.getDownloadLink(space + key, fileName)
