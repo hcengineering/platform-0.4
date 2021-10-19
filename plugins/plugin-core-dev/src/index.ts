@@ -16,7 +16,7 @@
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import type { TxOperations } from '@anticrm/core'
 import core, { createClient, withOperations } from '@anticrm/core'
-import { NotificationClient } from '@anticrm/notification'
+import { NotificationHandler } from '@anticrm/notification'
 import regNotificationMappers from '@anticrm/notification-mappers'
 import type { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
@@ -39,7 +39,7 @@ export default async (): Promise<CoreService> => {
       let liveQuery: LiveQuery | undefined
 
       // eslint-disable-next-line prefer-const
-      let notificationClient: NotificationClient | undefined
+      let notificationHandler: NotificationHandler | undefined
 
       await regCalendarMappers()
       await regNotificationMappers()
@@ -54,14 +54,14 @@ export default async (): Promise<CoreService> => {
         },
         (tx) => {
           liveQuery?.notifyTx(tx).catch((err) => console.error(err))
-          notificationClient?.tx(tx)
+          notificationHandler?.tx(tx)
         }
       )
       close = async () => await storage.close()
       liveQuery = new LiveQuery(storage)
 
       client = withOperations(core.account.System, liveQuery)
-      notificationClient = NotificationClient.get(client)
+      notificationHandler = NotificationHandler.get(client)
     }
     return client
   }

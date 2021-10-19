@@ -28,7 +28,7 @@
   import { Label } from '@anticrm/ui'
 
   const client = getClient()
-  const notificationClient = NotificationClient.get(client)
+  const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Message>
   export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()

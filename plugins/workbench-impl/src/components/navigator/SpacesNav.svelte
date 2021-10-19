@@ -25,7 +25,7 @@
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
-  import { NotificationClient } from '@anticrm/notification'
+  import { NotificationHandler } from '@anticrm/notification'
   import type { SpaceLastViews, SpaceSubscribeUpdater, ObjectSubscribeUpdater } from '@anticrm/notification'
   import { onDestroy } from 'svelte'
 
@@ -34,7 +34,7 @@
 
   let spaces: Space[] = []
   const client = getClient()
-  const notificationClient = NotificationClient.get(client)
+  const notificationHandler = NotificationHandler.get(client)
   const router = getRouter<WorkbenchRoute>()
   const accountId = client.accountId()
   let query: QueryUpdater<Space> | undefined
@@ -54,7 +54,7 @@
       ]
       if (model.notification?.spaceClass !== undefined) {
         const targetClass = model.notification?.spaceClass
-        spacesSubscribe = notificationClient.subscribeSpaces(
+        spacesSubscribe = notificationHandler.subscribeSpaces(
           spacesSubscribe,
           spaces.map((s) => s._id),
           targetClass,
@@ -75,7 +75,7 @@
     })
     if (ids.length > 0) {
       const targetClass = model.notification.itemByIdClass
-      itemsSubscribe = notificationClient.subscribeObjects(
+      itemsSubscribe = notificationHandler.subscribeObjects(
         itemsSubscribe,
         ids,
         targetClass,

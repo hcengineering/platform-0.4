@@ -18,12 +18,12 @@ import { getMetadata } from '@anticrm/platform'
 import pluginCore, { Client, CoreService } from '@anticrm/plugin-core'
 import { LiveQuery } from '@anticrm/query'
 import { connect as connectBrowser } from './connection'
-import { NotificationClient } from '@anticrm/notification'
+import { NotificationHandler } from '@anticrm/notification'
 
 let client: (Client & TxOperations) | undefined
 let clientClose: (() => void) | undefined
 let liveQuery: LiveQuery | undefined
-let notificationClient: NotificationClient | undefined
+let notificationHandler: NotificationHandler | undefined
 
 async function doConnect (tx: TxHandler): Promise<CoreClient> {
   const clientUrl = getMetadata(pluginCore.metadata.ClientUrl)
@@ -40,7 +40,7 @@ async function getClient (): Promise<Client> {
   if (client === undefined) {
     console.log('Connecting to server')
     const storage = await createClient(doConnect, (tx) => {
-      notificationClient?.tx(tx)
+      notificationHandler?.tx(tx)
       liveQuery?.notifyTx(tx).catch((err) => console.error(err))
     })
 
@@ -48,7 +48,7 @@ async function getClient (): Promise<Client> {
 
     liveQuery = new LiveQuery(storage)
     client = withOperations(accountId, liveQuery)
-    notificationClient = NotificationClient.get(client)
+    notificationHandler = NotificationHandler.get(client)
     console.log('Registration complete')
   }
   return client

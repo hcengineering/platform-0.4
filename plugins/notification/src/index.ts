@@ -44,7 +44,7 @@ export interface SpaceLastViews extends DerivedData {
 
 export interface NotificationService extends Service {}
 
-let instance: NotificationClient | undefined
+let instance: NotificationHandler | undefined
 
 interface SpaceSubscribe {
   targetClass: Ref<Class<Doc>>
@@ -168,86 +168,7 @@ export class NotificationClient {
   private prevLastViews: SpaceLastViews | undefined
   private readonly readObjects: Set<Ref<Doc>> = new Set<Ref<Doc>>()
 
-  private readonly spaceSubscribes: Map<string, SpaceSubscribe> = new Map<string, SpaceSubscribe>()
-  private readonly objectSubscribes: Map<string, ObjectSubscribe> = new Map<string, ObjectSubscribe>()
-
-  private constructor (private readonly client: Storage & TxOperations) {}
-
-  public static get (client: Storage & TxOperations): NotificationClient {
-    if (instance === undefined) {
-      instance = new NotificationClient(client)
-    }
-    return instance
-  }
-
-  public async tx (tx: Tx): Promise<void> {
-    this.spaceSubscribes.forEach((p) => {
-      void updateSpace(tx, p) // eslint-disable-line no-void
-    })
-    this.objectSubscribes.forEach((p) => {
-      void updateObject(tx, p) // eslint-disable-line no-void
-    })
-  }
-
-  public subscribeSpaces (
-    subscribe: SpaceSubscribeUpdater | undefined,
-    spaces: Array<Ref<Space>>,
-    targetClass: Ref<Class<Doc>>,
-    callback: (map: Map<Ref<Space>, Timestamp>) => void
-  ): SpaceSubscribeUpdater {
-    if (subscribe !== undefined) {
-      subscribe.update(spaces, targetClass)
-      return subscribe
-    }
-    return this.spaceQuery(spaces, targetClass, callback)
-  }
-
-  private spaceQuery (
-    spaces: Array<Ref<Space>>,
-    targetClass: Ref<Class<Doc>>,
-    callback: (map: Map<Ref<Space>, Timestamp>) => void
-  ): SpaceSubscribeUpdater {
-    const lQuery = new SpaceNotification(this.client, callback)
-    lQuery.update(spaces, targetClass, this.spaceSubscribes)
-
-    return {
-      update: (spaces, targetClass) => lQuery.update(spaces, targetClass, this.spaceSubscribes),
-      unsubscribe: () => {
-        lQuery.unsubscribe?.()
-      }
-    }
-  }
-
-  public subscribeObjects (
-    subscribe: ObjectSubscribeUpdater | undefined,
-    ids: Array<Ref<Doc>>,
-    targetClass: Ref<Class<Doc>>,
-    callback: (map: Map<Ref<Doc>, Timestamp>) => void,
-    targetField?: string
-  ): ObjectSubscribeUpdater {
-    if (subscribe !== undefined) {
-      subscribe.update(ids, targetClass, targetField)
-      return subscribe
-    }
-    return this.objectQuery(ids, targetClass, callback, targetField)
-  }
-
-  private objectQuery (
-    ids: Array<Ref<Doc>>,
-    targetClass: Ref<Class<Doc>>,
-    callback: (map: Map<Ref<Doc>, Timestamp>) => void,
-    targetField?: string
-  ): ObjectSubscribeUpdater {
-    const lQuery = new ObjectNotification(this.client, callback)
-    lQuery.update(ids, targetClass, this.objectSubscribes, targetField)
-
-    return {
-      update: (spaces, targetClass) => lQuery.update(spaces, targetClass, this.objectSubscribes, targetField),
-      unsubscribe: () => {
-        lQuery.unsubscribe?.()
-      }
-    }
-  }
+  constructor (private readonly client: Storage & TxOperations) {}
 
   public async before (
     div: HTMLElement,
@@ -357,6 +278,89 @@ export class NotificationClient {
     clearTimeout(this.timeoutId)
     this.timeoutId = undefined
     await this.client.updateDoc(lastViews._class, lastViews.space, lastViews._id, query)
+  }
+}
+
+export class NotificationHandler {
+  private readonly spaceSubscribes: Map<string, SpaceSubscribe> = new Map<string, SpaceSubscribe>()
+  private readonly objectSubscribes: Map<string, ObjectSubscribe> = new Map<string, ObjectSubscribe>()
+
+  private constructor (private readonly client: Storage & TxOperations) {}
+
+  public static get (client: Storage & TxOperations): NotificationHandler {
+    if (instance === undefined) {
+      instance = new NotificationHandler(client)
+    }
+    return instance
+  }
+
+  public async tx (tx: Tx): Promise<void> {
+    this.spaceSubscribes.forEach((p) => {
+      void updateSpace(tx, p) // eslint-disable-line no-void
+    })
+    this.objectSubscribes.forEach((p) => {
+      void updateObject(tx, p) // eslint-disable-line no-void
+    })
+  }
+
+  public subscribeSpaces (
+    subscribe: SpaceSubscribeUpdater | undefined,
+    spaces: Array<Ref<Space>>,
+    targetClass: Ref<Class<Doc>>,
+    callback: (map: Map<Ref<Space>, Timestamp>) => void
+  ): SpaceSubscribeUpdater {
+    if (subscribe !== undefined) {
+      subscribe.update(spaces, targetClass)
+      return subscribe
+    }
+    return this.spaceQuery(spaces, targetClass, callback)
+  }
+
+  private spaceQuery (
+    spaces: Array<Ref<Space>>,
+    targetClass: Ref<Class<Doc>>,
+    callback: (map: Map<Ref<Space>, Timestamp>) => void
+  ): SpaceSubscribeUpdater {
+    const lQuery = new SpaceNotification(this.client, callback)
+    lQuery.update(spaces, targetClass, this.spaceSubscribes)
+
+    return {
+      update: (spaces, targetClass) => lQuery.update(spaces, targetClass, this.spaceSubscribes),
+      unsubscribe: () => {
+        lQuery.unsubscribe?.()
+      }
+    }
+  }
+
+  public subscribeObjects (
+    subscribe: ObjectSubscribeUpdater | undefined,
+    ids: Array<Ref<Doc>>,
+    targetClass: Ref<Class<Doc>>,
+    callback: (map: Map<Ref<Doc>, Timestamp>) => void,
+    targetField?: string
+  ): ObjectSubscribeUpdater {
+    if (subscribe !== undefined) {
+      subscribe.update(ids, targetClass, targetField)
+      return subscribe
+    }
+    return this.objectQuery(ids, targetClass, callback, targetField)
+  }
+
+  private objectQuery (
+    ids: Array<Ref<Doc>>,
+    targetClass: Ref<Class<Doc>>,
+    callback: (map: Map<Ref<Doc>, Timestamp>) => void,
+    targetField?: string
+  ): ObjectSubscribeUpdater {
+    const lQuery = new ObjectNotification(this.client, callback)
+    lQuery.update(ids, targetClass, this.objectSubscribes, targetField)
+
+    return {
+      update: (spaces, targetClass) => lQuery.update(spaces, targetClass, this.objectSubscribes, targetField),
+      unsubscribe: () => {
+        lQuery.unsubscribe?.()
+      }
+    }
   }
 }
 
