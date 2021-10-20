@@ -15,19 +15,19 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { Data, Space } from '@anticrm/core'
-  import { Card, EditBox } from '@anticrm/ui'
+  import { Card } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import AvatarView from './AvatarView.svelte'
+  import CandidateEditor from './CandidateEditor.svelte'
 
   const dispatch = createEventDispatcher()
 
   export let space: Space
   const client = getClient()
 
-  const candidate: Candidate & Data<Required<Candidate>> = {
+  let candidate: Candidate & Data<Required<Candidate>> = {
     firstName: '',
     lastName: '',
     avatar: 'https://robohash.org/prefix?set=set4',
@@ -62,34 +62,7 @@
   okAction={create}
   on:close={() => dispatch('close')}
 >
-  <div class="flex-row-center">
-    <AvatarView src={candidate.avatar} />
-    <div class="flex-col">
-      <div class="name"><EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus /></div>
-      <div class="name"><EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} /></div>
-      <div class="title">
-        <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.employment.position} />
-      </div>
-      <div class="city"><EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} /></div>
-    </div>
-  </div>
+  <CandidateEditor min bind:candidate />
   <svelte:fragment slot="pool">Pool</svelte:fragment>
   <svelte:fragment slot="contacts">Contacts</svelte:fragment>
 </Card>
-
-<style lang="scss">
-  .name {
-    font-weight: 500;
-    font-size: 1.25rem;
-    color: var(--theme-caption-color);
-  }
-  .title,
-  .city {
-    font-weight: 500;
-    font-size: 0.75rem;
-    color: var(--theme-content-accent-color);
-  }
-  .title {
-    margin-top: 8px;
-  }
-</style>
