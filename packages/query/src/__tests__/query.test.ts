@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Doc, Space, TxCreateDoc, TxOperations } from '@anticrm/core'
+import type { Class, Doc, Ref, Space, TxCreateDoc, TxOperations } from '@anticrm/core'
 import core, { createClient, SortingOrder, Storage, withOperations, _genMinModel as getModel } from '@anticrm/core'
 import { LiveQuery } from '..'
 import { connect } from './connection'
@@ -363,6 +363,26 @@ describe('query', () => {
         name: `Sp${index + spaces.length + 1}`
       })
     }
+  })
+
+  it('check query failed', async (done) => {
+    const client = await getClient()
+
+    const spaces = await client.findAll(core.class.Space, {})
+    let attempt = 0
+    client.query<Space>(
+      'do.error:fail' as Ref<Class<Doc>>,
+      {},
+      (result) => {
+        expect(result[0].name).toEqual(`Sp${++attempt}`)
+        if (attempt === spaces.length + 1) done()
+      },
+      {},
+      (reject) => {
+        expect(reject.message).toEqual('class not found: do.error:fail')
+        done()
+      }
+    )
   })
 })
 

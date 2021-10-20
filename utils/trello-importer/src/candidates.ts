@@ -1,9 +1,19 @@
 import core, { Client, generateDocumentDiff, Ref, TxOperations } from '@anticrm/core'
 import { FSM, State } from '@anticrm/fsm'
-import recrutting, { Candidate, CandidatePoolSpace, CandidateStatus } from '@anticrm/recruiting'
-import { TrelloBoard } from './trello'
+import recrutting, { Applicant, Candidate, CandidatePoolSpace, CandidateStatus } from '@anticrm/recruiting'
+import { TrelloAttachment, TrelloBoard } from './trello'
 
-function getName (name: string): {
+/**
+ * @public
+ */
+export interface CandState {
+  state: Ref<State>
+  pos: number
+  idMember?: string
+  applicant?: Ref<Applicant>
+  attachments?: TrelloAttachment[]
+}
+export function getName (name: string): {
   firstName: string
   lastName: string
   prefix?: string
@@ -54,18 +64,21 @@ export async function createUpdateCandidates (
   board: TrelloBoard
 ): Promise<{
     candidates: Candidate[]
-    candidateStates: Map<Ref<Candidate>, { state: Ref<State>, pos: number }>
+    candidateStates: Map<Ref<Candidate>, CandState>
   }> {
   const allCandidates = new Map<Ref<Candidate>, Candidate>(
     Array.from(await client.findAll(recrutting.class.Candidate, { space: candPoolId })).map((c) => [c._id, c])
   )
-  const states = new Map<Ref<Candidate>, { state: Ref<State>, pos: number }>()
+  const states = new Map<Ref<Candidate>, CandState>()
   const clientId = await client.accountId()
   for (const c of board.cards) {
+    if (c.closed) {
+      continue
+    }
     const cid = c.id as Ref<Candidate>
     const { firstName, lastName } = getName(c.name)
 
-    states.set(cid, { state: c.idList as Ref<State>, pos: c.pos })
+    states.set(cid, { state: c.idList as Ref<State>, pos: c.pos, idMember: c.idMembers[0], attachments: c.attachments })
 
     const data: Candidate = {
       _id: cid,
@@ -78,6 +91,7 @@ export async function createUpdateCandidates (
       firstName,
       lastName,
       email: '',
+      avatar: `https://robohash.org/prefix${Number(cid[0]) % 5}?set=set3`,
       address: {},
       employment: {
         position: '',

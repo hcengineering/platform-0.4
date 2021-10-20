@@ -108,6 +108,10 @@ export const Code = component('rpc' as Component, {
   UnknownMethod: '' as StatusCode<{ method: string }>
 })
 
+interface RequestHandle {
+  promise: DeferredPromise<any>
+  stack: any
+}
 /**
  * Process requests and handle responses.
  * Also allow to handle non identified results passed from other side.
@@ -118,7 +122,7 @@ export const Code = component('rpc' as Component, {
  */
 export abstract class RequestProcessor {
   private reqIndex: number = 0
-  private readonly requests = new Map<ReqId, DeferredPromise<any>>()
+  private readonly requests = new Map<ReqId, RequestHandle>()
 
   protected abstract send (request: Request<any>): void
   protected abstract notify (response: Response<any>): void
@@ -128,11 +132,11 @@ export abstract class RequestProcessor {
       const req = this.requests.get(response.id)
       if (req !== undefined) {
         if (response.error !== undefined) {
-          console.error(response.error)
-          req.reject(new PlatformError(response.error))
+          console.error('RPC error', response.error, req.stack)
+          req.promise.reject(new PlatformError(response.error))
           return
         } else {
-          req.resolve(response.result)
+          req.promise.resolve(response.result)
           return
         }
       }
@@ -151,7 +155,7 @@ export abstract class RequestProcessor {
   protected reject (status: Status): void {
     // We need to reply requests in case they are missed.
     for (const op of this.requests.entries()) {
-      op[1].reject(new PlatformError(status))
+      op[1].promise.reject(new PlatformError(status))
     }
     this.requests.clear()
   }
@@ -159,7 +163,7 @@ export abstract class RequestProcessor {
   protected async request (method: string, ...params: any[]): Promise<any> {
     const id = ++this.reqIndex
     const promise = new DeferredPromise<any>()
-    this.requests.set(id, promise)
+    this.requests.set(id, { promise, stack: new Error().stack })
 
     // Send request
     this.send({ id, method, params })

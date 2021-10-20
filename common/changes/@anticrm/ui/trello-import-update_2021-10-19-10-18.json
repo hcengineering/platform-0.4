@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Trello import fixes",
+      "type": "patch",
+      "packageName": "@anticrm/ui"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "haiodo@gmail.com"
+}

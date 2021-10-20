@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 //
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -16,14 +16,16 @@
 import { Ref, withOperations } from '@anticrm/core'
 import { FSM, State } from '@anticrm/fsm'
 import { createClient } from '@anticrm/node-client'
+import recruiting, { Applicant, Candidate } from '@anticrm/recruiting'
 import { config } from 'dotenv'
+import { deepEqual } from 'fast-equals'
 import { readFile } from 'fs/promises'
-import { createCandidatePool, createUpdateCandidates } from './candidates'
-import { buildFSMItems, createFSM, FSMItem, updateFSMStates } from './fsm'
+import { createUpdateAccounts } from './accounts'
+import { createUpdateApplicant } from './applicant'
+import { CandState, createCandidatePool, createUpdateCandidates, getName } from './candidates'
+import { buildFSMItems, createFSM, FSMColumn, updateFSMStates } from './fsm'
 import { TrelloBoard } from './trello'
 import { createVacancySpace } from './vacancies'
-import recruiting, { Applicant, Candidate } from '@anticrm/recruiting'
-import { deepEqual } from 'fast-equals'
 
 config()
 
@@ -38,19 +40,46 @@ async function start (): Promise<void> {
     process.exit(1)
   }
 
-  const board = JSON.parse((await readFile(process.argv[process.argv.length - 1])).toString()) as TrelloBoard
+  let inputFile = ''
+  let onlyLog = false
+  let limit = -1
 
-  const fsm: FSMItem[] = buildFSMItems(board)
+  for (const opt of process.argv) {
+    if (opt.endsWith('.json')) {
+      inputFile = opt
+    }
+    if (opt === '--log') {
+      onlyLog = true
+    }
+    if (opt.startsWith('--limit')) {
+      limit = parseInt(opt.split('=')[1])
+    }
+  }
 
-  console.log('Found trello cards', board.cards.length)
+  const board = JSON.parse((await readFile(inputFile)).toString()) as TrelloBoard
 
-  // for (const l of fsm) {
-  //   console.info(l.id, l.name, '\n', l.items.map(l => `\t${l.id} ${JSON.stringify(getName(l.name))}`).join('\n'))
-  // }
+  const fsm: FSMColumn[] = buildFSMItems(board)
 
-  // if (fsm.length > 0) {
-  //   process.exit(1)
-  // }
+  if (onlyLog) {
+    console.log('Total columns:', board.lists.length)
+    console.log('Total cards:', board.cards.length)
+    console.log('Total Actions:', board.actions.length)
+    console.log('Total Members:', board.members.length)
+
+    let i = 0
+    for (const l of fsm) {
+      console.info(l.id, l.name, '\n')
+      for (const itm of l.items) {
+        console.info(`\t${itm.id} ${JSON.stringify(getName(itm.name))}`)
+      }
+      i++
+      if (i === limit) {
+        break
+      }
+    }
+
+    process.exit(0)
+  }
 
   console.info('Connecting to server')
   const client = await createClient(`${serverUri}/${token}`)
@@ -58,61 +87,53 @@ async function start (): Promise<void> {
   const clientId = await client.accountId()
   console.log('Connected as ', clientId)
 
-  const operations = withOperations(await client.accountId(), client)
+  const clientOps = withOperations(await client.accountId(), client)
 
   const fsmId = board.id as Ref<FSM>
 
   // Create appropriate FSM.
-  await createFSM(client, fsmId, board, operations)
+  await createFSM(client, fsmId, board, clientOps)
 
   // Create/update states
-  const states = await updateFSMStates(operations, fsmId, fsm)
+  const states = await updateFSMStates(clientOps, fsmId, fsm)
 
   // Create candidate pool
-  const candPoolId = await createCandidatePool(fsmId, operations, board)
+  const candPoolId = await createCandidatePool(fsmId, clientOps, board)
 
   // Add missing candidates.
-  const { candidates, candidateStates } = await createUpdateCandidates(operations, candPoolId, board)
+  const { candidates, candidateStates } = await createUpdateCandidates(clientOps, candPoolId, board)
 
   // Create an public vacancy space for FSM if not pressent.
-  const vacancyId = await createVacancySpace(fsmId, operations, board)
+  const vacancyId = await createVacancySpace(fsmId, clientOps, board)
+
+  // Add missing Accounts.
+  const membersMap = await createUpdateAccounts(clientOps, board, [vacancyId, candPoolId])
 
   const applicants = await client.findAll(recruiting.class.Applicant, { space: vacancyId })
   const applicantsMap = new Map<Ref<Candidate>, Applicant>(applicants.map((a) => [a.item as Ref<Candidate>, a]))
 
-  const newStates = new Map<Ref<State>, { applicant: Ref<Applicant>, pos: number }[]>()
+  const newStates = new Map<Ref<State>, CandState[]>()
 
-  for (const c of candidates) {
-    const aid = ('a' + c._id) as Ref<Applicant>
-    let appl = applicantsMap.get(c._id)
-    const candState = candidateStates.get(c._id) as { state: Ref<State>, pos: number }
-    if (appl === undefined) {
-      // No applicant defined
-      appl = await operations.createDoc(
-        recruiting.class.Applicant,
-        vacancyId,
-        {
-          item: c._id,
-          recruiter: clientId,
-          fsm: vacancyId,
-          clazz: c._class,
-          state: candState.state,
-          comments: []
-        },
-        aid
-      )
-    }
-    const appls: { applicant: Ref<Applicant>, pos: number }[] = newStates.get(candState.state) ?? []
-    appls.push({ applicant: appl?._id, pos: candState.pos })
-    newStates.set(candState.state, appls)
-  }
+  await createUpdateApplicant(
+    candidates,
+    applicantsMap,
+    candidateStates,
+    vacancyId,
+    clientId,
+    membersMap,
+    clientOps,
+    newStates
+  )
 
   // Now I need to update states to contain proper applicants.
   for (const st of states) {
     // st.items
-    const newValue = (newStates.get(st._id) ?? []).sort((a, b) => b.pos - a.pos).map((v) => v.applicant)
+    const newValue = (newStates.get(st._id) ?? [])
+      .sort((a, b) => b.pos - a.pos)
+      .map((v) => v.applicant)
+      .filter((v) => v !== undefined)
     if (!deepEqual(st.items, newValue)) {
-      await operations.updateDoc(st._class, st.space, st._id, { items: newValue })
+      await clientOps.updateDoc(st._class, st.space, st._id, { items: newValue as Ref<Applicant>[] })
     }
   }
 

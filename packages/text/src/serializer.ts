@@ -595,7 +595,7 @@ export class MarkdownState implements IState {
   }
 
   quote (str: string): string {
-    const wrap = !str.includes('"') ? '""' : !str.includes("'") ? "''" : '()'
+    const wrap = !(str?.includes('"') ?? false) ? '""' : !(str?.includes("'") ?? false) ? "''" : '()'
     return wrap[0] + str + wrap[1]
   }
 

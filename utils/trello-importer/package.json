@@ -37,6 +37,7 @@
     "dotenv": "~10.0.0",
     "@anticrm/fsm": "~0.4.0",
     "@anticrm/recruiting": "~0.4.0",
-    "fast-equals": "^2.0.1"
+    "fast-equals": "^2.0.1",
+    "@anticrm/chunter": "~0.4.0"
   }
 }

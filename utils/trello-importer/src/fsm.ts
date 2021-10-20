@@ -1,12 +1,24 @@
 import core, { Client, Data, Ref, TxOperations } from '@anticrm/core'
 import fsmPlugin, { FSM, State } from '@anticrm/fsm'
 import recrutting from '@anticrm/recruiting'
-import { TrelloBoard, TrelloCard } from './trello'
+import { TrelloBoard } from './trello'
 
-export interface FSMItem {
+export interface FSMColumn {
   id: string
   name: string
-  items: TrelloCard[]
+  items: FSMItem[]
+}
+
+export interface FSMItem {
+  id: string // Card id
+  name: string
+  pos: number
+
+  comments: {
+    time: number
+    text: string
+    author: string
+  }[]
 }
 
 export async function createFSM (
@@ -33,7 +45,7 @@ export async function createFSM (
 export async function updateFSMStates (
   client: Client & TxOperations,
   fsmId: Ref<FSM>,
-  fsm: FSMItem[]
+  fsm: FSMColumn[]
 ): Promise<State[]> {
   let states = await client.findAll(fsmPlugin.class.State, {
     fsm: fsmId
@@ -70,9 +82,9 @@ export async function updateFSMStates (
   return result
 }
 
-export function buildFSMItems (board: TrelloBoard): FSMItem[] {
-  const fsm: FSMItem[] = []
-  const fsmMap = new Map<string, FSMItem>()
+export function buildFSMItems (board: TrelloBoard): FSMColumn[] {
+  const fsm: FSMColumn[] = []
+  const fsmMap = new Map<string, FSMColumn>()
 
   for (const l of Array.from(board.lists).sort((l1, l2) => l1.pos - l2.pos)) {
     if (!l.closed) {
@@ -85,7 +97,8 @@ export function buildFSMItems (board: TrelloBoard): FSMItem[] {
   for (const c of Array.from(board.cards).sort((l1, l2) => l1.pos - l2.pos)) {
     const list = fsmMap.get(c.idList)
     if (list !== undefined && !c.closed) {
-      list.items.push(c)
+      const item: FSMItem = { id: c.id, name: c.name, pos: c.pos, comments: [] }
+      list.items.push(item)
     }
   }
 
