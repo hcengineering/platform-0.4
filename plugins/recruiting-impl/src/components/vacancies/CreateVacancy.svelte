@@ -61,14 +61,13 @@
       fsm: dFSM._id
     })
   }
+
+  let canSave = false
+  $: canSave = vacancy.name !== '' && vacancy.fsm !== ''
 </script>
 
-<!-- <Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
-  <VacancyEditor bind:vacancy />
-</Dialog> -->
-
-<Card label={recruiting.string.AddVacancy} canSave={true} okAction={createVacancy} on:close={() => dispatch('close')}>
+<Card label={recruiting.string.AddVacancy} {canSave} okAction={createVacancy} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <VacancyEditor bind:vacancy />
+    <VacancyEditor bind:vacancy min />
   </Grid>
 </Card>

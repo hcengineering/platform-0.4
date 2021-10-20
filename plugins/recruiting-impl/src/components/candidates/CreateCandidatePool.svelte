@@ -37,7 +37,6 @@
 <Card label={recruiting.string.AddPoolSpace} okAction={createPool} on:close canSave={!!pool.name}>
   <Grid column={1} rowGap={20}>
     <EditBox label={recruiting.string.Name} bind:value={pool.name} focus />
-    <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->
     <ToggleWithLabel
       label={recruiting.string.MakePrivate}
       description={recruiting.string.MakePrivateDescription}
