@@ -25,8 +25,10 @@
 
   const client = getClient()
 
-  const addAction = () => {
-    if (spaceModel?.item?.createComponent !== undefined) showPopup(spaceModel.item.createComponent, { space }, 'right')
+  const addAction = (ev: MouseEvent) => {
+    if (spaceModel?.item?.createComponent !== undefined) {
+      showPopup(spaceModel.item.createComponent, { space }, ev.target as HTMLElement)
+    }
   }
   const changeStarred = () => {
     if (space !== undefined) {
@@ -73,7 +75,14 @@
     {/if}
   </div>
   <div class="flex-row-center">
-    <Button label={spaceModel?.item?.createLabel ?? ui.string.Create} size={'small'} primary on:click={addAction} />
+    <Button
+      label={spaceModel?.item?.createLabel ?? ui.string.Create}
+      size={'small'}
+      primary
+      on:click={(ev) => {
+        addAction(ev)
+      }}
+    />
     <div class="button">
       <ActionIcon icon={Star} size={16} padding={8} action={changeStarred} filled={space?.account?.starred ?? false} />
     </div>

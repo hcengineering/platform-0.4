@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "New popups.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

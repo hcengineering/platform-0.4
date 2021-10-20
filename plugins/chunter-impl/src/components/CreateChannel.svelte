@@ -13,18 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import { EditBox, TextArea, Dialog, ToggleWithLabel, Grid } from '@anticrm/ui'
+  import { EditBox, Card, Grid, ToggleWithLabel } from '@anticrm/ui'
 
   import { getClient } from '@anticrm/workbench'
 
   import chunter from '../plugin'
   import core from '@anticrm/core'
 
-  const dispatch = createEventDispatcher()
-
   let name: string = ''
-  let description: string = ''
+  const description: string = ''
   let isPrivate: boolean = false
 
   const client = getClient()
@@ -40,21 +37,14 @@
   }
 </script>
 
-<Dialog
-  label={chunter.string.CreateChannel}
-  okLabel={chunter.string.CreateChannel}
-  okAction={createChannel}
-  on:close={() => {
-    dispatch('close')
-  }}
->
-  <Grid column={1}>
-    <EditBox label={chunter.string.ChannelName} bind:value={name} />
-    <TextArea label={chunter.string.ChannelDescription} bind:value={description} />
+<Card label={chunter.string.CreateChannel} okAction={createChannel} on:close canSave={!!name}>
+  <Grid column={1} rowGap={20}>
+    <EditBox label={chunter.string.ChannelName} bind:value={name} focus />
+    <!-- <TextArea label={chunter.string.ChannelDescription} bind:value={description} /> -->
     <ToggleWithLabel
       label={chunter.string.MakePrivate}
       description={chunter.string.MakePrivateDescription}
       bind:on={isPrivate}
     />
   </Grid>
-</Dialog>
+</Card>

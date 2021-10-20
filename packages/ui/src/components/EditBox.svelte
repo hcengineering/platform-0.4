@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { afterUpdate } from 'svelte'
+  import { afterUpdate, onMount } from 'svelte'
   import type { IntlString } from '@anticrm/platform'
   import Label from './Label.svelte'
 
@@ -24,9 +24,14 @@
   export let password: boolean | undefined = undefined
   export let id: string | undefined = undefined
   export let placeholder: string = 'Start typing...'
+  export let maxWidth: string | undefined
+  export let focus: boolean = false
 
   let text: HTMLElement
   let input: HTMLInputElement
+  let style: string
+
+  $: style = maxWidth ? `max-width: ${maxWidth};` : ''
 
   function computeSize (t: EventTarget | null) {
     const target = t as HTMLInputElement
@@ -35,6 +40,13 @@
     target.style.width = text.clientWidth + 8 + 'px'
   }
 
+  onMount(() => {
+    if (focus) {
+      input.focus()
+      focus = false
+    }
+    computeSize(input)
+  })
   afterUpdate(() => {
     computeSize(input)
   })
@@ -48,6 +60,7 @@
       bind:this={input}
       type="password"
       {id}
+      {style}
       bind:value
       {placeholder}
       on:change
@@ -61,6 +74,7 @@
       bind:this={input}
       type="text"
       {id}
+      {style}
       bind:value
       {placeholder}
       on:change
@@ -78,16 +92,15 @@
     visibility: hidden;
   }
   .editbox {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
-    min-width: 50px;
-    height: 36px;
+    align-items: flex-start;
 
     .label {
       margin-bottom: 4px;
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: 500;
-      color: var(--theme-content-accent-color);
+      color: var(--theme-caption-color);
       opacity: 0.8;
       pointer-events: none;
       user-select: none;
@@ -95,13 +108,9 @@
 
     input {
       max-width: 100%;
-      height: 21px;
       margin: -4px;
       padding: 2px;
-      font-family: inherit;
-      font-size: 14px;
-      line-height: 150%;
-      color: var(--theme-caption-color);
+      color: inherit;
       background-color: transparent;
       border: 2px solid transparent;
       border-radius: 2px;

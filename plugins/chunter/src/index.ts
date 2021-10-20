@@ -109,6 +109,7 @@ export default plugin(
       CopyLink: '' as IntlString,
       DeleteMessage: '' as IntlString,
       CancelEdit: '' as IntlString,
+      Save: '' as IntlString,
       SaveEdit: '' as IntlString,
       MoreReplies: '' as IntlString
     },

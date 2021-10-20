@@ -163,6 +163,7 @@ export default plugin(PluginRecruiting, {}, {
     Applications: '' as IntlString,
     Interviews: '' as IntlString,
     SubmitFeedback: '' as IntlString,
+    Save: '' as IntlString,
     State: '' as IntlString,
 
     Comments: '' as IntlString

@@ -13,17 +13,19 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import core from '@anticrm/core'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Dialog } from '@anticrm/ui'
+  import { Card, Grid } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   import VacancyEditor from './VacancyEditor.svelte'
 
   const client = getClient()
+  const dispatch = createEventDispatcher()
 
   let vacancy: VacancySpace = {
     name: '',
@@ -61,6 +63,12 @@
   }
 </script>
 
-<Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
+<!-- <Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
   <VacancyEditor bind:vacancy />
-</Dialog>
+</Dialog> -->
+
+<Card label={recruiting.string.AddVacancy} canSave={true} okAction={createVacancy} on:close={() => dispatch('close')}>
+  <Grid column={1} rowGap={24}>
+    <VacancyEditor bind:vacancy />
+  </Grid>
+</Card>

@@ -27,7 +27,7 @@
   export let selected: Ref<Account> | undefined
   export let users: Account[] = []
   export let showSearch: boolean = false
-  export let scrollable: boolean = false
+  export let maxHeight: number = 0
 
   const dispatch = createEventDispatcher()
   $: selectedItem = selected === undefined ? undefined : users.find((u) => u._id === selected)
@@ -35,7 +35,7 @@
   let search: string = ''
 </script>
 
-<div class="userbox-popup" class:scrollable>
+<div class="userbox-popup" style="max-height: {maxHeight ? maxHeight + 'px' : 'max-content'}">
   <div class="flex-col header">
     {#if label}<div class="title"><Label {label} /></div>{/if}
     {#if showSearch}
@@ -82,8 +82,9 @@
   .userbox-popup {
     display: flex;
     flex-direction: column;
-    padding: 8px 8px 12px;
-    height: 100%;
+    margin-right: 7px;
+    padding: 8px 1px 12px 8px;
+    height: min-content;
     background-color: var(--theme-popup-bg);
     border: var(--theme-popup-border);
     border-radius: 20px;
@@ -92,6 +93,7 @@
     backdrop-filter: blur(30px);
 
     .header {
+      margin-right: 6px;
       padding: 8px 8px 0;
       .title {
         margin-bottom: 12px;
@@ -110,17 +112,10 @@
       }
     }
 
-    &.scrollable {
-      margin-right: 7px;
-      padding: 8px 1px 12px 8px;
-      .header {
-        margin-right: 6px;
-      }
-      .scroll {
-        overflow-y: scroll;
-        .box {
-          margin-right: 1px;
-        }
+    .scroll {
+      overflow-y: scroll;
+      .box {
+        margin-right: 1px;
       }
     }
   }

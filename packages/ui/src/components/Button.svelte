@@ -22,12 +22,14 @@
   export let size: 'small' | 'medium' = 'medium'
   export let disabled: boolean = false
   export let loading: boolean = false
+  export let transparent: boolean = false
   export let width: string | undefined = undefined
 </script>
 
 <button
   class="button {size}"
   class:primary
+  class:transparent
   disabled={disabled || loading}
   style={width ? 'width: ' + width : ''}
   on:click
@@ -96,6 +98,62 @@
       border-color: var(--primary-button-border);
       color: rgb(var(--theme-caption-color) / 60%);
       cursor: not-allowed;
+    }
+  }
+
+  .transparent {
+    padding: 0 20px;
+    font-weight: 500;
+    border-radius: 8px;
+    color: var(--theme-caption-color);
+    background-color: var(--trans-button-bg);
+    border-color: var(--theme-bg-accent-color);
+
+    &:hover {
+      background-color: var(--trans-button-bg-hovered);
+      border-color: var(--trans-button-border-hovered);
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+    }
+    &:focus {
+      background-color: var(--trans-button-bg-hovered);
+      border-color: var(--primary-button-focused-border);
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+    }
+    &:active {
+      background-color: var(--trans-button-bg);
+      border-color: var(--trans-button-border);
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    }
+    &:disabled {
+      background-color: var(--trans-button-bg);
+      border-color: var(--trans-button-border);
+    }
+
+    &.primary {
+      color: var(--trans-primary-button-color);
+      background-color: var(--trans-primary-button-bg);
+      border-color: var(--trans-primary-button-border);
+      backdrop-filter: blur(3px);
+
+      &:hover {
+        background-color: var(--trans-primary-button-bg-hovered);
+        border-color: var(--trans-primary-button-border-hovered);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+      }
+      &:focus {
+        background-color: var(--trans-primary-button-bg-hovered);
+        border-color: var(--primary-button-focused-border);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+      }
+      &:active {
+        background-color: var(--trans-primary-button-bg);
+        border-color: var(--trans-primary-button-border);
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+      }
+      &:disabled {
+        background-color: var(--primary-button-disabled);
+        border-color: var(--trans-primary-button-border);
+      }
     }
   }
 </style>

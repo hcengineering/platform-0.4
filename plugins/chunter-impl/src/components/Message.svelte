@@ -18,7 +18,7 @@
   import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import { ActionIcon, Button, DateTime, IconEdit, MessageViewer, PopupItem, PopupMenu } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, MessageViewer, showPopup } from '@anticrm/ui'
   import type { ItemRefefence } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import { chunterbotAcc } from '../chunterbot'
@@ -31,13 +31,12 @@
   import RefControl from './RefControl.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
+  import MessagePopup from './MessagePopup.svelte'
 
   export let message: WithMessage
   export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   export let showReferences = true
-
-  let showMore = false
 
   let parsedMessage: MessageNode
 
@@ -120,6 +119,23 @@
       })
     }
   }
+
+  let selElement: HTMLElement
+  const findNode = (el: HTMLElement, name: string): any => {
+    while (el.parentNode !== null) {
+      if (el.classList.contains(name)) return el
+      el = el.parentNode as HTMLElement
+    }
+    return false
+  }
+  const showMsgPopup = (ev?: Event): void => {
+    selElement = findNode(ev?.currentTarget as HTMLElement, 'message-container')
+    selElement.classList.add('selected')
+    showPopup(MessagePopup, { message }, ev?.currentTarget as HTMLElement, (result) => {
+      if (result && result === 'edit') editMode = true
+      selElement.classList.remove('selected')
+    })
+  }
 </script>
 
 <div
@@ -147,28 +163,8 @@
           </div>
           <div class="buttons">
             <div class="tool">
-              <ActionIcon
-                icon={MoreH}
-                size={20}
-                action={() => {
-                  showMore = !showMore
-                }}
-              />
+              <ActionIcon icon={MoreH} size={20} action={showMsgPopup} />
             </div>
-            <PopupMenu bind:show={showMore}>
-              <PopupItem title={chunter.string.CopyLink} action={() => {}} />
-              {#if message.modifiedBy === client.accountId()}
-                <PopupItem
-                  component={IconEdit}
-                  title={chunter.string.EditMessage}
-                  action={() => {
-                    editMode = true
-                    showMore = false
-                  }}
-                />
-                <PopupItem title={chunter.string.DeleteMessage} action={() => {}} />
-              {/if}
-            </PopupMenu>
             <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
             {#if !thread}
@@ -261,7 +257,8 @@
       margin-left: 0px;
     }
 
-    &:hover > .container .message .header .buttons {
+    &:hover > .container .message .header .buttons,
+    &.selected > .container .message .header .buttons {
       visibility: visible;
     }
 

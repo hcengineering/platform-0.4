@@ -15,13 +15,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { Data, Space } from '@anticrm/core'
-  import { Dialog } from '@anticrm/ui'
+  import { Card, EditBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-
-  import CandidateEditor from './CandidateEditor.svelte'
+  import AvatarView from './AvatarView.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -53,13 +52,44 @@
   async function create () {
     await client.createDoc(recruiting.class.Candidate, space._id, candidate)
   }
+
+  $: candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
 </script>
 
-<Dialog
+<Card
   label={recruiting.string.AddCandidate}
-  okLabel={recruiting.string.AddCandidate}
+  canSave={candidate.firstName.length > 0 && candidate.lastName.length > 0}
   okAction={create}
   on:close={() => dispatch('close')}
 >
-  <CandidateEditor {candidate} />
-</Dialog>
+  <div class="flex-row-center">
+    <AvatarView src={candidate.avatar} />
+    <div class="flex-col">
+      <div class="name"><EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus /></div>
+      <div class="name"><EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} /></div>
+      <div class="title">
+        <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.employment.position} />
+      </div>
+      <div class="city"><EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} /></div>
+    </div>
+  </div>
+  <svelte:fragment slot="pool">Pool</svelte:fragment>
+  <svelte:fragment slot="contacts">Contacts</svelte:fragment>
+</Card>
+
+<style lang="scss">
+  .name {
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--theme-caption-color);
+  }
+  .title,
+  .city {
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--theme-content-accent-color);
+  }
+  .title {
+    margin-top: 8px;
+  }
+</style>

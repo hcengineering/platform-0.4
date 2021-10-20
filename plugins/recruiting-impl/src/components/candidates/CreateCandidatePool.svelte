@@ -15,7 +15,7 @@
 <script lang="ts">
   import core from '@anticrm/core'
   import type { Doc } from '@anticrm/core'
-  import { EditBox, Dialog, ToggleWithLabel, TextArea } from '@anticrm/ui'
+  import { EditBox, Card, Grid, ToggleWithLabel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CandidatePoolSpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
@@ -34,22 +34,14 @@
   }
 </script>
 
-<Dialog label={recruiting.string.AddPoolSpace} okLabel={recruiting.string.AddPoolSpace} okAction={createPool} on:close>
-  <div class="content">
-    <EditBox label={recruiting.string.Name} bind:value={pool.name} />
-    <TextArea label={recruiting.string.Description} bind:value={pool.description} />
+<Card label={recruiting.string.AddPoolSpace} okAction={createPool} on:close canSave={!!pool.name}>
+  <Grid column={1} rowGap={20}>
+    <EditBox label={recruiting.string.Name} bind:value={pool.name} focus />
+    <!-- <TextArea label={recruiting.string.Description} bind:value={pool.description} /> -->
     <ToggleWithLabel
       label={recruiting.string.MakePrivate}
       description={recruiting.string.MakePrivateDescription}
       bind:on={pool.private}
     />
-  </div>
-</Dialog>
-
-<style lang="scss">
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-</style>
+  </Grid>
+</Card>
