@@ -21,6 +21,7 @@
   import type { Attachment } from '@anticrm/attachment'
   import AttachmentView from './Attachment.svelte'
   import { getPlugin } from '@anticrm/platform'
+  import mime from 'mime'
 
   export let objectId: Ref<Doc>
   export let objectClass: Ref<Class<Doc>>
@@ -64,7 +65,7 @@
     for (let index = 0; index < list.length; index++) {
       const file = list.item(index)
       if (file === null) continue
-      createAttachment(file)
+      await createAttachment(file)
     }
   }
 
@@ -75,12 +76,13 @@
     for (let index = 0; index < list.length; index++) {
       const file = list.item(index)
       if (file === null) continue
-      createAttachment(file)
+      await createAttachment(file)
     }
   }
 
   async function createAttachment (file: File): Promise<void> {
     const fileService = await getPlugin(attachment.id)
+    const type = mime.getType(file.name) ?? ''
     const key = (generateId() + '.' + nameToFormat(file.name)) as Ref<UploadAttachmet>
     const item = {
       objectClass: objectClass,
@@ -88,7 +90,7 @@
       name: file.name,
       size: file.size,
       format: nameToFormat(file.name),
-      mime: file.type,
+      mime: type,
       url: '',
       space: space,
       modifiedBy: client.accountId(),

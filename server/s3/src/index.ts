@@ -15,11 +15,20 @@
 
 import { S3 } from 'aws-sdk'
 import https from 'https'
+import sharp from 'sharp'
 
 /**
  * @public
  */
 export type Body = Buffer | Uint8Array | Blob
+
+/**
+ * @public
+ */
+export interface File {
+  body: Buffer
+  type?: string
+}
 
 /**
  * @public
@@ -94,5 +103,46 @@ export class S3Storage {
       ResponseContentDisposition: `attachment; filename =${filename}`
     }
     return await this.client.getSignedUrlPromise('getObject', params)
+  }
+
+  async getFile (key: string): Promise<File | undefined> {
+    const params = {
+      Bucket: this.bucket,
+      Key: key
+    }
+    try {
+      const response = await this.client.getObject(params).promise()
+      return {
+        body: response.Body as Buffer,
+        type: response.Metadata?.['content-type']
+      }
+    } catch (error: any) {
+      if (error.statusCode === 404) return undefined
+      throw error
+    }
+  }
+
+  async uploadFile (key: string, file: File): Promise<void> {
+    const params = {
+      Bucket: this.bucket,
+      Key: key,
+      ContentType: file.type,
+      Body: file.body
+    }
+    await this.client.upload(params).promise()
+  }
+
+  async getImage (key: string, width: number): Promise<File | undefined> {
+    const image = await this.getFile(key + width.toString())
+    if (image !== undefined) return image
+    const file = await this.getFile(key)
+    if (file === undefined) return undefined
+    const buffer = await sharp(file.body).resize({ width, withoutEnlargement: true }).toBuffer()
+    const res = {
+      body: buffer,
+      type: file.type
+    }
+    await this.uploadFile(key + width.toString(), res)
+    return res
   }
 }
