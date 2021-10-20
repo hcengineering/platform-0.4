@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Fix multiple popup issues",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}
