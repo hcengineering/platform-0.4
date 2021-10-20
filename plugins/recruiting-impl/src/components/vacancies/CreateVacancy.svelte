@@ -63,12 +63,8 @@
   }
 </script>
 
-<!-- <Dialog label={recruiting.string.AddVacancy} okLabel={recruiting.string.AddVacancy} okAction={createVacancy} on:close>
-  <VacancyEditor bind:vacancy />
-</Dialog> -->
-
 <Card label={recruiting.string.AddVacancy} canSave={true} okAction={createVacancy} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <VacancyEditor bind:vacancy />
+    <VacancyEditor bind:vacancy min />
   </Grid>
 </Card>

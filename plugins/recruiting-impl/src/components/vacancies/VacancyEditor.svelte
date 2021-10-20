@@ -21,27 +21,27 @@
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { DropdownItem } from '@anticrm/ui'
-  import { EditBox } from '@anticrm/ui'
-  // import {
-  //   DatePicker,
-  //   Dropdown,
-  //   EditBox,
-  //   Grid,
-  //   IconEdit,
-  //   IconFile,
-  //   Section,
-  //   TextArea,
-  //   ToggleWithLabel
-  // } from '@anticrm/ui'
+  import {
+    DatePicker,
+    Dropdown,
+    EditBox,
+    Grid,
+    IconEdit,
+    IconFile,
+    Section,
+    TextArea,
+    ToggleWithLabel
+  } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  // import attachment from '@anticrm/attachment'
-  // import { Attachments } from '@anticrm/attachment-impl'
+  import attachment from '@anticrm/attachment'
+  import { Attachments } from '@anticrm/attachment-impl'
 
-  // import Details from '../icons/Details.svelte'
+  import Details from '../icons/Details.svelte'
 
   const dispatch = createEventDispatcher()
 
   export let vacancy: VacancySpace
+  export let min: boolean = false
 
   const client = getClient()
   let selectedFSM: FSM | undefined = undefined
@@ -63,10 +63,10 @@
     dispatch('update')
   }
 
-  // function onDueDateChange (event: any) {
-  //   vacancy.dueDate = event.detail.getTime()
-  //   onChange()
-  // }
+  function onDueDateChange (event: any) {
+    vacancy.dueDate = event.detail.getTime()
+    onChange()
+  }
 
   let fsmItems: DropdownItem[] = []
   $: fsmItems = fsmTmpls.map((x) => ({
@@ -81,46 +81,52 @@
   }
 </script>
 
-<!-- <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
-  <Grid column={2}> -->
-
-<EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
-<EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
-
-<!-- {#if vacancy._id === undefined}
-      <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
-    {:else}
-      <div />
-    {/if}
-    <DatePicker
-      value={vacancy.dueDate !== undefined ? new Date(vacancy.dueDate) : undefined}
-      on:change={onDueDateChange}
-      label={recruiting.string.Due}
-      noLabel={recruiting.string.NoDue}
-    />
-    <ToggleWithLabel
-      label={recruiting.string.MakePrivate}
-      description={recruiting.string.MakePrivateDescription}
-      bind:on={vacancy.private}
-      on:change={onChange}
-    />
-  </Grid>
-</Section>
-<Section label={recruiting.string.VacancyNotes} icon={IconEdit}>
-  <Grid column={1}>
-    <TextArea label={recruiting.string.Summary} bind:value={vacancy.details.summary} on:blur={onChange} />
-    <TextArea label={recruiting.string.Qualification} bind:value={vacancy.details.qualification} on:blur={onChange} />
-    <TextArea label={recruiting.string.Experience} bind:value={vacancy.details.experience} on:blur={onChange} />
-  </Grid>
-</Section>
-<Section label={recruiting.string.VacancyDetails} icon={Details}>
-  <Grid column={2}>
-    <EditBox label={recruiting.string.Location} bind:value={vacancy.location} on:blur={onChange} />
-    <EditBox label={recruiting.string.VacancyType} bind:value={vacancy.type} on:blur={onChange} />
-  </Grid>
-</Section>
-{#if vacancy._id !== undefined}
-  <Section label={attachment.string.Attachments} icon={IconFile}>
-    <Attachments objectId={vacancy._id} space={vacancy._id} editable />
+{#if min}
+  <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
+  <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
+  {#if vacancy._id === undefined}
+    <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
+  {/if}
+{:else}
+  <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
+    <Grid column={2}>
+      <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
+      <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
+      {#if vacancy._id === undefined}
+        <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
+      {:else}
+        <div />
+      {/if}
+      <DatePicker
+        value={vacancy.dueDate !== undefined ? new Date(vacancy.dueDate) : undefined}
+        on:change={onDueDateChange}
+        label={recruiting.string.Due}
+        noLabel={recruiting.string.NoDue}
+      />
+      <ToggleWithLabel
+        label={recruiting.string.MakePrivate}
+        description={recruiting.string.MakePrivateDescription}
+        bind:on={vacancy.private}
+        on:change={onChange}
+      />
+    </Grid>
   </Section>
-{/if} -->
+  <Section label={recruiting.string.VacancyNotes} icon={IconEdit}>
+    <Grid column={1}>
+      <TextArea label={recruiting.string.Summary} bind:value={vacancy.details.summary} on:blur={onChange} />
+      <TextArea label={recruiting.string.Qualification} bind:value={vacancy.details.qualification} on:blur={onChange} />
+      <TextArea label={recruiting.string.Experience} bind:value={vacancy.details.experience} on:blur={onChange} />
+    </Grid>
+  </Section>
+  <Section label={recruiting.string.VacancyDetails} icon={Details}>
+    <Grid column={2}>
+      <EditBox label={recruiting.string.Location} bind:value={vacancy.location} on:blur={onChange} />
+      <EditBox label={recruiting.string.VacancyType} bind:value={vacancy.type} on:blur={onChange} />
+    </Grid>
+  </Section>
+  {#if vacancy._id !== undefined}
+    <Section label={attachment.string.Attachments} icon={IconFile}>
+      <Attachments objectId={vacancy._id} space={vacancy._id} editable />
+    </Section>
+  {/if}
+{/if}
