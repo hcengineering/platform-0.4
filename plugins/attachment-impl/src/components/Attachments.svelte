@@ -20,7 +20,7 @@
   import attachment from '@anticrm/attachment'
   import type { Attachment } from '@anticrm/attachment'
   import AddAttachment from './AddAttachment.svelte'
-  import AttachmentView from './Attachment.svelte'
+  import AttachmentView from './AttachmentView.svelte'
   import AttachmentViewer from './AttachmentViewer.svelte'
 
   export let objectId: Ref<Doc>

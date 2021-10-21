@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import { generateId, Ref, Space } from '@anticrm/core'
   import type { Message } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
@@ -26,6 +26,7 @@
 
   export let currentSpace: Ref<Space> | undefined
   export let spaceLastViews: SpaceLastViews | undefined
+  let id = generateId()
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -37,12 +38,18 @@
   const loadLimit = 100
 
   async function addMessage (message: string, spaceLastViews?: SpaceLastViews): Promise<void> {
-    await client.createDoc(chunter.class.Message, currentSpace!, {
-      message
-    })
+    await client.createDoc(
+      chunter.class.Message,
+      currentSpace!,
+      {
+        message
+      },
+      id
+    )
     if (spaceLastViews !== undefined) {
       await notificationClient.readNow(spaceLastViews)
     }
+    id = generateId()
   }
 
   let query: QueryUpdater<Message> | undefined
@@ -78,7 +85,12 @@
 </div>
 <div class="ref-input">
   {#if currentSpace}
-    <ReferenceInput {currentSpace} on:message={(event) => addMessage(event.detail, spaceLastViews)} />
+    <ReferenceInput
+      {currentSpace}
+      objectClass={chunter.class.Message}
+      objectId={id}
+      on:message={(event) => addMessage(event.detail, spaceLastViews)}
+    />
   {/if}
 </div>
 

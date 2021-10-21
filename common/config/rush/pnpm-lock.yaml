@@ -11609,7 +11609,7 @@ packages:
     dev: false
 
   file:projects/action-impl.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-70PdOBZSFmCZONPjRsLWE+ZK32hWpyRIMoJypK9XHxmSp6/3Yo/EMfDzDaTc6NhJuZ9UcdQaoRmYf5LM03f71Q==, tarball: file:projects/action-impl.tgz}
+    resolution: {integrity: sha512-QnDJtEFatNC4yQWhhlIWOSqj13Z3bVCUhBPWZNxnNpazWNnNPAfKAT2h9FUL9FqCSn09bee0wziHOpCjrpVD9g==, tarball: file:projects/action-impl.tgz}
     id: file:projects/action-impl.tgz
     name: '@rush-temp/action-impl'
     version: 0.0.0
@@ -11791,7 +11791,7 @@ packages:
     dev: false
 
   file:projects/calendar-action.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-bhgFnagGmKuq/HWaqRR31pmDR5Rr3lcKkO88L6ZP1A6MiNxePXT0iOczx/m6gI/26WxxraHY5f/HaTu8tvPYNA==, tarball: file:projects/calendar-action.tgz}
+    resolution: {integrity: sha512-uNNV9UBCijLcFXbR9cyPIcb1jEsuw24+qcSx8pcrPytCKTicpc2G2bGdgLLJUEE1eIlJWgR7iHU7mtCtWBCSvw==, tarball: file:projects/calendar-action.tgz}
     id: file:projects/calendar-action.tgz
     name: '@rush-temp/calendar-action'
     version: 0.0.0
@@ -11841,7 +11841,7 @@ packages:
     dev: false
 
   file:projects/calendar-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-a/2KMaEW4SqsOnhGU/xDlVrlyaaQ6GkE3sXGfnqBUopdRtuklY2Blh44IcsHefueXkIbiNO3p6TVQZleIs118w==, tarball: file:projects/calendar-impl.tgz}
+    resolution: {integrity: sha512-gi6SZw6UgzlbJDnrAUixx2YJhV3BEx9tUdp6woh+DSrpaDXW3aZ9kPYbnnQVNCfrXLQIVkhn3Vgk1R6ozOL1oA==, tarball: file:projects/calendar-impl.tgz}
     id: file:projects/calendar-impl.tgz
     name: '@rush-temp/calendar-impl'
     version: 0.0.0
@@ -11886,7 +11886,7 @@ packages:
     dev: false
 
   file:projects/calendar-mappers.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-GJtSVa2xwxxJCmtnMTTp2aWKwEnidGHYpzUOHXBtqk+NmpDLGrRS8CioISEnn8rpLSVaaLVLThmfutaQOYOQKQ==, tarball: file:projects/calendar-mappers.tgz}
+    resolution: {integrity: sha512-N/pPXuNuqv0J50pZejSgVfo1Qt8HAqsCfyMpdOil/k9t3Ip9t3m11JLNeoPCRfUi30/H6f7YKDOwcqOVuB+Yeg==, tarball: file:projects/calendar-mappers.tgz}
     id: file:projects/calendar-mappers.tgz
     name: '@rush-temp/calendar-mappers'
     version: 0.0.0
@@ -11958,7 +11958,7 @@ packages:
     dev: false
 
   file:projects/chunter-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-TxPdPd6MPgMeL10Etc3FmO5ZwJUIOknwwaSMqJ1wpIGF4wu+pwO6ukxjwQWH8HlpvSo/D1UsUgJKOGkYZZ+m6Q==, tarball: file:projects/chunter-impl.tgz}
+    resolution: {integrity: sha512-OzHIKlwBOiSdSt39p2SyJimXsPs/qIaQr7loCfg1+L2fM6R6DaB9BW9HpjXvQxYPdrursBGGtnilPJItSrhnrw==, tarball: file:projects/chunter-impl.tgz}
     id: file:projects/chunter-impl.tgz
     name: '@rush-temp/chunter-impl'
     version: 0.0.0
@@ -12067,7 +12067,7 @@ packages:
     dev: false
 
   file:projects/dev-server.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-PngbWGQ8kDnChq5l0EIa1VHu2IcWhzYXa1TgvxKdr90MTzbSsxkQJf1tY+rR/Ua6+KTIrPDgPtx9mZxGW0bL4g==, tarball: file:projects/dev-server.tgz}
+    resolution: {integrity: sha512-hF3X6HK5Pa+zOFNHRDfrCmVgGow0k7rEtPifVKi5agfHVPgBJRI+/Rq77NDVr7Zm99GAYX72WqfWw0BNlnb0VA==, tarball: file:projects/dev-server.tgz}
     id: file:projects/dev-server.tgz
     name: '@rush-temp/dev-server'
     version: 0.0.0
@@ -12086,6 +12086,7 @@ packages:
       '@types/mongodb': 3.6.20
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
+      cross-env: 7.0.3
       eslint: 7.32.0
       eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
       eslint-plugin-import: 2.24.2_eslint@7.32.0
@@ -12142,7 +12143,7 @@ packages:
     dev: false
 
   file:projects/fsm-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-Id1jCFpCariuQucQVkDUJV53paeNTdN54KZ4p3S9YPieSeVldn49SP5hLRxv69VG5p9tEJqsMRTudVtehi5KGQ==, tarball: file:projects/fsm-impl.tgz}
+    resolution: {integrity: sha512-BpCftSMntR/MBLXrgyKqY4ToX0T/6k8uzMAxBJTk3YueY/PioT4YwbVV7aa0k5TCtjVB1E2e1j3JLQH0Y1gTsw==, tarball: file:projects/fsm-impl.tgz}
     id: file:projects/fsm-impl.tgz
     name: '@rush-temp/fsm-impl'
     version: 0.0.0
@@ -12354,7 +12355,7 @@ packages:
     dev: false
 
   file:projects/meeting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-rBzBJWYS5zVI/9aE/Y+LfJ4SWTxno4V4Idq/X9tJir6f/0HAKngplPIXGayVTBED4KHlJfGjMxT53VdM0ruwbw==, tarball: file:projects/meeting-impl.tgz}
+    resolution: {integrity: sha512-Bg6m53qZIIi82UM6EfJ2neSNwUd/+dRX7gLjIkonuF3mWoDPYRqfFZI2+aUFDTV606tP8hjLhIbKDCACIaXfFQ==, tarball: file:projects/meeting-impl.tgz}
     id: file:projects/meeting-impl.tgz
     name: '@rush-temp/meeting-impl'
     version: 0.0.0
@@ -12878,7 +12879,7 @@ packages:
     dev: false
 
   file:projects/notification-mappers.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-XMBCImn0POzkJSyxnISpx1Ue2O7Uy73ZggVmyCfKmmeJ9NBscZLC7v/iDT0Z7a12CNH4M1fMiWPaPlfs7qJWmQ==, tarball: file:projects/notification-mappers.tgz}
+    resolution: {integrity: sha512-1T9QSqKwheXvizMY0Y+NCwrwsXVH4BCKUU4jejKcIIsD1QOo4rpZf0KMvHMrtwPf/HaMsoXbfypuPccaC7pYFA==, tarball: file:projects/notification-mappers.tgz}
     id: file:projects/notification-mappers.tgz
     name: '@rush-temp/notification-mappers'
     version: 0.0.0
@@ -13176,7 +13177,7 @@ packages:
     dev: false
 
   file:projects/recruiting-action.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-mML1PKcyu1YGOgnBcS/Qjwc4AwfCl6B6AnvnrkiV+XUJ0Yl6Ah1QT0o3Vw67Jz6El8kWLevigiImj75MxgcE1A==, tarball: file:projects/recruiting-action.tgz}
+    resolution: {integrity: sha512-/LxOB6xM2y7mtBK6JRK7gHlfQcG0BRaKaC+EjUvSbWzk82gpjsGLAsVeapdJd/LRUsnjfz2QfpZzFvMjg20jpA==, tarball: file:projects/recruiting-action.tgz}
     id: file:projects/recruiting-action.tgz
     name: '@rush-temp/recruiting-action'
     version: 0.0.0
@@ -13226,7 +13227,7 @@ packages:
     dev: false
 
   file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-3NXispLrHSSzB1GZnb9hGyaFQj+i2I5IUt+FukKi+KYhCntfLRdmAO4S1IEm6VJ3Lsa7VdIUmkclxzemKjyXBg==, tarball: file:projects/recruiting-impl.tgz}
+    resolution: {integrity: sha512-IQoBckgxRKP/1ymeN5JvdPnmY0WLFFN0/vI6D0x+QXt2lzI+OGEBoDx8J5MwiQiEmlbaG92dbu2pWn9pg9B+ow==, tarball: file:projects/recruiting-impl.tgz}
     id: file:projects/recruiting-impl.tgz
     name: '@rush-temp/recruiting-impl'
     version: 0.0.0
@@ -13274,7 +13275,7 @@ packages:
     dev: false
 
   file:projects/recruiting-mappers.tgz_ts-node@10.2.1:
-    resolution: {integrity: sha512-ZnEwGWlEHHk/Autm+B0OZVN5EIpqAcoKRO0IsRTWYLFkj/m2nTN8sSswloPnppO7ooH15yMOBua6aFHPKCYf8g==, tarball: file:projects/recruiting-mappers.tgz}
+    resolution: {integrity: sha512-Pcj5YPu52HsgfEv7yQcbU6YoUTveyQajvW1FDdQUdWigiKK+XO/CrP1CIruzEaUwze/sblssCxJgWQKzklrfCw==, tarball: file:projects/recruiting-mappers.tgz}
     id: file:projects/recruiting-mappers.tgz
     name: '@rush-temp/recruiting-mappers'
     version: 0.0.0
@@ -13656,7 +13657,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-8btN6rjobJ29YGdVlxPjF3oykA5tJRxYubCaFDa+k/+dxPkJSSMSVZj0pkLvzY+ahoYdImNVn3bsPK0Bs7InBA==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-d5ymWp/4GUKpemM5KwINH8iKAjGpFn4lqLKjfe9dT4xeHlGKgDrjF56oJllVpb/FkHiFWWKXNOXO1zefQbxPqw==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0
@@ -13845,7 +13846,7 @@ packages:
     dev: false
 
   file:projects/trello-importer.tgz:
-    resolution: {integrity: sha512-JfPs/7L9w/OMaJbhBzwVuwgBlJLe6nm2giqvOCe3Ou/5f+eWXobLt4ejsJipMepMEnHGlGefcKDiJ+qGVhfpwQ==, tarball: file:projects/trello-importer.tgz}
+    resolution: {integrity: sha512-h9VhObgSC2j9m+eB8mX2mPdvNg2wISw15yubPXSx2kf/rmhpjjoaFfrVyf2vdn2nCag++y0A9KLjElONN8J3ww==, tarball: file:projects/trello-importer.tgz}
     name: '@rush-temp/trello-importer'
     version: 0.0.0
     dependencies:
@@ -14039,7 +14040,7 @@ packages:
     dev: false
 
   file:projects/workbench-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-HSlvvIjwgEpU7fnyiXzTYYkoBPTfJKsDcqssdFf+QGPTKPFhJGWIK1b5EbSMQTVl5PqXENsftJcWPDtrOwnMyg==, tarball: file:projects/workbench-impl.tgz}
+    resolution: {integrity: sha512-Z0xxKbh8ROrzx2bkMC2Coli5Ybo2K1/ywSz2Hl87G63tUx77P0kgcom7iUzkOp4Q4JcTcdHrDToyQz27Syr2pg==, tarball: file:projects/workbench-impl.tgz}
     id: file:projects/workbench-impl.tgz
     name: '@rush-temp/workbench-impl'
     version: 0.0.0

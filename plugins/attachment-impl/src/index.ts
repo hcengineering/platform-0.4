@@ -15,12 +15,18 @@
 
 import attachment, { AttachmentService, nameToFormat } from '@anticrm/attachment'
 import { Ref, Space } from '@anticrm/core'
-import { getMetadata } from '@anticrm/platform'
+import { getMetadata, setResource } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
+import AddAttachment from './components/AddAttachment.svelte'
+import AttachmentPreview from './components/AttachmentPreview.svelte'
 
 export { default as Attachments } from './components/Attachments.svelte'
+export { default as AttachmentView } from './components/AttachmentView.svelte'
+export { default as AttachmentViewer } from './components/AttachmentViewer.svelte'
 
 export default async (): Promise<AttachmentService> => {
+  setResource(attachment.component.AddAttachment, AddAttachment)
+  setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   const fileServerURL = getMetadata(attachment.metadata.FilesUrl) ?? ''
   if (fileServerURL === '') {
     throw new PlatformError(new Status(Severity.ERROR, attachment.status.NoFileServerUri, {}))

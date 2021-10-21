@@ -6,10 +6,10 @@
     "build": "heft build",
     "test": "echo 'no tests'",
     "lint": "eslint src",
-    "dev": "NODE_ENV=production node -r ts-node/register ./src/index.ts",
-    "gen": "NODE_ENV=production ts-node ./src/gen-data.ts",
-    "gen-inspect": "NODE_ENV=production node --inspect -r ts-node/register ./src/gen-data.ts",
-    "prof": "NODE_ENV=production node --prof -r ts-node/register ./src/gen-data.ts",
+    "dev": "cross-env NODE_ENV=production && node -r ts-node/register ./src/index.ts",
+    "gen": "cross-env NODE_ENV=production ts-node ./src/gen-data.ts",
+    "gen-inspect": "cross-env NODE_ENV=production node --inspect -r ts-node/register ./src/gen-data.ts",
+    "prof": "cross-env NODE_ENV=production node --prof -r ts-node/register ./src/gen-data.ts",
     "show": "node --prof-process --preprocess -j isolate*.log | flamebearer",
     "lint:fix": "eslint --fix src",
     "format": "prettier --write src && eslint --fix src"
@@ -17,6 +17,7 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@types/jwt-simple": "^0.5.33",
     "@types/koa": "^2.13.1",
     "@types/koa-bodyparser": "^4.3.0",

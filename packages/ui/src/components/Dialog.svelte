@@ -30,8 +30,8 @@
   export let okDisabled: boolean = false
   export let cancelLabel: IntlString = ui.string.Cancel
   export let withCancel = true
-  export let okAction: () => void
-  export let cancelAction: () => void = () => {}
+  export let okAction: (() => void) | (() => Promise<void>)
+  export let cancelAction: (() => void) | (() => Promise<void>) = () => {}
 
   const dispatch = createEventDispatcher()
 </script>
@@ -56,16 +56,22 @@
       label={okLabel}
       disabled={okDisabled}
       primary
-      on:click={() => {
-        okAction()
+      on:click={async () => {
+        const promise = okAction()
+        if (promise instanceof Promise) {
+          await promise
+        }
         dispatch('close')
       }}
     />
     {#if withCancel}
       <Button
         label={cancelLabel}
-        on:click={() => {
-          cancelAction()
+        on:click={async () => {
+          const promise = cancelAction()
+          if (promise instanceof Promise) {
+            await promise
+          }
           dispatch('close')
         }}
       />

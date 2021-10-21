@@ -47,6 +47,7 @@
     "@anticrm/ui":"~0.4.1",
     "@anticrm/workbench":"~0.4.0",
     "@anticrm/platform":"~0.4.2",
-    "@anticrm/attachment":"~0.4.0"
+    "@anticrm/attachment":"~0.4.0",
+    "@anticrm/attachment-impl":"~0.4.0"
   }
 }

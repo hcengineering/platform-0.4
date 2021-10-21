@@ -27,7 +27,8 @@ configurePlatform()
 const accountsUrl = process.env.APP_ACCOUNTS_URL
 const meetingHost = process.env.MEETING_WSHOST ?? 'localhost'
 const meetingPort = process.env.MEETING_WSPORT ?? 18081
-const fileServerUrl = process.env.APP_FILES_URL ?? 'https://localhost:18082'
+const fileServerUrl =
+  process.env.APP_FILES_URL ?? (process.env.CLIENT !== 'server' ? 'blob:' : 'https://localhost:18082')
 const clientUri = process.env.CLIENT_URL ?? 'wss://localhost:18080'
 
 setMetadata(login.metadata.AccountsUrl, accountsUrl)

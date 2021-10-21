@@ -19,7 +19,7 @@
   import { getClient } from '@anticrm/workbench'
   import attachment, { nameToFormat } from '@anticrm/attachment'
   import type { Attachment } from '@anticrm/attachment'
-  import AttachmentView from './Attachment.svelte'
+  import AttachmentView from './AttachmentView.svelte'
   import { getPlugin } from '@anticrm/platform'
   import mime from 'mime'
 
@@ -40,7 +40,7 @@
   async function confirm (): Promise<void> {
     const fileService = await getPlugin(attachment.id)
     for (const item of items) {
-      const url = fileService.generateLink(item._id, space, item.name, item.format)
+      item.url = encodeURI(fileService.generateLink(item._id, space, item.name, item.format))
 
       await client.createDoc(
         attachment.class.Attachment,
@@ -52,7 +52,7 @@
           size: item.size,
           format: item.format,
           mime: item.mime,
-          url: url
+          url: item.url
         },
         item._id
       )
@@ -139,13 +139,15 @@
   okLabel={attachment.string.AddAttachment}
   cancelLabel={ui.string.Cancel}
   okDisabled={items.some((p) => p.progress < 100)}
-  cancelAction={() => {
-    clearAll()
+  cancelAction={async () => {
+    await clearAll()
   }}
   on:close={() => {
-    dispatch('close')
+    dispatch('close', items)
   }}
-  okAction={confirm}
+  okAction={async () => {
+    await confirm()
+  }}
   withCancel={true}
 >
   {#each items as item (item._id)}

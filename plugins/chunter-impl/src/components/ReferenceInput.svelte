@@ -13,14 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core from '@anticrm/core'
+  import core, { Class, Doc } from '@anticrm/core'
   import type { Account, Ref, Space, Title } from '@anticrm/core'
   import type { EditorActions, EditorContentEvent, ItemRefefence } from '@anticrm/richeditor'
   import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
   import { schema } from '@anticrm/richeditor'
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
-  import type { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
+  import { CompletionItem, CompletionPopupActions, showPopup } from '@anticrm/ui'
   import { CompletionPopup, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
@@ -34,12 +34,15 @@
   import Brackets from './icons/Brackets.svelte'
   import Mention from './icons/Mention.svelte'
   import chunter from '../plugin'
+  import attachment, { Attachment } from '@anticrm/attachment'
 
   export let stylesEnabled = false
   // If specified, submit button will be enabled, message will be send on any modify operation
   export let submitEnabled = true
   export let lines = 1
   export let currentSpace: Ref<Space> | undefined
+  export let objectClass: Ref<Class<Doc>>
+  export let objectId: Ref<Doc>
 
   const dispatch = createEventDispatcher()
 
@@ -233,6 +236,31 @@
   }
 
   const transformFunction = createTextTransform(findTitle)
+
+  function addAttachment (): void {
+    if (currentSpace === undefined) return
+    htmlEditor.emitStyleEvent()
+    const space = currentSpace
+    showPopup(
+      attachment.component.AddAttachment,
+      { objectId: objectId, objectClass: objectClass, space: space },
+      undefined,
+      (items: Attachment[]) => {
+        for (const item of items) {
+          insertAttachment(item)
+        }
+      }
+    )
+  }
+
+  function insertAttachment (item: Attachment) {
+    const from = Math.max(styleState.selection.from, 1)
+    htmlEditor.insertMark(item.name + ' ', from, styleState.selection.to, schema.marks.link, {
+      href: item.url,
+      title: item.name
+    })
+    htmlEditor.focus()
+  }
 </script>
 
 <div class="ref-container">
@@ -280,7 +308,14 @@
     {/if}
   </div>
   <div class="buttons">
-    <div class="tool"><Attach /></div>
+    <div
+      class="tool"
+      on:click={() => {
+        addAttachment()
+      }}
+    >
+      <Attach />
+    </div>
     <div class="tool"><TextStyle /></div>
     <div
       class="tool"

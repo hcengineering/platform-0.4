@@ -204,6 +204,8 @@
             submitEnabled={false}
             lines={Math.min(message.message.split('\n').length + 3, 10)}
             currentSpace={message.space}
+            objectId={message._id}
+            objectClass={message._class}
             editorContent={parseMessage(message.message)}
             on:update={(detail) => {
               newMessageValue = serializeMessage(detail.detail)
