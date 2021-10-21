@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Account, Ref, Space } from '@anticrm/core'
+  import core, { Account, generateId, Ref, Space } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
   import { SelectBox, UserInfo } from '@anticrm/ui'
   import type { IPopupItem } from '@anticrm/ui'
@@ -34,6 +34,7 @@
   let to: Ref<Account>[] = []
   let toAccount: Account[] = []
   let currentSpace: Space | undefined
+  let id = generateId()
 
   let div: HTMLElement
   let messages: Message[] = []
@@ -95,9 +96,15 @@
       currentSpace = channel
     }
 
-    await client.createDoc(chunter.class.Message, currentSpace._id, {
-      message
-    })
+    await client.createDoc(
+      chunter.class.Message,
+      currentSpace._id,
+      {
+        message
+      },
+      id
+    )
+    id = generateId()
 
     if (spaceLastViews !== undefined) {
       notificationClient.readNow(spaceLastViews)
@@ -160,6 +167,8 @@
   <div class="message-input">
     <ReferenceInput
       currentSpace={currentSpace?._id}
+      objectClass={chunter.class.Message}
+      objectId={id}
       on:message={(event) => {
         addMessage(event.detail, spaceLastViews)
       }}

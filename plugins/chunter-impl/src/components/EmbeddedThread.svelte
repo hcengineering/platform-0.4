@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Message, Comment } from '@anticrm/chunter'
-  import { Ref, Space } from '@anticrm/core'
+  import { generateId, Ref, Space } from '@anticrm/core'
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
@@ -37,6 +37,7 @@
   let div: HTMLElement
   let messageLastRead = 0
   let showAllReplies = false
+  const commentId = generateId()
 
   let lq: QueryUpdater<Message> | undefined
 
@@ -61,10 +62,16 @@
   }
 
   async function addMessage (text: string, spaceLastViews?: SpaceLastViews): Promise<void> {
-    await client.createDoc(chunter.class.Comment, message!.space, {
-      replyOf: getFullRef(message!._id, message!._class),
-      message: text
-    })
+    await client.createDoc(
+      chunter.class.Comment,
+      message!.space,
+      {
+        replyOf: getFullRef(message!._id, message!._class),
+        message: text
+      },
+      commentId
+    )
+    id = generateId()
     if (spaceLastViews !== undefined) {
       await notificationClient.readNow(spaceLastViews, message!._id)
     }
@@ -103,7 +110,12 @@
   {/if}
 </div>
 <div class="ref-input">
-  <ReferenceInput currentSpace={message?.space} on:message={(event) => addMessage(event.detail, spaceLastViews)} />
+  <ReferenceInput
+    objectClass={chunter.class.Comment}
+    objectId={commentId}
+    currentSpace={message?.space}
+    on:message={(event) => addMessage(event.detail, spaceLastViews)}
+  />
 </div>
 
 <style lang="scss">

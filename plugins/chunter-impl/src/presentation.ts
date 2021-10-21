@@ -4,6 +4,11 @@ import type { AnyComponent } from '@anticrm/status'
 import { DocumentReference, ExternalReference, MessageReference, ReferenceKind } from './messages'
 import chunter from './plugin'
 import { parseLocation, Router } from '@anticrm/router'
+import { getMetadata } from '@anticrm/platform'
+import attachment from '@anticrm/attachment'
+
+const filesUrl = getMetadata(attachment.metadata.FilesUrl)
+const filesHost = filesUrl !== undefined ? new URL(filesUrl).host : ''
 
 export interface PresentationResult {
   component: AnyComponent
@@ -56,6 +61,14 @@ async function findExternalPresentation (
         },
         {}
       )
+
+      // internal attachments
+      r.addRoute<any>(filesHost, (match) => {
+        result = {
+          component: attachment.component.AttachmentPreview,
+          props: { href: reference.href }
+        }
+      })
 
       const loc = parseLocation({ pathname: url.host + url.pathname, search: url.search, hash: url.hash })
       r.update(loc)

@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Class, Doc, Ref, Space } from '@anticrm/core'
+import { Class, Doc, DocumentPresenter, Ref, Space } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { IntlString, Metadata, StatusCode } from '@anticrm/status'
+import type { AnyComponent, IntlString, Metadata, StatusCode } from '@anticrm/status'
 
 export interface Attachment extends Doc {
   objectId: Ref<Doc>
@@ -62,6 +62,10 @@ const attachment = plugin(
     class: {
       Attachment: '' as Ref<Class<Attachment>>
     },
+    component: {
+      AddAttachment: '' as AnyComponent,
+      AttachmentPreview: '' as AnyComponent
+    },
     string: {
       Attachment: '' as IntlString,
       Attachments: '' as IntlString,
@@ -73,6 +77,9 @@ const attachment = plugin(
     },
     status: {
       NoFileServerUri: '' as StatusCode
+    },
+    presenter: {
+      AttachmentPresenter: '' as Ref<DocumentPresenter<Attachment>>
     }
   }
 )
