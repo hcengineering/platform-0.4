@@ -180,7 +180,8 @@ describe('real-server', () => {
       }
     )
 
-    const brain3tx = new DeferredPromise()
+    const brain5tx = new DeferredPromise()
+    const brain1tx = new DeferredPromise()
 
     const brainTxes: Tx[] = []
     const client2 = await createClient(
@@ -192,8 +193,11 @@ describe('real-server', () => {
       ).cert,
       (tx) => {
         brainTxes.push(tx)
+        if (brainTxes.length === 1) {
+          brain1tx.resolve(null)
+        }
         if (brainTxes.length === 5) {
-          brain3tx.resolve(null)
+          brain5tx.resolve(null)
         }
       }
     )
@@ -204,6 +208,7 @@ describe('real-server', () => {
       description: 'test space',
       private: true
     })
+    await brain1tx.promise
     expect(johnTxes.length).toEqual(1)
     expect(brainTxes.length).toEqual(1)
 
@@ -212,7 +217,7 @@ describe('real-server', () => {
       email: 't1',
       name: 't2'
     })
-    await brain3tx.promise
+    await brain5tx.promise
     expect(johnTxes.length).toEqual(5)
     expect(brainTxes.length).toEqual(5)
     const c2t = await client2.findAll(core.class.Account, {})
