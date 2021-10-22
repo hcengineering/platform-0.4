@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Attachment-impl export component fix",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
