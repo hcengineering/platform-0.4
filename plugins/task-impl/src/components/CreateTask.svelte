@@ -26,7 +26,8 @@
     Grid,
     Row,
     CheckBoxList,
-    IconToDo
+    IconToDo,
+    Component
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { CheckListItem, Task } from '@anticrm/task'
@@ -43,7 +44,6 @@
   import type { SpaceLastViews } from '@anticrm/notification'
   import notification from '@anticrm/notification'
   import attachment from '@anticrm/attachment'
-  import { Attachments } from '@anticrm/attachment-impl'
 
   const dispatch = createEventDispatcher()
 
@@ -179,7 +179,7 @@
     </Section>
   {:else if selectedTab === attachment.string.Attachments}
     <Section label={attachment.string.Attachments} icon={IconFile}>
-      <Attachments objectId={id} space={space._id} editable />
+      <Component is={attachment.component.Attachments} props={{ objectId: id, space: space._id, editable: true }} />
     </Section>
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>

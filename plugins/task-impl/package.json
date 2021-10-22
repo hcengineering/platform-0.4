@@ -56,7 +56,6 @@
     "@anticrm/presentation":"~0.4.0",
     "@anticrm/notification":"~0.4.0",
     "@anticrm/attachment":"~0.4.0",
-    "@anticrm/attachment-impl":"~0.4.0",
     "fast-equals": "^2.0.1"
   }
 }

@@ -43,7 +43,6 @@
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
   import attachment from '@anticrm/attachment'
-  import { Attachments } from '@anticrm/attachment-impl'
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -186,7 +185,10 @@
         </Section>
       {:else if selectedTab === attachment.string.Attachments}
         <Section label={attachment.string.Attachments} icon={IconFile}>
-          <Attachments objectId={item._id} space={item.space} editable />
+          <Component
+            is={attachment.component.Attachments}
+            props={{ objectId: item._id, space: item.space, editable: true }}
+          />
         </Section>
       {:else}
         <Section label={task.string.ToDos} icon={IconToDo}>

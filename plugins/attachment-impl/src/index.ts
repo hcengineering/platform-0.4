@@ -18,13 +18,16 @@ import { Ref, Space } from '@anticrm/core'
 import { getMetadata, setResource } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
 import AddAttachment from './components/AddAttachment.svelte'
+import Attachments from './components/Attachments.svelte'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
 
+// use for attachment-dev only
 export { default as Attachments } from './components/Attachments.svelte'
 export { default as AttachmentView } from './components/AttachmentView.svelte'
 export { default as AttachmentViewer } from './components/AttachmentViewer.svelte'
 
 export default async (): Promise<AttachmentService> => {
+  setResource(attachment.component.Attachments, Attachments)
   setResource(attachment.component.AddAttachment, AddAttachment)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   const fileServerURL = getMetadata(attachment.metadata.FilesUrl) ?? ''

@@ -20,7 +20,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import type { DropdownItem } from '@anticrm/ui'
+  import { Component, DropdownItem } from '@anticrm/ui'
   import {
     DatePicker,
     Dropdown,
@@ -34,7 +34,6 @@
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import attachment from '@anticrm/attachment'
-  import { Attachments } from '@anticrm/attachment-impl'
 
   import Details from '../icons/Details.svelte'
 
@@ -126,7 +125,10 @@
   </Section>
   {#if vacancy._id !== undefined}
     <Section label={attachment.string.Attachments} icon={IconFile}>
-      <Attachments objectId={vacancy._id} space={vacancy._id} editable />
+      <Component
+        is={attachment.component.Attachments}
+        props={{ objectId: vacancy._id, space: vacancy._id, editable: true }}
+      />
     </Section>
   {/if}
 {/if}
