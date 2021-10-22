@@ -93,7 +93,7 @@
     scrollHandler()
   }
 
-  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler() 
+  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
 </script>
 
 <div class="header">

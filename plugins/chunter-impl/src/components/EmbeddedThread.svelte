@@ -90,7 +90,7 @@
     return []
   }
 
-  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler() 
+  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
 </script>
 
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
