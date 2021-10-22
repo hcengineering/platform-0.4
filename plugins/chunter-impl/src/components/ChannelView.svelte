@@ -76,6 +76,8 @@
   function scrollHandler () {
     notificationClient.scrollHandler(div, spaceLastViews)
   }
+
+  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
 </script>
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>

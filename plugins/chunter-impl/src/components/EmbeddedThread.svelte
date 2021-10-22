@@ -37,7 +37,7 @@
   let div: HTMLElement
   let messageLastRead = 0
   let showAllReplies = false
-  const commentId = generateId()
+  let commentId = generateId()
 
   let lq: QueryUpdater<Message> | undefined
 
@@ -71,7 +71,7 @@
       },
       commentId
     )
-    id = generateId()
+    commentId = generateId()
     if (spaceLastViews !== undefined) {
       await notificationClient.readNow(spaceLastViews, message!._id)
     }
@@ -89,6 +89,8 @@
     }
     return []
   }
+
+  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
 </script>
 
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
