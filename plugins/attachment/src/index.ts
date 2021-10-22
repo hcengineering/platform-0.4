@@ -64,6 +64,7 @@ const attachment = plugin(
     },
     component: {
       AddAttachment: '' as AnyComponent,
+      Attachments: '' as AnyComponent,
       AttachmentPreview: '' as AnyComponent
     },
     string: {

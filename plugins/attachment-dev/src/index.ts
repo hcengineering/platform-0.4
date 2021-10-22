@@ -17,10 +17,11 @@ import type { AttachmentService } from '@anticrm/attachment'
 import attachment from '@anticrm/attachment'
 import { Ref, Space } from '@anticrm/core'
 import { setResource } from '@anticrm/platform'
-import AddAttachment from '@anticrm/attachment-impl/src/components/AddAttachment.svelte'
+import { Attachments, AddAttachment } from '@anticrm/attachment-impl'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
 
 export default async (): Promise<AttachmentService> => {
+  setResource(attachment.component.Attachments, Attachments)
   setResource(attachment.component.AddAttachment, AddAttachment)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   const files: Map<string, File> = new Map<string, File>()
