@@ -109,6 +109,18 @@
     return false
   }
 
+  function isNotificated (message: WithMessage, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined || spaceLastViews.objectId !== message.space) return false
+    if (spaceLastViews.notificatedObjects.includes(message._id)) return true
+    if (!thread) {
+      const comments = (message as Message).comments
+      for (const comment of comments ?? []) {
+        if (spaceLastViews.notificatedObjects.includes(comment._id)) return true
+      }
+    }
+    return false
+  }
+
   function refAction (doc: ItemRefefence): void {
     selectDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
   }
@@ -141,7 +153,8 @@
 <div
   class="message-container"
   class:no-thread={!thread}
-  class:isNew={isNew(message, spaceLastViews)}
+  class:isNew={isNew(message, spaceLastViews) || isNotificated(message, spaceLastViews)}
+  class:isNotificated={isNotificated(message, spaceLastViews)}
   data-created={message.createOn}
   data-modified={message.modifiedOn}
   data-id={message._id}
@@ -247,6 +260,10 @@
 
     &.isNew {
       background-color: var(--theme-bg-accent-color);
+    }
+    &.isNotificated {
+      border: 1px solid !important;
+      border-color: var(--theme-bg-focused-border);
     }
     &.no-thread {
       padding: 10px;

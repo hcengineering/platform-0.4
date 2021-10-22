@@ -83,14 +83,14 @@
 
   onDestroy(async () => {
     if (spaceLastViews !== undefined) {
-      notificationClient.readNow(spaceLastViews, id)
+      await notificationClient.readNow(spaceLastViews, id)
     }
   })
 
   afterUpdate(async () => {
     if (prevId !== id) {
       if (prevId !== undefined && spaceLastViews !== undefined) {
-        notificationClient.readNow(spaceLastViews, prevId)
+        await notificationClient.readNow(spaceLastViews, prevId)
       }
       prevId = id
     }

@@ -232,7 +232,10 @@ export class NotificationClient {
         this.lastTime = Date.now()
       }
     }
-    if (this.lastTime > lastRead) {
+    if (this.lastTime > lastRead || this.readObjects.size > 0) {
+      if (this.lastTime < lastRead) {
+        this.lastTime = lastRead
+      }
       if (this.timeoutId === undefined) {
         this.timeoutId = setTimeout(async () => await this.updateLastRead(spaceLastViews, id), 2000)
       }
@@ -277,6 +280,7 @@ export class NotificationClient {
     }
     clearTimeout(this.timeoutId)
     this.timeoutId = undefined
+    this.readObjects.clear()
     await this.client.updateDoc(lastViews._class, lastViews.space, lastViews._id, query)
   }
 }

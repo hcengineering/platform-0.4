@@ -13,14 +13,14 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { generateId, Ref, Space } from '@anticrm/core'
+  import { Doc, generateId, Ref, Space } from '@anticrm/core'
   import type { Message } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import Channel from './Channel.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import chunter from '../plugin'
   import { getClient } from '@anticrm/workbench'
-  import { tick } from 'svelte'
+  import { afterUpdate, tick } from 'svelte'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
 
@@ -76,6 +76,8 @@
   function scrollHandler () {
     notificationClient.scrollHandler(div, spaceLastViews)
   }
+
+  $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler() 
 </script>
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
