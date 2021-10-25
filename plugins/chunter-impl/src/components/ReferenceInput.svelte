@@ -20,7 +20,7 @@
   import { schema } from '@anticrm/richeditor'
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
-  import { CompletionItem, CompletionPopupActions, showPopup } from '@anticrm/ui'
+  import { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
   import { CompletionPopup, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
@@ -34,7 +34,8 @@
   import Brackets from './icons/Brackets.svelte'
   import Mention from './icons/Mention.svelte'
   import chunter from '../plugin'
-  import attachment, { Attachment } from '@anticrm/attachment'
+  import attachment, { Attachment, UploadAttachmet } from '@anticrm/attachment'
+  import { getPlugin } from '@anticrm/platform'
 
   export let stylesEnabled = false
   // If specified, submit button will be enabled, message will be send on any modify operation
@@ -45,6 +46,8 @@
   export let objectId: Ref<Doc>
 
   const dispatch = createEventDispatcher()
+  let input: HTMLElement
+  let attachments: Array<UploadAttachmet> = []
 
   let styleState: EditorContentEvent = {
     isEmpty: true,
@@ -237,22 +240,6 @@
 
   const transformFunction = createTextTransform(findTitle)
 
-  function addAttachment (): void {
-    if (currentSpace === undefined) return
-    htmlEditor.emitStyleEvent()
-    const space = currentSpace
-    showPopup(
-      attachment.component.AddAttachment,
-      { objectId: objectId, objectClass: objectClass, space: space },
-      undefined,
-      (items: Attachment[]) => {
-        for (const item of items) {
-          insertAttachment(item)
-        }
-      }
-    )
-  }
-
   function insertAttachment (item: Attachment) {
     const from = Math.max(styleState.selection.from, 1)
     htmlEditor.insertMark(item.name + ' ', from, styleState.selection.to, schema.marks.link, {
@@ -260,6 +247,45 @@
       title: item.name
     })
     htmlEditor.focus()
+  }
+
+  async function fileInputChange (e: Event): Promise<void> {
+    const elem = e.target as HTMLInputElement
+    const list = elem.files
+    if (list === null || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      await createAttachment(file)
+    }
+  }
+
+  async function createAttachment (file: File): Promise<void> {
+    const fileService = await getPlugin(attachment.id)
+    const item = await fileService.createAttachment(
+      file,
+      objectId,
+      objectClass,
+      currentSpace!,
+      client,
+      (progress: number) => {
+        item.progress = progress
+        attachments = attachments
+      }
+    )
+    attachments.push(item)
+    attachments = attachments
+    insertAttachment(item)
+  }
+
+  async function drop (e: DragEvent): Promise<void> {
+    const list = e.dataTransfer?.files
+    if (list === undefined || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      await createAttachment(file)
+    }
   }
 </script>
 
@@ -270,6 +296,8 @@
       class:edit-box-vertical={stylesEnabled}
       class:edit-box-horizontal={!stylesEnabled}
       on:keydown={onKeyDown}
+      on:drop|preventDefault={drop}
+      on:dragover|preventDefault
     >
       <MessageEditor
         bind:this={htmlEditor}
@@ -308,10 +336,11 @@
     {/if}
   </div>
   <div class="buttons">
+    <input class="hidden" bind:this={input} on:change={fileInputChange} type="file" multiple={true} />
     <div
       class="tool"
       on:click={() => {
-        addAttachment()
+        input.click()
       }}
     >
       <Attach />
@@ -423,6 +452,10 @@
     .buttons {
       margin: 10px 0 0 8px;
       display: flex;
+
+      .hidden {
+        display: none;
+      }
 
       .tool {
         display: flex;

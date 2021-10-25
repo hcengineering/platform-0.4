@@ -37,7 +37,8 @@
     "svelte-check": "^2.1.0",
     "eslint-svelte3-preprocess": "~0.0.5",
     "svelte-preprocess": "^4.7.0",
-    "svelte-loader": "^3.1.0"
+    "svelte-loader": "^3.1.0",
+    "@types/mime": "~2.0.3"
   },
   "dependencies": {
     "@anticrm/core":"~0.4.0",
@@ -48,6 +49,7 @@
     "@anticrm/workbench":"~0.4.0",
     "@anticrm/platform":"~0.4.2",
     "@anticrm/attachment":"~0.4.0",
-    "@anticrm/attachment-impl":"~0.4.0"
+    "@anticrm/attachment-impl":"~0.4.0",
+    "mime":"~2.5.2"
   }
 }

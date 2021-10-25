@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Class, Doc, DocumentPresenter, Ref, Space } from '@anticrm/core'
+import { Class, Doc, DocumentPresenter, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, IntlString, Metadata, StatusCode } from '@anticrm/status'
@@ -24,6 +24,11 @@ export interface Attachment extends Doc {
   mime: string
   url: string
   size: number
+}
+
+export interface UploadAttachmet extends Attachment {
+  progress: number
+  abort: () => void
 }
 
 export function nameToFormat (name: string): string {
@@ -42,15 +47,16 @@ export function sizeToString (size: number): string {
 }
 
 export interface AttachmentService extends Service {
-  upload: (
-    file: File,
-    key: string,
-    space: Ref<Space>,
-    progressCallback?: (progress: number) => void
-  ) => Promise<() => void>
   remove: (key: string, space: Ref<Space>) => Promise<void>
-  generateLink: (key: string, space: Ref<Space>, name: string, format: string) => string
   authorize: (token: string) => Promise<void>
+  createAttachment: (
+    file: File,
+    objectId: Ref<Doc>,
+    objectClass: Ref<Class<Doc>>,
+    space: Ref<Space>,
+    client: Storage & TxOperations,
+    progressCallback?: (progress: number) => void
+  ) => Promise<UploadAttachmet>
 }
 
 const PluginAttachment = 'attachment' as Plugin<AttachmentService>
@@ -63,7 +69,6 @@ const attachment = plugin(
       Attachment: '' as Ref<Class<Attachment>>
     },
     component: {
-      AddAttachment: '' as AnyComponent,
       Attachments: '' as AnyComponent,
       AttachmentPreview: '' as AnyComponent
     },
