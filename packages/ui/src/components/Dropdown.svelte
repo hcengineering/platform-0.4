@@ -29,13 +29,12 @@
   export let label: IntlString | undefined
   export let items: DropdownItem[]
   export let selected: DropdownItem['id'] | undefined
-  export let disabled: boolean = false
 
   const dispatch = createEventDispatcher()
   let btn: HTMLElement
 
   let isNull = false
-  $: disabled = isNull = items.length === 0
+  $: isNull = items.length === 0
 
   let selectedItem = items.find((x) => x.id === selected)
   $: selectedItem = items.find((x) => x.id === selected)
@@ -59,14 +58,14 @@
 >
   {#if label}<div class="label"><Label {label} /></div>{/if}
   <div class="flex-row-center">
-    <div class="icon {!selectedItem?.label || disabled ? 'content-trans-color' : 'caption-color'}">
+    <div class="icon {!selectedItem?.label || isNull ? 'content-trans-color' : 'caption-color'}">
       {#if typeof icon === 'string'}
         <Icon {icon} size={16} fill={'currentColor'} />
       {:else}
         <svelte:component this={icon} size={16} fill={'currentColor'} />
       {/if}
     </div>
-    <div class={!selectedItem?.label || disabled ? 'content-trans-color' : 'caption-color'}>
+    <div class={!selectedItem?.label || isNull ? 'content-trans-color' : 'caption-color'}>
       {#if selectedItem?.label !== undefined}
         <Label label={selectedItem.label} />
       {:else}
