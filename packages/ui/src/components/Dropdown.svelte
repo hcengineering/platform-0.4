@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { IntlString, Asset, UIComponent } from '@anticrm/status'
@@ -78,10 +79,8 @@
 <style lang="scss">
   .label {
     font-weight: 500;
-    font-size: 0.75rem;
+    font-size: .75rem;
     color: var(--theme-content-accent-color);
   }
-  .icon {
-    margin-right: 0.25rem;
-  }
+  .icon { margin-right: .25rem; }
 </style>
