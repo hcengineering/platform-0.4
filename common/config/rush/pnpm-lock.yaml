@@ -11697,13 +11697,14 @@ packages:
     dev: false
 
   file:projects/attachment-dev.tgz_postcss@8.3.6:
-    resolution: {integrity: sha512-nEWqAFu18BJiIA92FmAnUzxlbZf7bNkB9TW+zT2ug0/qmt6gRr/ATwF/JtZp2oXso2m0ipHQo7+Zi6763swUow==, tarball: file:projects/attachment-dev.tgz}
+    resolution: {integrity: sha512-7NUD5FXlTcv3Ta8n8uVmD0mnA8KGkPPCTJinAQPtqmwtoTUmWFb1sXuMtsY9FU4Qumb1oS/08pmMOD54sIvV5w==, tarball: file:projects/attachment-dev.tgz}
     id: file:projects/attachment-dev.tgz
     name: '@rush-temp/attachment-dev'
     version: 0.0.0
     dependencies:
       '@microsoft/api-extractor': 7.18.6
       '@types/browser-or-node': 1.3.0
+      '@types/mime': 2.0.3
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
       eslint: 7.32.0
@@ -11713,6 +11714,7 @@ packages:
       eslint-plugin-promise: 5.1.0_eslint@7.32.0
       eslint-plugin-svelte3: 3.2.0_eslint@7.32.0+svelte@3.42.3
       eslint-svelte3-preprocess: 0.0.5_svelte@3.42.3
+      mime: 2.5.2
       prettier: 2.3.2
       prettier-plugin-svelte: 2.3.1_prettier@2.3.2+svelte@3.42.3
       svelte: 3.42.3
@@ -12599,7 +12601,7 @@ packages:
     dev: false
 
   file:projects/model-dev.tgz_@types+node@14.17.11:
-    resolution: {integrity: sha512-aHQB5y8k5rMGHBEI1FToLavG42Zo2QrUJlIl3AZZQLltsmEcN/575Lg5by39GF1JlyoKfxjwLu/69AhALkoHXw==, tarball: file:projects/model-dev.tgz}
+    resolution: {integrity: sha512-C6npyC948DaVbAjzzPU4pLvIL8PvHRupnoz3W346CR2uzkx80C/p+GtgqW3Kp9WNF5wRAgDGlN4qROFF2l+paw==, tarball: file:projects/model-dev.tgz}
     id: file:projects/model-dev.tgz
     name: '@rush-temp/model-dev'
     version: 0.0.0
@@ -13227,7 +13229,7 @@ packages:
     dev: false
 
   file:projects/recruiting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-IQoBckgxRKP/1ymeN5JvdPnmY0WLFFN0/vI6D0x+QXt2lzI+OGEBoDx8J5MwiQiEmlbaG92dbu2pWn9pg9B+ow==, tarball: file:projects/recruiting-impl.tgz}
+    resolution: {integrity: sha512-YRK7vS+jhs+Gl7nBnrj43fKqVBSum2lNByUerVfVYmLV5s+CDEgZOg+sxJDkQuZjkC5aOf7U1SCeVH3/WhUI+A==, tarball: file:projects/recruiting-impl.tgz}
     id: file:projects/recruiting-impl.tgz
     name: '@rush-temp/recruiting-impl'
     version: 0.0.0
@@ -13657,7 +13659,7 @@ packages:
     dev: false
 
   file:projects/task-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-d5ymWp/4GUKpemM5KwINH8iKAjGpFn4lqLKjfe9dT4xeHlGKgDrjF56oJllVpb/FkHiFWWKXNOXO1zefQbxPqw==, tarball: file:projects/task-impl.tgz}
+    resolution: {integrity: sha512-uvd80k17U7/NkSHuT+VsSkWPTbMoplmDna+Rf7eeHXgHwWiXHuwsLMqDHc3MU8kO2rpVbxY86myUsFDOCkKp+w==, tarball: file:projects/task-impl.tgz}
     id: file:projects/task-impl.tgz
     name: '@rush-temp/task-impl'
     version: 0.0.0

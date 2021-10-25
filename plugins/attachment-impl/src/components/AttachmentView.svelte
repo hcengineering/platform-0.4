@@ -15,10 +15,8 @@
 <script lang="ts">
   import { sizeToString } from '@anticrm/attachment'
   import type { Attachment } from '@anticrm/attachment'
-  import { EditBox } from '@anticrm/ui'
 
   export let item: Attachment
-  export let editable: boolean = false
 </script>
 
 <div class="content" on:click on:dblclick>
@@ -26,11 +24,7 @@
     <div>{item.format.toUpperCase()}</div>
   </div>
   <div class="info">
-    {#if editable}
-      <EditBox bind:value={item.name} />
-    {:else}
-      <div class="label">{item.name}</div>
-    {/if}
+    <div class="label">{item.name}</div>
     <div class="size">{sizeToString(item.size)}</div>
   </div>
 </div>

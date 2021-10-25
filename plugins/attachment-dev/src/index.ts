@@ -13,34 +13,17 @@
 // limitations under the License.
 //
 
-import type { AttachmentService } from '@anticrm/attachment'
-import attachment from '@anticrm/attachment'
-import { Ref, Space } from '@anticrm/core'
+import attachment, { AttachmentService, nameToFormat, UploadAttachmet } from '@anticrm/attachment'
+import { Class, Doc, generateId, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import { setResource } from '@anticrm/platform'
-import { Attachments, AddAttachment } from '@anticrm/attachment-impl'
+import { Attachments } from '@anticrm/attachment-impl'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
+import mime from 'mime'
 
 export default async (): Promise<AttachmentService> => {
   setResource(attachment.component.Attachments, Attachments)
-  setResource(attachment.component.AddAttachment, AddAttachment)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   const files: Map<string, File> = new Map<string, File>()
-  async function upload (
-    file: File,
-    key: string,
-    space: Ref<Space>,
-    progressCallback?: (progress: number) => void
-  ): Promise<() => void> {
-    if (progressCallback != null) {
-      progressCallback(100)
-    }
-    return await new Promise(function (resolve, reject) {
-      files.set(key, file)
-      resolve(() => {
-        files.delete(key)
-      })
-    })
-  }
 
   async function remove (key: string, space: Ref<Space>): Promise<void> {
     return await new Promise(function (resolve, reject) {
@@ -63,10 +46,47 @@ export default async (): Promise<AttachmentService> => {
     })
   }
 
+  async function createAttachment (
+    file: File,
+    objectId: Ref<Doc>,
+    objectClass: Ref<Class<Doc>>,
+    space: Ref<Space>,
+    client: Storage & TxOperations,
+    progressCallback?: (progress: number) => void
+  ): Promise<UploadAttachmet> {
+    const type = mime.getType(file.name) ?? ''
+    const format = nameToFormat(file.name)
+    const key = (generateId() + '.' + format) as Ref<UploadAttachmet>
+    files.set(key, file)
+    const item = {
+      objectClass: objectClass,
+      objectId: objectId,
+      name: file.name,
+      size: file.size,
+      format: format,
+      mime: type,
+      url: encodeURI(generateLink(key, space, file.name, format)),
+      space: space,
+      modifiedBy: client.accountId(),
+      modifiedOn: Date.now(),
+      createOn: Date.now(),
+      _class: attachment.class.Attachment,
+      _id: key,
+      progress: 0,
+      abort: () => {}
+    }
+    item.abort = () => {
+      files.delete(key)
+    }
+    if (progressCallback !== undefined) {
+      progressCallback(100)
+    }
+    return item
+  }
+
   return {
-    upload,
     remove,
-    generateLink,
-    authorize
+    authorize,
+    createAttachment
   }
 }

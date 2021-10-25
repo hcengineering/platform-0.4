@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/attachment",
+      "comment": " Remove extra modal AddAttachment #474 ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/attachment"
+}

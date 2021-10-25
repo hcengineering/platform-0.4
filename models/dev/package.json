@@ -42,6 +42,7 @@
     "@anticrm/model-meeting":"~0.4.0",
     "@anticrm/model-fsm":"~0.4.0",
     "@anticrm/model-all":"~0.4.0",
+    "@anticrm/attachment":"~0.4.0",
     "@anticrm/task":"~0.4.0",
     "@anticrm/chunter":"~0.4.0",
     "faker":"^5.5.3"
