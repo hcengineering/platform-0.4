@@ -33,6 +33,7 @@ import References from './components/References.svelte'
 import MessageView from './components/MessageView.svelte'
 
 import AllThreadsView from './components/AllThreadsView.svelte'
+import BookmarksView from './components/BookmarksView.svelte'
 
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
@@ -52,6 +53,7 @@ export default async (): Promise<ChunterService> => {
   setResource(chunter.component.MessageView, MessageView)
 
   setResource(chunter.component.AllThreadsView, AllThreadsView)
+  setResource(chunter.component.BookmarksItemsView, BookmarksView)
 
   return {}
 }

@@ -8,13 +8,14 @@
     "MakePrivateDescription": "Make channel private",
     "Thread": "Thread",
     "Replies": " replies",
-    "RepliesText": " replies",
+    "RepliesText": "{replies} replies",
     "NewMessagePlaceholder": "Type a new message",
     "ApplicationLabelChunter": "Chat",
     "DirectMessages": "Messages",
     "CreateDirectMessage": "New Direct message",
     "MessagesSpecial": "Messages",
     "ThreadsSpecial": "All Threads",
+    "BookmarkSpecial": "Bookmarks",
     "UserTo": "User:",
     "MessageTo": "Message to:",
     "MessageToLabel": "Person",
@@ -26,6 +27,8 @@
     "CancelEdit": "Cancel",
     "Save": "Save",
     "SaveEdit": "Save...",
-    "MoreReplies": "Show {replies} more replies"
+    "MoreReplies": "Show {replies} more replies",
+    "ChannelPin": "Pin to channel",
+    "ChannelUnPin": "Un-Pin from channel"
   }
 }

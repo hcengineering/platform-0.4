@@ -163,6 +163,8 @@ export class DerivedDataProcessor {
   async waitComplete (): Promise<void> {
     const p = new DeferredPromise<void>()
     this.sleeping.push(p)
+    // We just need to wait it up.
+    this.wakeup.resolve()
     await p.promise
   }
 

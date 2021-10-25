@@ -16,11 +16,10 @@
 import type { Class, Data, Doc, DocumentQuery, Ref, Space } from '@anticrm/core'
 import { Plugin, plugin, Service } from '@anticrm/platform'
 import type { PresentationClient } from '@anticrm/presentation'
-import type { Asset, IntlString, UIComponent } from '@anticrm/status'
-import type { AnyComponent } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString, UIComponent } from '@anticrm/status'
 import { getContext } from 'svelte'
-import { CompAndProps, store } from './stores'
 import { currentDocument, DocumentSelection } from './selection'
+import { CompAndProps, store } from './stores'
 
 /**
  * @public
@@ -56,6 +55,8 @@ export interface SpacesNavModel<T extends Space = Space> {
     itemByIdClass?: Ref<Class<Doc>>
     itemByIdField?: string
   }
+  // TODO: This one and `createComponent` item should be refacgored to list of actions for item.
+  showActions?: boolean // Show or not actions for specified nav model item.
 }
 
 /**
@@ -137,6 +138,7 @@ export function closeModal (): void {
  * @public
  */
 export { store, CompAndProps }
+export { currentDocument, DocumentSelection }
 
 /**
  * Will set current active document,
@@ -146,8 +148,6 @@ export { store, CompAndProps }
 export function selectDocument (doc?: Pick<Doc, '_id' | '_class'>, shortId?: string | null): void {
   currentDocument.set(doc === undefined ? null : { document: doc, shortId })
 }
-
-export { currentDocument, DocumentSelection }
 
 /**
  * @public

@@ -100,8 +100,10 @@ function withLogging (
       const result = await resultTx
       if (options.logRequests) {
         let printResult: any = result
+        let total = 0
         if (Array.isArray(result)) {
-          printResult = result.slice(0, 5)
+          total = result.length
+          printResult = [result.slice(0, 5), total]
         }
         console.log(
           `request from ${accountId}-${details?.email} find request: _class=${_class} query=`,

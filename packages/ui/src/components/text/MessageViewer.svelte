@@ -118,7 +118,7 @@
   </p>
 {:else if message.type === MessageNodeType.text}
   <span
-    class="inline_block"
+    class="text_block"
     class:bold={style.bold}
     class:code={style.code}
     class:italic={style.italic}
@@ -181,8 +181,7 @@
 {/if}
 
 <style lang="scss">
-  .inline_block {
-    display: inline-block;
+  .text_block {
     word-wrap: break-word;
     white-space: pre-wrap;
   }

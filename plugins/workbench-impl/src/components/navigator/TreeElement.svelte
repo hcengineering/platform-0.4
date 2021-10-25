@@ -32,6 +32,7 @@
   export let node = false
   export let collapsed = false
   export let actions: Action[] = []
+  export let topic = false
 
   let useIcon = true
 
@@ -45,6 +46,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
   class="flex-row-center container"
+  class:topic_container={topic}
   class:sub={!node}
   class:changed
   on:click|stopPropagation={() => {
@@ -70,7 +72,7 @@
         <Expanded />
       {/if}
     </div>
-    <span>
+    <span class:topic>
       {#if label}<Label {label} />{:else}{title}{/if}
     </span>
   {/if}
@@ -94,12 +96,13 @@
     margin: 0 16px;
     padding-left: 10px;
     padding-right: 12px;
-    min-height: 36px;
     font-weight: 500;
     color: var(--theme-caption-color);
     border-radius: 8px;
     user-select: none;
     cursor: pointer;
+    min-height: 28px;
+
     &.sub {
       padding-left: 44px;
       font-weight: 400;
@@ -127,6 +130,17 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+    }
+    .topic {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 18px;
     }
     .component {
       flex-grow: 1;
@@ -161,5 +175,8 @@
       height: 0;
       margin-bottom: 8px;
     }
+  }
+  .topic_container {
+    min-height: 36px;
   }
 </style>

@@ -13,21 +13,50 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import type { MessageBookmark, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
-  import type { WithMessage } from '@anticrm/chunter'
+  import { IconEdit, PopupItem, PopupWrap } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { IconEdit, PopupWrap, PopupItem } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
+  import { newAllBookmarksQuery } from '../bookmarks'
 
   export let message: WithMessage
   export let maxHeight: number | undefined = undefined
 
   const client = getClient()
   const dispatch = createEventDispatcher()
+  let bookmark: MessageBookmark | undefined
+
+  newAllBookmarksQuery(client, (result) => {
+    bookmark = result.find((p) => p.message === message._id && p?.channelPin === true)
+  })
+
+  const pinChannel = () => {
+    if (message === undefined) {
+      return
+    }
+    if (bookmark !== undefined) {
+      if (bookmark.modifiedBy === client.accountId()) {
+        client.removeDoc(bookmark._class, bookmark.space, bookmark._id)
+      }
+    } else {
+      client.createDoc(chunter.class.Bookmark, message.space, {
+        message: message._id,
+        channelPin: true
+      })
+    }
+    dispatch('close')
+  }
 </script>
 
 <PopupWrap {maxHeight}>
   <PopupItem title={chunter.string.CopyLink} action={() => {}} />
+  {#if bookmark === undefined || bookmark.modifiedBy === client.accountId()}
+    <PopupItem
+      title={bookmark === undefined ? chunter.string.ChannelPin : chunter.string.ChannelUnPin}
+      action={pinChannel}
+    />
+  {/if}
   {#if message.modifiedBy === client.accountId()}
     <PopupItem
       component={IconEdit}

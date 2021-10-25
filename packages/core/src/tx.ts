@@ -86,8 +86,8 @@ export type OmitNever<T extends object> = Omit<T, KeysByType<T, never>>
  * @public
  */
 export interface DocOperation<T extends Doc> {
-  $push?: Partial<OmitNever<ArrayPush<T>>>
-  $pull?: Partial<OmitNever<ArrayAsElementQuery<T>>>
+  $push?: Partial<OmitNever<ArrayPush<Required<T>>>>
+  $pull?: Partial<OmitNever<ArrayAsElementQuery<Required<T>>>>
 }
 
 /**

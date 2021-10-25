@@ -23,6 +23,7 @@
   import { tick } from 'svelte'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
+  import PinmarkControl from './PinmarkControl.svelte'
 
   export let currentSpace: Ref<Space> | undefined
   export let spaceLastViews: SpaceLastViews | undefined
@@ -79,6 +80,8 @@
 
   $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
 </script>
+
+<PinmarkControl space={currentSpace} />
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
   {#if currentSpace}

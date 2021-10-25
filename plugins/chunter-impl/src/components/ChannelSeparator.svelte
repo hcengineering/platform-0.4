@@ -18,11 +18,12 @@
 
   export let label: IntlString
   export let line: boolean = false
+  export let params: any = undefined
 </script>
 
 <div class="flex-center container" class:line>
   <div class="label">
-    <Label {label} />
+    <Label {label} {params} />
   </div>
 </div>
 

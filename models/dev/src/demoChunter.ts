@@ -1,4 +1,4 @@
-import chunter, { Channel, Comment, Message } from '@anticrm/chunter'
+import chunter, { Channel, Comment, Message, MessageBookmark } from '@anticrm/chunter'
 import core, { Account, getFullRef, Ref } from '@anticrm/core'
 import { component, Component } from '@anticrm/status'
 import type { Task } from '@anticrm/task'
@@ -16,7 +16,7 @@ const demoIds = component('demo-task' as Component, {
 /**
  * @public
  */
-export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7, ri = 10): Promise<void> {
+export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 3, ri = 100): Promise<void> {
   const members: Ref<Account>[] = [core.account.System, ...accountIds]
   await builder.createDoc(
     chunter.class.Channel,
@@ -84,22 +84,22 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7,
     if (i === ri - 1) {
       // Last message
       msgText = faker.lorem.paragraphs(1)
-      msgText += `Hello [${tasks[0].shortRefId as string}](ref://task.Task#${tasks[0]._id})`
-      msgText += `\nHello2 [${tasks[1].shortRefId as string}](ref://task.Task#${tasks[1]._id})`
+      msgText += ` Hello [${tasks[0].shortRefId as string}](ref://task.Task#${tasks[0]._id})`
+      msgText += ` Hello2 [${tasks[1].shortRefId as string}](ref://task.Task#${tasks[1]._id})`
       msgText += faker.lorem.paragraphs(1)
     }
 
     if (i === ri - 2) {
       // Last message
       msgText = faker.lorem.paragraphs(1)
-      msgText += 'Youtube Page [Demo page](https://www.youtube.com/watch?v=LXb3EKWsInQ)'
+      msgText += ' Youtube Page [Demo page](https://www.youtube.com/watch?v=LXb3EKWsInQ)'
       msgText += faker.lorem.paragraphs(1)
     }
 
     if (i === ri - 3) {
       // Last message
       msgText = faker.lorem.paragraphs(1)
-      msgText += 'Github link [#261](https://github.com/hardcoreeng/platform/issues/261)'
+      msgText += ' Github link [#261](https://github.com/hardcoreeng/platform/issues/261)'
       msgText += faker.lorem.paragraphs(1)
     }
 
@@ -135,5 +135,22 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7,
         createOn: Date.now()
       }
     )
+
+    if (i % 3 === 0) {
+      await builder.createDoc(
+        chunter.class.Bookmark,
+        {
+          message: msgId,
+          channelPin: true
+        },
+        `${msgId}pin${i}` as Ref<MessageBookmark>,
+        {
+          space: demoIds.project.DemoChannel,
+          modifiedBy: i % 2 === 0 ? faker.random.arrayElement(accountIds) : core.account.System,
+          modifiedOn: Date.now(),
+          createOn: Date.now()
+        }
+      )
+    }
   }
 }

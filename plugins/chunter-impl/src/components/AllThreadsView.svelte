@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref, Space } from '@anticrm/core'
+  import type { DocumentQuery, Ref, Space } from '@anticrm/core'
   import type { Message, Channel } from '@anticrm/chunter'
   import { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
@@ -21,21 +21,18 @@
   import SpaceItem from './SpaceItem.svelte'
   import type { SpaceLastViews } from '@anticrm/notification'
 
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
-
   const client = getClient()
+
+  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
+  export let filter: DocumentQuery<Message> = { 'comments.userId': client.accountId() }
 
   let messages: Message[] = []
 
   $: {
     client
-      .findAll(
-        chunter.class.Message,
-        { 'comments.userId': client.accountId() },
-        {
-          sort: { lastModified: -1 }
-        }
-      )
+      .findAll(chunter.class.Message, filter, {
+        sort: { lastModified: -1 }
+      })
       .then((result) => {
         messages = result
       })

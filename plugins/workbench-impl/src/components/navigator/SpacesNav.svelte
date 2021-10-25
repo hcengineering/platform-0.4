@@ -89,6 +89,9 @@
 
   function toolActions (model: SpacesNavModel): Action[] {
     const result: Action[] = []
+    if (!(model.showActions ?? true)) {
+      return []
+    }
     const create = model.createComponent
     if (create !== undefined) {
       result.push({
@@ -158,7 +161,7 @@
 
 <div>
   {#if !(model.hideIfEmpty ?? false) || spaces.length > 0}
-    <TreeNode label={model.label} {actions}>
+    <TreeNode label={model.label} {actions} topic={true}>
       {#each spaces as space (space._id)}
         <TreeItem
           notifications={hasNotification(space._id, spacesLastViews)}
