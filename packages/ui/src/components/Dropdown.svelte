@@ -13,187 +13,72 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString } from '@anticrm/status'
+  import { createEventDispatcher } from 'svelte'
+  import type { IntlString, Asset, UIComponent } from '@anticrm/status'
 
   import ui from '../component'
-  import type { DropdownItem } from '../types'
+  import { showPopup, closePopup } from '..'
+  import type { DropdownItem, PopupAlignment } from '../types'
+  import DropdownPopup from './popups/DropdownPopup.svelte'
 
-  import ArrowUp from './icons/Up.svelte'
   import ArrowDown from './icons/Down.svelte'
   import Label from './Label.svelte'
+  import Icon from './Icon.svelte'
 
+  export let icon: Asset | UIComponent = ArrowDown
+  export let label: IntlString | undefined
   export let items: DropdownItem[]
   export let selected: DropdownItem['id'] | undefined
-  export let title: IntlString | undefined
+  export let disabled: boolean = false
 
-  let isDisabled = false
-  $: isDisabled = items.length === 0
+  const dispatch = createEventDispatcher()
+  let btn: HTMLElement
 
-  let isOpened = false
+  let isNull = false
+  $: disabled = isNull = items.length === 0
+
   let selectedItem = items.find((x) => x.id === selected)
   $: selectedItem = items.find((x) => x.id === selected)
   $: if (selected === undefined && items[0] !== undefined) {
     selected = items[0].id
   }
-
-  function onItemClick (id: DropdownItem['id']) {
-    selected = id
-  }
-
-  function onClick () {
-    isOpened = !isOpened
-  }
-
-  function onClickOutside () {
-    isOpened = false
-  }
-
-  function clickOutside (node: any, onEventFunction: any) {
-    const handleClick = (event: any) => {
-      const path = event.composedPath()
-
-      if (!path.includes(node)) {
-        onEventFunction()
-      }
-    }
-
-    document.addEventListener('click', handleClick)
-
-    return {
-      destroy () {
-        document.removeEventListener('click', handleClick)
-      }
-    }
-  }
 </script>
 
-<div class="root" class:disabled={isDisabled} on:click={onClick} use:clickOutside={onClickOutside}>
-  <div class="selected">
-    <div class="content">
-      {#if title !== undefined}
-        <div class="title">
-          <Label label={title} />
-        </div>
-      {/if}
-      <div class="label">
-        {#if selectedItem?.label !== undefined}
-          {selectedItem.label}
-        {:else}
-          <Label label={ui.string.None} />
-        {/if}
-      </div>
-    </div>
-    <div class="icon">
-      {#if isOpened}
-        <ArrowUp />
+<div bind:this={btn} class="flex-col cursor-pointer"
+  on:click={(ev) => {
+    showPopup(DropdownPopup, { items, selected }, btn, (result) => {
+      // undefined passed when closed without changes, null passed when unselect
+      if (result !== undefined && result !== selected) {
+        selected = result
+        dispatch('change', selected)
+      }
+    })
+  }}
+>
+  {#if label}<div class="label"><Label {label} /></div>{/if}
+  <div class="flex-row-center">
+    <div class="icon {(!selectedItem?.label || disabled) ? 'content-trans-color' : 'caption-color'}">
+      {#if typeof icon === 'string'}
+        <Icon {icon} size={16} fill={'currentColor'} />
       {:else}
-        <ArrowDown />
+        <svelte:component this={icon} size={16} fill={'currentColor'} />
+      {/if}
+    </div>
+    <div class={(!selectedItem?.label || disabled) ? 'content-trans-color' : 'caption-color'}>
+      {#if selectedItem?.label !== undefined}
+        <Label label={selectedItem.label} />
+      {:else}
+        <Label label={ui.string.None} />
       {/if}
     </div>
   </div>
-  {#if isOpened}
-    <div class="items-container">
-      <div class="items">
-        {#each items as item (item.id)}
-          <div class="item" on:click={() => onItemClick(item.id)}>
-            {item.label}
-          </div>
-        {/each}
-      </div>
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
-  .root {
-    font-family: inherit;
-    font-size: 14px;
-    border: 2px solid transparent;
-    border-radius: 2px;
-    cursor: pointer;
-
-    &.disabled {
-      cursor: unset;
-    }
-  }
-
-  .selected {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 100%;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .title {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--theme-content-accent-color);
-    opacity: 0.8;
-    user-select: none;
-  }
-
   .label {
-    flex-grow: 1;
-    min-width: 0;
-
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-right: 15px;
-
-    color: var(--theme-caption-color);
+    font-weight: 500;
+    font-size: .75rem;
+    color: var(--theme-content-accent-color);
   }
-
-  .items-container {
-    position: relative;
-  }
-
-  .items {
-    position: absolute;
-    width: 100%;
-
-    top: 18px;
-
-    display: flex;
-    flex-direction: column;
-
-    max-height: 300px;
-    overflow-y: auto;
-
-    background-color: var(--theme-button-bg-hovered);
-    border: 1px solid var(--theme-button-border-enabled);
-    border-radius: 12px;
-
-    z-index: 1000;
-  }
-
-  .item {
-    flex-shrink: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-right: 15px;
-
-    padding: 10px 20px;
-
-    &:first-child {
-      padding-top: 20px;
-      padding-bottom: 10px;
-    }
-
-    &:last-child {
-      padding-bottom: 20px;
-    }
-
-    &:hover {
-      background-color: var(--theme-bg-accent-color);
-    }
-  }
+  .icon { margin-right: .25rem; }
 </style>

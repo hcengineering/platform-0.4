@@ -130,7 +130,7 @@
         title={recruiting.string.SelectCandidate}
         showSearch
       />
-      <Dropdown items={stateItems} bind:selected={stateID} title={recruiting.string.State} />
+      <Dropdown items={stateItems} bind:selected={stateID} label={recruiting.string.State} />
     </Grid>
   </Section>
 </Dialog>

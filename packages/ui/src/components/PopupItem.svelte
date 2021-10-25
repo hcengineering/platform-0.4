@@ -69,7 +69,7 @@
       border-radius: 50%;
       opacity: 0;
       &.selected {
-        opacity: 0.8;
+        opacity: .8;
       }
     }
 
