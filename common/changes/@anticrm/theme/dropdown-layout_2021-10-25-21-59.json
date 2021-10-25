@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Dropdown layout.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}
