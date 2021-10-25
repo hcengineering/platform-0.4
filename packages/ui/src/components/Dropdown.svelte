@@ -17,8 +17,8 @@
   import type { IntlString, Asset, UIComponent } from '@anticrm/status'
 
   import ui from '../component'
-  import { showPopup, closePopup } from '..'
-  import type { DropdownItem, PopupAlignment } from '../types'
+  import { showPopup } from '..'
+  import type { DropdownItem } from '../types'
   import DropdownPopup from './popups/DropdownPopup.svelte'
 
   import ArrowDown from './icons/Down.svelte'
@@ -44,7 +44,9 @@
   }
 </script>
 
-<div bind:this={btn} class="flex-col cursor-pointer"
+<div
+  bind:this={btn}
+  class="flex-col cursor-pointer"
   on:click={(ev) => {
     showPopup(DropdownPopup, { items, selected }, btn, (result) => {
       // undefined passed when closed without changes, null passed when unselect
@@ -57,14 +59,14 @@
 >
   {#if label}<div class="label"><Label {label} /></div>{/if}
   <div class="flex-row-center">
-    <div class="icon {(!selectedItem?.label || disabled) ? 'content-trans-color' : 'caption-color'}">
+    <div class="icon {!selectedItem?.label || disabled ? 'content-trans-color' : 'caption-color'}">
       {#if typeof icon === 'string'}
         <Icon {icon} size={16} fill={'currentColor'} />
       {:else}
         <svelte:component this={icon} size={16} fill={'currentColor'} />
       {/if}
     </div>
-    <div class={(!selectedItem?.label || disabled) ? 'content-trans-color' : 'caption-color'}>
+    <div class={!selectedItem?.label || disabled ? 'content-trans-color' : 'caption-color'}>
       {#if selectedItem?.label !== undefined}
         <Label label={selectedItem.label} />
       {:else}
@@ -77,8 +79,10 @@
 <style lang="scss">
   .label {
     font-weight: 500;
-    font-size: .75rem;
+    font-size: 0.75rem;
     color: var(--theme-content-accent-color);
   }
-  .icon { margin-right: .25rem; }
+  .icon {
+    margin-right: 0.25rem;
+  }
 </style>
