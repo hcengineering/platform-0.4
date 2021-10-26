@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc } from '@anticrm/core'
+import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc, Hierarchy, Class } from '@anticrm/core'
 import core, { registerMapper } from '@anticrm/core'
 import type { DerivedFeedback, Feedback } from '@anticrm/recruiting'
 import recruiting from '@anticrm/recruiting'
@@ -40,13 +40,17 @@ async function createFeedback (feedback: Feedback, d: DerivedDataDescriptor<Doc,
   ]
 }
 
+const isTarget = (hierarchy: Hierarchy, c: Ref<Class<Doc>>): boolean =>
+  hierarchy.isDerived(c, recruiting.class.Feedback) &&
+  !hierarchy.isDerived(c, recruiting.class.DerivedFeedback)
+
 export default async (): Promise<void> => {
   registerMapper(recruiting.mapper.Feedback, {
     map: async (tx: Tx, options: MappingOptions): Promise<DerivedData[]> => {
       if (tx._class === core.class.TxCreateDoc) {
         const ttx = tx as TxCreateDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, recruiting.class.Feedback)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           return await createFeedback(TxProcessor.createDoc2Doc(ttx) as Feedback, options.descriptor, options)
         }
       }
@@ -54,7 +58,7 @@ export default async (): Promise<void> => {
       if (tx._class === core.class.TxUpdateDoc) {
         const ttx = tx as TxUpdateDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, recruiting.class.Feedback)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           const feedback = (await options.storage.findAll(recruiting.class.Feedback, { _id: ttx.objectId as Ref<Feedback> }, { limit: 1 }))[0]
 
           if (feedback === undefined) {
@@ -79,7 +83,7 @@ export default async (): Promise<void> => {
       if (tx._class === core.class.TxRemoveDoc) {
         const ttx = tx as TxRemoveDoc<Doc>
 
-        if (options.hierarchy.isDerived(ttx.objectClass, recruiting.class.Feedback)) {
+        if (isTarget(options.hierarchy, ttx.objectClass)) {
           return []
         }
       }
