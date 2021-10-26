@@ -14,12 +14,37 @@
 -->
 <script lang="ts">
   import type { UIComponent } from '@anticrm/status'
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte'
 
   export let component: UIComponent
   export let doc: any
+
+  const dispatch = createEventDispatcher()
+  let root: HTMLElement
+
+  const rObs = new ResizeObserver((entries) => {
+    const rect = entries[0]?.contentRect
+
+    if (rect === undefined) {
+      return
+    }
+
+    dispatch('sizeChange', [rect.width, rect.height])
+  })
+
+  onMount(() => {
+    rObs.observe(root)
+
+    const rect = root.getBoundingClientRect()
+    dispatch('sizeChange', [rect.width, rect.height])
+  })
+
+  onDestroy(() => {
+    rObs.disconnect()
+  })
 </script>
 
-<div class="root">
+<div bind:this={root} class="root">
   <svelte:component this={component} {doc} />
 </div>
 

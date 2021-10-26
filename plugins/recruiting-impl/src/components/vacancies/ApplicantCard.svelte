@@ -107,7 +107,7 @@
     flex-direction: column;
 
     gap: 10px;
-    min-height: 50px;
+    min-height: 70px;
 
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-bg-accent-color);

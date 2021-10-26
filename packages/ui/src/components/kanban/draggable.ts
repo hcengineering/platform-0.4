@@ -27,8 +27,18 @@ export interface DragStartEvent extends DragEvent {
   }
 }
 
+type Coord = [number, number]
+
+interface DragInfo {
+  lastPos: Coord
+  style: Record<string, string>
+}
+
 export interface DragEndEvent extends DragEvent {
   reset: () => void
+  forced: boolean
+  node: HTMLElement
+  dragInfo?: DragInfo
   hoveredItems: Array<{
     id: string
     type: string
@@ -39,18 +49,29 @@ export interface DragEndEvent extends DragEvent {
 class Draggable {
   private isClick = false
   private isMoved = false
-  private downPos: [number, number] = [-1, -1]
+  private downPos: Coord = [-1, -1]
+  private lastPos: Coord = [-1, -1]
   private readonly moveThreshold = 10
 
   constructor (
     private readonly node: HTMLElement,
-    private readonly onstart: (e: any) => void,
-    private readonly onmove: (e: any) => void,
-    private readonly onend: (e: any) => void
+    private readonly onstart: (e: { x: number, y: number }) => void,
+    private readonly onmove: (e: { x: number, y: number, dx: number, dy: number }) => void,
+    private readonly onend: (e: { x: number, y: number, forced: boolean, lastPos?: Coord }) => void,
+    lastPos?: Coord
   ) {
     node.setAttribute('x-type', 'draggable')
     node.addEventListener('click', this.handleClick, true)
     node.addEventListener('mousedown', this.handleMouseDown)
+
+    // If lastPos is not undefined that means specific item is dragging right now
+    if (lastPos !== undefined) {
+      this.lastPos = lastPos
+      this.isMoved = true
+      this.onstart({ x: lastPos[0], y: lastPos[1] })
+      window.addEventListener('mouseup', this.handleMouseUp)
+      window.addEventListener('mousemove', this.handleMouseMove)
+    }
   }
 
   cleanup (): void {
@@ -61,6 +82,12 @@ class Draggable {
     // In case we got element destroyed before mouseup
     window.removeEventListener('mousemove', this.handleMouseMove)
     window.removeEventListener('mouseup', this.handleMouseUp)
+
+    if (this.isMoved) {
+      this.onend({ x: this.lastPos[0], y: this.lastPos[1], forced: true, lastPos: this.lastPos })
+      this.lastPos = [-1, -1]
+      this.downPos = [-1, -1]
+    }
   }
 
   private readonly handleClick = (e: MouseEvent): void => {
@@ -127,6 +154,7 @@ class Draggable {
       this.isMoved = true
     }
 
+    this.lastPos = [e.clientX, e.clientY]
     this.onmove({ x: e.clientX, y: e.clientY, dx: e.movementX, dy: e.movementY })
   }
 
@@ -142,21 +170,30 @@ class Draggable {
         target.click()
       }
     } else {
-      this.onend({ x: e.clientX, y: e.clientY })
+      this.onend({ x: e.clientX, y: e.clientY, forced: false })
     }
 
     this.isMoved = false
+    this.lastPos = [-1, -1]
     this.downPos = [-1, -1]
   }
 }
 
-export function draggable (
-  node: HTMLElement,
-  data: { id: string, watcher: DragWatcher, type: string, disabled?: boolean, ctx?: any }
-): any {
-  if (data.disabled === true) {
-    return
+interface Data {
+  id?: string
+  watcher: DragWatcher
+  type: string
+  dragInfo?: DragInfo
+  disabled?: boolean
+  ctx?: any
+}
+
+function createDraggable (node: HTMLElement, data: Data): () => void {
+  if (data.disabled === true || data.id === undefined) {
+    return () => {}
   }
+
+  const actualID = data.id
 
   const dragWatcher = data.watcher
   const [dragID, unsub] = dragWatcher.regDraggable({
@@ -165,41 +202,43 @@ export function draggable (
     type: data.type
   })
 
-  let isDragging = false
   const clearStyles = (): void => {
-    node.style.position = ''
-    node.style.top = ''
-    node.style.left = ''
-    node.style.width = ''
-    node.style.height = ''
-    node.style.zIndex = ''
+    node.style.removeProperty('position')
+    node.style.removeProperty('top')
+    node.style.removeProperty('left')
+    node.style.removeProperty('width')
+    node.style.removeProperty('height')
+    node.style.removeProperty('z-index')
   }
 
   const draggable = new Draggable(
     node,
     (e) => {
-      isDragging = true
-
       const bbox = node.getBoundingClientRect()
-      node.style.position = 'fixed'
-      node.style.top = `${bbox.top}px`
-      node.style.left = `${bbox.left}px`
-      node.style.width = `${bbox.width}px`
-      node.style.height = `${bbox.height}px`
-      node.style.zIndex = '2000'
+
+      if (data.dragInfo === undefined) {
+        node.style.position = 'fixed'
+        node.style.top = `${bbox.top}px`
+        node.style.left = `${bbox.left}px`
+        node.style.width = `${bbox.width}px`
+        node.style.height = `${bbox.height}px`
+        node.style.zIndex = '2000'
+      } else {
+        Object.entries(data.dragInfo.style).forEach(([key, value]) => {
+          node.style.setProperty(key, value)
+        })
+      }
 
       node.dispatchEvent(
         new CustomEvent<DragStartEvent>('dragStart', {
-          detail: { ...data, size: { width: bbox.width, height: bbox.height } }
+          detail: { ...data, id: actualID, size: { width: bbox.width, height: bbox.height } }
         })
       )
       dragWatcher.dragMove(dragID, e.x, e.y)
     },
     (e) => {
-      const dx = e.dx as number
-      const dy = e.dy as number
-      const x = parseFloat(node.style.left ?? '0') + dx
-      const y = parseFloat(node.style.top ?? '0') + dy
+      const x = parseFloat(node.style.left ?? '0') + e.dx
+      const y = parseFloat(node.style.top ?? '0') + e.dy
 
       node.style.top = `${y}px`
       node.style.left = `${x}px`
@@ -207,8 +246,6 @@ export function draggable (
       dragWatcher.dragMove(dragID, e.x, e.y)
     },
     (e) => {
-      isDragging = false
-
       const hoveredItems = dragWatcher.getHoveredItems()
 
       dragWatcher.dragEnd()
@@ -216,8 +253,24 @@ export function draggable (
       node.dispatchEvent(
         new CustomEvent<DragEndEvent>('dragEnd', {
           detail: {
-            id: data.id,
+            id: actualID,
             ctx: data.ctx,
+            node,
+            forced: e.forced,
+            dragInfo:
+              e.lastPos !== undefined
+                ? {
+                    lastPos: e.lastPos,
+                    style: {
+                      position: node.style.position,
+                      top: node.style.top,
+                      left: node.style.left,
+                      width: node.style.width,
+                      height: node.style.height,
+                      'z-index': node.style.zIndex
+                    }
+                  }
+                : undefined,
             reset: clearStyles,
             hoveredItems: hoveredItems.map((item) => ({
               id: item.id,
@@ -227,18 +280,32 @@ export function draggable (
           }
         })
       )
-    }
+    },
+    data.dragInfo?.lastPos
   )
+
+  return () => {
+    draggable.cleanup()
+    unsub()
+  }
+}
+
+export function draggable (node: HTMLElement, data: Data): any {
+  let { id, disabled, dragInfo } = data
+  let cleanup = createDraggable(node, data)
 
   return {
     destroy: () => {
-      draggable.cleanup()
-      unsub()
+      cleanup()
     },
-    update: () => {
-      if (!isDragging) {
-        clearStyles()
-        dragWatcher.dragEnd()
+    update: (newData: Data) => {
+      if (newData.id !== id || newData.disabled !== disabled || newData.dragInfo !== dragInfo) {
+        id = newData.id
+        disabled = newData.disabled
+        dragInfo = newData.dragInfo
+
+        cleanup()
+        cleanup = createDraggable(node, newData)
       }
     }
   }

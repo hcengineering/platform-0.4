@@ -95,6 +95,7 @@ function createHoverable (node: HTMLElement, data: Data): () => State {
 
 export function hoverable (node: HTMLElement, data: Data): any {
   let isDisabled = data.disabled
+  let id = data.id
   let unsub = createHoverable(node, data)
 
   return {
@@ -106,10 +107,11 @@ export function hoverable (node: HTMLElement, data: Data): any {
       }
     },
     update: (newData: Data) => {
-      if (isDisabled !== newData.disabled) {
+      if (isDisabled !== newData.disabled || id !== newData.id) {
         unsub()
         unsub = createHoverable(node, newData)
         isDisabled = newData.disabled
+        id = newData.id
       }
     }
   }

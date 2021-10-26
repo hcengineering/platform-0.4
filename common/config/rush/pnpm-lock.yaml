@@ -201,6 +201,7 @@ specifiers:
   svelte-jester: ^1.7.0
   svelte-loader: ^3.1.0
   svelte-preprocess: ^4.7.0
+  svelte-window: ~1.2.3
   svgo-loader: ^3.0.0
   tmp: ^0.2.1
   toposort: ^2.0.2
@@ -417,6 +418,7 @@ dependencies:
   svelte-jester: 1.8.2_jest@26.6.3
   svelte-loader: 3.1.2
   svelte-preprocess: 4.8.0_postcss@8.3.6+typescript@4.3.5
+  svelte-window: 1.2.3
   svgo-loader: 3.0.0
   tmp: 0.2.1
   toposort: 2.0.2
@@ -10351,6 +10353,10 @@ packages:
       typescript: 4.3.5
     dev: false
 
+  /svelte-window/1.2.3:
+    resolution: {integrity: sha512-hG05EPjHGp6UyndJY1m+2V14nz40yp/CVWY3sFkTVjsR5CEjfZEhcesSx4mE6GmdXtP63khHDLX7nBGgPk0VDg==}
+    dev: false
+
   /svelte/3.42.3:
     resolution: {integrity: sha512-pbdtdNZEx2GBqSM6XEgPoHbwtvWBwFLt/1bRmzsyXZO+i424wFnPe7O5B3GOJDPFSxPRztumAW3mL5LPzecWUg==}
     engines: {node: '>= 8'}
@@ -13955,7 +13961,7 @@ packages:
     dev: false
 
   file:projects/ui.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-XPCHFYWEq73H+7K7a+NNj7ShO+OVM2twuRoEqv7ovwO/A32FWecwaDQzMd3tsluGKOHeeMk3IUgC8pFOgYNAsg==, tarball: file:projects/ui.tgz}
+    resolution: {integrity: sha512-KiAqtwHgTTUMNzBFOoFhXM7xHE1yL1jW9L2+PpoxfxIl8EJIIweP5ZTEMJmSHaNeBJJdsmacrPLZax98bxAKWw==, tarball: file:projects/ui.tgz}
     id: file:projects/ui.tgz
     name: '@rush-temp/ui'
     version: 0.0.0
@@ -13982,6 +13988,7 @@ packages:
       svelte-check: 2.2.5_postcss@8.3.6+svelte@3.42.3
       svelte-loader: 3.1.2_svelte@3.42.3
       svelte-preprocess: 4.8.0_de13032659dbc45f75dea0e9a3a663a9
+      svelte-window: 1.2.3
       typescript: 4.3.5
     transitivePeerDependencies:
       - '@babel/core'

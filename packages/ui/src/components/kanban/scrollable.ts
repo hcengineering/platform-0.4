@@ -22,7 +22,7 @@ class Scroller {
   private cancelScroll = false
   private isScrolling = false
 
-  constructor (private readonly node: HTMLElement) {}
+  constructor (private readonly getNode: () => HTMLElement | undefined) {}
 
   scroll (direction: { x?: number, y?: number }): void {
     this.x = direction.x ?? this.x
@@ -62,8 +62,13 @@ class Scroller {
       return
     }
 
-    const { scrollLeft, scrollTop } = this.node
-    this.node.scroll(scrollLeft + this.x, scrollTop + this.y)
+    const node = this.getNode()
+    if (node === undefined) {
+      return
+    }
+
+    const { scrollLeft, scrollTop } = node
+    node.scroll(scrollLeft + this.x, scrollTop + this.y)
 
     requestAnimationFrame(this.scrollAction)
   }
@@ -110,23 +115,32 @@ interface Data {
   disabled?: boolean
   watcher: DragWatcher
   allowedTypes?: string[]
+  getNode?: (node: HTMLElement) => HTMLElement
 }
 
-function createScrollable (node: HTMLElement, data: Data): () => void {
+function createScrollable (root: HTMLElement, data: Data): () => void {
   if (data.disabled === true) {
     return () => {}
   }
 
-  const scroller = new Scroller(node)
+  const getNode = (): HTMLElement | undefined => (data.getNode !== undefined ? data.getNode(root) : root)
+
+  const scroller = new Scroller(getNode)
   const dragWatcher = data.watcher
-  const max = data?.maxSpeed ?? 16
+  const max = data.maxSpeed ?? 16
 
   const unsub = dragWatcher.listen({
     id: generateId(),
-    node,
+    node: getNode,
     type: ObjectType.Common,
     onDragOver: (e) => {
-      if (data?.allowedTypes !== undefined && !data.allowedTypes.includes(e.type)) {
+      if (data.allowedTypes !== undefined && !data.allowedTypes.includes(e.type)) {
+        return
+      }
+
+      const node = getNode()
+
+      if (node === undefined) {
         return
       }
 
@@ -139,7 +153,7 @@ function createScrollable (node: HTMLElement, data: Data): () => void {
       })
     },
     onDragEnd: (e) => {
-      if (data?.allowedTypes !== undefined && !data.allowedTypes.includes(e.type)) {
+      if (data.allowedTypes !== undefined && !data.allowedTypes.includes(e.type)) {
         return
       }
 
