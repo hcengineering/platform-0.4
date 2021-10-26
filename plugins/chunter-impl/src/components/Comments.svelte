@@ -22,6 +22,7 @@
   import chunter from '../plugin'
   import Message from './Message.svelte'
   import type { SpaceLastViews } from '@anticrm/notification'
+  import { newAllBookmarksQuery } from '../bookmarks'
 
   export let message: MessageModel
   export let spaceLastViews: SpaceLastViews | undefined
@@ -52,11 +53,15 @@
       }
     )
   }
+
+  newAllBookmarksQuery(client, () => {
+    // Do nothing just cache
+  })
 </script>
 
 <div class="channel-container">
   {#each comments as m (m._id)}
-    <Message {spaceLastViews} thread message={m} />
+    <Message {spaceLastViews} thread message={m} showLabels={true} />
   {/each}
 </div>
 

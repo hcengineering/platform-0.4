@@ -13,14 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Comment, CommentRef, Message, WithMessage } from '@anticrm/chunter'
+  import type { Comment, CommentRef, Message, MessageBookmark, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
-  import core, { Account, Class, Doc, parseFullRef, Ref, Timestamp } from '@anticrm/core'
+  import core, { parseFullRef } from '@anticrm/core'
+  import type { Account, Class, Doc, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import { ActionIcon, Button, DateTime, MessageViewer, showPopup } from '@anticrm/ui'
   import type { ItemRefefence } from '@anticrm/ui'
+  import { ActionIcon, Button, DateTime, MessageViewer, showPopup } from '@anticrm/ui'
   import { getClient, selectDocument } from '@anticrm/workbench'
+  import { newAllBookmarksQuery } from '../bookmarks'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
   import { findReferences } from '../messages'
@@ -28,15 +30,16 @@
   import ChatIcon from './icons/Chat.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
+  import MessagePopup from './MessagePopup.svelte'
   import RefControl from './RefControl.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
-  import MessagePopup from './MessagePopup.svelte'
 
   export let message: WithMessage
   export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   export let showReferences = true
+  export let showLabels = false
 
   let parsedMessage: MessageNode
 
@@ -51,7 +54,22 @@
     replyIds = comments.map((r) => r.userId)
   }
 
+  let bookmark: MessageBookmark | undefined
+  let pinMark: MessageBookmark | undefined
+  let pinUser: Account | undefined
+
   const client = getClient()
+
+  newAllBookmarksQuery(client, (result) => {
+    const mids = result.filter((p) => p.message === message._id)
+    bookmark = mids.find((p) => p.channelPin === false)
+    pinMark = mids.find((p) => p.channelPin === true)
+    if (pinMark !== undefined) {
+      getUser(pinMark.modifiedBy).then((pu) => {
+        pinUser = pu
+      })
+    }
+  })
 
   let editMode = false
   let newMessageValue: string = ''
@@ -64,11 +82,17 @@
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
   }
 
-  function onClick () {
+  async function onClick () {
     if (thread) {
       return
     }
-    selectDocument(message)
+    if (await client.isDerived(message._class, chunter.class.Comment)) {
+      const cmt = message as Comment
+      const { _id, _class } = parseFullRef(cmt.replyOf)
+      selectDocument({ _id, _class })
+    } else {
+      selectDocument(message)
+    }
   }
 
   function isToday (value: Date | Timestamp): boolean {
@@ -148,6 +172,16 @@
       selElement.classList.remove('selected')
     })
   }
+  const toggleBookmark = () => {
+    if (bookmark !== undefined) {
+      client.removeDoc(bookmark._class, client.userSpace(), bookmark._id)
+    } else {
+      client.createDoc(chunter.class.Bookmark, client.userSpace(), {
+        message: message._id,
+        channelPin: false
+      })
+    }
+  }
 </script>
 
 <div
@@ -159,6 +193,22 @@
   data-modified={message.modifiedOn}
   data-id={message._id}
 >
+  <slot name="header" />
+
+  {#if showLabels}
+    {#if bookmark !== undefined}
+      <div class="bookmark-logo">
+        <Bookmark size={10} />
+        <span>saved to bookmarks.</span>
+      </div>
+    {/if}
+    {#if pinMark !== undefined}
+      <div class="bookmark-logo">
+        <Bookmark size={10} />
+        <span>pined by {pinUser?.name}</span>
+      </div>
+    {/if}
+  {/if}
   <div class="container">
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
@@ -178,7 +228,9 @@
             <div class="tool">
               <ActionIcon icon={MoreH} size={20} action={showMsgPopup} />
             </div>
-            <div class="tool"><ActionIcon icon={Bookmark} size={20} /></div>
+            <div class="tool">
+              <ActionIcon icon={Bookmark} size={20} action={toggleBookmark} filled={bookmark !== undefined} />
+            </div>
             <div class="tool"><ActionIcon icon={Share} size={20} /></div>
             {#if !thread}
               <div class="tool">
@@ -256,7 +308,8 @@
     flex-direction: column;
     padding-bottom: 15px;
     border-radius: 12px;
-    padding: 10px;
+    padding: 2px;
+    padding-right: 10px;
 
     &.isNew {
       background-color: var(--theme-bg-accent-color);
@@ -310,7 +363,6 @@
           font-size: 16px;
           line-height: 150%;
           color: var(--theme-caption-color);
-          margin-bottom: 4px;
 
           display: flex;
           justify-content: space-between;
@@ -337,7 +389,6 @@
           justify-content: space-between;
           align-items: center;
           height: 32px;
-          margin-top: 8px;
           user-select: none;
 
           div + div {
@@ -368,6 +419,13 @@
     &:hover {
       background-color: var(--theme-button-bg-enabled);
       border-color: var(--theme-bg-accent-color);
+    }
+
+    .bookmark-logo {
+      display: flex;
+      align-items: center;
+      font-size: 10px;
+      margin: 5px 10px;
     }
   }
 </style>

@@ -16,7 +16,6 @@
 import core, {
   Account,
   Class,
-  DeferredPromise,
   DerivedDataDescriptor,
   Doc,
   DOMAIN_TX,
@@ -28,6 +27,7 @@ import core, {
   Space,
   Title,
   Tx,
+  withSID,
   _createClass as createClass,
   _createDoc as createDoc
 } from '@anticrm/core'
@@ -36,9 +36,9 @@ import builder from '@anticrm/model-all'
 import { getMongoClient, mongoEscape, shutdown, _dropAllDBWithPrefix } from '@anticrm/mongo'
 import { component, Component } from '@anticrm/status'
 import * as net from 'net'
-import { Server, startServer, generateToken } from '..'
+import { assignWorkspace, closeWorkspace, generateToken, Server, startServer } from '..'
 import { selfSignedAuth } from '../tls_utils'
-import { createClient } from './client'
+import { ClientWithShutdown, createClient as createRawClient } from './client'
 
 const SERVER_SECRET = 'secret'
 const MONGO_URI = 'mongodb://localhost:27017'
@@ -71,6 +71,7 @@ async function prepareServer (enableLogging = true): Promise<{
   address: net.AddressInfo
   workspaceId: string
   server: Server
+  waitDD: () => Promise<void>
 }> {
   const client = await getMongoClient(MONGO_URI)
 
@@ -110,10 +111,17 @@ async function prepareServer (enableLogging = true): Promise<{
       ]
     })
   )
-
+  const sidTx = withSID(undefined, -1)
   for (const tx of btx) {
-    await txes.insertOne(mongoEscape(tx))
+    await txes.insertOne(mongoEscape(await sidTx(tx)))
   }
+
+  const { workspace } = await assignWorkspace({
+    clientId: 'system-id',
+    accountId: core.account.System,
+    workspaceId,
+    tx: (tx) => {}
+  })
 
   // eslint-disable-next-line
   const server = await startServer('localhost', 0, SERVER_SECRET, {
@@ -121,13 +129,18 @@ async function prepareServer (enableLogging = true): Promise<{
     logTransactions: enableLogging,
     security: await securityCertificate
   })
+
+  // We need to wait for initial DD to be processed before test is processing.
+
   return {
     shutdown: async () => {
+      await closeWorkspace('system-id')
       server.shutdown()
     },
     address: server.address(),
     workspaceId,
-    server
+    server,
+    waitDD: async () => await workspace.waitDDComplete()
   }
 }
 
@@ -136,11 +149,23 @@ describe('real-server', () => {
   let address: net.AddressInfo
   let server: Server
   let workspaceId: string
+  let waitDD: () => Promise<void>
   const mongodbUri: string = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
+  const clients: ClientWithShutdown[] = []
 
   async function cleanDbs (): Promise<void> {
     const mongoClient = await getMongoClient(mongodbUri)
     await _dropAllDBWithPrefix('ws-s-test', mongoClient)
+  }
+
+  async function createClient (
+    clientUrl: string,
+    certificate: string,
+    notify?: (tx: Tx) => void
+  ): Promise<ClientWithShutdown> {
+    const c = await createRawClient(clientUrl, certificate, notify)
+    clients.push(c)
+    return c
   }
 
   beforeAll(async () => {
@@ -158,9 +183,14 @@ describe('real-server', () => {
     address = s.address
     workspaceId = s.workspaceId
     server = s.server
+    waitDD = s.waitDD
   })
 
   afterEach(async () => {
+    for (const c of clients) {
+      await c.shutdown()
+    }
+    clients.splice(0, clients.length)
     return await serverShutdown()
   })
 
@@ -180,9 +210,6 @@ describe('real-server', () => {
       }
     )
 
-    const brain5tx = new DeferredPromise()
-    const brain1tx = new DeferredPromise()
-
     const brainTxes: Tx[] = []
     const client2 = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
@@ -193,12 +220,7 @@ describe('real-server', () => {
       ).cert,
       (tx) => {
         brainTxes.push(tx)
-        if (brainTxes.length === 1) {
-          brain1tx.resolve(null)
-        }
-        if (brainTxes.length === 5) {
-          brain5tx.resolve(null)
-        }
+        console.log(brainTxes.length, tx)
       }
     )
 
@@ -208,18 +230,15 @@ describe('real-server', () => {
       description: 'test space',
       private: true
     })
-    await brain1tx.promise
-    expect(johnTxes.length).toEqual(1)
-    expect(brainTxes.length).toEqual(1)
 
     // Create account inside space, to cause DD be in same space.
     await client.createDoc(core.class.Account, sp1._id, {
       email: 't1',
       name: 't2'
     })
-    await brain5tx.promise
-    expect(johnTxes.length).toEqual(5)
-    expect(brainTxes.length).toEqual(5)
+    await waitDD()
+    expect(johnTxes.length).toBeGreaterThanOrEqual(3)
+    expect(brainTxes.length).toBeGreaterThanOrEqual(3)
     const c2t = await client2.findAll(core.class.Account, {})
     expect(c2t.length).toEqual(2)
 
@@ -266,7 +285,6 @@ describe('real-server', () => {
 
     const brainTxes: Tx[] = []
 
-    const brainAllTx = new DeferredPromise<void>()
     const client2 = await createClient(
       `${address.address}:${address.port}/${generateToken(SERVER_SECRET, brianAccount as string, workspaceId, {
         email: johnAccount
@@ -276,9 +294,6 @@ describe('real-server', () => {
       ).cert,
       (tx) => {
         brainTxes.push(tx)
-        if (brainTxes.length === 8) {
-          brainAllTx.resolve()
-        }
       }
     )
 
@@ -303,8 +318,8 @@ describe('real-server', () => {
       ofDoc: getFullRef(t1._id, t1._class),
       message: 'Comment 2'
     })
-
-    await brainAllTx.promise
+    console.log('brainTxes.length', brainTxes.length)
+    await waitDD()
     const t12 = await client2.findAll(testIds.class.Task, {})
     expect(t12.length).toEqual(1)
     expect(t12[0].comments?.length).toEqual(2)

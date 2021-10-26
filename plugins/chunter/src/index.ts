@@ -13,14 +13,23 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Doc, DocumentMapper, FullRefString, Ref, Space, Timestamp } from '@anticrm/core'
+import type {
+  Account,
+  AccountProperties,
+  Class,
+  Doc,
+  DocumentMapper,
+  FullRefString,
+  Ref,
+  Space,
+  Timestamp
+} from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 
-export interface ChannelAccountPreferences {
-  favourite: boolean
-  muted: boolean
+export interface ChannelAccountPreferences extends AccountProperties {
+  closed: boolean // If set, then direct message will not be visible.
   notifications: ChannelNotificationSchema
 }
 
@@ -31,6 +40,9 @@ export interface Channel extends Space {
 
   // Customizable fields.
   account?: ChannelAccountPreferences
+
+  // Customizable field.
+  visible?: boolean // If defined, will be shown in user list or nor.
 }
 
 export interface CommentRef {
@@ -49,6 +61,16 @@ export interface Message extends WithMessage {
 
   // Derived value, updated by any comment add/modification.
   lastModified?: Timestamp
+}
+
+/**
+ * An message bookmark
+ *
+ * @public
+ */
+export interface MessageBookmark extends Doc {
+  channelPin: boolean // If true, then this is channel pinned item.
+  message: Ref<Message>
 }
 
 export interface Comment extends WithMessage {
@@ -78,7 +100,8 @@ export default plugin(
     class: {
       Channel: '' as Ref<Class<Channel>>,
       Message: '' as Ref<Class<Message>>,
-      Comment: '' as Ref<Class<Comment>>
+      Comment: '' as Ref<Class<Comment>>,
+      Bookmark: '' as Ref<Class<MessageBookmark>>
     },
     string: {
       Channels: '' as IntlString,
@@ -96,6 +119,7 @@ export default plugin(
 
       MessagesSpecial: '' as IntlString,
       ThreadsSpecial: '' as IntlString,
+      BookmarkSpecial: '' as IntlString,
 
       UserTo: '' as IntlString,
       MessageTo: '' as IntlString,
@@ -111,12 +135,15 @@ export default plugin(
       CancelEdit: '' as IntlString,
       Save: '' as IntlString,
       SaveEdit: '' as IntlString,
-      MoreReplies: '' as IntlString
+      MoreReplies: '' as IntlString,
+      ChannelPin: '' as IntlString,
+      ChannelUnPin: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,
       Hashtag: '' as Asset,
-      Lock: '' as Asset
+      Lock: '' as Asset,
+      Bookmark: '' as Asset
     },
     component: {
       ChannelView: '' as AnyComponent,
@@ -125,7 +152,8 @@ export default plugin(
       ReferenceInput: '' as AnyComponent,
       Channel: '' as AnyComponent,
       References: '' as AnyComponent,
-      AllThreadsView: '' as AnyComponent
+      AllThreadsView: '' as AnyComponent,
+      BookmarksItemsView: '' as AnyComponent
     },
     account: {
       Chunterbot: '' as Ref<Account>

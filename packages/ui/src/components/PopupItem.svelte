@@ -25,7 +25,7 @@
   export let selected: boolean = false
   export let action: () => void = () => {}
 
-  if (title) {
+  $: if (title) {
     component = Label
     props = { label: title }
   }

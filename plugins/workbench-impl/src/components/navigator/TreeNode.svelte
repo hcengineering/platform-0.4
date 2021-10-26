@@ -21,8 +21,9 @@
   export let actions: Action[] = []
   export let notifications = 0
   export let collapsed = false
+  export let topic = false
 </script>
 
-<TreeElement {label} {notifications} {collapsed} {actions} node>
+<TreeElement {label} {notifications} {collapsed} {actions} node {topic}>
   <slot />
 </TreeElement>

@@ -20,7 +20,8 @@ const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-
 loadMetadata(chunter.icon, {
   Chunter: `${icons}#chunter`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
   Hashtag: `${icons}#hashtag`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
-  Lock: `${icons}#lock` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Lock: `${icons}#lock`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Bookmark: `${icons}#bookmark` // eslint-disable-line @typescript-eslint/restrict-template-expressions
 })
 
 addStringsLoader(chunter.id, async (lang: string) => {

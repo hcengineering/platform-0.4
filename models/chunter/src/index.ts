@@ -13,14 +13,22 @@
 // limitations under the License.
 //
 
-import type { Channel, ChannelNotificationSchema, Comment, CommentRef, Message } from '@anticrm/chunter'
+import type {
+  Channel,
+  ChannelAccountPreferences,
+  ChannelNotificationSchema,
+  Comment,
+  CommentRef,
+  Message,
+  MessageBookmark
+} from '@anticrm/chunter'
 import { Domain, FullRefString, PresentationMode, Ref, Timestamp } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import workbench from '@anticrm/model-workbench'
+import notification from '@anticrm/notification'
 import { Application, SpacesNavModel } from '@anticrm/workbench'
 import chunter from './plugin'
-import notification from '@anticrm/notification'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
@@ -35,6 +43,19 @@ export class TChannel extends TSpace implements Channel {
   favourite!: boolean
   muted!: boolean
   notifications!: ChannelNotificationSchema
+  pinned!: Ref<Message>[]
+
+  account?: ChannelAccountPreferences
+  visible?: boolean
+}
+
+/**
+ * @public
+ */
+@Model(chunter.class.Bookmark, core.class.Doc, DOMAIN_CHUNTER)
+export class TMessageBookmark extends TDoc implements MessageBookmark {
+  channelPin!: boolean
+  message!: Ref<Message>
 }
 
 /**
@@ -60,7 +81,7 @@ export class TComment extends TDoc implements Comment {
  * @public
  */
 export function createModel (builder: Builder): void {
-  builder.createModel(TChannel, TMessage, TComment)
+  builder.createModel(TChannel, TMessage, TComment, TMessageBookmark)
   const directMessagesModel: SpacesNavModel<Channel> = {
     label: chunter.string.DirectMessages,
     spaceIcon: chunter.icon.Hashtag,
@@ -76,7 +97,8 @@ export function createModel (builder: Builder): void {
       members: [],
       private: true,
       direct: true
-    }
+    },
+    showActions: false
   }
 
   builder.createDoc<Application>(
@@ -97,6 +119,12 @@ export function createModel (builder: Builder): void {
             label: chunter.string.ThreadsSpecial,
             component: chunter.component.AllThreadsView,
             icon: chunter.icon.Hashtag
+          },
+          {
+            id: 'saved-items',
+            label: chunter.string.BookmarkSpecial,
+            component: chunter.component.BookmarksItemsView,
+            icon: chunter.icon.Bookmark
           }
         ],
         spaces: [

@@ -158,8 +158,10 @@ export async function closeWorkspace (clientId: string): Promise<void> {
   }
   const ws = workspaces.get(info.workspaceId)
   if (ws !== undefined) {
+    console.info('closing workspace', info.workspaceId, 'clientId', clientId, ws.clients.size)
     ws.clients.delete(clientId)
     if (ws.clients.size === 0) {
+      console.info('closing workspace, no clients', info.workspaceId)
       await ws.close()
     }
   }

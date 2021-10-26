@@ -27,6 +27,7 @@
   import MsgView from './Message.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import { afterUpdate } from 'svelte'
+  import { newAllBookmarksQuery } from '../bookmarks'
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -94,6 +95,10 @@
   }
 
   $: (spaceLastViews?.notificatedObjects?.length ?? 0) > 0 && scrollHandler()
+
+  newAllBookmarksQuery(client, () => {
+    // Do nothing just cache
+  })
 </script>
 
 <div class="header">
@@ -103,8 +108,8 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} {spaceLastViews} thread showReferences={false} />
-      <ChannelSeparator label={chunter.string.RepliesText} line />
+      <MsgView {message} {spaceLastViews} thread showReferences={false} showLabels={true} />
+      <ChannelSeparator label={chunter.string.RepliesText} line params={{ replies: message.comments?.length }} />
       <Comments
         {message}
         {spaceLastViews}
@@ -129,7 +134,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 
     .title {
       flex-grow: 1;
