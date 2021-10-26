@@ -6,12 +6,20 @@ import faker from 'faker'
 
 let attachmentIds = 0
 
-const fileURIs = ['https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_500kB.jpg', 'https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf', 'https://file-examples-com.github.io/uploads/2017/02/file-sample_100kB.doc']
-export async function createAttachment (objectId: Ref<Doc>, objcetClass: Ref<Class<Doc>>, builder: DemoBuilder, index?: number): Promise<Attachment> {
+const fileURIs = [
+  'https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_500kB.jpg',
+  'https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf',
+  'https://file-examples-com.github.io/uploads/2017/02/file-sample_100kB.doc'
+]
+
+export async function createAttachment (
+  objectId: Ref<Doc>,
+  objcetClass: Ref<Class<Doc>>,
+  builder: DemoBuilder,
+  index?: number
+): Promise<Attachment> {
   const url = index !== undefined ? fileURIs[index % fileURIs.length] : faker.random.arrayElement(fileURIs)
-  const responce = await fetch(url)
   const fileName = url.split('/').pop() ?? url
-  const blob = await responce.blob()
 
   const attachmentId: Ref<Attachment> = `attachment-${attachmentIds++}` as Ref<Attachment>
   const result = await builder.createDoc(
@@ -19,11 +27,11 @@ export async function createAttachment (objectId: Ref<Doc>, objcetClass: Ref<Cla
     {
       objectId: objectId,
       objectClass: objcetClass,
-      url: URL.createObjectURL(blob),
+      url: url,
       name: fileName,
       format: nameToFormat(fileName),
       mime: mime.getType(fileName) ?? '',
-      size: blob.size
+      size: 0
     },
     attachmentId
   )
