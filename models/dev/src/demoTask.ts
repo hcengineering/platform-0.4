@@ -4,6 +4,7 @@ import { component, Component } from '@anticrm/status'
 import task, { CheckListItem, Project, Task, TaskStatuses } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
+import { createAttachment } from './demoAttachment'
 import { DemoBuilder } from './model'
 
 const demoIds = component('demo-task' as Component, {
@@ -35,6 +36,7 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
 
   const sTasks = [1, 4, 2, 0, 10, 1, 5]
   const sComments = [2, 5, 1, 0, 2, 0, 3]
+  const sAttachments = [0, 1, 1, 0, 2, 0, 3]
   const DESCRIPTOR_SHORTREF = '#shortRef' as Ref<DerivedDataDescriptor<Doc, ShortRef>>
   const tasks: Task[] = []
   let commentIds = 0
@@ -88,6 +90,10 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
           createOn: Date.now()
         }
       )
+    }
+
+    for (let j = 0; j < sAttachments[i % sAttachments.length]; j++) {
+      await createAttachment(id, task.class.Task, builder)
     }
 
     tasks.push(

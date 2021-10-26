@@ -4,6 +4,7 @@ import { component, Component } from '@anticrm/status'
 import type { Task } from '@anticrm/task'
 import faker from 'faker'
 import { accountIds } from './demoAccount'
+import { createAttachment } from './demoAttachment'
 import { DemoBuilder } from './model'
 
 const demoIds = component('demo-task' as Component, {
@@ -100,6 +101,24 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 7,
       msgText = faker.lorem.paragraphs(1)
       msgText += 'Github link [#261](https://github.com/hardcoreeng/platform/issues/261)'
       msgText += faker.lorem.paragraphs(1)
+    }
+
+    if (i === ri - 4) {
+      const attachment = await createAttachment(msgId, chunter.class.Message, builder, 1)
+      msgText = faker.lorem.paragraphs(1)
+      msgText += ` [${attachment.name}](${attachment.url})`
+    }
+
+    if (i === ri - 5) {
+      const attachment = await createAttachment(msgId, chunter.class.Message, builder, 2)
+      msgText = faker.lorem.paragraphs(1)
+      msgText += ` [${attachment.name}](${attachment.url})`
+    }
+
+    if (i === ri - 6) {
+      const attachment = await createAttachment(msgId, chunter.class.Message, builder, 3)
+      msgText = faker.lorem.paragraphs(1)
+      msgText += ` [${attachment.name}](${attachment.url})`
     }
 
     await builder.createDoc(

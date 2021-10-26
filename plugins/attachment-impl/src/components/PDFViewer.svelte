@@ -15,6 +15,8 @@
 <script lang="ts">
   import * as pdfjs from 'pdfjs-dist'
   import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist'
+  import { getMetadata } from '@anticrm/platform'
+  import attachment from '@anticrm/attachment'
 
   export let url: string
   let lastUrl: string | undefined
@@ -26,10 +28,12 @@
   const canvases: HTMLCanvasElement[] = []
   const previews: HTMLCanvasElement[] = []
   let pagesCount = 0
+  const filesUrl = getMetadata(attachment.metadata.FilesUrl)
 
   $: if (lastUrl !== url) {
     lastUrl = url
-    pdfjs.getDocument({ url, withCredentials: true }).promise.then((res) => {
+    const withCredentials = filesUrl !== undefined ? url.includes(filesUrl) : false
+    pdfjs.getDocument({ url, withCredentials }).promise.then((res) => {
       pdfDoc = res
       pagesCount = res.numPages
       renderAllPreviews()
