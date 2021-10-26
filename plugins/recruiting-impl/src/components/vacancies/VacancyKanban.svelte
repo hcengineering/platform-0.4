@@ -18,7 +18,7 @@
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
   import { fsmPlugin } from '@anticrm/fsm-impl'
-  import type { FSM, State, Transition } from '@anticrm/fsm'
+  import type { FSM, State } from '@anticrm/fsm'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
@@ -33,7 +33,6 @@
   const fsmP = getPlugin(fsmPlugin.id)
   let lqApplicants: QueryUpdater<Applicant> | undefined
   let lqStates: QueryUpdater<State> | undefined
-  let lqTransitions: QueryUpdater<Transition> | undefined
 
   let fsm: FSM | undefined
   let lqFSM: QueryUpdater<FSM> | undefined
@@ -55,19 +54,6 @@
 
       lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { _id: space.fsm }, (result) => {
         fsm = result[0]
-      })
-
-      lqTransitions = client.query(lqTransitions, fsmPlugin.class.Transition, { fsm: space.fsm }, (result) => {
-        const updatedTransitions = new Map<string, Set<string>>()
-
-        result.forEach(({ from, to }) => {
-          const existing = updatedTransitions.get(from) ?? new Set()
-          existing.add(to)
-
-          updatedTransitions.set(from, existing)
-        })
-
-        transitions = updatedTransitions
       })
     }
   }
@@ -102,7 +88,6 @@
 
   let applicants: Applicant[] = []
   let rawStates: State[] = []
-  let transitions: Map<string, Set<string>> = new Map()
 
   let items = new Map<string, Applicant[]>()
   $: items = new Map<string, Applicant[]>(
@@ -126,7 +111,6 @@
 <Kanban
   {items}
   {states}
-  {transitions}
   cardDelay={100}
   cardComponent={ApplicantCard}
   on:drop={onDrop}
