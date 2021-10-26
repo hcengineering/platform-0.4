@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-mappers",
+      "comment": "Fix feedback mapper",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-mappers"
+}
