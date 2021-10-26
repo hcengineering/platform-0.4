@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Integrate virtualized list into kanban",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
