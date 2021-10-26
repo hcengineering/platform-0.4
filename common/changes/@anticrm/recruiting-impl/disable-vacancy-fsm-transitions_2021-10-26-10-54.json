@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Get rid of recruiting transitions",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}
