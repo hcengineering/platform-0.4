@@ -93,7 +93,7 @@
         }}
       />
       {#if isUploading(item)}
-      <Progress value={item.progress} />
+        <Progress value={item.progress} />
       {/if}
     </div>
   {/each}
