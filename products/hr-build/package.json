@@ -4,7 +4,7 @@
   "license": "EPL-2.0",
   "scripts": {
     "check": "tsc --noEmit",
-    "build-server": "rushx check && rushx lint && esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error",
+    "build-server": "rushx check && rushx lint && esbuild ./src/server.ts --bundle --minify --outfile=./dist/server.js --platform=node --log-level=error --external:sharp",
     "build": "rm -rf ./dist && cross-env NODE_ENV=production webpack && rushx build-server",
     "build-dev": "rm -rf ./dist && cross-env NODE_ENV=development webpack && rushx build-server",
     "rebuild-dev": "rm -rf ./dist/web && cross-env NODE_ENV=development webpack --progress && rushx build-server",

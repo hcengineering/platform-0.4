@@ -13,20 +13,23 @@
 // limitations under the License.
 //
 
-type Task<T> = () => Promise<T>
+/**
+ * @public
+ */
+export type Task<T> = () => Promise<T>
 
+/**
+ * @public
+ */
 export class TaskQueue {
   private readonly queue: Array<Task<any>> = []
   private inProgress = false
 
-  async add<T> (task: Task<T>): Promise<T> {
+  async add<T>(task: Task<T>): Promise<T> {
     const ret = new Promise<T>((resolve, reject) => {
-      this.queue
-        .push(async () => {
-          await task()
-            .then(resolve)
-            .catch(reject)
-        })
+      this.queue.push(async () => {
+        await task().then(resolve).catch(reject)
+      })
     })
 
     await this.dequeue()

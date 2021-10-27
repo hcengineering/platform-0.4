@@ -53,6 +53,7 @@
     "@anticrm/meeting":"~0.4.0",
     "@anticrm/webrtc":"~0.4.1",
     "@anticrm/workbench":"~0.4.0",
-    "lodash.debounce":"~4.0.8"
+    "lodash.debounce":"~4.0.8",
+    "@anticrm/plugin-core":"~0.4.0"
   }
 }

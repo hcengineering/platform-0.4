@@ -17,6 +17,7 @@ import type { MeetingService } from '@anticrm/meeting'
 import { getMetadata, setResource } from '@anticrm/platform'
 import { Client, Peer as RawPeer } from '@anticrm/webrtc'
 import meeting from '@anticrm/meeting'
+import pluginCore from '@anticrm/plugin-core'
 
 import CreateRoom from './components/CreateRoom.svelte'
 import App from './components/App.svelte'
@@ -37,5 +38,8 @@ export default async (): Promise<MeetingService> => {
   return {}
 }
 
-export const createRoomMgr = (): RoomMgr =>
-  new RoomMgr(new Client(`ws://${getMetadata(meeting.metadata.ClientUrl) ?? 'localhost:18081'}/ws`))
+export const createRoomMgr = (): RoomMgr => {
+  const token: string = getMetadata(pluginCore.metadata.Token) ?? ''
+  const meetingUrl: string = getMetadata(meeting.metadata.ClientUrl) ?? 'localhost:18081'
+  return new RoomMgr(new Client(`wss://${meetingUrl}/${token}`))
+}

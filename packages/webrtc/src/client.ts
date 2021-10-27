@@ -16,8 +16,14 @@
 import { Request, RequestProcessor, serialize, readResponse } from '@anticrm/rpc'
 import { RequestMsg, NotificationMethod, IncomingNotifications, OutgoingNotifications } from './api'
 
-type Subscriber = (x: OutgoingNotifications) => Promise<void> | void
+/**
+ * @public
+ */
+export type Subscriber = (x: OutgoingNotifications) => Promise<void> | void
 
+/**
+ * @public
+ */
 export class Client extends RequestProcessor {
   private readonly subs = new Map<NotificationMethod, Subscriber[]>()
   private ws: Promise<WebSocket>
@@ -30,7 +36,7 @@ export class Client extends RequestProcessor {
 
   async close (): Promise<void> {
     this.isClosed = true
-    await this.ws.then(ws => ws.close())
+    await this.ws.then((ws) => ws.close())
   }
 
   protected send (request: Request<any>): void {
@@ -47,9 +53,9 @@ export class Client extends RequestProcessor {
       return
     }
 
-    (this.subs.get(notification) ?? [])
+    ;(this.subs.get(notification) ?? [])
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      .forEach(s => s(response))
+      .forEach((s) => s(response))
   }
 
   private async initWS (url: string): Promise<WebSocket> {
@@ -91,6 +97,9 @@ export class Client extends RequestProcessor {
     this.subs.set(method, subs)
 
     return () =>
-      this.subs.set(method, (this.subs.get(method) ?? []).filter(x => x !== sub))
+      this.subs.set(
+        method,
+        (this.subs.get(method) ?? []).filter((x) => x !== sub)
+      )
   }
 }

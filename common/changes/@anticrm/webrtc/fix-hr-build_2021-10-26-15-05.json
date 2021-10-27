@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/webrtc",
+      "comment": "Meeting use WSS",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/webrtc"
+}
