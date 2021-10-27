@@ -306,6 +306,7 @@
   .message-container {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     padding-bottom: 15px;
     border-radius: 12px;
     padding: 2px;
