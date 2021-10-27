@@ -244,7 +244,7 @@ dependencies:
   '@rush-temp/elastic': file:projects/elastic.tgz
   '@rush-temp/fsm': file:projects/fsm.tgz_@typescript-eslint+parser@4.29.3
   '@rush-temp/fsm-impl': file:projects/fsm-impl.tgz_postcss@8.3.6+ts-node@10.2.1
-  '@rush-temp/hr-build': file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5
+  '@rush-temp/hr-build': file:projects/hr-build.tgz_postcss@8.3.6
   '@rush-temp/login': file:projects/login.tgz
   '@rush-temp/login-assets': file:projects/login-assets.tgz_e2648ea3577eecbba3519a3bcb75d461
   '@rush-temp/login-impl': file:projects/login-impl.tgz_postcss@8.3.6+ts-node@10.2.1
@@ -1553,25 +1553,6 @@ packages:
       semver: 7.3.5
       tapable: 1.1.3
       true-case-path: 2.2.1
-    dev: false
-
-  /@rushstack/module-minifier-plugin/0.4.31_webpack@5.51.1:
-    resolution: {integrity: sha512-0hUusXRKU88oaHXvMRRMJ0MEoiU1Jfn2v/uDRkNdHGpqEv9pvKxZDdOXZ4PJ785dnGlg6bSktsCJ5oCgaGzZuQ==}
-    engines: {node: '>=10.17.1'}
-    peerDependencies:
-      '@types/webpack': '*'
-      webpack: ^4.31.0
-      webpack-sources: ~1.4.3
-    peerDependenciesMeta:
-      '@types/webpack':
-        optional: true
-    dependencies:
-      '@types/node': 12.20.24
-      '@types/tapable': 1.0.6
-      source-map: 0.7.3
-      tapable: 1.1.3
-      terser: 4.7.0
-      webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
   /@rushstack/node-core-library/3.40.0:
@@ -10452,16 +10433,6 @@ packages:
       webpack: 5.51.1_webpack-cli@4.8.0
     dev: false
 
-  /terser/4.7.0:
-    resolution: {integrity: sha512-Lfb0RiZcjRDXCC3OSHJpEkxJ9Qeqs6mp2v4jf2MHfy8vGERmVDuvjXdd/EnP5Deme5F2yBRBymKmKHCBg2echw==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-    dependencies:
-      commander: 2.20.3
-      source-map: 0.6.1
-      source-map-support: 0.5.19
-    dev: false
-
   /terser/5.7.2:
     resolution: {integrity: sha512-0Omye+RD4X7X69O0eql3lC4Heh/5iLj3ggxR/B5ketZLOtLiOqukUgjw3q4PDnNQbsrkKr3UMypqStQG3XKRvw==}
     engines: {node: '>=10'}
@@ -12209,13 +12180,12 @@ packages:
       - supports-color
     dev: false
 
-  file:projects/hr-build.tgz_postcss@8.3.6+typescript@4.3.5:
-    resolution: {integrity: sha512-TfJ/qM53Rsr+v776KclfOVXzoZOJHzAnIZRSsWpDDxwRDnwHnl8QPH0PjJ0QiaULtMDy+rtm+SYMW9+nnHYg3A==, tarball: file:projects/hr-build.tgz}
+  file:projects/hr-build.tgz_postcss@8.3.6:
+    resolution: {integrity: sha512-MizxsmCQST+KrAXOFZiNG97U0fLjMQ9FIwzg+fn0gcnXKuDkJVVSQ/jarJhp9vjAZ25COFc4I168nuoNbvlPTA==, tarball: file:projects/hr-build.tgz}
     id: file:projects/hr-build.tgz
     name: '@rush-temp/hr-build'
     version: 0.0.0
     dependencies:
-      '@rushstack/module-minifier-plugin': 0.4.31_webpack@5.51.1
       '@types/node': 14.17.11
       '@typescript-eslint/eslint-plugin': 4.29.3_fd14c0002fbbfb85b8a0070d0dffb93d
       '@typescript-eslint/parser': 4.29.3_eslint@7.32.0+typescript@4.3.5
@@ -12226,6 +12196,7 @@ packages:
       css-loader: 5.2.7_webpack@5.51.1
       dotenv: 10.0.0
       dotenv-webpack: 7.0.3_webpack@5.51.1
+      esbuild: 0.12.22
       eslint: 7.32.0
       eslint-config-standard-with-typescript: 20.0.0_30544c4288e5c4ccc2ca1dc1cb93978a
       eslint-plugin-import: 2.24.2_eslint@7.32.0
@@ -12235,11 +12206,13 @@ packages:
       mini-css-extract-plugin: 1.6.2_webpack@5.51.1
       prettier: 2.3.2
       sass-loader: 11.1.1_webpack@5.51.1
+      sharp: 0.29.1
       style-loader: 2.0.0_webpack@5.51.1
       svelte: 3.42.3
       svelte-loader: 3.1.2_svelte@3.42.3
       svgo-loader: 3.0.0
       ts-loader: 8.3.0_typescript@4.3.5+webpack@5.51.1
+      typescript: 4.3.5
       webpack: 5.51.1_webpack-cli@4.8.0
       webpack-bundle-analyzer: 4.4.2
       webpack-cli: 4.8.0_b7b75b8d969789edffcc3c191127c767
@@ -12253,7 +12226,6 @@ packages:
       - postcss
       - sass
       - supports-color
-      - typescript
       - utf-8-validate
     dev: false
 
@@ -12364,7 +12336,7 @@ packages:
     dev: false
 
   file:projects/meeting-impl.tgz_postcss@8.3.6+ts-node@10.2.1:
-    resolution: {integrity: sha512-Bg6m53qZIIi82UM6EfJ2neSNwUd/+dRX7gLjIkonuF3mWoDPYRqfFZI2+aUFDTV606tP8hjLhIbKDCACIaXfFQ==, tarball: file:projects/meeting-impl.tgz}
+    resolution: {integrity: sha512-ibRwnsrqnGdxFelbmqCSEFc1ML6LRXptMwkjKaMzBWs8PoUcIL+QHQumE6Gw5L0TUhHUWoxYPK99nkwkPoRj5g==, tarball: file:projects/meeting-impl.tgz}
     id: file:projects/meeting-impl.tgz
     name: '@rush-temp/meeting-impl'
     version: 0.0.0

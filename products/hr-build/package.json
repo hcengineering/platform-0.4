@@ -22,6 +22,8 @@
     "build-dist": "rm -rf ./dist/hr-build.zip &&  cd ./dist && zip -9 -r hr-build.zip ./config ./web ./server.js"
   },
   "devDependencies": {
+    "typescript": "^4.2.4",
+    "esbuild": "^0.12.16",
     "cross-env": "^7.0.3",
     "webpack-cli": "^4.6.0",
     "webpack": "^5.32.0",
@@ -49,6 +51,7 @@
     "compression-webpack-plugin": "~9.0.0"
   },
   "dependencies": {
+    "sharp": "^0.29.1",
     "@anticrm/platform": "~0.4.2",
     "@anticrm/ui": "~0.4.1",
     "svelte": "^3.37.0",
