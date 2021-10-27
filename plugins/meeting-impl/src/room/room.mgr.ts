@@ -421,9 +421,11 @@ export class RoomMgr {
           const target = this.findPeer(result.params.peerID)
 
           if (target === undefined) {
+            console.warn('Missing peer:', result.params.peerID)
             return
           }
 
+          console.log(`[peer ${result.params.peerID}] new ice candidate received:`, result.params.candidate)
           await target.peer.addIceCandidate(result.params.candidate)
 
           return
@@ -554,6 +556,8 @@ export class RoomMgr {
         if (track.kind === 'audio') {
           onAudioTrack(track)
         }
+
+        console.log(`[peer ${peer.internalID}] add track:`, track.kind)
         peer.media.addTrack(track)
       })
     } else {
@@ -565,11 +569,26 @@ export class RoomMgr {
       })
     }
 
+    const printState = () => {
+      console.log(`[peer ${peer.internalID}] state:`, peer.peer)
+    }
+
+    peer.peer.onconnectionstatechange = printState
+    peer.peer.oniceconnectionstatechange = printState
+    peer.peer.onicegatheringstatechange = printState
+    peer.peer.onsignalingstatechange = printState
+
+    // @ts-expect-error
+    peer.peer.onicecandidateerror = (ev: RTCPeerConnectionIceErrorEvent) => {
+      console.error(`[peer ${peer.internalID}] ice candidate error:`, `${ev.address ?? ''}:${ev.port ?? ''}`, ev.errorCode, ev.errorText)
+    }
+
     peer.peer.addEventListener('icecandidate', ({ candidate }) => {
       if (candidate === null || candidate.sdpMid === null) {
         return
       }
 
+      console.log(`[peer ${peer.internalID}] new ice candidate to send:`, candidate?.sdpMid)
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.client.sendNotification({
         method: NotificationMethod.ICECandidate,
@@ -583,6 +602,7 @@ export class RoomMgr {
     })
 
     await peer.peer.createOffer().then(async (offer) => {
+      console.log(`[peer ${peer.internalID}] set peer local descr:`, offer)
       await peer.peer.setLocalDescription(offer)
       const resp: TransmitResp['result'] = await this.client.sendRequest({
         method: ReqMethod.Transmit,
@@ -594,7 +614,10 @@ export class RoomMgr {
         ]
       })
 
+      console.log(`[peer ${peer.internalID}] set peer remote descr:`, resp?.sdp)
       await peer.peer.setRemoteDescription({ type: 'answer', sdp: resp?.sdp })
+    }).catch((err) => {
+      console.error(`[peer ${peer.internalID}] offer error:`, err)
     })
   }
 }
