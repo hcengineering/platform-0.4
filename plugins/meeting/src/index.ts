@@ -30,7 +30,8 @@ export default plugin(PluginMeeting, {}, {
     Meeting: '' as Ref<Application>
   },
   metadata: {
-    ClientUrl: '' as Metadata<string>
+    ClientUrl: '' as Metadata<string>,
+    Token: '' as Metadata<string>
   },
   icon: {
     Meeting: '' as Asset,

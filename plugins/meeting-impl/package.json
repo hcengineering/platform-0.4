@@ -9,7 +9,7 @@
   "scripts": {
     "build": "node ./esbuild && svelte-check",
     "build:clean": "rm -rf ./lib && node ./esbuild && svelte-check",
-    "test": "jest --coverage",
+    "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
     "format": "prettier --write --plugin-search-dir=. src && eslint --fix src",

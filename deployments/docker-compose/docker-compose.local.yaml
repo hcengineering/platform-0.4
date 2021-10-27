@@ -19,13 +19,13 @@ services:
       - S3_SECRET=${FILE_STORAGE_SECRET}
       - FILES_URI=https://${WEB_HOST}
       - MEETINGS_URI=${WEB_HOST}:18081
-      - SECURITY_CERT_FILE=/etc/letsencrypt/live/${WEB_HOST}/cert.pem
-      - SECURITY_KEY_FILE=/etc/letsencrypt/live/${WEB_HOST}/privkey.pem
-      - SECURITY_CA_FILE=/etc/letsencrypt/live/${WEB_HOST}/chain.pem
+      - SECURITY_CERT_FILE=/app/cert/cert.crt
+      - SECURITY_KEY_FILE=/app/cert/cert.key
+      - SECURITY_CA_FILE=/app/cert/RootCA.crt
       - WORKSPACE=${WORKSPACE}
       - WORKSPACE_ORGANIZATION=${WORKSPACE_ORGANIZATION}
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+      - ./cert:/app/cert
   mongodb:
     image: mongo
     container_name: mongodb
@@ -33,7 +33,7 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - ./db/:/data/db
+      - db:/data/db
     expose:
       - 27017
     restart: unless-stopped
@@ -43,9 +43,12 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - ./files:/data
-      - /etc/letsencrypt/live/${WEB_HOST}/fullchain.pem:/root/.minio/certs/public.crt
-      - /etc/letsencrypt/live/${WEB_HOST}/privkey.pem:/root/.minio/certs/private.key
+      - files:/data
+      - ./cert/cert.crt:/root/.minio/certs/public.crt
+      - ./cert/cert.key:/root/.minio/certs/private.key
     environment:
       - MINIO_ROOT_USER=${FILE_STORAGE_ACCESS_KEY}
       - MINIO_ROOT_PASSWORD=${FILE_STORAGE_SECRET}
+volumes:
+  db:
+  files:

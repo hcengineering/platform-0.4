@@ -13,11 +13,21 @@
 // limitations under the License.
 //
 
-import { IceCandidate } from 'kurento-client'
-
 import { Request, Response } from '@anticrm/rpc'
 
-export const enum ReqMethod {
+/**
+ * @public
+ */
+export interface IceCandidate {
+  candidate: string
+  sdpMid: string
+  sdpMLineIndex: number
+}
+
+/**
+ * @public
+ */
+export enum ReqMethod {
   Join = 'join',
   Leave = 'leave',
   Transmit = 'transmit',
@@ -26,18 +36,31 @@ export const enum ReqMethod {
   PeerUpdate = 'peer-update'
 }
 
-export const enum NotificationMethod {
+/**
+ * @public
+ */
+export enum NotificationMethod {
   PeerJoined = 'participant-joined',
   PeerLeft = 'participant-left',
   PeerUpdated = 'peer-updated',
   ICECandidate = 'ice-candidate',
   ScreenSharingStarted = 'screen-sharing-started',
-  ScreenSharingFinished = 'screen-sharing-finished',
+  ScreenSharingFinished = 'screen-sharing-finished'
 }
 
+/**
+ * @public
+ */
 export type ReqID = string | number | undefined
-type InternalID = string
 
+/**
+ * @public
+ */
+export type InternalID = string
+
+/**
+ * @public
+ */
 export interface Peer {
   internalID: InternalID
   muted: boolean
@@ -45,27 +68,72 @@ export interface Peer {
 }
 
 const screenSuffix = '-screen'
+
+/**
+ * @public
+ */
 export const makeScreenID = (id: InternalID): InternalID => `${id}${screenSuffix}`
+/**
+ * @public
+ */
 export const getScreenOwner = (id: InternalID): InternalID => id.slice(0, -screenSuffix.length)
+/**
+ * @public
+ */
 export const isScreenID = (id: InternalID): boolean => id.endsWith(screenSuffix)
 
-export class JoinReq extends Request<[{ room: string, peer: { muted: boolean, camEnabled: boolean } }], ReqMethod.Join> {}
+/**
+ * @public
+ */
+export class JoinReq extends Request<
+[{ room: string, peer: { muted: boolean, camEnabled: boolean } }],
+ReqMethod.Join
+> {}
+/**
+ * @public
+ */
 export class LeaveReq extends Request<[], ReqMethod.Leave> {}
+/**
+ * @public
+ */
 export class PeerUpdateReq extends Request<[Partial<Omit<Peer, 'internalID'>>], ReqMethod.PeerUpdate> {}
+/**
+ * @public
+ */
 export class TransmitReq extends Request<
-[{
-  peerID: InternalID
-  sdp: string
-}],
+[
+  {
+    peerID: InternalID
+    sdp: string
+  }
+],
 ReqMethod.Transmit
 > {}
-export class InitScreenSharingReq extends Request<[], ReqMethod.InitScreenSharing> {}
-export class StopScreenSharingReq extends Request<[], ReqMethod.StopScreenSharing> {}
-export type ClientICECandNotification = Request<[{
-  peerID: InternalID
-  candidate: IceCandidate
-}], NotificationMethod.ICECandidate>
 
+/**
+ * @public
+ */
+export class InitScreenSharingReq extends Request<[], ReqMethod.InitScreenSharing> {}
+/**
+ * @public
+ */
+export class StopScreenSharingReq extends Request<[], ReqMethod.StopScreenSharing> {}
+/**
+ * @public
+ */
+export type ClientICECandNotification = Request<
+[
+  {
+    peerID: InternalID
+    candidate: IceCandidate
+  }
+],
+NotificationMethod.ICECandidate
+>
+
+/**
+ * @public
+ */
 export type JoinResp = Response<{
   peers: Peer[]
   me: Peer
@@ -74,30 +142,61 @@ export type JoinResp = Response<{
     owner: string
   }
 }>
+
+/**
+ * @public
+ */
 export type UpdatePeerResp = Response<{
   peer: Peer
 }>
+
+/**
+ * @public
+ */
 export type LeaveResp = Response<boolean>
+
+/**
+ * @public
+ */
 export type TransmitResp = Response<{
   sdp: string
 }>
+
+/**
+ * @public
+ */
 export type InitScreenSharingResp = Response<{
   peerID: InternalID
 }>
+
+/**
+ * @public
+ */
 export type StopScreenSharingResp = Response<boolean>
 
+/**
+ * @public
+ */
 export type PeerJoinedNotification = Response<{
   notification: NotificationMethod.PeerJoined
   params: {
     peer: Peer
   }
 }>
+
+/**
+ * @public
+ */
 export type PeerLeftNotification = Response<{
   notification: NotificationMethod.PeerLeft
   params: {
     peerID: InternalID
   }
 }>
+
+/**
+ * @public
+ */
 export type ScreenSharingStartedNotification = Response<{
   notification: NotificationMethod.ScreenSharingStarted
   params: {
@@ -105,9 +204,17 @@ export type ScreenSharingStartedNotification = Response<{
     owner: InternalID
   }
 }>
+
+/**
+ * @public
+ */
 export type ScreenSharingFinishedNotification = Response<{
   notification: NotificationMethod.ScreenSharingFinished
 }>
+
+/**
+ * @public
+ */
 export type ServerICECandNotification = Response<{
   notification: NotificationMethod.ICECandidate
   params: {
@@ -115,6 +222,10 @@ export type ServerICECandNotification = Response<{
     candidate: IceCandidate
   }
 }>
+
+/**
+ * @public
+ */
 export type PeerUpdatedNotification = Response<{
   notification: NotificationMethod.PeerUpdated
   params: {
@@ -122,19 +233,22 @@ export type PeerUpdatedNotification = Response<{
   }
 }>
 
-export type RequestMsg =
-  | JoinReq
-  | PeerUpdateReq
-  | LeaveReq
-  | TransmitReq
-  | InitScreenSharingReq
-  | StopScreenSharingReq
-export type IncomingNotifications =
-  | ClientICECandNotification
-export type Incoming =
-  | RequestMsg
-  | IncomingNotifications
+/**
+ * @public
+ */
+export type RequestMsg = JoinReq | PeerUpdateReq | LeaveReq | TransmitReq | InitScreenSharingReq | StopScreenSharingReq
+/**
+ * @public
+ */
+export type IncomingNotifications = ClientICECandNotification
+/**
+ * @public
+ */
+export type Incoming = RequestMsg | IncomingNotifications
 
+/**
+ * @public
+ */
 export type ResponseMsg =
   | JoinResp
   | UpdatePeerResp
@@ -142,6 +256,10 @@ export type ResponseMsg =
   | TransmitResp
   | InitScreenSharingResp
   | StopScreenSharingResp
+
+/**
+ * @public
+ */
 export type OutgoingNotifications =
   | PeerJoinedNotification
   | PeerUpdatedNotification
@@ -149,6 +267,8 @@ export type OutgoingNotifications =
   | ScreenSharingStartedNotification
   | ScreenSharingFinishedNotification
   | ServerICECandNotification
-export type Outgoing =
-  | ResponseMsg
-  | OutgoingNotifications
+
+/**
+ * @public
+ */
+export type Outgoing = ResponseMsg | OutgoingNotifications

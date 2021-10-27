@@ -10,7 +10,8 @@
     "clean-logs": "git status --ignored | grep build*.log | xargs rm",
     "remove-untracked-files": "git status --untracked-files --porcelain | grep '??' | cut -d ' ' -f 2 | xargs rm",
     "do-changes": "rush change --bulk --bump-type patch --message",
-    "clean-ui-cache": "find . -name '.ui-build' | xargs rm -rf"
+    "clean-ui-cache": "find . -name '.ui-build' | xargs rm -rf",
+    "clean-test": "find . -name 'package-deps_test.json' | xargs rm -rf && rush test"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0"

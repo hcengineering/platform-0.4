@@ -71,4 +71,5 @@ common/autoinstallers/*/.npmrc
 tsdoc-metadata.json
 dist
 dev/certificates
+deployments/docker-compose/cert
 temp

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/meeting",
+      "comment": "Meeting Plugin Token",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/meeting"
+}

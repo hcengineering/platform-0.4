@@ -78,6 +78,8 @@ export async function createUpdateCandidates (
     const cid = c.id as Ref<Candidate>
     const { firstName, lastName } = getName(c.name)
 
+    console.log('update candidate', firstName, lastName, cid)
+
     states.set(cid, { state: c.idList as Ref<State>, pos: c.pos, idMember: c.idMembers[0], attachments: c.attachments })
 
     const data: Candidate = {
