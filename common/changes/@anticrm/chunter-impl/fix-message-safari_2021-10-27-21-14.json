@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Fix Message in Safari >14.1.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl"
+}
