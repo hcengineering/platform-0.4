@@ -110,15 +110,10 @@
   }
 
   let canSave: boolean = false
-  $: canSave = (recruiter && candidate) ? true : false
+  $: canSave = !!(recruiter && candidate)
 </script>
 
-<Card
-  label={recruiting.string.CreateApplication}
-  bind:canSave
-  okAction={create}
-  on:close={() => dispatch('close')}
->
+<Card label={recruiting.string.CreateApplication} bind:canSave okAction={create} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
     <UserBox
       users={recruiters}
