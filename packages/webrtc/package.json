@@ -4,26 +4,29 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "build:docs": "echo 'no docs yet'",
+    "build": "heft build",
     "test": "echo 'not tests'",
     "lint": "eslint --max-warnings=0 src",
     "lint:fix": "eslint --fix src",
-    "format": "echo 'not defined yet'"
+    "format": "prettier --write src && eslint --fix src"
   },
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.13.4",
+    "@anticrm/platform-rig": "^0.4.0",
+    "@rushstack/heft-jest-plugin": "^0.1.42",
+    "@rushstack/heft": "^0.41.7",
+    "@types/heft-jest": "^1.0.2",
+    "@types/browser-or-node": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "eslint": "^7.25.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "typescript": "^4.2.4",
-    "@types/kurento-client": "~6.14.4"
+    "eslint": "^7.25.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.4"
   },
   "dependencies": {
     "@anticrm/status": "~0.4.2",

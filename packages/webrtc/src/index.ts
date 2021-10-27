@@ -14,5 +14,5 @@
 //
 
 export * from './api'
-export { TaskQueue } from './task.queue'
-export { Client } from './client'
+export { TaskQueue, Task } from './task.queue'
+export { Client, Subscriber } from './client'

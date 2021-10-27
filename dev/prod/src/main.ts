@@ -40,6 +40,7 @@ addEventListener('Token', async (event, data) => {
   setMetadata(pluginCore.metadata.Token, data)
   const attachmentPlugin = await getPlugin(attachment.id)
   await attachmentPlugin.authorize(data)
+  setMetadata(meetingPlugin.metadata.Token, data)
 })
 
 const loginInfo = currentAccount()
