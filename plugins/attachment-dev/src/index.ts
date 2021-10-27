@@ -13,16 +13,17 @@
 // limitations under the License.
 //
 
-import attachment, { AttachmentService, nameToFormat, UploadAttachmet } from '@anticrm/attachment'
+import attachment, { AttachmentService, nameToFormat, UploadAttachment } from '@anticrm/attachment'
 import { Class, Doc, generateId, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import { setResource } from '@anticrm/platform'
-import { Attachments } from '@anticrm/attachment-impl'
+import { Attachments, AttachmentList } from '@anticrm/attachment-impl'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
 import mime from 'mime'
 
 export default async (): Promise<AttachmentService> => {
   setResource(attachment.component.Attachments, Attachments)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
+  setResource(attachment.component.AttachmentList, AttachmentList)
   const files: Map<string, File> = new Map<string, File>()
 
   async function remove (key: string, space: Ref<Space>): Promise<void> {
@@ -52,13 +53,15 @@ export default async (): Promise<AttachmentService> => {
     objectClass: Ref<Class<Doc>>,
     space: Ref<Space>,
     client: Storage & TxOperations,
-    progressCallback?: (progress: number) => void
-  ): Promise<UploadAttachmet> {
+    progressCallback?: (item: UploadAttachment, progress: number) => void
+  ): Promise<UploadAttachment> {
     const type = mime.getType(file.name) ?? ''
     const format = nameToFormat(file.name)
-    const key = (generateId() + '.' + format) as Ref<UploadAttachmet>
+    const key = (generateId() + '.' + format) as Ref<UploadAttachment>
     files.set(key, file)
-    const item = {
+    let item: UploadAttachment | undefined
+    // eslint-disable-next-line prefer-const
+    item = {
       objectClass: objectClass,
       objectId: objectId,
       name: file.name,
@@ -72,14 +75,30 @@ export default async (): Promise<AttachmentService> => {
       createOn: Date.now(),
       _class: attachment.class.Attachment,
       _id: key,
-      progress: 0,
-      abort: () => {}
-    }
-    item.abort = () => {
-      files.delete(key)
+      progress: 1,
+      abort: () => {
+        files.delete(key)
+      }
     }
     if (progressCallback !== undefined) {
-      progressCallback(100)
+      progressCallback(item, 50)
+    }
+    await client.createDoc(
+      attachment.class.Attachment,
+      space,
+      {
+        objectClass: item.objectClass,
+        objectId: item.objectId,
+        name: item.name,
+        size: item.size,
+        format: item.format,
+        mime: item.mime,
+        url: item.url
+      },
+      item._id
+    )
+    if (progressCallback !== undefined) {
+      progressCallback(item, 100)
     }
     return item
   }

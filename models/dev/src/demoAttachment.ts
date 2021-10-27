@@ -31,7 +31,7 @@ export async function createAttachment (
       name: fileName,
       format: nameToFormat(fileName),
       mime: mime.getType(fileName) ?? '',
-      size: 0
+      size: faker.datatype.number({ min: 1000, max: 1500000000 })
     },
     attachmentId
   )

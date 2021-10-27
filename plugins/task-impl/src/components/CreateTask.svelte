@@ -179,7 +179,10 @@
     </Section>
   {:else if selectedTab === attachment.string.Attachments}
     <Section label={attachment.string.Attachments} icon={IconFile}>
-      <Component is={attachment.component.Attachments} props={{ objectId: id, space: space._id, editable: true }} />
+      <Component
+        is={attachment.component.Attachments}
+        props={{ objectId: id, objectClass: task.class.Task, space: space._id, editable: true }}
+      />
     </Section>
   {:else}
     <Section label={task.string.ToDos} icon={IconToDo}>
