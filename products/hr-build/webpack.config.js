@@ -68,7 +68,7 @@ module.exports = {
       },
       {
         test: /\.svelte$/,
-        exclude: /node_modules[\/cd \\].*\.svelte/,
+        exclude: /node_modules[\/\\].*\.svelte/,
         use: {
           loader: 'svelte-loader',
           options: {
