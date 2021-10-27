@@ -13,21 +13,24 @@
 // limitations under the License.
 //
 
-import attachment, { AttachmentService, nameToFormat, UploadAttachmet } from '@anticrm/attachment'
+import attachment, { AttachmentService, nameToFormat, UploadAttachment } from '@anticrm/attachment'
 import { Class, Doc, generateId, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import { getMetadata, setResource } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
 import Attachments from './components/Attachments.svelte'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
+import AttachmentList from './components/AttachmentList.svelte'
 import mime from 'mime'
 
 // use for attachment-dev only
 export { default as Attachments } from './components/Attachments.svelte'
+export { default as AttachmentList } from './components/AttachmentList.svelte'
 export { default as AttachmentView } from './components/AttachmentView.svelte'
 export { default as AttachmentViewer } from './components/AttachmentViewer.svelte'
 
 export default async (): Promise<AttachmentService> => {
   setResource(attachment.component.Attachments, Attachments)
+  setResource(attachment.component.AttachmentList, AttachmentList)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   const fileServerURL = getMetadata(attachment.metadata.FilesUrl) ?? ''
   if (fileServerURL === '') {
@@ -129,12 +132,14 @@ export default async (): Promise<AttachmentService> => {
     objectClass: Ref<Class<Doc>>,
     space: Ref<Space>,
     client: Storage & TxOperations,
-    progressCallback?: (progress: number) => void
-  ): Promise<UploadAttachmet> {
+    progressCallback?: (item: UploadAttachment, progress: number) => void
+  ): Promise<UploadAttachment> {
     const type = mime.getType(file.name) ?? ''
     const format = nameToFormat(file.name)
-    const key = (generateId() + '.' + format) as Ref<UploadAttachmet>
-    const item = {
+    const key = (generateId() + '.' + format) as Ref<UploadAttachment>
+    let item: UploadAttachment
+    // eslint-disable-next-line prefer-const
+    item = {
       objectClass: objectClass,
       objectId: objectId,
       name: file.name,
@@ -148,26 +153,34 @@ export default async (): Promise<AttachmentService> => {
       createOn: Date.now(),
       _class: attachment.class.Attachment,
       _id: key,
-      progress: 0,
+      progress: 1,
       abort: () => {}
     }
-    item.abort = await upload(file, key, space, progressCallback, () => {
-      // eslint-disable-next-line
-      void client.createDoc(
-        attachment.class.Attachment,
-        space,
-        {
-          objectClass: item.objectClass,
-          objectId: item.objectId,
-          name: item.name,
-          size: item.size,
-          format: item.format,
-          mime: item.mime,
-          url: item.url
-        },
-        item._id
-      )
-    })
+    item.abort = await upload(
+      file,
+      key,
+      space,
+      (progress: number) => {
+        progressCallback?.(item, progress)
+      },
+      () => {
+        // eslint-disable-next-line
+        void client.createDoc(
+          attachment.class.Attachment,
+          space,
+          {
+            objectClass: item.objectClass,
+            objectId: item.objectId,
+            name: item.name,
+            size: item.size,
+            format: item.format,
+            mime: item.mime,
+            url: item.url
+          },
+          item._id
+        )
+      }
+    )
     return item
   }
 

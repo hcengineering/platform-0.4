@@ -20,7 +20,7 @@
   import { schema } from '@anticrm/richeditor'
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
-  import { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
+  import { CompletionItem, CompletionPopupActions, Component } from '@anticrm/ui'
   import { CompletionPopup, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
@@ -34,8 +34,9 @@
   import Brackets from './icons/Brackets.svelte'
   import Mention from './icons/Mention.svelte'
   import chunter from '../plugin'
-  import attachment, { Attachment, UploadAttachmet } from '@anticrm/attachment'
+  import attachment, { Attachment, UploadAttachment } from '@anticrm/attachment'
   import { getPlugin } from '@anticrm/platform'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   export let stylesEnabled = false
   // If specified, submit button will be enabled, message will be send on any modify operation
@@ -47,7 +48,12 @@
 
   const dispatch = createEventDispatcher()
   let input: HTMLElement
-  let attachments: Array<UploadAttachmet> = []
+  let attachments: Array<UploadAttachment> = []
+
+  let lq: QueryUpdater<UploadAttachment> | undefined
+  $: lq = client.query(lq, attachment.class.Attachment, { objectId: objectId }, (result) => {
+    attachments = result
+  })
 
   let styleState: EditorContentEvent = {
     isEmpty: true,
@@ -232,6 +238,7 @@
   }
 
   function handleSubmit (): void {
+    syncAttachments()
     if (!styleState.isEmpty) {
       dispatch('message', serializeMessage(editorContent))
     }
@@ -262,20 +269,17 @@
 
   async function createAttachment (file: File): Promise<void> {
     const fileService = await getPlugin(attachment.id)
-    const item = await fileService.createAttachment(
-      file,
-      objectId,
-      objectClass,
-      currentSpace!,
-      client,
-      (progress: number) => {
-        item.progress = progress
-        attachments = attachments
-      }
-    )
-    attachments.push(item)
+    let item: UploadAttachment
+    // eslint-disable-next-line prefer-const
+    item = await fileService.createAttachment(file, objectId, objectClass, currentSpace!, client, (item, progress) => {
+      item.progress = progress
+      attachments = attachments
+    })
+    if (attachments.find((p) => p._id === item._id) === undefined) {
+      console.log('push attachment')
+      attachments.push(item)
+    }
     attachments = attachments
-    insertAttachment(item)
   }
 
   async function drop (e: DragEvent): Promise<void> {
@@ -287,53 +291,67 @@
       await createAttachment(file)
     }
   }
+
+  function syncAttachments (): void {
+    attachments.forEach((item) => {
+      insertAttachment(item)
+    })
+  }
 </script>
 
 <div class="ref-container">
-  <div class="flex-between textInput" style={`height: ${lines + 1}em;`}>
-    <div
-      class="inputMsg"
-      class:edit-box-vertical={stylesEnabled}
-      class:edit-box-horizontal={!stylesEnabled}
-      on:keydown={onKeyDown}
-      on:drop|preventDefault={drop}
-      on:dragover|preventDefault
-    >
-      <MessageEditor
-        bind:this={htmlEditor}
-        bind:content={editorContent}
-        {triggers}
-        transformInjections={transformFunction}
-        on:content={(event) => {
-          editorContent = event.detail
-        }}
-        on:styleEvent={(e) => updateStyle(e.detail)}
-      >
-        <div class="label" slot="hoverMessage" let:empty={isEmpty}>
-          {#if isEmpty}
-            <Label label={chunter.string.NewMessagePlaceholder} />
-          {/if}
-        </div>
-        {#if popupVisible && completions.length > 0}
-          <CompletionPopup
-            bind:this={completionControl}
-            on:blur={() => (completions = [])}
-            ontop={true}
-            items={completions}
-            pos={{
-              left: styleState.cursor.left + 15,
-              top: styleState.cursor.top - styleState.inputHeight,
-              right: styleState.cursor.right + 15,
-              bottom: styleState.cursor.bottom - styleState.inputHeight
-            }}
-            on:select={(e) => handlePopupSelected(e.detail)}
-          />
-        {/if}
-      </MessageEditor>
-    </div>
-    {#if submitEnabled}
-      <button class="sendButton" on:click={() => handleSubmit()}><div class="icon"><Send /></div></button>
+  <div class="border">
+    {#if attachments.length > 0 && currentSpace !== undefined}
+      <Component
+        is={attachment.component.AttachmentList}
+        props={{ items: attachments, horizontal: true, editable: true }}
+      />
     {/if}
+    <div class="flex-between textInput" style={`height: ${lines + 1}em;`}>
+      <div
+        class="inputMsg"
+        class:edit-box-vertical={stylesEnabled}
+        class:edit-box-horizontal={!stylesEnabled}
+        on:keydown={onKeyDown}
+        on:drop|preventDefault={drop}
+        on:dragover|preventDefault
+      >
+        <MessageEditor
+          bind:this={htmlEditor}
+          bind:content={editorContent}
+          {triggers}
+          transformInjections={transformFunction}
+          on:content={(event) => {
+            editorContent = event.detail
+          }}
+          on:styleEvent={(e) => updateStyle(e.detail)}
+        >
+          <div class="label" slot="hoverMessage" let:empty={isEmpty}>
+            {#if isEmpty}
+              <Label label={chunter.string.NewMessagePlaceholder} />
+            {/if}
+          </div>
+          {#if popupVisible && completions.length > 0}
+            <CompletionPopup
+              bind:this={completionControl}
+              on:blur={() => (completions = [])}
+              ontop={true}
+              items={completions}
+              pos={{
+                left: styleState.cursor.left + 15,
+                top: styleState.cursor.top - styleState.inputHeight,
+                right: styleState.cursor.right + 15,
+                bottom: styleState.cursor.bottom - styleState.inputHeight
+              }}
+              on:select={(e) => handlePopupSelected(e.detail)}
+            />
+          {/if}
+        </MessageEditor>
+      </div>
+      {#if submitEnabled}
+        <button class="sendButton" on:click={() => handleSubmit()}><div class="icon"><Send /></div></button>
+      {/if}
+    </div>
   </div>
   <div class="buttons">
     <input class="hidden" bind:this={input} on:change={fileInputChange} type="file" multiple={true} />
@@ -379,10 +397,7 @@
     flex-direction: column;
     min-height: 74px;
 
-    .textInput {
-      position: relative;
-      min-height: 44px;
-      padding: 12px 16px;
+    .border {
       background-color: var(--theme-bg-accent-color);
       border: 1px solid var(--theme-bg-accent-hover);
       border-radius: 12px;
@@ -392,63 +407,70 @@
         border-color: var(--theme-bg-focused-border);
       }
 
-      .inputMsg {
-        width: 100%;
-        max-width: calc(100% - 32px);
-        height: 100%;
-        color: var(--theme-content-color);
-        background-color: transparent;
-        border: none;
-        outline: none;
+      .textInput {
+        position: relative;
+        min-height: 44px;
+        padding: 12px 16px;
 
-        .edit-box-horizontal {
+        .inputMsg {
           width: 100%;
+          max-width: calc(100% - 32px);
           height: 100%;
-          margin-top: 7px;
-          align-self: center;
-        }
+          color: var(--theme-content-color);
+          background-color: transparent;
+          border: none;
+          outline: none;
 
-        .edit-box-vertical {
-          width: 100%;
-          height: 100%;
-          margin: 4px;
-        }
+          .edit-box-horizontal {
+            width: 100%;
+            height: 100%;
+            margin-top: 7px;
+            align-self: center;
+          }
 
-        .label {
-          position: absolute;
-          top: 14px;
-          font-size: 14px;
-          line-height: 14px;
-          color: var(--theme-caption-color);
-          pointer-events: none;
-          opacity: 0.3;
-          transition: all 200ms;
-          user-select: none;
-        }
-      }
-      .sendButton {
-        flex-shrink: 0;
-        margin-left: 8px;
-        width: 24px;
-        min-width: 24px;
-        height: 24px;
-        border-radius: 4px;
+          .edit-box-vertical {
+            width: 100%;
+            height: 100%;
+            margin: 4px;
+          }
 
-        & .icon {
-          opacity: 0.3;
+          .label {
+            position: absolute;
+            top: 14px;
+            font-size: 14px;
+            line-height: 14px;
+            color: var(--theme-caption-color);
+            pointer-events: none;
+            opacity: 0.3;
+            transition: all 200ms;
+            user-select: none;
+          }
         }
-        &:hover .icon {
-          opacity: 1;
-        }
-        &:focus {
-          border: 1px solid var(--primary-button-focused-border);
-          box-shadow: 0 0 0 3px var(--primary-button-outline);
+        .sendButton {
+          flex-shrink: 0;
+          margin-left: 8px;
+          width: 24px;
+          min-width: 24px;
+          height: 24px;
+          border-radius: 4px;
+
           & .icon {
+            opacity: 0.3;
+          }
+          &:hover .icon {
             opacity: 1;
+          }
+          &:focus {
+            border: 1px solid var(--primary-button-focused-border);
+            box-shadow: 0 0 0 3px var(--primary-button-outline);
+            & .icon {
+              opacity: 1;
+            }
           }
         }
       }
     }
+
     .buttons {
       margin: 10px 0 0 8px;
       display: flex;

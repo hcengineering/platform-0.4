@@ -127,7 +127,7 @@
     <Section label={attachment.string.Attachments} icon={IconFile}>
       <Component
         is={attachment.component.Attachments}
-        props={{ objectId: vacancy._id, space: vacancy._id, editable: true }}
+        props={{ objectId: vacancy._id, objectClass: vacancy._class, space: vacancy._id, editable: true }}
       />
     </Section>
   {/if}

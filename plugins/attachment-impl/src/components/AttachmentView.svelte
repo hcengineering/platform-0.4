@@ -15,11 +15,15 @@
 <script lang="ts">
   import { sizeToString } from '@anticrm/attachment'
   import type { Attachment } from '@anticrm/attachment'
+  import { ActionIcon, IconClose } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
 
+  const dispatch = createEventDispatcher()
   export let item: Attachment
+  export let editable = false
 </script>
 
-<div class="content" on:click on:dblclick>
+<div class="content" on:click>
   <div class="icon">
     <div>{item.format.toUpperCase()}</div>
   </div>
@@ -27,6 +31,17 @@
     <div class="label">{item.name}</div>
     <div class="size">{sizeToString(item.size)}</div>
   </div>
+  {#if editable}
+    <div class="remove">
+      <ActionIcon
+        action={() => {
+          dispatch('remove')
+        }}
+        icon={IconClose}
+        size={16}
+      />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -35,8 +50,6 @@
     flex-grow: 1;
     align-items: center;
     cursor: pointer;
-    border-bottom: 1px solid var(--theme-menu-divider);
-    padding-bottom: 10px;
 
     .icon {
       width: 32px;
@@ -61,6 +74,18 @@
 
     .info {
       margin-left: 20px;
+    }
+
+    &:hover .remove {
+      visibility: visible;
+    }
+
+    .remove {
+      background-color: var(--theme-bg-accent-color);
+      border-radius: 50%;
+      align-self: flex-start;
+      margin-left: auto;
+      visibility: hidden;
     }
   }
 </style>

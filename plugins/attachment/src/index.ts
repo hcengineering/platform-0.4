@@ -26,7 +26,7 @@ export interface Attachment extends Doc {
   size: number
 }
 
-export interface UploadAttachmet extends Attachment {
+export interface UploadAttachment extends Attachment {
   progress: number
   abort: () => void
 }
@@ -55,8 +55,8 @@ export interface AttachmentService extends Service {
     objectClass: Ref<Class<Doc>>,
     space: Ref<Space>,
     client: Storage & TxOperations,
-    progressCallback?: (progress: number) => void
-  ) => Promise<UploadAttachmet>
+    progressCallback?: (item: UploadAttachment, progress: number) => void
+  ) => Promise<UploadAttachment>
 }
 
 const PluginAttachment = 'attachment' as Plugin<AttachmentService>
@@ -70,7 +70,8 @@ const attachment = plugin(
     },
     component: {
       Attachments: '' as AnyComponent,
-      AttachmentPreview: '' as AnyComponent
+      AttachmentPreview: '' as AnyComponent,
+      AttachmentList: '' as AnyComponent
     },
     string: {
       Attachment: '' as IntlString,
