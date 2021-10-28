@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Update Message layout. Recruitment popups. Icons fill to currentColor.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}
