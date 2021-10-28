@@ -29,7 +29,7 @@
     display: flex;
     flex-direction: column;
     margin-right: 7px;
-    padding: 8px 1px 12px 8px;
+    padding: 8px 1px 8px 8px;
     height: min-content;
     background-color: var(--theme-popup-bg);
     border: var(--theme-popup-border);

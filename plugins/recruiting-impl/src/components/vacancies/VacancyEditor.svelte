@@ -40,7 +40,7 @@
   const dispatch = createEventDispatcher()
 
   export let vacancy: VacancySpace
-  export let min: boolean = false
+  // export let min: boolean = false
 
   const client = getClient()
   let selectedFSM: FSM | undefined = undefined
@@ -80,55 +80,55 @@
   }
 </script>
 
-{#if min}
+<!-- {#if min}
   <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
   <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
   {#if vacancy._id === undefined}
     <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
   {/if}
-{:else}
-  <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
-    <Grid column={2}>
-      <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
-      <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
-      {#if vacancy._id === undefined}
-        <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
-      {:else}
-        <div />
-      {/if}
-      <DatePicker
-        value={vacancy.dueDate !== undefined ? new Date(vacancy.dueDate) : undefined}
-        on:change={onDueDateChange}
-        label={recruiting.string.Due}
-        noLabel={recruiting.string.NoDue}
-      />
-      <ToggleWithLabel
-        label={recruiting.string.MakePrivate}
-        description={recruiting.string.MakePrivateDescription}
-        bind:on={vacancy.private}
-        on:change={onChange}
-      />
-    </Grid>
+{:else} -->
+<Section label={recruiting.string.GeneralInformation} icon={IconFile}>
+  <Grid column={2}>
+    <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
+    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
+    {#if vacancy._id === undefined}
+      <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
+    {:else}
+      <div />
+    {/if}
+    <DatePicker
+      value={vacancy.dueDate !== undefined ? new Date(vacancy.dueDate) : undefined}
+      on:change={onDueDateChange}
+      label={recruiting.string.Due}
+      noLabel={recruiting.string.NoDue}
+    />
+    <ToggleWithLabel
+      label={recruiting.string.MakePrivate}
+      description={recruiting.string.MakePrivateDescription}
+      bind:on={vacancy.private}
+      on:change={onChange}
+    />
+  </Grid>
+</Section>
+<Section label={recruiting.string.VacancyNotes} icon={IconEdit}>
+  <Grid column={1}>
+    <TextArea label={recruiting.string.Summary} bind:value={vacancy.details.summary} on:blur={onChange} />
+    <TextArea label={recruiting.string.Qualification} bind:value={vacancy.details.qualification} on:blur={onChange} />
+    <TextArea label={recruiting.string.Experience} bind:value={vacancy.details.experience} on:blur={onChange} />
+  </Grid>
+</Section>
+<Section label={recruiting.string.VacancyDetails} icon={Details}>
+  <Grid column={2}>
+    <EditBox label={recruiting.string.Location} bind:value={vacancy.location} on:blur={onChange} />
+    <EditBox label={recruiting.string.VacancyType} bind:value={vacancy.type} on:blur={onChange} />
+  </Grid>
+</Section>
+{#if vacancy._id !== undefined}
+  <Section label={attachment.string.Attachments} icon={IconFile}>
+    <Component
+      is={attachment.component.Attachments}
+      props={{ objectId: vacancy._id, objectClass: vacancy._class, space: vacancy._id, editable: true }}
+    />
   </Section>
-  <Section label={recruiting.string.VacancyNotes} icon={IconEdit}>
-    <Grid column={1}>
-      <TextArea label={recruiting.string.Summary} bind:value={vacancy.details.summary} on:blur={onChange} />
-      <TextArea label={recruiting.string.Qualification} bind:value={vacancy.details.qualification} on:blur={onChange} />
-      <TextArea label={recruiting.string.Experience} bind:value={vacancy.details.experience} on:blur={onChange} />
-    </Grid>
-  </Section>
-  <Section label={recruiting.string.VacancyDetails} icon={Details}>
-    <Grid column={2}>
-      <EditBox label={recruiting.string.Location} bind:value={vacancy.location} on:blur={onChange} />
-      <EditBox label={recruiting.string.VacancyType} bind:value={vacancy.type} on:blur={onChange} />
-    </Grid>
-  </Section>
-  {#if vacancy._id !== undefined}
-    <Section label={attachment.string.Attachments} icon={IconFile}>
-      <Component
-        is={attachment.component.Attachments}
-        props={{ objectId: vacancy._id, objectClass: vacancy._class, space: vacancy._id, editable: true }}
-      />
-    </Section>
-  {/if}
 {/if}
+<!-- {/if} -->

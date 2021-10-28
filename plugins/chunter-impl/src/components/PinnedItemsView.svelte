@@ -13,22 +13,25 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import type { Message, MessageBookmark, Channel } from '@anticrm/chunter'
   import type { Ref, Space, DocumentQuery, Account } from '@anticrm/core'
   import core from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { IconClose, ActionIcon } from '@anticrm/ui'
+  import ui, { ActionIcon, Dialog } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { newAllBookmarksQuery } from '../bookmarks'
   import chunter from '../plugin'
   import MessageView from './Message.svelte'
   import SpaceItem from './SpaceItem.svelte'
+  import Pin from './icons/Pin.svelte'
 
   export let space: Ref<Space> | undefined
   export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   const client = getClient()
+  const dispatch = createEventDispatcher()
 
   let allBookmarks: MessageBookmark[] = []
   let bookmarks: MessageBookmark[] = []
@@ -80,77 +83,62 @@
   }
 </script>
 
-<div class="threads">
+<Dialog
+  label={chunter.string.Pinned}
+  okLabel={ui.string.Close}
+  withCancel={false}
+  okAction={() => {
+    dispatch('close')
+  }}
+  on:close={() => {
+    dispatch('close')
+  }}
+>
   {#each messages as message}
-    <div class="content">
-      <div class="flex">
-        <MessageView {message} spaceLastViews={spacesLastViews.get(message.space)} thread={false}>
-          <svelte:fragment slot="header">
-            <div class="header title">
-              {#await getSpace(message) then sp}
-                <SpaceItem space={sp.channel} />
-                <span class="avatar-box">
-                  pined by <div class="avatar"><img src={sp.account?.avatar ?? ''} alt={sp.account?.name} /></div>
-                </span>
-              {/await}
+    <MessageView {message} spaceLastViews={spacesLastViews.get(message.space)} thread={false}>
+      <svelte:fragment slot="header">
+        <div class="header">
+          {#await getSpace(message) then sp}
+            <SpaceItem space={sp.channel} />
+            <div class="flex-row-center">
+              pined by <div class="avatar ml-1"><img src={sp.account?.avatar ?? ''} alt={sp.account?.name} /></div>
               {#if bookmarksMap.get(message._id)?.modifiedBy === client.accountId()}
-                <ActionIcon icon={IconClose} size={16} action={() => removeBookmark(message)} />
+                <div class="ml-2">
+                  <ActionIcon
+                    icon={Pin}
+                    filled
+                    size={12}
+                    label={chunter.string.ChannelUnPin}
+                    action={() => removeBookmark(message)}
+                  />
+                </div>
               {/if}
             </div>
-          </svelte:fragment>
-        </MessageView>
-      </div>
-    </div>
+          {/await}
+        </div>
+      </svelte:fragment>
+    </MessageView>
   {/each}
-</div>
+</Dialog>
 
 <style lang="scss">
-  .threads {
+  .header {
     display: flex;
-    flex-direction: column;
-    width: 500px;
-    max-height: 800px;
-    padding: 16px;
-    height: min-content;
-    background-color: var(--theme-popup-bg);
-    border: var(--theme-popup-border);
-    border-radius: 20px;
-    box-shadow: var(--theme-popup-shadow);
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
-    overflow: auto;
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-      align-items: center;
-      margin-bottom: 20px;
-
-      .title {
-        flex-grow: 1;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: var(--theme-caption-color);
-        user-select: none;
-      }
-      .avatar-box {
-        display: flex;
-        margin-left: 10px;
-      }
-    }
-
-    .content {
-      width: 444px;
-      border-radius: 12px;
-      background-color: var(--theme-bg-low-accent-color);
-    }
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+    background-color: var(--theme-bg-accent-color);
+    border: 1px solid var(--theme-bg-accent-hover);
+    border-radius: 0.5rem;
 
     .avatar {
-      min-width: 16px;
-      width: 16px;
-      height: 16px;
-      background-color: var(--theme-bg-accent-color);
+      min-width: 1rem;
+      width: 1rem;
+      height: 1rem;
       border-radius: 50%;
       user-select: none;
       overflow: hidden;

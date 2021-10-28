@@ -14,7 +14,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  const fill: string = 'var(--theme-caption-color)'
+  const fill: string = 'currentColor'
 </script>
 
 <svg class="svg-avatar" {fill} viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
