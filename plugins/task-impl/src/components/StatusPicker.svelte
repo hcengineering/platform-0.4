@@ -36,9 +36,7 @@
       selectable
       selected
       action={() => {
-        selected = undefined
         pressed = !pressed
-        dispatch('change', selected)
       }}
     />
     {#each items.filter((u) => u !== selected) as item}
