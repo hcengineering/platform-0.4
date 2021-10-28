@@ -84,7 +84,7 @@
   <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
   <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
   {#if vacancy._id === undefined}
-    <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
+    <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
   {/if}
 {:else}
   <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
@@ -92,7 +92,7 @@
       <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} />
       <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
       {#if vacancy._id === undefined}
-        <Dropdown items={fsmItems} bind:selected={selectedFSMId} title={recruiting.string.Flow} />
+        <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
       {:else}
         <div />
       {/if}

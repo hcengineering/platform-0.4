@@ -17,6 +17,7 @@ import { S3Storage } from '..'
 import * as fs from 'fs'
 import * as http from 'http'
 import * as url from 'url'
+import { generateId } from '@anticrm/core'
 
 describe('s3', () => {
   const accessKey: string = process.env.S3_ACCESS_KEY ?? 'minioadmin'
@@ -24,11 +25,13 @@ describe('s3', () => {
   const endpoit: string = process.env.S3_URI ?? 'http://localhost:9000'
   let client: S3Storage
   const bucket = 'bucket'
-  const fileName = 'testFile'
+  const testId = generateId()
+  const fileName = 'testFile' + testId
+  const resultFile = 'resultFile' + testId
 
   afterAll(() => {
     fs.unlinkSync(`./${fileName}`)
-    fs.unlinkSync('./resultFile')
+    fs.unlinkSync(`./${resultFile}`)
   })
 
   it('check storage', async (done) => {
@@ -52,7 +55,7 @@ describe('s3', () => {
     const downloadLink = await client.getDownloadLink(fileName, 'simple')
     const req = http.request(options, (res) => {
       expect(downloadLink.length).toBeGreaterThan(0)
-      const resultStream = fs.createWriteStream('resultFile')
+      const resultStream = fs.createWriteStream(resultFile)
       const getLink = new url.URL(downloadLink)
       const getOptions: http.RequestOptions = {
         host: getLink.hostname,
@@ -64,7 +67,7 @@ describe('s3', () => {
         expect(response.statusCode).toEqual(200)
         const stream = response.pipe(resultStream)
         stream.on('finish', () => {
-          const downloadedFile = fs.readFileSync('resultFile')
+          const downloadedFile = fs.readFileSync(resultFile)
           expect(downloadedFile).toEqual(file)
           done()
         })
@@ -112,7 +115,8 @@ describe('s3', () => {
     expect.assertions(3)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     const image = fs.readFileSync('./src/__tests__/testImage.jpg')
-    const uploadLink = await client.getUploadLink('testImage', 'image/jpeg')
+    const fileName = 'testImage' + testId
+    const uploadLink = await client.getUploadLink(fileName, 'image/jpeg')
     const path = new url.URL(uploadLink)
 
     const options: http.RequestOptions = {
@@ -125,19 +129,19 @@ describe('s3', () => {
       }
     }
 
-    const notFoundFile = await client.getImage('testImage', 100)
+    const notFoundFile = await client.getImage(fileName, 100)
     expect(notFoundFile).toBeUndefined()
 
     const req = http.request(options, () => {
       // eslint-disable-next-line
-      void client.getImage('testImage', 100).then(async (file) => {
-        const hashedFile = await client.getImage('testImage', 100)
+      void client.getImage(fileName, 100).then(async (file) => {
+        const hashedFile = await client.getImage(fileName, 100)
         expect(file).toEqual(hashedFile)
-        const bigFile = await client.getImage('testImage', 200)
+        const bigFile = await client.getImage(fileName, 200)
         expect(file).not.toEqual(bigFile)
-        await client.remove('testImage')
-        await client.remove('testImage100')
-        await client.remove('testImage200')
+        await client.remove(fileName)
+        await client.remove(fileName + '100')
+        await client.remove(fileName + '200')
         done()
       })
     })

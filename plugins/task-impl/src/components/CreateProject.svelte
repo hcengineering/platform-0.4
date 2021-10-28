@@ -54,7 +54,7 @@
   }
 
   function filterMembers (): void {
-    members = members.filter((m) => m !== undefined)
+    members = members.filter((m) => m != null)
   }
 
   function getAvaibleMembers (members: Ref<Account>[], member?: Ref<Account>): Account[] {

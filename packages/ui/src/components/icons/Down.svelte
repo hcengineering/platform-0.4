@@ -1,6 +1,6 @@
 <script lang="ts">
   export let size: number = 16
-  const fill: string = 'var(--theme-caption-color)'
+  export let fill: string = 'var(--theme-caption-color)'
 </script>
 
 <svg width={size} height={size} {fill} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
