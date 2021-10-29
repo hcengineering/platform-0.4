@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "move to new popup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
