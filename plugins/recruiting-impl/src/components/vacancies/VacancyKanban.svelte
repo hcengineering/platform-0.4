@@ -86,6 +86,41 @@
     })
   }
 
+  async function onAddNewColumn () {
+    if (fsm === undefined) {
+      return
+    }
+
+    const fsmPlug = await fsmP
+    await fsmPlug.addState({
+      fsm: fsm._id,
+      items: [],
+      name: 'New column',
+      optionalActions: [],
+      requiredActions: [],
+      color: '#000000'
+    })
+  }
+
+  async function onColumnRename (event: CustomEvent<any>) {
+    const { id, title } = event.detail
+
+    await client.updateDoc(fsmPlugin.class.State, core.space.Model, id, {
+      name: title
+    })
+  }
+
+  async function onColumnRemove (event: CustomEvent<any>) {
+    const state = states.find((x) => x._id === event.detail.id)
+
+    if (state === undefined) {
+      return
+    }
+
+    const fsmPlug = await fsmP
+    await fsmPlug.removeState(state)
+  }
+
   let applicants: Applicant[] = []
   let rawStates: State[] = []
 
@@ -115,4 +150,7 @@
   cardComponent={ApplicantCard}
   on:drop={onDrop}
   on:stateReorder={onStateReorder}
+  on:columnAdd={onAddNewColumn}
+  on:columnRename={onColumnRename}
+  on:columnRemove={onColumnRemove}
 />

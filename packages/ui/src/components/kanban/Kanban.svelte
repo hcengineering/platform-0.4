@@ -20,6 +20,10 @@
   import type { UIComponent } from '@anticrm/status'
 
   import type { KanbanItem, KanbanState } from '../../types'
+  import Add from '../icons/Add.svelte'
+  import Label from '../Label.svelte'
+
+  import ui from '../..'
 
   import Panel from './Panel.svelte'
 
@@ -39,7 +43,7 @@
   export let cardDelay: number = 0
 
   // Temporary flag, need to remove as soon as tasks plugin be updated
-  export let panelDragDisabled = false
+  export let panelEditDisabled = false
 
   const dragWatcher = new DragWatcher()
   setContext('dragWatcher', dragWatcher)
@@ -195,6 +199,10 @@
       )
     }
   }
+
+  function onColumnAdd () {
+    dispatch('columnAdd')
+  }
 </script>
 
 <div
@@ -205,7 +213,7 @@
   {#each states as state, idx (state._id)}
     <div
       class="panel-container"
-      use:draggable={{ id: state._id, watcher: dragWatcher, disabled: panelDragDisabled, type: ObjectType.Panel }}
+      use:draggable={{ id: state._id, watcher: dragWatcher, disabled: panelEditDisabled, type: ObjectType.Panel }}
       on:dragStart={onPanelDragStart}
       on:dragEnd={onPanelDragEnd}
       use:hoverable={{
@@ -230,16 +238,28 @@
           id={state._id}
           disabled={disabledPanels.has(state._id)}
           items={actualItems[idx]}
+          {panelEditDisabled}
           {cardDelay}
           {cardComponent}
           on:cardDragStart={onCardDragStart}
           on:cardDragEnd={onCardDragEnd}
+          on:columnRename
+          on:columnRemove
         />
       </div>
     </div>
   {/each}
   {#if panelDragData !== undefined}
     <div style={`min-width: ${panelDragData.size.width}px;`} />
+  {:else if !panelEditDisabled}
+    <div class="add-column" on:click={onColumnAdd}>
+      <div class="add-column-icon">
+        <Add size={24} />
+      </div>
+      <div class="add-column-label">
+        <Label label={ui.string.AddNewColumn} />
+      </div>
+    </div>
   {/if}
 </div>
 
@@ -271,5 +291,44 @@
     transition-timing-function: ease-in;
     transition: transform 200ms;
     height: 100%;
+  }
+
+  .add-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    cursor: pointer;
+
+    width: 320px;
+    min-width: 320px;
+    height: 100%;
+
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background-color: var(--theme-button-bg-enabled);
+
+    margin: 0 5px;
+  }
+
+  .add-column-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+    width: 80px;
+    height: 80px;
+
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .add-column-label {
+    padding-top: 20px;
+    font-size: 14px;
+    user-select: false;
+
+    color: var(--theme-caption-color);
   }
 </style>

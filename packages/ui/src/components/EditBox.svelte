@@ -67,6 +67,7 @@
       on:keyup
       on:blur
       on:focus
+      on:click|stopPropagation
       on:input={(ev) => ev.target && computeSize(ev.target)}
     />
   {:else}
@@ -81,6 +82,7 @@
       on:keyup
       on:blur
       on:focus
+      on:click|stopPropagation
       on:input={(ev) => ev.target && computeSize(ev.target)}
     />
   {/if}
@@ -115,6 +117,7 @@
       border: 2px solid transparent;
       border-radius: 2px;
       outline: none;
+      font-weight: inherit;
 
       &:focus {
         border-color: var(--primary-button-enabled);

@@ -91,7 +91,12 @@ class Draggable {
   }
 
   private readonly handleClick = (e: MouseEvent): void => {
-    const targetDraggable = this.findClosestDraggable(e.target as HTMLElement)
+    const etarget = e.target as HTMLElement
+    if (etarget.tagName === 'INPUT') {
+      return
+    }
+
+    const targetDraggable = this.findClosestDraggable(etarget)
     if (targetDraggable !== this.node) {
       return
     }
@@ -128,8 +133,13 @@ class Draggable {
   }
 
   private readonly handleMouseDown = (e: MouseEvent): void => {
+    const etarget = e.target as HTMLElement
+    if (etarget.tagName === 'INPUT') {
+      return
+    }
+
     // We must not handle mouse down if event is for inner draggable
-    const targetDraggable = this.findClosestDraggable(e.target as HTMLElement)
+    const targetDraggable = this.findClosestDraggable(etarget)
     if (targetDraggable !== this.node) {
       return
     }
