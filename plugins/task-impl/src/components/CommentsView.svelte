@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef, SortingOrder } from '@anticrm/core'
+  import { generateId, getFullRef, SortingOrder } from '@anticrm/core'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
@@ -30,12 +30,19 @@
 
   const client = getClient()
   let messages: Comment[] = []
+  let newCommentId: Ref<Comment> = generateId()
 
   function addMessage (message: string): void {
-    client.createDoc(chunter.class.Comment, currentSpace, {
-      message,
-      replyOf: getFullRef(taskId, task.class.Task)
-    })
+    client.createDoc(
+      chunter.class.Comment,
+      currentSpace,
+      {
+        message,
+        replyOf: getFullRef(taskId, task.class.Task)
+      },
+      newCommentId
+    )
+    newCommentId = generateId()
   }
 
   let query: QueryUpdater<Comment> | undefined
@@ -55,4 +62,11 @@
   }
 </script>
 
-<Comments {messages} {currentSpace} {spaceLastViews} on:message={(event) => addMessage(event.detail)} />
+<Comments
+  {messages}
+  {currentSpace}
+  {spaceLastViews}
+  objectClass={chunter.class.Comment}
+  objectId={newCommentId}
+  on:message={(event) => addMessage(event.detail)}
+/>

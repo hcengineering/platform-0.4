@@ -16,18 +16,24 @@
   import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { SpaceLastViews } from '@anticrm/notification'
-  import type { Ref, Space } from '@anticrm/core'
+  import type { Class, Doc, Ref, Space } from '@anticrm/core'
   import { Component } from '@anticrm/ui'
 
   export let messages: Comment[] = []
   export let spaceLastViews: SpaceLastViews | undefined
   export let currentSpace: Ref<Space>
+  export let objectClass: Ref<Class<Doc>>
+  export let objectId: Ref<Doc>
 </script>
 
 <div class="msg-board">
   <Component is={chunter.component.Channel} props={{ messages, spaceLastViews, thread: true }} />
 </div>
-<Component is={chunter.component.ReferenceInput} props={{ currentSpace, spaceLastViews, thread: true }} on:message />
+<Component
+  is={chunter.component.ReferenceInput}
+  props={{ currentSpace, objectClass, objectId, spaceLastViews, thread: true }}
+  on:message
+/>
 
 <style lang="scss">
   .msg-board {
