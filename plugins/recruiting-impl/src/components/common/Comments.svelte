@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef, SortingOrder } from '@anticrm/core'
+  import { generateId, getFullRef, Ref, SortingOrder } from '@anticrm/core'
   import type { Doc } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
@@ -29,6 +29,7 @@
 
   let msgs: Comment[] = []
   let msgsQ: QueryUpdater<Comment> | undefined
+  let newCommentId: Ref<Comment> = generateId()
 
   $: msgsQ = client.query(
     msgsQ,
@@ -39,10 +40,16 @@
   )
 
   function onAddMessage (e: any): void {
-    client.createDoc(chunter.class.Comment, target.space, {
-      message: e.detail,
-      replyOf: ref
-    })
+    client.createDoc(
+      chunter.class.Comment,
+      target.space,
+      {
+        message: e.detail,
+        replyOf: ref
+      },
+      newCommentId
+    )
+    newCommentId = generateId()
   }
 </script>
 
@@ -51,7 +58,7 @@
 </div>
 <Component
   is={chunter.component.ReferenceInput}
-  props={{ currentSpace: target.space, thread: true }}
+  props={{ currentSpace: target.space, objectClass: chunter.class.Comment, objectId: newCommentId, thread: true }}
   on:message={onAddMessage}
 />
 
