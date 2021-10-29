@@ -13,6 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import attachment from '@anticrm/attachment'
   import core, { Account, Ref, Space } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
@@ -25,24 +26,23 @@
     DatePicker,
     EditBox,
     Grid,
-    IconClose,
     IconComments,
     IconFile,
     IconToDo,
     Row,
-    ScrollBox,
     Section,
     Tabs,
     UserBox,
-    Component
+    Component,
+    Panel
   } from '@anticrm/ui'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import { afterUpdate, onDestroy } from 'svelte'
   import task from '../plugin'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
-  import attachment from '@anticrm/attachment'
+  import IconTask from './icons/Task.svelte'
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -95,10 +95,6 @@
     }
   })
 
-  function close () {
-    selectDocument()
-  }
-
   const tabs = [task.string.General, attachment.string.Attachments, task.string.ToDos]
   let selectedTab: IntlString = task.string.General
 
@@ -114,11 +110,7 @@
 
 {#await getItem(id) then value}
   {#if item}
-    <div class="header">
-      <div class="title">{item.name}</div>
-      <div class="tool" on:click={close}><IconClose size={16} /></div>
-    </div>
-    <ScrollBox autoscrollable={true} vertical>
+    <Panel icon={IconTask} title={item.name} on:close>
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
@@ -202,31 +194,6 @@
           />
         </Section>
       {/if}
-    </ScrollBox>
+    </Panel>
   {/if}
 {/await}
-
-<style lang="scss">
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    .title {
-      flex-grow: 1;
-      font-weight: 500;
-      font-size: 1.25rem;
-      color: var(--theme-caption-color);
-      user-select: none;
-    }
-    .tool {
-      margin-left: 12px;
-      opacity: 0.4;
-      cursor: pointer;
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
-</style>

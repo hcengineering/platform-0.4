@@ -13,14 +13,15 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import ui, { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, closePopup, Progress, showPopup, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
   import { getStatusColor } from '../plugin'
   import core, { Account, Ref } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
+  import EditTask from './EditTask.svelte'
 
   export let card: Task
 
@@ -39,7 +40,9 @@
   }
 
   function select () {
-    selectDocument(card)
+    showPopup(EditTask, { id: card._id }, 'full', () => {
+      closePopup()
+    })
   }
 </script>
 

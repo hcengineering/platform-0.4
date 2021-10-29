@@ -13,17 +13,16 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, UserInfo, DateTime } from '@anticrm/ui'
-  import core, { DocumentQuery } from '@anticrm/core'
-  import type { Ref, Doc, Account } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
-
-  import { deepEqual } from 'fast-equals'
-  import TaskStatus from './TaskStatus.svelte'
-
+  import core from '@anticrm/core'
+  import type { Ref, Doc, DocumentQuery, Account } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
+  import { getClient } from '@anticrm/workbench'
+  import { Table, Label, UserInfo, DateTime, closePopup, showPopup } from '@anticrm/ui'
+  import { deepEqual } from 'fast-equals'
+  import EditTask from './EditTask.svelte'
+  import TaskStatus from './TaskStatus.svelte'
 
   export let query: DocumentQuery<Task>
   let prevQuery: DocumentQuery<Task> | undefined
@@ -63,7 +62,9 @@
   }
 
   function onClick (event: any) {
-    selectDocument(event.detail)
+    showPopup(EditTask, { id: event.detail._id }, 'full', () => {
+      closePopup()
+    })
   }
 
   async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {
