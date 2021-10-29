@@ -42,7 +42,6 @@
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
-  import attachment from '@anticrm/attachment'
   import { getContext } from 'svelte'
   import { Writable } from 'svelte/store'
 

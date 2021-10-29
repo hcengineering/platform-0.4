@@ -37,9 +37,12 @@
   let newCommentId: Ref<Comment> = generateId()
 
   async function addMessage (message: string): Promise<void> {
-    await client.createDoc(chunter.class.Comment, currentSpace, {
-      message,
-      replyOf: getFullRef(taskId, task.class.Task)
+    await client.createDoc(
+      chunter.class.Comment,
+      currentSpace,
+      {
+        message,
+        replyOf: getFullRef(taskId, task.class.Task)
       },
       newCommentId
     )

@@ -21,18 +21,15 @@
   export let autoscrollable: boolean = false
   export let noShift: boolean = false
   export let hShrink: boolean = false
-  export let div: HTMLElement | undefined
-  export let scrollHandler: () => void = () => {}
+  let div: HTMLElement
   let autoscroll: boolean = true
 
   afterUpdate(async () => {
-    if (div !== undefined && autoscrollable && autoscroll) div.scrollTo(0, div.scrollHeight)
+    if (autoscrollable && autoscroll) div.scrollTo(0, div.scrollHeight)
   })
 
   function setAutoscroll () {
-    if (div !== undefined) {
-      autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
-    }
+    autoscroll = div.scrollTop > div.scrollHeight - div.clientHeight - 50
   }
 </script>
 
@@ -43,10 +40,7 @@
   class:bothScroll
   class:noShift
   class:hShrink
-  on:scroll={() => {
-    setAutoscroll()
-    scrollHandler()
-  }}
+  on:scroll={setAutoscroll}
 >
   <div class="box" class:stretch>
     <slot />
