@@ -18,7 +18,7 @@
 
   export let icon: Asset
   export let size: 12 | 16 | 20 | 24 | 28
-  export let fill = 'var(--theme-caption-color)'
+  export let fill = 'currentColor'
 
   let url: string
   $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'

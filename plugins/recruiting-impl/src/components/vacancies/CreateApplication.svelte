@@ -13,9 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import core, { Account, Ref } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
-  import { Dialog, Section, Grid, IconFile, UserBox, Dropdown } from '@anticrm/ui'
+  import { Card, Grid, UserBox, Dropdown } from '@anticrm/ui'
   import type { DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
@@ -26,6 +27,7 @@
 
   export let space: VacancySpace
   const client = getClient()
+  const dispatch = createEventDispatcher()
 
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
@@ -106,31 +108,27 @@
       }
     })
   }
+
+  let canSave: boolean = false
+  $: canSave = !!(recruiter && candidate)
 </script>
 
-<Dialog
-  label={recruiting.string.CreateApplication}
-  okLabel={recruiting.string.CreateApplication}
-  okAction={create}
-  on:close
->
-  <Section label={recruiting.string.GeneralInformation} icon={IconFile}>
-    <Grid column={2}>
-      <UserBox
-        users={recruiters}
-        bind:selected={recruiter}
-        label={recruiting.string.Recruiter}
-        title={recruiting.string.AssignRecruiter}
-        showSearch
-      />
-      <UserBox
-        users={userBoxCandidates}
-        bind:selected={candidate}
-        label={recruiting.string.Candidate}
-        title={recruiting.string.SelectCandidate}
-        showSearch
-      />
-      <Dropdown items={stateItems} bind:selected={stateID} label={recruiting.string.State} />
-    </Grid>
-  </Section>
-</Dialog>
+<Card label={recruiting.string.CreateApplication} bind:canSave okAction={create} on:close={() => dispatch('close')}>
+  <Grid column={1} rowGap={24}>
+    <UserBox
+      users={recruiters}
+      bind:selected={recruiter}
+      label={recruiting.string.Recruiter}
+      title={recruiting.string.AssignRecruiter}
+      showSearch
+    />
+    <UserBox
+      users={userBoxCandidates}
+      bind:selected={candidate}
+      label={recruiting.string.Candidate}
+      title={recruiting.string.SelectCandidate}
+      showSearch
+    />
+  </Grid>
+  <Dropdown slot="pool" items={stateItems} bind:selected={stateID} label={recruiting.string.State} />
+</Card>

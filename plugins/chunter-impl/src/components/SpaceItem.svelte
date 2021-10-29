@@ -27,30 +27,13 @@
   {#if space.direct}
     <UserSpaceInfo {space} />
   {:else}
-    <div class="flex">
-      <div class="icon">
-        <Icon icon={space.private ? chunter.icon.Lock : chunter.icon.Hashtag} size={16} />
+    <div class="flex-row-center">
+      <div class="mr-1">
+        <Icon icon={space.private ? chunter.icon.Lock : chunter.icon.Hashtag} size={12} />
       </div>
-      <span class="span-eclipses">
+      <span class="flex-grow dotted-text">
         {space.name}
       </span>
     </div>
   {/if}
 {/if}
-
-<style lang="scss">
-  .icon {
-    width: 16px;
-    min-width: 16px;
-    height: 16px;
-    margin: 0 16px 0 0;
-    border-radius: 4px;
-    opacity: 0.3;
-  }
-  .span-eclipses {
-    flex-grow: 1;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-</style>

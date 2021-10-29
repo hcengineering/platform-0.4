@@ -110,15 +110,15 @@
     .content {
       flex-shrink: 0;
       flex-grow: 1;
-      margin: 12px 28px;
+      margin: 8px 28px;
       height: fit-content;
       &.no-pool {
-        margin-bottom: 28px;
+        margin-bottom: 12px;
       }
     }
 
     .pool {
-      margin: 0 28px 16px;
+      margin: 0 28px 12px;
       color: var(--theme-caption-color);
       .separator {
         margin: 16px 0;

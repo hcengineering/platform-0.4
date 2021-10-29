@@ -27,6 +27,7 @@
   import type { MessageReference } from '../messages'
   import { findReferences } from '../messages'
   import Bookmark from './icons/Bookmark.svelte'
+  import Pin from './icons/Pin.svelte'
   import ChatIcon from './icons/Chat.svelte'
   import MoreH from './icons/MoreH.svelte'
   import Share from './icons/Share.svelte'
@@ -193,22 +194,26 @@
   data-modified={message.modifiedOn}
   data-id={message._id}
 >
+  {#if showLabels && (bookmark || pinMark)}
+    <div class="top-container">
+      <div class="flex-row-center top-panel">
+        {#if pinMark !== undefined}
+          <div class="flex-row-center section">
+            <Pin size={8} filled />
+            <span>pined by {pinUser?.name}</span>
+          </div>
+        {/if}
+        {#if bookmark !== undefined}
+          <div class="flex-row-center section primary">
+            <Bookmark size={10} filled />
+            <span>saved to bookmarks</span>
+          </div>
+        {/if}
+      </div>
+    </div>
+  {/if}
   <slot name="header" />
 
-  {#if showLabels}
-    {#if bookmark !== undefined}
-      <div class="bookmark-logo">
-        <Bookmark size={10} />
-        <span>saved to bookmarks.</span>
-      </div>
-    {/if}
-    {#if pinMark !== undefined}
-      <div class="bookmark-logo">
-        <Bookmark size={10} />
-        <span>pined by {pinUser?.name}</span>
-      </div>
-    {/if}
-  {/if}
   <div class="container">
     {#if user}
       <div class="avatar"><img src={user?.avatar ?? ''} alt={user?.name} /></div>
@@ -263,7 +268,7 @@
           </div>
         {/if}
       {:else}
-        // This is edit mode
+        <!-- // This is edit mode -->
         <div class="text">
           <ReferenceInput
             submitEnabled={false}
@@ -306,6 +311,7 @@
   .message-container {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     padding-bottom: 15px;
     border-radius: 12px;
     padding: 2px;
@@ -319,7 +325,7 @@
       border-color: var(--theme-bg-focused-border);
     }
     &.no-thread {
-      padding: 10px;
+      padding: 0.75rem;
       border: 1px solid transparent;
     }
     .references {
@@ -419,13 +425,36 @@
     &:hover {
       background-color: var(--theme-button-bg-enabled);
       border-color: var(--theme-bg-accent-color);
+      .top-container .top-panel .section {
+        border-radius: 0 0 0.25rem 0.25rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
     }
 
-    .bookmark-logo {
-      display: flex;
-      align-items: center;
-      font-size: 10px;
-      margin: 5px 10px;
+    .top-container {
+      position: relative;
+      height: 1rem;
+
+      .top-panel {
+        position: absolute;
+        top: -0.75rem;
+        left: 3.25rem;
+        font-weight: 500;
+        font-size: 0.625rem;
+
+        .section {
+          margin-right: 0.5rem;
+          padding: 0.25rem 0.5rem;
+          background-color: var(--theme-bg-accent-color);
+          border-radius: 0.25rem;
+          span {
+            margin-left: 0.25rem;
+          }
+          &.primary {
+            background-color: var(--theme-popup-bg);
+          }
+        }
+      }
     }
   }
 </style>

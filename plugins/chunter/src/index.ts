@@ -137,7 +137,8 @@ export default plugin(
       SaveEdit: '' as IntlString,
       MoreReplies: '' as IntlString,
       ChannelPin: '' as IntlString,
-      ChannelUnPin: '' as IntlString
+      ChannelUnPin: '' as IntlString,
+      Pinned: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,

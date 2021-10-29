@@ -14,20 +14,20 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import core from '@anticrm/core'
+  import core, { Ref } from '@anticrm/core'
+  import type { QueryUpdater } from '@anticrm/presentation'
+  import type { FSM } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Card, Grid } from '@anticrm/ui'
+  import { Card, Grid, EditBox, Dropdown, DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-
-  import VacancyEditor from './VacancyEditor.svelte'
 
   const client = getClient()
   const dispatch = createEventDispatcher()
 
-  let vacancy: VacancySpace = {
+  const vacancy: VacancySpace = {
     name: '',
     description: '',
     fsm: '' as VacancySpace['fsm'],
@@ -43,6 +43,37 @@
     type: '',
     dueDate: undefined
   } as VacancySpace
+
+  let selectedFSM: FSM | undefined = undefined
+  $: selectedFSM = fsmTmpls.find((x) => x._id === selectedFSMId)
+
+  let fsmTmpls: FSM[] = []
+  let lq: QueryUpdater<FSM> | undefined
+
+  if (vacancy._id === undefined) {
+    lq = client.query(lq, fsmPlugin.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
+      fsmTmpls = result
+      if (selectedFSM === undefined) {
+        selectedFSM = result[0]
+      }
+    })
+  }
+
+  function onChange () {
+    dispatch('update')
+  }
+
+  let fsmItems: DropdownItem[] = []
+  $: fsmItems = fsmTmpls.map((x) => ({
+    id: x._id,
+    label: x.name
+  }))
+  let selectedFSMId: string | undefined
+
+  $: if (vacancy._id === undefined) {
+    vacancy.fsm = selectedFSMId as Ref<FSM>
+    onChange()
+  }
 
   async function createVacancy () {
     if (!vacancy.fsm) {
@@ -68,6 +99,10 @@
 
 <Card label={recruiting.string.AddVacancy} {canSave} okAction={createVacancy} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <VacancyEditor bind:vacancy min />
+    <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} focus />
+    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
   </Grid>
+  <svelte:fragment slot="pool">
+    <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
+  </svelte:fragment>
 </Card>

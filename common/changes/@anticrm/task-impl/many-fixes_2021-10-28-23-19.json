@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Update Message layout. Recruitment popups. Icons fill to currentColor.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}

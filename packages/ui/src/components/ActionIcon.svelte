@@ -24,7 +24,7 @@
   export let icon: Asset | UIComponent
   export let padding: number = 0
   export let filled: boolean = false
-  export let size: 16 | 20 | 24
+  export let size: 12 | 16 | 20 | 24
   export let action: (ev?: Event) => void = () => {}
   export let invisible: boolean = false
 </script>
@@ -54,19 +54,20 @@
     cursor: pointer;
 
     .icon {
-      opacity: 0.3;
+      color: var(--theme-content-trans-color);
+      opacity: 1;
       &.invisible {
         opacity: 0;
       }
     }
     &:hover .icon {
-      opacity: 1;
+      color: var(--theme-caption-color);
     }
     &:focus {
       border: 1px solid var(--primary-button-focused-border);
       box-shadow: 0 0 0 3px var(--primary-button-outline);
       .icon {
-        opacity: 1;
+        color: var(--theme-caption-color);
       }
     }
   }

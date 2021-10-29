@@ -15,8 +15,10 @@
 <script lang="ts">
   import type { MessageBookmark } from '@anticrm/chunter'
   import type { Ref, Space } from '@anticrm/core'
-  import { showPopup } from '@anticrm/ui'
+  import { showPopup, Link } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
+  import chunter from '../plugin'
+  import { translate } from '@anticrm/platform'
   import { newAllBookmarksQuery } from '../bookmarks'
   import Pin from './icons/Pin.svelte'
   import PinnedItemsView from './PinnedItemsView.svelte'
@@ -32,35 +34,26 @@
   })
 
   $: pinned = bookmarks.filter((p) => p.channelPin === true && p.space === space)
-  let pinsBoard: HTMLElement
 </script>
 
 {#if pinned.length > 0}
-  <div bind:this={pinsBoard} class="pins-board">
-    <div class="link-text pins" on:click={() => showPopup(PinnedItemsView, { space }, pinsBoard)}>
-      <div class="pin">
-        <Pin size={12} />
-      </div>
-      {pinned.length} pinned
-    </div>
+  <div class="flex-row-center pins-board">
+    {#await translate(chunter.string.Pinned, {}) then text}
+      <Link
+        label={pinned.length + ' ' + text.toLowerCase()}
+        icon={Pin}
+        transparent
+        maxLenght={0}
+        on:click={() => showPopup(PinnedItemsView, { space }, 'right')}
+      />
+    {/await}
   </div>
 {/if}
 
 <style lang="scss">
   .pins-board {
-    .pins {
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-      height: 48px;
-      font-weight: 400;
-      border-bottom: 1px solid var(--theme-menu-divider);
-
-      margin-left: 10px;
-
-      .pin {
-        opacity: 0.6;
-      }
-    }
+    flex-shrink: 0;
+    padding: 1rem 2.5rem;
+    border-bottom: 1px solid var(--theme-menu-divider);
   }
 </style>

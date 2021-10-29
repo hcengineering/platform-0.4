@@ -16,10 +16,18 @@
 /* CLEAR */
 a {
   font: inherit;
-  color: var(--theme-content-color);
-  &:hover { color: var(--theme-caption-color); }
-  &:active { color: var(--theme-content-color); }
-  &:visited { color: var(--theme-content-color); }
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--theme-content-accent-color);
+  &:hover {
+    color: var(--theme-caption-color);
+    text-decoration: underline;
+  }
+  &:active {
+    color: var(--theme-content-accent-color);
+    text-decoration: underline;
+  }
+  &:visited { color: var(--theme-caption-color); }
 }
 button {
   display: flex;
@@ -135,6 +143,11 @@ table {
 }
 .h-full { height: 100%; }
 .square-36 { width: 2.25rem; height: 2.25rem; }
+
+/* Margin & Padding */
+.mr-1 { margin-right: .25rem; }
+.ml-1 { margin-left: .25rem; }
+.ml-2 { margin-left: .5rem; }
 
 .panel-kanban + .panel-kanban {
   margin-left: 12px;

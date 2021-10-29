@@ -29,6 +29,7 @@
     "SaveEdit": "Save...",
     "MoreReplies": "Show {replies} more replies",
     "ChannelPin": "Pin to channel",
-    "ChannelUnPin": "Un-Pin from channel"
+    "ChannelUnPin": "Un-Pin from channel",
+    "Pinned": "Pinned"
   }
 }
