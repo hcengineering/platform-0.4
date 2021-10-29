@@ -59,6 +59,7 @@ const task = plugin(
       ProjectDescription: '' as IntlString,
       MakePrivate: '' as IntlString,
       MakePrivateDescription: '' as IntlString,
+      TaskID: '' as IntlString,
       TaskName: '' as IntlString,
       TaskDescription: '' as IntlString,
       CreateTask: '' as IntlString,

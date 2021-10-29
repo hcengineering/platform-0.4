@@ -6,6 +6,7 @@
     "MakePrivate": "Make private",
     "MakePrivateDescription": "Make project private",
     "TaskName": "Task name",
+    "TaskID": "ID",
     "TaskDescription": "Task description",
     "CreateTask": "Create task",
     "Assignee": "Assignee",

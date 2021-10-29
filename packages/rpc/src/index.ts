@@ -61,6 +61,13 @@ export function readResponse<D> (response: string): Response<D> {
 }
 
 function replacer (key: string, value: any): any {
+  if (Array.isArray(value) && (value as any).total !== undefined) {
+    return {
+      dataType: 'TotalArray',
+      total: (value as any).total,
+      value: [...value]
+    }
+  }
   if (value instanceof Map) {
     return {
       dataType: 'Map',
@@ -75,6 +82,9 @@ function reviver (key: string, value: any): any {
   if (typeof value === 'object' && value !== null) {
     if (value.dataType === 'Map') {
       return new Map(value.value)
+    }
+    if (value.dataType === 'TotalArray') {
+      return Object.assign(value.value, { total: value.total })
     }
   }
   return value

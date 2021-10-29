@@ -23,11 +23,17 @@
   import { deepEqual } from 'fast-equals'
   import EditTask from './EditTask.svelte'
   import TaskStatus from './TaskStatus.svelte'
+  import LimitHeader from './LimitHeader.svelte'
 
   export let query: DocumentQuery<Task>
   let prevQuery: DocumentQuery<Task> | undefined
 
+  let skip = 0
+  let total = 0
+  const limit = 150
+
   const columns = [
+    { label: task.string.TaskID, properties: [{ key: 'shortRefId', property: 'label' }], component: Label },
     { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
     {
       label: task.string.Status,
@@ -52,13 +58,20 @@
 
   $: if (!deepEqual(prevQuery, query)) {
     prevQuery = query
-    lq = client.query(lq, task.class.Task, query, async (result) => {
-      data = []
-      for (const item of result) {
-        data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
-      }
-      data = data
-    })
+    lq = client.query(
+      lq,
+      task.class.Task,
+      query,
+      async (result) => {
+        data = []
+        for (const item of result) {
+          data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
+        }
+        data = data
+        total = result.total
+      },
+      { limit, skip }
+    )
   }
 
   function onClick (event: any) {
@@ -73,4 +86,5 @@
   }
 </script>
 
+<LimitHeader bind:skip {total} {limit} />
 <Table {data} {columns} on:rowClick={onClick} showHeader />

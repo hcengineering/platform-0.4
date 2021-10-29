@@ -23,9 +23,8 @@ export async function createUpdateAccounts (
   board: TrelloBoard,
   spaceRefs: Ref<Space>[]
 ): Promise<Map<string, Ref<Account>>> {
-  const allAccounts = new Map<Ref<Account>, Account>(
-    Array.from(await client.findAll(core.class.Account, {})).map((c) => [c._id, c])
-  )
+  const accounts = await client.findAll(core.class.Account, {})
+  const allAccounts = new Map<Ref<Account>, Account>(Array.from(accounts).map((c) => [c._id, c]))
 
   const spaces = await client.findAll(core.class.Space, { _id: { $in: spaceRefs } })
 
@@ -36,6 +35,8 @@ export async function createUpdateAccounts (
     const cid = c.username as Ref<Account>
     membersMap.set(c.id, cid)
     const { firstName, lastName } = getAccountName(c.fullName)
+
+    console.log('update account', firstName, lastName, cid)
 
     const data: Account = {
       _id: cid,

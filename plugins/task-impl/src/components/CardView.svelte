@@ -14,34 +14,52 @@
 -->
 <script lang="ts">
   import type { DocumentQuery } from '@anticrm/core'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
+  import { ScrollBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { QueryUpdater } from '@anticrm/presentation'
-
   import Card from './Card.svelte'
+  import LimitHeader from './LimitHeader.svelte'
 
   export let query: DocumentQuery<Task>
   const client = getClient()
   let cards: Task[] = []
   let lq: QueryUpdater<Task> | undefined
 
+  let skip = 0
+  let total = 0
+  const limit = 150
+
   $: if (query !== undefined) {
-    lq = client.query(lq, task.class.Task, query, (result) => {
-      cards = result
-    })
+    lq = client.query(
+      lq,
+      task.class.Task,
+      query,
+      (result) => {
+        cards = result
+        total = result.total
+      },
+      { skip, limit }
+    )
   }
 </script>
 
-<div class="cards-container">
-  {#each cards as card}
-    <Card {card} />
-  {/each}
-</div>
+<LimitHeader bind:skip {total} {limit} />
+
+<ScrollBox vertical>
+  <div class="cards-container">
+    {#each cards as card}
+      <Card {card} />
+    {/each}
+  </div>
+</ScrollBox>
 
 <style lang="scss">
   .cards-container {
     display: grid;
+    overflow: auto;
+    height: max-content;
     grid-template-columns: repeat(auto-fit, minmax(220px, auto));
     grid-auto-rows: 280px;
     grid-gap: 20px;

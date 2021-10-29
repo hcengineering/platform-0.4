@@ -27,6 +27,7 @@ import core, {
   Storage,
   Tx,
   TxCreateDoc,
+  txObjectClass,
   TxProcessor,
   TxRemoveDoc,
   TxUpdateDoc
@@ -54,7 +55,12 @@ export class DocStorage extends TxProcessor implements Storage {
   }
 
   async tx (tx: Tx): Promise<void> {
-    return await measureAsync('mongo.tx', async () => await this.txHandlers[tx._class]?.(tx))
+    return await measureAsync(
+      'mongo.tx',
+      async () => await this.txHandlers[tx._class]?.(tx),
+      tx._class,
+      txObjectClass(tx) ?? '0'
+    )
   }
 
   private collection<T extends Doc>(_class: Ref<Class<T>>): Collection {
@@ -64,10 +70,7 @@ export class DocStorage extends TxProcessor implements Storage {
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
     try {
-      await measureAsync(
-        'mongo.txCreateDoc',
-        async () => await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
-      )
+      await this.collection(tx.objectClass).insertOne(TxProcessor.createDoc2Doc(tx))
     } catch (err: any) {
       // Convert error to platform known ones.
       if (err.code === 11000) {
@@ -106,10 +109,7 @@ export class DocStorage extends TxProcessor implements Storage {
     if ($pull !== undefined) {
       op.$pull = $pull
     }
-    return await measureAsync(
-      'mongo.txUpdateDoc',
-      async () => await this.collection(tx.objectClass).updateOne(updateQuery, op)
-    )
+    return await this.collection(tx.objectClass).updateOne(updateQuery, op)
   }
 
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
@@ -118,7 +118,7 @@ export class DocStorage extends TxProcessor implements Storage {
       _class: tx.objectClass,
       space: tx.objectSpace
     }
-    await measureAsync('mongo.txRemoveDoc', async () => await this.collection(tx.objectClass).deleteOne(deleteQuery))
+    await await this.collection(tx.objectClass).deleteOne(deleteQuery)
   }
 
   async findAll<T extends Doc>(
@@ -126,7 +126,7 @@ export class DocStorage extends TxProcessor implements Storage {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    const done = await measure('mongo.findAll')
+    const done = await measure('mongo.findAll', _class)
     const mongoQuery = toMongoQuery(this.hierarchy, _class, query)
     let cursor = this.collection(_class).find(mongoQuery)
     if (options?.sort !== undefined) {

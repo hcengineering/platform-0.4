@@ -17,6 +17,7 @@ import regCalendarActions from '@anticrm/calendar-action'
 import regCalendarMappers from '@anticrm/calendar-mappers'
 import core, { Class, Data, Doc, measureAsync, newTxCreateDoc, Ref, Space, TxProcessor } from '@anticrm/core'
 import { Account } from '@anticrm/core/src/classes'
+import { printMeasurements } from '@anticrm/core/src/performance'
 import builder from '@anticrm/model-all'
 import { demoAccount, DemoBuilder, demoChunter, demoTask } from '@anticrm/model-dev'
 import regNotificationMappers from '@anticrm/notification-mappers'
@@ -24,7 +25,6 @@ import regRecruitingActions from '@anticrm/recruiting-action'
 import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import { assignWorkspace } from '@anticrm/server'
 import { createWorkspace, deleteWorkspace } from '@anticrm/workspaces'
-import { printInfo } from './info'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 
@@ -65,7 +65,7 @@ async function start (): Promise<void> {
     }
   }
 
-  const cl = setInterval(printInfo, 5000)
+  const cl = setInterval(printMeasurements, 5000)
 
   const d1 = Date.now()
   console.info('Generate accounts')
@@ -84,7 +84,7 @@ async function start (): Promise<void> {
   console.info('Done in', d4 - d3)
 
   await workspace.waitDDComplete()
-  printInfo()
+  printMeasurements()
   clearInterval(cl)
   process.exit(0)
 }

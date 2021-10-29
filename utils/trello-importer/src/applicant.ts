@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Account, Client, generateDocumentDiff, getFullRef, Ref, TxOperations } from '@anticrm/core'
+import { Account, Client, generateDocumentDiff, getFullRef, measure, Ref, TxOperations } from '@anticrm/core'
 import { State } from '@anticrm/fsm'
 import recruiting, { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
 import { CandState } from './candidates'
@@ -28,13 +28,16 @@ export async function createUpdateApplicant (
   candidateStates: Map<Ref<Candidate>, CandState>,
   vacancyId: Ref<VacancySpace>,
   clientId: Ref<Account>,
-  membersMap: Map<string, Ref<Account>>,
+  // membersMap: Map<string, Account>,
   clientOps: Client & TxOperations,
   newStates: Map<Ref<State>, CandState[]>
 ): Promise<void> {
   for (const c of candidates) {
     const aid = ('a' + c._id) as Ref<Applicant>
     let appl = applicantsMap.get(c._id)
+
+    console.log('update applicant', c.lastName, c.firstName, aid)
+    const done = measure('update.applicant')
     const candState = candidateStates.get(c._id) as CandState
     const applData: Applicant = {
       _class: recruiting.class.Applicant,
@@ -44,7 +47,7 @@ export async function createUpdateApplicant (
       createOn: Date.now(),
       _id: aid,
       item: c._id,
-      recruiter: membersMap.get(candState.idMember ?? '') ?? clientId,
+      recruiter: clientId, // membersMap.get(candState.idMember ?? '') ?? clientId,
       fsm: vacancyId,
       clazz: c._class,
       state: candState.state,
@@ -65,43 +68,49 @@ export async function createUpdateApplicant (
 
     // Add individual attachments as comments.
     const replyOf = getFullRef(aid, recruiting.class.Applicant)
-    const allComments = new Map(
-      await (await clientOps.findAll(chunter.class.Comment, { replyOf })).map((c) => [c._id, c])
-    )
-
-    const isImage = (name: string): string => {
-      if (name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
-        return '!'
-      }
-      return ''
-    }
-
-    for (const a of candState.attachments ?? []) {
-      const memberId = membersMap.get(a.idMember ?? '') ?? clientId
-      const message = `Attachment added ${isImage(a.name)}[${a.name}](${a.url})`
-
-      const cData: Comment = {
-        _class: chunter.class.Comment,
-        space: vacancyId,
-        modifiedOn: Date.now(),
-        modifiedBy: memberId,
-        createOn: Date.now(),
-        _id: a.id as Ref<Comment>,
-        message,
-        replyOf
+    if ((candState.attachments?.length ?? 0) > 0) {
+      const isImage = (name: string): string => {
+        if (name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
+          return '!'
+        }
+        return ''
       }
 
-      const comment = allComments.get(a.id as Ref<Comment>)
+      const ids = (candState.attachments ?? []).map((a) => a.id as Ref<Comment>)
+      const allComments = new Map(
+        (await clientOps.findAll(chunter.class.Comment, { replyOf, _id: { $in: ids } }, { limit: ids.length })).map(
+          (c) => [c._id, c]
+        )
+      )
 
-      if (comment === undefined) {
-        // No applicant defined
-        await clientOps.createDoc(chunter.class.Comment, appl.space, cData, a.id as Ref<Comment>)
-      } else {
-        // Perform update, in case values are different.
-        for (const t of generateDocumentDiff([comment], [cData])) {
-          await clientOps.tx(t)
+      for (const a of candState.attachments ?? []) {
+        // const memberId = membersMap.get(a.idMember ?? '')
+        const message = `Attachment added ${isImage(a.name)}[${a.name}](${a.url})`
+
+        const cData: Comment = {
+          _class: chunter.class.Comment,
+          space: vacancyId,
+          modifiedOn: Date.now(),
+          modifiedBy: clientId,
+          createOn: Date.now(),
+          _id: a.id as Ref<Comment>,
+          message,
+          replyOf
+        }
+
+        const comment = allComments.get(a.id as Ref<Comment>)
+
+        if (comment === undefined) {
+          // No applicant defined
+          await clientOps.createDoc(chunter.class.Comment, appl.space, cData, a.id as Ref<Comment>)
+        } else {
+          // Perform update, in case values are different.
+          for (const t of generateDocumentDiff([comment], [cData])) {
+            await clientOps.tx(t)
+          }
         }
       }
     }
+    done()
   }
 }

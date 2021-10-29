@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { measure, measureAsync } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
@@ -62,10 +63,14 @@ class ClientImpl extends TxProcessor implements Client {
     const modelTx = txs.filter(isModelTx)
 
     // Hierarchy should be updated first, since model could use it.
-    modelTx.forEach((tx) => this.hierarchy.tx(tx))
+    modelTx.forEach((tx) => {
+      const done = measure('client.hierarchy.tx', tx._class)
+      this.hierarchy.tx(tx)
+      done()
+    })
 
     // Now it is safe to update model, since hierarchy is up to date.
-    modelTx.forEach((tx) => void this.model.tx(tx))
+    modelTx.forEach((tx) => void measureAsync('client.model.tx', async () => await this.model.tx(tx), tx._class))
 
     if (!bootstrap && this.notify !== undefined) {
       // Notify passed handler.
@@ -83,12 +88,12 @@ class ClientImpl extends TxProcessor implements Client {
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
     const storage = isModelFind(_class, this.hierarchy) ? this.model : this.conn
-    return await storage.findAll(_class, query, options)
+    return await measureAsync('client.findAll', async () => await storage.findAll(_class, query, options), _class)
   }
 
   async tx (tx: Tx): Promise<void> {
-    await this.conn.tx(tx)
-    await this.extraTx?.(tx)
+    await measureAsync('client.tx', async () => await this.conn.tx(tx), tx._class)
+    await measureAsync('client.extra.tx', async () => await this.extraTx?.(tx), tx._class)
   }
 
   async accountId (): Promise<Ref<Account>> {
@@ -135,7 +140,7 @@ export async function createClient (
   notify?: TxHandler
 ): Promise<Client> {
   const buffer = new TransactionBuffer()
-  const connection = await connect((tx) => buffer.tx(tx)) // << --- new transactions go into buffer, until we process existing ones.
+  const connection = await measureAsync('connect', async () => await connect((tx) => buffer.tx(tx))) // << --- new transactions go into buffer, until we process existing ones.
 
   const accountId = await connection.accountId()
 

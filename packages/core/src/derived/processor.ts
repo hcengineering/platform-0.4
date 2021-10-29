@@ -87,6 +87,8 @@ export class DerivedDataProcessor {
   private readonly ddQuery: Tx[] = []
   private isClosed = false
   private lastSIDAvailable: TransactionID = 0
+  private allDescriptorState = new Map<Ref<Descr>, DerivedDataDescriptorState>()
+  updateStateTimeout = 200
 
   private constructor (
     readonly descrs: DescriptorMap,
@@ -183,7 +185,7 @@ export class DerivedDataProcessor {
     }
     const apply = context?.apply ?? true
     for (const d of descriptors) {
-      const done = measure('dd.create =>' + d._id + (tx.sid === 0 ? '-sid0' : ''))
+      const done = measure('dd.create', d._id)
       if (d.query !== undefined && !matchDocument(txDoc, d.query)) {
         // Skip as not matched by query.
         continue
@@ -196,24 +198,29 @@ export class DerivedDataProcessor {
           const oldData =
             context !== undefined
               ? await measureAsync(
-                'dd.create =>' + d._id + '<=fo',
+                'dd.findOld',
                 async () =>
                   await this.storage.findAll(d.targetClass as Ref<Class<DerivedData>>, {
                     objectId: tx.objectId,
                     objectClass: tx.objectClass,
                     descriptorId: d._id
-                  })
+                  }),
+                d._id
               )
               : []
 
           await measureAsync(
-            'dd.create =>' + d._id + '<=ad' + (tx.sid === 0 ? '-sid0' : ''),
-            async () => await this.applyDerivedData(oldData, results as DerivedData[], tx.modifiedBy)
+            'dd.apply',
+            async () => await this.applyDerivedData(oldData, results as DerivedData[], tx.modifiedBy),
+            d._id,
+            'create'
           )
 
           await measureAsync(
-            'dd.create =>' + d._id + '<=ac' + (tx.sid === 0 ? '-sid0' : ''),
-            async () => await this.applyCollectionRules(d as DescrWithTarget, tx, apply, context?.collectionCleanCache)
+            'dd.collection',
+            async () => await this.applyCollectionRules(d as DescrWithTarget, tx, apply, context?.collectionCleanCache),
+            d._id,
+            'create'
           )
         }
       }
@@ -257,12 +264,12 @@ export class DerivedDataProcessor {
         if (r.sourceFieldPattern === undefined) {
           const target = await this.getTargetByRef(doc, d.targetClass, r)
           if (target !== undefined) {
-            await this.pushToCollection(doc, { ...target, space: tx.objectSpace }, r, collectionCleanCache)
+            await this.pushToCollection(d, doc, { ...target, space: tx.objectSpace }, r, collectionCleanCache)
           }
         } else {
           const targets = await this.getTargetsByRegex(doc, d.targetClass, r)
           for (const target of targets) {
-            await this.pushToCollection(doc, { ...target, space: tx.objectSpace }, r, collectionCleanCache)
+            await this.pushToCollection(d, doc, { ...target, space: tx.objectSpace }, r, collectionCleanCache)
           }
         }
       } else {
@@ -307,6 +314,7 @@ export class DerivedDataProcessor {
   }
 
   private async pushToCollection (
+    d: DescrWithTarget,
     doc: Doc,
     target: Pick<Doc, '_id' | '_class' | 'space'>,
     r: CollectionRule,
@@ -314,7 +322,7 @@ export class DerivedDataProcessor {
   ): Promise<void> {
     if (target === undefined) return
     try {
-      const dd = measure('dd.pushToCollection')
+      const dd = measure('dd.pushToCollection', d._id)
       const obj = this.extractEmbeddedDoc(doc, r.rules)
 
       let operation: DocumentUpdate<Doc> = {
@@ -335,9 +343,7 @@ export class DerivedDataProcessor {
       }
 
       // We need to do pull of all previous records with out id.
-      await measureAsync('dd.pushToCollection.updates', async () => {
-        await this.updateData(operation, target._id, target._class, target.space)
-      })
+      await this.updateData(operation, target._id, target._class, target.space)
       dd()
     } catch (err) {
       console.log(err)
@@ -350,7 +356,7 @@ export class DerivedDataProcessor {
     const descr = this.model.getObject(objectId)
 
     const state = (
-      await this.rawStorage.findAll(core.class.DerivedDataDescriptorState, { descriptorId: objectId })
+      await this.rawStorage.findAll(core.class.DerivedDataDescriptorState, { descriptorId: objectId }, { limit: 1 })
     ).shift()
     const prevVersion = state !== undefined ? state.version : ''
 
@@ -411,7 +417,7 @@ export class DerivedDataProcessor {
     const apply = context?.apply ?? true
 
     for (const d of descriptors) {
-      const done = measure('dd.update => ' + d._id + (tx.sid === 0 ? '-sid0' : ''))
+      const done = measure('dd.update', d._id)
       if (d.query !== undefined && !matchDocument(await doc.resolve(), d.query)) {
         // Skip as not matched by query.
         continue
@@ -419,12 +425,22 @@ export class DerivedDataProcessor {
 
       const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
       if (results !== null && d.targetClass !== undefined) {
-        const oldData = await this.storage.findAll(d.targetClass, {
-          objectId: tx.objectId,
-          objectClass: tx.objectClass,
-          descriptorId: d._id
-        })
-        await this.applyDerivedData(oldData, results, tx.modifiedBy)
+        const oldData = await measureAsync(
+          'dd.findOld',
+          async () =>
+            await this.storage.findAll(d.targetClass as Ref<Class<DerivedData>>, {
+              objectId: tx.objectId,
+              objectClass: tx.objectClass,
+              descriptorId: d._id
+            }),
+          d._id
+        )
+        await measureAsync(
+          'dd.apply',
+          async () => await this.applyDerivedData(oldData, results, tx.modifiedBy),
+          d._id,
+          'update'
+        )
       }
       done()
     }
@@ -440,13 +456,29 @@ export class DerivedDataProcessor {
 
     for (const d of descriptors) {
       if (d.targetClass !== undefined) {
-        const oldData = await this.storage.findAll(d.targetClass, {
-          objectId: tx.objectId,
-          objectClass: tx.objectClass,
-          descriptorId: d._id
-        })
-        await this.applyDerivedData(oldData, [], tx.modifiedBy)
-        await this.applyCollectionRules(d as DescrWithTarget, tx, false)
+        const oldData = await measureAsync(
+          'dd.findOld',
+          async () =>
+            await this.storage.findAll(d.targetClass as Ref<Class<DerivedData>>, {
+              objectId: tx.objectId,
+              objectClass: tx.objectClass,
+              descriptorId: d._id
+            }),
+          d._id,
+          'remove'
+        )
+        await measureAsync(
+          'dd.apply',
+          async () => await this.applyDerivedData(oldData, [], tx.modifiedBy),
+          d._id,
+          'remove'
+        )
+        await measureAsync(
+          'dd.collection',
+          async () => await this.applyCollectionRules(d as DescrWithTarget, tx, false),
+          d._id,
+          'remove'
+        )
       }
     }
   }
@@ -607,9 +639,10 @@ export class DerivedDataProcessor {
   }
 
   private async doProcessing (): Promise<void> {
-    const state = (
-      await this.rawStorage.findAll(core.class.DerivedDataDescriptorState, { descriptorId: core.dd.Global })
-    ).shift()
+    this.allDescriptorState = new Map(
+      (await this.rawStorage.findAll(core.class.DerivedDataDescriptorState, {})).map((s) => [s.descriptorId, s])
+    )
+    const state = this.allDescriptorState.get(core.dd.Global)
 
     let lastSID = state?.lastSID ?? -1
 
@@ -650,8 +683,6 @@ export class DerivedDataProcessor {
         await this.txWith(tx)
         if (tx.sid !== 0) {
           lastSID = tx.sid
-
-          await this.updateDDState(core.dd.Global, '1.0', lastSID)
         }
         if (processed % 500 === 0) {
           console.log(
@@ -662,6 +693,7 @@ export class DerivedDataProcessor {
         }
         processed++
       }
+      await this.updateDDState(core.dd.Global, '1.0', lastSID)
     }
     this.processSleepers()
     console.info('DD processing is finished')
@@ -701,9 +733,7 @@ export class DerivedDataProcessor {
     const updateState = async (): Promise<void> => {
       const lastActualSID = this.ddStates.get(descriptorId) ?? lastSID
       this.ddStates.delete(descriptorId)
-      const state = (
-        await this.rawStorage.findAll(core.class.DerivedDataDescriptorState, { descriptorId: descriptorId })
-      ).shift()
+      const state = this.allDescriptorState.get(descriptorId)
       if (state === undefined) {
         const ctx: TxCreateDoc<DerivedDataDescriptorState> = {
           sid: 0,
@@ -722,6 +752,7 @@ export class DerivedDataProcessor {
             lastSID: lastActualSID
           }
         }
+        this.allDescriptorState.set(descriptorId, TxProcessor.createDoc2Doc(ctx) as DerivedDataDescriptorState)
         await this.rawStorage.tx(ctx)
       } else {
         const ctx: TxUpdateDoc<DerivedDataDescriptorState> = {
@@ -736,17 +767,26 @@ export class DerivedDataProcessor {
           space: core.space.Tx,
           objectSpace: core.space.DerivedData,
           operations: {
-            lastSID: lastActualSID
+            lastSID: lastActualSID,
+            version: version ?? ''
           }
         }
         await this.rawStorage.tx(ctx)
+        state.lastSID = lastActualSID
+        state.version = version ?? ''
+        this.allDescriptorState.set(descriptorId, state)
       }
     }
-    setTimeout(() => {
+    const op = (): void => {
       if (!this.isClosed) {
         void updateState()
       }
-    }, 200)
+    }
+    if (this.updateStateTimeout !== 0) {
+      setTimeout(op, this.updateStateTimeout)
+    } else {
+      op()
+    }
   }
 
   /**
