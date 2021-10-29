@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/notification",
+      "comment": "task notifications",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/notification"
+}
