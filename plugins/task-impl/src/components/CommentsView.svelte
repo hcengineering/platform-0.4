@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { getFullRef, SortingOrder } from '@anticrm/core'
+  import { generateId, getFullRef, SortingOrder } from '@anticrm/core'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Task } from '@anticrm/task'
@@ -34,12 +34,16 @@
   const client = getClient()
   const notificationClient = new NotificationClient(client)
   let messages: Comment[] = []
+  let newCommentId: Ref<Comment> = generateId()
 
   async function addMessage (message: string): Promise<void> {
     await client.createDoc(chunter.class.Comment, currentSpace, {
       message,
       replyOf: getFullRef(taskId, task.class.Task)
-    })
+      },
+      newCommentId
+    )
+    newCommentId = generateId()
     const spaceLastViews = $spacesLastViews.get(currentSpace)
     if (spaceLastViews !== undefined) {
       await notificationClient.readNow(spaceLastViews, taskId, true)
@@ -63,4 +67,10 @@
   }
 </script>
 
-<Comments {messages} {currentSpace} on:message={(event) => addMessage(event.detail)} />
+<Comments
+  {messages}
+  {currentSpace}
+  objectClass={chunter.class.Comment}
+  objectId={newCommentId}
+  on:message={(event) => addMessage(event.detail)}
+/>

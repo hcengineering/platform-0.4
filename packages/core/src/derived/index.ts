@@ -142,7 +142,7 @@ export interface DerivedDataDescriptorState extends Doc {
   lastSID: TransactionID
 
   // if 'core.dd.global' is set it is global descriptor state.
-  descriptorId?: Ref<DerivedDataDescriptor<Doc, DerivedData>>
+  descriptorId: Ref<DerivedDataDescriptor<Doc, DerivedData>>
   version?: string
 }
 

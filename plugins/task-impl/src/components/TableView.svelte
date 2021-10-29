@@ -13,22 +13,27 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, UserInfo, DateTime } from '@anticrm/ui'
-  import core, { DocumentQuery } from '@anticrm/core'
-  import type { Ref, Doc, Account } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
-
-  import { deepEqual } from 'fast-equals'
-  import TaskStatus from './TaskStatus.svelte'
-
+  import core from '@anticrm/core'
+  import type { Ref, Doc, DocumentQuery, Account } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
+  import type { Task } from '@anticrm/task'
+  import { getClient } from '@anticrm/workbench'
+  import { Table, Label, UserInfo, DateTime, closePopup, showPopup } from '@anticrm/ui'
+  import { deepEqual } from 'fast-equals'
+  import EditTask from './EditTask.svelte'
+  import TaskStatus from './TaskStatus.svelte'
+  import LimitHeader from './LimitHeader.svelte'
 
   export let query: DocumentQuery<Task>
   let prevQuery: DocumentQuery<Task> | undefined
 
+  let skip = 0
+  let total = 0
+  const limit = 150
+
   const columns = [
+    { label: task.string.TaskID, properties: [{ key: 'shortRefId', property: 'label' }], component: Label },
     { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
     {
       label: task.string.Status,
@@ -53,17 +58,26 @@
 
   $: if (!deepEqual(prevQuery, query)) {
     prevQuery = query
-    lq = client.query(lq, task.class.Task, query, async (result) => {
-      data = []
-      for (const item of result) {
-        data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
-      }
-      data = data
-    })
+    lq = client.query(
+      lq,
+      task.class.Task,
+      query,
+      async (result) => {
+        data = []
+        for (const item of result) {
+          data.push(Object.assign(item, { asigneeUser: await getUser(item.assignee) }))
+        }
+        data = data
+        total = result.total
+      },
+      { limit, skip }
+    )
   }
 
   function onClick (event: any) {
-    selectDocument(event.detail)
+    showPopup(EditTask, { id: event.detail._id }, 'full', () => {
+      closePopup()
+    })
   }
 
   async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {
@@ -72,4 +86,5 @@
   }
 </script>
 
+<LimitHeader bind:skip {total} {limit} />
 <Table {data} {columns} on:rowClick={onClick} showHeader />

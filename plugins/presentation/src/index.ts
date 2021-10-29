@@ -42,7 +42,7 @@ class LiveQueryImpl<T extends Doc> {
 
   constructor (
     private readonly client: () => Promise<Client>,
-    private readonly callback: (result: T[]) => void,
+    private readonly callback: (result: FindResult<T>) => void,
     readonly stack?: string
   ) {
     onDestroy(() => {
@@ -123,7 +123,7 @@ export class PresentationClient implements Storage, TxOperations {
     liveQuery: QueryUpdater<T> | undefined,
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: T[]) => void,
+    callback: (result: FindResult<T>) => void,
     options?: FindOptions<T>
   ): QueryUpdater<T> {
     if (liveQuery !== undefined) {
@@ -188,7 +188,7 @@ export class PresentationClient implements Storage, TxOperations {
   private liveQuery<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
-    callback: (result: T[]) => void,
+    callback: (result: FindResult<T>) => void,
     options?: FindOptions<T>
   ): QueryUpdater<T> {
     const lQuery = new LiveQueryImpl<T>(this.client, callback, new Error().stack)

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Implement FSM statuses edit",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets"
+}

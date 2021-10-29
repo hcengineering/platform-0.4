@@ -13,17 +13,18 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import ui, { ActionIcon, Progress, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, closePopup, Progress, showPopup, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
   import { getStatusColor } from '../plugin'
   import core, { Account, Ref, Space } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
   import { SpaceLastViews } from '@anticrm/notification'
   import { getContext } from 'svelte'
   import { Writable } from 'svelte/store'
+  import { getClient } from '@anticrm/workbench'
+  import EditTask from './EditTask.svelte'
 
   const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
@@ -45,7 +46,9 @@
   }
 
   function select () {
-    selectDocument(card)
+    showPopup(EditTask, { id: card._id }, 'full', () => {
+      closePopup()
+    })
   }
 
   function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {

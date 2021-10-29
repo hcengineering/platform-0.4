@@ -66,4 +66,4 @@
   $: items = new Map(states.map((state) => [state._id, tasks.filter((task) => task.state === state._id)]))
 </script>
 
-<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop} panelDragDisabled={true} />
+<Kanban {items} {states} cardComponent={KanbanCard} on:drop={onDrop} panelEditDisabled={true} />

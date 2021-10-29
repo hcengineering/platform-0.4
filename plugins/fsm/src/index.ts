@@ -15,7 +15,7 @@
 
 import { plugin } from '@anticrm/platform'
 import type { Plugin, Service } from '@anticrm/platform'
-import type { Doc, Ref, Class, Space } from '@anticrm/core'
+import type { Doc, Ref, Class, Space, Data } from '@anticrm/core'
 import type { Action } from '@anticrm/action-plugin'
 
 export interface FSM extends Doc {
@@ -66,6 +66,13 @@ export interface FSMService extends Service {
       actual: Ref<State>
     },
     idx: number
+  ) => Promise<void>
+
+  addState: (
+    state: Data<State>
+  ) => Promise<State>
+  removeState: (
+    state: State
   ) => Promise<void>
 
   duplicateFSM: (fsm: Ref<FSM>) => Promise<FSM | undefined>

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Implement FSM statuses edit",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}

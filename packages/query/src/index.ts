@@ -253,7 +253,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     const res = await this.client.findAll(q._class, q.query, q.options)
     q.result = copy(res)
     q.total = res.total
-    q.callback(copy(res))
+    q.callback(Object.assign(copy(res), { total: res.total }))
   }
 
   private sort (q: Query, tx: TxUpdateDoc<Doc>): void {
@@ -308,8 +308,9 @@ function newThenProcessor<T extends Doc> (
   q: Query
 ): ((value: FindResult<T>) => void | PromiseLike<void>) | null | undefined {
   return (res) => {
-    q.result = copy(res)
+    q.result = res
     q.total = res.total
-    q.callback(copy(res))
+    const callbackValue = Object.assign(copy(res), { total: res.total })
+    q.callback(callbackValue)
   }
 }

@@ -1,17 +1,17 @@
 import { Accounts } from '@anticrm/accounts'
+import regCalendarActions from '@anticrm/calendar-action'
+import regCalendarMappers from '@anticrm/calendar-mappers'
+import { printMeasurements } from '@anticrm/core'
 import { getMongoClient, shutdown } from '@anticrm/mongo'
+import regNotificationMappers from '@anticrm/notification-mappers'
+import regRecruitingActions from '@anticrm/recruiting-action'
+import regRecruitingMappers from '@anticrm/recruiting-mappers'
 import { Server, startServer } from '@anticrm/server'
-import { newApp, newAuthServer, createFileServer, newFrontServer } from '@anticrm/services'
+import { createFileServer, newApp, newAuthServer, newFrontServer } from '@anticrm/services'
 import { createWorkspace, upgradeWorkspace } from '@anticrm/workspaces'
 import { createServer } from 'https'
 import { config, readCertificates } from './config'
 import builder from './model'
-
-import regCalendarMappers from '@anticrm/calendar-mappers'
-import regRecruitingMappers from '@anticrm/recruiting-mappers'
-import regRecruitingActions from '@anticrm/recruiting-action'
-import regCalendarActions from '@anticrm/calendar-action'
-import regNotificationMappers from '@anticrm/notification-mappers'
 
 async function initWorkspace (): Promise<void> {
   const client = await getMongoClient(config.dbUri)
@@ -85,7 +85,9 @@ async function start (): Promise<void> {
 
   console.log('Anticrm Platform server is started at ', address, port)
 
+  const cl = setInterval(printMeasurements, 10000)
   const doShutdown = (): void => {
+    clearInterval(cl)
     console.log('shutting down')
     webServer.close()
     appServer.shutdown()

@@ -14,13 +14,12 @@
 -->
 <script lang="ts">
   import type { DocumentQuery } from '@anticrm/core'
-  import ui, { ScrollBox, IconGroup, IconList, IconCard, IconKanban } from '@anticrm/ui'
-  import type { Task } from '@anticrm/task'
   import type { IntlString, UIComponent } from '@anticrm/status'
-
+  import type { Task } from '@anticrm/task'
+  import ui, { IconCard, IconGroup, IconKanban, IconList } from '@anticrm/ui'
+  import CardView from './CardView.svelte'
   import KanbanView from './KanbanView.svelte'
   import TableView from './TableView.svelte'
-  import CardView from './CardView.svelte'
 
   type IDs = 'list' | 'card' | 'kanban'
 
@@ -44,11 +43,7 @@
 {#if selected === 'kanban'}
   <KanbanView {query} />
 {:else if selected === 'card'}
-  <div class="content">
-    <ScrollBox vertical>
-      <CardView {query} />
-    </ScrollBox>
-  </div>
+  <CardView {query} />
 {:else if selected === 'list'}
   <TableView {query} />
 {/if}
@@ -59,12 +54,8 @@
     flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 40px;
+    margin: 20px 20px;
     min-height: 40px;
     height: 40px;
-  }
-  .content {
-    height: 100%;
-    margin: 0 40px 40px;
   }
 </style>

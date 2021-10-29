@@ -276,7 +276,6 @@
       attachments = attachments
     })
     if (attachments.find((p) => p._id === item._id) === undefined) {
-      console.log('push attachment')
       attachments.push(item)
     }
     attachments = attachments

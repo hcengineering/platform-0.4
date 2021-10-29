@@ -13,14 +13,14 @@
 // limitations under the License.
 //
 
-import { Ref, withOperations } from '@anticrm/core'
+import { getMeasurements, Ref, withOperations } from '@anticrm/core'
 import { FSM, State } from '@anticrm/fsm'
 import { createClient } from '@anticrm/node-client'
 import recruiting, { Applicant, Candidate } from '@anticrm/recruiting'
 import { config } from 'dotenv'
 import { deepEqual } from 'fast-equals'
 import { readFile } from 'fs/promises'
-import { createUpdateAccounts } from './accounts'
+import { clearInterval } from 'timers'
 import { createUpdateApplicant } from './applicant'
 import { CandState, createCandidatePool, createUpdateCandidates, getName } from './candidates'
 import { buildFSMItems, createFSM, FSMColumn, updateFSMStates } from './fsm'
@@ -31,6 +31,24 @@ config()
 
 const serverUri = process.env.SERVER_URI ?? 'wss://localhost:18080'
 const token = process.env.TOKEN ?? ''
+
+function toLen (val: string, len = 50): string {
+  while (val.length < len) {
+    val += ' '
+  }
+  return val
+}
+let prevInfo = ''
+function printInfo (): void {
+  const val = getMeasurements()
+    .filter((m) => m.total > 1)
+    .map((m) => `${toLen(m.name)}: avg ${m.avg} total: ${m.total} ops: ${m.ops}`.trim())
+    .join('\n')
+  if (prevInfo !== val) {
+    prevInfo = val
+    console.log('\nStatistics:\n', val)
+  }
+}
 
 async function start (): Promise<void> {
   console.log('Importing trello data into Platform...')
@@ -55,6 +73,8 @@ async function start (): Promise<void> {
       limit = parseInt(opt.split('=')[1])
     }
   }
+
+  const intervalHandle = setInterval(printInfo, 5000)
 
   const board = JSON.parse((await readFile(inputFile)).toString()) as TrelloBoard
 
@@ -107,23 +127,14 @@ async function start (): Promise<void> {
   const vacancyId = await createVacancySpace(fsmId, clientOps, board)
 
   // Add missing Accounts.
-  const membersMap = await createUpdateAccounts(clientOps, board, [vacancyId, candPoolId])
+  // const membersMap = await createUpdateAccounts(clientOps, board, [vacancyId, candPoolId])
 
   const applicants = await client.findAll(recruiting.class.Applicant, { space: vacancyId })
   const applicantsMap = new Map<Ref<Candidate>, Applicant>(applicants.map((a) => [a.item as Ref<Candidate>, a]))
 
   const newStates = new Map<Ref<State>, CandState[]>()
 
-  await createUpdateApplicant(
-    candidates,
-    applicantsMap,
-    candidateStates,
-    vacancyId,
-    clientId,
-    membersMap,
-    clientOps,
-    newStates
-  )
+  await createUpdateApplicant(candidates, applicantsMap, candidateStates, vacancyId, clientId, clientOps, newStates)
 
   // Now I need to update states to contain proper applicants.
   for (const st of states) {
@@ -135,8 +146,10 @@ async function start (): Promise<void> {
     if (!deepEqual(st.items, newValue)) {
       await clientOps.updateDoc(st._class, st.space, st._id, { items: newValue as Ref<Applicant>[] })
     }
+    console.log('update state', st.name)
   }
-
+  clearInterval(intervalHandle)
+  printInfo()
   process.exit(0)
 }
 start().catch((err) => console.log(err))

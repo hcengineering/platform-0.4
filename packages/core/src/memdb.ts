@@ -22,6 +22,7 @@ import { findProperty, resultSort, shouldSkipId } from './query'
 import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 import { isDerivedDataTx } from './derived/index'
+import { measure } from '.'
 
 /**
  * @public
@@ -90,6 +91,7 @@ export class MemDb extends TxProcessor implements Storage {
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
+    const done = measure('model.findAll', _class)
     let result: Doc[]
     if (
       Object.prototype.hasOwnProperty.call(query, '_id') &&
@@ -115,7 +117,9 @@ export class MemDb extends TxProcessor implements Storage {
       result = result.slice(options.skip)
     }
     result = result.slice(0, options?.limit)
-    return Object.assign(result as T[], { total })
+    const finResult = Object.assign(result as T[], { total })
+    done()
+    return finResult
   }
 
   addDoc (doc: Doc): void {

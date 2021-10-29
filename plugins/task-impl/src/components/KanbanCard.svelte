@@ -13,17 +13,18 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import ui, { ActionIcon, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, closePopup, showPopup, UserInfo } from '@anticrm/ui'
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import core, { Space } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
   import { SpaceLastViews } from '@anticrm/notification'
   import { getContext } from 'svelte'
   import { Writable } from 'svelte/store'
+  import { getClient } from '@anticrm/workbench'
+  import EditTask from './EditTask.svelte'
 
   export let doc: Task
   const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
@@ -38,7 +39,9 @@
   }
 
   function select () {
-    selectDocument(doc)
+    showPopup(EditTask, { id: doc._id }, 'full', () => {
+      closePopup()
+    })
   }
 
   function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {

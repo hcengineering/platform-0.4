@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Class, Doc, Ref, Space } from '@anticrm/core'
+import type { Class, Data, Doc, Ref, Space } from '@anticrm/core'
 import core from '@anticrm/core'
 import type { FSM, FSMItem, FSMService, State, Transition, WithFSM } from '@anticrm/fsm'
 import { getPlugin } from '@anticrm/platform'
@@ -43,8 +43,8 @@ export default async (): Promise<FSMService> => {
       .findAll(fsmPlugin.class.Transition, { fsm })
       .then((xs) => xs.filter((x): x is Transition => x !== undefined))
 
-  const getTargetFSM = async (fsmOwner: WithFSM): Promise<FSM | undefined> => {
-    return (await client.findAll(fsmPlugin.class.FSM, { _id: fsmOwner.fsm }))[0]
+  const getTargetFSM = async (fsmID: Ref<FSM>): Promise<FSM | undefined> => {
+    return (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }))[0]
   }
 
   return {
@@ -58,7 +58,7 @@ export default async (): Promise<FSMService> => {
       },
       space: Ref<Space> = fsmOwner._id
     ) => {
-      const fsm = await getTargetFSM(fsmOwner)
+      const fsm = await getTargetFSM(fsmOwner.fsm)
 
       if (fsm === undefined) {
         return
@@ -118,6 +118,45 @@ export default async (): Promise<FSMService> => {
         state: actualState._id
       })
     },
+
+    addState: async (state: Data<State>): Promise<State> => {
+      const fsm = await getTargetFSM(state.fsm)
+
+      if (fsm === undefined) {
+        throw Error(`FSM is not found: ${state.fsm}`)
+      }
+
+      const actualState = await client.createDoc(fsmPlugin.class.State, core.space.Model, state)
+      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, fsm._id, {
+        $push: {
+          states: actualState._id
+        }
+      })
+
+      return actualState
+    },
+    removeState: async (state: State): Promise<void> => {
+      const fsm = await getTargetFSM(state.fsm)
+
+      if (fsm === undefined) {
+        throw Error(`FSM is not found: ${state.fsm}`)
+      }
+
+      const hasItems = (await client.findAll(fsmPlugin.class.FSMItem, { state: state._id }, { limit: 1 })).length > 0
+
+      if (hasItems) {
+        throw Error('FSM state contains items')
+      }
+
+      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, fsm._id, {
+        $pull: {
+          states: state._id
+        }
+      })
+
+      await client.removeDoc(fsmPlugin.class.State, core.space.Model, state._id)
+    },
+
     duplicateFSM: async (fsmRef: Ref<FSM>) => {
       const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmRef }))[0]
 

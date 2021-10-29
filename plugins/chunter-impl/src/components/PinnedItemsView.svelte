@@ -15,7 +15,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { Message, MessageBookmark, Channel } from '@anticrm/chunter'
-  import type { Ref, Space, DocumentQuery, Account } from '@anticrm/core'
+  import type { Ref, Space, DocumentQuery, Account, FindResult } from '@anticrm/core'
   import core from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import ui, { ActionIcon, Dialog } from '@anticrm/ui'
@@ -46,7 +46,7 @@
 
   let messagesQuery: QueryUpdater<Message> | undefined
 
-  let messages: Message[] = []
+  let messages: FindResult<Message> = Object.assign([], { total: 0 })
 
   $: messagesQuery = client.query(
     messagesQuery,
@@ -56,7 +56,8 @@
       messages = result
     },
     {
-      sort: { lastModified: -1 }
+      sort: { lastModified: -1 },
+      limit: 150
     }
   )
 
@@ -92,6 +93,9 @@
     dispatch('close')
   }}
 >
+  <div class="bm-header">
+    Bookmarks {messages.length} of {messages.total}
+  </div>
   {#each messages as message}
     <MessageView {message} thread={false}>
       <svelte:fragment slot="header">
@@ -145,5 +149,8 @@
         max-height: 100%;
       }
     }
+  }
+  .bm-header {
+    margin: 5px 10px;
   }
 </style>

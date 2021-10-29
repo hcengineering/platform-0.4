@@ -18,10 +18,14 @@
 
   import type { IntlString, UIComponent } from '@anticrm/status'
 
+  import ui from '../..'
   import type { KanbanItem } from '../../types'
 
   import Label from '../Label.svelte'
+  import EditBox from '../EditBox.svelte'
+  import ActionIcon from '../ActionIcon.svelte'
   import VirtualList, { sty } from '../VirtualList.svelte'
+  import IconClose from '../icons/Close.svelte'
 
   import DelayedRenderer from './DelayedRenderer.svelte'
   import Card from './Card.svelte'
@@ -43,6 +47,7 @@
   export let cardComponent: UIComponent
   export let disabled: boolean = false
   export let cardDelay: number
+  export let panelEditDisabled: boolean
 
   const dispatch = createEventDispatcher()
   const heightCache = new HeightCache()
@@ -160,9 +165,30 @@
   $: if (isHovered) {
     setHeight(actualItems.length - 1, $dragCardSize.height)
   }
+
+  function onColumnRename () {
+    dispatch('columnRename', {
+      id,
+      title
+    })
+  }
+
+  function onColumnRemove () {
+    dispatch('columnRemove', { id })
+  }
+
+  let isHoveredByMouse = false
+  let showDeleteButton = false
+  $: showDeleteButton = !collapsed && isHoveredByMouse && items.length === 0
 </script>
 
-<section class="panel-kanban" class:collapsed class:disabled>
+<section
+  class="panel-kanban"
+  class:collapsed
+  class:disabled
+  on:mouseenter={() => (isHoveredByMouse = true)}
+  on:mouseleave={() => (isHoveredByMouse = false)}
+>
   <div
     class="header"
     class:collapsed
@@ -171,8 +197,20 @@
       collapsed = !collapsed
     }}
   >
-    {#if collapsed !== true}<div class="title"><Label label={title} /></div>{/if}
-    <div class="counter">{items.length}</div>
+    {#if collapsed !== true}
+      <div class="title">
+        {#if panelEditDisabled}
+          <Label label={title} />
+        {:else}
+          <EditBox maxWidth="245px" bind:value={title} on:blur={onColumnRename} />
+        {/if}
+      </div>
+    {/if}
+    {#if showDeleteButton && !panelEditDisabled}
+      <ActionIcon icon={IconClose} action={onColumnRemove} size={16} label={ui.string.Remove} direction="top" />
+    {:else}
+      <div class="counter">{items.length}</div>
+    {/if}
   </div>
   {#if collapsed !== true}
     <div class="container">
