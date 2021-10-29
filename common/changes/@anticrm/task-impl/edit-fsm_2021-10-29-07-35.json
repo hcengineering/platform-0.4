@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Implement FSM statuses edit",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
