@@ -20,6 +20,8 @@ import { ModelDb, TxDb } from '../memdb'
 import { SortingOrder } from '../storage'
 import { TxUpdateDoc, withOperations } from '../tx'
 import { _genMinModel } from '../minmodel'
+import { clearMeasurements, getMeasurements } from '..'
+import { printMeasurements } from '../performance'
 
 const txes = _genMinModel()
 
@@ -308,6 +310,25 @@ describe('memdb', () => {
 
     expect((await model.findAll<MySpace>(core.class.Space, { 'someArray.firstName': 'varya' })).length).toEqual(1)
     expect((await model.findAll<MySpace>(core.class.Space, { 'someField2.someArray.name': 'zxc' })).length).toEqual(1)
+  })
+
+  it('check measurements', async () => {
+    clearMeasurements()
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) await hierarchy.tx(tx)
+    const model = withOperations(core.account.System, new ModelDb(hierarchy))
+    for (const tx of txes) await model.tx(tx)
+    await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account1@site.com',
+      name: 'account1'
+    })
+
+    const accounts = await model.findAll(core.class.Account, {})
+    expect(accounts.length).toEqual(3)
+    const ms = getMeasurements()
+    expect(ms[0].name).toEqual('model.findAll')
+    expect(ms[0].ops).toEqual(1)
+    printMeasurements()
   })
 })
 async function prepareModel (): Promise<{ model: ModelDb, hierarchy: Hierarchy, txDb: TxDb }> {

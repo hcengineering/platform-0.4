@@ -13,13 +13,11 @@
 // limitations under the License.
 //
 
-import * as gravatar from 'gravatar'
-import core, { Account, newTxCreateDoc, Ref, Tx, CoreClient } from '@anticrm/core'
-
+import core, { Account, CoreClient, Ref, Tx } from '@anticrm/core'
 import { Server, start } from './server'
-import { AccountDetails, decodeToken } from './token'
-import { assignWorkspace, closeWorkspace, WorkspaceInfo } from './workspaces'
 import { SecurityOptions } from './tls_utils'
+import { AccountDetails, decodeToken } from './token'
+import { assignWorkspace, closeWorkspace } from './workspaces'
 
 /**
  * @public
@@ -66,7 +64,12 @@ function connectClient (
       const { workspace, clientStorage } = await assignWorkspace({ clientId, accountId, workspaceId, tx: sendTx })
 
       // We need to check if there is Account exists and if not create it.
-      await updateAccount(clientId, workspace, accountId, details)
+      const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId }, { limit: 1 })
+      if (accountRef === undefined) {
+        await closeWorkspace(clientId)
+        // No account, wrong token.
+        throw new Error('invalid token')
+      }
 
       if (options.logTransactions || options.logRequests) {
         return withLogging(clientStorage, options, accountId, details)
@@ -128,36 +131,5 @@ function withLogging (
     },
     accountId: async () => await clientStorage.accountId(),
     close: async () => await clientStorage.close()
-  }
-}
-
-/**
- * Will check and create Account for current log-in user if required.
- */
-async function updateAccount (
-  clientId: string,
-  workspace: WorkspaceInfo,
-  accountId: Ref<Account>,
-  details: AccountDetails
-): Promise<void> {
-  const accountRef = await workspace.workspace.model.findAll(core.class.Account, { _id: accountId }, { limit: 1 })
-  if (accountRef.length === 0) {
-    // We need to create an account entry.
-    await workspace.workspace.tx(
-      clientId,
-      newTxCreateDoc<Account>(
-        accountId,
-        core.class.Account,
-        core.space.Model,
-        {
-          email: details.email,
-          name: ((details?.firstName ?? '') + ' ' + (details?.lastName ?? '')).trim(),
-          firstName: details?.firstName ?? '',
-          lastName: details?.lastName ?? '',
-          avatar: gravatar.url(details.email) // TODO: Use platform plugin mechanism for this
-        },
-        accountId
-      )
-    )
   }
 }

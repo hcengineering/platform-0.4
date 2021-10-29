@@ -42,14 +42,21 @@
     ([first]) => {
       isLoading = false
       candidate = first
-    }
+    },
+    { limit: 1 }
   )
 
   let state: State | undefined
   let stateQ: QueryUpdater<State> | undefined
-  $: stateQ = client.query(stateQ, fsm.class.State, { _id: doc.state }, (res) => {
-    state = res[0]
-  })
+  $: stateQ = client.query(
+    stateQ,
+    fsm.class.State,
+    { _id: doc.state },
+    (res) => {
+      state = res[0]
+    },
+    { limit: 1 }
+  )
 
   let actions: Action[] = []
   let actionsQ: QueryUpdater<Action> | undefined

@@ -16,18 +16,18 @@
 import { Component, component, Resource } from '@anticrm/status'
 import copy from 'fast-copy'
 import { getFullRef, Storage, TxCreateDoc, TxOperations, TxProcessor, TxUpdateDoc, withOperations, withSID } from '..'
-import { Account, Class, Doc, FullRefString, Ref, Space } from '../classes'
+import { Account, Class, Doc, FullRefString, Ref, Space, Timestamp } from '../classes'
 import { createClient } from '../client'
 import core from '../component'
 import { DerivedData, DerivedDataDescriptor, DerivedDataProcessor, DocumentMapper, registerMapper } from '../derived'
-import { newDerivedData } from '../derived/utils'
+import { findExistingData, newDerivedData } from '../derived/utils'
 import { Hierarchy } from '../hierarchy'
 import { ModelDb, TxDb } from '../memdb'
-import { _createClass, _createDoc, createTestTxAndDocStorage, _genMinModel } from '../minmodel'
+import { createTestTxAndDocStorage, _createClass, _createDoc, _genMinModel } from '../minmodel'
 import { Reference } from '../reference'
 import { SortingOrder } from '../storage'
 import { Title } from '../title'
-import { Tx } from '../tx'
+import { Tx, txObjectClass } from '../tx'
 import { connect } from './connection'
 
 const txes = _genMinModel()
@@ -63,6 +63,7 @@ interface Page extends Doc {
   name: string
   description: string
   comments?: CommentRef[]
+  lastComment: Timestamp
 }
 
 const testIds = component('test' as Component, {
@@ -83,7 +84,12 @@ const dtxes = [
   _createClass(testIds.class.Task, { extends: core.class.Doc }),
   _createClass(testIds.class.Message, { extends: core.class.Doc }),
   _createClass(testIds.class.Page, { extends: core.class.Doc }),
-  _createClass(testIds.class.Comment, { extends: core.class.Doc })
+  _createClass(testIds.class.Comment, { extends: core.class.Doc }),
+  _createDoc(core.class.DerivedDataDescriptorState, {
+    lastSID: -1,
+    descriptorId: core.dd.Global,
+    version: '0'
+  })
 ]
 
 registerMapper(testIds.mapper.PageTitleMapper, {
@@ -164,8 +170,10 @@ describe('deried data', () => {
       },
       tx: async (tx) => {
         await storage.tx(tx)
-        counter.txData.push(tx)
-        counter.txes += 1
+        if (txObjectClass(tx) !== core.class.DerivedDataDescriptorState) {
+          counter.txData.push(tx)
+          counter.txes += 1
+        }
       }
     }
 
@@ -173,6 +181,7 @@ describe('deried data', () => {
     const processor = await DerivedDataProcessor.create(model, hierarchy, countModel, (p) => {
       promises.push(p)
     })
+    processor.updateStateTimeout = 0
     await processor.waitComplete()
 
     const countStorage: Storage = {
@@ -347,7 +356,8 @@ describe('deried data', () => {
 
     const doc1 = await operations.createDoc(testIds.class.Page, core.space.Model, {
       name: 'T-101',
-      description: ''
+      description: '',
+      lastComment: 0
     })
 
     // Check for Title to be created
@@ -546,6 +556,7 @@ describe('deried data', () => {
         collections: [
           {
             sourceField: 'replyOf',
+            lastModifiedField: 'lastComment',
             targetField: 'comments',
             rules: [{ sourceField: 'modifiedBy', targetField: 'userId' }]
           }
@@ -555,7 +566,8 @@ describe('deried data', () => {
 
     const doc1 = await operations.createDoc(testIds.class.Page, core.space.Model, {
       name: 'my-page',
-      description: ''
+      description: '',
+      lastComment: 0
     })
 
     for (let i = 0; i < 10; i++) {
@@ -694,8 +706,54 @@ describe('deried data', () => {
       { limit: 1000, sort: { createOn: SortingOrder.Ascending } }
     )
 
-    expect(txes2.length).toEqual(21)
+    expect(txes2.length).toEqual(22)
     expect(txes2[0].sid).toEqual(1000)
     expect(txes2[20].sid).toEqual(1020)
+  })
+
+  it('check find existing data', async () => {
+    // We need few descriptors to be available
+
+    const d1 = [
+      TxProcessor.createDoc2Doc(
+        _createDoc<Reference>(core.class.Reference, {
+          link: 'data1',
+          descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Reference>>,
+          objectId: '0' as Ref<Doc>,
+          objectClass: testIds.class.Message
+        }) as TxCreateDoc<DerivedData>
+      ) as DerivedData,
+      TxProcessor.createDoc2Doc(
+        _createDoc<Reference>(core.class.Reference, {
+          link: 'data2',
+          descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Reference>>,
+          objectId: '0' as Ref<Doc>,
+          objectClass: testIds.class.Message
+        }) as TxCreateDoc<DerivedData>
+      ) as DerivedData
+    ]
+    const d2 = [
+      TxProcessor.createDoc2Doc(
+        _createDoc<Reference>(core.class.Reference, {
+          link: 'data2',
+          descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Reference>>,
+          objectId: '0' as Ref<Doc>,
+          objectClass: testIds.class.Message
+        }) as TxCreateDoc<DerivedData>
+      ) as DerivedData,
+      TxProcessor.createDoc2Doc(
+        _createDoc<Reference>(core.class.Reference, {
+          link: 'data3',
+          descriptorId: '' as Ref<DerivedDataDescriptor<Doc, Reference>>,
+          objectId: '0' as Ref<Doc>,
+          objectClass: testIds.class.Message
+        }) as TxCreateDoc<DerivedData>
+      ) as DerivedData
+    ]
+    const ops = findExistingData(d1, d2)
+
+    expect(ops.additions.length).toEqual(0)
+    expect(ops.deletes.length).toEqual(0)
+    expect(ops.updates.length).toEqual(1)
   })
 })

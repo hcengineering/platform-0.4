@@ -1,4 +1,4 @@
-import core, { Client, generateDocumentDiff, Ref, TxOperations } from '@anticrm/core'
+import core, { Client, generateDocumentDiff, measure, Ref, TxOperations } from '@anticrm/core'
 import { FSM, State } from '@anticrm/fsm'
 import recrutting, { Applicant, Candidate, CandidatePoolSpace, CandidateStatus } from '@anticrm/recruiting'
 import { TrelloAttachment, TrelloBoard } from './trello'
@@ -66,15 +66,15 @@ export async function createUpdateCandidates (
     candidates: Candidate[]
     candidateStates: Map<Ref<Candidate>, CandState>
   }> {
-  const allCandidates = new Map<Ref<Candidate>, Candidate>(
-    Array.from(await client.findAll(recrutting.class.Candidate, { space: candPoolId })).map((c) => [c._id, c])
-  )
+  const candidates = await client.findAll(recrutting.class.Candidate, { space: candPoolId })
+  const allCandidates = new Map<Ref<Candidate>, Candidate>(Array.from(candidates).map((c) => [c._id, c]))
   const states = new Map<Ref<Candidate>, CandState>()
   const clientId = await client.accountId()
   for (const c of board.cards) {
     if (c.closed) {
       continue
     }
+    const done = measure('update.candidate')
     const cid = c.id as Ref<Candidate>
     const { firstName, lastName } = getName(c.name)
 
@@ -112,6 +112,7 @@ export async function createUpdateCandidates (
         await client.tx(t)
       }
     }
+    done()
   }
   return {
     candidates: await client.findAll(recrutting.class.Candidate, { space: candPoolId }),

@@ -15,7 +15,7 @@
 
 import regCalendarActions from '@anticrm/calendar-action'
 import regCalendarMappers from '@anticrm/calendar-mappers'
-import core from '@anticrm/core'
+import core, { printMeasurements } from '@anticrm/core'
 import builder from '@anticrm/model-all'
 import { shutdown } from '@anticrm/mongo'
 import regNotificationMappers from '@anticrm/notification-mappers'
@@ -26,7 +26,7 @@ import { upgradeWorkspace } from '@anticrm/workspaces'
 import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 import { startFileServer } from './file'
-import { printInfo, startInfoServer } from './info'
+import { startInfoServer } from './info'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 const LOG_TR = Boolean(process.env.LOG_TRANSACTIONS)
@@ -61,7 +61,7 @@ async function start (): Promise<void> {
 
   const { shutdown: infoShutdown } = await startInfoServer(3001, security)
 
-  const cl = setInterval(printInfo, 10000)
+  const cl = setInterval(printMeasurements, 10000)
   const close = (): void => {
     clearInterval(cl)
     fileServer.shutdown()
