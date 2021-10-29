@@ -132,7 +132,6 @@
       text-overflow: ellipsis;
 
       font-style: normal;
-      font-weight: normal;
       font-size: 14px;
       line-height: 18px;
     }

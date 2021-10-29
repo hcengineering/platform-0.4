@@ -15,7 +15,7 @@
 <script lang="ts">
   import type { Comment, CommentRef, Message, MessageBookmark, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
-  import core, { parseFullRef } from '@anticrm/core'
+  import core, { parseFullRef, Space } from '@anticrm/core'
   import type { Account, Class, Doc, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
@@ -35,9 +35,14 @@
   import RefControl from './RefControl.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
+  $: spaceLastViews = $spacesLastViews.get(message.space)
 
   export let message: WithMessage
-  export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   export let showReferences = true
   export let showLabels = false

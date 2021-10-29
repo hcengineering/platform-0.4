@@ -22,6 +22,7 @@
   import Card from './Card.svelte'
 
   export let query: DocumentQuery<Task>
+
   const client = getClient()
   let cards: Task[] = []
   let lq: QueryUpdater<Task> | undefined

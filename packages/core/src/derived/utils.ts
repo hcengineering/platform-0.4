@@ -100,8 +100,17 @@ export function getRuleFieldValues (
   doc: Partial<Data<Doc>>
 ): { value: string, rule: MappingRule }[] {
   const results: { value: string, rule: MappingRule }[] = []
+  console.log('getRuleFieldValues')
+  console.log('rules')
+  console.log(rules)
+  console.log('doc')
+  console.log(doc)
   for (const rule of rules) {
     const value = (doc as any)[rule.sourceField]
+    console.log('rule')
+    console.log(rule)
+    console.log('value')
+    console.log(value)
     if (value !== undefined) {
       results.push({ rule, value: value as string })
     }

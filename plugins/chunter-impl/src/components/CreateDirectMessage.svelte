@@ -25,8 +25,11 @@
   import { deepEqual } from 'fast-equals'
   import type { IntlString } from '@anticrm/status'
   import type { SpaceLastViews } from '@anticrm/notification'
-  import notification, { NotificationClient } from '@anticrm/notification'
-  import { afterUpdate } from 'svelte'
+  import { NotificationClient } from '@anticrm/notification'
+  import { afterUpdate, getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
@@ -38,7 +41,7 @@
 
   let div: HTMLElement
   let messages: Message[] = []
-  let spaceLastViews: SpaceLastViews | undefined
+  $: spaceLastViews = currentSpace !== undefined ? $spacesLastViews.get(currentSpace._id) : undefined
 
   let allAccounts: Account[] = []
 
@@ -70,11 +73,6 @@
       if (deepEqual(channelAccounts, targetAccounts)) {
         // Ok, we have channel already
         currentSpace = c
-        if (currentSpace !== undefined) {
-          client
-            .findAll(notification.class.SpaceLastViews, { objectId: currentSpace._id })
-            .then((result) => (spaceLastViews = result.shift()))
-        }
         return
       }
       currentSpace = undefined
@@ -107,7 +105,7 @@
     id = generateId()
 
     if (spaceLastViews !== undefined) {
-      notificationClient.readNow(spaceLastViews)
+      notificationClient.readNow(spaceLastViews, undefined, true)
     }
   }
 
@@ -161,7 +159,7 @@
   </div>
   <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
     {#if currentSpace}
-      <Channel {spaceLastViews} {messages} />
+      <Channel {messages} />
     {/if}
   </div>
   <div class="message-input">

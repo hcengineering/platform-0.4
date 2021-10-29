@@ -28,7 +28,8 @@ import {
   Storage,
   SortingOrder,
   generateId,
-  ObjectTx
+  ObjectTx,
+  TxUpdateDoc
 } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
@@ -53,7 +54,7 @@ interface SpaceSubscribe {
 }
 
 interface ObjectSubscribe {
-  targetField: string
+  targetField?: string
   objects: Map<Ref<Doc>, Timestamp | Timestamp> | Promise<Map<Ref<Doc>, Timestamp | Timestamp>>
   callback: (lastModified: Map<Ref<Doc>, Timestamp>) => void
 }
@@ -122,9 +123,8 @@ export class ObjectNotification {
     ids: Array<Ref<Doc>>,
     targetClass: Ref<Class<Doc>>,
     objectSubscribes: Map<string, ObjectSubscribe>,
-    _targetField?: string
+    targetField?: string
   ): void {
-    const targetField = _targetField ?? 'modifiedBy'
     if (this.checkParams(ids, targetClass, targetField)) {
       return
     }
@@ -134,7 +134,16 @@ export class ObjectNotification {
     this.oldTargetClass = targetClass
     this.oldTargetField = targetField
     const objects = this.client.findAll(targetClass, { _id: { $in: ids } }).then((r) => {
-      return new Map(r.map((d) => [d._id, (d as any)[targetField]]))
+      return new Map(
+        r.map((d) => [
+          d._id,
+          targetField !== undefined
+            ? (d as any)[targetField] > d.modifiedOn
+              ? (d as any)[targetField]
+              : d.modifiedOn
+            : d.modifiedOn
+        ])
+      )
     })
     const subscribe = {
       _id: generateId(),
@@ -190,9 +199,9 @@ export class NotificationClient {
     }
   }
 
-  public async readNow (lastView: SpaceLastViews, id?: Ref<Doc>): Promise<void> {
+  public async readNow (lastView: SpaceLastViews, id?: Ref<Doc>, create: boolean = false): Promise<void> {
     this.lastTime = Date.now()
-    await this.updateLastRead(lastView, id, true)
+    await this.updateLastRead(lastView, id, create)
   }
 
   public initScroll (div: HTMLElement, lastRead: number): void {
@@ -272,6 +281,9 @@ export class NotificationClient {
         lastViews.objectLastReads.set(id, this.lastTime)
       }
       query.objectLastReads = lastViews.objectLastReads
+      if (lastViews.notificatedObjects.includes(id)) {
+        this.readObjects.add(id)
+      }
     }
     if (this.readObjects.size > 0) {
       query.$pull = {
@@ -302,9 +314,12 @@ export class NotificationHandler {
     this.spaceSubscribes.forEach((p) => {
       void updateSpace(tx, p) // eslint-disable-line no-void
     })
-    this.objectSubscribes.forEach((p) => {
-      void updateObject(tx, p) // eslint-disable-line no-void
-    })
+    const updateTx = tx as TxUpdateDoc<Doc>
+    if (updateTx !== undefined) {
+      this.objectSubscribes.forEach((p) => {
+        void updateObject(updateTx, p) // eslint-disable-line no-void
+      })
+    }
   }
 
   public subscribeSpaces (
@@ -399,11 +414,17 @@ async function updateSpace (tx: Tx, subscribe: SpaceSubscribe): Promise<void> {
   }
 }
 
-async function updateObject (tx: Tx, subscribe: ObjectSubscribe): Promise<void> {
+async function updateObject (tx: TxUpdateDoc<Doc>, subscribe: ObjectSubscribe): Promise<void> {
   subscribe.objects = await awaitValue(subscribe.objects)
   const modified = subscribe.objects.get(tx.objectId)
   if (modified !== undefined) {
-    const target = (tx as any)[subscribe.targetField]
+    let target = tx.modifiedOn
+    if (subscribe.targetField !== undefined) {
+      const value = (tx.operations as any)[subscribe.targetField]
+      if (value !== undefined && value > target) {
+        target = value
+      }
+    }
     if (target > modified) {
       subscribe.objects.set(tx.objectId, target)
       subscribe.callback(subscribe.objects)

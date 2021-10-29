@@ -17,7 +17,6 @@
   import type { Message, MessageBookmark, Channel } from '@anticrm/chunter'
   import type { Ref, Space, DocumentQuery, Account } from '@anticrm/core'
   import core from '@anticrm/core'
-  import type { SpaceLastViews } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import ui, { ActionIcon, Dialog } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
@@ -28,7 +27,6 @@
   import Pin from './icons/Pin.svelte'
 
   export let space: Ref<Space> | undefined
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   const client = getClient()
   const dispatch = createEventDispatcher()
@@ -95,7 +93,7 @@
   }}
 >
   {#each messages as message}
-    <MessageView {message} spaceLastViews={spacesLastViews.get(message.space)} thread={false}>
+    <MessageView {message} thread={false}>
       <svelte:fragment slot="header">
         <div class="header">
           {#await getSpace(message) then sp}

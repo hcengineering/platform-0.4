@@ -19,11 +19,9 @@
   import chunter from '../plugin'
   import EmbeddedThread from './EmbeddedThread.svelte'
   import SpaceItem from './SpaceItem.svelte'
-  import type { SpaceLastViews } from '@anticrm/notification'
 
   const client = getClient()
 
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
   export let filter: DocumentQuery<Message> = { 'comments.userId': client.accountId() }
 
   let messages: Message[] = []
@@ -57,7 +55,7 @@
         </div>
       </div>
       <div class="flex-col">
-        <EmbeddedThread id={message._id} {spacesLastViews} />
+        <EmbeddedThread id={message._id} />
       </div>
     </div>
   {/each}

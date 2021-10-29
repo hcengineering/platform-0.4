@@ -33,7 +33,7 @@
   import type { CheckListItem, Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { generateId, getFullRef, Timestamp } from '@anticrm/core'
+  import core, { generateId, getFullRef } from '@anticrm/core'
   import type { Account, Ref, Space } from '@anticrm/core'
   import DescriptionEditor from './DescriptionEditor.svelte'
   import Comments from './Comments.svelte'
@@ -41,14 +41,18 @@
   import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { IntlString } from '@anticrm/status'
-  import type { SpaceLastViews } from '@anticrm/notification'
-  import notification from '@anticrm/notification'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
   import attachment from '@anticrm/attachment'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   const dispatch = createEventDispatcher()
 
   export let space: Space
   let name: string = ''
+  $: spaceLastViews = $spacesLastViews.get(space._id)
   let description: string = ''
   let assignee: Ref<Account> | undefined
   let checkItems: CheckListItem[] = []
@@ -58,6 +62,7 @@
   const id = generateId() as Ref<Task>
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
 
   async function getProjectMembers (): Promise<Array<Account>> {
     const members = space.members
@@ -108,24 +113,12 @@
         replyOf: getFullRef(id, task.class.Task)
       })
     }
-    updateLastRead()
+    await updateLastRead()
   }
 
   async function updateLastRead (): Promise<void> {
-    const spaceLastViews = (
-      await client.findAll(notification.class.SpaceLastViews, {
-        objectId: space._id
-      })
-    ).shift()
     if (spaceLastViews === undefined) return
-    if (spaceLastViews.objectLastReads instanceof Map) {
-      spaceLastViews.objectLastReads = new Map<Ref<Task>, Timestamp>()
-    }
-    spaceLastViews.objectLastReads.set(id, Date.now())
-
-    await client.updateDoc<SpaceLastViews>(spaceLastViews._class, spaceLastViews.space, spaceLastViews._id, {
-      lastRead: Date.now()
-    })
+    await notificationClient.readNow(spaceLastViews, id, true)
   }
 
   const tabs = [task.string.General, attachment.string.Attachments, task.string.ToDos]
@@ -159,6 +152,7 @@
         <DatePicker bind:value={dueTo} label={task.string.PickDue} noLabel={task.string.NoPickDue} />
         <Row>
           <DescriptionEditor
+            currentSpace={space._id}
             placeholder={task.string.TaskDescription}
             label={task.string.TaskDescription}
             lines={5}
@@ -169,12 +163,7 @@
     </Section>
     <Section label={task.string.Comments} icon={IconComments}>
       <Grid column={1}>
-        <Comments
-          messages={comments}
-          spaceLastViews={undefined}
-          currentSpace={space._id}
-          on:message={(event) => addMessage(event.detail)}
-        />
+        <Comments messages={comments} currentSpace={space._id} on:message={(event) => addMessage(event.detail)} />
       </Grid>
     </Section>
   {:else if selectedTab === attachment.string.Attachments}

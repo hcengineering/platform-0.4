@@ -14,7 +14,7 @@
 //
 
 import chunter, { CommentRef } from '@anticrm/chunter'
-import { Account, DocumentPresenter, Domain, PresentationMode, Ref, ShortRef } from '@anticrm/core'
+import { Account, DocumentPresenter, Domain, PresentationMode, Ref, ShortRef, Timestamp } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { MARKDOWN_MENTION_PATTERN, MARKDOWN_REFERENCE_PATTERN, TDoc, TSpace } from '@anticrm/model-core'
 import notification from '@anticrm/notification'
@@ -44,6 +44,7 @@ export class TTask extends TDoc implements Task {
   dueTo!: Date
   checkItems!: CheckListItem[]
   comments!: CommentRef[]
+  lastModified!: Timestamp
 }
 
 /**
@@ -81,6 +82,11 @@ export function createModel (builder: Builder): void {
             item: {
               createComponent: task.component.CreateTask,
               editComponent: task.component.EditTask
+            },
+            notification: {
+              spaceClass: task.class.Task,
+              itemByIdClass: task.class.Task,
+              itemByIdField: 'lastModified'
             }
           }
         ],
@@ -140,11 +146,18 @@ export function createModel (builder: Builder): void {
       collections: [
         {
           sourceField: 'replyOf',
-          targetField: 'comments'
-        },
-        {
-          sourceField: 'modifiedOn',
-          targetField: 'lastModified'
+          targetField: 'comments',
+          lastModifiedField: 'lastModified',
+          rules: [
+            {
+              sourceField: 'modifiedBy',
+              targetField: 'userId'
+            },
+            {
+              sourceField: 'modifiedOn',
+              targetField: 'lastModified'
+            }
+          ]
         }
       ]
     },

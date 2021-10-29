@@ -43,12 +43,16 @@
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
   import attachment from '@anticrm/attachment'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
+  let div: HTMLElement
   let spaceLastViews: SpaceLastViews | undefined
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
@@ -63,7 +67,7 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
-      spaceLastViews = spacesLastViews.get(result[0]?.space)
+      spaceLastViews = $spacesLastViews.get(result[0]?.space)
       desсription = result[0]?.description
       item = result[0]
       if (item !== undefined) {
@@ -107,8 +111,15 @@
       const operations = {
         [key]: value === null ? undefined : value
       }
-      client.updateDoc(item._class, item.space, item._id, operations)
+      await client.updateDoc(item._class, item.space, item._id, operations)
+      if (spaceLastViews !== undefined) {
+        await notificationClient.readNow(spaceLastViews, item._id, true)
+      }
     }
+  }
+
+  function scrollHandler () {
+    notificationClient.scrollHandler(div, spaceLastViews, item?._id)
   }
 </script>
 
@@ -118,7 +129,7 @@
       <div class="title">{item.name}</div>
       <div class="tool" on:click={close}><IconClose size={16} /></div>
     </div>
-    <ScrollBox autoscrollable={true} vertical>
+    <ScrollBox autoscrollable={true} bind:div vertical {scrollHandler}>
       <Tabs {tabs} bind:selected={selectedTab} />
       {#if selectedTab === task.string.General}
         <Section label={task.string.GeneralInformation} icon={IconFile}>
@@ -181,7 +192,7 @@
         />
 
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView {spaceLastViews} currentSpace={item.space} taskId={item._id} />
+          <CommentsView currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === attachment.string.Attachments}
         <Section label={attachment.string.Attachments} icon={IconFile}>

@@ -19,9 +19,15 @@
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
   import { getStatusColor } from '../plugin'
-  import core, { Account, Ref } from '@anticrm/core'
+  import core, { Account, Ref, Space } from '@anticrm/core'
   import { getClient, selectDocument } from '@anticrm/workbench'
+  import { SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
+  $: spaceLastViews = $spacesLastViews.get(card.space)
   export let card: Task
 
   export const attach: number = 3
@@ -41,9 +47,31 @@
   function select () {
     selectDocument(card)
   }
+
+  function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined) return false
+    const lastRead = spaceLastViews.objectLastReads.get(card._id)
+    if (lastRead === undefined) return false
+    if (card.modifiedOn > lastRead) return true
+    if ((card.lastModified ?? 0) > lastRead) return true
+    return false
+  }
+
+  function isNotificated (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined) return false
+    if (spaceLastViews.notificatedObjects.includes(card._id)) return true
+    for (const comment of card.comments) {
+      if (spaceLastViews.notificatedObjects.includes(comment._id)) return true
+    }
+    return false
+  }
 </script>
 
-<div class="card-container">
+<div
+  class="card-container"
+  class:isNew={isNew(card, spaceLastViews) || isNotificated(card, spaceLastViews)}
+  class:isNotificated={isNotificated(card, spaceLastViews)}
+>
   <div class="content">
     <div class="title">{card.name}</div>
     <div class="description">{card.description}</div>
@@ -73,6 +101,14 @@
     background-color: var(--theme-bg-accent-color);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-press);
+    }
+
+    &.isNotificated {
+      border-color: var(--theme-bg-focused-border);
+    }
 
     .content {
       padding: 40px 20px 28px;

@@ -14,13 +14,11 @@
 -->
 <script lang="ts">
   import type { WithMessage } from '@anticrm/chunter'
-  import type { SpaceLastViews } from '@anticrm/notification'
   import { getClient } from '@anticrm/workbench'
   import { newAllBookmarksQuery } from '../bookmarks'
   import Message from './Message.svelte'
 
   export let messages: WithMessage[] = []
-  export let spaceLastViews: SpaceLastViews | undefined
   export let thread: boolean = false
   let div: HTMLElement
 
@@ -31,6 +29,6 @@
 
 <div class="flex-col" bind:this={div}>
   {#each messages as m (m._id)}
-    <Message message={m} {thread} {spaceLastViews} showLabels={true} />
+    <Message message={m} {thread} showLabels={true} />
   {/each}
 </div>

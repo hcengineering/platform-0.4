@@ -27,10 +27,11 @@
   import TreeNode from './TreeNode.svelte'
   import { NotificationHandler } from '@anticrm/notification'
   import type { SpaceLastViews, SpaceSubscribeUpdater, ObjectSubscribeUpdater } from '@anticrm/notification'
-  import { onDestroy } from 'svelte'
+  import { getContext, onDestroy } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let model: SpacesNavModel
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews>
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   let spaces: Space[] = []
   const client = getClient()
@@ -68,7 +69,7 @@
 
   $: if (model.notification?.itemByIdClass !== undefined) {
     const ids: Ref<Doc>[] = []
-    spacesLastViews.forEach((v) => {
+    $spacesLastViews.forEach((v) => {
       if (v.objectLastReads instanceof Map) {
         ids.push(...Array.from(v.objectLastReads.keys()))
       }
@@ -139,7 +140,7 @@
     const spaceLastViews = spacesLastViews.get(space)
     if (spaceLastViews === undefined) return false
     if (spaceLastViews.notificatedObjects.length > 0) return true
-    if ((spacesLastModified.get(space) ?? 0) > spaceLastViews.lastRead) return true
+    if (spaceLastViews.lastRead !== 0 && (spacesLastModified.get(space) ?? 0) > spaceLastViews.lastRead) return true
     if (spaceLastViews.objectLastReads instanceof Map) {
       for (const object of spaceLastViews.objectLastReads) {
         const id = object[0]
@@ -164,8 +165,8 @@
     <TreeNode label={model.label} {actions} topic={true}>
       {#each spaces as space (space._id)}
         <TreeItem
-          notifications={hasNotification(space._id, spacesLastViews)}
-          changed={changed(space._id, spacesLastViews, spacesLastModified, itemsLastModifieds)}
+          notifications={hasNotification(space._id, $spacesLastViews)}
+          changed={changed(space._id, $spacesLastViews, spacesLastModified, itemsLastModifieds)}
           component={model.spaceItem}
           props={{ space: space }}
           title={space.name}

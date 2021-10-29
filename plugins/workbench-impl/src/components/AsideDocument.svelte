@@ -1,12 +1,11 @@
 <script lang="ts">
-  import core, { Doc, DocumentPresenter, PresentationFormat, PresentationMode, Ref, Space } from '@anticrm/core'
+  import core, { Doc, DocumentPresenter, PresentationFormat, PresentationMode } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
   import { Component, getRouter, Splitter } from '@anticrm/ui'
   import { currentDocument, getClient } from '@anticrm/workbench'
   import type { WorkbenchRoute, DocumentSelection } from '@anticrm/workbench'
   import { onDestroy } from 'svelte'
   import { handleCurrentDocumentChange, updateCurrentDocument } from '../selection'
-  import type { SpaceLastViews } from '@anticrm/notification'
 
   const client = getClient()
 
@@ -14,7 +13,6 @@
 
   export let compHTML: HTMLElement | undefined = undefined
   export let currentRoute: WorkbenchRoute
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews>
 
   let currentDocumentPresentation: QueryUpdater<DocumentPresenter<Doc>> | undefined = undefined
   let editPresenter: PresentationFormat | undefined
@@ -84,8 +82,7 @@
       is={editPresenter.component}
       props={{
         id: selectedDocument.document._id,
-        _class: selectedDocument.document._class,
-        spacesLastViews: spacesLastViews
+        _class: selectedDocument.document._class
       }}
     />
   </div>
