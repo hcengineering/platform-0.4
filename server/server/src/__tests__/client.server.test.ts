@@ -88,7 +88,7 @@ async function prepareServer (enableLogging = true): Promise<{
   btx.push(
     createClass(testIds.class.Task, { extends: core.class.Doc, domain: 'task' as Domain }),
     createClass(testIds.class.Comment, { extends: core.class.Doc, domain: 'task' as Domain }),
-    createDoc(core.class.Account, { email: johnAccount, name: 'John Appleseed' }, johnAccount),
+    // createDoc(core.class.Account, { email: johnAccount, name: 'John Appleseed' }, johnAccount),
     createDoc(core.class.Account, { email: brianAccount, name: 'Brian Appleseed' }, brianAccount),
     createDoc<DerivedDataDescriptor<Title, Reference>>(core.class.DerivedDataDescriptor, {
       sourceClass: core.class.Account,
