@@ -49,8 +49,7 @@ export interface NestedDotQuery {
  */
 export type DocumentQuery<T extends Doc> = {
   [P in keyof T]?: ObjQueryType<T[P]>
-} &
-NestedDotQuery
+} & NestedDotQuery
 
 /**
  * @public

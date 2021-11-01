@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-import { MarkType } from 'prosemirror-model'
-
 export const copyright = 'Copyright © 2020 Anticrm Platform Contributors.'
 
 export interface EditorContentEvent {
@@ -28,26 +26,6 @@ export interface EditorContentEvent {
   inputHeight: number
 }
 
-// An actions interface, will be extended to allow operations.
-export interface EditorActions {
-  insertMark: (
-    text: string,
-    from: number,
-    to: number,
-    mark: MarkType,
-    attrs?: { [key: string]: any }
-  ) => void
-  insert: (text: string, from: number, to: number) => void
-
-  toggleBold: () => void
-  toggleItalic: () => void
-  toggleStrike: () => void
-  toggleUnderline: () => void
-  toggleUnOrderedList: () => void
-  toggleOrderedList: () => void
-  focus: () => void
-}
-
+export { schema } from './internal/schema'
 export { default as MessageEditor } from './MessageEditor.svelte'
 export * from './transform'
-export { schema } from './internal/schema'

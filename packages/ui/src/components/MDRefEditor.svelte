@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
-  import type { EditorActions, EditorContentEvent, FindFunction } from '@anticrm/richeditor'
+  import type { EditorContentEvent, FindFunction } from '@anticrm/richeditor'
   import { schema } from '@anticrm/richeditor'
   import type { IntlString } from '@anticrm/status'
   import type { MessageNode } from '@anticrm/text'
@@ -60,7 +60,7 @@
     }
   }
 
-  let htmlEditor: MessageEditor & EditorActions
+  let htmlEditor: MessageEditor
 
   const triggers = ['@', '#', '[[']
 

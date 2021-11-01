@@ -7,7 +7,7 @@
 
   const dispatch2 = createEventDispatcher()
 
-  export function changeType(): void {
+  export function changeType(a: number, b: string): void {
     type = 'submit'
   }
 
