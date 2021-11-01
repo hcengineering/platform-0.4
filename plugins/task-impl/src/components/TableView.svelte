@@ -38,7 +38,8 @@
     {
       label: task.string.Status,
       properties: [{ key: 'status', property: 'title' }],
-      component: TaskStatus
+      component: TaskStatus,
+      width: 150
     },
     { label: task.string.Assignee, properties: [{ key: 'asigneeUser', property: 'user' }], component: UserInfo },
     {
@@ -47,7 +48,8 @@
         { key: 'dueTo', property: 'value' },
         { value: 'true', property: 'dateOnly' }
       ],
-      component: DateTime
+      component: DateTime,
+      width: 150
     }
   ]
 

@@ -17,10 +17,11 @@
   import type { IntlString, UIComponent } from '@anticrm/status'
 
   import Label from './Label.svelte'
-  import ScrollBox from './ScrollBox.svelte'
+  import VirtualList, { sty } from './VirtualList.svelte'
 
   interface Cell {
     component: UIComponent
+    width?: number
     props?: Object
   }
 
@@ -28,6 +29,7 @@
     properties: ColumnProp[]
     label: IntlString
     component: UIComponent
+    width?: number
   }
 
   interface ColumnProp {
@@ -41,14 +43,16 @@
   }
 
   const dispatch = createEventDispatcher()
+  let list: any
 
   export let showHeader: boolean = false
   export let columns: Column[]
   export let data: Data[]
 
   const docToRow = (doc: Data): Cell[] =>
-    columns.map(({ component, properties }) => ({
+    columns.map(({ component, width, properties }) => ({
       component,
+      width,
       props: properties.reduce(
         (r, prop) => ({
           ...r,
@@ -57,67 +61,82 @@
         {}
       )
     }))
+
+  const widthSty = (f: { width?: number }) =>
+    f.width !== undefined ? `min-width: ${f.width}px; width: ${f.width}px` : ''
+
+  $: if (data || !data) {
+    list?.reset()
+  }
 </script>
 
-<div class="container">
-  <ScrollBox vertical stretch noShift>
-    <table class="table-body">
-      {#if showHeader}
-        <thead>
-          <tr class="tr-head">
-            {#each columns as field}
-              <th><Label label={field.label} /></th>
+<div class="table">
+  {#if showHeader}
+    <div class="header">
+      {#each columns as field}
+        <div class="cell" style={widthSty(field)}><Label label={field.label} /></div>
+      {/each}
+    </div>
+  {/if}
+  <div class="rows-container">
+    <div class="rows">
+      <VirtualList bind:this={list} itemCount={data.length} let:items getItemSize={() => 60}>
+        {#each items as item (data[item.index]._id)}
+          <div class="row" style={sty(item.style)} on:click={() => dispatch('rowClick', data[item.index])}>
+            {#each docToRow(data[item.index]) as cell}
+              <div class="cell" style={widthSty(cell)}>
+                <svelte:component this={cell.component} {...cell.props} />
+              </div>
             {/each}
-          </tr>
-        </thead>
-      {/if}
-      <tbody>
-        {#each data as doc (doc._id)}
-          <tr class="tr-body" on:click={() => dispatch('rowClick', doc)}>
-            {#each docToRow(doc) as cell}
-              <td><svelte:component this={cell.component} {...cell.props} /></td>
-            {/each}
-          </tr>
+          </div>
         {/each}
-      </tbody>
-    </table>
-  </ScrollBox>
+      </VirtualList>
+    </div>
+  </div>
 </div>
 
 <style lang="scss">
-  .container {
-    flex-grow: 1;
-    position: relative;
+  .table {
+    height: 100%;
     padding-bottom: 40px;
-    height: max-content;
-
-    &::before {
-      position: absolute;
-      content: '';
-      top: 40px;
-      bottom: 0;
-      width: 100%;
-      background-color: var(--theme-table-bg-color);
-      border-radius: 0 0 20px 2px;
-    }
   }
 
-  .table-body {
+  .rows-container {
+    position: relative;
     width: 100%;
+    height: 100%;
+
+    border-radius: 0 0 20px 20px;
+    background-color: var(--theme-table-bg-color);
   }
 
-  th,
-  td {
-    padding: 8px 24px;
-    text-align: left;
+  .rows {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    padding-bottom: 20px;
+  }
+
+  .cell {
+    width: 100%;
+    padding: 0 24px;
+
+    flex-grow: 0;
+
+    overflow: hidden;
     &:first-child {
       padding-left: 40px;
     }
   }
 
-  th {
-    position: sticky;
-    top: 0;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     height: 40px;
     font-weight: 500;
     font-size: 12px;
@@ -127,13 +146,18 @@
     z-index: 1;
   }
 
-  .tr-body {
-    height: 60px;
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
     color: var(--theme-caption-color);
     border-bottom: 1px solid var(--theme-button-border-hovered);
+
     &:last-child {
-      border-bottom: none;
+      border-bottom: unset;
     }
+
     &:hover {
       background-color: var(--theme-table-bg-hover);
     }
