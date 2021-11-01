@@ -59,16 +59,22 @@
   function updateAccounts (docs: Account[]): CompletionItem[] {
     const items: CompletionItem[] = []
     for (const value of docs) {
+      const { label, fln } = getLabel(value)
       items.push({
         key: value._id,
         completion: value._id,
-        label: value.name,
-        title: value.name,
+        label,
+        title: fln.length > 0 ? fln + `(${value.name})` : value.name,
         class: core.class.Account,
         id: `${currentSpace}-${value._id}`
       } as ExtendedCompletionItem)
     }
     return items
+  }
+
+  function getLabel (value: Account): { label: string; fln: string } {
+    const fln = ((value.firstName ?? '') + ' ' + (value.lastName ?? '')).trim()
+    return { label: '@' + (fln.length > 0 ? fln : value.name) + ' ', fln }
   }
 
   async function getCompletions (currentPrefix: string): Promise<void> {

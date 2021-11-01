@@ -22,18 +22,22 @@
   import chunter from '@anticrm/chunter'
   import type { Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import type { SpaceLastViews } from '@anticrm/notification'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   export let currentSpace: Ref<Space>
   export let taskId: Ref<Task>
-  export let spaceLastViews: SpaceLastViews | undefined
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
   let messages: Comment[] = []
   let newCommentId: Ref<Comment> = generateId()
 
-  function addMessage (message: string): void {
-    client.createDoc(
+  async function addMessage (message: string): Promise<void> {
+    await client.createDoc(
       chunter.class.Comment,
       currentSpace,
       {
@@ -43,6 +47,10 @@
       newCommentId
     )
     newCommentId = generateId()
+    const spaceLastViews = $spacesLastViews.get(currentSpace)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, taskId, true)
+    }
   }
 
   let query: QueryUpdater<Comment> | undefined
@@ -65,7 +73,6 @@
 <Comments
   {messages}
   {currentSpace}
-  {spaceLastViews}
   objectClass={chunter.class.Comment}
   objectId={newCommentId}
   on:message={(event) => addMessage(event.detail)}

@@ -42,13 +42,16 @@
   import DescriptionEditor from './DescriptionEditor.svelte'
   import CommentsView from './CommentsView.svelte'
   import StatusPicker from './StatusPicker.svelte'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
   import IconTask from './icons/Task.svelte'
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Task>
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
   let spaceLastViews: SpaceLastViews | undefined
   let prevId: Ref<Task> | undefined
   let item: Task | undefined
@@ -63,7 +66,7 @@
 
   async function getItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
-      spaceLastViews = spacesLastViews.get(result[0]?.space)
+      spaceLastViews = $spacesLastViews.get(result[0]?.space)
       desсription = result[0]?.description
       item = result[0]
       if (item !== undefined) {
@@ -103,7 +106,10 @@
       const operations = {
         [key]: value === null ? undefined : value
       }
-      client.updateDoc(item._class, item.space, item._id, operations)
+      await client.updateDoc(item._class, item.space, item._id, operations)
+      if (spaceLastViews !== undefined) {
+        await notificationClient.readNow(spaceLastViews, item._id, true)
+      }
     }
   }
 </script>
@@ -173,7 +179,7 @@
         />
 
         <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView {spaceLastViews} currentSpace={item.space} taskId={item._id} />
+          <CommentsView currentSpace={item.space} taskId={item._id} />
         </Section>
       {:else if selectedTab === attachment.string.Attachments}
         <Section label={attachment.string.Attachments} icon={IconFile}>

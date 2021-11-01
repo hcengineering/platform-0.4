@@ -15,7 +15,6 @@
 <script lang="ts">
   import type { Message, MessageBookmark, Channel } from '@anticrm/chunter'
   import type { Ref, Space, DocumentQuery } from '@anticrm/core'
-  import type { SpaceLastViews } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import { newAllBookmarksQuery } from '../bookmarks'
@@ -23,8 +22,6 @@
   import MessageView from './Message.svelte'
   import SpaceItem from './SpaceItem.svelte'
   import Bookmark from './icons/Bookmark.svelte'
-
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   const client = getClient()
 
@@ -77,7 +74,7 @@
   {#each messages as message}
     <div class="content">
       <div class="flex-col">
-        <MessageView {message} spaceLastViews={spacesLastViews.get(message.space)} thread={false}>
+        <MessageView {message} thread={false}>
           <svelte:fragment slot="header">
             <div class="header">
               <div class="title">

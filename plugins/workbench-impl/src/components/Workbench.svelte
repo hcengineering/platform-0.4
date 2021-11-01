@@ -34,7 +34,10 @@
   import notification from '@anticrm/notification'
   import type { AnyComponent } from '@anticrm/status'
   import AsideDocument from './AsideDocument.svelte'
+  import { writable } from 'svelte/store'
 
+  export const spacesLastViewsStore = writable(new Map<Ref<Space>, SpaceLastViews>())
+  setContext('spacesLastViews', spacesLastViewsStore)
   export let client: PresentationClient
   let account = client.accountId()
   $: account = client.accountId()
@@ -94,6 +97,7 @@
     result.forEach((p) => {
       res.set(p.objectId as Ref<Space>, p)
     })
+    spacesLastViewsStore.set(res)
     spacesLastViews = res
   })
   $: if (currentRoute.space && navigatorModel) {
@@ -133,7 +137,6 @@
       <Navigator
         model={navigatorModel}
         special={currentRoute.special}
-        {spacesLastViews}
         on:special={(detail) => {
           currentRoute.special = detail.detail
           router.navigate({ space: undefined, special: currentRoute.special })
@@ -147,16 +150,13 @@
         <SpaceHeader space={currentSpace} {spaceModel} />
       {/if}
       {#if currentRoute.space}
-        <Component
-          is={navigatorModel.spaceView}
-          props={{ currentSpace: currentRoute.space, spaceLastViews: spacesLastViews.get(currentRoute.space) }}
-        />
+        <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
       {/if}
     {:else if navigatorModel && navigatorModel.specials && currentRoute.special}
       <Component is={specialComponent(currentRoute.special)} />
     {/if}
   </div>
-  <AsideDocument bind:this={aside} bind:compHTML bind:currentRoute bind:spacesLastViews />
+  <AsideDocument bind:this={aside} bind:compHTML bind:currentRoute />
 </div>
 <Modal />
 <Popup />

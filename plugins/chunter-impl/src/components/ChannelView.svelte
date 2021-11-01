@@ -24,9 +24,13 @@
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import PinmarkControl from './PinmarkControl.svelte'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   export let currentSpace: Ref<Space> | undefined
-  export let spaceLastViews: SpaceLastViews | undefined
+  $: spaceLastViews = currentSpace !== undefined ? $spacesLastViews.get(currentSpace) : undefined
   let id = generateId()
 
   const client = getClient()
@@ -48,7 +52,7 @@
       id
     )
     if (spaceLastViews !== undefined) {
-      await notificationClient.readNow(spaceLastViews)
+      await notificationClient.readNow(spaceLastViews, undefined, true)
     }
     id = generateId()
   }
@@ -64,11 +68,13 @@
         notificationClient.setAutoscroll(div)
         messages = result.reverse() // Since we sort of createOn -1
         await tick()
-        if (div && spaceLastViews) {
-          await notificationClient.before(div, spaceLastViews, currentSpace, false)
+        if (div !== undefined) {
+          if (spaceLastViews) {
+            await notificationClient.before(div, spaceLastViews, currentSpace, false)
+          }
+          notificationClient.initScroll(div, spaceLastViews?.lastRead ?? 0)
+          scrollHandler()
         }
-        notificationClient.initScroll(div, spaceLastViews?.lastRead ?? 0)
-        scrollHandler()
       },
       { limit: loadLimit, sort: { createOn: -1 } }
     )
@@ -85,7 +91,7 @@
 
 <div class="msg-board" bind:this={div} on:scroll={scrollHandler}>
   {#if currentSpace}
-    <Channel {messages} {spaceLastViews} />
+    <Channel {messages} />
   {/if}
 </div>
 <div class="ref-input">

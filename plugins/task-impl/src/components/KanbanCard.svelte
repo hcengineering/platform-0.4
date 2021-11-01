@@ -18,12 +18,18 @@
   import task from '@anticrm/task'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
-  import core from '@anticrm/core'
+  import core, { Space } from '@anticrm/core'
   import type { Account, Ref } from '@anticrm/core'
+  import { SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
   import { getClient } from '@anticrm/workbench'
   import EditTask from './EditTask.svelte'
 
   export let doc: Task
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
+  $: spaceLastViews = $spacesLastViews.get(doc.space)
 
   const client = getClient()
 
@@ -37,9 +43,31 @@
       closePopup()
     })
   }
+
+  function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined) return false
+    const lastRead = spaceLastViews.objectLastReads.get(card._id)
+    if (lastRead === undefined) return false
+    if (card.modifiedOn > lastRead) return true
+    if ((card.lastModified ?? 0) > lastRead) return true
+    return false
+  }
+
+  function isNotificated (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined) return false
+    if (spaceLastViews.notificatedObjects.includes(card._id)) return true
+    for (const comment of card.comments) {
+      if (spaceLastViews.notificatedObjects.includes(comment._id)) return true
+    }
+    return false
+  }
 </script>
 
-<div class="card-container">
+<div
+  class="card-container"
+  class:isNew={isNew(doc, spaceLastViews) || isNotificated(doc, spaceLastViews)}
+  class:isNotificated={isNotificated(doc, spaceLastViews)}
+>
   <div class="header">{doc.name}</div>
   <div class="footer">
     {#await getUser(doc.assignee) then user}
@@ -62,6 +90,14 @@
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-press);
+    }
+
+    &.isNotificated {
+      border-color: var(--theme-bg-focused-border);
+    }
 
     .header {
       margin-bottom: 16px;

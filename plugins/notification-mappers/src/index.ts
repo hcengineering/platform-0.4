@@ -38,7 +38,7 @@ function createSpaceNotification<T extends Space> (
 ): SpaceLastViews {
   return {
     _id: `${ctx.objectId}-${member}` as Ref<SpaceLastViews>,
-    lastRead: ctx.modifiedOn,
+    lastRead: 0,
     createOn: ctx.createOn,
     descriptorId: options.descriptor._id,
     space: member.toString() as Ref<Space>,

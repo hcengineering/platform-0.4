@@ -26,12 +26,15 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import { tick } from 'svelte'
   import { Label } from '@anticrm/ui'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Message>
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
   let spaceLastViews: SpaceLastViews | undefined
   let message: Message | undefined
   let div: HTMLElement
@@ -44,7 +47,7 @@
   $: {
     lq = client.query(lq, chunter.class.Message, { _id: id }, async (result) => {
       if (result[0] !== undefined) {
-        spaceLastViews = spacesLastViews.get(result[0].space)
+        spaceLastViews = $spacesLastViews.get(result[0].space)
         notificationClient.setAutoscroll(div)
       }
       message = result[0]
@@ -73,7 +76,7 @@
     )
     commentId = generateId()
     if (spaceLastViews !== undefined) {
-      await notificationClient.readNow(spaceLastViews, message!._id)
+      await notificationClient.readNow(spaceLastViews, message!._id, true)
     }
   }
 
@@ -96,7 +99,7 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} {spaceLastViews} thread showReferences={false} />
+      <MsgView {message} thread showReferences={false} />
       {#if message?.comments && message.comments.length > 2 && !showAllReplies}
         <div
           class="link-text"
@@ -107,7 +110,7 @@
           <Label label={chunter.string.MoreReplies} params={{ replies: message.comments.length - 2 }} />
         </div>
       {/if}
-      <Comments {message} {spaceLastViews} filter={showAllReplies ? {} : { _id: { $in: lastMessageIds(message) } }} />
+      <Comments {message} filter={showAllReplies ? {} : { _id: { $in: lastMessageIds(message) } }} />
     </div>
   {/if}
 </div>

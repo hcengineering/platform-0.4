@@ -56,7 +56,7 @@
 </script>
 
 {#if message}
-  <MessageViewer {message} showReferences={false} thread={true} spaceLastViews={undefined} />
+  <MessageViewer {message} showReferences={false} thread={true} />
   <div class="flex-between">
     {#if channel}
       <div class="channel link-text" on:click={() => router.navigate({ app: chunterApp, space: channel?._id })}>

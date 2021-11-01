@@ -14,7 +14,7 @@
 //
 
 import type { CommentRef } from '@anticrm/chunter'
-import type { Account, Class, Doc, Ref, ShortRef, Space } from '@anticrm/core'
+import type { Account, Class, Doc, Ref, ShortRef, Space, Timestamp } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { Asset, IntlString } from '@anticrm/status'
@@ -32,6 +32,9 @@ export interface Task extends Doc {
   checkItems: CheckListItem[]
   dueTo: Date
   comments: CommentRef[]
+
+  // Derived value, updated by any comment add/modification.
+  lastModified?: Timestamp
 }
 
 export interface CheckListItem {

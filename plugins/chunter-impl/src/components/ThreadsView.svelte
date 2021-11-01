@@ -28,12 +28,15 @@
   import ReferenceInput from './ReferenceInput.svelte'
   import { afterUpdate } from 'svelte'
   import { newAllBookmarksQuery } from '../bookmarks'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
   const client = getClient()
   const notificationClient = new NotificationClient(client)
 
   export let id: Ref<Message>
-  export let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
   let spaceLastViews: SpaceLastViews | undefined
   let message: Message | undefined
   let div: HTMLElement
@@ -43,7 +46,7 @@
   let lq: QueryUpdater<Message> | undefined
 
   afterUpdate(() => {
-    spaceLastViews = message === undefined ? undefined : spacesLastViews.get(message.space)
+    spaceLastViews = message === undefined ? undefined : $spacesLastViews.get(message.space)
   })
 
   $: {
@@ -53,7 +56,7 @@
       }
       message = result[0]
       messageLastRead = 0
-      spaceLastViews = message === undefined ? undefined : spacesLastViews.get(message.space)
+      spaceLastViews = message === undefined ? undefined : $spacesLastViews.get(message.space)
       if (spaceLastViews?.objectLastReads instanceof Map) {
         messageLastRead = spaceLastViews.objectLastReads.get(message?._id) ?? 0
       }
@@ -75,7 +78,7 @@
       commentId
     )
     if (spaceLastViews !== undefined) {
-      await notificationClient.readNow(spaceLastViews, message!._id)
+      await notificationClient.readNow(spaceLastViews, message!._id, true)
     }
     commentId = generateId()
   }
@@ -108,11 +111,10 @@
 <div class="content" bind:this={div} on:scroll={scrollHandler}>
   {#if message}
     <div class="flex-col">
-      <MsgView {message} {spaceLastViews} thread showReferences={false} showLabels={true} />
+      <MsgView {message} thread showReferences={false} showLabels={true} />
       <ChannelSeparator label={chunter.string.RepliesText} line params={{ replies: message.comments?.length }} />
       <Comments
         {message}
-        {spaceLastViews}
         on:update={() => {
           update()
         }}

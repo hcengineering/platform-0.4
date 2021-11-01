@@ -17,12 +17,15 @@
   import TaskView from './TaskView.svelte'
   import task from '../plugin'
   import { Label } from '@anticrm/ui'
+  import { SpaceLastViews } from '@anticrm/notification'
 
   export let currentSpace: Ref<Space>
+  export let spaceLastViews: SpaceLastViews
+  $: spacesLastViews = new Map<Ref<Space>, SpaceLastViews>().set(currentSpace, spaceLastViews)
 </script>
 
 {#if currentSpace}
-  <TaskView query={{ space: currentSpace }} />
+  <TaskView query={{ space: currentSpace }} {spacesLastViews} />
 {:else}
   <Label label={task.string.PleaseSelectSpace} />
 {/if}

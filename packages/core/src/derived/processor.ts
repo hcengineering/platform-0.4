@@ -172,7 +172,6 @@ export class DerivedDataProcessor {
 
   private async txCreateDocWith (tx: TxCreateDoc<Doc>, context?: DDRebuildContext): Promise<void> {
     const descriptors = context !== undefined ? [context.descriptor] : this.descrs.getByClass(tx.objectClass)
-
     if (this.hierarchy.isDerived(tx.objectClass, core.class.DerivedDataDescriptor)) {
       await this.updateDescriptor(tx.objectId as Ref<Descr>, tx.sid)
       return
@@ -397,7 +396,6 @@ export class DerivedDataProcessor {
 
   private async txUpdateDocWith (tx: TxUpdateDoc<Doc>, context?: DDRebuildContext): Promise<void> {
     const descriptors = context !== undefined ? [context.descriptor] : this.descrs.getByClass(tx.objectClass)
-
     if (this.hierarchy.isDerived(tx.objectClass, core.class.DerivedDataDescriptor)) {
       await this.updateDescriptor(tx.objectId as Ref<Descr>, tx.sid)
       return
@@ -422,7 +420,6 @@ export class DerivedDataProcessor {
         // Skip as not matched by query.
         continue
       }
-
       const results = apply ? (await this.applyMapper(d, tx)) ?? (await this.applyRule(d, tx, doc)) : []
       if (results !== null && d.targetClass !== undefined) {
         const oldData = await measureAsync(
