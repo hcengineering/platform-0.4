@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "Add social icons.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}

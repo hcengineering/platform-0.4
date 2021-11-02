@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Fix DataPicker.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}
