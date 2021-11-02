@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Make virtualized table",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

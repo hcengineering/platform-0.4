@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Adjust table usage",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
