@@ -15,12 +15,13 @@
 <script lang="ts">
   import core, { Class, Doc } from '@anticrm/core'
   import type { Account, Ref, Space, Title } from '@anticrm/core'
-  import type { EditorActions, EditorContentEvent, ItemRefefence } from '@anticrm/richeditor'
+  import type { EditorContentEvent, ItemRefefence } from '@anticrm/richeditor'
   import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
   import { schema } from '@anticrm/richeditor'
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
-  import { CompletionItem, CompletionPopupActions, Component } from '@anticrm/ui'
+  import type { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
+  import { Component } from '@anticrm/ui'
   import { CompletionPopup, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
@@ -75,7 +76,7 @@
   }
   export let editorContent: MessageNode = newMessageDocument()
 
-  let htmlEditor: MessageEditor & EditorActions
+  let htmlEditor: MessageEditor
 
   const triggers = ['@', '#', '[[']
 

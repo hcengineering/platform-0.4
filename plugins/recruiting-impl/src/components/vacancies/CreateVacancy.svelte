@@ -21,7 +21,8 @@
   import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Card, Grid, EditBox, Dropdown, DropdownItem } from '@anticrm/ui'
+  import { Card, Grid, EditBox, Dropdown } from '@anticrm/ui'
+  import type { DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   const client = getClient()

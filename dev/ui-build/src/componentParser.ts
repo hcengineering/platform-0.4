@@ -24,11 +24,16 @@ interface ComponentParserOptions {
 
 type ComponentPropName = string
 
+export interface ComponentPropParam {
+  name: string
+  type?: string
+}
 export interface ComponentProp {
   name: string
   kind: 'let' | 'const' | 'function'
   constant: boolean
   type?: string
+  params?: ComponentPropParam[]
   value?: any
   description?: string
   isFunction: boolean
@@ -338,6 +343,7 @@ export class ComponentParser {
 
           let value = undefined
           let type = undefined
+          let params: { name: string, type?: string }[] | undefined
           let kind = (node as any).declaration.kind
           let description = undefined
           let isFunction = false
@@ -372,8 +378,10 @@ export class ComponentParser {
 
           if (declarationType === 'FunctionDeclaration') {
             value = `() => ${this.sourceAtPos(body.start, body.end)?.replace(/\n/g, ' ') ?? '{}'}`
-            type = '() => any'
+            type = 'void'
             kind = 'function'
+            params = (node as any).declaration?.params?.map((p: any) => ({ name: p.name }))
+
             isFunction = true
             isFunctionDeclaration = true
           }
@@ -395,6 +403,7 @@ export class ComponentParser {
             kind,
             description,
             type,
+            params,
             value,
             isFunction,
             isFunctionDeclaration,

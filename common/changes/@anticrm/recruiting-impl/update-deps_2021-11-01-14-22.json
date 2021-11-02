@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Update dependencies",
+      "type": "patch",
+      "packageName": "@anticrm/recruiting-impl"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl",
+  "email": "haiodo@gmail.com"
+}

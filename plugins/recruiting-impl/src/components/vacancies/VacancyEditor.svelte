@@ -20,7 +20,8 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Component, DropdownItem } from '@anticrm/ui'
+  import { Component } from '@anticrm/ui'
+  import type { DropdownItem } from '@anticrm/ui'
   import {
     DatePicker,
     Dropdown,

@@ -119,6 +119,10 @@ function convertEvent (event: ComponentEvent): string {
       : `WindowEventMap["${event.name}"]`
   };`
 }
+function formatArg (p: any): string {
+  const tpe = p.type !== undefined ? `: ${p.type as string}` : ''
+  return (p.name as string) + tpe
+}
 
 function genAccessors (def: Pick<ComponentDocApi, 'props'>): string {
   return def.props
@@ -127,7 +131,7 @@ function genAccessors (def: Pick<ComponentDocApi, 'props'>): string {
       const propComments = genProps(prop)
       return `
     ${propComments.length > 0 ? `/**\n${propComments}*/` : EMPTY_STR}
-    ${prop.name}: ${prop.type as string};`
+    ${prop.name}: (${prop?.params?.map((p) => formatArg(p)).join(', ') ?? ''}) => ${prop.type as string};`
     })
     .join('\n')
 }

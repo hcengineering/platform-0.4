@@ -13,7 +13,8 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { IntlString, Asset } from '@anticrm/status'
+  import { translate } from '@anticrm/platform'
+  import type { Asset, IntlString } from '@anticrm/status'
   import { Icon, Tooltip } from '@anticrm/ui'
 
   export let label: IntlString
@@ -21,6 +22,9 @@
   export let action: () => Promise<void>
   export let selected: boolean
   export let notify: boolean
+
+  // Preload tooltip
+  $: translate(label, {})
 </script>
 
 <Tooltip {label}>
