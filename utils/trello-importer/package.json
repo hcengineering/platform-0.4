@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "heft build",
+    "fast-build": "tsc --skipLibCheck",
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "dev": "ts-node ./src/index.ts",

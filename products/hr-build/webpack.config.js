@@ -21,6 +21,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const mode = process.env.NODE_ENV || 'development'
 const NO_SVELTE = process.env.NO_SVELTE ?? false
 const prod = mode === 'production'
+const FAST_BUILD = process.env.FAST_BUILD ?? false
 
 module.exports = {
   entry: {
@@ -63,7 +64,15 @@ module.exports = {
     rules: [
       {
         test: /\.ts?$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: FAST_BUILD,
+            compilerOptions: {
+              skipLibCheck: true
+            }
+          }
+        },
         exclude: /node_modules/
       },
       {

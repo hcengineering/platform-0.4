@@ -9,7 +9,8 @@ export const opt: ts.CompilerOptions = {
   target: ts.ScriptTarget.ESNext,
   module: ts.ModuleKind.CommonJS,
   emitDeclarationOnly: true,
-  declaration: true
+  declaration: true,
+  skipLibCheck: true
 }
 
 export interface DefOptions {

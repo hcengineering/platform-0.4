@@ -27,6 +27,7 @@ import { readFileSync } from 'fs'
 import { startAuthServer } from './auth'
 import { startFileServer } from './file'
 import { startInfoServer } from './info'
+import { AccountDetails } from '../../../server/server/lib/token'
 
 const dbUri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017'
 const LOG_TR = Boolean(process.env.LOG_TRANSACTIONS)
@@ -34,6 +35,20 @@ const LOG_R = Boolean(process.env.LOG_REQUESTS)
 
 const john = 'john.appleseed@gmail.com'
 const brian = 'brian.appleseed@gmail.com'
+
+const details: Record<string, AccountDetails> = {
+  [john]: {
+    email: john,
+    firstName: 'John',
+    lastName: 'Appleseed'
+  },
+  [brian]: {
+    email: brian,
+    firstName: 'Brian',
+    lastName: 'Appleseed'
+  }
+}
+
 const defaultPass = '123'
 
 const defaultWorkspace = 'workspace'
@@ -79,7 +94,8 @@ async function start (): Promise<void> {
 
   for (const account of [john, brian]) {
     if ((await accounts.findAccount(account)) === undefined) {
-      await accounts.createAccount(account, defaultPass)
+      console.log('Create account with ', details)
+      await accounts.createAccount(account, defaultPass, details[account])
     }
   }
 

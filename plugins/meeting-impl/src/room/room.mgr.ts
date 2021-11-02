@@ -367,7 +367,6 @@ export class RoomMgr {
     }
 
     // https://github.com/microsoft/TypeScript/issues/33232
-    // @ts-expect-error
     const media = await navigator.mediaDevices.getDisplayMedia({
       audio: false,
       video: {

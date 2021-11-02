@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "heft build",
+    "fast-build": "tsc --skipLibCheck",
     "test": "heft test",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",

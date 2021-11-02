@@ -37,11 +37,15 @@ async function doConnect (tx: TxHandler): Promise<CoreClient> {
 }
 
 async function getClient (): Promise<Client> {
+  const logging: boolean = getMetadata(pluginCore.metadata.Logging) ?? false
   if (client === undefined) {
     console.log('Connecting to server')
     const storage = await createClient(doConnect, (tx) => {
       notificationHandler?.tx(tx)
       liveQuery?.notifyTx(tx).catch((err) => console.error(err))
+      if (logging) {
+        console.info('server tx:', tx)
+      }
     })
 
     const accountId = await storage.accountId()

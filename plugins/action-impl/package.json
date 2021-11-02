@@ -8,6 +8,7 @@
   "license": "EPL-2.0",
   "scripts": {
     "build": "heft build",
+    "fast-build": "tsc --skipLibCheck",
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",

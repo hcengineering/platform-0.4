@@ -202,7 +202,21 @@
       "description": "Perform testing of all projects",
       "enableParallelism": true,
       "incremental": true
-    }
+    },
+    {
+      /**
+       * (Required) Determines the type of custom command.
+       * Rush's "global" commands are invoked once for the entire repo.
+       */
+      "commandKind": "bulk",
+      "name": "fast-build",
+      "summary": "Fast building with omit of some checks",
+      "description": "Perform fast building with tsc",
+      "enableParallelism": true,
+      "incremental": true,
+      "ignoreMissingScript": true,
+      "watchForChanges": true
+    },
   ],
 
   /**

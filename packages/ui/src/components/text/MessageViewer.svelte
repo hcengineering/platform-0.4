@@ -212,6 +212,7 @@
     border-radius: 10px;
     padding: 2px;
     text-decoration-line: underline;
+    display: inline-block;
   }
 
   .unknown_reference {

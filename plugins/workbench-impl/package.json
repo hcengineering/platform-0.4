@@ -9,6 +9,7 @@
   "scripts": {
     "build": "node ./esbuild && svelte-check",
     "build:clean": "rm -rf ./lib && node ./esbuild",
+    "fast-build": "node ./esbuild",
     "test": "echo 'no test'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",

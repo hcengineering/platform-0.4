@@ -230,24 +230,28 @@ export class NotificationClient {
   public scrollHandler (div: HTMLElement, spaceLastViews: SpaceLastViews | undefined, id?: Ref<Doc>): void {
     if (spaceLastViews === undefined) return
     const lastRead = id === undefined ? spaceLastViews.lastRead : spaceLastViews.objectLastReads.get(id) ?? 0
-    this.lastPosition = div.scrollTop
-    const newObjects = div.getElementsByClassName('isNew')
-    const divBottom = div.getBoundingClientRect().bottom
-    for (let i = 0; i < newObjects.length; i++) {
-      const elem = newObjects[i] as HTMLElement
-      if (elem.getBoundingClientRect().bottom > divBottom + 10) break
-      this.readObject(spaceLastViews, elem.dataset)
-      if (i === newObjects.length - 1) {
-        this.lastTime = Date.now()
+    try {
+      this.lastPosition = div.scrollTop
+      const newObjects = div.getElementsByClassName('isNew')
+      const divBottom = div.getBoundingClientRect().bottom
+      for (let i = 0; i < newObjects.length; i++) {
+        const elem = newObjects[i] as HTMLElement
+        if (elem.getBoundingClientRect().bottom > divBottom + 10) break
+        this.readObject(spaceLastViews, elem.dataset)
+        if (i === newObjects.length - 1) {
+          this.lastTime = Date.now()
+        }
       }
-    }
-    if (this.lastTime > lastRead || this.readObjects.size > 0) {
-      if (this.lastTime < lastRead) {
-        this.lastTime = lastRead
+      if (this.lastTime > lastRead || this.readObjects.size > 0) {
+        if (this.lastTime < lastRead) {
+          this.lastTime = lastRead
+        }
+        if (this.timeoutId === undefined) {
+          this.timeoutId = setTimeout(async () => await this.updateLastRead(spaceLastViews, id), 2000)
+        }
       }
-      if (this.timeoutId === undefined) {
-        this.timeoutId = setTimeout(async () => await this.updateLastRead(spaceLastViews, id), 2000)
-      }
+    } catch (err: any) {
+      console.error(err)
     }
   }
 

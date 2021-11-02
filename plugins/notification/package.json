@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "api-extractor run --local",
+    "fast-build": "tsc --skipLibCheck",
     "test": "echo 'no tests'",
     "lint": "ts-standard src",
     "lint:fix": "ts-standard --fix src",

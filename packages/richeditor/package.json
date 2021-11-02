@@ -9,6 +9,7 @@
   "svelte": "src/index.ts",
   "scripts": {
     "build": "rm -rf ./lib && node ./esbuild",
+    "fast-build": "rm -rf ./lib && node ./esbuild",
     "test": "CI=true jest --silent",
     "jest": "jest",
     "lint": "eslint src",

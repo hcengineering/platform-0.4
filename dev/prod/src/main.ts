@@ -35,6 +35,7 @@ setMetadata(login.metadata.AccountsUrl, accountsUrl)
 setMetadata(attachment.metadata.FilesUrl, fileServerUrl)
 setMetadata(meetingPlugin.metadata.ClientUrl, `${meetingHost}:${meetingPort}`)
 setMetadata(pluginCore.metadata.ClientUrl, clientUri)
+setMetadata(pluginCore.metadata.Logging, true)
 
 addEventListener('Token', async (event, data) => {
   setMetadata(pluginCore.metadata.Token, data)

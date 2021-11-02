@@ -15,26 +15,24 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import core, { matchDocument } from '@anticrm/core'
+  import type { SpaceLastViews } from '@anticrm/notification'
+  import notification from '@anticrm/notification'
   import { PresentationClient, QueryUpdater } from '@anticrm/presentation'
-  import type { IntlString } from '@anticrm/status'
-  import { Component, TooltipInstance, Popup } from '@anticrm/ui'
-  import { newRouter } from '@anticrm/ui'
+  import type { AnyComponent, IntlString } from '@anticrm/status'
+  import { Component, newRouter, Popup, TooltipInstance } from '@anticrm/ui'
   import type { Application, NavigatorModel, SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import workbench from '@anticrm/workbench'
   import { setContext } from 'svelte'
+  import { writable } from 'svelte/store'
   import ActivityStatus from './ActivityStatus.svelte'
   import Applications from './Applications.svelte'
+  import AsideDocument from './AsideDocument.svelte'
   import Modal from './Modal.svelte'
   import NavHeader from './NavHeader.svelte'
   import Navigator from './Navigator.svelte'
   import Profile from './Profile.svelte'
   import SpaceHeader from './SpaceHeader.svelte'
   import { buildUserSpace } from './utils/space.utils'
-  import type { SpaceLastViews } from '@anticrm/notification'
-  import notification from '@anticrm/notification'
-  import type { AnyComponent } from '@anticrm/status'
-  import AsideDocument from './AsideDocument.svelte'
-  import { writable } from 'svelte/store'
 
   export const spacesLastViewsStore = writable(new Map<Ref<Space>, SpaceLastViews>())
   setContext('spacesLastViews', spacesLastViewsStore)
@@ -49,6 +47,7 @@
   let spacesLastViews: Map<Ref<Space>, SpaceLastViews> = new Map<Ref<Space>, SpaceLastViews>()
 
   let currentSpace: Space | undefined
+  let noSpaceAccess = false
   let navigatorModel: NavigatorModel | undefined
   let spaceModel: SpacesNavModel | undefined
 
@@ -105,6 +104,10 @@
       const target = navigatorModel?.spaces.find((x) => x.userSpace !== undefined)
       currentSpace = currentRoute.space === account.toString() ? buildUserSpace(account, target) : result[0]
 
+      noSpaceAccess = currentSpace !== undefined && currentSpace.members.indexOf(client.accountId()) === -1
+
+      // Check if current user had access to selected space
+
       // Find a space model
       if (navigatorModel !== undefined && currentSpace !== undefined) {
         spaceModel = updateSpaceModel(currentSpace, navigatorModel)
@@ -146,11 +149,23 @@
   {/if}
   <div bind:this={compHTML} class="component">
     {#if navigatorModel && currentRoute.special === undefined}
-      {#if spaceModel}
+      {#if spaceModel && !noSpaceAccess}
         <SpaceHeader space={currentSpace} {spaceModel} />
       {/if}
       {#if currentRoute.space}
-        <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
+        {#if !noSpaceAccess}
+          <Component is={navigatorModel.spaceView} props={{ currentSpace: currentRoute.space }} />
+        {:else}
+          <div class="no-access">
+            {#if currentSpace && spaceModel}
+              <span class="header">
+                You are not a member of `{currentSpace.name}`.
+              </span>
+              <br />
+              <span> Please join to have access to its contents. </span>
+            {/if}
+          </div>
+        {/if}
       {/if}
     {:else if navigatorModel && navigatorModel.specials && currentRoute.special}
       <Component is={specialComponent(currentRoute.special)} />
@@ -208,6 +223,16 @@
       min-width: 550px;
       flex-grow: 1;
       margin-right: 20px;
+
+      .no-access {
+        margin: 30px;
+        .header {
+          font-size: 24px;
+        }
+        span {
+          font-size: 20px;
+        }
+      }
     }
   }
 </style>

@@ -20,6 +20,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const mode = process.env.NODE_ENV || 'development'
 const NO_SVELTE = process.env.NO_SVELTE ?? false
+const FAST_BUILD = process.env.FAST_BUILD ?? false
 const prod = mode === 'production'
 const PUBLIC_PATH = process.env.PUBLIC_PATH ?? '/'
 
@@ -60,7 +61,15 @@ module.exports = {
     rules: [
       {
         test: /\.ts?$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: FAST_BUILD,
+            compilerOptions: {
+              skipLibCheck: true
+            }
+          }
+        },
         exclude: /node_modules/
       },
       {

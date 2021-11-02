@@ -42,7 +42,8 @@ export default plugin(
   {
     metadata: {
       ClientUrl: '' as Metadata<string>, // A URI to connect to server.
-      Token: '' as Metadata<string> // An a token to use for client connection.
+      Token: '' as Metadata<string>, // An a token to use for client connection.
+      Logging: '' as Metadata<boolean> // Will log transactions to console if enabled.
     }
   }
 )

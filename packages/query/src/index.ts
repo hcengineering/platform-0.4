@@ -308,7 +308,7 @@ function newThenProcessor<T extends Doc> (
   q: Query
 ): ((value: FindResult<T>) => void | PromiseLike<void>) | null | undefined {
   return (res) => {
-    q.result = res
+    q.result = copy(res)
     q.total = res.total
     const callbackValue = Object.assign(copy(res), { total: res.total })
     q.callback(callbackValue)
