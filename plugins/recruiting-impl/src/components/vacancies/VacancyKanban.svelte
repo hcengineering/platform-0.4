@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import core from '@anticrm/core'
+  import core, { SortingOrder } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
   import { fsmPlugin } from '@anticrm/fsm-impl'
@@ -31,8 +31,8 @@
 
   const client = getClient()
   const fsmP = getPlugin(fsmPlugin.id)
-  let lqApplicants: QueryUpdater<Applicant> | undefined
   let lqStates: QueryUpdater<State> | undefined
+  const lqApplicantsMap: Map<Ref<State>, QueryUpdater<Applicant>> = new Map()
 
   let fsm: FSM | undefined
   let lqFSM: QueryUpdater<FSM> | undefined
@@ -41,49 +41,107 @@
     prevSpace = space._id
 
     if (space !== undefined) {
-      lqApplicants = client.query(lqApplicants, recruiting.class.Applicant, { space: space._id }, (result) => {
-        applicants = result.map((x) => ({
-          ...x,
-          id: x._id
-        }))
-      })
-
-      lqStates = client.query(lqStates, fsmPlugin.class.State, { fsm: space.fsm }, (result) => {
-        rawStates = result
-      })
+      lqStates = client.query(
+        lqStates,
+        fsmPlugin.class.State,
+        { fsm: space.fsm },
+        (result) => {
+          states = result
+        },
+        {
+          sort: {
+            rank: SortingOrder.Ascending
+          }
+        }
+      )
 
       lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { _id: space.fsm }, (result) => {
         fsm = result[0]
       })
+    } else {
+      lqFSM?.unsubscribe()
+      fsm = undefined
+
+      lqStates?.unsubscribe()
+      states = []
     }
   }
 
-  async function onDrop (event: CustomEvent<any>) {
-    const { item, state, idx } = event.detail
-    const actualItem = applicants.find((x) => x._id === item)
+  $: {
+    const stateIDs = states.map((x) => x._id)
+    const ss = new Set(stateIDs)
 
-    if (!actualItem) {
+    const missingQueryKeys = [...lqApplicantsMap.keys()].filter((x) => !ss.has(x))
+    missingQueryKeys.forEach((k) => {
+      lqApplicantsMap.get(k)?.unsubscribe()
+      lqApplicantsMap.delete(k)
+    })
+
+    const missingItemsKeys = [...items.keys()].filter((x) => !ss.has(x as Ref<State>))
+    missingItemsKeys.forEach((k) => {
+      items.delete(k)
+    })
+
+    items = items
+
+    const curQueryKeys = [...lqApplicantsMap.keys()]
+    const newStates = stateIDs.filter((x) => !curQueryKeys.includes(x))
+
+    newStates.forEach((state) => {
+      lqApplicantsMap.set(
+        state,
+        client.query(
+          undefined,
+          recruiting.class.Applicant,
+          { state },
+          (result) => {
+            const applicants = result.map((x) => ({
+              ...x,
+              id: x._id
+            }))
+            items.set(state, applicants)
+
+            items = items
+          },
+          {
+            sort: {
+              rank: SortingOrder.Ascending
+            }
+          }
+        )
+      )
+    })
+  }
+
+  async function onDrop (event: CustomEvent<any>) {
+    const { item, state, prevState, idx } = event.detail
+    const actualItem = items.get(prevState)?.find((x) => x._id === item)
+    const targetItems = items.get(state)
+
+    if (actualItem === undefined || targetItems === undefined) {
       return
     }
 
     const fsm = await fsmP
+    const prev = targetItems[idx - 1]
+    const next = targetItems[idx]
 
-    await fsm.moveItem(actualItem, { prev: actualItem.state, actual: state }, idx)
+    await fsm.moveItem(actualItem, state, { prev, next })
   }
 
   async function onStateReorder (event: CustomEvent<any>) {
-    if (fsm === undefined) {
+    const { item, idx } = event.detail
+    const actualItem = states.find((x) => x._id === item)
+
+    if (actualItem === undefined) {
       return
     }
 
-    const { item, idx } = event.detail
-    const updatedStates = [...fsm.states.slice(0, idx), item, ...fsm.states.slice(idx)].filter(
-      (x, i) => x !== item || i === idx
-    )
+    const prev = states[idx - 1]
+    const next = states[idx]
 
-    await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, space.fsm, {
-      states: updatedStates
-    })
+    const fsm = await fsmP
+    await fsm.moveState(actualItem, { prev, next })
   }
 
   async function onAddNewColumn () {
@@ -94,7 +152,6 @@
     const fsmPlug = await fsmP
     await fsmPlug.addState({
       fsm: fsm._id,
-      items: [],
       name: 'New column',
       optionalActions: [],
       requiredActions: [],
@@ -121,26 +178,8 @@
     await fsmPlug.removeState(state)
   }
 
-  let applicants: Applicant[] = []
-  let rawStates: State[] = []
-
-  let items = new Map<string, Applicant[]>()
-  $: items = new Map<string, Applicant[]>(
-    rawStates.map(
-      (state) =>
-        [
-          state._id,
-          state.items
-            .map((itemID) => applicants.find((x) => x._id === itemID))
-            .filter((item): item is Applicant => item !== undefined)
-        ] as [string, Applicant[]]
-    )
-  )
-
   let states: State[] = []
-  $: states =
-    fsm?.states.map((stateID) => rawStates.find((x) => x._id === stateID)).filter((x): x is State => x !== undefined) ??
-    []
+  let items = new Map<string, Applicant[]>()
 </script>
 
 <Kanban

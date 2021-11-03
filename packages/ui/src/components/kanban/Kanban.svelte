@@ -42,6 +42,8 @@
   export let cardComponent: UIComponent
   export let cardDelay: number = 0
 
+  let itemsCopy: Map<string, KanbanItem[]>
+  $: itemsCopy = new Map(items)
   // Temporary flag, need to remove as soon as tasks plugin be updated
   export let panelEditDisabled = false
 
@@ -54,7 +56,7 @@
   const dispatch = createEventDispatcher()
 
   let actualItems: KanbanItem[][] = []
-  $: actualItems = states.map((state) => items.get(state._id) ?? [])
+  $: actualItems = states.map((state) => itemsCopy.get(state._id) ?? [])
 
   let panelDragData:
     | {
@@ -99,8 +101,8 @@
       return
     }
 
-    const targetItems = items.get(targetState)
-    const origItems = items.get(origState)
+    const targetItems = itemsCopy.get(targetState)
+    const origItems = itemsCopy.get(origState)
     const targetItem = origItems?.find((x) => x._id === e.detail.id)
 
     if (panel === undefined || targetItems === undefined || origItems === undefined || targetItem === undefined) {
@@ -113,17 +115,17 @@
 
     if (targetState !== origState) {
       const updatedOrigItems = origItems?.filter((x) => x._id !== targetItem._id)
-      items.set(origState, updatedOrigItems)
+      itemsCopy.set(origState, updatedOrigItems)
     }
 
     const updatedTargetItems = [...targetItems.slice(0, idx), targetItem, ...targetItems.slice(idx)].filter(
       (x, i) => x._id !== targetItem._id || idx === i
     )
 
-    items.set(targetState, updatedTargetItems)
-    items = items
+    itemsCopy.set(targetState, updatedTargetItems)
+    itemsCopy = itemsCopy
 
-    dispatch('drop', { item: e.detail.id, idx, state: panel.id })
+    dispatch('drop', { item: e.detail.id, idx, prevState: origState, state: panel.id })
 
     await tick()
     e.detail.reset()

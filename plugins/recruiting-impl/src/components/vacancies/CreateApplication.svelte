@@ -80,13 +80,10 @@
   let recruiter: Ref<Account> | undefined
   let stateItems: DropdownItem[] = []
   $: if (fsm !== undefined) {
-    stateItems = fsm.states
-      .map((id) => states.find((s) => s._id === id))
-      .filter((s): s is State => s !== undefined)
-      .map((s) => ({
-        id: s._id,
-        label: s.name
-      }))
+    stateItems = states.map((s) => ({
+      id: s._id,
+      label: s.name
+    }))
   }
 
   let stateID: string | undefined

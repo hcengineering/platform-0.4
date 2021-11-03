@@ -14,15 +14,14 @@
 //
 
 import { getMeasurements, Ref, withOperations } from '@anticrm/core'
-import { FSM, State } from '@anticrm/fsm'
+import { FSM } from '@anticrm/fsm'
 import { createClient } from '@anticrm/node-client'
 import recruiting, { Applicant, Candidate } from '@anticrm/recruiting'
 import { config } from 'dotenv'
-import { deepEqual } from 'fast-equals'
 import { readFile } from 'fs/promises'
 import { clearInterval } from 'timers'
 import { createUpdateApplicant } from './applicant'
-import { CandState, createCandidatePool, createUpdateCandidates, getName } from './candidates'
+import { createCandidatePool, createUpdateCandidates, getName } from './candidates'
 import { buildFSMItems, createFSM, FSMColumn, updateFSMStates } from './fsm'
 import { TrelloBoard } from './trello'
 import { createVacancySpace } from './vacancies'
@@ -115,7 +114,7 @@ async function start (): Promise<void> {
   await createFSM(client, fsmId, board, clientOps)
 
   // Create/update states
-  const states = await updateFSMStates(clientOps, fsmId, fsm)
+  await updateFSMStates(clientOps, fsmId, fsm)
 
   // Create candidate pool
   const candPoolId = await createCandidatePool(fsmId, clientOps, board)
@@ -132,22 +131,8 @@ async function start (): Promise<void> {
   const applicants = await client.findAll(recruiting.class.Applicant, { space: vacancyId })
   const applicantsMap = new Map<Ref<Candidate>, Applicant>(applicants.map((a) => [a.item as Ref<Candidate>, a]))
 
-  const newStates = new Map<Ref<State>, CandState[]>()
+  await createUpdateApplicant(candidates, applicantsMap, candidateStates, vacancyId, clientId, clientOps)
 
-  await createUpdateApplicant(candidates, applicantsMap, candidateStates, vacancyId, clientId, clientOps, newStates)
-
-  // Now I need to update states to contain proper applicants.
-  for (const st of states) {
-    // st.items
-    const newValue = (newStates.get(st._id) ?? [])
-      .sort((a, b) => b.pos - a.pos)
-      .map((v) => v.applicant)
-      .filter((v) => v !== undefined)
-    if (!deepEqual(st.items, newValue)) {
-      await clientOps.updateDoc(st._class, st.space, st._id, { items: newValue as Ref<Applicant>[] })
-    }
-    console.log('update state', st.name)
-  }
   clearInterval(intervalHandle)
   printInfo()
   process.exit(0)

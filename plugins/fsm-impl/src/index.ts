@@ -13,8 +13,9 @@
 // limitations under the License.
 //
 
+import { LexoRank } from 'lexorank'
 import type { Class, Data, Doc, Ref, Space } from '@anticrm/core'
-import core from '@anticrm/core'
+import core, { SortingOrder } from '@anticrm/core'
 import type { FSM, FSMItem, FSMService, State, Transition, WithFSM } from '@anticrm/fsm'
 import { getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
@@ -26,16 +27,12 @@ export default async (): Promise<FSMService> => {
   const coreP = await getPlugin(corePlugin.id)
   const client: Client = await coreP.getClient()
 
-  const getStates = async (fsmID: Ref<FSM>): Promise<State[]> => {
-    const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }, { limit: 1 }))[0]
-
-    if (fsm === undefined) {
-      return []
-    }
-
-    const states = await client.findAll(fsmPlugin.class.State, { fsm: fsmID })
-
-    return fsm.states.map((x) => states.find((state) => state._id === x)).filter((x): x is State => x !== undefined)
+  const getStates = async (
+    fsmID: Ref<FSM>,
+    order: SortingOrder = SortingOrder.Ascending,
+    limit?: number
+  ): Promise<State[]> => {
+    return await client.findAll(fsmPlugin.class.State, { fsm: fsmID }, { sort: { rank: order }, limit })
   }
 
   const getTransitions = async (fsm: Ref<FSM>): Promise<Transition[]> =>
@@ -47,6 +44,11 @@ export default async (): Promise<FSMService> => {
     return (await client.findAll(fsmPlugin.class.FSM, { _id: fsmID }))[0]
   }
 
+  const calcRank = (prev?: { rank: string }, next?: { rank: string }): LexoRank =>
+    (prev?.rank !== undefined ? LexoRank.parse(prev.rank) : LexoRank.min()).between(
+      next?.rank !== undefined ? LexoRank.parse(next.rank) : LexoRank.max()
+    )
+
   return {
     getStates,
     getTransitions,
@@ -54,7 +56,7 @@ export default async (): Promise<FSMService> => {
       fsmOwner: WithFSM,
       item: {
         _class?: Ref<Class<T>>
-        obj: Omit<T, keyof Doc | 'state' | 'fsm'> & { state?: Ref<State> }
+        obj: Omit<T, keyof Doc | 'state' | 'fsm' | 'rank'> & { state?: Ref<State> }
       },
       space: Ref<Space> = fsmOwner._id
     ) => {
@@ -64,76 +66,60 @@ export default async (): Promise<FSMService> => {
         return
       }
 
-      const state = item.obj.state ?? fsm.states[0]
+      const state = item.obj.state ?? (await getStates(fsm._id, undefined, 1))[0]?._id
 
+      if (state === undefined) {
+        return
+      }
+
+      const firstItem = (
+        await client.findAll(fsmPlugin.class.FSMItem, { state }, { sort: { rank: SortingOrder.Ascending }, limit: 1 })
+      )[0]
+
+      const rank = calcRank(undefined, firstItem)
       const doc = await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space, {
         ...item.obj,
         fsm: fsmOwner._id,
-        state
-      })
-
-      await client.updateDoc(fsmPlugin.class.State, core.space.Model, state, {
-        $push: {
-          items: doc._id
-        }
+        state,
+        rank: rank.toString()
       })
 
       return doc
     },
     moveItem: async (
       item: FSMItem,
-      transition: {
-        prev: Ref<State>
-        actual: Ref<State>
-      },
-      idx: number
+      state: Ref<State>,
+      place: {
+        prev?: FSMItem
+        next?: FSMItem
+      }
     ): Promise<void> => {
-      const updateItems = (items: Array<Ref<FSMItem>>): Array<Ref<FSMItem>> =>
-        [...items.slice(0, idx), item._id, ...items.slice(idx)].filter((x, i) => !(x === item._id && i !== idx))
-
-      const prevState = (await client.findAll(fsmPlugin.class.State, { _id: transition.prev }))[0]
-      const actualState = (await client.findAll(fsmPlugin.class.State, { _id: transition.actual }))[0]
-
-      if (prevState === undefined || actualState === undefined) {
-        return
-      }
-
-      if (prevState._id === actualState._id) {
-        await client.updateDoc(fsmPlugin.class.State, core.space.Model, actualState._id, {
-          items: updateItems(actualState.items)
-        })
-
-        return
-      }
-
-      await client.updateDoc(fsmPlugin.class.State, core.space.Model, prevState._id, {
-        items: prevState.items.filter((x) => x !== item._id)
-      })
-
-      await client.updateDoc(fsmPlugin.class.State, core.space.Model, actualState._id, {
-        items: updateItems(actualState.items)
-      })
+      const rank = calcRank(place.prev, place.next).toString()
 
       await client.updateDoc(item._class, item.space, item._id, {
-        state: actualState._id
+        state,
+        rank
       })
     },
 
-    addState: async (state: Data<State>): Promise<State> => {
+    addState: async (state: Omit<Data<State>, 'rank'>): Promise<State> => {
       const fsm = await getTargetFSM(state.fsm)
 
       if (fsm === undefined) {
         throw Error(`FSM is not found: ${state.fsm}`)
       }
 
-      const actualState = await client.createDoc(fsmPlugin.class.State, core.space.Model, state)
-      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, fsm._id, {
-        $push: {
-          states: actualState._id
-        }
-      })
+      const lastState = (await getStates(fsm._id, SortingOrder.Descending, 1))[0]
+      const rank = calcRank(lastState, undefined)
 
-      return actualState
+      return await client.createDoc(fsmPlugin.class.State, core.space.Model, { ...state, rank: rank.toString() })
+    },
+    moveState: async (state: State, place: { prev?: State, next?: State }): Promise<void> => {
+      const rank = calcRank(place.prev, place.next).toString()
+
+      await client.updateDoc(state._class, state.space, state._id, {
+        rank
+      })
     },
     removeState: async (state: State): Promise<void> => {
       const fsm = await getTargetFSM(state.fsm)
@@ -147,12 +133,6 @@ export default async (): Promise<FSMService> => {
       if (hasItems) {
         throw Error('FSM state contains items')
       }
-
-      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, fsm._id, {
-        $pull: {
-          states: state._id
-        }
-      })
 
       await client.removeDoc(fsmPlugin.class.State, core.space.Model, state._id)
     },
@@ -189,10 +169,6 @@ export default async (): Promise<FSMService> => {
             ] as [State, State]
         )
       ).then((xs) => new Map(xs.map(([x, y]) => [x._id, y._id] as [Ref<State>, Ref<State>])))
-
-      await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, newFSM._id, {
-        states: fsm.states.map((x) => stateMap.get(x)).filter((x): x is Ref<State> => x !== undefined)
-      })
 
       await Promise.all(
         transitions.map(

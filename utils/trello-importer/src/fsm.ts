@@ -2,6 +2,7 @@ import core, { Client, Data, Ref, TxOperations } from '@anticrm/core'
 import fsmPlugin, { FSM, State } from '@anticrm/fsm'
 import recrutting from '@anticrm/recruiting'
 import { TrelloBoard } from './trello'
+import { genRanks } from './utils'
 
 export interface FSMColumn {
   id: string
@@ -34,8 +35,7 @@ export async function createFSM (
     const fsmInstance: Data<FSM> = {
       name: board.name,
       clazz: recrutting.class.VacancySpace,
-      isTemplate: false,
-      states: []
+      isTemplate: false
     }
     await operations.createDoc(fsmPlugin.class.FSM, core.space.Model, fsmInstance, fsmId)
     fsms = await client.findAll(fsmPlugin.class.FSM, { _id: fsmId })
@@ -47,15 +47,20 @@ export async function updateFSMStates (
   fsmId: Ref<FSM>,
   fsm: FSMColumn[]
 ): Promise<State[]> {
-  let states = await client.findAll(fsmPlugin.class.State, {
+  const states = await client.findAll(fsmPlugin.class.State, {
     fsm: fsmId
   })
   const statesMap = new Map<Ref<State>, State>(Array.from(states).map((s) => [s._id, s]))
   const result: State[] = []
-
-  let needUpdateStates = false
+  const rankGen = genRanks(fsm.length)
 
   for (const o of fsm) {
+    const rank = rankGen.next().value
+
+    if (rank === undefined) {
+      throw Error('Unable to gen rank')
+    }
+
     // Check if no state, add it.
     let cur = statesMap.get(o.id as Ref<State>)
     if (cur === undefined) {
@@ -64,21 +69,19 @@ export async function updateFSMStates (
         name: o.name,
         color: 'black',
         fsm: fsmId,
-        items: [],
         optionalActions: [],
-        requiredActions: []
+        requiredActions: [],
+        rank
       }
+
       cur = await client.createDoc(fsmPlugin.class.State, core.space.Model, st, o.id as Ref<State>)
-      needUpdateStates = true
+    } else {
+      await client.updateDoc(cur._class, cur.space, cur._id, { rank: rank })
     }
+
     result.push(cur)
   }
-  if (needUpdateStates) {
-    states = await client.findAll(fsmPlugin.class.State, {
-      fsm: fsmId
-    })
-    await client.updateDoc(fsmPlugin.class.FSM, core.space.Model, fsmId, { states: states.map((s) => s._id) })
-  }
+
   return result
 }
 
