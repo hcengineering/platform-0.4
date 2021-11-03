@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/core",
+      "comment": "Fix Workspace Upgrade",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/core"
+}

@@ -741,7 +741,7 @@ export class DerivedDataProcessor {
           _class: core.class.TxCreateDoc,
           objectClass: core.class.DerivedDataDescriptorState,
           objectId: generateId(),
-          space: core.space.Tx,
+          space: core.space.DerivedData,
           objectSpace: core.space.DerivedData,
           attributes: {
             descriptorId: descriptorId,
@@ -761,7 +761,7 @@ export class DerivedDataProcessor {
           _class: core.class.TxUpdateDoc,
           objectClass: core.class.DerivedDataDescriptorState,
           objectId: state._id,
-          space: core.space.Tx,
+          space: core.space.DerivedData,
           objectSpace: core.space.DerivedData,
           operations: {
             lastSID: lastActualSID,

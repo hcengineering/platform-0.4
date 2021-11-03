@@ -44,7 +44,7 @@ export async function upgradeWorkspace (workspaceId: string, options: WorkspaceO
   // Find all system transactions.
   const existingTxes = await txes.find({ objectSpace: core.space.Model, modifiedBy: core.account.System }).toArray()
 
-  const lastSID = (await txes.find<Tx>({}, { limit: 1, sort: { sid: 1 } }).toArray())[0]?.sid ?? -1
+  const lastSID = (await txes.find<Tx>({}, { limit: 1, sort: { sid: -1 } }).toArray())[0]?.sid ?? -1
   const sidTx = withSID(undefined, lastSID)
 
   const { diffTx, dropTx } = await generateModelDiff(
