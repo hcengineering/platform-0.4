@@ -13,15 +13,14 @@
 // limitations under the License.
 //
 
-import { addEventListener, broadcastEvent, getPlugin, setMetadata } from '@anticrm/platform'
-import { createApp } from '@anticrm/ui'
-import login, { currentAccount } from '@anticrm/login'
-import pluginCore from '@anticrm/plugin-core'
-import meetingPlugin from '@anticrm/meeting'
-
-import { configurePlatform } from './platform'
-import { PlatformConfiguration } from './config'
 import attachment from '@anticrm/attachment'
+import login from '@anticrm/login'
+import meetingPlugin from '@anticrm/meeting'
+import { addEventListener, getPlugin, setMetadata } from '@anticrm/platform'
+import pluginCore from '@anticrm/plugin-core'
+import { createApp } from '@anticrm/ui'
+import { PlatformConfiguration } from './config'
+import { configurePlatform } from './platform'
 
 async function loadConfiguration (): Promise<PlatformConfiguration> {
   return await new Promise<PlatformConfiguration>((resolve) => {
@@ -51,11 +50,6 @@ async function init (): Promise<void> {
     const attachmentPlugin = await getPlugin(attachment.id)
     await attachmentPlugin.authorize(data)
   })
-
-  const loginInfo = currentAccount()
-  if (loginInfo !== undefined) {
-    void broadcastEvent('Token', loginInfo.token)
-  }
 
   createApp(document.body)
 }

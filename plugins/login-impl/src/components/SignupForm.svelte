@@ -27,12 +27,12 @@
   import loginImpl from '../plugin'
 
   const fields = [
-    { name: 'first', i18n: loginImpl.string.FirstName, short: true },
-    { name: 'last', i18n: loginImpl.string.LastName, short: true },
-    { name: 'username', i18n: loginImpl.string.Email },
+    { id: 'given-name', name: 'first', i18n: loginImpl.string.FirstName, short: true },
+    { id: 'family-name', name: 'last', i18n: loginImpl.string.LastName, short: true },
+    { id: 'email', name: 'username', i18n: loginImpl.string.Email },
     { name: 'workspace', i18n: loginImpl.string.Workspace },
-    { name: 'password', i18n: loginImpl.string.Password, password: true },
-    { name: 'password2', i18n: loginImpl.string.Password2, password: true }
+    { id: 'new-password', name: 'password', i18n: loginImpl.string.Password, password: true },
+    { id: 'new-password', name: 'password2', i18n: loginImpl.string.Password2, password: true }
   ]
 
   const object = {

@@ -118,6 +118,7 @@ export class Accounts {
     this.methods = {
       login: this.login.bind(this),
       signup: this.signup.bind(this),
+      verify: this.verify.bind(this),
       updateAccount: this.updateAccount.bind(this)
     }
   }
@@ -276,6 +277,33 @@ export class Accounts {
     await this.addWorkspace(email, workspace)
     // Do login
     return await this.login(email, password, workspace)
+  }
+
+  async verify (token: string): Promise<LoginInfo> {
+    checkDefined('email and password should be specified', token)
+
+    const { accountId, workspaceId, details } = decodeToken(this.serverToken, token)
+
+    const accountInfo = await this.getAccount(details.email)
+    if (accountId !== accountInfo._id) {
+      throw new PlatformError(new Status(Severity.ERROR, Code.status.AccountNotFound, { email: details.email }))
+    }
+
+    const workspace = await this.getWorkspace(workspaceId)
+
+    if (!workspace.accounts.includes(accountInfo._id)) {
+      throw new PlatformError(
+        new Status(Severity.ERROR, Code.status.WorkspaceNotAccessible, { workspace: workspaceId, email: details.email })
+      )
+    }
+
+    const newToken = generateToken(this.serverToken, accountInfo._id, workspaceId, details)
+    const result: LoginInfo = {
+      workspace: workspaceId,
+      token: newToken,
+      email: details.email
+    }
+    return result
   }
 
   async updateAccount (token: string, password: string, newPassword: string): Promise<AccountInfo> {

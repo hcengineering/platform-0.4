@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-import { addEventListener, broadcastEvent, getPlugin, setMetadata } from '@anticrm/platform'
+import { addEventListener, getPlugin, setMetadata } from '@anticrm/platform'
 import { createApp } from '@anticrm/ui'
-import login, { currentAccount } from '@anticrm/login'
+import login from '@anticrm/login'
 import pluginCore from '@anticrm/plugin-core'
 import meetingPlugin from '@anticrm/meeting'
 
@@ -43,10 +43,5 @@ addEventListener('Token', async (event, data) => {
   await attachmentPlugin.authorize(data)
   setMetadata(meetingPlugin.metadata.Token, data)
 })
-
-const loginInfo = currentAccount()
-if (loginInfo !== undefined) {
-  void broadcastEvent('Token', loginInfo.token)
-}
 
 createApp(document.body)
