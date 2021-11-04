@@ -17,12 +17,12 @@
   import { Label } from '@anticrm/ui'
   import { getStatusColor } from '../plugin'
 
-  export let title: IntlString
-  $: color = getStatusColor(title)
+  export let value: IntlString
+  $: color = getStatusColor(value)
 </script>
 
 <div class="taskstatus-container" style="background-color: {color}">
-  <Label label={title} />
+  <Label label={value} />
 </div>
 
 <style lang="scss">

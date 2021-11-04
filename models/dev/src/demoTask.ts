@@ -25,7 +25,7 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
     {
       name: 'PL-DEMO',
       description: 'Demo Task project',
-      members: members,
+      members: [core.account.System, ...faker.random.arrayElements(members)],
       private: false
     },
     demoIds.project.DemoProject,

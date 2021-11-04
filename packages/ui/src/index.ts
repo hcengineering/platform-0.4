@@ -19,6 +19,7 @@ import Root from './components/internal/Root.svelte'
 import type { IntlString } from '@anticrm/platform'
 import { writable } from 'svelte/store'
 import type { LabelAndProps, TooltipAligment, PopupAlignment } from './types'
+import { DeferredPromise } from '@anticrm/core'
 
 export * from './types'
 export { applicationShortcutKey, defaultApplicationShortcutKey } from './utils'
@@ -50,6 +51,7 @@ export { default as SelectBox } from './components/SelectBox.svelte'
 export { default as SelectItem } from './components/SelectItem.svelte'
 export { default as UserInfo } from './components/UserInfo.svelte'
 export { default as UserBox } from './components/UserBox.svelte'
+export { default as UserBoxPopup } from './components/popups/UserBoxPopup.svelte'
 export { default as TextArea } from './components/TextArea.svelte'
 export { default as CompletionPopup } from './components/CompletionPopup.svelte'
 export { default as Table } from './components/Table.svelte'
@@ -101,25 +103,29 @@ interface CompAndProps {
   props: any
   element?: PopupAlignment
   onClose?: (result: any) => void
+  hidePromise: DeferredPromise<void>
 }
 
 export const popupstore = writable<CompAndProps[]>([])
 
-export function showPopup (
+export async function showPopup (
   component: UIComponent,
   props: any,
   element?: PopupAlignment,
   onClose?: (result: any) => void
-): void {
+): Promise<void> {
+  const p = new DeferredPromise<void>()
   popupstore.update((popups) => {
-    popups.push({ is: component, props, element, onClose })
+    popups.push({ is: component, props, element, onClose, hidePromise: p })
     return popups
   })
+  return await p.promise
 }
 
 export function closePopup (): void {
   popupstore.update((popups) => {
-    popups.pop()
+    const pp = popups.pop()
+    pp?.hidePromise.resolve()
     return popups
   })
 }

@@ -26,6 +26,8 @@ import CreateProject from './components/CreateProject.svelte'
 
 import TaskPreview from './components/presenters/TaskPreview.svelte'
 
+import ProjectProperties from './components/ProjectProperties.svelte'
+
 export default async (): Promise<TaskService> => {
   setResource(task.component.CreateProject, CreateProject)
   setResource(task.component.ProjectView, ProjectView)
@@ -33,8 +35,8 @@ export default async (): Promise<TaskService> => {
   setResource(task.component.FavoriteView, FavoriteView)
   setResource(task.component.CreateTask, CreateTask)
   setResource(task.component.EditTask, EditTask)
-
   setResource(task.component.TaskPreview, TaskPreview)
+  setResource(task.component.ProjectProperties, ProjectProperties)
 
   return {}
 }

@@ -4,7 +4,7 @@
     "ProjectName": "Project name",
     "ProjectDescription": "Project description",
     "MakePrivate": "Make private",
-    "MakePrivateDescription": "Make project private",
+    "MakePrivateDescription": "Only members can see it",
     "TaskName": "Task name",
     "TaskID": "ID",
     "TaskDescription": "Task description",
@@ -16,7 +16,7 @@
     "Progress": "Progress",
     "AddCheckItem": "Add check item",
     "CheckItems": "Check items",
-    "ProjectMembers": "Project members",
+    "ProjectMembers": "Members",
     "GeneralInformation": "General Information",
     "IviteMember": "Ivite a member",
     "General": "General",
@@ -32,6 +32,7 @@
     "Favorite": "Favorite",
     "MyTasks": "My tasks",
     "PleaseSelectSpace": "Space selection is required.",
-    "References": "References"
+    "References": "References",
+    "Activity": "Activity"
   }
 }

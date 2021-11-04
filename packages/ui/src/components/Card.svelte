@@ -150,8 +150,8 @@
       right: 0;
       background-color: var(--theme-card-bg);
       border-radius: 20px;
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(120px);
+      backdrop-filter: blur(120px);
       box-shadow: var(--theme-card-shadow);
       z-index: -1;
     }

@@ -20,7 +20,8 @@ import { applicationShortcutKey, defaultApplicationShortcutKey } from '@anticrm/
 const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-eslint/no-var-requires
 loadMetadata(workbench.icon, {
   Hashtag: `${icons}#hashtag`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
-  Lock: `${icons}#lock` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Lock: `${icons}#lock`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Members: `${icons}#members` // eslint-disable-line @typescript-eslint/restrict-template-expressions
 })
 
 addStringsLoader(workbench.id, async (lang: string) => {

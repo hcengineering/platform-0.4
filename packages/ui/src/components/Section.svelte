@@ -14,12 +14,13 @@
 -->
 <script lang="ts">
   import { IntlString } from '@anticrm/platform'
-  import type { UIComponent } from '@anticrm/status'
+  import type { Asset, UIComponent } from '@anticrm/status'
   import Label from './Label.svelte'
   import ArrowUp from './icons/Up.svelte'
   import ArrowDown from './icons/Down.svelte'
+  import Icon from './Icon.svelte'
 
-  export let icon: UIComponent
+  export let icon: UIComponent | Asset
   export let label: IntlString
   export let closed: boolean = false
 </script>
@@ -30,7 +31,7 @@
     closed = !closed
   }}
 >
-  <svelte:component this={icon} size={20} />
+  <Icon {icon} size={20} />
   <div class="title"><Label {label} /></div>
   <div class="arrow">
     {#if closed}<ArrowUp />{:else}<ArrowDown />{/if}

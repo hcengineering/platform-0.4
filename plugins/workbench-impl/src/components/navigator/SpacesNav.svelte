@@ -14,21 +14,20 @@
 -->
 <script lang="ts">
   import { Doc, Ref, Space, Timestamp } from '@anticrm/core'
+  import type { ObjectSubscribeUpdater, SpaceLastViews, SpaceSubscribeUpdater } from '@anticrm/notification'
+  import { NotificationHandler } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Action } from '@anticrm/ui'
-  import { IconAdd } from '@anticrm/ui'
-  import { getRouter, showPopup } from '@anticrm/ui'
+  import { getRouter, IconAdd, showPopup } from '@anticrm/ui'
   import type { SpacesNavModel, WorkbenchRoute } from '@anticrm/workbench'
   import { getClient } from '@anticrm/workbench'
+  import { getContext, onDestroy } from 'svelte'
+  import { Writable } from 'svelte/store'
   import workbench from '../../plugin'
   import MoreH from '../icons/MoreH.svelte'
   import { buildUserSpace } from '../utils/space.utils'
   import TreeItem from './TreeItem.svelte'
   import TreeNode from './TreeNode.svelte'
-  import { NotificationHandler } from '@anticrm/notification'
-  import type { SpaceLastViews, SpaceSubscribeUpdater, ObjectSubscribeUpdater } from '@anticrm/notification'
-  import { getContext, onDestroy } from 'svelte'
-  import { Writable } from 'svelte/store'
 
   export let model: SpacesNavModel
   const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
@@ -99,7 +98,7 @@
         label: model.addSpaceLabel,
         icon: IconAdd,
         action: async (ev?: Event): Promise<void> => {
-          showPopup(create, {}, ev?.currentTarget as HTMLElement)
+          return showPopup(create, {}, ev?.currentTarget as HTMLElement)
         }
       })
     }
@@ -107,7 +106,7 @@
       label: model.label,
       icon: MoreH,
       action: async (): Promise<void> => {
-        showPopup(
+        return showPopup(
           workbench.component.Spaces,
           {
             _class: model.spaceClass,
@@ -118,6 +117,29 @@
         )
       }
     })
+    return result
+  }
+
+  function spaceActions (model: SpacesNavModel, space: Space): Action[] {
+    const result: Action[] = []
+
+    if (model.spaceMore !== undefined) {
+      const view = model.spaceMore
+      result.push({
+        label: workbench.string.Options,
+        icon: MoreH,
+        action: async (ev): Promise<void> => {
+          return showPopup(
+            view,
+            {
+              _class: model.spaceClass,
+              space
+            },
+            'right' // ev?.currentTarget as HTMLElement
+          )
+        }
+      })
+    }
     return result
   }
 
@@ -167,6 +189,7 @@
         <TreeItem
           notifications={hasNotification(space._id, $spacesLastViews)}
           changed={changed(space._id, $spacesLastViews, spacesLastModified, itemsLastModifieds)}
+          actions={spaceActions(model, space)}
           component={model.spaceItem}
           props={{ space: space }}
           title={space.name}

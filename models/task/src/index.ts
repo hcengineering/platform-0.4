@@ -75,7 +75,7 @@ export function createModel (builder: Builder): void {
         spaces: [
           {
             label: task.string.Projects,
-            spaceIcon: task.icon.Task,
+            spaceIcon: task.icon.Project,
             spaceClass: task.class.Project,
             addSpaceLabel: task.string.CreateProject,
             createComponent: task.component.CreateProject,
@@ -87,7 +87,8 @@ export function createModel (builder: Builder): void {
               spaceClass: task.class.Task,
               itemByIdClass: task.class.Task,
               itemByIdField: 'lastModified'
-            }
+            },
+            spaceMore: task.component.ProjectProperties
           }
         ],
         spaceView: task.component.ProjectView

@@ -66,8 +66,6 @@ export class ClientImpl extends TxProcessor implements Client {
     for (let tx of txes) {
       tx = await sidID(tx)
       await transactions.tx(tx)
-    }
-    for (const tx of txes) {
       await model.tx(tx)
     }
 

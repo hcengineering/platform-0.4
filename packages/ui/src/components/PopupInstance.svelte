@@ -16,7 +16,7 @@
 <script lang="ts">
   import { afterUpdate, onMount } from 'svelte'
   import Component from './Component.svelte'
-  import type { UIComponent } from '@anticrm/status'
+  import type { AnyComponent, UIComponent } from '@anticrm/status'
   import type { PopupAlignment } from '../types'
   import { closePopup } from '..'
 
@@ -93,12 +93,22 @@
       resizeObserver.observe(modalHTML)
     }
   })
+  function toComponent (is: UIComponent): AnyComponent {
+    return is as AnyComponent
+  }
 </script>
 
-<svelte:window on:resize={fitPopup} />
+<svelte:window
+  on:resize={fitPopup}
+  on:keydown={(e) => {
+    if (e.key === 'Escape') {
+      close(undefined)
+    }
+  }}
+/>
 <div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
   {#if typeof is === 'string'}
-    <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
+    <Component is={toComponent(is)} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
   {:else}
     <svelte:component this={is} {...props} {maxHeight} on:close={(ev) => close(ev.detail)} />
   {/if}

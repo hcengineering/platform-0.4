@@ -41,6 +41,8 @@
   }
 
   const dispatch = createEventDispatcher()
+  let mouseOver = false
+  let noOver = false
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -49,9 +51,18 @@
   class:topic_container={topic}
   class:sub={!node}
   class:changed
+  class:mouseOver
   on:click|stopPropagation={() => {
     if (node && !icon) collapsed = !collapsed
     dispatch('click')
+  }}
+  on:mouseover={() => {
+    mouseOver = true
+  }}
+  on:mouseleave={() => {
+    if (!noOver) {
+      mouseOver = false
+    }
   }}
 >
   {#if component}
@@ -77,8 +88,20 @@
     </span>
   {/if}
   {#each actions as action}
-    <div class="tool">
-      <ActionIcon label={action.label} icon={action.icon} size={16} padding={4} action={action.action} />
+    <div class:tool_mouseOver={mouseOver} class="tool">
+      <ActionIcon
+        label={action.label}
+        icon={action.icon}
+        size={16}
+        padding={4}
+        action={(ev) => {
+          noOver = true
+          action.action(ev).then(() => {
+            mouseOver = false
+            noOver = false
+          })
+        }}
+      />
     </div>
   {/each}
   {#if notifications > 0 && collapsed}
@@ -92,6 +115,9 @@
 {/if}
 
 <style lang="scss">
+  .mouseOver {
+    background-color: var(--theme-button-bg-enabled);
+  }
   .container {
     margin: 0 16px;
     padding-left: 10px;
@@ -156,11 +182,8 @@
       line-height: 100%;
     }
 
-    &:hover {
-      background-color: var(--theme-button-bg-enabled);
-      .tool {
-        visibility: visible;
-      }
+    .tool_mouseOver {
+      visibility: visible;
     }
   }
 

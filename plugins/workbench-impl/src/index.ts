@@ -19,6 +19,8 @@ import Spaces from './components/Spaces.svelte'
 import WorkbenchApp from './components/WorkbenchApp.svelte'
 import workbench from './plugin'
 
+import MembersSection from './components/MembersSection.svelte'
+
 /*!
  * Anticrm Platform™ Workbench Plugin
  * © 2020 Anticrm Platform Contributors. All Rights Reserved.
@@ -27,6 +29,7 @@ import workbench from './plugin'
 export default async (): Promise<WorkbenchService> => {
   setResource(workbench.component.WorkbenchApp, WorkbenchApp)
   setResource(workbench.component.Spaces, Spaces)
+  setResource(workbench.component.MembersSection, MembersSection)
 
   return {}
 }

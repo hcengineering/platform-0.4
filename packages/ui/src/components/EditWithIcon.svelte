@@ -26,11 +26,7 @@
 <div class="editbox" style={width ? 'width: ' + width : ''}>
   <input type="text" {id} bind:value {placeholder} on:change on:keyup on:blur on:focus />
   <div class="icon">
-    {#if typeof icon === 'string'}
-      <Icon {icon} size={16} />
-    {:else}
-      <svelte:component this={icon} size={16} />
-    {/if}
+    <Icon {icon} size={16} />
   </div>
 </div>
 

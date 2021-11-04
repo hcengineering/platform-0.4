@@ -215,7 +215,8 @@
       "enableParallelism": true,
       "incremental": true,
       "ignoreMissingScript": true,
-      "watchForChanges": true
+      "watchForChanges": true,
+      "safeForSimultaneousRushProcesses": true
     },
   ],
 

@@ -32,11 +32,7 @@
 <Tooltip {label} {direction}>
   <button class="button" style="padding: {padding}px" on:click|stopPropagation={action}>
     <div class="icon" style="width: {size}px; height: {size}px;" class:invisible>
-      {#if typeof icon === 'string'}
-        <Icon {icon} {size} />
-      {:else}
-        <svelte:component this={icon} {size} {filled} />
-      {/if}
+      <Icon {icon} {size} {filled} />
     </div>
   </button>
 </Tooltip>

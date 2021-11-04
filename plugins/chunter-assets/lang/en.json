@@ -30,6 +30,9 @@
     "MoreReplies": "Show {replies} more replies",
     "ChannelPin": "Pin to channel",
     "ChannelUnPin": "Un-Pin from channel",
-    "Pinned": "Pinned"
+    "Pinned": "Pinned",
+    "General": "General",
+    "ChannelMembers": "Members",
+    "Activity": "Activity"
   }
 }

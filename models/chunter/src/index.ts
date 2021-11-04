@@ -141,7 +141,8 @@ export function createModel (builder: Builder): void {
               spaceClass: chunter.class.Message,
               itemByIdClass: chunter.class.Message,
               itemByIdField: 'lastModified'
-            }
+            },
+            spaceMore: chunter.component.ChannelProperties
           },
           {
             label: chunter.string.Channels,
@@ -156,7 +157,8 @@ export function createModel (builder: Builder): void {
               spaceClass: chunter.class.Message,
               itemByIdClass: chunter.class.Message,
               itemByIdField: 'lastModified'
-            }
+            },
+            spaceMore: chunter.component.ChannelProperties
           },
           directMessagesModel
         ],

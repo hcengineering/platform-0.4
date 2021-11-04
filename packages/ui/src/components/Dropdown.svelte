@@ -59,11 +59,7 @@
   {#if label}<div class="label"><Label {label} /></div>{/if}
   <div class="flex-row-center">
     <div class="icon {!selectedItem?.label || isNull ? 'content-trans-color' : 'caption-color'}">
-      {#if typeof icon === 'string'}
-        <Icon {icon} size={16} fill={'currentColor'} />
-      {:else}
-        <svelte:component this={icon} size={16} fill={'currentColor'} />
-      {/if}
+      <Icon {icon} size={16} fill={'currentColor'} />
     </div>
     <div class={!selectedItem?.label || isNull ? 'content-trans-color' : 'caption-color'}>
       {#if selectedItem?.label !== undefined}
