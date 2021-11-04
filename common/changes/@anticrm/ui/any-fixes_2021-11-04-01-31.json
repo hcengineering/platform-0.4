@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Update Table, CheckBox, backdrop-filter.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
