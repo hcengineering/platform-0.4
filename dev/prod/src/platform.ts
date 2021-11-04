@@ -14,8 +14,9 @@
 //
 
 import { addLocation } from '@anticrm/platform'
+import { OK } from '@anticrm/status'
 
-import login from '@anticrm/login'
+import login, { LoginService } from '@anticrm/login'
 import workbench from '@anticrm/workbench'
 import core from '@anticrm/plugin-core'
 import action from '@anticrm/action-plugin'
@@ -45,13 +46,28 @@ export function configurePlatform (): void {
       attachment,
       async () => await import(/* webpackChunkName: "attachment-dev" */ '@anticrm/attachment-dev')
     )
+    addLocation(login, async () => {
+      return await Promise.resolve({
+        default: async () => {
+          const service: LoginService = {
+            doLogin: async () => OK,
+            doSignup: async () => OK,
+            doVerify: async () => OK,
+            getLoginInfo: async () => await Promise.resolve(undefined),
+            saveSetting: async () => OK,
+            doLogout: async () => OK
+          }
+          return await Promise.resolve(service)
+        }
+      })
+    })
   } else {
     console.info('use server DB')
     addLocation(core, async () => await import(/* webpackChunkName: "plugin-core" */ '@anticrm/plugin-core-impl'))
     addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
+    addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
   }
 
-  addLocation(login, async () => await import(/* webpackChunkName: "login" */ '@anticrm/login-impl'))
   addLocation(workbench, async () => await import(/* webpackChunkName: "workbench" */ '@anticrm/workbench-impl'))
   addLocation(chunter, async () => await import(/* webpackChunkName: "chunter" */ '@anticrm/chunter-impl'))
   addLocation(task, async () => await import(/* webpackChunkName: "task" */ '@anticrm/task-impl'))
