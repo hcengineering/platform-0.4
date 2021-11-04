@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/workbench-impl",
+      "comment": "Fix dev login issue",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl"
+}

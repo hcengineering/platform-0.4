@@ -48,7 +48,9 @@
 </script>
 
 {#await clientPromise}
-  <Spinner />
+  <div class="middle">
+    <Spinner />
+  </div>
 {:then client}
   <Workbench {client} on:logout={doLogout} />
 {:catch}
@@ -59,3 +61,11 @@
     }}
   />
 {/await}
+
+<style lang="scss">
+  .middle {
+    position: fixed;
+    left: calc(100% / 2 - 14px);
+    top: calc(100% / 2 - 14px);
+  }
+</style>
