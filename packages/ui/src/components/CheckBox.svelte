@@ -23,14 +23,20 @@
   $: dispatch('change', checked)
 </script>
 
-<label class="checkbox" on:click={(ev) => { ev.stopPropagation(); checked = !checked }}>
+<label
+  class="checkbox"
+  on:click={(ev) => {
+    ev.stopPropagation()
+    checked = !checked
+  }}
+>
   <input class="chBox" type="checkbox" bind:checked disabled={!editable} />
   <svg class="checkSVG" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
     <path class="back" d="M4,0h8c2.2,0,4,1.8,4,4v8c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V4C0,1.8,1.8,0,4,0z" />
     {#if symbol === 'minus'}
-      <rect class="check" x="4" y="7.4" width="8" height="1.2"/>
+      <rect class="check" x="4" y="7.4" width="8" height="1.2" />
     {:else}
-      <polygon class="check" points="7.3,11.5 4,8.3 5,7.4 7.3,9.7 11.8,5.1 12.7,6.1 "/>
+      <polygon class="check" points="7.3,11.5 4,8.3 5,7.4 7.3,9.7 11.8,5.1 12.7,6.1 " />
     {/if}
     <path
       class="border"

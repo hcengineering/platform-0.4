@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { IntlString, UIComponent } from '@anticrm/status'
@@ -93,7 +92,12 @@
     <div class="rows">
       <VirtualList bind:this={list} itemCount={data.length} let:items getItemSize={() => 60}>
         {#each items as item (data[item.index]._id)}
-          <div class="row" class:checked style={sty(item.style)} on:click={() => dispatch('rowClick', data[item.index])}>
+          <div
+            class="row"
+            class:checked
+            style={sty(item.style)}
+            on:click={() => dispatch('rowClick', data[item.index])}
+          >
             {#each docToRow(data[item.index]) as cell, i}
               <div class="cell dotted-text" style={widthSty(cell)}>
                 {#if i === 0}
@@ -168,7 +172,9 @@
     &.checked .cell:first-child {
       padding-left: 16px;
       padding-right: 48px;
-      .checkbox { display: block; }
+      .checkbox {
+        display: block;
+      }
     }
   }
 
@@ -176,7 +182,7 @@
     display: none;
     margin-right: 32px;
   }
-   
+
   .rowMenu {
     display: none;
     .menuBtn {
@@ -184,7 +190,9 @@
       margin: 0 8px;
       color: var(--theme-content-accent-color);
       cursor: pointer;
-      &:hover { color: var(--theme-caption-color); }
+      &:hover {
+        color: var(--theme-caption-color);
+      }
     }
   }
 
@@ -203,7 +211,9 @@
         padding-right: 48px;
         .rowMenu {
           display: flex;
-          .menuBtn { visibility: visible; }
+          .menuBtn {
+            visibility: visible;
+          }
         }
       }
     }
@@ -211,7 +221,9 @@
     &.checked .cell:first-child {
       padding-left: 16px;
       padding-right: 48px;
-      .rowMenu { display: flex; }
+      .rowMenu {
+        display: flex;
+      }
     }
   }
 </style>
