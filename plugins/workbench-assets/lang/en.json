@@ -2,6 +2,9 @@
   "string": {
     "Profile": "Profile",
     "Logout": "Logout",
-    "More": "More..."
+    "More": "More...",
+    "Options": "Options",
+    "Members": "Members",
+    "InviteMember": "Invite a member"
   }
 }

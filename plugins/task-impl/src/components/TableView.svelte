@@ -37,7 +37,7 @@
     { label: task.string.TaskName, properties: [{ key: 'name', property: 'label' }], component: Label },
     {
       label: task.string.Status,
-      properties: [{ key: 'status', property: 'title' }],
+      properties: [{ key: 'status', property: 'value' }],
       component: TaskStatus,
       width: 150
     },

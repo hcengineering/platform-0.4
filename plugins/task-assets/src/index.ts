@@ -19,7 +19,8 @@ import task from '@anticrm/task'
 const icons = require('../assets/icons.svg') // eslint-disable-line @typescript-eslint/no-var-requires
 loadMetadata(task.icon, {
   Task: `${icons}#task`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
-  Star: `${icons}#star` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Star: `${icons}#star`, // eslint-disable-line @typescript-eslint/restrict-template-expressions
+  Project: `${icons}#project` // eslint-disable-line @typescript-eslint/restrict-template-expressions
 })
 
 addStringsLoader(task.id, async (lang: string) => {

@@ -96,6 +96,7 @@
 </script>
 
 <svelte:window on:mouseup={waitClick} on:resize={startScroll} />
+
 <div class="popup-menu">
   <div
     bind:this={trigger}

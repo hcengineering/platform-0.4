@@ -33,7 +33,9 @@ export default mergeIds(task, {
     TaskPreview: '' as AnyComponent,
 
     // An one line reference to be shown during editing, should allow to select different task
-    TaskRefView: '' as AnyComponent
+    TaskRefView: '' as AnyComponent,
+
+    ProjectProperties: '' as AnyComponent
   },
   ids: {
     Application: '' as Ref<Application>

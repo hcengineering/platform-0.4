@@ -14,45 +14,45 @@
 -->
 <script lang="ts">
   import type { IntlString } from '@anticrm/status'
-  import { showPopup } from '@anticrm/ui'
+  import { TaskStatuses } from '@anticrm/task'
+  import { PopupItem } from '@anticrm/ui'
   import { createEventDispatcher } from 'svelte'
-  import StatusPickerPopup from './StatusPickerPopup.svelte'
   import TaskStatus from './TaskStatus.svelte'
 
   export let selected: IntlString
+  export let maxHeight: number = 0
   const dispatch = createEventDispatcher()
-  let btn: HTMLElement | undefined
+
+  const items = Object.entries(TaskStatuses).map(([k, v]) => v)
 </script>
 
-<div class="statusPicker">
-  <div
-    bind:this={btn}
-    class="selected"
-    on:click|preventDefault={(event) => {
-      console.log('pressed, pressed')
-      showPopup(StatusPickerPopup, { selected }, btn, (result) => {
-        // undefined passed when closed without changes, null passed when unselect
-        if (result !== undefined && result !== selected) {
-          selected = result
-          dispatch('change', selected)
-        }
-      })
-      event.stopPropagation()
-    }}
-  >
-    <TaskStatus value={selected} />
-  </div>
+<div class="status-popup" style="max-height: {maxHeight ? maxHeight + 'px' : 'max-content'}">
+  {#each items as item}
+    <PopupItem
+      component={TaskStatus}
+      props={{ value: item }}
+      selectable
+      action={() => {
+        selected = item
+
+        dispatch('close', selected)
+      }}
+    />
+  {/each}
 </div>
 
 <style lang="scss">
-  .statusPicker {
+  .status-popup {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: auto;
-
-    .selected {
-      font-size: 14px;
-    }
+    flex-direction: column;
+    margin-right: 7px;
+    padding: 8px 1px 12px 8px;
+    height: min-content;
+    background-color: var(--theme-popup-bg);
+    border: var(--theme-popup-border);
+    border-radius: 20px;
+    box-shadow: var(--theme-popup-shadow);
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
   }
 </style>

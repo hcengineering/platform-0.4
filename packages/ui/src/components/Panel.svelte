@@ -44,11 +44,7 @@
     <div class="leftSection">
       <div class="flex-row-center header">
         <div class="icon">
-          {#if typeof icon === 'string'}
-            <Icon {icon} size={16} />
-          {:else}
-            <svelte:component this={icon} size={16} />
-          {/if}
+          <Icon {icon} size={16} />
         </div>
         <div class="title">{title}</div>
       </div>
@@ -75,11 +71,7 @@
     <div class="unionSection">
       <div class="flex-row-center header">
         <div class="icon">
-          {#if typeof icon === 'string'}
-            <Icon {icon} size={16} />
-          {:else}
-            <svelte:component this={icon} size={16} />
-          {/if}
+          <Icon {icon} size={16} />
         </div>
         <div class="title">{title}</div>
       </div>

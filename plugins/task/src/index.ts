@@ -50,7 +50,8 @@ const task = plugin(
   {
     icon: {
       Task: '' as Asset,
-      Star: '' as Asset
+      Star: '' as Asset,
+      Project: '' as Asset
     },
     class: {
       Project: '' as Ref<Class<Project>>,
@@ -88,7 +89,8 @@ const task = plugin(
       Closed: '' as IntlString,
       Favorite: '' as IntlString,
       MyTasks: '' as IntlString,
-      References: '' as IntlString
+      References: '' as IntlString,
+      Activity: '' as IntlString
     }
   }
 )

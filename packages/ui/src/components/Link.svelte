@@ -33,11 +33,7 @@
 <span class="container" class:transparent class:disabled on:click>
   {#if icon}
     <span class="flex-center icon">
-      {#if typeof icon === 'string'}
-        <Icon {icon} size={16} />
-      {:else}
-        <svelte:component this={icon} size={16} />
-      {/if}
+      <Icon {icon} size={16} />
     </span>
   {/if}
   {#if disabled}

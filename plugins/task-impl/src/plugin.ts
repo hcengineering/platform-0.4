@@ -40,7 +40,8 @@ export default mergeIds(task, {
     EditTask: '' as AnyComponent,
 
     TaskPreview: '' as AnyComponent,
-    TaskRefView: '' as AnyComponent
+    TaskRefView: '' as AnyComponent,
+    ProjectProperties: '' as AnyComponent
   },
   string: {
     PleaseSelectSpace: '' as IntlString

@@ -13,17 +13,29 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Asset } from '@anticrm/status'
+  import type { Asset, UIComponent } from '@anticrm/status'
   import { getMetadata } from '@anticrm/platform'
 
-  export let icon: Asset
+  export let icon: Asset | UIComponent
   export let size: 12 | 16 | 20 | 24 | 28
   export let fill = 'currentColor'
 
+  function isAsset (icon: Asset | UIComponent): boolean {
+    return typeof icon === 'string'
+  }
+
+  function toAsset (icon: UIComponent | Asset): Asset {
+    return icon as Asset
+  }
+
   let url: string
-  $: url = getMetadata(icon) ?? 'https://anticrm.org/logo.svg'
+  $: url = isAsset(icon) ? getMetadata(toAsset(icon)) ?? 'https://anticrm.org/logo.svg' : ''
 </script>
 
-<svg width={size} height={size} {fill}>
-  <use href={url} />
-</svg>
+{#if isAsset(icon)}
+  <svg width={size} height={size} {fill}>
+    <use href={url} />
+  </svg>
+{:else}
+  <svelte:component this={icon} {size} filled={fill} />
+{/if}

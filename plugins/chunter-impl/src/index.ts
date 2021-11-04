@@ -35,6 +35,8 @@ import MessageView from './components/MessageView.svelte'
 import AllThreadsView from './components/AllThreadsView.svelte'
 import BookmarksView from './components/BookmarksView.svelte'
 
+import ChannelProperties from './components/ChannelProperties.svelte'
+
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
   setResource(chunter.component.CreateMessage, CreateDirectMessage)
@@ -54,6 +56,8 @@ export default async (): Promise<ChunterService> => {
 
   setResource(chunter.component.AllThreadsView, AllThreadsView)
   setResource(chunter.component.BookmarksItemsView, BookmarksView)
+
+  setResource(chunter.component.ChannelProperties, ChannelProperties)
 
   return {}
 }

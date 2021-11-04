@@ -23,6 +23,7 @@ import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
 import { isDerivedDataTx } from './derived/index'
 import { measure } from '.'
+import copy from 'fast-copy'
 
 /**
  * @public
@@ -99,7 +100,7 @@ export class MemDb extends TxProcessor implements Storage {
     ) {
       result = this.getByIdQuery(query, _class)
     } else {
-      result = this.getObjectsByClass(_class)
+      result = copy(this.getObjectsByClass(_class))
     }
 
     for (const key in query) {

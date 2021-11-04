@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Chunter/Task project details",
+      "type": "patch",
+      "packageName": "@anticrm/workbench-impl"
+    }
+  ],
+  "packageName": "@anticrm/workbench-impl",
+  "email": "haiodo@gmail.com"
+}

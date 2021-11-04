@@ -49,14 +49,16 @@
     align-items: stretch;
     flex-wrap: nowrap;
     width: 100%;
-    height: 54px;
-    min-height: 54px;
-    border-bottom: 1px solid var(--theme-menu-divider);
+    height: 74px;
+    min-height: 74px;
+    border-bottom: 1px solid var(--theme-dialog-divider);
+    margin-bottom: 40px;
 
     .tab {
       display: flex;
       align-items: center;
-      height: 54px;
+      margin-top: 28px;
+      padding-bottom: 28px;
       color: var(--theme-content-trans-color);
       cursor: pointer;
       user-select: none;

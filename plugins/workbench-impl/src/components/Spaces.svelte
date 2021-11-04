@@ -51,7 +51,9 @@
 </script>
 
 <Dialog {label} okLabel={ui.string.Close} okAction={() => {}} withCancel={false} on:close>
-  <EditBox label={ui.string.Search} bind:value={search} />
+  <svelte:fragment slot="actions">
+    <EditBox label={ui.string.Search} bind:value={search} />
+  </svelte:fragment>
   <table class="table-body">
     {#each spaces as space (space._id)}
       <tr class="tr-body">

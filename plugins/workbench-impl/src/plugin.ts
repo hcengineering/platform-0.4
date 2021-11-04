@@ -21,7 +21,8 @@ export default mergeIds(workbench, {
   component: {
     Spaces: '' as AnyComponent
   },
-  strings: {
-    More: '' as IntlString
+  string: {
+    More: '' as IntlString,
+    Options: '' as IntlString
   }
 })

@@ -9,7 +9,7 @@
   "scripts": {
     "build": "node ./esbuild",
     "build:clean": "rm -rf ./lib && node ./esbuild",
-    "fast-build": "node ./esbuild",
+    "fast-build": "rm -rf ./lib && node ./esbuild",
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
@@ -52,6 +52,7 @@
     "@anticrm/task":"~0.4.0",
     "@anticrm/workbench":"~0.4.0",
     "@anticrm/chunter":"~0.4.0",
+    "@anticrm/calendar":"~0.4.0",
     "@anticrm/richeditor":"~0.4.0",
     "@anticrm/text":"~0.4.0",
     "@anticrm/presentation":"~0.4.0",

@@ -17,6 +17,7 @@
   import type { Asset } from '@anticrm/status'
   import { createEventDispatcher } from 'svelte'
   import type { AnyComponent } from '@anticrm/status'
+  import { Action } from '@anticrm/ui'
 
   export let component: AnyComponent | undefined = undefined
   export let props: any | undefined
@@ -24,6 +25,7 @@
   export let title: string
   export let notifications = 0
   export let changed: boolean
+  export let actions: Action[] = []
 
   const dispatch = createEventDispatcher()
 </script>
@@ -33,6 +35,7 @@
   {props}
   {icon}
   {title}
+  {actions}
   {notifications}
   {changed}
   collapsed

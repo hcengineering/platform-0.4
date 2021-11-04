@@ -13,4 +13,9 @@
     />
   </symbol>
 
+  <symbol id="project" viewBox="0 0 20 20" fill='none'>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M16.9796 12.6276C16.9796 15.0397 15.4415 16.4615 12.8322 16.4615H7.1569C4.54097 16.4615 3 15.0397 3 12.6276V7.36908C3 4.96028 3.95827 3.53847 6.56837 3.53847H8.02693C8.55055 3.53914 9.04355 3.76634 9.35714 4.15398L10.023 4.97242C10.338 5.35939 10.831 5.58726 11.3546 5.58793H13.4185C16.0344 5.58793 17 6.81896 17 9.28033L16.9796 12.6276Z" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.51172 11.916H13.2738" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
 </svg>

@@ -55,8 +55,11 @@ export interface SpacesNavModel<T extends Space = Space> {
     itemByIdClass?: Ref<Class<Doc>>
     itemByIdField?: string
   }
-  // TODO: This one and `createComponent` item should be refacgored to list of actions for item.
+  // TODO: This one and `createComponent` item should be refactored to list of actions for item.
   showActions?: boolean // Show or not actions for specified nav model item.
+
+  // If defined, will show tool and show following popup.
+  spaceMore?: AnyComponent
 }
 
 /**
@@ -101,14 +104,18 @@ const workbench = plugin(
     },
     string: {
       Logout: '' as IntlString,
-      Profile: '' as IntlString
+      Profile: '' as IntlString,
+      Members: '' as IntlString,
+      InviteMember: '' as IntlString
     },
     icon: {
       Hashtag: '' as Asset,
-      Lock: '' as Asset
+      Lock: '' as Asset,
+      Members: '' as Asset
     },
     component: {
-      WorkbenchApp: '' as AnyComponent
+      WorkbenchApp: '' as AnyComponent,
+      MembersSection: '' as AnyComponent
     }
   }
 )
