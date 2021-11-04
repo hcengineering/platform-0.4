@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm-impl",
+      "comment": "Add FSM rank",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/fsm-impl"
+}

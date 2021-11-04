@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import { LexoRank } from 'lexorank'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import type { Class, Doc, Domain, Ref } from '@anticrm/core'
 import type { FSM, FSMItem, State, Transition, WithFSM } from '@anticrm/fsm'
@@ -31,7 +32,6 @@ export class TFSM extends TDoc implements FSM {
   name!: string
   clazz!: Ref<Class<Doc>>
   isTemplate!: boolean
-  states!: Ref<State>[]
 }
 
 /**
@@ -43,6 +43,7 @@ export class TFSMItem extends TDoc implements FSMItem {
   state!: Ref<State>
   item!: Ref<Doc>
   clazz!: Ref<Class<Doc>>
+  rank!: string
 }
 
 /**
@@ -55,7 +56,7 @@ export class TState extends TDoc implements State {
   fsm!: Ref<FSM>
   optionalActions!: Ref<Action>[]
   requiredActions!: Ref<Action>[]
-  items!: Ref<FSMItem>[]
+  rank!: string
 }
 
 /**
@@ -86,7 +87,7 @@ export function createModel (builder: Builder): void {
 /**
  * @public
  */
-export type PureState = Omit<State, keyof Doc | 'fsm' | 'color' | 'items'> & {
+export type PureState = Omit<State, keyof Doc | 'fsm' | 'color' | 'rank'> & {
   color?: string
 }
 
@@ -159,12 +160,12 @@ export class FSMBuilder {
       {
         name: this.name,
         clazz: this.clazz,
-        isTemplate: true,
-        states: [...stateIDs.values()]
+        isTemplate: true
       },
       this.fsmId
     )
 
+    let rank = LexoRank.middle()
     this.states.forEach((state, key) => {
       const color = state.color ?? this.genColor.next().value
       S.createDoc(
@@ -173,10 +174,11 @@ export class FSMBuilder {
           ...state,
           color,
           fsm: this.fsmId,
-          items: []
+          rank: rank.toString()
         },
         stateIDs.get(key) ?? ('' as Ref<State>)
       )
+      rank = rank.between(LexoRank.max())
     })
 
     const transitions: Array<Ref<Transition>> = []

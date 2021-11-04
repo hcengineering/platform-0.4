@@ -22,7 +22,6 @@ export interface FSM extends Doc {
   name: string
   clazz: Ref<Class<Doc>>
   isTemplate: boolean
-  states: Array<Ref<State>>
 }
 
 export interface Transition extends Doc {
@@ -40,6 +39,7 @@ export interface FSMItem extends Doc {
   state: Ref<State>
   item: Ref<Doc>
   clazz: Ref<Class<Doc>>
+  rank: string
 }
 
 export interface State extends Doc {
@@ -48,7 +48,7 @@ export interface State extends Doc {
   fsm: Ref<FSM>
   requiredActions: Array<Ref<Action>>
   optionalActions: Array<Ref<Action>>
-  items: Array<Ref<FSMItem>>
+  rank: string
 }
 
 export interface FSMService extends Service {
@@ -57,20 +57,24 @@ export interface FSMService extends Service {
 
   addItem: <T extends FSMItem>(fsmOwner: WithFSM, item: {
     _class?: Ref<Class<T>>
-    obj: Omit<T, keyof Doc | 'state' | 'fsm'> & {state?: Ref<State>}
+    obj: Omit<T, keyof Doc | 'state' | 'fsm' | 'rank'> & {state?: Ref<State>}
   }) => Promise<FSMItem | undefined>
   moveItem: (
     item: FSMItem,
-    transition: {
-      prev: Ref<State>
-      actual: Ref<State>
-    },
-    idx: number
+    state: Ref<State>,
+    place: {
+      prev?: FSMItem
+      next?: FSMItem
+    }
   ) => Promise<void>
 
   addState: (
-    state: Data<State>
+    state: Omit<Data<State>, 'rank'>
   ) => Promise<State>
+  moveState: (
+    state: State,
+    place: { prev?: State, next?: State }
+  ) => Promise<void>
   removeState: (
     state: State
   ) => Promise<void>

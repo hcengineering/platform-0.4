@@ -18,6 +18,7 @@ import { State } from '@anticrm/fsm'
 import recruiting, { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
 import { CandState } from './candidates'
 import chunter, { Comment } from '@anticrm/chunter'
+import { genRanks } from './utils'
 
 /**
  * @public
@@ -29,88 +30,111 @@ export async function createUpdateApplicant (
   vacancyId: Ref<VacancySpace>,
   clientId: Ref<Account>,
   // membersMap: Map<string, Account>,
-  clientOps: Client & TxOperations,
-  newStates: Map<Ref<State>, CandState[]>
+  clientOps: Client & TxOperations
 ): Promise<void> {
-  for (const c of candidates) {
-    const aid = ('a' + c._id) as Ref<Applicant>
-    let appl = applicantsMap.get(c._id)
+  const groupedCandidates = new Map<Ref<State>, { cand: Candidate, pos: number }[]>()
 
-    console.log('update applicant', c.lastName, c.firstName, aid)
-    const done = measure('update.applicant')
-    const candState = candidateStates.get(c._id) as CandState
-    const applData: Applicant = {
-      _class: recruiting.class.Applicant,
-      space: vacancyId,
-      modifiedOn: Date.now(),
-      modifiedBy: clientId,
-      createOn: Date.now(),
-      _id: aid,
-      item: c._id,
-      recruiter: clientId, // membersMap.get(candState.idMember ?? '') ?? clientId,
-      fsm: vacancyId,
-      clazz: c._class,
-      state: candState.state,
-      comments: []
+  candidates.forEach((cand) => {
+    const state = candidateStates.get(cand._id)
+    if (state === undefined) {
+      return
     }
-    if (appl === undefined) {
-      // No applicant defined
-      appl = await clientOps.createDoc(recruiting.class.Applicant, vacancyId, applData, aid)
-    } else {
-      // Perform update, in case values are different.
-      for (const t of generateDocumentDiff([appl], [applData])) {
-        await clientOps.tx(t)
+
+    const val = groupedCandidates.get(state.state) ?? []
+    val.push({ cand, pos: state.pos })
+
+    groupedCandidates.set(state.state, val)
+  })
+
+  for (const [state, cands] of groupedCandidates.entries()) {
+    cands.sort((a, b) => b.pos - a.pos)
+    const rankGen = genRanks(cands.length)
+
+    for (const c of cands.map((x) => x.cand)) {
+      const aid = ('a' + c._id) as Ref<Applicant>
+      let appl = applicantsMap.get(c._id)
+      const rank = rankGen.next().value
+
+      if (rank === undefined) {
+        throw Error('Unable to generate rank')
       }
-    }
-    const appls: CandState[] = newStates.get(candState.state) ?? []
-    appls.push({ ...candState, applicant: appl?._id })
-    newStates.set(candState.state, appls)
 
-    // Add individual attachments as comments.
-    const replyOf = getFullRef(aid, recruiting.class.Applicant)
-    if ((candState.attachments?.length ?? 0) > 0) {
-      const isImage = (name: string): string => {
-        if (name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
-          return '!'
+      console.log('update applicant', c.lastName, c.firstName, aid)
+      const candState = candidateStates.get(c._id) as CandState
+
+      const done = measure('update.applicant')
+      const applData: Applicant = {
+        _class: recruiting.class.Applicant,
+        space: vacancyId,
+        modifiedOn: Date.now(),
+        modifiedBy: clientId,
+        createOn: Date.now(),
+        _id: aid,
+        item: c._id,
+        recruiter: clientId, // membersMap.get(candState.idMember ?? '') ?? clientId,
+        fsm: vacancyId,
+        clazz: c._class,
+        state,
+        comments: [],
+        rank
+      }
+
+      if (appl === undefined) {
+        // No applicant defined
+        appl = await clientOps.createDoc(recruiting.class.Applicant, vacancyId, applData, aid)
+      } else {
+        // Perform update, in case values are different.
+        for (const t of generateDocumentDiff([appl], [applData])) {
+          await clientOps.tx(t)
         }
-        return ''
       }
 
-      const ids = (candState.attachments ?? []).map((a) => a.id as Ref<Comment>)
-      const allComments = new Map(
-        (await clientOps.findAll(chunter.class.Comment, { replyOf, _id: { $in: ids } }, { limit: ids.length })).map(
-          (c) => [c._id, c]
+      // Add individual attachments as comments.
+      const replyOf = getFullRef(aid, recruiting.class.Applicant)
+      if ((candState.attachments?.length ?? 0) > 0) {
+        const isImage = (name: string): string => {
+          if (name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
+            return '!'
+          }
+          return ''
+        }
+
+        const ids = (candState.attachments ?? []).map((a) => a.id as Ref<Comment>)
+        const allComments = new Map(
+          (await clientOps.findAll(chunter.class.Comment, { replyOf, _id: { $in: ids } }, { limit: ids.length })).map(
+            (c) => [c._id, c]
+          )
         )
-      )
 
-      for (const a of candState.attachments ?? []) {
-        // const memberId = membersMap.get(a.idMember ?? '')
-        const message = `Attachment added ${isImage(a.name)}[${a.name}](${a.url})`
+        for (const a of candState.attachments ?? []) {
+          // const memberId = membersMap.get(a.idMember ?? '')
+          const message = `Attachment added ${isImage(a.name)}[${a.name}](${a.url})`
 
-        const cData: Comment = {
-          _class: chunter.class.Comment,
-          space: vacancyId,
-          modifiedOn: Date.now(),
-          modifiedBy: clientId,
-          createOn: Date.now(),
-          _id: a.id as Ref<Comment>,
-          message,
-          replyOf
-        }
+          const cData: Comment = {
+            _class: chunter.class.Comment,
+            space: vacancyId,
+            modifiedOn: Date.now(),
+            modifiedBy: clientId,
+            createOn: Date.now(),
+            _id: a.id as Ref<Comment>,
+            message,
+            replyOf
+          }
 
-        const comment = allComments.get(a.id as Ref<Comment>)
+          const comment = allComments.get(a.id as Ref<Comment>)
 
-        if (comment === undefined) {
-          // No applicant defined
-          await clientOps.createDoc(chunter.class.Comment, appl.space, cData, a.id as Ref<Comment>)
-        } else {
-          // Perform update, in case values are different.
-          for (const t of generateDocumentDiff([comment], [cData])) {
-            await clientOps.tx(t)
+          if (comment === undefined) {
+            // No applicant defined
+            await clientOps.createDoc(chunter.class.Comment, appl.space, cData, a.id as Ref<Comment>)
+          } else {
+            // Perform update, in case values are different.
+            for (const t of generateDocumentDiff([comment], [cData])) {
+              await clientOps.tx(t)
+            }
           }
         }
       }
+      done()
     }
-    done()
   }
 }
