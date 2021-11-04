@@ -101,7 +101,7 @@
     border-radius: 8px;
     user-select: none;
     cursor: pointer;
-    min-height: 28px;
+    min-height: 36px;
 
     &.sub {
       padding-left: 44px;
