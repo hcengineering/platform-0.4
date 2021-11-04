@@ -15,10 +15,8 @@
 
 // P L U G I N
 
-import type { Metadata, Plugin, Service } from '@anticrm/platform'
-import { plugin } from '@anticrm/platform'
-import { Status, StatusCode } from '@anticrm/status'
-import type { AnyComponent } from '@anticrm/status'
+import { getPlugin, Metadata, Plugin, plugin, Service } from '@anticrm/platform'
+import { AnyComponent, Status, StatusCode } from '@anticrm/status'
 
 /**
  * @public
@@ -45,17 +43,10 @@ export const ACCOUNT_KEY = 'anticrm-account'
 /**
  * @public
  */
-export function currentAccount (): LoginInfo | undefined {
-  const account = localStorage.getItem(ACCOUNT_KEY)
-  return account !== null ? JSON.parse(account) : undefined
-}
-
-/**
- * @public
- */
 export interface LoginService extends Service {
   doLogin: (username: string, password: string, workspace: string) => Promise<Status>
   doSignup: (username: string, password: string, workspace: string, details: SignupDetails) => Promise<Status>
+  doVerify: () => Promise<Status>
 
   /**
    * Check and auto return login information if available.
@@ -68,7 +59,7 @@ export interface LoginService extends Service {
   /**
    * Do logout from current logged in account
    */
-  doLogout: () => Promise<void>
+  doLogout: () => Promise<Status>
 }
 
 const PluginLogin = 'login' as Plugin<LoginService>
@@ -100,3 +91,14 @@ const login = plugin(
  * @public
  */
 export default login
+
+/**
+ *
+ * Perform token verification and broadcast Token event with a token value after it.
+ *
+ * @public
+ */
+export async function verifyToken (): Promise<Status> {
+  const loginPlugin = await getPlugin(login.id)
+  return await loginPlugin.doVerify()
+}

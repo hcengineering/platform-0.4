@@ -36,6 +36,11 @@ export class Request<P extends any[], M extends string = string> {
 }
 
 /**
+ * @public
+ */
+export type AnyRequest = Request<any[], string>
+
+/**
  * Response object define a server response on transaction request.
  *
  * Also used to inform other clients about operations being performed by server.

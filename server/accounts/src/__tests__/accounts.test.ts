@@ -17,7 +17,7 @@
 
 import { Request } from '@anticrm/rpc'
 import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb'
-import { AccountDetails, AccountInfo, Accounts, Code, wrapCall } from '..'
+import { AccountDetails, AccountInfo, Accounts, Code, generateToken, wrapCall } from '..'
 
 const DB_NAME = 'test_accounts'
 
@@ -118,6 +118,46 @@ describe('server', () => {
     const result = await wrapCall<any[], AccountInfo>(accounts, request)
     expect(result.result).toBeDefined()
     expect(result.result?.email).toBe('andrey2')
+  })
+
+  it('should verify-token', async () => {
+    // Prepare account.
+    const a1 = await accounts.createAccount('andrey2', '123')
+    const a2 = await accounts.createAccount('andrey3', '123')
+    await accounts.createWorkspace('workspace', 'OOO Horse Inc')
+    await accounts.addWorkspace('andrey2', 'workspace')
+
+    const t1 = generateToken('secret', a1._id, 'workspace', { email: 'andrey2' })
+
+    const request: Request<[string]> = {
+      method: 'verify',
+      params: [t1]
+    }
+
+    const result = await wrapCall<any[], AccountInfo>(accounts, request)
+    expect(result.result).toBeDefined()
+    expect(result.result?.email).toBe('andrey2')
+
+    // Verify branches
+    await expect(
+      async () => await accounts.verify(generateToken('secret', 'non-id', 'workspace', { email: 'andrey2' }))
+    ).rejects.toThrow()
+
+    await expect(
+      async () => await accounts.verify(generateToken('secret2', 'non-id', 'workspace', { email: 'andrey2' }))
+    ).rejects.toThrow()
+
+    await expect(
+      async () => await accounts.verify(generateToken('secret', a1._id, 'workspace3', { email: 'andrey2' }))
+    ).rejects.toThrow()
+
+    await expect(
+      async () => await accounts.verify(generateToken('secret', a1._id, 'workspace', { email: 'andrey3' }))
+    ).rejects.toThrow()
+
+    await expect(
+      async () => await accounts.verify(generateToken('secret', a2._id, 'workspace', { email: 'andrey3' }))
+    ).rejects.toThrow()
   })
 
   it('should not login, wrong password', async () => {

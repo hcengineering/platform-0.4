@@ -20,6 +20,7 @@
   import login from '../plugin'
 
   interface Field {
+    id?: string
     name: string
     i18n: IntlString
     password?: boolean
@@ -81,6 +82,7 @@
           on:keyup={validate}
           on:focus={validate}
           on:blur={validate}
+          name={field.id}
         />
       </div>
     {/each}

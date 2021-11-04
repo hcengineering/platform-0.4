@@ -30,13 +30,21 @@
   export const LAST_WORKSPACE_KEY = 'anticrm-last-workspace'
 
   const fields = [
-    { name: 'username', i18n: loginImpl.string.Email },
     {
+      id: 'email',
+      name: 'username',
+      i18n: loginImpl.string.Email
+    },
+    {
+      id: 'current-password',
       name: 'password',
       i18n: loginImpl.string.Password,
       password: true
     },
-    { name: 'workspace', i18n: loginImpl.string.Workspace }
+    {
+      name: 'workspace',
+      i18n: loginImpl.string.Workspace
+    }
   ]
 
   const object = {

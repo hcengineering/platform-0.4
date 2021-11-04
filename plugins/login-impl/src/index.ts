@@ -15,141 +15,100 @@
 
 import login, { ACCOUNT_KEY, LoginInfo, LoginService, SignupDetails } from '@anticrm/login'
 import { broadcastEvent, getMetadata, setResource } from '@anticrm/platform'
+import { AnyRequest, Request, Response, serialize } from '@anticrm/rpc'
 import { OK, PlatformError, Severity, Status, unknownError } from '@anticrm/status'
-import { Request, Response, serialize } from '@anticrm/rpc'
 import LoginApp from './components/LoginApp.svelte'
 import SettingForm from './components/SettingForm.svelte'
 
-export default async (): Promise<LoginService> => {
-  setResource(login.component.LoginForm, LoginApp)
-
+function getAccountUrl (): string {
   const accountsUrl = getMetadata(login.metadata.AccountsUrl)
   if (accountsUrl === undefined) {
     throw new PlatformError(new Status(Severity.ERROR, login.status.NoAccountUri, {}))
   }
-  setResource(login.component.SettingForm, SettingForm)
+  return accountsUrl
+}
+async function doPostRequest<P extends any[], M extends string> (
+  accountsUrl: string,
+  request: Request<P, M>
+): Promise<Response<LoginInfo>> {
+  const response = await fetch(accountsUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: serialize(request)
+  })
+  return await response.json()
+}
 
-  async function setLoginInfo (loginInfo: LoginInfo): Promise<void> {
-    localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
+class LoginServiceImpl implements LoginService {
+  async setLoginInfo (loginInfo?: LoginInfo): Promise<Status> {
+    if (loginInfo === undefined) {
+      localStorage.removeItem(ACCOUNT_KEY)
+    } else {
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginInfo))
+    }
 
-    await broadcastEvent('Token', loginInfo.token)
+    await broadcastEvent('Token', loginInfo?.token)
+    return OK
   }
 
-  async function clearLoginInfo (): Promise<void> {
-    localStorage.removeItem(ACCOUNT_KEY)
-    await broadcastEvent('Token', undefined)
-  }
-
-  async function getLoginInfo (): Promise<LoginInfo | undefined> {
+  async getLoginInfo (): Promise<LoginInfo | undefined> {
     const account = localStorage.getItem(ACCOUNT_KEY)
     if (account == null) {
-      return await Promise.resolve(undefined)
+      return undefined
     }
-    const loginInfo = JSON.parse(account) as LoginInfo
-
-    // Do some operation to check if token is expired or not.
-    return await Promise.resolve(loginInfo)
+    return JSON.parse(account) as LoginInfo
   }
 
-  async function saveSetting (password: string, newPassword: string): Promise<Status> {
-    const loginInfo = await getLoginInfo()
-    if (loginInfo == null) return new Status(Severity.ERROR, login.status.UnAuthorized, {})
-    const request: Request<[string, string, string]> = {
-      method: 'updateAccount',
-      params: [loginInfo.email, password, newPassword]
-    }
-
+  async doRequest (request: AnyRequest): Promise<Status> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const response = await fetch(accountsUrl!, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: serialize(request)
-      })
-      const result = (await response.json()) as Response<any>
-      if (result.error !== undefined) {
-        return result.error
-      }
-      if (result.result !== undefined) {
-        await setLoginInfo(result.result)
-      }
-      return OK
+      const result = await doPostRequest(getAccountUrl(), request)
+      return result.error ?? (await this.setLoginInfo(result.result))
     } catch (err) {
-      return new Status(Severity.ERROR, login.status.ServerNotAvailable, {})
+      return unknownError(err as Error)
     }
   }
+
+  async saveSetting (password: string, newPassword: string): Promise<Status> {
+    const loginInfo = await this.getLoginInfo()
+    if (loginInfo === undefined) {
+      return new Status(Severity.ERROR, login.status.UnAuthorized, {})
+    }
+    return await this.doRequest({ method: 'updateAccount', params: [loginInfo.email, password, newPassword] })
+  }
+
   /**
    * Perform a login operation to required workspace with user credentials.
    */
-  async function doLogin (username: string, password: string, workspace: string): Promise<Status> {
-    const accountsUrl = getMetadata(login.metadata.AccountsUrl) ?? 'localhost:18080'
-
-    const request: Request<[string, string, string]> = {
-      method: 'login',
-      params: [username, password, workspace]
-    }
-
-    try {
-      const response = await fetch(accountsUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: serialize(request)
-      })
-      const result: Response<LoginInfo> = await response.json()
-      const status = result.error ?? OK
-      if (result.result !== undefined) {
-        await setLoginInfo(result.result)
-      }
-      return status
-    } catch (err: any) {
-      return unknownError(err)
-    }
-  }
-  async function doSignup (
-    username: string,
-    password: string,
-    workspace: string,
-    details: SignupDetails
-  ): Promise<Status> {
-    const accountsUrl = getMetadata(login.metadata.AccountsUrl) ?? 'localhost:18080'
-
-    const request: Request<[string, string, string, SignupDetails]> = {
-      method: 'signup',
-      params: [username, password, workspace, details]
-    }
-
-    try {
-      const response = await fetch(accountsUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: serialize(request)
-      })
-      const result: Response<LoginInfo> = await response.json()
-      const status = result.error ?? OK
-      if (result.result !== undefined) {
-        await setLoginInfo(result.result)
-      }
-      return status
-    } catch (err) {
-      return unknownError(err)
-    }
+  async doLogin (username: string, password: string, workspace: string): Promise<Status> {
+    return await this.doRequest({ method: 'login', params: [username, password, workspace] })
   }
 
-  async function doLogout (): Promise<void> {
-    return await clearLoginInfo()
+  async doSignup (username: string, password: string, workspace: string, details: SignupDetails): Promise<Status> {
+    return await this.doRequest({ method: 'signup', params: [username, password, workspace, details] })
   }
 
-  return {
-    doLogin,
-    doSignup,
-    doLogout,
-    getLoginInfo,
-    saveSetting
+  async doVerify (): Promise<Status> {
+    const account = localStorage.getItem(ACCOUNT_KEY)
+
+    const info = account !== null ? (JSON.parse(account) as LoginInfo) : undefined
+
+    if (info !== undefined) {
+      // We need to verify token.
+      return await this.doRequest({ method: 'verify', params: [info.token] })
+    }
+    return new Status(Severity.ERROR, login.status.UnAuthorized, {})
   }
+
+  async doLogout (): Promise<Status> {
+    return await this.setLoginInfo(undefined)
+  }
+}
+
+export default async (): Promise<LoginService> => {
+  setResource(login.component.LoginForm, LoginApp)
+  setResource(login.component.SettingForm, SettingForm)
+
+  return new LoginServiceImpl()
 }

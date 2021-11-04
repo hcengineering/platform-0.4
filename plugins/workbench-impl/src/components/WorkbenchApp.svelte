@@ -14,14 +14,19 @@
 -->
 <script lang="ts">
   import { PresentationClient } from '@anticrm/presentation'
-  import login from '@anticrm/login'
-  import { Component } from '@anticrm/ui'
+  import login, { verifyToken } from '@anticrm/login'
+  import { Component, Spinner } from '@anticrm/ui'
   import pluginCore from '@anticrm/plugin-core'
 
   import Workbench from './Workbench.svelte'
   import { getPlugin } from '@anticrm/platform'
+  import { PlatformError, Severity } from '@anticrm/status'
 
   async function connect (): Promise<PresentationClient> {
+    const st = await verifyToken()
+    if (st.severity !== Severity.OK) {
+      throw new PlatformError(st)
+    }
     const plugin = await getPlugin(pluginCore.id)
     const accountId = (await plugin.getClient()).accountId()
     return await PresentationClient.create(accountId, async () => await plugin.getClient())
@@ -43,7 +48,7 @@
 </script>
 
 {#await clientPromise}
-  <div />
+  <Spinner />
 {:then client}
   <Workbench {client} on:logout={doLogout} />
 {:catch}
