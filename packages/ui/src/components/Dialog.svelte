@@ -121,8 +121,8 @@
       right: 0;
       background-color: var(--theme-dialog-bg);
       border-radius: 20px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(120px);
+      -webkit-backdrop-filter: blur(120px);
       box-shadow: var(--theme-dialog-shadow);
       z-index: -1;
     }

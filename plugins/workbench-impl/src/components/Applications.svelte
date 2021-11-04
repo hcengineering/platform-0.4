@@ -34,7 +34,6 @@
 
   query = client.query(query, workbench.class.Application, {}, (result) => {
     apps = result
-    console.log('applications', apps)
   })
 
   function navigateApp (app: Ref<Application>) {

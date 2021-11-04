@@ -41,7 +41,7 @@
   const tabs = [chunter.string.General, chunter.string.ChannelMembers, chunter.string.Activity]
   let selectedTab: IntlString = chunter.string.General
 
-  async function update(key: string, value: any): Promise<void> {
+  async function update (key: string, value: any): Promise<void> {
     if (updatedSpace !== undefined) {
       const operations = {
         [key]: value === null ? undefined : value

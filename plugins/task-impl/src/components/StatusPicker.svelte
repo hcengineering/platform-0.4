@@ -29,7 +29,6 @@
     bind:this={btn}
     class="selected"
     on:click|preventDefault={(event) => {
-      console.log('pressed, pressed')
       showPopup(StatusPickerPopup, { selected }, btn, (result) => {
         // undefined passed when closed without changes, null passed when unselect
         if (result !== undefined && result !== selected) {

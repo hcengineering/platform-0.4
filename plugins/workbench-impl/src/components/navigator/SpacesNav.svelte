@@ -123,7 +123,6 @@
   function spaceActions (model: SpacesNavModel, space: Space): Action[] {
     const result: Action[] = []
 
-    console.log(model.spaceMore)
     if (model.spaceMore !== undefined) {
       const view = model.spaceMore
       result.push({

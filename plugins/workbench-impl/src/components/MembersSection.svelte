@@ -21,7 +21,6 @@
   let btn: HTMLElement | undefined
 
   function inviteMember (): void {
-    console.log(members, otherMembers)
     showPopup(
       UserBoxPopup,
       { label: workbench.string.InviteMember, users: otherMembers, selected: undefined, showSearch: true },
