@@ -213,8 +213,8 @@
 
     .navigator {
       @include panel(var(--theme-bg-color));
-      max-width: 280px;
-      min-width: 200px;
+      width: 280px;
+      min-width: 280px;
       margin-right: 20px;
     }
 

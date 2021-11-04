@@ -137,7 +137,8 @@
     background: rgba(31, 31, 37, 0.7);
     border-radius: 20px;
     box-shadow: 0px 44px 154px rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 
     .header {
       flex-shrink: 0;
