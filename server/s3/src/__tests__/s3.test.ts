@@ -24,19 +24,14 @@ describe('s3', () => {
   const secret: string = process.env.S3_SECRET ?? 'minioadmin'
   const endpoit: string = process.env.S3_URI ?? 'http://localhost:9000'
   let client: S3Storage
-  const bucket = 'bucket'
-  const testId = generateId()
-  const fileName = 'testFile' + testId
-  const resultFile = 'resultFile' + testId
-
-  afterAll(() => {
-    fs.unlinkSync(`./${fileName}`)
-    fs.unlinkSync(`./${resultFile}`)
-  })
+  const bucket = 'bucket' + generateId()
 
   it('check storage', async (done) => {
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     expect.assertions(4)
+    const testId = generateId()
+    const fileName = 'testFile' + testId
+    const resultFile = 'resultFile' + testId
     fs.writeFileSync(fileName, 'testText')
     const file = fs.readFileSync(`./${fileName}`)
     const uploadLink = await client.getUploadLink(fileName, '')
@@ -69,6 +64,10 @@ describe('s3', () => {
         stream.on('finish', () => {
           const downloadedFile = fs.readFileSync(resultFile)
           expect(downloadedFile).toEqual(file)
+          // eslint-disable-next-line
+          client.remove(fileName)
+          fs.unlinkSync(`./${fileName}`)
+          fs.unlinkSync(`./${resultFile}`)
           done()
         })
       })
@@ -79,7 +78,7 @@ describe('s3', () => {
   })
 
   it('check download file', async (done) => {
-    const fileName = 'testFile2'
+    const fileName = 'testFile2' + generateId()
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     expect.assertions(2)
     fs.writeFileSync(fileName, 'testText')
@@ -103,18 +102,20 @@ describe('s3', () => {
       void client.getFile(fileName).then((res) => {
         expect(res?.body).toEqual(file)
         fs.unlinkSync(`./${fileName}`)
+        // eslint-disable-next-line
+        client.remove(fileName)
         done()
       })
     })
     req.write(file)
     req.end()
-    await client.remove(fileName)
   })
 
   it('check get image', async (done) => {
     expect.assertions(3)
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     const image = fs.readFileSync('./src/__tests__/testImage.jpg')
+    const testId = generateId()
     const fileName = 'testImage' + testId
     const uploadLink = await client.getUploadLink(fileName, 'image/jpeg')
     const path = new url.URL(uploadLink)
@@ -151,21 +152,45 @@ describe('s3', () => {
 
   it('check remove', async (done) => {
     expect.assertions(1)
+    const testId = generateId()
+    const fileName = 'testFile' + testId
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
-    await client.remove(fileName)
-    const downloadLink = await client.getDownloadLink(fileName, 'simple')
-    const getLink = new url.URL(downloadLink)
-    const getOptions: http.RequestOptions = {
-      host: getLink.hostname,
-      path: getLink.pathname + getLink.search,
-      port: getLink.port,
-      method: 'GET'
+    fs.writeFileSync(fileName, 'testText')
+    const file = fs.readFileSync(`./${fileName}`)
+    const uploadLink = await client.getUploadLink(fileName, '')
+    const path = new url.URL(uploadLink)
+    const options: http.RequestOptions = {
+      host: path.hostname,
+      path: path.pathname + path.search,
+      port: path.port,
+      method: 'PUT',
+      headers: {
+        'Content-Length': Buffer.byteLength(file)
+      }
     }
-    http.get(getOptions, (response) => {
-      expect(response.statusCode).not.toEqual(200)
-      done()
+    const downloadLink = await client.getDownloadLink(fileName, 'simple')
+    const req = http.request(options, (res) => {
+      // eslint-disable-next-line
+      void client.remove(fileName).then(() => {
+        const getLink = new url.URL(downloadLink)
+        const getOptions: http.RequestOptions = {
+          host: getLink.hostname,
+          path: getLink.pathname + getLink.search,
+          port: getLink.port,
+          method: 'GET'
+        }
+        http.get(getOptions, (response) => {
+          expect(response.statusCode).not.toEqual(200)
+          fs.unlinkSync(`./${fileName}`)
+          done()
+        })
+      })
     })
+
+    req.write(file)
+    req.end()
   })
+
   it('fictive ca test', async () => {
     // eslint-disable-next-line
     expect(() => S3Storage.create(accessKey, secret, endpoit, bucket, 'will be ignored for http')).rejects.toThrow()
