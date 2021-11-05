@@ -182,6 +182,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
     border-radius: 20px;
     background-color: $bg-color;
   }
