@@ -147,7 +147,6 @@
     width: 100%;
     height: 100%;
 
-    border-radius: 0 0 20px 20px;
     background-color: var(--theme-table-bg-color);
   }
 
@@ -157,8 +156,6 @@
     top: 0;
     right: 0;
     bottom: 0;
-
-    padding-bottom: 20px;
   }
 
   .cell {
@@ -222,6 +219,10 @@
 
     color: var(--theme-caption-color);
     border-bottom: 1px solid var(--theme-button-border-hovered);
+
+    &:last-child {
+      border-bottom: unset;
+    }
 
     &:hover {
       background-color: var(--theme-table-bg-hover);
