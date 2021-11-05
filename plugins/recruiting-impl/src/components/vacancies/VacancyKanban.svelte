@@ -24,7 +24,7 @@
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
   import { Kanban } from '@anticrm/ui'
 
-  import ApplicantCard from './ApplicantCard.svelte'
+  import ApplicantCard from '../applicants/ApplicantCard.svelte'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined

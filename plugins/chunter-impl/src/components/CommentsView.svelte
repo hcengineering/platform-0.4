@@ -1,5 +1,5 @@
 <!--
-// Copyright © 2020 Anticrm Platform Contributors.
+// Copyright © 2021 Anticrm Platform Contributors.
 // 
 // Licensed under the Eclipse Public License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License. You may
@@ -13,21 +13,22 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { WithMessage } from '@anticrm/chunter'
-  import { getClient } from '@anticrm/workbench'
-  import { newAllBookmarksQuery } from '../bookmarks'
+  import type { Comment } from '@anticrm/chunter'
   import Message from './Message.svelte'
 
-  export let messages: WithMessage[] = []
-  export let thread: boolean = false
-
-  newAllBookmarksQuery(getClient(), () => {
-    // Just to cache bookmarks.
-  })
+  export let comments: Comment[] = []
 </script>
 
-<div class="flex-col">
-  {#each messages as m (m._id)}
-    <Message message={m} {thread} showLabels={true} />
+<div class="channel-container">
+  {#each comments as m (m._id)}
+    <Message thread message={m} showLabels={true} />
   {/each}
 </div>
+
+<style lang="scss">
+  .channel-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+</style>

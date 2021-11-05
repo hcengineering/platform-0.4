@@ -26,12 +26,9 @@ export interface Person extends Doc {
   lastName: string
   avatar?: string
   bio?: string
-  phone?: string
   address: {
     country?: string
     city?: string
-    street?: string
-    zip?: string
   }
 }
 

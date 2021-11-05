@@ -13,15 +13,17 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, selectDocument } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import { Label, Table } from '@anticrm/ui'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
+
+  const client = getClient()
 
   // May look similar to candidate table definition
   // but it's gonna get updated eventually
@@ -38,7 +40,29 @@
     }
   ]
 
-  const client = getClient()
+  function onClick (event: any) {
+    const applicant = applicants.find((x) => event.detail._id === x.item)
+
+    if (!applicant) {
+      return
+    }
+
+    selectDocument(applicant)
+  }
+
+  let candidates: Map<string, Candidate> = new Map()
+  let lqCandidates: QueryUpdater<Candidate> | undefined
+
+  $: candidateIDs = applicants.map((a) => a.item as Ref<Candidate>)
+
+  $: {
+    lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: { $in: candidateIDs } }, (result) => {
+      candidates = new Map(result.map((x) => [x._id, x]))
+    })
+  }
+
+  $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
+
   let applicants: Applicant[] = []
   let lqApplicants: QueryUpdater<Applicant> | undefined
   $: if (space._id !== prevSpace) {
@@ -49,29 +73,6 @@
         applicants = result
       })
     }
-  }
-
-  $: candidateIDs = applicants.map((a) => a.item as Ref<Candidate>)
-
-  let candidates: Map<string, Candidate> = new Map()
-  let lqCandidates: QueryUpdater<Candidate> | undefined
-
-  $: {
-    lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: { $in: candidateIDs } }, (result) => {
-      candidates = new Map(result.map((x) => [x._id, x]))
-    })
-  }
-
-  $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
-
-  function onClick (event: any) {
-    const applicant = applicants.find((x) => event.detail._id === x.item)
-
-    if (!applicant) {
-      return
-    }
-
-    selectDocument(applicant)
   }
 </script>
 

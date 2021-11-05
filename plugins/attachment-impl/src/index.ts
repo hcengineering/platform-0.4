@@ -14,12 +14,14 @@
 //
 
 import attachment, { AttachmentService, nameToFormat, UploadAttachment } from '@anticrm/attachment'
-import { Class, Doc, generateId, Ref, Space, Storage, TxOperations } from '@anticrm/core'
+import { Class, Doc, generateId, getFullRef, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import { getMetadata, setResource } from '@anticrm/platform'
 import { PlatformError, Status, Severity } from '@anticrm/status'
 import Attachments from './components/Attachments.svelte'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
 import AttachmentList from './components/AttachmentList.svelte'
+import AvatarEditor from './components/AvatarEditor.svelte'
+import AttachmentsTableCell from './components/AttachmentsTableCell.svelte'
 import mime from 'mime'
 
 // use for attachment-dev only
@@ -27,11 +29,15 @@ export { default as Attachments } from './components/Attachments.svelte'
 export { default as AttachmentList } from './components/AttachmentList.svelte'
 export { default as AttachmentView } from './components/AttachmentView.svelte'
 export { default as AttachmentViewer } from './components/AttachmentViewer.svelte'
+export { default as AvatarEditor } from './components/AvatarEditor.svelte'
+export { default as AttachmentsTableCell } from './components/AttachmentsTableCell.svelte'
 
 export default async (): Promise<AttachmentService> => {
   setResource(attachment.component.Attachments, Attachments)
   setResource(attachment.component.AttachmentList, AttachmentList)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
+  setResource(attachment.component.AvatarEditor, AvatarEditor)
+  setResource(attachment.component.AttachmentsTableCell, AttachmentsTableCell)
   const fileServerURL = getMetadata(attachment.metadata.FilesUrl) ?? ''
   if (fileServerURL === '') {
     throw new PlatformError(new Status(Severity.ERROR, attachment.status.NoFileServerUri, {}))
@@ -147,6 +153,7 @@ export default async (): Promise<AttachmentService> => {
       format: format,
       mime: type,
       url: encodeURI(generateLink(key, space, file.name, format)),
+      attachTo: getFullRef(objectId, objectClass),
       space: space,
       modifiedBy: client.accountId(),
       modifiedOn: Date.now(),
@@ -172,6 +179,7 @@ export default async (): Promise<AttachmentService> => {
             objectClass: item.objectClass,
             objectId: item.objectId,
             name: item.name,
+            attachTo: item.attachTo,
             size: item.size,
             format: item.format,
             mime: item.mime,

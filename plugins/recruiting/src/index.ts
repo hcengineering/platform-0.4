@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Class, Ref, Space, DocumentPresenter, Timestamp, DocumentMapper, Doc, DerivedData, DerivedDataDescriptor } from '@anticrm/core'
+import type { Account, Class, Ref, Space, DocumentPresenter, Timestamp, DocumentMapper, Doc, DerivedData, DerivedDataDescriptor, FullRefString } from '@anticrm/core'
 import type { Person } from '@anticrm/contact'
 import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
 import { Action as ActionDef } from '@anticrm/action'
@@ -23,6 +23,7 @@ import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 import type { CommentRef } from '@anticrm/chunter'
+import type { Attachment } from '@anticrm/attachment'
 
 export enum CandidateStatus {
   Employed = 'employed',
@@ -31,17 +32,31 @@ export enum CandidateStatus {
 
 export interface Candidate extends Person {
   status: CandidateStatus
-  employment: {
-    position: string
-    experience: number
-  }
+  title: string
   salaryExpectation?: number
-  resume: string
+  applicants: Array<Ref<Applicant>>
+  attachments: Array<Ref<Attachment>>
+  comments: CommentRef[]
+  socialLinks: SocialLink[]
+  workPreference: WorkPreference
 }
+
+export interface WorkPreference {
+  onsite?: boolean
+  remote?: boolean
+}
+
+export interface SocialLink {
+  type: SocialLinkType
+  link: string
+}
+
+export type SocialLinkType = 'Discord' | 'Email'| 'Facebook'| 'Github'| 'Instagram' | 'Linkedin' | 'Phone' | 'Telegram' | 'Twitter' | 'Vk' | 'Whatsapp' | 'Youtube'
 
 export interface Applicant extends FSMItem {
   recruiter: Ref<Account>
   comments: CommentRef[]
+  candidate: FullRefString
 }
 
 export interface CandidatePoolSpace extends Space {}
@@ -166,7 +181,19 @@ export default plugin(PluginRecruiting, {}, {
     Save: '' as IntlString,
     State: '' as IntlString,
 
-    Comments: '' as IntlString
+    Comments: '' as IntlString,
+    AddSocialLinks: '' as IntlString,
+    SocialLinks: '' as IntlString,
+    CreateCandidate: '' as IntlString,
+    WorkPreference: '' as IntlString,
+    WorkPreferences: '' as IntlString,
+    Title: '' as IntlString,
+    EditSocialLinks: '' as IntlString,
+    Onsite: '' as IntlString,
+    Remote: '' as IntlString,
+    CandidatePool: '' as IntlString,
+    CandidatePools: '' as IntlString,
+    Vacancy: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,
@@ -184,7 +211,10 @@ export default plugin(PluginRecruiting, {}, {
   },
   dd: {
     Feedback: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    CandidateReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    CandidateAttachTo: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    CandidateApplicant: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   },
   mapper: {
     Feedback: '' as Resource<DocumentMapper>

@@ -95,11 +95,12 @@ export async function createUpdateCandidates (
       email: '',
       avatar: `https://robohash.org/prefix${Number(cid[0]) % 5}?set=set3`,
       address: {},
-      employment: {
-        position: '',
-        experience: 0
-      },
-      resume: '',
+      title: '',
+      workPreference: {},
+      applicants: [],
+      socialLinks: [],
+      attachments: [],
+      comments: [],
       status: CandidateStatus.AvailableForHire
     }
     const cand = allCandidates.get(cid)

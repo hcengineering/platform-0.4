@@ -43,6 +43,7 @@
     "@anticrm/fsm":"~0.4.0",
     "@anticrm/action-plugin":"~0.4.0",
     "@anticrm/calendar":"~0.4.0",
-    "@anticrm/chunter":"~0.4.0"
+    "@anticrm/chunter":"~0.4.0",
+    "@anticrm/attachment":"~0.4.0"
   }
 }

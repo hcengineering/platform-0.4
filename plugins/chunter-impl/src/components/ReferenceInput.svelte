@@ -22,10 +22,9 @@
   import { newMessageDocument, serializeMessage } from '@anticrm/text'
   import type { CompletionItem, CompletionPopupActions } from '@anticrm/ui'
   import { Component } from '@anticrm/ui'
-  import { CompletionPopup, Label } from '@anticrm/ui'
+  import { CompletionPopup, Label, IconAttach } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
-  import Attach from './icons/Attach.svelte'
   import Emoji from './icons/Emoji.svelte'
   import GIF from './icons/GIF.svelte'
   import Send from './icons/Send.svelte'
@@ -361,7 +360,7 @@
         input.click()
       }}
     >
-      <Attach />
+      <IconAttach />
     </div>
     <div class="tool"><TextStyle /></div>
     <div

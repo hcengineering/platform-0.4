@@ -1,6 +1,6 @@
 import attachment, { Attachment, nameToFormat } from '@anticrm/attachment'
 import { DemoBuilder } from '.'
-import { Ref, Doc, Class } from '@anticrm/core'
+import { Ref, Doc, Class, getFullRef } from '@anticrm/core'
 import mime from 'mime'
 import faker from 'faker'
 
@@ -27,6 +27,7 @@ export async function createAttachment (
     {
       objectId: objectId,
       objectClass: objcetClass,
+      attachTo: getFullRef(objectId, objcetClass),
       url: url,
       name: fileName,
       format: nameToFormat(fileName),

@@ -18,7 +18,7 @@
   import type { VacancySpace } from '@anticrm/recruiting'
 
   import ApplicantTable from './ApplicantTable.svelte'
-  import VacancyKanban from './VacancyKanban.svelte'
+  import VacancyKanban from '../vacancies/VacancyKanban.svelte'
 
   export let space: VacancySpace
 

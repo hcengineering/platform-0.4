@@ -24,7 +24,7 @@
   import { Label, ActionIcon, Spinner } from '@anticrm/ui'
   import type { Applicant, Candidate } from '@anticrm/recruiting'
 
-  import ActionPresenter from './ActionPresenter.svelte'
+  import ActionPresenter from '../vacancies/ActionPresenter.svelte'
 
   import Dots from '../icons/Dots.svelte'
 

@@ -13,53 +13,120 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref } from '@anticrm/core'
+  import type { Account, Ref } from '@anticrm/core'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
-  import type { WithFSM } from '@anticrm/fsm'
-  import { Button } from '@anticrm/ui'
+  import type { State } from '@anticrm/fsm'
+  import { Header, Label, showPopup, Table, UserInfo } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import CreateApplication from './CreateApplication.svelte'
+  import fsm from '@anticrm/fsm'
+  import core from '@anticrm/core'
+  import StateViewer from '../applicants/StateViewer.svelte'
 
   const client = getClient()
   export let candidate: Candidate
 
-  let applications: Set<Ref<WithFSM>> = new Set()
+  let applications: Applicant[] = []
   let lqApplications: QueryUpdater<Applicant> | undefined
 
-  $: lqApplications = client.query(lqApplications, recruiting.class.Applicant, { item: candidate._id }, (result) => {
-    applications = new Set(result.map((x) => x.fsm))
-  })
+  $: lqApplications = client.query(
+    lqApplications,
+    recruiting.class.Applicant,
+    { _id: { $in: candidate.applicants } },
+    (result) => {
+      applications = result
+    }
+  )
 
   let vacancies: VacancySpace[] = []
   let lqVacancies: QueryUpdater<VacancySpace> | undefined
-  $: lqVacancies = client.query(lqVacancies, recruiting.class.VacancySpace, {}, (result) => {
-    vacancies = result.filter((x) => x.members.includes(client.accountId()))
-  })
+  $: lqVacancies = client.query(
+    lqVacancies,
+    recruiting.class.VacancySpace,
+    { _id: { $in: applications.map((s) => s.space as Ref<VacancySpace>) } },
+    (result) => {
+      vacancies = result
+    }
+  )
 
-  let appliedVacancies: VacancySpace[] = []
+  let states: State[] = []
+  let stateQ: QueryUpdater<State> | undefined
+  $: stateQ = client.query(
+    stateQ,
+    fsm.class.State,
+    { _id: { $in: applications.map((s) => s.state as Ref<State>) } },
+    (result) => {
+      states = result
+    }
+  )
 
-  $: {
-    appliedVacancies = vacancies.filter((x) => applications.has(x._id))
+  let recruiters: Account[] = []
+  let recruitersQ: QueryUpdater<Account> | undefined
+  $: recruitersQ = client.query(
+    recruitersQ,
+    core.class.Account,
+    { _id: { $in: applications.map((s) => s.recruiter as Ref<Account>) } },
+    (result) => {
+      recruiters = result
+    }
+  )
+
+  $: data = generateItems(applications, vacancies, states)
+
+  function create () {
+    showPopup(CreateApplication, { candidate: candidate._id })
   }
+
+  interface ApplicantItem {
+    vacancy: string
+    location: string
+    recruiter: Account
+    state: State
+  }
+
+  function generateItems (applications: Applicant[], vacancies: VacancySpace[], states: State[]): ApplicantItem[] {
+    const result: ApplicantItem[] = []
+    for (const applicant of applications) {
+      const vacancy = vacancies.find((v) => v._id === applicant.space)
+      if (vacancy === undefined) continue
+      const state = states.find((v) => v._id === applicant.state)
+      if (state === undefined) continue
+      const recruiter = recruiters.find((v) => v._id === applicant.recruiter)
+      if (recruiter === undefined) continue
+      const item = {
+        vacancy: vacancy.name,
+        location: vacancy.location,
+        recruiter: recruiter,
+        state
+      }
+      result.push(item)
+    }
+    return result
+  }
+
+  const columns = [
+    { label: recruiting.string.Vacancy, properties: [{ key: 'vacancy', property: 'label' }], component: Label },
+    { label: recruiting.string.Location, properties: [{ key: 'location', property: 'label' }], component: Label },
+    {
+      label: recruiting.string.Recruiter,
+      properties: [{ key: 'recruiter', property: 'user' }],
+      component: UserInfo
+    },
+    { label: recruiting.string.State, properties: [{ key: 'state', property: 'state' }], component: StateViewer }
+  ]
 </script>
 
-<div class="root">
-  {#each appliedVacancies as vacancy}
-    <div class="label">{vacancy.name}</div>
-    <Button label={recruiting.string.Unassign} />
-  {/each}
-</div>
+<Header label={recruiting.string.Applications} addHandler={create} />
+{#if data.length}
+  <div class="table">
+    <Table {data} {columns} showHeader />
+  </div>
+{/if}
 
 <style lang="scss">
-  .root {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 5px;
-  }
-
-  .label {
-    display: flex;
-    align-items: center;
+  .table {
+    min-height: 100px;
   }
 </style>

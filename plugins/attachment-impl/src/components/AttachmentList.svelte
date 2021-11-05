@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { IconAdd, Label, showPopup, Progress } from '@anticrm/ui'
+  import { showPopup, Progress } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import attachment from '@anticrm/attachment'
   import type { Attachment, UploadAttachment } from '@anticrm/attachment'
@@ -22,39 +22,12 @@
   import { getPlugin } from '@anticrm/platform'
 
   export let items: Array<UploadAttachment> = []
-  export let createHandler: ((file: File) => Promise<void>) | undefined = undefined
   export let editable: boolean = false
   export let horizontal: boolean = false
-  let input: HTMLElement
   const client = getClient()
 
   function open (item: Attachment): void {
     showPopup(AttachmentViewer, { item: item })
-  }
-
-  async function drop (e: DragEvent): Promise<void> {
-    const list = e.dataTransfer?.files
-    if (list === undefined || list.length === 0) return
-    for (let index = 0; index < list.length; index++) {
-      const file = list.item(index)
-      if (file === null) continue
-      if (createHandler !== undefined) {
-        await createHandler(file)
-      }
-    }
-  }
-
-  async function change (e: Event): Promise<void> {
-    const elem = e.target as HTMLInputElement
-    const list = elem.files
-    if (list === null || list.length === 0) return
-    for (let index = 0; index < list.length; index++) {
-      const file = list.item(index)
-      if (file === null) continue
-      if (createHandler !== undefined) {
-        await createHandler(file)
-      }
-    }
   }
 
   async function clear (item: UploadAttachment): Promise<void> {
@@ -75,8 +48,6 @@
   function isUploading (item: UploadAttachment): boolean {
     return item.progress < 100 && item.progress > 0
   }
-
-  let dragover: boolean = false
 </script>
 
 <div class="list" class:horizontal class:vertical={!horizontal}>
@@ -97,27 +68,6 @@
       {/if}
     </div>
   {/each}
-  {#if createHandler}
-    <div
-      class="list-item add-item"
-      class:dragover
-      on:drop|preventDefault={drop}
-      on:dragover|preventDefault
-      on:dragenter={() => {
-        dragover = true
-      }}
-      on:dragleave={() => {
-        dragover = false
-      }}
-      on:click={() => {
-        input.click()
-      }}
-    >
-      <input class="hidden" bind:this={input} on:change={change} type="file" multiple={true} />
-      <div class="icon"><div><IconAdd /></div></div>
-      <div class="label"><Label label={attachment.string.AddAttachment} /></div>
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -143,7 +93,6 @@
 
     &.vertical {
       flex-direction: column;
-      margin: 0 16px;
 
       .list-item {
         padding: 10px 0 10px 0;
@@ -156,47 +105,6 @@
 
     .uploading {
       opacity: 0.6;
-    }
-
-    .add-item {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-
-      &.dragover {
-        border: 3px dashed var(--theme-bg-accent-color);
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      .icon {
-        opacity: 0.6;
-        width: 32px;
-        height: 32px;
-        border-radius: 25%;
-        background-color: var(--theme-button-bg-enabled);
-        border-color: var(--theme-button-border);
-        display: flex;
-
-        div {
-          margin: auto;
-        }
-      }
-      .label {
-        margin-left: 16px;
-        color: var(--theme-content-color);
-      }
-
-      &:hover {
-        .icon {
-          opacity: 1;
-        }
-        .label {
-          color: var(--theme-caption-color);
-        }
-      }
     }
   }
 </style>
