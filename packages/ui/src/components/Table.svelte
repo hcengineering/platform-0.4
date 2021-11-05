@@ -21,9 +21,10 @@
   import CheckBox from './CheckBox.svelte'
   import MoreV from './icons/MoreV.svelte'
   import Component from './Component.svelte'
+  import { getNestedValue } from '@anticrm/core'
 
   interface Cell {
-    component: UIComponent
+    component: UIComponent | AnyComponent
     width?: number
     props?: Object
   }
@@ -51,6 +52,7 @@
   export let showHeader: boolean = false
   export let columns: Column[]
   export let data: Data[]
+  export let virtual: boolean = true
 
   const docToRow = (doc: Data): Cell[] =>
     columns.map(({ component, width, properties }) => ({
@@ -59,7 +61,7 @@
       props: properties.reduce(
         (r, prop) => ({
           ...r,
-          [prop.property]: prop.key ? getValue(doc, prop.key) : prop.value
+          [prop.property]: prop.key ? getNestedValue(prop.key, doc) : prop.value
         }),
         {}
       )
@@ -72,19 +74,6 @@
     list?.reset()
   }
   let checked: boolean = false
-
-  function asComponent (comp: UIComponent | AnyComponent): AnyComponent {
-    return comp as AnyComponent
-  }
-
-  function getValue (doc: any, key: string): any {
-    const arr = key.split('.')
-    let result = doc
-    for (const currentKey of arr) {
-      result = result[currentKey]
-    }
-    return result
-  }
 </script>
 
 <div class="table">
@@ -106,15 +95,33 @@
   {/if}
   <div class="rows-container">
     <div class="rows">
-      <VirtualList bind:this={list} itemCount={data.length} let:items getItemSize={() => 60}>
-        {#each items as item (data[item.index]._id)}
-          <div
-            class="row"
-            class:checked
-            style={sty(item.style)}
-            on:click={() => dispatch('rowClick', data[item.index])}
-          >
-            {#each docToRow(data[item.index]) as cell, i}
+      {#if virtual}
+        <VirtualList bind:this={list} itemCount={data.length} let:items getItemSize={() => 60}>
+          {#each items as item (data[item.index]._id)}
+            <div
+              class="row"
+              class:checked
+              style={sty(item.style)}
+              on:click={() => dispatch('rowClick', data[item.index])}
+            >
+              {#each docToRow(data[item.index]) as cell, i}
+                <div class="cell dotted-text" style={widthSty(cell)}>
+                  {#if i === 0}
+                    <div class="flex-row-center rowMenu">
+                      <CheckBox bind:checked />
+                      <div class="menuBtn"><MoreV size={16} /></div>
+                    </div>
+                  {/if}
+                  <Component is={cell.component} props={cell.props} />
+                </div>
+              {/each}
+            </div>
+          {/each}
+        </VirtualList>
+      {:else}
+        {#each data as item (item._id)}
+          <div class="row" class:checked on:click={() => dispatch('rowClick', item)}>
+            {#each docToRow(item) as cell, i}
               <div class="cell dotted-text" style={widthSty(cell)}>
                 {#if i === 0}
                   <div class="flex-row-center rowMenu">
@@ -122,16 +129,12 @@
                     <div class="menuBtn"><MoreV size={16} /></div>
                   </div>
                 {/if}
-                {#if typeof cell.component === 'string'}
-                  <Component is={asComponent(cell.component)} props={cell.props} />
-                {:else}
-                  <svelte:component this={cell.component} {...cell.props} />
-                {/if}
+                <Component is={cell.component} props={cell.props} />
               </div>
             {/each}
           </div>
         {/each}
-      </VirtualList>
+      {/if}
     </div>
   </div>
 </div>

@@ -19,22 +19,31 @@
   import { Card, Grid, UserBox, Dropdown } from '@anticrm/ui'
   import type { DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { Candidate, VacancySpace } from '@anticrm/recruiting'
+  import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { FSM, State } from '@anticrm/fsm'
   import { fsmPlugin } from '@anticrm/fsm-impl'
   import type { QueryUpdater } from '@anticrm/presentation'
 
-  export let candidate: Ref<Account>
+  export let candidate: Candidate
   let space: VacancySpace | undefined
 
   const client = getClient()
   const accountId = client.accountId()
   const dispatch = createEventDispatcher()
 
+  let applicants: Applicant[] = []
+  let applicantsQ: QueryUpdater<Applicant> | undefined
+  $: applicantsQ = client.query(
+    applicantsQ,
+    fsmPlugin.class.FSM,
+    { _id: { $in: candidate.applicants } },
+    (res) => (applicants = res)
+  )
+
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
-  $: fsmQ = space && client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]))
+  $: fsmQ = space && client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]), { limit: 1 })
 
   let states: State[] = []
   let statesQ: QueryUpdater<State> | undefined
@@ -49,6 +58,9 @@
   let recruiter: Ref<Account> | undefined
   let stateItems: DropdownItem[] = []
   $: if (fsm !== undefined) {
+    if (stateID !== undefined && states.findIndex((s) => s._id === stateID) === -1) {
+      stateID = undefined
+    }
     stateItems = states.map((s) => ({
       id: s._id,
       label: s.name
@@ -66,11 +78,11 @@
     await fsmP.addItem(space, {
       _class: recruiting.class.Applicant,
       obj: {
-        item: candidate as never as Ref<Candidate>,
+        item: candidate._id,
         clazz: recruiting.class.Candidate,
         recruiter,
         state: stateID as Ref<State>,
-        candidate: getFullRef(candidate, recruiting.class.Candidate),
+        candidate: getFullRef(candidate._id, recruiting.class.Candidate),
         comments: []
       }
     })
@@ -82,7 +94,9 @@
   let vacancyItems: DropdownItem[] = []
   let vacanciesQ: QueryUpdater<VacancySpace> | undefined
   $: vacanciesQ = client.query(vacanciesQ, recruiting.class.VacancySpace, {}, (res) => {
-    vacancies = res.filter((space) => !space.private || space.members.includes(accountId))
+    vacancies = res
+      .filter((space) => !space.private || space.members.includes(accountId))
+      .filter((space) => !applicants.map((app) => app.space).includes(space._id))
     vacancyItems = vacancies.map((v) => ({
       id: v._id,
       label: v.name

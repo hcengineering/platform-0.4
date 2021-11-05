@@ -25,8 +25,6 @@ export async function createAttachment (
   const result = await builder.createDoc(
     attachment.class.Attachment,
     {
-      objectId: objectId,
-      objectClass: objcetClass,
       attachTo: getFullRef(objectId, objcetClass),
       url: url,
       name: fileName,

@@ -15,17 +15,22 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { getResource } from '@anticrm/platform'
-  import type { AnyComponent } from '@anticrm/status'
+  import type { AnyComponent, UIComponent } from '@anticrm/status'
 
   // import Icon from './Icon.svelte'
   import Spinner from './Spinner.svelte'
   import ErrorBoundary from './internal/ErrorBoundary'
 
-  export let is: AnyComponent
+  export let is: AnyComponent | UIComponent
   export let props: any = {}
   export let scrollable: boolean = false
+  export let maxHeight: number = 0
 
-  $: component = getResource(is)
+  function asComponent (comp: AnyComponent | string): AnyComponent {
+    return comp as AnyComponent
+  }
+
+  $: component = typeof is === 'string' ? getResource(asComponent(is)) : is
 
   const dispatch = createEventDispatcher()
 </script>
@@ -38,6 +43,7 @@
       this={Ctor}
       {...props}
       {scrollable}
+      {maxHeight}
       on:change
       on:open
       on:message

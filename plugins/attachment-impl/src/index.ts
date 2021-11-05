@@ -146,8 +146,6 @@ export default async (): Promise<AttachmentService> => {
     let item: UploadAttachment
     // eslint-disable-next-line prefer-const
     item = {
-      objectClass: objectClass,
-      objectId: objectId,
       name: file.name,
       size: file.size,
       format: format,
@@ -176,8 +174,6 @@ export default async (): Promise<AttachmentService> => {
           attachment.class.Attachment,
           space,
           {
-            objectClass: item.objectClass,
-            objectId: item.objectId,
             name: item.name,
             attachTo: item.attachTo,
             size: item.size,
