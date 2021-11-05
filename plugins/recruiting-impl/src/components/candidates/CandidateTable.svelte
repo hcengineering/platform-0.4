@@ -13,39 +13,79 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, showPopup, closePopup } from '@anticrm/ui'
-  import type { Ref, Space } from '@anticrm/core'
+  import { Table, Label, showPopup, closePopup, YesNo } from '@anticrm/ui'
+  import type { Doc, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import attachment from '@anticrm/attachment'
+  import chunter from '@anticrm/chunter'
 
   import EditCandidate from './EditCandidate.svelte'
+  import SocialLinks from './SocialLinks.svelte'
+  import ApplicantsTableCell from './ApplicantsTableCell.svelte'
 
   export let currentSpace: Ref<Space> | undefined
   let prevSpace: Ref<Space> | undefined
 
   const columns = [
     {
-      label: recruiting.string.FirstName,
-      properties: [{ key: 'firstName', property: 'label' }],
+      label: recruiting.string.Candidate,
+      properties: [{ key: 'fullName', property: 'label' }],
       component: Label
     },
     {
-      label: recruiting.string.LastName,
-      properties: [{ key: 'lastName', property: 'label' }],
+      label: recruiting.string.Location,
+      properties: [{ key: 'address.city', property: 'label' }],
       component: Label
+    },
+    {
+      label: recruiting.string.Title,
+      properties: [{ key: 'title', property: 'label' }],
+      component: Label
+    },
+    {
+      properties: [{ key: 'applicants', property: 'applicants' }],
+      component: ApplicantsTableCell
+    },
+    {
+      label: recruiting.string.Onsite,
+      properties: [{ key: 'workPreference.onsite', property: 'value' }],
+      component: YesNo
+    },
+    {
+      label: recruiting.string.Remote,
+      properties: [{ key: 'workPreference.remote', property: 'value' }],
+      component: YesNo
+    },
+    {
+      properties: [{ key: 'attachments', property: 'attachments' }],
+      component: attachment.component.AttachmentsTableCell
+    },
+    {
+      properties: [{ key: 'comments', property: 'comments' }],
+      component: chunter.component.CommentsTableCell
+    },
+    {
+      label: recruiting.string.SocialLinks,
+      properties: [{ key: 'socialLinks', property: 'socialLinks' }],
+      component: SocialLinks
     }
   ]
 
   const client = getClient()
-  let data: Candidate[] = []
+  let data: Doc[] = []
   let lq: QueryUpdater<Candidate> | undefined
   $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
 
     if (currentSpace !== undefined) {
-      lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => (data = result))
+      lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => {
+        data = result.map((c) => {
+          return Object.assign(c, { fullName: `${c.firstName} ${c.lastName}` })
+        })
+      })
     }
   }
 

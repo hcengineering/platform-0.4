@@ -20,14 +20,13 @@
 
   export let messages: WithMessage[] = []
   export let thread: boolean = false
-  let div: HTMLElement
 
   newAllBookmarksQuery(getClient(), () => {
     // Just to cache bookmarks.
   })
 </script>
 
-<div class="flex-col" bind:this={div}>
+<div class="flex-col">
   {#each messages as m (m._id)}
     <Message message={m} {thread} showLabels={true} />
   {/each}

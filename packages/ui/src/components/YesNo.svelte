@@ -14,13 +14,22 @@
 -->
 <script lang="ts">
   import Label from './Label.svelte'
+  import ui from '../index'
+  import { createEventDispatcher } from 'svelte'
 
   export let value: boolean | undefined
 
   function getLabel (value: boolean | undefined) {
-    if (value === true) return 'Yes'
-    if (value === false) return 'No'
-    return 'Unk'
+    if (value === true) return ui.string.Yes
+    if (value === false) return ui.string.No
+    return ui.string.Unknown
+  }
+
+  const dispatch = createEventDispatcher()
+
+  function change () {
+    value = value === false ? undefined : !value
+    dispatch('update')
   }
 </script>
 
@@ -28,11 +37,7 @@
   class="flex-row-center yesno-container"
   class:yes={value === true}
   class:no={value === false}
-  on:click={() => {
-    if (value === true) value = false
-    else if (value === false) value = undefined
-    else value = true
-  }}
+  on:click|stopPropagation={change}
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
     <circle cx="8" cy="8" r="6" />

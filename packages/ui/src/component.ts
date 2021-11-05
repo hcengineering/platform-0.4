@@ -2,6 +2,7 @@ import { Component, component, IntlString } from '@anticrm/status'
 
 export default component('ui' as Component, {
   string: {
+    Add: '' as IntlString,
     Search: '' as IntlString,
     Close: '' as IntlString,
     Undefined: '' as IntlString,
@@ -19,6 +20,9 @@ export default component('ui' as Component, {
     AddNewColumn: '' as IntlString,
     Cards: '' as IntlString,
     None: '' as IntlString,
-    NoDate: '' as IntlString
+    NoDate: '' as IntlString,
+    Yes: '' as IntlString,
+    No: '' as IntlString,
+    Unknown: '' as IntlString
   }
 })

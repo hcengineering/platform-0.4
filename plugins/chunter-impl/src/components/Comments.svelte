@@ -15,15 +15,15 @@
 <script lang="ts">
   import { getFullRef, SortingOrder } from '@anticrm/core'
   import type { DocumentQuery } from '@anticrm/core'
-  import type { Message as MessageModel, Comment } from '@anticrm/chunter'
+  import type { Message, Comment } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import { afterUpdate, createEventDispatcher } from 'svelte'
   import chunter from '../plugin'
-  import Message from './Message.svelte'
   import { newAllBookmarksQuery } from '../bookmarks'
+  import CommentsView from './CommentsView.svelte'
 
-  export let message: MessageModel
+  export let message: Message
 
   export let filter: DocumentQuery<Comment> | undefined = undefined
 
@@ -57,16 +57,4 @@
   })
 </script>
 
-<div class="channel-container">
-  {#each comments as m (m._id)}
-    <Message thread message={m} showLabels={true} />
-  {/each}
-</div>
-
-<style lang="scss">
-  .channel-container {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-</style>
+<CommentsView {comments} />

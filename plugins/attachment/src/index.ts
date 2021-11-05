@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Class, Doc, DocumentPresenter, Ref, Space, Storage, TxOperations } from '@anticrm/core'
+import { Class, Doc, DocumentPresenter, FullRefString, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, IntlString, Metadata, StatusCode } from '@anticrm/status'
@@ -19,6 +19,7 @@ import type { AnyComponent, IntlString, Metadata, StatusCode } from '@anticrm/st
 export interface Attachment extends Doc {
   objectId: Ref<Doc>
   objectClass: Ref<Class<Doc>>
+  attachTo: FullRefString
   name: string
   format: string
   mime: string
@@ -71,7 +72,9 @@ const attachment = plugin(
     component: {
       Attachments: '' as AnyComponent,
       AttachmentPreview: '' as AnyComponent,
-      AttachmentList: '' as AnyComponent
+      AttachmentList: '' as AnyComponent,
+      AvatarEditor: '' as AnyComponent,
+      AttachmentsTableCell: '' as AnyComponent
     },
     string: {
       Attachment: '' as IntlString,

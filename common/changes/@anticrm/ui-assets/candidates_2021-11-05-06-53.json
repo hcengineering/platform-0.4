@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "candidates",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets"
+}

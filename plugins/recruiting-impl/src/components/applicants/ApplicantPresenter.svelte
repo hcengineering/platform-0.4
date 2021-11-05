@@ -88,7 +88,7 @@
 <ScrollBox vertical>
   {#if applicant !== undefined}
     {#if candidate !== undefined}
-      <PersonSummary person={candidate} subtitle={candidate.employment.position} />
+      <PersonSummary person={candidate} subtitle={candidate.title} />
     {/if}
 
     <Section label={recruiting.string.GeneralInformation} icon={IconFile}>

@@ -14,9 +14,9 @@
 //
 
 import attachment, { AttachmentService, nameToFormat, UploadAttachment } from '@anticrm/attachment'
-import { Class, Doc, generateId, Ref, Space, Storage, TxOperations } from '@anticrm/core'
+import { Class, Doc, generateId, getFullRef, Ref, Space, Storage, TxOperations } from '@anticrm/core'
 import { setResource } from '@anticrm/platform'
-import { Attachments, AttachmentList } from '@anticrm/attachment-impl'
+import { Attachments, AttachmentList, AvatarEditor, AttachmentsTableCell } from '@anticrm/attachment-impl'
 import AttachmentPreview from './components/AttachmentPreview.svelte'
 import mime from 'mime'
 
@@ -24,6 +24,8 @@ export default async (): Promise<AttachmentService> => {
   setResource(attachment.component.Attachments, Attachments)
   setResource(attachment.component.AttachmentPreview, AttachmentPreview)
   setResource(attachment.component.AttachmentList, AttachmentList)
+  setResource(attachment.component.AvatarEditor, AvatarEditor)
+  setResource(attachment.component.AttachmentsTableCell, AttachmentsTableCell)
   const files: Map<string, File> = new Map<string, File>()
 
   async function remove (key: string, space: Ref<Space>): Promise<void> {
@@ -69,6 +71,7 @@ export default async (): Promise<AttachmentService> => {
       format: format,
       mime: type,
       url: encodeURI(generateLink(key, space, file.name, format)),
+      attachTo: getFullRef(objectId, objectClass),
       space: space,
       modifiedBy: client.accountId(),
       modifiedOn: Date.now(),
@@ -89,6 +92,7 @@ export default async (): Promise<AttachmentService> => {
       {
         objectClass: item.objectClass,
         objectId: item.objectId,
+        attachTo: item.attachTo,
         name: item.name,
         size: item.size,
         format: item.format,

@@ -16,7 +16,7 @@
   import { createEventDispatcher } from 'svelte'
   import { deepEqual } from 'fast-equals'
   import cloneDeep from 'lodash.clonedeep'
-  import type { Data, Ref } from '@anticrm/core'
+  import type { Ref } from '@anticrm/core'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
@@ -30,26 +30,20 @@
   const dispatch = createEventDispatcher()
 
   const client = getClient()
-  let candidate: (Candidate & Required<Data<Candidate>>) | undefined
-  let prevCandidate: (Candidate & Required<Data<Candidate>>) | undefined
+  let candidate: Candidate | undefined
+  let prevCandidate: Candidate | undefined
   let lqCandidates: QueryUpdater<Candidate> | undefined
 
   $: lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: id }, ([first]) => {
     const adjustedRes = {
       ...first,
-      _id: first._id as Ref<Candidate & Required<Data<Candidate>>>,
+      _id: first._id as Ref<Candidate>,
       firstName: first.firstName ?? '',
       lastName: first.lastName ?? '',
       avatar: first.avatar ?? '',
       bio: first.bio ?? '',
-      phone: first.phone ?? '',
-      address: first.address ?? {
-        city: '',
-        country: '',
-        street: '',
-        zip: ''
-      },
-      salaryExpectation: first.salaryExpectation ?? 0
+      address: first.address ?? {},
+      salaryExpectation: first.salaryExpectation
     }
 
     candidate = adjustedRes

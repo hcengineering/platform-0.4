@@ -17,6 +17,10 @@
     "AddNewColumn": "Add new column",
     "Cards": "Cards",
     "None": "None",
-    "NoDate": "-"
+    "NoDate": "-",
+    "Add": "Add",
+    "Yes": "Yes",
+    "No": "No",
+    "Unknown": "Unk"
   }
 }

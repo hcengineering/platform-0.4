@@ -141,7 +141,8 @@ export default plugin(
       Pinned: '' as IntlString,
       General: '' as IntlString,
       ChannelMembers: '' as IntlString,
-      Activity: '' as IntlString
+      Activity: '' as IntlString,
+      Comments: '' as IntlString
     },
     icon: {
       Chunter: '' as Asset,
@@ -158,7 +159,8 @@ export default plugin(
       References: '' as AnyComponent,
       AllThreadsView: '' as AnyComponent,
       BookmarksItemsView: '' as AnyComponent,
-      ChannelProperties: '' as AnyComponent
+      ChannelProperties: '' as AnyComponent,
+      CommentsTableCell: '' as AnyComponent
     },
     account: {
       Chunterbot: '' as Ref<Account>

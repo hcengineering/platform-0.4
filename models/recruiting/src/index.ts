@@ -24,7 +24,8 @@ import type {
   Doc,
   DocumentPresenter,
   Domain,
-  Class
+  Class,
+  FullRefString
 } from '@anticrm/core'
 import { PresentationMode } from '@anticrm/core'
 import fsm from '@anticrm/fsm'
@@ -39,7 +40,9 @@ import type {
   DerivedFeedback,
   Feedback,
   FeedbackRequest,
-  VacancySpace
+  SocialLink,
+  VacancySpace,
+  WorkPreference
 } from '@anticrm/recruiting'
 import chunter from '@anticrm/chunter'
 import type { CommentRef } from '@anticrm/chunter'
@@ -48,6 +51,7 @@ import calendar from '@anticrm/calendar'
 import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
+import attachment, { Attachment } from '@anticrm/attachment'
 
 const DOMAIN_RECRUITING = 'recruiting' as Domain
 
@@ -57,13 +61,13 @@ const DOMAIN_RECRUITING = 'recruiting' as Domain
 @Model(recruiting.class.Candidate, contact.class.Person)
 class TCandidate extends TPerson implements Candidate {
   status!: CandidateStatus
-  employment!: {
-    position: string
-    experience: number
-  }
-
+  title!: string
+  applicants!: Ref<Applicant>[]
+  comments!: CommentRef[]
+  attachments!: Ref<Attachment>[]
   salaryExpectation!: number
-  resume!: string
+  socialLinks!: SocialLink[]
+  workPreference!: WorkPreference
 }
 
 /**
@@ -79,6 +83,7 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 class TApplicant extends TFSMItem implements Applicant {
   recruiter!: Ref<Account>
   comments!: CommentRef[]
+  candidate!: FullRefString
 }
 
 /**
@@ -161,7 +166,7 @@ export function createModel (builder: Builder): void {
             }
           },
           {
-            label: recruiting.string.Candidates,
+            label: recruiting.string.CandidatePools,
             spaceIcon: recruiting.icon.Recruiting,
             spaceClass: recruiting.class.CandidatePoolSpace,
             addSpaceLabel: recruiting.string.AddPoolSpace,
@@ -282,14 +287,86 @@ export function createModel (builder: Builder): void {
       collections: [
         {
           sourceField: 'replyOf',
-          targetField: 'comments'
-        },
-        {
-          sourceField: 'modifiedOn',
-          targetField: 'lastModified'
+          targetField: 'comments',
+          lastModifiedField: 'lastModified',
+          rules: [
+            {
+              sourceField: 'modifiedBy',
+              targetField: 'userId'
+            },
+            {
+              sourceField: 'modifiedOn',
+              targetField: 'lastModified'
+            }
+          ]
         }
       ]
     },
     recruiting.dd.ReplyOf
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: chunter.class.Comment,
+      targetClass: recruiting.class.Candidate,
+      query: {
+        replyOf: { $like: '%class:recruiting.Candidate%' }
+      },
+      collections: [
+        {
+          sourceField: 'replyOf',
+          targetField: 'comments',
+          lastModifiedField: 'lastModified',
+          rules: [
+            {
+              sourceField: 'modifiedBy',
+              targetField: 'userId'
+            },
+            {
+              sourceField: 'modifiedOn',
+              targetField: 'lastModified'
+            }
+          ]
+        }
+      ]
+    },
+    recruiting.dd.CandidateReplyOf
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: attachment.class.Attachment,
+      targetClass: recruiting.class.Candidate,
+      query: {
+        attachTo: { $like: '%class:recruiting.Candidate%' }
+      },
+      collections: [
+        {
+          sourceField: 'attachTo',
+          targetField: 'attachments'
+        }
+      ]
+    },
+    recruiting.dd.CandidateAttachTo
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: recruiting.class.Applicant,
+      targetClass: recruiting.class.Candidate,
+      query: {
+        candidate: { $like: '%class:recruiting.Candidate%' }
+      },
+      collections: [
+        {
+          sourceField: 'candidate',
+          targetField: 'applicants'
+        }
+      ]
+    },
+    recruiting.dd.CandidateApplicant
   )
 }

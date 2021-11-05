@@ -14,99 +14,80 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { Data } from '@anticrm/core'
-  import { EditBox, Section, Grid, IconFile, TextArea } from '@anticrm/ui'
-  import type { Candidate } from '@anticrm/recruiting'
+  import { EditBox, Component, YesNoCard, Label } from '@anticrm/ui'
   import recruiting from '@anticrm/recruiting'
-
-  import Address from '../icons/Address.svelte'
+  import type { Candidate } from '@anticrm/recruiting'
+  import attachment from '@anticrm/attachment'
   import CandidateApplication from './CandidateApplication.svelte'
   import AvatarView from './AvatarView.svelte'
+  import SocialLinks from './SocialLinks.svelte'
+  import CandidateHeader from './CandidateHeader.svelte'
 
   const dispatch = createEventDispatcher()
 
-  export let candidate: (Candidate & Data<Required<Candidate>>) | undefined
+  export let candidate: Candidate | undefined
   export let min: boolean = false
 
   function onUpdate () {
     dispatch('update')
   }
-
-  function onNameUpdate () {
-    if (candidate === undefined) {
-      return
-    }
-
-    candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
-    onUpdate()
-  }
 </script>
 
 {#if candidate !== undefined}
-  {#if min}
-    <div class="flex-row-center">
-      <AvatarView src={candidate.avatar} />
-      <div class="flex-col">
-        <div class="name">
-          <EditBox placeholder="John" maxWidth="320px" bind:value={candidate.firstName} focus on:blur={onNameUpdate} />
-        </div>
-        <div class="name">
-          <EditBox placeholder="Appleseed" maxWidth="320px" bind:value={candidate.lastName} on:blur={onNameUpdate} />
-        </div>
-        <div class="title">
-          <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.employment.position} />
-        </div>
-        <div class="city"><EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} /></div>
+  {#if !min}
+    <CandidateHeader bind:candidate on:update={onUpdate} />
+    <div class="separator" />
+  {/if}
+  <div class="flex-row-center">
+    <AvatarView
+      bind:src={candidate.avatar}
+      objectId={candidate._id}
+      objectClass={candidate._class}
+      space={candidate.space}
+      on:update={onUpdate}
+    />
+    <div class="flex-col">
+      <div class="name">
+        <EditBox placeholder="John" maxWidth="320px" bind:value={candidate.firstName} focus on:blur={onUpdate} />
       </div>
+      <div class="name">
+        <EditBox placeholder="Appleseed" maxWidth="320px" bind:value={candidate.lastName} on:blur={onUpdate} />
+      </div>
+      <div class="title">
+        <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.title} on:blur={onUpdate} />
+      </div>
+      {#if min}
+        <div class="city">
+          <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} on:blur={onUpdate} />
+        </div>
+      {/if}
+      <div class="socialLinks">
+        <SocialLinks
+          bind:socialLinks={candidate.socialLinks}
+          width={min ? 152 : undefined}
+          editable
+          on:update={onUpdate}
+        />
+      </div>
+    </div>
+  </div>
+  {#if min}
+    <div class="separator" />
+    <Label label={recruiting.string.WorkPreferences} />
+    <div class="flex-between work-preference">
+      <Label label={recruiting.string.Onsite} />
+      <YesNoCard bind:value={candidate.workPreference.onsite} on:update={onUpdate} />
+    </div>
+    <div class="flex-between work-preference">
+      <Label label={recruiting.string.Remote} />
+      <YesNoCard bind:value={candidate.workPreference.remote} on:update={onUpdate} />
     </div>
   {:else}
-    <div>
-      <div class="flex-row-center">
-        <AvatarView src={candidate.avatar} />
-        <div class="flex-col">
-          <div class="name">
-            <EditBox
-              placeholder="John"
-              maxWidth="320px"
-              bind:value={candidate.firstName}
-              focus
-              on:blur={onNameUpdate}
-            />
-          </div>
-          <div class="name">
-            <EditBox placeholder="Appleseed" maxWidth="320px" bind:value={candidate.lastName} on:blur={onNameUpdate} />
-          </div>
-        </div>
-      </div>
-      <Section label={recruiting.string.PersonalInformation} icon={IconFile}>
-        <Grid column={2}>
-          <EditBox label={recruiting.string.Email} bind:value={candidate.email} on:blur={onUpdate} />
-          <EditBox label={recruiting.string.Phone} bind:value={candidate.phone} on:blur={onUpdate} />
-          <EditBox label={recruiting.string.Position} bind:value={candidate.employment.position} on:blur={onUpdate} />
-          <EditBox
-            label={recruiting.string.SalaryExpectation}
-            bind:value={candidate.salaryExpectation}
-            on:blur={onUpdate}
-          />
-        </Grid>
-      </Section>
-      <Section label={recruiting.string.Details} icon={IconFile}>
-        <TextArea bind:value={candidate.bio} label={recruiting.string.Bio} on:blur={onUpdate} />
-      </Section>
-      <Section label={recruiting.string.Address} icon={Address}>
-        <Grid column={2}>
-          <EditBox label={recruiting.string.Street} bind:value={candidate.address.street} on:blur={onUpdate} />
-          <EditBox label={recruiting.string.City} bind:value={candidate.address.city} on:blur={onUpdate} />
-          <EditBox label={recruiting.string.Zip} bind:value={candidate.address.zip} on:blur={onUpdate} />
-          <EditBox label={recruiting.string.Country} bind:value={candidate.address.country} on:blur={onUpdate} />
-        </Grid>
-      </Section>
-      {#if candidate._id !== undefined}
-        <Section label={recruiting.string.ApplicationInfo} icon={IconFile}>
-          <CandidateApplication {candidate} />
-        </Section>
-      {/if}
-    </div>
+    <CandidateApplication {candidate} />
+    <Component
+      is={attachment.component.Attachments}
+      props={{ objectId: candidate._id, objectClass: candidate._class, space: candidate.space, editable: true }}
+    />
   {/if}
 {/if}
 
@@ -118,9 +99,14 @@
   }
 
   .city,
+  .socialLinks,
   .title {
     font-size: 0.75rem;
     color: var(--theme-content-accent-color);
+  }
+
+  .socialLinks {
+    margin-top: 16px;
   }
 
   .title {
@@ -131,5 +117,15 @@
     font-weight: 500;
     font-size: 1.25rem;
     color: var(--theme-caption-color);
+  }
+
+  .separator {
+    margin: 16px 0;
+    height: 1px;
+    background-color: var(--theme-card-divider);
+  }
+
+  .work-preference {
+    margin-top: 16px;
   }
 </style>

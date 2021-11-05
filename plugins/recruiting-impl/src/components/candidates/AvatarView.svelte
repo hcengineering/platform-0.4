@@ -13,34 +13,77 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import attachment, { Attachment } from '@anticrm/attachment'
+  import { Class, Doc, Ref, Space } from '@anticrm/core'
+  import { showPopup } from '@anticrm/ui'
+  import { createEventDispatcher } from 'svelte'
+
   import Avatar from '../icons/Avatar.svelte'
 
-  export let src: string
+  export let src: string | undefined
+  export let objectId: Ref<Doc>
+  export let objectClass: Ref<Class<Doc>>
+  export let space: Ref<Space>
+  const dispatch = createEventDispatcher()
+  let input: HTMLElement
 
-  let kl: boolean = false
+  async function fileInputChange (e: Event): Promise<void> {
+    const elem = e.target as HTMLInputElement
+    const list = elem.files
+    if (list === null || list.length === 0) return
+    selectFiles(list)
+  }
+
+  function selectFiles (list: FileList): void {
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      showPopup(
+        attachment.component.AvatarEditor,
+        { objectId, objectClass, space, file },
+        undefined,
+        (item: Attachment | undefined) => {
+          src = item?.url
+          // closePopup()
+          dispatch('update')
+        }
+      )
+    }
+  }
+
+  async function drop (e: DragEvent): Promise<void> {
+    const list = e.dataTransfer?.files
+    if (list === undefined || list.length === 0) return
+    selectFiles(list)
+  }
+
+  function getImageURL (url: string): string {
+    return url.startsWith('blob') ? url : url + '?width=96'
+  }
 </script>
 
-<div class="avatar-container">
+<div class="avatar-container" on:drop|preventDefault={drop} on:dragover|preventDefault>
+  <input class="hidden" bind:this={input} on:change={fileInputChange} type="file" accept="image/*" />
   <div class="flex-center avatar-shadow">
-    {#if kl}
+    {#if !src}
       <div class="bg-avatar"><Avatar /></div>
     {:else}
       <div class="bg-avatar">
-        <img class="img-avatar" {src} alt="Avatar" />
+        <img class="img-avatar" src={getImageURL(src)} alt="Avatar" />
       </div>
     {/if}
   </div>
   <div
     class="flex-center avatar"
     on:click={() => {
-      kl = !kl
+      input.click()
     }}
   >
     <div class="border" />
-    {#if kl}
+    {#if !src}
       <Avatar />
     {:else}
-      <img class="img-avatar" {src} alt="Avatar" />
+      <img class="img-avatar" src={getImageURL(src)} alt="Avatar" />
     {/if}
   </div>
 </div>
@@ -55,6 +98,10 @@
     width: 96px;
     height: 96px;
     user-select: none;
+
+    .hidden {
+      display: none;
+    }
   }
   .avatar-shadow {
     position: absolute;

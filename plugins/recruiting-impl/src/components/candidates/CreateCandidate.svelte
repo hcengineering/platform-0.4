@@ -14,55 +14,67 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { Data, Space } from '@anticrm/core'
-  import { Card } from '@anticrm/ui'
+  import { generateId, Ref, Space } from '@anticrm/core'
+  import { Card, Dropdown, DropdownItem } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import type { Candidate } from '@anticrm/recruiting'
+  import type { Candidate, CandidatePoolSpace } from '@anticrm/recruiting'
   import { CandidateStatus } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import CandidateEditor from './CandidateEditor.svelte'
+  import { QueryUpdater } from '@anticrm/presentation'
 
   const dispatch = createEventDispatcher()
 
   export let space: Space
+  let pool: Ref<CandidatePoolSpace> = space._id
   const client = getClient()
+  const accountId = client.accountId()
 
-  let candidate: Candidate & Data<Required<Candidate>> = {
+  $: candidate = {
+    _id: generateId(),
+    space: pool,
+    _class: recruiting.class.Candidate,
     firstName: '',
     lastName: '',
-    avatar: 'https://robohash.org/prefix?set=set4',
+    avatar: '',
     email: '',
-    phone: '',
     bio: '',
+    socialLinks: [],
+    createOn: 0,
+    modifiedBy: client.accountId(),
+    modifiedOn: 0,
     status: CandidateStatus.AvailableForHire,
-    employment: {
-      position: '',
-      experience: 0
-    },
+    title: '',
+    comments: [],
+    attachments: [],
+    applicants: [],
     address: {
-      city: '',
-      country: '',
-      street: '',
-      zip: ''
+      city: ''
     },
-    salaryExpectation: 0,
-    resume: ''
-  } as Candidate & Data<Required<Candidate>>
+    workPreference: {}
+  } as Candidate
 
   async function create () {
-    await client.createDoc(recruiting.class.Candidate, space._id, candidate)
+    await client.createDoc(candidate._class, candidate.space, candidate, candidate._id)
   }
 
-  $: candidate.avatar = `https://robohash.org/prefix${candidate.firstName}${candidate.lastName}?set=set4`
+  let poolItems: DropdownItem[] = []
+  let poolQuery: QueryUpdater<CandidatePoolSpace> | undefined
+  $: poolQuery = client.query(poolQuery, recruiting.class.CandidatePoolSpace, {}, (res) => {
+    const pools = res.filter((space) => !space.private || space.members.includes(accountId))
+    poolItems = pools.map((v) => ({
+      id: v._id,
+      label: v.name
+    }))
+  })
 </script>
 
 <Card
-  label={recruiting.string.AddCandidate}
+  label={recruiting.string.CreateCandidate}
   canSave={candidate.firstName.length > 0 && candidate.lastName.length > 0}
   okAction={create}
   on:close={() => dispatch('close')}
 >
   <CandidateEditor min bind:candidate />
-  <svelte:fragment slot="pool">Pool</svelte:fragment>
-  <svelte:fragment slot="contacts">Contacts</svelte:fragment>
+  <Dropdown slot="pool" items={poolItems} bind:selected={pool} label={recruiting.string.CandidatePool} />
 </Card>

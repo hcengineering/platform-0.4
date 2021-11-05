@@ -14,12 +14,13 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { IntlString, UIComponent } from '@anticrm/status'
+  import type { AnyComponent, IntlString, UIComponent } from '@anticrm/status'
 
   import Label from './Label.svelte'
   import VirtualList, { sty } from './VirtualList.svelte'
   import CheckBox from './CheckBox.svelte'
   import MoreV from './icons/MoreV.svelte'
+  import Component from './Component.svelte'
 
   interface Cell {
     component: UIComponent
@@ -29,7 +30,7 @@
 
   interface Column {
     properties: ColumnProp[]
-    label: IntlString
+    label?: IntlString
     component: UIComponent
     width?: number
   }
@@ -58,7 +59,7 @@
       props: properties.reduce(
         (r, prop) => ({
           ...r,
-          [prop.property]: prop.key ? doc[prop.key] : prop.value
+          [prop.property]: prop.key ? getValue(doc, prop.key) : prop.value
         }),
         {}
       )
@@ -71,6 +72,19 @@
     list?.reset()
   }
   let checked: boolean = false
+
+  function asComponent (comp: UIComponent | AnyComponent): AnyComponent {
+    return comp as AnyComponent
+  }
+
+  function getValue (doc: any, key: string): any {
+    const arr = key.split('.')
+    let result = doc
+    for (const currentKey of arr) {
+      result = result[currentKey]
+    }
+    return result
+  }
 </script>
 
 <div class="table">
@@ -83,7 +97,9 @@
               <CheckBox symbol={'minus'} />
             </div>
           {/if}
-          <Label label={field.label} />
+          {#if field.label}
+            <Label label={field.label} />
+          {/if}
         </div>
       {/each}
     </div>
@@ -106,7 +122,11 @@
                     <div class="menuBtn"><MoreV size={16} /></div>
                   </div>
                 {/if}
-                <svelte:component this={cell.component} {...cell.props} />
+                {#if typeof cell.component === 'string'}
+                  <Component is={asComponent(cell.component)} props={cell.props} />
+                {:else}
+                  <svelte:component this={cell.component} {...cell.props} />
+                {/if}
               </div>
             {/each}
           </div>
@@ -128,7 +148,7 @@
     height: 100%;
 
     border-radius: 0 0 20px 20px;
-    // background-color: var(--theme-table-bg-color);
+    background-color: var(--theme-table-bg-color);
   }
 
   .rows {
@@ -165,7 +185,6 @@
     font-weight: 500;
     font-size: 12px;
     color: var(--theme-content-dark-color);
-    background-color: var(--theme-bg-color);
     box-shadow: inset 0 -1px 0 0 var(--theme-bg-focused-color);
     z-index: 1;
 

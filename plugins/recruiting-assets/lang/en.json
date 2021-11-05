@@ -50,6 +50,18 @@
     "SubmitFeedback": "Submit feedback",
     "Save": "Save",
     "State": "State",
-    "Comments": "Comments"
+    "Comments": "Comments",
+    "AddSocialLinks": "Add social links",
+    "CreateCandidate": "Create candidate",
+    "Title": "Title",
+    "WorkPreference": "Work preference",
+    "WorkPreferences": "Work location preferences",
+    "SocialLinks": "SocialLinks",
+    "EditSocialLinks": "Edit social links",
+    "Onsite": "Onsite",
+    "Remote": "Remote",
+    "CandidatePool": "Candidate pool",
+    "CandidatePools": "Candidate pools",
+    "Vacancy": "Vacancy"
   }
 }

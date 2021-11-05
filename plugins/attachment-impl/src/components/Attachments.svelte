@@ -20,13 +20,16 @@
   import type { UploadAttachment } from '@anticrm/attachment'
   import { getPlugin } from '@anticrm/platform'
   import AttachmentList from './AttachmentList.svelte'
+  import { Header } from '@anticrm/ui'
 
   export let objectId: Ref<Doc>
   export let space: Ref<Space>
   export let objectClass: Ref<Class<Doc>>
   export let editable: boolean = false
+
   const client = getClient()
   let items: Array<UploadAttachment> = []
+  let input: HTMLElement
 
   let lq: QueryUpdater<UploadAttachment> | undefined
   $: lq = client.query(lq, attachment.class.Attachment, { objectId: objectId }, (result) => {
@@ -44,6 +47,59 @@
     items.push(item)
     items = items
   }
+
+  async function drop (e: DragEvent): Promise<void> {
+    const list = e.dataTransfer?.files
+    if (list === undefined || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      await createAttachment(file)
+    }
+  }
+
+  async function change (e: Event): Promise<void> {
+    const elem = e.target as HTMLInputElement
+    const list = elem.files
+    if (list === null || list.length === 0) return
+    for (let index = 0; index < list.length; index++) {
+      const file = list.item(index)
+      if (file === null) continue
+      await createAttachment(file)
+    }
+  }
+
+  let dragover: boolean = false
+
+  function click (): void {
+    input.click()
+  }
 </script>
 
-<AttachmentList {items} createHandler={createAttachment} {editable} />
+<div
+  class:dragover
+  on:drop|preventDefault={drop}
+  on:dragover|preventDefault
+  on:dragenter|preventDefault|stopPropagation={() => {
+    console.log('set dragover to true')
+    dragover = true
+  }}
+  on:dragleave|preventDefault|stopPropagation={() => {
+    console.log('set dragover to false')
+    dragover = false
+  }}
+>
+  <Header label={attachment.string.Attachments} addHandler={editable ? click : undefined} />
+  <AttachmentList {items} {editable} />
+  <input class="hidden" bind:this={input} on:change={change} type="file" multiple={true} />
+</div>
+
+<style lang="scss">
+  .dragover {
+    border: 3px dashed var(--theme-bg-accent-color);
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>

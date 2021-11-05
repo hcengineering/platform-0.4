@@ -19,13 +19,13 @@ import recruiting from '@anticrm/recruiting'
 
 import CreateCandidatePool from './components/candidates/CreateCandidatePool.svelte'
 import CreateVacancy from './components/vacancies/CreateVacancy.svelte'
-import CreateApplication from './components/vacancies/CreateApplication.svelte'
+import CreateApplication from './components/applicants/CreateApplication.svelte'
 import VacancyDetails from './components/vacancies/VacancyDetails.svelte'
 import CreateCandidate from './components/candidates/CreateCandidate.svelte'
 import EditCandidate from './components/candidates/EditCandidate.svelte'
 import Workspace from './components/Workspace.svelte'
-import Applications from './components/vacancies/Applications.svelte'
-import ApplicantPresenter from './components/vacancies/ApplicantPresenter.svelte'
+import Applications from './components/applicants/Applications.svelte'
+import ApplicantPresenter from './components/applicants/ApplicantPresenter.svelte'
 import FeedbackForm from './components/feedback/FeedbackForm.svelte'
 
 export default async (): Promise<RecruitingService> => {

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Doc, Domain, Ref } from '@anticrm/core'
+import { Class, Doc, Domain, FullRefString, Ref } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
 import attachment from '@anticrm/attachment'
@@ -33,6 +33,7 @@ export class TAttachment extends TDoc implements Attachment {
   mime!: string
   url!: string
   size!: number
+  attachTo!: FullRefString
 }
 
 /**
