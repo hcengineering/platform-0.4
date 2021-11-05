@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Adjust table styles",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}
