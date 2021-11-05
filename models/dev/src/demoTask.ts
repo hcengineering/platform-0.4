@@ -68,6 +68,7 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
     const checkItems: CheckListItem[] = []
     for (let j = 0; j < sTasks[i % sTasks.length]; j++) {
       checkItems.push({
+        id: `${id}c${j}`,
         description: `do ${faker.commerce.productDescription()}`,
         done: faker.datatype.boolean()
       })

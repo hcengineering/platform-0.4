@@ -14,40 +14,33 @@
 -->
 <script lang="ts">
   import attachment from '@anticrm/attachment'
-  import core, { Account, Ref, Space } from '@anticrm/core'
+  import chunter from '@anticrm/chunter'
+  import type { Account, Ref, Space } from '@anticrm/core'
+  import core from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import type { IntlString } from '@anticrm/status'
-  import type { Task } from '@anticrm/task'
-  import chunter from '@anticrm/chunter'
+  import type { Project, Task } from '@anticrm/task'
   import {
     CheckBoxList,
+    Component,
     DatePicker,
     EditBox,
-    Grid,
+    Icon,
     IconComments,
-    IconFile,
-    IconToDo,
-    Row,
+    Panel,
     Section,
-    Tabs,
-    UserBox,
-    Component,
-    Panel
+    UserBox
   } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { afterUpdate, onDestroy } from 'svelte'
-  import task from '../plugin'
-  import DescriptionEditor from './DescriptionEditor.svelte'
-  import CommentsView from './CommentsView.svelte'
-  import StatusPicker from './StatusPicker.svelte'
-  import { getContext } from 'svelte'
+  import { afterUpdate, getContext, onDestroy } from 'svelte'
   import { Writable } from 'svelte/store'
+  import task from '../plugin'
+  import CommentsView from './CommentsView.svelte'
+  import DescriptionEditor from './DescriptionEditor.svelte'
+  import StatusPicker from './StatusPicker.svelte'
 
   const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
-  import IconTask from './icons/Task.svelte'
-
   const client = getClient()
   const notificationClient = new NotificationClient(client)
 
@@ -57,20 +50,20 @@
   let item: Task | undefined
   let projectMembers: Account[] = []
   let desсription: string = ''
+  let project: Project | undefined
 
-  $: {
-    getItem(id)
-  }
+  $: updateItem(id)
 
   let lq: QueryUpdater<Task> | undefined
 
-  async function getItem (id: Ref<Task>) {
+  async function updateItem (id: Ref<Task>) {
     lq = client.query(lq, task.class.Task, { _id: id }, async (result) => {
       spaceLastViews = $spacesLastViews.get(result[0]?.space)
       desсription = result[0]?.description
       item = result[0]
       if (item !== undefined) {
-        const members = (await client.findAll(core.class.Space, { _id: item.space })).pop()?.members
+        project = (await client.findAll(core.class.Space, { _id: item.space })).pop()
+        const members = project?.members
         if (members !== undefined) {
           projectMembers = await client.findAll(core.class.Account, { _id: { $in: members } })
         } else {
@@ -80,7 +73,6 @@
         projectMembers = []
       }
     })
-    return item
   }
 
   onDestroy(async () => {
@@ -98,9 +90,6 @@
     }
   })
 
-  const tabs = [task.string.General, attachment.string.Attachments, task.string.ToDos]
-  let selectedTab: IntlString = task.string.General
-
   async function update (key: string, value: any): Promise<void> {
     if (item !== undefined) {
       const operations = {
@@ -114,92 +103,108 @@
   }
 </script>
 
-{#await getItem(id) then value}
-  {#if item}
-    <Panel icon={IconTask} title={item.name} on:close>
-      <Tabs {tabs} bind:selected={selectedTab} />
-      {#if selectedTab === task.string.General}
-        <Section label={task.string.GeneralInformation} icon={IconFile}>
-          <Grid column={2}>
-            <EditBox
-              label={task.string.TaskName}
-              bind:value={item.name}
-              on:blur={(e) => {
-                update('name', item?.name)
-              }}
-            />
-            <StatusPicker
-              selected={item.status}
-              on:change={(e) => {
-                update('status', e.detail)
-              }}
-            />
-            <UserBox
-              selected={item.assignee}
-              users={projectMembers}
-              title={task.string.Assignee}
-              label={task.string.AssignTask}
-              on:change={(e) => {
-                update('assignee', e.detail)
-              }}
-              showSearch
-            />
-            <DatePicker
-              value={item.dueTo !== undefined ? new Date(item.dueTo) : undefined}
-              label={task.string.PickDue}
-              noLabel={task.string.NoPickDue}
-              on:change={(e) => {
-                update('dueTo', e.detail)
-              }}
-            />
-            <Row>
-              <DescriptionEditor
-                currentSpace={item.space}
-                label={task.string.TaskDescription}
-                placeholder={task.string.TaskDescription}
-                on:blur={(e) => {
-                  if (item?.description !== desсription) {
-                    update('description', desсription)
-                  }
-                }}
-                bind:value={desсription}
-              />
-            </Row>
-          </Grid>
-        </Section>
+{#if item}
+  <Panel on:close>
+    <svelte:fragment slot="header">
+      <div class="flex-row">
+        <div class="title">
+          <Icon size={16} icon={task.icon.Task} />
+          <span>{item.name}</span>
+        </div>
+        <div class="description">
+          {item.description}
+        </div>
+      </div>
+    </svelte:fragment>
+    <svelte:fragment slot="actions">
+      <UserBox
+        selected={item.assignee}
+        users={projectMembers}
+        title={task.string.Assignee}
+        label={task.string.AssignTask}
+        on:change={(e) => {
+          update('assignee', e.detail)
+        }}
+        showSearch
+      />
+      <DatePicker
+        value={item.dueTo !== undefined ? new Date(item.dueTo) : undefined}
+        label={task.string.PickDue}
+        noLabel={task.string.NoPickDue}
+        on:change={(e) => {
+          update('dueTo', e.detail)
+        }}
+      />
+      <StatusPicker
+        selected={item.status}
+        on:change={(e) => {
+          update('status', e.detail)
+        }}
+      />
+    </svelte:fragment>
 
-        <Component
-          is={chunter.component.References}
-          props={{
-            label: task.string.References,
-            icon: IconComments,
-            closed: true,
-            docRef: item
-          }}
-        />
+    <EditBox
+      label={task.string.TaskName}
+      bind:value={item.name}
+      on:blur={(e) => {
+        update('name', item?.name)
+      }}
+    />
 
-        <Section label={task.string.Comments} icon={IconComments}>
-          <CommentsView currentSpace={item.space} taskId={item._id} />
-        </Section>
-      {:else if selectedTab === attachment.string.Attachments}
-        <Section label={attachment.string.Attachments} icon={IconFile}>
-          <Component
-            is={attachment.component.Attachments}
-            props={{ objectId: item._id, objectClass: task.class.Task, space: item.space, editable: true }}
-          />
-        </Section>
-      {:else}
-        <Section label={task.string.ToDos} icon={IconToDo}>
-          <CheckBoxList
-            editable
-            label={task.string.AddCheckItem}
-            bind:items={item.checkItems}
-            on:change={(e) => {
-              update('checkItems', item?.checkItems)
-            }}
-          />
-        </Section>
-      {/if}
-    </Panel>
-  {/if}
-{/await}
+    <DescriptionEditor
+      currentSpace={item.space}
+      label={task.string.TaskDescription}
+      placeholder={task.string.TaskDescription}
+      on:blur={(e) => {
+        if (item?.description !== desсription) {
+          update('description', desсription)
+        }
+      }}
+      bind:value={desсription}
+    />
+
+    <CheckBoxList
+      editable
+      label={task.string.ToDos}
+      bind:items={item.checkItems}
+      on:change={(e) => {
+        update('checkItems', item?.checkItems)
+      }}
+    />
+
+    <Component
+      is={chunter.component.References}
+      props={{
+        label: task.string.References,
+        icon: IconComments,
+        closed: true,
+        docRef: item
+      }}
+    />
+
+    <Section label={task.string.Comments} icon={IconComments}>
+      <CommentsView currentSpace={item.space} taskId={item._id} />
+    </Section>
+
+    <Component
+      is={attachment.component.Attachments}
+      props={{ objectId: item._id, objectClass: task.class.Task, space: item.space, editable: true }}
+    />
+  </Panel>
+{/if}
+
+<style lang="scss">
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    line-height: 24px;
+    span {
+      margin-left: 10px;
+    }
+  }
+  .description {
+    font-size: 12px;
+    opacity: 0.4;
+  }
+</style>

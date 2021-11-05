@@ -20,7 +20,7 @@
   import { MDRefEditor } from '@anticrm/ui'
   import type { CompletionItem, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
 
-  export let lines = 10
+  export let lines = 3
   export let value: string = ''
   export let label: IntlString | undefined
   export let placeholder: IntlString | undefined

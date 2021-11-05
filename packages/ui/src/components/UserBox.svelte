@@ -66,6 +66,7 @@
     display: flex;
     flex-wrap: nowrap;
     cursor: pointer;
+    font-size: 12px;
 
     .btn {
       width: 36px;

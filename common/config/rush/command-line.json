@@ -203,11 +203,7 @@
       "enableParallelism": true,
       "incremental": true
     },
-    {
-      /**
-       * (Required) Determines the type of custom command.
-       * Rush's "global" commands are invoked once for the entire repo.
-       */
+    {      
       "commandKind": "bulk",
       "name": "fast-build",
       "summary": "Fast building with omit of some checks",
@@ -216,8 +212,9 @@
       "incremental": true,
       "ignoreMissingScript": true,
       "watchForChanges": true,
+      "ignoreDependencyOrder": true,
       "safeForSimultaneousRushProcesses": true
-    },
+    }
   ],
 
   /**

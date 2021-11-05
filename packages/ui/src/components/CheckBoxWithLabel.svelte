@@ -64,15 +64,12 @@
   })
 
   const dispatch = createEventDispatcher()
-  function changeItem () {
-    dispatch('change', { checked, value })
-  }
 </script>
 
 <svelte:window on:mousedown={waitClick} />
 <div class="checkBox-container">
   <div style="margin-top: 1px;">
-    <CheckBox bind:checked on:change={changeItem} {editable} />
+    <CheckBox bind:checked on:change={() => dispatch('change', { checked, value })} {editable} />
   </div>
   <div
     class="label"
@@ -89,7 +86,7 @@
       placeholder="New item"
       class="edit-item"
       on:input={(ev) => ev.target && computeSize(ev.target)}
-      on:change={changeItem}
+      on:change={() => dispatch('change', { checked, value })}
     />
     <div class="text" class:checked bind:this={text}>{value}</div>
   </div>

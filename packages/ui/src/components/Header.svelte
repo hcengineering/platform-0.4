@@ -14,18 +14,20 @@
 -->
 <script lang="ts">
   import { IntlString } from '@anticrm/status'
+  import ActionIcon from './ActionIcon.svelte'
   import Add from './icons/Add.svelte'
   import Label from './Label.svelte'
+  import ui from '../component'
 
-  export let label: IntlString | string
-  export let addHandler: () => void | undefined
+  export let label: IntlString
+  export let addHandler: (() => void) | undefined
 </script>
 
 <div class="header flex-row-center">
   <Label {label} />
   {#if addHandler}
-    <div class="icon" on:click={addHandler}>
-      <div><Add size={10} /></div>
+    <div class="add">
+      <ActionIcon label={ui.string.Add} icon={Add} size={20} circleSize={24} action={addHandler} />
     </div>
   {/if}
 </div>
@@ -35,23 +37,10 @@
     color: var(--theme-caption-color);
     font-weight: 500;
     font-size: 20px;
-    margin-top: 48px;
+    margin-top: 28px;
     margin-bottom: 28px;
-
-    .icon {
-      display: flex;
+    .add {
       margin-left: 12px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background-color: var(--theme-button-bg-enabled);
-      border-color: var(--theme-button-border-enabled);
-      border-style: solid;
-      border-width: 1px;
-
-      div {
-        margin: auto;
-      }
     }
   }
 </style>

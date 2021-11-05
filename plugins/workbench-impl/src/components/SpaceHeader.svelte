@@ -83,10 +83,10 @@
         addAction(ev)
       }}
     />
-    <div class="button">
-      <ActionIcon icon={Star} size={16} padding={8} action={changeStarred} filled={space?.account?.starred ?? false} />
+    <div class="button button-8">
+      <ActionIcon icon={Star} size={16} action={changeStarred} filled={space?.account?.starred ?? false} />
     </div>
-    <div class="button"><ActionIcon icon={MoreH} size={16} padding={4} /></div>
+    <div class="button button-4"><ActionIcon icon={MoreH} size={16} /></div>
   </div>
 </div>
 
@@ -122,6 +122,12 @@
 
     .button {
       margin-left: 8px;
+    }
+    .button-8 {
+      padding: 8px;
+    }
+    .button-4 {
+      padding: 4px;
     }
   }
 </style>

@@ -25,8 +25,7 @@
 
 <label
   class="checkbox"
-  on:click={(ev) => {
-    ev.stopPropagation()
+  on:click|stopPropagation|preventDefault={() => {
     checked = !checked
   }}
 >

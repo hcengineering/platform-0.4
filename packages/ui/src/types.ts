@@ -65,6 +65,7 @@ export interface LabelAndProps {
 }
 
 export interface CheckListItem {
+  id: string
   description: string
   done: boolean
 }

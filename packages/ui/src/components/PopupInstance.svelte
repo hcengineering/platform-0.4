@@ -97,7 +97,7 @@
 
 <svelte:window
   on:resize={fitPopup}
-  on:keydown={(e) => {
+  on:keydown|stopPropagation={(e) => {
     if (e.key === 'Escape') {
       close(undefined)
     }
