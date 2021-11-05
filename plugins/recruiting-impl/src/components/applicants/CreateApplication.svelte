@@ -33,7 +33,7 @@
 
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
-  $: fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]))
+  $: fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]), { limit: 1 })
 
   let existingCandidates: Set<Ref<Candidate>> | undefined
   let existingCandidatesQ: QueryUpdater<Applicant> | undefined

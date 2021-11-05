@@ -15,7 +15,7 @@
 <script lang="ts">
   import attachment, { UploadAttachment } from '@anticrm/attachment'
   import ui, { Button } from '@anticrm/ui'
-  import { Class, Doc, Ref, Space } from '@anticrm/core'
+  import { Class, Doc, getFullRef, Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
@@ -58,11 +58,7 @@
 
   async function removeAttachment (objectId: Ref<Doc>): Promise<void> {
     const attachmentId = (
-      await client.findAll(
-        attachment.class.Attachment,
-        { objectId: objectId, objectClass: objectClass, space: space },
-        { limit: 1 }
-      )
+      await client.findAll(attachment.class.Attachment, { attachTo: getFullRef(objectId, objectClass) }, { limit: 1 })
     ).shift()
     if (attachmentId === undefined) return
     const fileService = await getPlugin(attachment.id)

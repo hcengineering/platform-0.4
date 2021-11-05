@@ -20,7 +20,7 @@
   import type { PopupAlignment } from '../types'
   import { closePopup } from '..'
 
-  export let is: UIComponent
+  export let is: UIComponent | AnyComponent
   export let props: object
   export let element: PopupAlignment | undefined
   export let onClose: ((result: any) => void) | undefined
@@ -93,9 +93,6 @@
       resizeObserver.observe(modalHTML)
     }
   })
-  function toComponent (is: UIComponent): AnyComponent {
-    return is as AnyComponent
-  }
 </script>
 
 <svelte:window
@@ -107,11 +104,7 @@
   }}
 />
 <div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
-  {#if typeof is === 'string'}
-    <Component is={toComponent(is)} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
-  {:else}
-    <svelte:component this={is} {...props} {maxHeight} on:close={(ev) => close(ev.detail)} />
-  {/if}
+  <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
 </div>
 <div
   bind:this={modalOHTML}

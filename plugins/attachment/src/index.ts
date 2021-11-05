@@ -17,8 +17,6 @@ import { plugin } from '@anticrm/platform'
 import type { AnyComponent, IntlString, Metadata, StatusCode } from '@anticrm/status'
 
 export interface Attachment extends Doc {
-  objectId: Ref<Doc>
-  objectClass: Ref<Class<Doc>>
   attachTo: FullRefString
   name: string
   format: string

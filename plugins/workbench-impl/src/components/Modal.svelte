@@ -44,20 +44,13 @@
       return 'top: 50%; left: 50%; transform: translate(-50%, -50%);'
     }
   }
-  function asComponent (comp: UIComponent | AnyComponent): AnyComponent {
-    return comp as AnyComponent
-  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
 {#if component}
   <div class="modal" class:top-arrow={$modal.element} bind:this={modalHTML} style={getStyle($modal.element)}>
-    {#if typeof component === 'string'}
-      <Component is={asComponent(component)} props={$modal.props} on:close={close} />
-    {:else}
-      <svelte:component this={component} {...$modal.props} on:close={close} />
-    {/if}
+    <Component is={component} props={$modal.props} on:close={close} />
   </div>
   <div bind:this={modalOHTML} class="modal-overlay" />
 {/if}

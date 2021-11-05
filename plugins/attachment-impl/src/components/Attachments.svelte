@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Class, Doc, Ref, Space } from '@anticrm/core'
+  import { Class, Doc, getFullRef, Ref, Space } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { getClient } from '@anticrm/workbench'
   import attachment from '@anticrm/attachment'
@@ -32,7 +32,7 @@
   let input: HTMLElement
 
   let lq: QueryUpdater<UploadAttachment> | undefined
-  $: lq = client.query(lq, attachment.class.Attachment, { objectId: objectId }, (result) => {
+  $: lq = client.query(lq, attachment.class.Attachment, { attachTo: getFullRef(objectId, objectClass) }, (result) => {
     items = result
   })
 

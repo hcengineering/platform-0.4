@@ -76,10 +76,11 @@
   $: data = generateItems(applications, vacancies, states)
 
   function create () {
-    showPopup(CreateApplication, { candidate: candidate._id })
+    showPopup(CreateApplication, { candidate: candidate })
   }
 
   interface ApplicantItem {
+    _id: Ref<Applicant>
     vacancy: string
     location: string
     recruiter: Account
@@ -96,6 +97,7 @@
       const recruiter = recruiters.find((v) => v._id === applicant.recruiter)
       if (recruiter === undefined) continue
       const item = {
+        _id: applicant._id,
         vacancy: vacancy.name,
         location: vacancy.location,
         recruiter: recruiter,
@@ -120,13 +122,5 @@
 
 <Header label={recruiting.string.Applications} addHandler={create} />
 {#if data.length}
-  <div class="table">
-    <Table {data} {columns} showHeader />
-  </div>
+  <Table {data} {columns} showHeader virtual={false} />
 {/if}
-
-<style lang="scss">
-  .table {
-    min-height: 100px;
-  }
-</style>

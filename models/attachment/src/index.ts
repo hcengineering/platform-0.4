@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import { Class, Doc, Domain, FullRefString, Ref } from '@anticrm/core'
+import { Domain, FullRefString } from '@anticrm/core'
 import { Builder, Model } from '@anticrm/model'
 import core, { TDoc } from '@anticrm/model-core'
 import attachment from '@anticrm/attachment'
@@ -26,8 +26,6 @@ const DOMAIN_ATTACHMENT = 'attachment' as Domain
  */
 @Model(attachment.class.Attachment, core.class.Doc, DOMAIN_ATTACHMENT)
 export class TAttachment extends TDoc implements Attachment {
-  objectId!: Ref<Doc>
-  objectClass!: Ref<Class<Doc>>
   name!: string
   format!: string
   mime!: string
