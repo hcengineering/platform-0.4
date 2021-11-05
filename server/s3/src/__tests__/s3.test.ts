@@ -24,9 +24,9 @@ describe('s3', () => {
   const secret: string = process.env.S3_SECRET ?? 'minioadmin'
   const endpoit: string = process.env.S3_URI ?? 'http://localhost:9000'
   let client: S3Storage
+  const bucket = 'bucket' + generateId()
 
   it('check storage', async (done) => {
-    const bucket = 'bucket' + generateId()
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     expect.assertions(4)
     const testId = generateId()
@@ -64,6 +64,8 @@ describe('s3', () => {
         stream.on('finish', () => {
           const downloadedFile = fs.readFileSync(resultFile)
           expect(downloadedFile).toEqual(file)
+          // eslint-disable-next-line
+          client.remove(fileName)
           fs.unlinkSync(`./${fileName}`)
           fs.unlinkSync(`./${resultFile}`)
           done()
@@ -77,7 +79,6 @@ describe('s3', () => {
 
   it('check download file', async (done) => {
     const fileName = 'testFile2' + generateId()
-    const bucket = 'bucket' + generateId()
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     expect.assertions(2)
     fs.writeFileSync(fileName, 'testText')
@@ -101,17 +102,17 @@ describe('s3', () => {
       void client.getFile(fileName).then((res) => {
         expect(res?.body).toEqual(file)
         fs.unlinkSync(`./${fileName}`)
+        // eslint-disable-next-line
+        client.remove(fileName)
         done()
       })
     })
     req.write(file)
     req.end()
-    await client.remove(fileName)
   })
 
   it('check get image', async (done) => {
     expect.assertions(3)
-    const bucket = 'bucket' + generateId()
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
     const image = fs.readFileSync('./src/__tests__/testImage.jpg')
     const testId = generateId()
@@ -151,7 +152,6 @@ describe('s3', () => {
 
   it('check remove', async (done) => {
     expect.assertions(1)
-    const bucket = 'bucket' + generateId()
     const testId = generateId()
     const fileName = 'testFile' + testId
     client = await S3Storage.create(accessKey, secret, endpoit, bucket)
@@ -192,7 +192,6 @@ describe('s3', () => {
   })
 
   it('fictive ca test', async () => {
-    const bucket = 'bucket' + generateId()
     // eslint-disable-next-line
     expect(() => S3Storage.create(accessKey, secret, endpoit, bucket, 'will be ignored for http')).rejects.toThrow()
   })
