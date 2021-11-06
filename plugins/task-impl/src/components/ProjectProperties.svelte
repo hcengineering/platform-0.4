@@ -18,7 +18,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
   import type { Project } from '@anticrm/task'
-  import { ActionIcon, Component, Dialog, EditBox, Grid, Icon, Label, Tabs, ToggleWithLabel } from '@anticrm/ui'
+  import { ActionIcon, Component, Dialog, EditBox, Grid, Icon, Tabs, ToggleWithLabel } from '@anticrm/ui'
   import workbench, { getClient } from '@anticrm/workbench'
   import task from '../plugin'
   import StatusPicker from './StatusPicker.svelte'
@@ -70,9 +70,7 @@
   </svelte:fragment>
   <svelte:fragment slot="actions">
     <div class="flex">
-      <div class="action-item">
-        <ActionIcon size={16} icon={calendar.icon.Calendar} />
-      </div>
+      <ActionIcon size={16} icon={calendar.icon.Calendar} circleSize={36} />
     </div>
     <StatusPicker selected={toIntlString('Status')} on:change={(e) => {}} />
   </svelte:fragment>
@@ -97,12 +95,9 @@
         }}
       />
       <div class="attachments">
-        <div class="header">
-          <Label label={attachment.string.Attachments} />
-        </div>
         <Component
           is={attachment.component.Attachments}
-          props={{ objectId: space._id, objectClass: space._class, space: space._id }}
+          props={{ objectId: space._id, objectClass: space._class, space: space._id, editable: true }}
         />
       </div>
     </Grid>
@@ -139,21 +134,9 @@
     font-size: 12px;
     opacity: 0.4;
   }
-  .action-item {
-    border: 1px solid var(--theme-dialog-divider);
-    border-radius: 50px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .attachments {
     display: flex;
     flex-direction: column;
-    .header {
-      font-size: 20px;
-    }
   }
   .section {
     border-bottom: 1px solid var(--theme-dialog-divider);

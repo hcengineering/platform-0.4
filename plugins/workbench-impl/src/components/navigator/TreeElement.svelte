@@ -93,7 +93,6 @@
         label={action.label}
         icon={action.icon}
         size={16}
-        padding={4}
         action={(ev) => {
           noOver = true
           action.action(ev).then(() => {
@@ -173,6 +172,7 @@
     }
     .tool {
       margin-left: 2px;
+      padding: 4px;
       visibility: hidden;
     }
     .counter {

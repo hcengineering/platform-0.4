@@ -205,13 +205,13 @@
 
     .textInput {
       position: relative;
-      min-height: 44px;
+      min-height: 48px;
       margin: -3px;
-      padding: 2px;
+      padding: 5px;
       color: var(--theme-caption-color);
-      background-color: transparent;
-      border: 1px solid transparent;
-      border-radius: 2px;
+      background-color: var(--theme-dialog-bg-accent);
+      border: 1px solid var(--theme-dialog-divider);
+      border-radius: 12px;
 
       &:focus-within {
         border-color: var(--primary-button-enabled);

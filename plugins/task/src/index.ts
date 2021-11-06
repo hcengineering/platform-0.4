@@ -38,6 +38,7 @@ export interface Task extends Doc {
 }
 
 export interface CheckListItem {
+  id: string
   description: string
   done: boolean
 }

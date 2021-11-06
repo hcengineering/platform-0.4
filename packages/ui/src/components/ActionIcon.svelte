@@ -20,17 +20,30 @@
   import Tooltip from './Tooltip.svelte'
 
   export let label: IntlString
-  export let direction: TooltipAligment
+  export let direction: TooltipAligment = 'right'
   export let icon: Asset | UIComponent
-  export let padding: number = 0
   export let filled: boolean = false
   export let size: 12 | 16 | 20 | 24
   export let action: (ev?: Event) => void = () => {}
   export let invisible: boolean = false
+  export let circleSize: 0 | 16 | 18 | 24 | 28 | 36 = 0
+
+  export function buttonStyle (size: number, padding: number, margin: number): string {
+    let style = ''
+    if (circleSize > 0) {
+      style += `width: ${size}px; height: ${size}px;`
+    }
+    return style
+  }
 </script>
 
 <Tooltip {label} {direction}>
-  <button class="button" style="padding: {padding}px" on:click|stopPropagation={action}>
+  <button
+    class="button"
+    style={buttonStyle(circleSize)}
+    on:click|stopPropagation={action}
+    class:circle-button={circleSize > 0}
+  >
     <div class="icon" style="width: {size}px; height: {size}px;" class:invisible>
       <Icon {icon} {size} {filled} />
     </div>
@@ -38,6 +51,10 @@
 </Tooltip>
 
 <style lang="scss">
+  .circle-button {
+    border: 1px solid var(--theme-dialog-divider) !important;
+    border-radius: 50px !important;
+  }
   .button {
     display: flex;
     justify-content: center;

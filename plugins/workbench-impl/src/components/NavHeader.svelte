@@ -26,7 +26,7 @@
   <div class="title">
     <span><Label label={title} /></span>
     <div class="tool">
-      <ActionIcon icon={MoreH} size={16} padding={4} label={workbench.string.More} />
+      <ActionIcon icon={MoreH} size={16} label={workbench.string.More} />
     </div>
   </div>
 </div>
@@ -58,6 +58,7 @@
       }
       .tool {
         margin-left: 16px;
+        padding: 4px;
       }
     }
   }

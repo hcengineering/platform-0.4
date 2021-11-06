@@ -14,10 +14,10 @@
 -->
 <script lang="ts">
   import attachment from '@anticrm/attachment'
+  import type { Channel } from '@anticrm/chunter'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { IntlString } from '@anticrm/status'
-  import type { Channel } from '@anticrm/chunter'
-  import { Component, Dialog, EditBox, Grid, Icon, Label, Tabs, ToggleWithLabel } from '@anticrm/ui'
+  import { Component, Dialog, EditBox, Grid, Icon, Tabs, ToggleWithLabel } from '@anticrm/ui'
   import workbench, { getClient } from '@anticrm/workbench'
   import chunter from '../plugin'
 
@@ -84,12 +84,9 @@
         }}
       />
       <div class="attachments">
-        <div class="header">
-          <Label label={attachment.string.Attachments} />
-        </div>
         <Component
           is={attachment.component.Attachments}
-          props={{ objectId: space._id, objectClass: space._class, space: space._id }}
+          props={{ objectId: space._id, objectClass: space._class, space: space._id, editable: true }}
         />
       </div>
     </Grid>
@@ -130,9 +127,6 @@
   .attachments {
     display: flex;
     flex-direction: column;
-    .header {
-      font-size: 20px;
-    }
   }
   .section {
     border-bottom: 1px solid var(--theme-dialog-divider);

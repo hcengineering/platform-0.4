@@ -37,13 +37,6 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<svelte:window
-  on:keydown={(e) => {
-    if (e.key === 'Escape') {
-      dispatch('close')
-    }
-  }}
-/>
 <div class="dialog-container">
   <div class="dialog-bg" />
   <div class="header">

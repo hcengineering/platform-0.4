@@ -13,46 +13,42 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { generateId } from '@anticrm/core'
+
   import type { IntlString } from '@anticrm/platform'
+  import { createEventDispatcher } from 'svelte'
   import type { CheckListItem } from '..'
   import CheckBoxWithLabel from './CheckBoxWithLabel.svelte'
-  import Label from './Label.svelte'
-  import Add from './icons/Add.svelte'
+  import Header from './Header.svelte'
 
-  export let label: IntlString | undefined
+  export let label: IntlString
   export let items: Array<CheckListItem>
   export let editable: boolean = false
 
   const dispatch = createEventDispatcher()
+
+  function addHandler (): void {
+    items.push({ id: generateId(), description: '', done: false })
+    items = items
+  }
 </script>
 
 <div class="checkbox-list">
+  <Header {label} addHandler={editable ? addHandler : undefined} />
   {#each items as item}
     <div class="list-item">
       <CheckBoxWithLabel
         bind:value={item.description}
         bind:checked={item.done}
         {editable}
-        on:change={() => {
+        on:change={(ev) => {
           items = items.filter((i) => i.description !== '')
+          console.log('items', items, ev, item)
           dispatch('change', item)
         }}
       />
     </div>
   {/each}
-  {#if editable}
-    <div
-      class="add-item"
-      on:click={() => {
-        items.push({ description: '', done: false })
-        items = items
-      }}
-    >
-      <div class="icon"><Add /></div>
-      <div class="label"><Label {label} /></div>
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -61,35 +57,10 @@
     flex-direction: column;
     align-items: stretch;
     max-width: 100%;
-    margin: 0 16px;
+    font-size: 14px;
+    line-height: 21px;
     .list-item + .list-item {
       margin-top: 20px;
-    }
-
-    .add-item {
-      display: flex;
-      align-items: center;
-      margin-top: 20px;
-      cursor: pointer;
-
-      .icon {
-        width: 16px;
-        height: 16px;
-        opacity: 0.6;
-      }
-      .label {
-        margin-left: 16px;
-        color: var(--theme-content-color);
-      }
-
-      &:hover {
-        .icon {
-          opacity: 1;
-        }
-        .label {
-          color: var(--theme-caption-color);
-        }
-      }
     }
   }
 </style>

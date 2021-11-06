@@ -25,8 +25,8 @@
   import CollapseWin from './icons/CollapseWin.svelte'
   import Activity from './icons/Activity.svelte'
 
-  export let title: string
-  export let icon: Asset | UIComponent
+  export let title: string | undefined
+  export let icon: Asset | UIComponent | undefined
   export let fullSize: boolean = false
   // export let object: any
 
@@ -43,12 +43,23 @@
   {#if fullSize}
     <div class="leftSection">
       <div class="flex-row-center header">
-        <div class="icon">
-          <Icon {icon} size={16} />
-        </div>
-        <div class="title">{title}</div>
+        {#if icon}
+          <div class="icon">
+            <Icon {icon} size={16} />
+          </div>
+        {/if}
+        {#if title}
+          <div class="title">{title}</div>
+        {/if}
+        {#if $$slots.header}
+          <slot name="header" />
+        {/if}
       </div>
-      {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
+      {#if $$slots.actions}
+        <div class="action-panel">
+          <slot name="actions" />
+        </div>
+      {/if}
       <div class="flex-col scroll-container">
         <div class="flex-col content">
           <slot />
@@ -70,12 +81,23 @@
   {:else}
     <div class="unionSection">
       <div class="flex-row-center header">
-        <div class="icon">
-          <Icon {icon} size={16} />
-        </div>
-        <div class="title">{title}</div>
+        {#if icon}
+          <div class="icon">
+            <Icon {icon} size={16} />
+          </div>
+        {/if}
+        {#if title}
+          <div class="title">{title}</div>
+        {/if}
+        {#if $$slots.header}
+          <slot name="header" />
+        {/if}
       </div>
-      {#if $$slots.subtitle}<div class="flex-row-center subtitle"><slot name="subtitle" /></div>{/if}
+      {#if $$slots.actions}
+        <div class="action-panel">
+          <slot name="actions" />
+        </div>
+      {/if}
       <ScrollBox vertical stretch noShift>
         <div class="flex-col content">
           <slot />
@@ -120,8 +142,8 @@
     position: fixed;
     top: 32px;
     bottom: 24px;
-    left: 50%;
     right: 24px;
+    min-width: 700px;
 
     display: flex;
     flex-direction: column;
@@ -131,6 +153,16 @@
     box-shadow: 0px 44px 154px rgba(0, 0, 0, 0.75);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+
+    .action-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 0 32px 0 40px;
+      height: 72px;
+      border-bottom: 1px solid var(--theme-card-divider);
+    }
 
     .header {
       flex-shrink: 0;
@@ -150,13 +182,6 @@
         user-select: none;
       }
     }
-
-    .subtitle {
-      flex-shrink: 0;
-      padding: 0 32px;
-      height: 56px;
-      border-bottom: 1px solid var(--theme-bg-accent-hover);
-    }
   }
 
   .unionSection {
@@ -172,6 +197,7 @@
       flex-direction: column;
       padding: 24px 40px;
       height: max-content;
+      row-gap: 20px;
     }
     .activity {
       background-color: var(--theme-bg-accent-color);
@@ -206,6 +232,7 @@
       .content {
         flex-shrink: 0;
         padding: 8px 8px 0;
+        row-gap: 20px;
       }
     }
   }
@@ -217,6 +244,7 @@
     .content {
       flex-grow: 1;
       padding: 40px 40px 0;
+      row-gap: 20px;
       background-color: var(--theme-bg-accent-color);
     }
   }
