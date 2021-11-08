@@ -163,7 +163,8 @@ export function createModel (builder: Builder): void {
             item: {
               createComponent: recruiting.component.CreateApplication,
               createLabel: recruiting.string.CreateApplication
-            }
+            },
+            spaceMore: recruiting.component.VacancyProperties
           },
           {
             label: recruiting.string.CandidatePools,
@@ -175,7 +176,8 @@ export function createModel (builder: Builder): void {
               createComponent: recruiting.component.CreateCandidate,
               createLabel: recruiting.string.AddCandidate,
               editComponent: recruiting.component.EditCandidate
-            }
+            },
+            spaceMore: recruiting.component.CandidatePoolProperties
           }
         ],
         spaceView: recruiting.component.WorkspaceComponent

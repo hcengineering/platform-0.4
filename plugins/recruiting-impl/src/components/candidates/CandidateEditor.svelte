@@ -21,7 +21,6 @@
   import CandidateApplication from './CandidateApplication.svelte'
   import AvatarView from './AvatarView.svelte'
   import SocialLinks from './SocialLinks.svelte'
-  import CandidateHeader from './CandidateHeader.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -34,10 +33,6 @@
 </script>
 
 {#if candidate !== undefined}
-  {#if !min}
-    <CandidateHeader bind:candidate on:update={onUpdate} />
-    <div class="separator" />
-  {/if}
   <div class="flex-row-center">
     <AvatarView
       bind:src={candidate.avatar}

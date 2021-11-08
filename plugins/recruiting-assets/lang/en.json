@@ -62,6 +62,11 @@
     "Remote": "Remote",
     "CandidatePool": "Candidate pool",
     "CandidatePools": "Candidate pools",
-    "Vacancy": "Vacancy"
+    "Vacancy": "Vacancy",
+    "General": "General",
+    "Members": "Members",
+    "Activity": "Activity",
+    "FolderName": "Folder name",
+    "FolderDescription": "Folder description"
   }
 }

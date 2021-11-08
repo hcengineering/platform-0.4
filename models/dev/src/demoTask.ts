@@ -17,7 +17,10 @@ const demoIds = component('demo-task' as Component, {
  * @public
  */
 export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Task[]> {
-  const members: Ref<Account>[] = [core.account.System, ...accountIds]
+  const members: Ref<Account>[] = [
+    core.account.System,
+    ...faker.random.arrayElements(accountIds, faker.datatype.number(accountIds.length))
+  ]
 
   console.error('generate demo project')
   await builder.createDoc(
@@ -25,7 +28,7 @@ export async function demoTask (builder: DemoBuilder, taskCount = 7): Promise<Ta
     {
       name: 'PL-DEMO',
       description: 'Demo Task project',
-      members: [core.account.System, ...faker.random.arrayElements(members)],
+      members: members,
       private: false
     },
     demoIds.project.DemoProject,

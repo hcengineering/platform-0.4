@@ -24,6 +24,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import CandidateEditor from './CandidateEditor.svelte'
   import Contact from '../icons/Contact.svelte'
+  import CandidateHeader from './CandidateHeader.svelte'
 
   export let id: Ref<Candidate>
 
@@ -77,6 +78,9 @@
       dispatch('close')
     }}
   >
+    <svelte:fragment slot="actions">
+      <CandidateHeader bind:candidate on:update={onUpdate} />
+    </svelte:fragment>
     <CandidateEditor bind:candidate on:update={onUpdate} />
   </Panel>
 {/if}

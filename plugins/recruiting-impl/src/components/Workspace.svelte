@@ -21,7 +21,7 @@
   import plugin from '@anticrm/recruiting'
 
   import CandidatesWorkspace from './candidates/CandidatesWorkspace.svelte'
-  import VacancyWorkspace from './vacancies/VacancyWorkspace.svelte'
+  import Applications from './applicants/Applications.svelte'
 
   export let currentSpace: Ref<VacancySpace | CandidatePoolSpace> | undefined
   let prevSpace: Ref<VacancySpace | CandidatePoolSpace> | undefined
@@ -47,7 +47,7 @@
 
 {#if space !== undefined}
   {#if isVacancySpace(space)}
-    <VacancyWorkspace {space} />
+    <Applications {space} />
   {:else}
     <CandidatesWorkspace {space} />
   {/if}
