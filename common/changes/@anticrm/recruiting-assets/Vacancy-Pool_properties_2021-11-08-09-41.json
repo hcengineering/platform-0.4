@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "comment": "spaces properties",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-assets"
+}
