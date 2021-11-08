@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Update EditBox.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}

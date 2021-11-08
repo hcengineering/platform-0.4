@@ -37,7 +37,7 @@
     const target = t as HTMLInputElement
     const value = target.value
     text.innerHTML = (value === '' ? placeholder : value).split(' ').join('&nbsp;')
-    target.style.width = text.clientWidth + 8 + 'px'
+    target.style.width = text.clientWidth + 'px'
   }
 
   onMount(() => {
@@ -55,37 +55,39 @@
 <div class="editbox" style={width ? 'width: ' + width : ''}>
   <div class="text" bind:this={text} />
   {#if label}<div class="label"><Label {label} /></div>{/if}
-  {#if password}
-    <input
-      bind:this={input}
-      type="password"
-      {id}
-      {style}
-      bind:value
-      {placeholder}
-      on:change
-      on:keyup
-      on:blur
-      on:focus
-      on:click|stopPropagation
-      on:input={(ev) => ev.target && computeSize(ev.target)}
-    />
-  {:else}
-    <input
-      bind:this={input}
-      type="text"
-      {id}
-      {style}
-      bind:value
-      {placeholder}
-      on:change
-      on:keyup
-      on:blur
-      on:focus
-      on:click|stopPropagation
-      on:input={(ev) => ev.target && computeSize(ev.target)}
-    />
-  {/if}
+  <div class="wrap">
+    {#if password}
+      <input
+        bind:this={input}
+        type="password"
+        {id}
+        {style}
+        bind:value
+        {placeholder}
+        on:change
+        on:keyup
+        on:blur
+        on:focus
+        on:click|stopPropagation
+        on:input={(ev) => ev.target && computeSize(ev.target)}
+      />
+    {:else}
+      <input
+        bind:this={input}
+        type="text"
+        {id}
+        {style}
+        bind:value
+        {placeholder}
+        on:change
+        on:keyup
+        on:blur
+        on:focus
+        on:click|stopPropagation
+        on:input={(ev) => ev.target && computeSize(ev.target)}
+      />
+    {/if}
+  </div>
 </div>
 
 <style lang="scss">
@@ -108,20 +110,27 @@
       user-select: none;
     }
 
+    .wrap {
+      position: relative;
+      &::after {
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        left: -4px;
+        right: -4px;
+        border: 2px solid var(--primary-button-enabled);
+      }
+      &:focus-within::after {
+        content: '';
+      }
+    }
+
     input {
       max-width: 100%;
-      margin: -4px;
-      padding: 2px;
       color: inherit;
       background-color: transparent;
-      border: 2px solid transparent;
-      border-radius: 2px;
-      outline: none;
-      font-weight: inherit;
+      border: none;
 
-      &:focus {
-        border-color: var(--primary-button-enabled);
-      }
       &::placeholder {
         color: var(--theme-content-dark-color);
       }
