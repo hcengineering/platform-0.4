@@ -63,13 +63,7 @@ export interface CandidatePoolSpace extends Space {}
 
 export interface Vacancy {
   company: string
-  details: {
-    summary: string
-    qualification: string
-    experience: string
-  }
   location: string
-  type: string
   dueDate?: Timestamp
 }
 export interface VacancySpace extends WithFSM, Vacancy {}
@@ -116,8 +110,9 @@ export default plugin(PluginRecruiting, {}, {
     EditCandidate: '' as AnyComponent,
     ApplicantPresenter: '' as AnyComponent,
     Applications: '' as AnyComponent,
-    VacancyDetails: '' as AnyComponent,
-    Feedback: '' as AnyComponent
+    Feedback: '' as AnyComponent,
+    CandidatePoolProperties: '' as AnyComponent,
+    VacancyProperties: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,
@@ -193,7 +188,12 @@ export default plugin(PluginRecruiting, {}, {
     Remote: '' as IntlString,
     CandidatePool: '' as IntlString,
     CandidatePools: '' as IntlString,
-    Vacancy: '' as IntlString
+    Vacancy: '' as IntlString,
+    Activity: '' as IntlString,
+    General: '' as IntlString,
+    Members: '' as IntlString,
+    FolderName: '' as IntlString,
+    FolderDescription: '' as IntlString
   },
   presenter: {
     CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,

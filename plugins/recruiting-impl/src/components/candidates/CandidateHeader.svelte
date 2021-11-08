@@ -60,6 +60,7 @@
   .header {
     padding-top: 12px;
     padding-bottom: 12px;
+    height: 100%;
 
     .icon {
       height: 36px;

@@ -34,15 +34,8 @@
     fsm: '' as VacancySpace['fsm'],
     private: true,
     members: [client.accountId()],
-    details: {
-      summary: '',
-      qualification: '',
-      experience: ''
-    },
     company: '',
-    location: '',
-    type: '',
-    dueDate: undefined
+    location: ''
   } as VacancySpace
 
   let selectedFSM: FSM | undefined = undefined

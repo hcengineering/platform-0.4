@@ -7,8 +7,8 @@ import { accountIds } from './demoAccount'
 import { createAttachment } from './demoAttachment'
 import { DemoBuilder } from './model'
 
-const demoIds = component('demo-task' as Component, {
-  project: {
+const demoIds = component('demo-channel' as Component, {
+  channel: {
     DemoChannel: '' as Ref<Channel>
   }
 })
@@ -27,7 +27,7 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 3,
       direct: false,
       private: false
     },
-    demoIds.project.DemoChannel,
+    demoIds.channel.DemoChannel,
     {
       space: core.space.Model
     }
@@ -71,7 +71,7 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 3,
         },
         cid,
         {
-          space: demoIds.project.DemoChannel,
+          space: demoIds.channel.DemoChannel,
           modifiedOn: Date.now(),
           createOn: Date.now(),
           modifiedBy: userId
@@ -129,7 +129,7 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 3,
       },
       msgId,
       {
-        space: demoIds.project.DemoChannel,
+        space: demoIds.channel.DemoChannel,
         modifiedBy: faker.random.arrayElement(accountIds),
         modifiedOn: Date.now(),
         createOn: Date.now()
@@ -145,7 +145,7 @@ export async function demoChunter (builder: DemoBuilder, tasks: Task[], dmc = 3,
         },
         `${msgId}pin${i}` as Ref<MessageBookmark>,
         {
-          space: demoIds.project.DemoChannel,
+          space: demoIds.channel.DemoChannel,
           modifiedBy: i % 2 === 0 ? faker.random.arrayElement(accountIds) : core.account.System,
           modifiedOn: Date.now(),
           createOn: Date.now()

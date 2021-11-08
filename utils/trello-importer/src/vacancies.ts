@@ -37,13 +37,7 @@ export async function createVacancySpace (
         private: false,
         members: [clientId],
         company: '',
-        location: '',
-        type: '',
-        details: {
-          summary: '',
-          qualification: '',
-          experience: ''
-        }
+        location: ''
       },
       vacancyId
     )

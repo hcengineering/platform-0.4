@@ -20,13 +20,14 @@ import recruiting from '@anticrm/recruiting'
 import CreateCandidatePool from './components/candidates/CreateCandidatePool.svelte'
 import CreateVacancy from './components/vacancies/CreateVacancy.svelte'
 import CreateApplication from './components/applicants/CreateApplication.svelte'
-import VacancyDetails from './components/vacancies/VacancyDetails.svelte'
 import CreateCandidate from './components/candidates/CreateCandidate.svelte'
 import EditCandidate from './components/candidates/EditCandidate.svelte'
 import Workspace from './components/Workspace.svelte'
 import Applications from './components/applicants/Applications.svelte'
 import ApplicantPresenter from './components/applicants/ApplicantPresenter.svelte'
 import FeedbackForm from './components/feedback/FeedbackForm.svelte'
+import CandidatePoolProperties from './components/candidates/CandidatePoolProperties.svelte'
+import VacancyProperties from './components/vacancies/VacancyProperties.svelte'
 
 export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.CreatePool, CreateCandidatePool)
@@ -37,8 +38,9 @@ export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.CreateApplication, CreateApplication)
   setResource(recruiting.component.Applications, Applications)
   setResource(recruiting.component.Feedback, FeedbackForm)
-  setResource(recruiting.component.VacancyDetails, VacancyDetails)
   setResource(recruiting.component.ApplicantPresenter, ApplicantPresenter)
+  setResource(recruiting.component.CandidatePoolProperties, CandidatePoolProperties)
+  setResource(recruiting.component.VacancyProperties, VacancyProperties)
 
   return {}
 }
