@@ -120,16 +120,20 @@
         right: -4px;
         border: 2px solid var(--primary-button-enabled);
       }
-      &:focus-within::after { content: '' }
+      &:focus-within::after {
+        content: '';
+      }
     }
-    
+
     input {
       max-width: 100%;
       color: inherit;
       background-color: transparent;
       border: none;
 
-      &::placeholder { color: var(--theme-content-dark-color); }
+      &::placeholder {
+        color: var(--theme-content-dark-color);
+      }
 
       &::-webkit-contacts-auto-fill-button,
       &::-webkit-credentials-auto-fill-button {
