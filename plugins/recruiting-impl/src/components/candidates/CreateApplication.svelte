@@ -112,11 +112,7 @@
   $: canSave = !!(recruiter && candidate && stateID)
 
   function getAvaibleVacancies (applicants: Applicant[]): DropdownItem[] {
-    console.log('filter')
-    console.log(applicants)
-    console.log(vacancyItems)
     const res = vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>))
-    console.log(res)
     return res
   }
 </script>
