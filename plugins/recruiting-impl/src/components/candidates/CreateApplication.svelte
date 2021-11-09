@@ -33,12 +33,16 @@
   const dispatch = createEventDispatcher()
 
   let applicants: Applicant[] = []
+  let applicantsLoaded = false
   let applicantsQ: QueryUpdater<Applicant> | undefined
   $: applicantsQ = client.query(
     applicantsQ,
     recruiting.class.Applicant,
     { _id: { $in: candidate.applicants } },
-    (res) => (applicants = res)
+    (res) => {
+      applicants = res
+      applicantsLoaded = true
+    }
   )
 
   let fsm: FSM | undefined
@@ -111,16 +115,13 @@
   let canSave: boolean = false
   $: canSave = !!(recruiter && candidate && stateID)
 
-  function getAvailableVacancies (applicants: Applicant[]): DropdownItem[] {
-    const res = vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>))
-    return res
-  }
+  $: items = applicantsLoaded ? vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>)) : []
 </script>
 
 <Card label={recruiting.string.CreateApplication} bind:canSave okAction={create} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
     <Dropdown
-      items={getAvailableVacancies(applicants)}
+      {items}
       bind:selected={selectedVacancy}
       label={recruiting.string.Vacancies}
     />
