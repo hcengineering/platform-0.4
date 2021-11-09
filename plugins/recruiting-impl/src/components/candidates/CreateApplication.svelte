@@ -115,16 +115,14 @@
   let canSave: boolean = false
   $: canSave = !!(recruiter && candidate && stateID)
 
-  $: items = applicantsLoaded ? vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>)) : []
+  $: items = applicantsLoaded
+    ? vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>))
+    : []
 </script>
 
 <Card label={recruiting.string.CreateApplication} bind:canSave okAction={create} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <Dropdown
-      {items}
-      bind:selected={selectedVacancy}
-      label={recruiting.string.Vacancies}
-    />
+    <Dropdown {items} bind:selected={selectedVacancy} label={recruiting.string.Vacancies} />
     <UserBox
       users={recruiters}
       bind:selected={recruiter}
