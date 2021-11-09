@@ -39,7 +39,11 @@ export function toMongoQuery<T extends Doc> (
   for (const key in query) {
     const value = query[key]
     if (typeof value !== 'object') continue
-    mongoQuery[key] = translateQuery(value)
+    if (key === '$or') {
+      mongoQuery[key] = (value as Array<DocumentQuery<T>>).map((t) => toMongoQuery(hierarchy, objectClass, t))
+    } else {
+      mongoQuery[key] = translateQuery(value)
+    }
   }
 
   mongoQuery._class = objectClass

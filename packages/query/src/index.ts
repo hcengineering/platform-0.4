@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import {
+import core, {
   Class,
   Client,
   Doc,
@@ -23,7 +23,9 @@ import {
   FindResult,
   generateId,
   getOperator,
+  HierarchyClient,
   isDerivedDataTx,
+  matchDocument,
   Obj,
   Ref,
   resultSort,
@@ -75,7 +77,7 @@ export type QueryUnsubscribe = () => void
 /**
  * @public
  */
-export class LiveQuery extends TxProcessor implements Storage, Queriable {
+export class LiveQuery extends TxProcessor implements Storage, Queriable, HierarchyClient {
   private readonly queries: Map<string, Query> = new Map<string, Query>()
 
   constructor (readonly client: Client) {
@@ -86,18 +88,19 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     return this.client.isDerived(_class, from)
   }
 
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Ref<Class<Obj>>[] {
+    return this.client.getDescendants(_class)
+  }
+
+  getAncestors (_class: Ref<Class<Obj>>): Ref<Class<Obj>>[] {
+    return this.client.getAncestors(_class)
+  }
+
   private match (q: Query, doc: Doc): boolean {
     if (!this.isDerived(doc._class, q._class)) {
       return false
     }
-    for (const key in q.query) {
-      const value = (q.query as any)[key]
-      const res = findProperty([doc], key, value)
-      if (res.length === 0) {
-        return false
-      }
-    }
-    return true
+    return matchDocument(doc, q.query)
   }
 
   async findAll<T extends Doc>(
@@ -141,6 +144,7 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
     if (!this.isDerived(q._class, tx.objectClass)) {
       return false
     }
+
     for (const key in q.query) {
       const value = (q.query as any)[key]
       const res = findProperty([tx.operations as unknown as Doc], key, value)
@@ -153,6 +157,11 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
 
   async txUpdateDoc (tx: TxUpdateDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
+      if (this.client.isDerived(core.class.Tx, q._class) && !isDerivedDataTx(tx, this.client)) {
+        // handle add since Txes are immutable
+        await this.handleDocAdd(q, tx)
+        continue
+      }
       if (q.result instanceof Promise) {
         const res = await q.result
         q.result = copy(res)
@@ -177,32 +186,44 @@ export class LiveQuery extends TxProcessor implements Storage, Queriable {
   }
 
   async txCreateDoc (tx: TxCreateDoc<Doc>): Promise<void> {
-    const doc = TxProcessor.createDoc2Doc(tx)
+    const docTx = TxProcessor.createDoc2Doc(tx)
     for (const q of this.queries.values()) {
-      if (this.match(q, doc)) {
-        if (q.result instanceof Promise) {
-          const res = await q.result
-          q.result = copy(res)
-          q.total = res.total
-        }
-        q.result.push(doc)
-        q.total++
+      const doc = this.client.isDerived(q._class, core.class.Tx) && !isDerivedDataTx(tx, this.client) ? tx : docTx
+      await this.handleDocAdd(q, doc)
+    }
+  }
 
-        if (q.options?.sort !== undefined) resultSort(q.result, q.options?.sort)
+  private async handleDocAdd (q: Query, doc: Doc): Promise<void> {
+    if (this.match(q, doc)) {
+      if (q.result instanceof Promise) {
+        const res = await q.result
+        q.result = copy(res)
+        q.total = res.total
+      }
+      q.result.push(doc)
+      q.total++
 
-        if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
-          if (q.result.pop()?._id !== doc._id) {
-            q.callback(Object.assign(copy(q.result), { total: q.total }))
-          }
-        } else {
+      if (q.options?.sort !== undefined) {
+        resultSort(q.result, q.options?.sort)
+      }
+
+      if (q.options?.limit !== undefined && q.result.length > q.options.limit) {
+        if (q.result.pop()?._id !== doc._id) {
           q.callback(Object.assign(copy(q.result), { total: q.total }))
         }
+      } else {
+        q.callback(Object.assign(copy(q.result), { total: q.total }))
       }
     }
   }
 
   async txRemoveDoc (tx: TxRemoveDoc<Doc>): Promise<void> {
     for (const q of this.queries.values()) {
+      if (this.client.isDerived(core.class.Tx, q._class) && !isDerivedDataTx(tx, this.client)) {
+        // handle add since Txes are immutable
+        await this.handleDocAdd(q, tx)
+        continue
+      }
       if (q.result instanceof Promise) {
         const res = await q.result
         q.result = copy(res)

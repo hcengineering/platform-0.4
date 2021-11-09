@@ -29,6 +29,7 @@ import workbench from '@anticrm/model-workbench'
 import notification from '@anticrm/notification'
 import { Application, SpacesNavModel } from '@anticrm/workbench'
 import chunter from './plugin'
+import activity from '@anticrm/activity'
 
 const DOMAIN_CHUNTER = 'chunter' as Domain
 
@@ -332,5 +333,23 @@ export function createModel (builder: Builder): void {
       ]
     },
     chunter.dd.CommentSpaceNotifications
+  )
+
+  builder.createDoc(
+    activity.class.ActivityDefinition,
+    {
+      objectClass: chunter.class.Message,
+      presenter: chunter.component.MessageActivity
+    },
+    chunter.activity.Message
+  )
+
+  builder.createDoc(
+    activity.class.ActivityDefinition,
+    {
+      objectClass: chunter.class.Comment,
+      presenter: chunter.component.CommentActivity
+    },
+    chunter.activity.Comment
   )
 }

@@ -27,6 +27,7 @@ import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
 import { createModel as attachmentModel } from '@anticrm/model-attachment'
 import { createModel as actionModel } from '@anticrm/model-action'
+import { createModel as activityModel } from '@anticrm/model-activity'
 
 /**
  * @public
@@ -36,6 +37,7 @@ export function createBuilder (): Builder {
 
   coreModel(builder)
   actionModel(builder)
+  activityModel(builder)
   workbenchModel(builder)
   contactModel(builder)
   chunterModel(builder)

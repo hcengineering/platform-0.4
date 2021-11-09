@@ -1,6 +1,6 @@
 import { deepEqual } from 'fast-equals'
-import { Doc } from './classes'
-import { createPredicates, isPredicate } from './predicate'
+import { Doc, Ref } from './classes'
+import { createPredicates, isPredicate, isRootPredicate } from './predicate'
 import { DocumentQuery, QuerySelector, SortingQuery } from './storage'
 
 /**
@@ -15,6 +15,42 @@ export function checkLikeQuery (value: string, query: string): boolean {
   const searchString = query.split(likeSymbol).join('.*')
   const regex = RegExp(`^${searchString}$`)
   return regex.test(value)
+}
+
+/**
+ * @public
+ */
+export function findQuery<T extends Doc> (query: DocumentQuery<T>, objects: T[]): T[] {
+  let result: Doc[] = objects
+
+  // Handler root predicates before do query filtering.
+
+  for (const key of Object.keys(query).filter((q) => isRootPredicate(q))) {
+    const value = (query as any)[key]
+    const queries = value as unknown as Array<any>
+    if (key === '$or') {
+      const orResult = []
+      const rMap = new Set<Ref<Doc>>()
+      for (const q of queries) {
+        const ov = findQuery(q as DocumentQuery<T>, objects)
+        for (const oo of ov) {
+          if (!rMap.has(oo._id)) {
+            rMap.add(oo._id)
+            orResult.push(oo)
+          }
+        }
+      }
+      result = orResult
+    }
+  }
+
+  for (const key in query) {
+    if (shouldSkipId<T>(key, query)) continue
+    if (key === '$or') continue
+    const value = (query as any)[key]
+    result = findProperty(result, key, value)
+  }
+  return result as T[]
 }
 
 /**
@@ -114,13 +150,7 @@ export function resultSort<T extends Doc> (result: T[], sortOptions: SortingQuer
  * @public
  */
 export function matchDocument<T extends Doc> (doc: T, query: DocumentQuery<T>): boolean {
-  let result: Doc[] = [doc]
-  for (const key in query) {
-    if (!shouldSkipId<T>(key, query)) {
-      const value = (query as any)[key]
-      result = findProperty(result, key, value)
-    }
-  }
+  const result = findQuery(query, [doc])
   return result.length === 1
 }
 

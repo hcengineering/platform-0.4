@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-import task, { Project, Task } from '@anticrm/task'
-import { mergeIds, AnyComponent } from '@anticrm/status'
-
-import { Application } from '@anticrm/workbench'
-import {} from '@anticrm/platform'
+import { ActivityDefinition, DocumentAssociationMapper } from '@anticrm/activity'
 import { DerivedDataDescriptor, Doc, DocumentPresenter, Ref } from '@anticrm/core'
+import {} from '@anticrm/platform'
+import { AnyComponent, mergeIds, Resource } from '@anticrm/status'
+import task, { Project, Task } from '@anticrm/task'
+import { Application } from '@anticrm/workbench'
 
 export default mergeIds(task, {
   component: {
@@ -35,7 +35,8 @@ export default mergeIds(task, {
     // An one line reference to be shown during editing, should allow to select different task
     TaskRefView: '' as AnyComponent,
 
-    ProjectProperties: '' as AnyComponent
+    ProjectProperties: '' as AnyComponent,
+    TaskActivity: '' as AnyComponent
   },
   ids: {
     Application: '' as Ref<Application>
@@ -51,5 +52,9 @@ export default mergeIds(task, {
   },
   presenter: {
     TaskPresenter: '' as Ref<DocumentPresenter<Task>>
+  },
+  activity: {
+    Activity: '' as Ref<ActivityDefinition>,
+    Mapper: '' as Resource<DocumentAssociationMapper>
   }
 })

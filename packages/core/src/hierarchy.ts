@@ -18,10 +18,19 @@ import core from './component'
 import type { Tx, TxCreateDoc } from './tx'
 
 /**
+ * @public
+ */
+export interface HierarchyClient {
+  getDescendants: <T extends Obj>(_class: Ref<Class<T>>) => Ref<Class<Obj>>[]
+  getAncestors: (_class: Ref<Class<Obj>>) => Ref<Class<Obj>>[]
+  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
+}
+
+/**
  * A class hierarchy with usefull functions
  * @public
  */
-export class Hierarchy {
+export class Hierarchy implements HierarchyClient {
   private readonly classes = new Map<Ref<Class<Obj>>, Data<Class<Obj>>>()
   private readonly descendants = new Map<Ref<Class<Obj>>, Ref<Class<Obj>>[]>()
   private readonly ancestors = new Map<Ref<Class<Obj>>, Ref<Class<Obj>>[]>()

@@ -180,7 +180,7 @@ export interface Space extends Doc {
   name: string
   description: string
   private: boolean
-  members: Arr<Ref<Account>>
+  members: Ref<Account>[]
 
   // Per account properties, should be stored inside account transaction space.
   account?: AccountProperties

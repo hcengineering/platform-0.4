@@ -78,6 +78,13 @@ export function isPredicate (o: Record<string, any>): boolean {
 /**
  * @public
  */
+export function isRootPredicate (key: string): boolean {
+  return key.startsWith('$')
+}
+
+/**
+ * @public
+ */
 export function createPredicates (o: Record<string, any>, propertyKey: string): Predicate[] {
   const keys = Object.keys(o)
   const result: Predicate[] = []

@@ -7,9 +7,9 @@
   "author": "Anticrm Platform Contributors",
   "license": "EPL-2.0",
   "scripts": {
-    "build": "node ./esbuild && svelte-check",
+    "build": "rm -rf ./lib && node ./esbuild && svelte-check",
     "build:clean": "rm -rf ./lib && node ./esbuild && svelte-check",
-    "fast-build": "node ./esbuild",
+    "fast-build": "rm -rf ./lib && node ./esbuild",
     "test": "echo 'no tests'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
@@ -60,6 +60,8 @@
     "lodash.clonedeep":"~4.5.0",
     "fast-equals": "^2.0.1",
     "@anticrm/attachment": "~0.4.0",
-    "@anticrm/chunter": "~0.4.0"
+    "@anticrm/chunter": "~0.4.0",
+    "@anticrm/activity": "~0.4.0",
+    "@anticrm/notification": "~0.4.0"
   }
 }

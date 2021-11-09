@@ -38,6 +38,9 @@ import CommentsTableCell from './components/CommentsTableCell.svelte'
 
 import ChannelProperties from './components/ChannelProperties.svelte'
 
+import MessageActivity from './components/presenters/MessageActivity.svelte'
+import CommentActivity from './components/presenters/CommentActivity.svelte'
+
 export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CreateChannel, CreateChannel)
   setResource(chunter.component.CreateMessage, CreateDirectMessage)
@@ -60,6 +63,9 @@ export default async (): Promise<ChunterService> => {
   setResource(chunter.component.CommentsTableCell, CommentsTableCell)
 
   setResource(chunter.component.ChannelProperties, ChannelProperties)
+
+  setResource(chunter.component.MessageActivity, MessageActivity)
+  setResource(chunter.component.CommentActivity, CommentActivity)
 
   return {}
 }

@@ -27,7 +27,7 @@ export interface Task extends Doc {
   shortRefId: Ref<ShortRef>
   name: string
   description: string
-  assignee?: Ref<Account>
+  assignee: Ref<Account> | '' // '' mean unassigned value.
   status: TaskStatus
   checkItems: CheckListItem[]
   dueTo: Date

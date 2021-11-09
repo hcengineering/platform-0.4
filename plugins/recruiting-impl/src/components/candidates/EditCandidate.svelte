@@ -13,27 +13,35 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import { deepEqual } from 'fast-equals'
-  import cloneDeep from 'lodash.clonedeep'
-  import type { Ref } from '@anticrm/core'
+  import activity from '@anticrm/activity'
+  import attachment from '@anticrm/attachment'
+  import type { Comment } from '@anticrm/chunter'
+  import chunter from '@anticrm/chunter'
+  import { generateId, getFullRef, Ref, Space } from '@anticrm/core'
+  import type { SpaceLastViews } from '@anticrm/notification'
+  import { NotificationClient } from '@anticrm/notification'
+  import type { QueryUpdater } from '@anticrm/presentation'
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
+  import { Component, EditBox, Panel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { Panel, Component, EditBox } from '@anticrm/ui'
-  import type { QueryUpdater } from '@anticrm/presentation'
-  import attachment from '@anticrm/attachment'
-  import CandidateApplication from './CandidateApplication.svelte'
+  import { createEventDispatcher, getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
   import Contact from '../icons/Contact.svelte'
-  import CandidateHeader from './CandidateHeader.svelte'
   import AvatarView from './AvatarView.svelte'
+  import CandidateApplication from './CandidateApplication.svelte'
+  import CandidateHeader from './CandidateHeader.svelte'
   import SocialLinks from './SocialLinks.svelte'
+  import cloneDeep from 'lodash.clonedeep'
+  import { deepEqual } from 'fast-equals'
 
   export let id: Ref<Candidate>
 
   const dispatch = createEventDispatcher()
 
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
   let candidate: Candidate | undefined
   let prevCandidate: Candidate | undefined
   let lqCandidates: QueryUpdater<Candidate> | undefined
@@ -70,6 +78,27 @@
     }
 
     await client.updateDoc(recruiting.class.Candidate, a.space, a._id, update)
+  }
+
+  let newCommentId: Ref<Comment> = generateId()
+  async function addMessage (candidate: Candidate | undefined, evt: any): Promise<void> {
+    if (candidate === undefined) {
+      return
+    }
+    await client.createDoc(
+      chunter.class.Comment,
+      candidate.space,
+      {
+        message: evt.detail as string,
+        replyOf: getFullRef(candidate._id, candidate._class)
+      },
+      newCommentId
+    )
+    newCommentId = generateId()
+    const spaceLastViews = $spacesLastViews.get(candidate.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, candidate._id, true)
+    }
   }
 </script>
 
@@ -115,5 +144,22 @@
       is={attachment.component.Attachments}
       props={{ objectId: candidate._id, objectClass: candidate._class, space: candidate.space, editable: true }}
     />
+    <svelte:fragment slot="activity">
+      <div class="msg-board">
+        <Component is={activity.component.Activity} props={{ spaceId: candidate.space, doc: candidate }} />
+      </div>
+    </svelte:fragment>
+    <svelte:fragment slot="ref-input">
+      <Component
+        is={chunter.component.ReferenceInput}
+        props={{
+          currentSpace: candidate.space,
+          objectClass: chunter.class.Comment,
+          objectId: newCommentId,
+          thread: true
+        }}
+        on:message={(evt) => addMessage(candidate, evt)}
+      />
+    </svelte:fragment>
   </Panel>
 {/if}

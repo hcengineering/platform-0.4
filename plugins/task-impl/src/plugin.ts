@@ -13,9 +13,10 @@
 // limitations under the License.
 //
 
-import { IntlString, mergeIds } from '@anticrm/status'
-import task, { TaskStatus } from '@anticrm/task'
+import { DocumentAssociationMapper } from '@anticrm/activity'
 import type { AnyComponent } from '@anticrm/status'
+import { IntlString, mergeIds, Resource } from '@anticrm/status'
+import task, { TaskStatus } from '@anticrm/task'
 
 export function getStatusColor (status: TaskStatus): string {
   switch (status) {
@@ -41,9 +42,13 @@ export default mergeIds(task, {
 
     TaskPreview: '' as AnyComponent,
     TaskRefView: '' as AnyComponent,
-    ProjectProperties: '' as AnyComponent
+    ProjectProperties: '' as AnyComponent,
+    TaskActivity: '' as AnyComponent
   },
   string: {
     PleaseSelectSpace: '' as IntlString
+  },
+  activity: {
+    Mapper: '' as Resource<DocumentAssociationMapper>
   }
 })

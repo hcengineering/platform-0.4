@@ -53,6 +53,7 @@ import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
 import attachment, { Attachment } from '@anticrm/attachment'
+import activity from '@anticrm/activity'
 
 const DOMAIN_RECRUITING = 'recruiting' as Domain
 
@@ -382,5 +383,25 @@ export function createModel (builder: Builder): void {
       ]
     },
     recruiting.dd.CandidateApplicant
+  )
+
+  builder.createDoc(
+    activity.class.ActivityDefinition,
+    {
+      objectClass: recruiting.class.Candidate,
+      presenter: recruiting.component.CandidateActivity,
+      associationMapper: recruiting.activity.CandidateActivityMapper
+    },
+    recruiting.activity.CandidateActivity
+  )
+
+  builder.createDoc(
+    activity.class.ActivityDefinition,
+    {
+      objectClass: recruiting.class.Applicant,
+      presenter: recruiting.component.ApplicantActivity,
+      associationMapper: recruiting.activity.ApplicantActivityMapper
+    },
+    recruiting.activity.ApplicantActivity
   )
 }

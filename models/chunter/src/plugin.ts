@@ -31,7 +31,9 @@ export default mergeIds(chunter, {
     CreateChannel: '' as AnyComponent,
     CreateMessage: '' as AnyComponent,
     SpaceItem: '' as AnyComponent,
-    SpaceHeader: '' as AnyComponent
+    SpaceHeader: '' as AnyComponent,
+    MessageActivity: '' as AnyComponent,
+    CommentActivity: '' as AnyComponent
   },
   string: {
     ApplicationLabelChunter: '' as IntlString

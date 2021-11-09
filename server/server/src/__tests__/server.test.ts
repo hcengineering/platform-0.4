@@ -129,7 +129,7 @@ describe('server', () => {
             // Create never complete promise. ,
             findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
               req++
-              if (req === 2) {
+              if (req === 3) {
                 close()
                 return await new Promise<FindResult<T>>(() => {})
               }
@@ -168,7 +168,7 @@ describe('server', () => {
             // Create never complete promise. ,
             findAll: async <T extends Doc>(_class: Ref<Class<T>>, query: DocumentQuery<T>): Promise<FindResult<T>> => {
               req++
-              if (req === 2) {
+              if (req === 3) {
                 throw new Error('Some error happened')
               }
               const domain = hierarchy.getClass(_class).domain

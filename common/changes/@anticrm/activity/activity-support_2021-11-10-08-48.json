@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Activity support",
+      "type": "patch",
+      "packageName": "@anticrm/activity"
+    }
+  ],
+  "packageName": "@anticrm/activity",
+  "email": "haiodo@gmail.com"
+}

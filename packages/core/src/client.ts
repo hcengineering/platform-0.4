@@ -13,13 +13,15 @@
 // limitations under the License.
 //
 
-import { measure, measureAsync } from '.'
+import { measure, measureAsync, SortingOrder } from '.'
 import type { Account, Class, Doc, Obj, Ref } from './classes'
 import { Hierarchy } from './hierarchy'
 import { ModelDb } from './memdb'
 import { findModelTxs, isModelFind, isModelTx } from './model'
 import type { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxProcessor } from './tx'
+import { HierarchyClient } from './hierarchy'
+import core from './component'
 
 /**
  * @public
@@ -40,9 +42,7 @@ export interface CoreClient extends Storage {
  * Client with hierarchy and model inside. Allow fast search for model, without accesing server.
  * @public
  */
-export interface Client extends CoreClient {
-  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
-}
+export interface Client extends CoreClient, HierarchyClient {}
 /**
  * Implementaion of client with model and hirarchy support.
  * @internal
@@ -51,15 +51,27 @@ class ClientImpl extends TxProcessor implements Client {
   readonly hierarchy = new Hierarchy()
   readonly model = new ModelDb(this.hierarchy)
   extraTx?: (tx: Tx) => Promise<void>
+  lastSID: number = 0
 
-  constructor (readonly conn: CoreClient, readonly connAccount: Ref<Account>, private readonly notify?: TxHandler) {
+  constructor (
+    readonly conn: CoreClient,
+    readonly connAccount: Ref<Account>,
+    private readonly notify: TxHandler | undefined,
+    lastSid: number
+  ) {
     super()
+    this.lastSID = lastSid
   }
 
   /**
    * Process notify events from connection, update model and hierarchy
    */
   txHandler (txs: Tx[], bootstrap: boolean): void {
+    txs.forEach((tx: Tx) => {
+      if (tx.sid > this.lastSID) {
+        this.lastSID = tx.sid
+      }
+    })
     const modelTx = txs.filter(isModelTx)
 
     // Hierarchy should be updated first, since model could use it.
@@ -82,16 +94,29 @@ class ClientImpl extends TxProcessor implements Client {
     return this.hierarchy.isDerived(_class, from)
   }
 
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Ref<Class<Obj>>[] {
+    return this.hierarchy.getDescendants(_class)
+  }
+
+  getAncestors (_class: Ref<Class<Obj>>): Ref<Class<Obj>>[] {
+    return this.hierarchy.getAncestors(_class)
+  }
+
   async findAll<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,
     options?: FindOptions<T>
   ): Promise<FindResult<T>> {
-    const storage = isModelFind(_class, this.hierarchy) ? this.model : this.conn
+    const isModel = isModelFind(_class, this.hierarchy)
+    const storage = isModel ? this.model : this.conn
     return await measureAsync('client.findAll', async () => await storage.findAll(_class, query, options), _class)
   }
 
   async tx (tx: Tx): Promise<void> {
+    if (tx.sid === 0) {
+      this.lastSID++
+      tx.sid = this.lastSID
+    }
     await measureAsync('client.tx', async () => await this.conn.tx(tx), tx._class)
     await measureAsync('client.extra.tx', async () => await this.extraTx?.(tx), tx._class)
   }
@@ -149,7 +174,11 @@ export async function createClient (
   // Put all transactions we recieve before out model transactions.
   buffer.pretend(txes)
 
-  const client = new ClientImpl(connection, accountId, notify)
+  const lastSID =
+    (await connection.findAll(core.class.Tx, {}, { limit: 1, sort: { sid: SortingOrder.Descending } })).shift()?.sid ??
+    0
+
+  const client = new ClientImpl(connection, accountId, notify, lastSID)
 
   // Apply all model transactions, including ones arrived during findAll is executed.
   buffer.flush((txs, bootstrap) => client.txHandler(txs, bootstrap))
