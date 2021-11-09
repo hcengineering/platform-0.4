@@ -23,9 +23,9 @@
   const client = getClient()
 
   async function open (e: MouseEvent): Promise<void> {
-    const items = await client.findAll(recruiting.class.Applicant, { _id: { $in: applicants } })
-    if (items.length > 0) {
+    if (applicants.length > 0) {
       e.stopPropagation()
+      const items = await client.findAll(recruiting.class.Applicant, { _id: { $in: applicants } })
       showPopup(ApplitcantsPopup, { applicants: items }, e.target as HTMLElement)
     }
   }

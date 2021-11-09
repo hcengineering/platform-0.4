@@ -24,9 +24,9 @@
   const client = getClient()
 
   async function open (e: MouseEvent): Promise<void> {
-    const items = await client.findAll(chunter.class.Comment, { _id: { $in: comments } })
-    if (items.length > 0) {
+    if (comments.length > 0) {
       e.stopPropagation()
+      const items = await client.findAll(chunter.class.Comment, { _id: { $in: comments } })
       showPopup(CommentsPopup, { comments: items }, e.target as HTMLElement)
     }
   }
