@@ -13,63 +13,18 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import type { Ref } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { selectDocument } from '@anticrm/workbench'
   import recruiting from '@anticrm/recruiting'
-  import action from '@anticrm/action-plugin'
-  import type { Action } from '@anticrm/action-plugin'
-  import type { State } from '@anticrm/fsm'
-  import fsm from '@anticrm/fsm'
-  import type { QueryUpdater } from '@anticrm/presentation'
-  import { Label, ActionIcon, Spinner } from '@anticrm/ui'
-  import type { Applicant, Candidate } from '@anticrm/recruiting'
+  import { Label, ActionIcon } from '@anticrm/ui'
 
   import ActionPresenter from '../vacancies/ActionPresenter.svelte'
 
   import Dots from '../icons/Dots.svelte'
+  import { ApplicantUIModel } from '../..'
 
-  export let doc: Applicant
+  export let doc: ApplicantUIModel
 
-  const client = getClient()
-
-  let candidate: Candidate | undefined
-  let candidateQ: QueryUpdater<Candidate> | undefined
-  let isLoading = true
-  $: candidateQ = client.query(
-    candidateQ,
-    recruiting.class.Candidate,
-    { _id: doc.item as Ref<Candidate> },
-    ([first]) => {
-      isLoading = false
-      candidate = first
-    },
-    { limit: 1 }
-  )
-
-  let state: State | undefined
-  let stateQ: QueryUpdater<State> | undefined
-  $: stateQ = client.query(
-    stateQ,
-    fsm.class.State,
-    { _id: doc.state },
-    (res) => {
-      state = res[0]
-    },
-    { limit: 1 }
-  )
-
-  let actions: Action[] = []
-  let actionsQ: QueryUpdater<Action> | undefined
-  $: if (state) {
-    actionsQ = client.query(
-      actionsQ,
-      action.class.Action,
-      { _id: { $in: state.optionalActions.concat(state.requiredActions) } },
-      (res) => {
-        actions = res
-      }
-    )
-  }
+  $: actions = doc.stateData.optionalActionsData.concat(doc.stateData.requiredActionsData)
 
   function onClick (): void {
     selectDocument(doc)
@@ -77,33 +32,27 @@
 </script>
 
 <div class="root" on:click={onClick}>
-  {#if candidate}
-    <div class="header" class:noContent={actions.length === 0}>
-      <div class="candidate">
-        <div class="candidate-avatar">
-          <img width="100%" height="100%" src={candidate.avatar} alt="avatar" />
+  <div class="header" class:noContent={actions.length === 0}>
+    <div class="candidate">
+      <div class="candidate-avatar">
+        <img width="100%" height="100%" src={doc.candidateData.avatar} alt="avatar" />
+      </div>
+      <div class="candidate-info">
+        <div class="candidate-title">
+          <Label label={recruiting.string.Candidate} />
         </div>
-        <div class="candidate-info">
-          <div class="candidate-title">
-            <Label label={recruiting.string.Candidate} />
-          </div>
-          <div class="candidate-name">
-            {`${candidate.firstName} ${candidate.lastName}`}
-          </div>
+        <div class="candidate-name">
+          {`${doc.candidateData.firstName} ${doc.candidateData.lastName}`}
         </div>
       </div>
-      <ActionIcon icon={Dots} size={24} />
     </div>
-    {#if actions.length > 0}
-      <div class="content">
-        {#each actions as action (action._id)}
-          <ActionPresenter {action} target={doc} />
-        {/each}
-      </div>
-    {/if}
-  {:else if isLoading}
-    <div class="spinner">
-      <Spinner />
+    <ActionIcon icon={Dots} size={24} />
+  </div>
+  {#if actions.length > 0}
+    <div class="content">
+      {#each actions as action (action._id)}
+        <ActionPresenter {action} target={doc} />
+      {/each}
     </div>
   {/if}
 </div>
@@ -119,13 +68,6 @@
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-bg-accent-color);
     border-radius: 12px;
-  }
-
-  .spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
   }
 
   .header {

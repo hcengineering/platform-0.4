@@ -15,7 +15,7 @@
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
   import { getClient, selectDocument } from '@anticrm/workbench'
-  import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
+  import type { Applicant, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { Label, Table } from '@anticrm/ui'
@@ -30,12 +30,12 @@
   const columns = [
     {
       label: recruiting.string.FirstName,
-      properties: [{ key: 'firstName', property: 'label' }],
+      properties: [{ key: 'candidateData.firstName', property: 'label' }],
       component: Label
     },
     {
       label: recruiting.string.LastName,
-      properties: [{ key: 'lastName', property: 'label' }],
+      properties: [{ key: 'candidateData.lastName', property: 'label' }],
       component: Label
     }
   ]
@@ -50,19 +50,6 @@
     selectDocument(applicant)
   }
 
-  let candidates: Map<string, Candidate> = new Map()
-  let lqCandidates: QueryUpdater<Candidate> | undefined
-
-  $: candidateIDs = applicants.map((a) => a.item as Ref<Candidate>)
-
-  $: {
-    lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: { $in: candidateIDs } }, (result) => {
-      candidates = new Map(result.map((x) => [x._id, x]))
-    })
-  }
-
-  $: data = applicants.map((x) => candidates.get(x.item)).filter((x): x is Candidate => x !== undefined)
-
   let applicants: Applicant[] = []
   let lqApplicants: QueryUpdater<Applicant> | undefined
   $: if (space._id !== prevSpace) {
@@ -76,4 +63,4 @@
   }
 </script>
 
-<Table {data} {columns} on:rowClick={onClick} showHeader />
+<Table data={applicants} {columns} on:rowClick={onClick} showHeader />
