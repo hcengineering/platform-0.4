@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-impl",
+      "comment": "fix #543 bug",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-impl"
+}
