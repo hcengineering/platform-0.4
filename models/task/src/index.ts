@@ -191,6 +191,7 @@ export function createModel (builder: Builder): void {
     core.class.DocumentPresenter,
     {
       objectClass: task.class.Task,
+      linkHandler: task.handler.OpenHandler,
       presentation: [
         {
           component: task.component.TaskRefView,
@@ -201,11 +202,6 @@ export function createModel (builder: Builder): void {
           component: task.component.TaskPreview,
           description: 'Task Preview',
           mode: PresentationMode.Preview
-        },
-        {
-          component: task.component.EditTask,
-          description: 'Task editor',
-          mode: PresentationMode.Edit
         }
       ]
     },

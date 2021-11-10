@@ -17,7 +17,7 @@
   import type { DerivedEvent, Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
   import { IconClose, ScrollBox } from '@anticrm/ui'
 
   import EventEditor from './EventEditor.svelte'
@@ -64,7 +64,7 @@
   }
 
   function onClose () {
-    selectDocument()
+    showSideDocument()
   }
 </script>
 

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Show side document",
+      "type": "patch",
+      "packageName": "@anticrm/calendar-impl"
+    }
+  ],
+  "packageName": "@anticrm/calendar-impl",
+  "email": "haiodo@gmail.com"
+}

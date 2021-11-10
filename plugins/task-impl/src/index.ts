@@ -32,6 +32,7 @@ import TaskActivity from './components/presenters/TaskActivity.svelte'
 import { taskActivityMapper } from './activity'
 
 import TaskRef from './components/presenters/TaskRef.svelte'
+import { showPopup } from '@anticrm/ui'
 
 export default async (): Promise<TaskService> => {
   setResource(task.component.CreateProject, CreateProject)
@@ -45,6 +46,10 @@ export default async (): Promise<TaskService> => {
   setResource(task.component.TaskActivity, TaskActivity)
   setResource(task.activity.Mapper, taskActivityMapper)
   setResource(task.component.TaskRefView, TaskRef)
+
+  setResource(task.handler.OpenHandler, async (objectClass, objectId) => {
+    await showPopup(task.component.EditTask, { id: objectId }, 'right')
+  })
 
   return {}
 }

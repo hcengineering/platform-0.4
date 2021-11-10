@@ -14,7 +14,7 @@
 //
 
 import { ActivityDefinition, DocumentAssociationMapper } from '@anticrm/activity'
-import { DerivedDataDescriptor, Doc, DocumentPresenter, Ref } from '@anticrm/core'
+import { DerivedDataDescriptor, Doc, DocumentPresenter, Ref, DocumentLinkHandler } from '@anticrm/core'
 import {} from '@anticrm/platform'
 import { AnyComponent, mergeIds, Resource } from '@anticrm/status'
 import task, { Project, Task } from '@anticrm/task'
@@ -56,5 +56,8 @@ export default mergeIds(task, {
   activity: {
     Activity: '' as Ref<ActivityDefinition>,
     Mapper: '' as Resource<DocumentAssociationMapper>
+  },
+  handler: {
+    OpenHandler: '' as DocumentLinkHandler
   }
 })

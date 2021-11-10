@@ -13,6 +13,7 @@
   import { MarkdownViewer } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { DocumentReference, ReferenceKind } from '../../messages'
+  import { showReferencedDocument } from '../../presentation'
   import RefControl from '../RefControl.svelte'
 
   export let tx: Tx<Doc>
@@ -52,12 +53,12 @@
   {/if}
 
   <div class="content">
-    <MarkdownViewer message={createDoc.attributes.message} />
+    <MarkdownViewer message={createDoc.attributes.message} refAction={(e) => showReferencedDocument(client, e)} />
   </div>
 {:else if updateDoc !== undefined}
   Update a comment to:
   <div class="content">
-    <MarkdownViewer message={updateDoc.operations.message} />
+    <MarkdownViewer message={updateDoc.operations.message} refAction={(e) => showReferencedDocument(client, e)} />
   </div>
 {/if}
 

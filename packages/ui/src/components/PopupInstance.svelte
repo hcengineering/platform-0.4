@@ -25,6 +25,7 @@
   export let element: PopupAlignment | undefined
   export let onClose: ((result: any) => void) | undefined
   export let zIndex: number
+  export let enableOverlay = true
 
   let modalHTML: HTMLElement
   let modalOHTML: HTMLElement
@@ -106,13 +107,17 @@
 <div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
   <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
 </div>
-<div
-  bind:this={modalOHTML}
-  class="modal-overlay"
-  class:showOverlay
-  style={`z-index: ${zIndex};`}
-  on:click={() => close(undefined)}
-/>
+
+{enableOverlay}
+{#if enableOverlay}
+  <div
+    bind:this={modalOHTML}
+    class="modal-overlay"
+    class:showOverlay
+    style={`z-index: ${zIndex};`}
+    on:click={() => close(undefined)}
+  />
+{/if}
 
 <style lang="scss">
   .popup {

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Show side document",
+      "type": "patch",
+      "packageName": "@anticrm/workbench"
+    }
+  ],
+  "packageName": "@anticrm/workbench",
+  "email": "haiodo@gmail.com"
+}

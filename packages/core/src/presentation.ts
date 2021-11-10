@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { AnyComponent } from '@anticrm/status'
+import type { AnyComponent, Resource } from '@anticrm/status'
 import { Class, Doc, Ref } from './classes'
 
 /**
@@ -44,6 +44,11 @@ export interface PresentationFormat {
   // define a component to be inserted into UI model
   component: AnyComponent
 }
+
+/**
+ * @public
+ */
+export type DocumentLinkHandler = Resource<(objectClass: Ref<Class<Doc>>, objectId: Ref<Doc>) => Promise<void>>
 /**
  * Define a set of presentation formats for document instance.
  * @public
@@ -54,4 +59,7 @@ export interface DocumentPresenter<T extends Doc> extends Doc {
 
   // An presentation format definition
   presentation: PresentationFormat[]
+
+  // Handler to open link of this document format type.
+  linkHandler?: DocumentLinkHandler
 }

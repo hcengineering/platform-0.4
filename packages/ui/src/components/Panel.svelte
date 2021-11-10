@@ -291,7 +291,5 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--theme-menu-color);
-    opacity: 0.7;
   }
 </style>
