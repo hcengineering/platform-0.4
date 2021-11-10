@@ -23,9 +23,9 @@
   const client = getClient()
 
   async function open (e: MouseEvent): Promise<void> {
-    const items = await client.findAll(attachment.class.Attachment, { _id: { $in: attachments } })
-    if (items.length > 0) {
+    if (attachments.length > 0) {
       e.stopPropagation()
+      const items = await client.findAll(attachment.class.Attachment, { _id: { $in: attachments } })
       showPopup(AttachmentPopupList, { items: items }, e.target as HTMLElement)
     }
   }
