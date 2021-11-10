@@ -48,6 +48,7 @@
     "@anticrm/task":"~0.4.0",
     "@anticrm/chunter":"~0.4.0",
     "@anticrm/recruiting":"~0.4.0",
+    "@anticrm/fsm":"~0.4.0",
     "mime":"~2.5.2",
     "faker":"^5.5.3"
   }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/attachment-impl",
+      "comment": "minor fix",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/attachment-impl"
+}

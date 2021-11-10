@@ -55,7 +55,7 @@
       width: 32px;
       height: 32px;
       border-radius: 25%;
-      background-color: #4474f6;
+      background-color: var(--primary-button-enabled);
       display: flex;
       flex-shrink: 0;
 

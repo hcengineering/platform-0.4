@@ -95,15 +95,7 @@ class TApplicant extends TFSMItem implements Applicant {
 @Model(recruiting.class.VacancySpace, fsm.class.WithFSM)
 class TVacancySpace extends TWithFSM implements VacancySpace {
   company!: string
-  description!: string
   location!: string
-  type!: string
-  details!: {
-    summary: string
-    qualification: string
-    experience: string
-  }
-
   dueDate!: Timestamp | undefined
 }
 
@@ -190,36 +182,6 @@ export function createModel (builder: Builder): void {
   )
 
   // P R E S E N T E R S
-  builder.createDoc<DocumentPresenter<Candidate>>(
-    core.class.DocumentPresenter,
-    {
-      objectClass: recruiting.class.Candidate,
-      presentation: [
-        {
-          component: recruiting.component.EditCandidate,
-          description: 'Candidate editor',
-          mode: PresentationMode.Edit
-        }
-      ]
-    },
-    recruiting.presenter.CandidatePresenter
-  )
-
-  builder.createDoc<DocumentPresenter<Applicant>>(
-    core.class.DocumentPresenter,
-    {
-      objectClass: recruiting.class.Applicant,
-      presentation: [
-        {
-          component: recruiting.component.ApplicantPresenter,
-          description: 'Applicant presenter',
-          mode: PresentationMode.Edit
-        }
-      ]
-    },
-    recruiting.presenter.ApplicantPresenter
-  )
-
   builder.createDoc<DocumentPresenter<FeedbackRequest>>(
     core.class.DocumentPresenter,
     {

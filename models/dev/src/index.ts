@@ -18,9 +18,10 @@ import { createBuilder } from '@anticrm/model-all'
 import { demoAccount } from './demoAccount'
 import { demoChunter } from './demoChunter'
 import { demoTask } from './demoTask'
+import { demoRecruiting } from './demoRecruiting'
 import { DemoBuilder } from './model'
 export { DemoBuilder }
-export { demoAccount, demoTask, demoChunter }
+export { demoAccount, demoTask, demoChunter, demoRecruiting }
 
 async function buildTxes (): Promise<Tx[]> {
   const builder = createBuilder()
@@ -38,6 +39,7 @@ async function buildTxes (): Promise<Tx[]> {
   await demoAccount(db)
   const tasks = await demoTask(db)
   await demoChunter(db, tasks)
+  await demoRecruiting(db)
   return builder.getTxes()
 }
 

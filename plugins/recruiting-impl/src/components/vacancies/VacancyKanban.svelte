@@ -17,7 +17,7 @@
   import core, { SortingOrder } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
-  import { fsmPlugin } from '@anticrm/fsm-impl'
+  import fsmPlugin from '@anticrm/fsm'
   import type { FSM, State } from '@anticrm/fsm'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'

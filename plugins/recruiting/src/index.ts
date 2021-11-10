@@ -121,7 +121,6 @@ export default plugin(PluginRecruiting, {}, {
     CreateCandidate: '' as AnyComponent,
     WorkspaceComponent: '' as AnyComponent,
     EditCandidate: '' as AnyComponent,
-    ApplicantPresenter: '' as AnyComponent,
     Applications: '' as AnyComponent,
     Feedback: '' as AnyComponent,
     CandidatePoolProperties: '' as AnyComponent,
@@ -212,8 +211,6 @@ export default plugin(PluginRecruiting, {}, {
     FolderDescription: '' as IntlString
   },
   presenter: {
-    CandidatePresenter: '' as Ref<DocumentPresenter<Doc>>,
-    ApplicantPresenter: '' as Ref<DocumentPresenter<Doc>>,
     FeedbackRequestPresenter: '' as Ref<DocumentPresenter<Doc>>
   },
   fsm: {

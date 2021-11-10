@@ -22,7 +22,7 @@
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { FSM, State } from '@anticrm/fsm'
-  import { fsmPlugin } from '@anticrm/fsm-impl'
+  import fsmPlugin from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let candidate: Candidate

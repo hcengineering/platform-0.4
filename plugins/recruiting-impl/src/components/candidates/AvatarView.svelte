@@ -24,7 +24,8 @@
   export let objectId: Ref<Doc>
   export let objectClass: Ref<Class<Doc>>
   export let space: Ref<Space>
-  export let size: 'medium' | 'large' = 'medium'
+  export let size: 'medium' | 'large' | 'small' = 'medium'
+  export let editable: boolean = true
 
   const dispatch = createEventDispatcher()
   let input: HTMLElement
@@ -32,7 +33,7 @@
   async function fileInputChange (e: Event): Promise<void> {
     const elem = e.target as HTMLInputElement
     const list = elem.files
-    if (list === null || list.length === 0) return
+    if (list === null || list.length === 0 || !editable) return
     selectFiles(list)
   }
 
@@ -55,7 +56,7 @@
 
   async function drop (e: DragEvent): Promise<void> {
     const list = e.dataTransfer?.files
-    if (list === undefined || list.length === 0) return
+    if (list === undefined || list.length === 0 || !editable) return
     selectFiles(list)
   }
 
@@ -77,8 +78,11 @@
   </div>
   <div
     class="flex-center avatar avatar-{size}"
+    class:editable
     on:click={() => {
-      input.click()
+      if (editable) {
+        input.click()
+      }
     }}
   >
     <div class="border" />
@@ -116,7 +120,10 @@
     position: absolute;
     border-radius: 50%;
     filter: var(--theme-avatar-shadow);
-    cursor: pointer;
+
+    &.editable {
+      cursor: pointer;
+    }
 
     &::after {
       content: '';
@@ -134,6 +141,10 @@
       border: 2px solid var(--theme-avatar-border);
       border-radius: 50%;
     }
+  }
+  .avatar-small {
+    width: 4.5rem;
+    height: 4.5rem;
   }
   .avatar-medium {
     width: 6rem;
