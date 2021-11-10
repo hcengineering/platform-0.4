@@ -49,9 +49,13 @@ export interface WorkPreference {
 export interface SocialLink {
   type: SocialLinkType
   link: string
+  // label?: IntlString
+  // icon?: UIComponent
 }
 
 export type SocialLinkType = 'Discord' | 'Email'| 'Facebook'| 'Github'| 'Instagram' | 'Linkedin' | 'Phone' | 'Telegram' | 'Twitter' | 'Vk' | 'Whatsapp' | 'Youtube'
+
+export const allSocialLinks: SocialLinkType[] = ['Discord', 'Email', 'Facebook', 'Github', 'Instagram', 'Linkedin', 'Phone', 'Telegram', 'Twitter', 'Vk', 'Whatsapp', 'Youtube']
 
 export interface Applicant extends FSMItem {
   recruiter: Ref<Account>

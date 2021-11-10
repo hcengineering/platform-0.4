@@ -75,6 +75,7 @@ export { default as PopupWrap } from './components/popups/PopupWrap.svelte'
 export { default as YesNo } from './components/YesNo.svelte'
 export { default as YesNoCard } from './components/YesNoCard.svelte'
 export { default as Header } from './components/Header.svelte'
+export { default as CircleButton } from './components/CircleButton.svelte'
 
 export { default as IconAdd } from './components/icons/Add.svelte'
 export { default as IconAttach } from './components/icons/Attach.svelte'
@@ -138,15 +139,39 @@ export function closePopup (): void {
 export const tooltipstore = writable<LabelAndProps>({
   label: undefined,
   element: undefined,
-  direction: undefined
+  direction: undefined,
+  component: undefined,
+  props: undefined,
+  onClose: undefined
 })
 
-export function showTooltip (label: IntlString, element: HTMLElement, direction?: TooltipAligment): void {
-  tooltipstore.set({ label: label, element: element, direction: direction })
+export function showTooltip (
+  label: IntlString | undefined,
+  element: HTMLElement,
+  direction?: TooltipAligment,
+  component?: UIComponent,
+  props?: any,
+  onClose?: (result?: any) => void
+): void {
+  tooltipstore.set({
+    label: label,
+    element: element,
+    direction: direction,
+    component: component,
+    props: props,
+    onClose: onClose
+  })
 }
 
 export function closeTooltip (): void {
-  tooltipstore.set({ label: undefined, element: undefined, direction: undefined })
+  tooltipstore.set({
+    label: undefined,
+    element: undefined,
+    direction: undefined,
+    component: undefined,
+    props: undefined,
+    onClose: undefined
+  })
 }
 
 // let documentProvider: DocumentProvider | undefined

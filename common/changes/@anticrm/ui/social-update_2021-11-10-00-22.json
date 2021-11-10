@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Add CircleButton. Update tooltips, social links, create and edit candidate.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

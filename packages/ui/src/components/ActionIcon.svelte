@@ -22,6 +22,7 @@
   export let label: IntlString
   export let direction: TooltipAligment = 'right'
   export let icon: Asset | UIComponent
+  export let fill: string = 'var(--theme-caption-color)'
   export let filled: boolean = false
   export let size: 12 | 16 | 20 | 24
   export let action: (ev?: Event) => void = () => {}
@@ -45,7 +46,7 @@
     class:circle-button={circleSize > 0}
   >
     <div class="icon" style="width: {size}px; height: {size}px;" class:invisible>
-      <Icon {icon} {size} {filled} />
+      <Icon {icon} {size} {fill} {filled} />
     </div>
   </button>
 </Tooltip>
@@ -67,20 +68,19 @@
     cursor: pointer;
 
     .icon {
-      color: var(--theme-content-trans-color);
-      opacity: 1;
+      opacity: 0.3;
       &.invisible {
         opacity: 0;
       }
     }
     &:hover .icon {
-      color: var(--theme-caption-color);
+      opacity: 1;
     }
     &:focus {
       border: 1px solid var(--primary-button-focused-border);
       box-shadow: 0 0 0 3px var(--primary-button-outline);
       .icon {
-        color: var(--theme-caption-color);
+        opacity: 1;
       }
     }
   }

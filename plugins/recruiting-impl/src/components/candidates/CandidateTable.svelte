@@ -69,7 +69,7 @@
     },
     {
       label: recruiting.string.SocialLinks,
-      properties: [{ key: 'socialLinks', property: 'socialLinks' }],
+      properties: [{ key: 'socialLinks', property: 'value' }],
       component: SocialLinks
     }
   ]

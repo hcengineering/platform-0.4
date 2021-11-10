@@ -24,6 +24,8 @@
   export let objectId: Ref<Doc>
   export let objectClass: Ref<Class<Doc>>
   export let space: Ref<Space>
+  export let size: 'medium' | 'large' = 'medium'
+
   const dispatch = createEventDispatcher()
   let input: HTMLElement
 
@@ -62,19 +64,19 @@
   }
 </script>
 
-<div class="avatar-container" on:drop|preventDefault={drop} on:dragover|preventDefault>
+<div class="avatar-container avatar-{size}" on:drop|preventDefault={drop} on:dragover|preventDefault>
   <input class="hidden" bind:this={input} on:change={fileInputChange} type="file" accept="image/*" />
-  <div class="flex-center avatar-shadow">
+  <div class="flex-center avatar-shadow avatar-{size}">
     {#if !src}
       <div class="bg-avatar"><Avatar /></div>
     {:else}
       <div class="bg-avatar">
-        <img class="img-avatar" src={getImageURL(src)} alt="Avatar" />
+        <img class="avatar-{size}" src={getImageURL(src)} alt="Avatar" />
       </div>
     {/if}
   </div>
   <div
-    class="flex-center avatar"
+    class="flex-center avatar avatar-{size}"
     on:click={() => {
       input.click()
     }}
@@ -83,7 +85,7 @@
     {#if !src}
       <Avatar />
     {:else}
-      <img class="img-avatar" src={getImageURL(src)} alt="Avatar" />
+      <img class="avatar-{size}" src={getImageURL(src)} alt="Avatar" />
     {/if}
   </div>
 </div>
@@ -94,9 +96,6 @@
   .avatar-container {
     flex-shrink: 0;
     position: relative;
-    margin-right: 16px;
-    width: 96px;
-    height: 96px;
     user-select: none;
 
     .hidden {
@@ -105,11 +104,9 @@
   }
   .avatar-shadow {
     position: absolute;
-    width: 96px;
-    height: 96px;
 
     .bg-avatar {
-      transform: scale(1.1);
+      // transform: scale(1.1);
       filter: blur(10px);
       opacity: 0.2;
     }
@@ -117,8 +114,6 @@
   .avatar {
     overflow: hidden;
     position: absolute;
-    width: 96px;
-    height: 96px;
     border-radius: 50%;
     filter: var(--theme-avatar-shadow);
     cursor: pointer;
@@ -140,8 +135,12 @@
       border-radius: 50%;
     }
   }
-  .img-avatar {
-    width: 96px;
-    height: 96px;
+  .avatar-medium {
+    width: 6rem;
+    height: 6rem;
+  }
+  .avatar-large {
+    width: 7.5rem;
+    height: 7.5rem;
   }
 </style>

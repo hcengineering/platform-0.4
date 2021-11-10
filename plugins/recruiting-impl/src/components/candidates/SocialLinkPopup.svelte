@@ -13,49 +13,54 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { EditBox, Label } from '@anticrm/ui'
+  import { SocialLink } from '@anticrm/recruiting'
+  import { UIComponent, Asset } from '@anticrm/status'
+  import { EditBox, Label, Icon, ActionIcon } from '@anticrm/ui'
   import { createEventDispatcher } from 'svelte'
+  import IconCopy from '../icons/Copy.svelte'
+  import IconDelete from '../icons/Delete.svelte'
 
-  export let value: string
+  export let icon: Asset | UIComponent
+  export let value: SocialLink
   export let editable: boolean = false
 
   const dispatch = createEventDispatcher()
 
-  function save () {
-    dispatch('close', value)
+  const save = (): void => dispatch('close', value)
+  const removeLink = (): void => dispatch('close', 'remove')
+  const copyLink = (): void => {
+    navigator.clipboard
+      .writeText(value.link)
+      .then(() => {
+        console.log('Copied!', value.link)
+      })
+      .catch((err) => {
+        console.log('Something went wrong', err)
+      })
+    dispatch('close')
   }
 </script>
 
-<div class="container">
-  <div class="bg" />
+<div class="flex-row-center">
   {#if editable}
-    <EditBox bind:value on:change={save} />
+    <EditBox {icon} bind:value={value.link} on:change={save} />
   {:else}
-    <Label label={value} />
+    <div class="flex-center mr-1 icon">
+      <Icon {icon} size={12} fill={'currentColor'} />
+    </div>
+    <Label label={value.link} />
+  {/if}
+  <div class="ml-4"><ActionIcon icon={IconCopy} action={copyLink} /></div>
+  {#if editable}
+    <div class="ml-1"><ActionIcon icon={IconDelete} fill={'var(--system-error-color)'} action={removeLink} /></div>
   {/if}
 </div>
 
 <style lang="scss">
-  .container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 320px;
-    border-radius: 20px;
-    padding: 20px;
-
-    .bg {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: var(--theme-card-bg);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: var(--theme-card-shadow);
-      z-index: -1;
-    }
+  .icon {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    color: var(--theme-content-trans-color);
   }
 </style>

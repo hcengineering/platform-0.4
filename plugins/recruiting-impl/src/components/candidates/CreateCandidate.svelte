@@ -15,13 +15,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { generateId, Ref, Space } from '@anticrm/core'
-  import { Card, Dropdown, DropdownItem } from '@anticrm/ui'
+  import { Card, Dropdown, DropdownItem, EditBox, Label, YesNoCard } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate, CandidatePoolSpace } from '@anticrm/recruiting'
-  import { CandidateStatus } from '@anticrm/recruiting'
-  import recruiting from '@anticrm/recruiting'
-  import CandidateEditor from './CandidateEditor.svelte'
+  import recruiting, { CandidateStatus } from '@anticrm/recruiting'
   import { QueryUpdater } from '@anticrm/presentation'
+  import AvatarView from './AvatarView.svelte'
+  import SocialLinks from './SocialLinks.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -75,6 +75,47 @@
   okAction={create}
   on:close={() => dispatch('close')}
 >
-  <CandidateEditor min bind:candidate />
+  <div class="flex-row-center mb-4">
+    <AvatarView
+      bind:src={candidate.avatar}
+      objectId={candidate._id}
+      objectClass={candidate._class}
+      space={candidate.space}
+    />
+    <div class="flex-col ml-4">
+      <div class="fs-title">
+        <EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus />
+      </div>
+      <div class="fs-title mb-2">
+        <EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} />
+      </div>
+      <div class="fs-subtitle">
+        <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.title} />
+      </div>
+      <div class="fs-subtitle">
+        <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} />
+      </div>
+    </div>
+  </div>
+  <SocialLinks bind:value={candidate.socialLinks} editable />
+  <div class="separator" />
+  <Label label={recruiting.string.WorkPreferences} />
+  <div class="flex-between mt-4">
+    <Label label={recruiting.string.Onsite} />
+    <YesNoCard bind:value={candidate.workPreference.onsite} />
+  </div>
+  <div class="flex-between mt-4">
+    <Label label={recruiting.string.Remote} />
+    <YesNoCard bind:value={candidate.workPreference.remote} />
+  </div>
+
   <Dropdown slot="pool" items={poolItems} bind:selected={pool} label={recruiting.string.CandidatePool} />
 </Card>
+
+<style lang="scss">
+  .separator {
+    margin: 1rem 0;
+    height: 1px;
+    background-color: var(--theme-card-divider);
+  }
+</style>
