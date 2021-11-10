@@ -13,9 +13,10 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import recruiting from '@anticrm/recruiting'
-  import { Label, ActionIcon, closePopup, showPopup } from '@anticrm/ui'
+  import { ActionIcon, closePopup, showPopup, Component } from '@anticrm/ui'
   import ApplicantPresenter from './ApplicantPresenter.svelte'
+  import attachment from '@anticrm/attachment'
+  import chunter from '@anticrm/chunter'
 
   import ActionPresenter from '../vacancies/ActionPresenter.svelte'
 
@@ -34,71 +35,70 @@
 </script>
 
 <div class="root" on:click={onClick}>
-  <div class="header" class:noContent={actions.length === 0}>
+  <div class="header">
     <div class="candidate">
       <div class="candidate-avatar">
-        <img width="100%" height="100%" src={doc.candidateData.avatar} alt="avatar" />
+        {#if doc.candidateData.avatar}
+          <img width="100%" height="100%" src={doc.candidateData.avatar} alt="avatar" />
+        {/if}
       </div>
       <div class="candidate-info">
-        <div class="candidate-title">
-          <Label label={recruiting.string.Candidate} />
-        </div>
         <div class="candidate-name">
           {`${doc.candidateData.firstName} ${doc.candidateData.lastName}`}
         </div>
+        <div class="candidate-title">
+          {doc.candidateData.title ?? ''}
+        </div>
       </div>
     </div>
-    <ActionIcon icon={Dots} size={24} />
+    <ActionIcon icon={Dots} size={16} />
   </div>
   {#if actions.length > 0}
-    <div class="content">
+    <div class="actions">
       {#each actions as action (action._id)}
-        <ActionPresenter {action} target={doc} />
+        <div class="action">
+          <ActionPresenter {action} target={doc} />
+        </div>
       {/each}
     </div>
   {/if}
+  <div class="footer">
+    <div class="footer-left">
+      <Component is={attachment.component.AttachmentsTableCell} props={{ attachments: [] }} />
+      <Component is={chunter.component.CommentsTableCell} props={{ comments: doc.comments }} />
+    </div>
+  </div>
 </div>
 
 <style lang="scss">
   .root {
+    position: relative;
     display: flex;
     flex-direction: column;
 
     gap: 10px;
-    min-height: 70px;
-
-    background-color: var(--theme-button-bg-hovered);
-    border: 1px solid var(--theme-bg-accent-color);
-    border-radius: 12px;
+    min-height: 72px;
+    padding: 16px 0;
   }
 
   .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-radius: 12px 12px 0 0;
 
-    font-weight: 500;
-
-    height: 70px;
-    padding: 0 15px;
-    background-color: var(--theme-button-bg-focused);
-
-    &.noContent {
-      border-radius: 12px;
-    }
+    height: 40px;
+    padding: 0 20px;
   }
 
   .candidate {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .candidate-avatar {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
 
     border-radius: 50%;
     overflow: hidden;
@@ -109,24 +109,57 @@
   .candidate-info {
     display: flex;
     flex-direction: column;
+
+    color: var(--theme-caption-color);
   }
 
   .candidate-title {
     font-weight: 400;
-    opacity: 0.4;
-    text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25);
+    opacity: 0.6;
   }
 
   .candidate-name {
     font-weight: 500;
+    font-size: 16px;
   }
 
-  .content {
+  .actions {
     display: flex;
     flex-direction: column;
 
     gap: 15px;
+    margin: 15px 0;
 
-    padding: 15px;
+    border: 1px solid var(--theme-bg-accent-color);
+    border-style: solid none;
+  }
+
+  .action {
+    display: flex;
+    align-items: center;
+    margin: 15px 20px;
+    border-bottom: 1px solid var(--theme-bg-accent-color);
+
+    height: 75px;
+    min-height: 75px;
+
+    &:last-child {
+      border-bottom: unset;
+    }
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 24px;
+    padding: 0 20px;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 </style>

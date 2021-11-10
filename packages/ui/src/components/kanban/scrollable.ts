@@ -115,7 +115,7 @@ interface Data {
   disabled?: boolean
   watcher: DragWatcher
   allowedTypes?: string[]
-  getNode?: (node: HTMLElement) => HTMLElement
+  getNode?: (node: HTMLElement) => HTMLElement | undefined
 }
 
 function createScrollable (root: HTMLElement, data: Data): () => void {

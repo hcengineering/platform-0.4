@@ -68,6 +68,7 @@ export interface Applicant extends FSMItem {
 export interface ShortCandidate {
   firstName: string
   lastName: string
+  title?: string
   avatar?: string
   location?: string
 }

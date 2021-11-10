@@ -43,7 +43,12 @@
   export let cardDelay: number = 0
 
   let itemsCopy: Map<string, KanbanItem[]>
-  $: itemsCopy = new Map(items)
+  $: copyItems(items)
+
+  function copyItems (m: Map<string, KanbanItem[]>) {
+    itemsCopy = new Map(m)
+  }
+
   // Temporary flag, need to remove as soon as tasks plugin be updated
   export let panelEditDisabled = false
 

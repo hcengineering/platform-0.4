@@ -13,9 +13,19 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  export let delay: number = 100 // readonly
+  // Main purpose is to handle 2 cases:
+  // 1. Load children after delay (slow scroll case)
+  // 2. Load children instantly if scroll finished before delay
 
-  let ready = delay === 0
+  export let delay: number = 100
+  export let isScrolling: boolean
+
+  let ready = !isScrolling || delay === 0
+
+  $: if (!isScrolling) {
+    ready = true
+  }
+
   setTimeout(() => {
     ready = true
   }, delay)

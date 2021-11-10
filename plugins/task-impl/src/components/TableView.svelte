@@ -60,6 +60,8 @@
 
   $: if (!deepEqual(prevQuery, query)) {
     prevQuery = query
+    data = []
+
     lq = client.query(
       lq,
       task.class.Task,

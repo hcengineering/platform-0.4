@@ -82,6 +82,7 @@ export async function createUpdateApplicant (
           location: c.address.city,
           firstName: c.firstName,
           lastName: c.lastName,
+          title: c.title,
           avatar: c.avatar
         }
       }

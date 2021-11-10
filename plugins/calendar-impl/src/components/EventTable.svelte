@@ -47,6 +47,7 @@
   let lqEvent: QueryUpdater<Event> | undefined
   $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
+    data = []
 
     if (currentSpace !== undefined) {
       lqEvent = client.query(lqEvent, calendar.class.Event, { space: currentSpace }, (result) => (data = result))

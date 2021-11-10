@@ -79,6 +79,7 @@
   let lq: QueryUpdater<Candidate> | undefined
   $: if (currentSpace !== prevSpace) {
     prevSpace = currentSpace
+    data = []
 
     if (currentSpace !== undefined) {
       lq = client.query(lq, recruiting.class.Candidate, { space: currentSpace }, (result) => {

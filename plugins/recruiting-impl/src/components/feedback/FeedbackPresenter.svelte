@@ -52,6 +52,3 @@
     </div>
   {/each}
 </Grid>
-
-<style lang="scss">
-</style>
