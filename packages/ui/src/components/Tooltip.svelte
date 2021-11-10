@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { IntlString, UIComponent } from '@anticrm/status'
   import type { TooltipAligment } from '..'
@@ -26,7 +25,7 @@
 
   let triggerHTML: HTMLElement
   let shown: boolean = false
-  $: shown = ($tooltip.label || $tooltip.component) ? true : false
+  $: shown = !!($tooltip.label || $tooltip.component)
 </script>
 
 <div

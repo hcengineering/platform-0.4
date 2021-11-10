@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { SocialLink, SocialLinkType } from '@anticrm/recruiting'
   import { UIComponent } from '@anticrm/status'
@@ -34,7 +33,7 @@
 
   export let socialLink: SocialLink
   export let editable: boolean = false
-  
+
   const dispatch = createEventDispatcher()
 
   $: icon = getIcon(socialLink.type)

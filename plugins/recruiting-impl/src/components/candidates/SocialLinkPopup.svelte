@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { SocialLink } from '@anticrm/recruiting'
   import { UIComponent, Asset } from '@anticrm/status'
@@ -30,16 +29,16 @@
   const save = (): void => dispatch('close', value)
   const removeLink = (): void => dispatch('close', 'remove')
   const copyLink = (): void => {
-    navigator.clipboard.writeText(value.link)
+    navigator.clipboard
+      .writeText(value.link)
       .then(() => {
         console.log('Copied!', value.link)
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('Something went wrong', err)
       })
     dispatch('close')
   }
-
 </script>
 
 <div class="flex-row-center">

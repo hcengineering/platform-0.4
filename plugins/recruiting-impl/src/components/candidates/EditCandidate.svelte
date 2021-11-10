@@ -106,13 +106,10 @@
         <div class="fs-subtitle mb-3">
           <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} />
         </div>
-        <SocialLinks
-          bind:value={candidate.socialLinks}
-          editable
-        />
+        <SocialLinks bind:value={candidate.socialLinks} editable />
       </div>
     </div>
-  
+
     <CandidateApplication {candidate} />
     <Component
       is={attachment.component.Attachments}

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import recruting, { SocialLink } from '@anticrm/recruiting'
   import { IconAdd, Label, IconEdit, CircleButton, showPopup } from '@anticrm/ui'
@@ -47,19 +46,11 @@
     {/each}
     {#if editable}
       <div class="item">
-        <CircleButton
-          icon={IconEdit}
-          size={'small'}
-          transparent
-          on:click={editSocialLinks}
-        />
+        <CircleButton icon={IconEdit} size={'small'} transparent on:click={editSocialLinks} />
       </div>
     {/if}
   {:else if editable}
-    <div
-      class="flex-row-center item"
-      on:click={editSocialLinks}
-    >
+    <div class="flex-row-center item" on:click={editSocialLinks}>
       <CircleButton icon={IconAdd} size={'small'} transparent />
       <span><Label label={recruting.string.AddSocialLinks} /></span>
     </div>
@@ -70,17 +61,31 @@
   .social-container {
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: .125rem;
-    &::-webkit-scrollbar:horizontal { height: 2px; }
-    &::-webkit-scrollbar-track { margin: 0; }
-    &::-webkit-scrollbar-thumb { background-color: var(--theme-bg-accent-color); }
-    &::-webkit-scrollbar-thumb:hover { background-color: var(--theme-bg-accent-hover); }
+    padding-bottom: 0.125rem;
+    &::-webkit-scrollbar:horizontal {
+      height: 2px;
+    }
+    &::-webkit-scrollbar-track {
+      margin: 0;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--theme-bg-accent-color);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: var(--theme-bg-accent-hover);
+    }
   }
   .item span {
-    margin-left: .5rem;
+    margin-left: 0.5rem;
     cursor: pointer;
   }
-  .item:hover { color: var(--theme-caption-color); }
-  .item:active { color: var(--theme-content-accent-color); }
-  .item + .item { margin-left: .25rem; }
+  .item:hover {
+    color: var(--theme-caption-color);
+  }
+  .item:active {
+    color: var(--theme-content-accent-color);
+  }
+  .item + .item {
+    margin-left: 0.25rem;
+  }
 </style>

@@ -145,12 +145,33 @@ export const tooltipstore = writable<LabelAndProps>({
   onClose: undefined
 })
 
-export function showTooltip (label: IntlString | undefined, element: HTMLElement, direction?: TooltipAligment, component?: UIComponent, props?: any, onClose?: (result?: any) => void): void {
-  tooltipstore.set({ label: label, element: element, direction: direction, component: component, props: props, onClose: onClose })
+export function showTooltip (
+  label: IntlString | undefined,
+  element: HTMLElement,
+  direction?: TooltipAligment,
+  component?: UIComponent,
+  props?: any,
+  onClose?: (result?: any) => void
+): void {
+  tooltipstore.set({
+    label: label,
+    element: element,
+    direction: direction,
+    component: component,
+    props: props,
+    onClose: onClose
+  })
 }
 
 export function closeTooltip (): void {
-  tooltipstore.set({ label: undefined, element: undefined, direction: undefined, component: undefined, props: undefined, onClose: undefined })
+  tooltipstore.set({
+    label: undefined,
+    element: undefined,
+    direction: undefined,
+    component: undefined,
+    props: undefined,
+    onClose: undefined
+  })
 }
 
 // let documentProvider: DocumentProvider | undefined

@@ -20,7 +20,7 @@ import { Action as ActionDef } from '@anticrm/action'
 import type { Action } from '@anticrm/action-plugin'
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { AnyComponent, Asset, IntlString, Resource, UIComponent } from '@anticrm/status'
+import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 import type { CommentRef } from '@anticrm/chunter'
 import type { Attachment } from '@anticrm/attachment'
@@ -55,7 +55,7 @@ export interface SocialLink {
 
 export type SocialLinkType = 'Discord' | 'Email'| 'Facebook'| 'Github'| 'Instagram' | 'Linkedin' | 'Phone' | 'Telegram' | 'Twitter' | 'Vk' | 'Whatsapp' | 'Youtube'
 
-export const allSocialLinks: SocialLinkType[] = [ 'Discord', 'Email', 'Facebook', 'Github', 'Instagram', 'Linkedin', 'Phone', 'Telegram', 'Twitter', 'Vk', 'Whatsapp', 'Youtube' ]
+export const allSocialLinks: SocialLinkType[] = ['Discord', 'Email', 'Facebook', 'Github', 'Instagram', 'Linkedin', 'Phone', 'Telegram', 'Twitter', 'Vk', 'Whatsapp', 'Youtube']
 
 export interface Applicant extends FSMItem {
   recruiter: Ref<Account>

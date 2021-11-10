@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import attachment, { Attachment } from '@anticrm/attachment'
   import { Class, Doc, Ref, Space } from '@anticrm/core'
@@ -109,7 +108,7 @@
     .bg-avatar {
       // transform: scale(1.1);
       filter: blur(10px);
-      opacity: .2;
+      opacity: 0.2;
     }
   }
   .avatar {

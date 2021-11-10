@@ -58,7 +58,7 @@
   <div class="text" bind:this={text} />
   {#if label}<div class="label"><Label {label} /></div>{/if}
   <div class="flex-row-center">
-    {#if icon }
+    {#if icon}
       <div class="flex-center mr-1 icon">
         <Icon {icon} size={12} fill={'currentColor'} />
       </div>
@@ -136,7 +136,9 @@
         right: -4px;
         border: 2px solid var(--primary-button-enabled);
       }
-      &:focus-within::after { content: ''; }
+      &:focus-within::after {
+        content: '';
+      }
     }
 
     input {
@@ -145,7 +147,9 @@
       background-color: transparent;
       border: none;
 
-      &::placeholder { color: var(--theme-content-dark-color); }
+      &::placeholder {
+        color: var(--theme-content-dark-color);
+      }
 
       &::-webkit-contacts-auto-fill-button,
       &::-webkit-credentials-auto-fill-button {

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import recruiting, { Candidate } from '@anticrm/recruiting'
   import { createEventDispatcher } from 'svelte'
@@ -56,10 +55,10 @@
 
 <style lang="scss">
   .header {
-    margin: .45rem 0;
+    margin: 0.45rem 0;
 
     .icon {
-      margin-right: .5rem;
+      margin-right: 0.5rem;
       height: 2.25rem;
       width: 2.25rem;
       border-radius: 50%;

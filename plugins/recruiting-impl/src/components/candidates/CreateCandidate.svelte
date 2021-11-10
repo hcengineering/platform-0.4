@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { generateId, Ref, Space } from '@anticrm/core'
@@ -98,10 +97,7 @@
       </div>
     </div>
   </div>
-  <SocialLinks
-    bind:value={candidate.socialLinks}
-    editable
-  />
+  <SocialLinks bind:value={candidate.socialLinks} editable />
   <div class="separator" />
   <Label label={recruiting.string.WorkPreferences} />
   <div class="flex-between mt-4">

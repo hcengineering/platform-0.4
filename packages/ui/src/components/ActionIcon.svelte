@@ -68,7 +68,7 @@
     cursor: pointer;
 
     .icon {
-      opacity: .3;
+      opacity: 0.3;
       &.invisible {
         opacity: 0;
       }

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import type { UIComponent, Asset } from '@anticrm/status'
   import Icon from './Icon.svelte'
@@ -34,10 +33,18 @@
     backdrop-filter: blur(3px);
     cursor: pointer;
 
-    &.selected { background-color: var(--theme-button-bg-hovered); }
-    &.transparent { background-color: rgba(31, 31, 37, .3); }
-    &:hover { border-color: var(--theme-bg-focused-border); }
-    &:active { background-color: var(--theme-bg-accent-color); }
+    &.selected {
+      background-color: var(--theme-button-bg-hovered);
+    }
+    &.transparent {
+      background-color: rgba(31, 31, 37, 0.3);
+    }
+    &:hover {
+      border-color: var(--theme-bg-focused-border);
+    }
+    &:active {
+      background-color: var(--theme-bg-accent-color);
+    }
   }
   .icon-small {
     width: 1.5rem;

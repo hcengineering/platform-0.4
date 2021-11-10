@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-
 <script lang="ts">
   import recruiting, { SocialLink, SocialLinkType, allSocialLinks } from '@anticrm/recruiting'
   import { UIComponent, IntlString } from '@anticrm/status'
@@ -74,11 +73,12 @@
         return Youtube
     }
   }
-  const getLabel = (t: SocialLinkType): IntlString => { return t as IntlString }
+  const getLabel = (t: SocialLinkType): IntlString => {
+    return t as IntlString
+  }
 
   const filterUndefined = (links: SocialLink[]): SocialLink[] =>
-    links.filter(link => link.link !== undefined && link.link.length > 0)
-
+    links.filter((link) => link.link !== undefined && link.link.length > 0)
 </script>
 
 <div class="popup">
@@ -97,7 +97,15 @@
     </div>
   </div>
   <div class="buttons">
-    <div class="btn"><Button label={recruiting.string.Save} width={'100%'} on:click={() => { dispatch('close', filterUndefined(value)) }}/></div>
+    <div class="btn">
+      <Button
+        label={recruiting.string.Save}
+        width={'100%'}
+        on:click={() => {
+          dispatch('close', filterUndefined(value))
+        }}
+      />
+    </div>
   </div>
 </div>
 
@@ -112,8 +120,8 @@
     color: var(--theme-caption-color);
     background-color: var(--theme-button-bg-hovered);
     border: 1px solid var(--theme-button-border-enabled);
-    border-radius: .75rem;
-    filter: drop-shadow(0 1.5rem 4rem rgba(0, 0, 0, .35));
+    border-radius: 0.75rem;
+    filter: drop-shadow(0 1.5rem 4rem rgba(0, 0, 0, 0.35));
 
     span {
       margin-bottom: 1rem;
@@ -127,7 +135,7 @@
       .box {
         display: grid;
         grid-auto-flow: row;
-        row-gap: .75rem;
+        row-gap: 0.75rem;
         margin-right: 1px;
       }
     }
@@ -136,6 +144,8 @@
     display: flex;
     align-items: center;
     margin-top: 1rem;
-    .btn { flex-grow: 1; }
+    .btn {
+      flex-grow: 1;
+    }
   }
 </style>
