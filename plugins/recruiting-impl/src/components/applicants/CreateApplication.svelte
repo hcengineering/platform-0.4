@@ -92,6 +92,7 @@
     if (candidate === undefined || recruiter === undefined || stateID === undefined) {
       return
     }
+    const c = userBoxCandidates.find((p) => p._id === candidate) as never as Candidate
 
     const fsmP = await getPlugin(fsmPlugin.id)
     await fsmP.addItem(space, {
@@ -102,7 +103,13 @@
         recruiter,
         state: stateID as Ref<State>,
         candidate: getFullRef(candidate, recruiting.class.Candidate),
-        comments: []
+        comments: [],
+        candidateData: {
+          location: c.address.city,
+          avatar: c.avatar,
+          lastName: c.lastName,
+          firstName: c.firstName
+        }
       }
     })
   }

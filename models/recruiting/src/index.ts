@@ -40,6 +40,7 @@ import type {
   DerivedFeedback,
   Feedback,
   FeedbackRequest,
+  ShortCandidate,
   SocialLink,
   VacancySpace,
   WorkPreference
@@ -84,6 +85,7 @@ class TApplicant extends TFSMItem implements Applicant {
   recruiter!: Ref<Account>
   comments!: CommentRef[]
   candidate!: FullRefString
+  candidateData!: ShortCandidate
 }
 
 /**
@@ -276,6 +278,16 @@ export function createModel (builder: Builder): void {
       mapper: recruiting.mapper.Feedback
     },
     recruiting.dd.Feedback
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      targetClass: recruiting.class.Applicant,
+      sourceClass: recruiting.class.Candidate,
+      mapper: recruiting.mapper.ApplicantCandidate
+    },
+    recruiting.dd.ApplicantCandidate
   )
 
   builder.createDoc(

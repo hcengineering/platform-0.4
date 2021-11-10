@@ -77,7 +77,13 @@ export async function createUpdateApplicant (
         state,
         comments: [],
         candidate: getFullRef(c._id, c._class),
-        rank
+        rank,
+        candidateData: {
+          location: c.address.city,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          avatar: c.avatar
+        }
       }
 
       if (appl === undefined) {

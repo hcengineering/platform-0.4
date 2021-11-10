@@ -61,6 +61,14 @@ export interface Applicant extends FSMItem {
   recruiter: Ref<Account>
   comments: CommentRef[]
   candidate: FullRefString
+  candidateData: ShortCandidate
+}
+
+export interface ShortCandidate {
+  firstName: string
+  lastName: string
+  avatar?: string
+  location?: string
 }
 
 export interface CandidatePoolSpace extends Space {}
@@ -218,9 +226,11 @@ export default plugin(PluginRecruiting, {}, {
     ReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     CandidateReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     CandidateAttachTo: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    CandidateApplicant: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    CandidateApplicant: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    ApplicantCandidate: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   },
   mapper: {
-    Feedback: '' as Resource<DocumentMapper>
+    Feedback: '' as Resource<DocumentMapper>,
+    ApplicantCandidate: '' as Resource<DocumentMapper>
   }
 })

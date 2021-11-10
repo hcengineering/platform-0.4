@@ -25,6 +25,8 @@
   import { Kanban } from '@anticrm/ui'
 
   import ApplicantCard from '../applicants/ApplicantCard.svelte'
+  import { ApplicantUIModel, StateUIModel } from '../..'
+  import action, { Action } from '@anticrm/action-plugin'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
@@ -32,7 +34,7 @@
   const client = getClient()
   const fsmP = getPlugin(fsmPlugin.id)
   let lqStates: QueryUpdater<State> | undefined
-  const lqApplicantsMap: Map<Ref<State>, QueryUpdater<Applicant>> = new Map()
+  let lqApplicants: QueryUpdater<Applicant> | undefined
 
   let fsm: FSM | undefined
   let lqFSM: QueryUpdater<FSM> | undefined
@@ -67,51 +69,32 @@
     }
   }
 
-  $: {
-    const stateIDs = states.map((x) => x._id)
-    const ss = new Set(stateIDs)
-
-    const missingQueryKeys = [...lqApplicantsMap.keys()].filter((x) => !ss.has(x))
-    missingQueryKeys.forEach((k) => {
-      lqApplicantsMap.get(k)?.unsubscribe()
-      lqApplicantsMap.delete(k)
-    })
-
-    const missingItemsKeys = [...items.keys()].filter((x) => !ss.has(x as Ref<State>))
-    missingItemsKeys.forEach((k) => {
-      items.delete(k)
-    })
-
-    items = items
-
-    const curQueryKeys = [...lqApplicantsMap.keys()]
-    const newStates = stateIDs.filter((x) => !curQueryKeys.includes(x))
-
-    newStates.forEach((state) => {
-      lqApplicantsMap.set(
-        state,
-        client.query(
-          undefined,
-          recruiting.class.Applicant,
-          { state },
-          (result) => {
-            const applicants = result.map((x) => ({
-              ...x,
-              id: x._id
-            }))
-            items.set(state, applicants)
-
-            items = items
-          },
-          {
-            sort: {
-              rank: SortingOrder.Ascending
-            }
-          }
-        )
+  let applicants: Applicant[] = []
+  let actions: Action[] = []
+  let actionsQuery: QueryUpdater<Action> | undefined
+  $: actionsQuery =
+    states.length > 0
+      ? client.query(
+        actionsQuery,
+        action.class.Action,
+        {
+          _id: { $in: states.map((s) => s.optionalActions.concat(s.requiredActions)).reduce((r, x) => r.concat(x)) }
+        },
+        (res) => (actions = res)
       )
-    })
-  }
+      : undefined
+
+  $: lqApplicants = client.query(
+    lqApplicants,
+    recruiting.class.Applicant,
+    { space: space._id },
+    (result) => (applicants = result),
+    {
+      sort: {
+        rank: SortingOrder.Ascending
+      }
+    }
+  )
 
   async function onDrop (event: CustomEvent<any>) {
     const { item, state, prevState, idx } = event.detail
@@ -179,7 +162,28 @@
   }
 
   let states: State[] = []
-  let items = new Map<string, Applicant[]>()
+
+  $: items = getData(applicants, states, actions)
+
+  function getData (applicants: Applicant[], states: State[], actions: Action[]): Map<string, ApplicantUIModel[]> {
+    const result: Map<string, ApplicantUIModel[]> = new Map<string, ApplicantUIModel[]>()
+    for (const state of states) {
+      const stateData: StateUIModel = {
+        ...state,
+        _id: state._id as Ref<StateUIModel>,
+        optionalActionsData: actions.filter((a) => state.optionalActions.includes(a._id)),
+        requiredActionsData: actions.filter((a) => state.requiredActions.includes(a._id))
+      }
+      const currentApplicants = applicants.filter((a) => a.state === state._id)
+      const res = currentApplicants.map((a) => ({
+        ...a,
+        _id: a._id as Ref<ApplicantUIModel>,
+        stateData: stateData
+      }))
+      result.set(state._id, res)
+    }
+    return result
+  }
 </script>
 
 <Kanban

@@ -15,7 +15,7 @@
 
 import { DerivedData, Doc, MappingOptions, Tx, TxCreateDoc, TxProcessor, Ref, generateId, DerivedDataDescriptor, TxUpdateDoc, TxRemoveDoc, Hierarchy, Class } from '@anticrm/core'
 import core, { registerMapper } from '@anticrm/core'
-import type { DerivedFeedback, Feedback } from '@anticrm/recruiting'
+import type { Applicant, Candidate, DerivedFeedback, Feedback } from '@anticrm/recruiting'
 import recruiting from '@anticrm/recruiting'
 
 async function createFeedback (feedback: Feedback, d: DerivedDataDescriptor<Doc, DerivedData>, opts: MappingOptions): Promise<(DerivedFeedback & DerivedData)[]> {
@@ -85,6 +85,72 @@ export default async (): Promise<void> => {
 
         if (isTarget(options.hierarchy, ttx.objectClass)) {
           return []
+        }
+      }
+
+      return []
+    }
+  })
+
+  registerMapper(recruiting.mapper.ApplicantCandidate, {
+    map: async (tx: Tx, options: MappingOptions): Promise<DerivedData[]> => {
+      if (tx._class === core.class.TxUpdateDoc) {
+        const ctx = tx as TxUpdateDoc<Candidate>
+        const candidate = (await options.storage.findAll(ctx.objectClass, { _id: ctx.objectId }, { limit: 1 })).pop()
+        if (candidate !== undefined && candidate.applicants.length !== 0) {
+          let needUpdate = false
+          const candidateData = {
+            location: candidate.address.city,
+            firstName: candidate.firstName,
+            lastName: candidate.lastName,
+            avatar: candidate.avatar
+          }
+          for (const key in ctx.operations) {
+            const value = (ctx.operations as any)[key]
+            switch (key) {
+              case 'address':
+                candidateData.location = value.city
+                needUpdate = true
+                break
+              case 'firstName':
+                candidateData.firstName = value
+                needUpdate = true
+                break
+              case 'lastName':
+                candidateData.lastName = value
+                needUpdate = true
+                break
+              case 'avatar':
+                candidateData.avatar = value
+                needUpdate = true
+                break
+              default:
+                continue
+            }
+          }
+
+          if (needUpdate) {
+            const applicants = await options.storage.findAll(recruiting.class.Applicant, { _id: { $in: candidate.applicants } })
+
+            for (const applicant of applicants) {
+              const tx: TxUpdateDoc<Applicant> = {
+                sid: 0,
+                _id: generateId(),
+                _class: core.class.TxUpdateDoc,
+                space: core.space.Tx,
+                modifiedBy: ctx.modifiedBy,
+                modifiedOn: Date.now(),
+                createOn: Date.now(),
+                objectId: applicant._id,
+                objectClass: applicant._class,
+                objectSpace: applicant.space,
+                operations: {
+                  candidateData: candidateData
+                }
+              }
+              await options.storage.tx(tx)
+            }
+          }
         }
       }
 

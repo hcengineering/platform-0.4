@@ -83,7 +83,13 @@
         recruiter,
         state: stateID as Ref<State>,
         candidate: getFullRef(candidate._id, recruiting.class.Candidate),
-        comments: []
+        comments: [],
+        candidateData: {
+          location: candidate.address.city,
+          firstName: candidate.firstName,
+          lastName: candidate.lastName,
+          avatar: candidate.avatar
+        }
       }
     })
   }

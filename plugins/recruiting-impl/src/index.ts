@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { RecruitingService } from '@anticrm/recruiting'
+import type { Applicant, RecruitingService } from '@anticrm/recruiting'
 import { setResource } from '@anticrm/platform'
 import recruiting from '@anticrm/recruiting'
 
@@ -28,6 +28,17 @@ import ApplicantPresenter from './components/applicants/ApplicantPresenter.svelt
 import FeedbackForm from './components/feedback/FeedbackForm.svelte'
 import CandidatePoolProperties from './components/candidates/CandidatePoolProperties.svelte'
 import VacancyProperties from './components/vacancies/VacancyProperties.svelte'
+import { Action } from '@anticrm/action-plugin'
+import { State } from '@anticrm/fsm'
+
+export interface ApplicantUIModel extends Applicant {
+  stateData: StateUIModel
+}
+
+export interface StateUIModel extends State {
+  requiredActionsData: Action[]
+  optionalActionsData: Action[]
+}
 
 export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.CreatePool, CreateCandidatePool)
