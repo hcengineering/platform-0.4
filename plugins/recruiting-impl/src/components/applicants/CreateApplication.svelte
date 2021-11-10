@@ -21,8 +21,8 @@
   import { getClient } from '@anticrm/workbench'
   import type { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
+  import fsmPlugin from '@anticrm/fsm'
   import type { FSM, State } from '@anticrm/fsm'
-  import { fsmPlugin } from '@anticrm/fsm-impl'
   import type { QueryUpdater } from '@anticrm/presentation'
 
   export let space: VacancySpace

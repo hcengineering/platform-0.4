@@ -92,21 +92,22 @@
         objectClass={candidate._class}
         space={candidate.space}
         size={'large'}
+        on:update={onUpdate}
       />
       <div class="flex-col ml-4">
         <div class="fs-title">
-          <EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus />
+          <EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus on:blur={onUpdate} />
         </div>
         <div class="fs-title mb-2">
-          <EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} />
+          <EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} on:blur={onUpdate} />
         </div>
         <div class="fs-subtitle">
-          <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.title} />
+          <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.title} on:blur={onUpdate} />
         </div>
         <div class="fs-subtitle mb-3">
-          <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} />
+          <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} on:blur={onUpdate} />
         </div>
-        <SocialLinks bind:value={candidate.socialLinks} editable />
+        <SocialLinks bind:value={candidate.socialLinks} editable on:update={onUpdate} />
       </div>
     </div>
 

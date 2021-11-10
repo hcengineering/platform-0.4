@@ -13,9 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { selectDocument } from '@anticrm/workbench'
   import recruiting from '@anticrm/recruiting'
-  import { Label, ActionIcon } from '@anticrm/ui'
+  import { Label, ActionIcon, closePopup, showPopup } from '@anticrm/ui'
+  import ApplicantPresenter from './ApplicantPresenter.svelte'
 
   import ActionPresenter from '../vacancies/ActionPresenter.svelte'
 
@@ -27,7 +27,9 @@
   $: actions = doc.stateData.optionalActionsData.concat(doc.stateData.requiredActionsData)
 
   function onClick (): void {
-    selectDocument(doc)
+    showPopup(ApplicantPresenter, { id: doc._id }, 'full', () => {
+      closePopup()
+    })
   }
 </script>
 

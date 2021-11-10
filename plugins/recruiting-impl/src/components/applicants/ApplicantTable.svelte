@@ -14,11 +14,12 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient } from '@anticrm/workbench'
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { Label, Table } from '@anticrm/ui'
+  import { closePopup, Label, showPopup, Table } from '@anticrm/ui'
+  import ApplicantPresenter from './ApplicantPresenter.svelte'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
@@ -41,13 +42,9 @@
   ]
 
   function onClick (event: any) {
-    const applicant = applicants.find((x) => event.detail._id === x.item)
-
-    if (!applicant) {
-      return
-    }
-
-    selectDocument(applicant)
+    showPopup(ApplicantPresenter, { id: event.detail._id }, 'full', () => {
+      closePopup()
+    })
   }
 
   let applicants: Applicant[] = []

@@ -14,10 +14,10 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import core, { Ref } from '@anticrm/core'
+  import core, { Data, Ref } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import fsm from '@anticrm/fsm'
   import type { FSM } from '@anticrm/fsm'
-  import { fsmPlugin } from '@anticrm/fsm-impl'
   import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
@@ -28,54 +28,41 @@
   const client = getClient()
   const dispatch = createEventDispatcher()
 
-  const vacancy: VacancySpace = {
+  const vacancy: Data<VacancySpace> = {
     name: '',
     description: '',
-    fsm: '' as VacancySpace['fsm'],
+    fsm: '' as Ref<FSM>,
     private: true,
     members: [client.accountId()],
     company: '',
     location: ''
-  } as VacancySpace
+  }
 
-  let selectedFSM: FSM | undefined = undefined
-  $: selectedFSM = fsmTmpls.find((x) => x._id === selectedFSMId)
+  let fsmId: Ref<FSM> | undefined
 
   let fsmTmpls: FSM[] = []
   let lq: QueryUpdater<FSM> | undefined
 
-  if (vacancy._id === undefined) {
-    lq = client.query(lq, fsmPlugin.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
-      fsmTmpls = result
-      if (selectedFSM === undefined) {
-        selectedFSM = result[0]
-      }
-    })
-  }
-
-  function onChange () {
-    dispatch('update')
-  }
+  lq = client.query(lq, fsm.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
+    fsmTmpls = result
+    if (vacancy.fsm === undefined) {
+      fsmId = result.shift()?._id
+    }
+  })
 
   let fsmItems: DropdownItem[] = []
   $: fsmItems = fsmTmpls.map((x) => ({
     id: x._id,
     label: x.name
   }))
-  let selectedFSMId: string | undefined
-
-  $: if (vacancy._id === undefined) {
-    vacancy.fsm = selectedFSMId as Ref<FSM>
-    onChange()
-  }
 
   async function createVacancy () {
-    if (!vacancy.fsm) {
+    if (fsmId === undefined) {
       return
     }
 
-    const fsmP = await getPlugin(fsmPlugin.id)
-    const dFSM = await fsmP.duplicateFSM(vacancy.fsm)
+    const fsmP = await getPlugin(fsm.id)
+    const dFSM = await fsmP.duplicateFSM(fsmId)
 
     if (!dFSM) {
       return
@@ -88,15 +75,15 @@
   }
 
   let canSave = false
-  $: canSave = vacancy.name !== '' && vacancy.fsm !== ''
+  $: canSave = vacancy.name !== '' && fsmId !== undefined
 </script>
 
 <Card label={recruiting.string.AddVacancy} {canSave} okAction={createVacancy} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} on:blur={onChange} focus />
-    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} on:blur={onChange} />
+    <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} focus />
+    <EditBox label={recruiting.string.Company} bind:value={vacancy.company} />
   </Grid>
   <svelte:fragment slot="pool">
-    <Dropdown items={fsmItems} bind:selected={selectedFSMId} label={recruiting.string.Flow} />
+    <Dropdown items={fsmItems} bind:selected={fsmId} label={recruiting.string.Flow} />
   </svelte:fragment>
 </Card>

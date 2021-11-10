@@ -33,6 +33,7 @@
     const target = ev.currentTarget as HTMLElement
     showPopup(SocialEditor, { value: value ?? [] }, target, (result) => {
       if (result) value = result
+      update()
     })
   }
 </script>
