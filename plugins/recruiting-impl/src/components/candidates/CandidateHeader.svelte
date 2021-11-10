@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import recruiting, { Candidate } from '@anticrm/recruiting'
   import { createEventDispatcher } from 'svelte'
@@ -26,67 +27,61 @@
 </script>
 
 <div class="header flex-row-center">
-  <div class="icon flex">
-    <div>
+  <div class="flex-row-center column">
+    <div class="flex-center icon">
       <IconLocation size={12} />
     </div>
-  </div>
-  <div class="item flex-col-stretch">
-    <Label label={recruiting.string.Location} />
-    <div class="value">
-      <EditBox bind:value={candidate.address.city} on:blur={update} />
+    <div class="flex-col">
+      <Label label={recruiting.string.Location} />
+      <div class="value">
+        <EditBox bind:value={candidate.address.city} on:blur={update} maxWidth="150px" />
+      </div>
     </div>
   </div>
-  <div class="splitter" />
-  <div class="item flex-col-stretch">
+  <div class="flex-col column">
     <Label label={recruiting.string.Onsite} />
     <YesNo bind:value={candidate.workPreference.onsite} on:update={update} />
   </div>
-  <div class="splitter" />
-  <div class="item flex-col-stretch">
+  <div class="flex-col column">
     <Label label={recruiting.string.Remote} />
     <YesNo bind:value={candidate.workPreference.remote} on:update={update} />
   </div>
-  <div class="splitter" />
-  <div class="item flex-col-stretch">
+  <div class="flex-col column">
     <Label label={recruiting.string.SalaryExpectation} />
     <div class="value">
-      <EditBox bind:value={candidate.salaryExpectation} on:blur={update} />
+      <EditBox bind:value={candidate.salaryExpectation} on:blur={update} maxWidth="150px" />
     </div>
   </div>
 </div>
 
 <style lang="scss">
   .header {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    height: 100%;
+    margin: .45rem 0;
 
     .icon {
-      height: 36px;
-      width: 36px;
+      margin-right: .5rem;
+      height: 2.25rem;
+      width: 2.25rem;
       border-radius: 50%;
-      border: 0.5px solid var(--theme-avatar-border);
-
-      div {
-        margin: auto;
-      }
+      border: 1px solid var(--theme-avatar-border);
     }
 
-    .splitter {
-      height: 100%;
-      width: 1px;
-      background-color: var(--theme-card-divider);
-    }
-
-    .item {
-      margin-left: 24px;
-      margin-right: 24px;
-
-      .value {
-        color: var(--theme-caption-color);
-        font-weight: 500;
+    .column + .column {
+      position: relative;
+      margin-left: 3rem;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -1.5rem;
+        width: 1px;
+        background-color: var(--theme-card-divider);
       }
+    }
+    .value {
+      font-weight: 500;
+      color: var(--theme-caption-color);
     }
   }
 </style>

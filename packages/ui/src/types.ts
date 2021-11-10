@@ -56,12 +56,15 @@ export interface IPopupItem {
 
 export type PopupAlignment = HTMLElement | 'right' | 'float' | 'full'
 
-export type TooltipAligment = 'top' | 'bottom' | 'left' | 'right' | undefined
+export type TooltipAligment = 'top' | 'bottom' | 'left' | 'right'
 
 export interface LabelAndProps {
   label: IntlString | undefined
   element: HTMLElement | undefined
   direction?: TooltipAligment
+  component?: UIComponent
+  props?: any
+  onClose?: (result?: any) => void
 }
 
 export interface CheckListItem {

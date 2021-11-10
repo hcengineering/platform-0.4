@@ -17,7 +17,7 @@
   import { getMetadata } from '@anticrm/platform'
 
   export let icon: Asset | UIComponent
-  export let size: 12 | 16 | 20 | 24 | 28
+  export let size: 10 | 12 | 16 | 20 | 24 | 28
   export let fill = 'currentColor'
   export let filled: boolean = false
 
@@ -38,5 +38,5 @@
     <use href={url} />
   </svg>
 {:else}
-  <svelte:component this={icon} {size} {filled} />
+  <svelte:component this={icon} {size} {fill} {filled} />
 {/if}

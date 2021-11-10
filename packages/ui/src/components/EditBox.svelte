@@ -14,17 +14,19 @@
 -->
 <script lang="ts">
   import { afterUpdate, onMount } from 'svelte'
-  import type { IntlString } from '@anticrm/platform'
+  import type { IntlString, Asset, UIComponent } from '@anticrm/status'
   import Label from './Label.svelte'
+  import Icon from './Icon.svelte'
 
   export let label: IntlString | undefined = undefined
+  export let icon: Asset | UIComponent | undefined = undefined
   export let width: string | undefined = undefined
   // Number is not really necessary to be here, just a quick fix until we implement some NumericEditBox
   export let value: string | number | undefined = undefined
   export let password: boolean | undefined = undefined
   export let id: string | undefined = undefined
   export let placeholder: string = 'Start typing...'
-  export let maxWidth: string | undefined
+  export let maxWidth: string | undefined = undefined
   export let focus: boolean = false
 
   let text: HTMLElement
@@ -55,38 +57,45 @@
 <div class="editbox" style={width ? 'width: ' + width : ''}>
   <div class="text" bind:this={text} />
   {#if label}<div class="label"><Label {label} /></div>{/if}
-  <div class="wrap">
-    {#if password}
-      <input
-        bind:this={input}
-        type="password"
-        {id}
-        {style}
-        bind:value
-        {placeholder}
-        on:change
-        on:keyup
-        on:blur
-        on:focus
-        on:click|stopPropagation
-        on:input={(ev) => ev.target && computeSize(ev.target)}
-      />
-    {:else}
-      <input
-        bind:this={input}
-        type="text"
-        {id}
-        {style}
-        bind:value
-        {placeholder}
-        on:change
-        on:keyup
-        on:blur
-        on:focus
-        on:click|stopPropagation
-        on:input={(ev) => ev.target && computeSize(ev.target)}
-      />
+  <div class="flex-row-center">
+    {#if icon }
+      <div class="flex-center mr-1 icon">
+        <Icon {icon} size={12} fill={'currentColor'} />
+      </div>
     {/if}
+    <div class="wrap">
+      {#if password}
+        <input
+          bind:this={input}
+          type="password"
+          {id}
+          {style}
+          bind:value
+          {placeholder}
+          on:change
+          on:keyup
+          on:blur
+          on:focus
+          on:click|stopPropagation
+          on:input={(ev) => ev.target && computeSize(ev.target)}
+        />
+      {:else}
+        <input
+          bind:this={input}
+          type="text"
+          {id}
+          {style}
+          bind:value
+          {placeholder}
+          on:change
+          on:keyup
+          on:blur
+          on:focus
+          on:click|stopPropagation
+          on:input={(ev) => ev.target && computeSize(ev.target)}
+        />
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -110,6 +119,13 @@
       user-select: none;
     }
 
+    .icon {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      color: var(--theme-content-trans-color);
+    }
+
     .wrap {
       position: relative;
       &::after {
@@ -120,9 +136,7 @@
         right: -4px;
         border: 2px solid var(--primary-button-enabled);
       }
-      &:focus-within::after {
-        content: '';
-      }
+      &:focus-within::after { content: ''; }
     }
 
     input {
@@ -131,9 +145,7 @@
       background-color: transparent;
       border: none;
 
-      &::placeholder {
-        color: var(--theme-content-dark-color);
-      }
+      &::placeholder { color: var(--theme-content-dark-color); }
 
       &::-webkit-contacts-auto-fill-button,
       &::-webkit-credentials-auto-fill-button {

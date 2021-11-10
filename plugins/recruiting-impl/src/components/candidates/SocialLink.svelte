@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
+
 <script lang="ts">
   import { SocialLink, SocialLinkType } from '@anticrm/recruiting'
   import { UIComponent } from '@anticrm/status'
-  import { showPopup } from '@anticrm/ui'
+  import { CircleButton, Tooltip } from '@anticrm/ui'
   import { createEventDispatcher } from 'svelte'
   import Discord from '../icons/Discord.svelte'
   import Email from '../icons/Email.svelte'
@@ -33,6 +34,7 @@
 
   export let socialLink: SocialLink
   export let editable: boolean = false
+  
   const dispatch = createEventDispatcher()
 
   $: icon = getIcon(socialLink.type)
@@ -64,40 +66,23 @@
         return Youtube
     }
   }
-
-  function edit (ev: MouseEvent) {
-    showPopup(SocialLinkPopup, { value: socialLink.link, editable: editable }, ev.target as HTMLElement, (result) => {
-      socialLink.link = result !== undefined ? result : socialLink.link
-      dispatch('update')
-    })
-  }
 </script>
 
-<div class="icon" class:empty={socialLink.link.length === 0} on:click|stopPropagation={edit}>
-  {#if icon}
-    <div><svelte:component this={icon} size={10} /></div>
-  {/if}
-</div>
-
-<style lang="scss">
-  .icon {
-    display: flex;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border-color: var(--theme-border-modal);
-    border: solid thin;
-
-    div {
-      margin: auto;
-    }
-
-    &.empty {
-      opacity: 0.6;
-    }
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-</style>
+{#if icon}
+  <Tooltip
+    component={SocialLinkPopup}
+    props={{
+      icon: getIcon(socialLink.type),
+      value: socialLink,
+      editable
+    }}
+    onClose={(result) => {
+      if (result === 'remove') {
+        socialLink.link = ''
+        dispatch('update')
+      }
+    }}
+  >
+    <CircleButton {icon} size={'small'} />
+  </Tooltip>
+{/if}

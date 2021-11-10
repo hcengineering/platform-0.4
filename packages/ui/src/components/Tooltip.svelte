@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 -->
-<script lang="ts">
-  import type { IntlString } from '@anticrm/platform'
-  import type { TooltipAligment } from '..'
-  import { showTooltip, closeTooltip } from '..'
 
-  export let label: IntlString
+<script lang="ts">
+  import type { IntlString, UIComponent } from '@anticrm/status'
+  import type { TooltipAligment } from '..'
+  import { tooltipstore as tooltip, showTooltip } from '..'
+
+  export let label: IntlString | undefined = undefined
   export let direction: TooltipAligment
+  export let component: UIComponent | undefined = undefined
+  export let props: any | undefined = undefined
+  export let onClose: (result?: any) => void = () => {}
 
   let triggerHTML: HTMLElement
+  let shown: boolean = false
+  $: shown = ($tooltip.label || $tooltip.component) ? true : false
 </script>
 
 <div
   class="tooltip-trigger"
   bind:this={triggerHTML}
-  on:mouseenter={(ev) => {
-    showTooltip(label, triggerHTML, direction)
-  }}
-  on:mouseleave={(ev) => {
-    closeTooltip()
+  on:mousemove={() => {
+    if (!shown) showTooltip(label, triggerHTML, direction, component, props, onClose)
   }}
 >
   <slot />

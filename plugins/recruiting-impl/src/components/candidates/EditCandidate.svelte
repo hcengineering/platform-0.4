@@ -20,11 +20,14 @@
   import type { Candidate } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import { getClient } from '@anticrm/workbench'
-  import { Panel } from '@anticrm/ui'
+  import { Panel, Component, EditBox } from '@anticrm/ui'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import CandidateEditor from './CandidateEditor.svelte'
+  import attachment from '@anticrm/attachment'
+  import CandidateApplication from './CandidateApplication.svelte'
   import Contact from '../icons/Contact.svelte'
   import CandidateHeader from './CandidateHeader.svelte'
+  import AvatarView from './AvatarView.svelte'
+  import SocialLinks from './SocialLinks.svelte'
 
   export let id: Ref<Candidate>
 
@@ -81,6 +84,39 @@
     <svelte:fragment slot="actions">
       <CandidateHeader bind:candidate on:update={onUpdate} />
     </svelte:fragment>
-    <CandidateEditor bind:candidate on:update={onUpdate} />
+
+    <div class="flex-row-center mb-4">
+      <AvatarView
+        bind:src={candidate.avatar}
+        objectId={candidate._id}
+        objectClass={candidate._class}
+        space={candidate.space}
+        size={'large'}
+      />
+      <div class="flex-col ml-4">
+        <div class="fs-title">
+          <EditBox placeholder="John" maxWidth="152px" bind:value={candidate.firstName} focus />
+        </div>
+        <div class="fs-title mb-2">
+          <EditBox placeholder="Appleseed" maxWidth="152px" bind:value={candidate.lastName} />
+        </div>
+        <div class="fs-subtitle">
+          <EditBox placeholder="Title" maxWidth="152px" bind:value={candidate.title} />
+        </div>
+        <div class="fs-subtitle mb-3">
+          <EditBox placeholder="Location" maxWidth="152px" bind:value={candidate.address.city} />
+        </div>
+        <SocialLinks
+          bind:value={candidate.socialLinks}
+          editable
+        />
+      </div>
+    </div>
+  
+    <CandidateApplication {candidate} />
+    <Component
+      is={attachment.component.Attachments}
+      props={{ objectId: candidate._id, objectClass: candidate._class, space: candidate.space, editable: true }}
+    />
   </Panel>
 {/if}
