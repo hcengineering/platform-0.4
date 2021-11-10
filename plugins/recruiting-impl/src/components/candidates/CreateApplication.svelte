@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import core, { Account, getFullRef, Ref } from '@anticrm/core'
+  import core, { Account, getFullRef, Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { Card, Grid, UserBox, Dropdown } from '@anticrm/ui'
   import type { DropdownItem } from '@anticrm/ui'
@@ -33,12 +33,16 @@
   const dispatch = createEventDispatcher()
 
   let applicants: Applicant[] = []
+  let applicantsLoaded = false
   let applicantsQ: QueryUpdater<Applicant> | undefined
   $: applicantsQ = client.query(
     applicantsQ,
-    fsmPlugin.class.FSM,
+    recruiting.class.Applicant,
     { _id: { $in: candidate.applicants } },
-    (res) => (applicants = res)
+    (res) => {
+      applicants = res
+      applicantsLoaded = true
+    }
   )
 
   let fsm: FSM | undefined
@@ -100,9 +104,7 @@
   let vacancyItems: DropdownItem[] = []
   let vacanciesQ: QueryUpdater<VacancySpace> | undefined
   $: vacanciesQ = client.query(vacanciesQ, recruiting.class.VacancySpace, {}, (res) => {
-    vacancies = res
-      .filter((space) => !space.private || space.members.includes(accountId))
-      .filter((space) => !applicants.map((app) => app.space).includes(space._id))
+    vacancies = res.filter((space) => !space.private || space.members.includes(accountId))
     vacancyItems = vacancies.map((v) => ({
       id: v._id,
       label: v.name
@@ -118,11 +120,15 @@
 
   let canSave: boolean = false
   $: canSave = !!(recruiter && candidate && stateID)
+
+  $: items = applicantsLoaded
+    ? vacancyItems.filter((item) => !applicants.map((app) => app.space).includes(item.id as Ref<Space>))
+    : []
 </script>
 
 <Card label={recruiting.string.CreateApplication} bind:canSave okAction={create} on:close={() => dispatch('close')}>
   <Grid column={1} rowGap={24}>
-    <Dropdown items={vacancyItems} bind:selected={selectedVacancy} label={recruiting.string.Vacancies} />
+    <Dropdown {items} bind:selected={selectedVacancy} label={recruiting.string.Vacancies} />
     <UserBox
       users={recruiters}
       bind:selected={recruiter}
