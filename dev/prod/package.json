@@ -83,6 +83,9 @@
     "@anticrm/attachment-dev": "~0.4.0",
     "@anticrm/attachment": "~0.4.0",
     "@anticrm/action-impl": "~0.4.0",
-    "@anticrm/action-plugin": "~0.4.0"
+    "@anticrm/action-plugin": "~0.4.0",
+    "@anticrm/activity": "~0.4.0",
+    "@anticrm/activity-impl": "~0.4.0",
+    "@anticrm/activity-assets": "~0.4.0"
   }
 }

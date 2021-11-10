@@ -103,6 +103,14 @@ export class PresentationClient implements Storage, TxOperations {
     return (await this.client()).isDerived(_class, from)
   }
 
+  async getDescendants<T extends Obj>(_class: Ref<Class<T>>): Promise<Array<Ref<Class<Obj>>>> {
+    return (await this.client()).getDescendants(_class)
+  }
+
+  async getAncestors (_class: Ref<Class<Obj>>): Promise<Array<Ref<Class<Obj>>>> {
+    return (await this.client()).getAncestors(_class)
+  }
+
   async findAll<T extends Doc>(
     _class: Ref<Class<T>>,
     query: DocumentQuery<T>,

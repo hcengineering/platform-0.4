@@ -22,6 +22,7 @@
   import workbench, { getClient } from '@anticrm/workbench'
   import task from '../plugin'
   import StatusPicker from './StatusPicker.svelte'
+  import activity from '@anticrm/activity'
 
   const client = getClient()
 
@@ -116,7 +117,7 @@
       <Component is={workbench.component.MembersSection} props={{ space: updatedSpace }} />
     </div>
   {:else}
-    TODO: Not yet implemented.
+    <Component is={activity.component.Activity} props={{ spaceId: updatedSpace._id }} />
   {/if}
 </Dialog>
 

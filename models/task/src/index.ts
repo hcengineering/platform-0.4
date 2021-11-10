@@ -22,6 +22,7 @@ import notification from '@anticrm/notification'
 import workbench from '@anticrm/model-workbench'
 import { CheckListItem, Project, Task, TaskStatus } from '@anticrm/task'
 import task from './plugin'
+import activity, { ActivityDefinition } from '@anticrm/activity'
 
 const DOMAIN_TASK = 'task' as Domain
 
@@ -209,5 +210,15 @@ export function createModel (builder: Builder): void {
       ]
     },
     task.presenter.TaskPresenter
+  )
+
+  builder.createDoc<ActivityDefinition>(
+    activity.class.ActivityDefinition,
+    {
+      objectClass: task.class.Task,
+      presenter: task.component.TaskActivity,
+      associationMapper: task.activity.Mapper
+    },
+    task.activity.Activity
   )
 }

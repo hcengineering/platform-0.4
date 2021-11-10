@@ -31,6 +31,10 @@ import VacancyProperties from './components/vacancies/VacancyProperties.svelte'
 import { Action } from '@anticrm/action-plugin'
 import { State } from '@anticrm/fsm'
 
+import ApplicantActivity from './components/activity/ApplicantActivity.svelte'
+import CandidateActivity from './components/activity/CandidateActivity.svelte'
+import { applicantActivityMapper, candidateActivityMapper } from './activity'
+
 export interface ApplicantUIModel extends Applicant {
   stateData: StateUIModel
 }
@@ -52,6 +56,10 @@ export default async (): Promise<RecruitingService> => {
   setResource(recruiting.component.ApplicantPresenter, ApplicantPresenter)
   setResource(recruiting.component.CandidatePoolProperties, CandidatePoolProperties)
   setResource(recruiting.component.VacancyProperties, VacancyProperties)
+  setResource(recruiting.component.ApplicantActivity, ApplicantActivity)
+  setResource(recruiting.component.CandidateActivity, CandidateActivity)
+  setResource(recruiting.activity.ApplicantActivityMapper, applicantActivityMapper)
+  setResource(recruiting.activity.CandidateActivityMapper, candidateActivityMapper)
 
   return {}
 }

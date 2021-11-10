@@ -43,7 +43,6 @@
         {editable}
         on:change={(ev) => {
           items = items.filter((i) => i.description !== '')
-          console.log('items', items, ev, item)
           dispatch('change', item)
         }}
       />

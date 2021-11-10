@@ -30,6 +30,7 @@ import recruiting from '@anticrm/recruiting'
 import task from '@anticrm/task'
 import workbench from '@anticrm/workbench'
 import attachment from '@anticrm/attachment'
+import activity from '@anticrm/activity'
 
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
@@ -40,6 +41,7 @@ import '@anticrm/recruiting-assets'
 import '@anticrm/task-assets'
 import '@anticrm/ui-assets'
 import '@anticrm/attachment-assets'
+import '@anticrm/activity-assets'
 
 export function configurePlatform (config: PlatformConfiguration): void {
   // This one is just to name core as core.
@@ -52,6 +54,7 @@ export function configurePlatform (config: PlatformConfiguration): void {
   addLocation(fsm, async () => await import(/* webpackChunkName: "fsm" */ '@anticrm/fsm-impl'))
   addLocation(action, async () => await import(/* webpackChunkName: "action" */ '@anticrm/action-impl'))
   addLocation(attachment, async () => await import(/* webpackChunkName: "attachment" */ '@anticrm/attachment-impl'))
+  addLocation(activity, async () => await import(/* webpackChunkName: "activity" */ '@anticrm/activity-impl'))
 
   if (config.chunter) {
     addLocation(chunter, async () => {

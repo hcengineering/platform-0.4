@@ -1,0 +1,11 @@
+{
+  "extends": "@anticrm/platform-rig/profiles/default/config/jest.config.json",
+  "coverageThreshold": {
+    "global": {
+      "branches": 75,
+      "functions": 90,
+      "lines": 85,
+      "statements": 85
+    }
+}
+}

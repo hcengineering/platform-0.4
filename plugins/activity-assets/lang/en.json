@@ -1,0 +1,6 @@
+{
+  "string": {
+    "Activity": "Activity",
+    "LoadMore" : "Load more {step} of {total}"
+  }
+}

@@ -13,15 +13,13 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Progress, UserInfo, ActionIcon, IconMoreV } from '@anticrm/ui'
-  import IconChat from '../icons/Chat.svelte'
-  import core, { Class, Ref, Account } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import core, { Account, Class, Ref } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
-
   import type { Task } from '@anticrm/task'
-
-  import { getStatusColor } from '../../plugin'
+  import { ActionIcon, IconMoreV, Progress, showPopup, UserInfo } from '@anticrm/ui'
+  import { getClient } from '@anticrm/workbench'
+  import taskIds, { getStatusColor } from '../../plugin'
+  import IconChat from '../icons/Chat.svelte'
 
   const client = getClient()
 
@@ -82,7 +80,12 @@
   <div class="footer">
     <UserInfo user={assignee} />
     <div class="actions">
-      <ActionIcon size={24} icon={IconChat} direction={'left'} action={() => selectDocument(task, task?.shortRefId)} />
+      <ActionIcon
+        size={24}
+        icon={IconChat}
+        direction={'left'}
+        action={() => showPopup(taskIds.component.EditTask, { id: objectId }, 'right')}
+      />
       <div class="counter">{task.comments.length}</div>
     </div>
   </div>

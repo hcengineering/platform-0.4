@@ -24,6 +24,7 @@ import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
 import { Application } from '@anticrm/workbench'
 import type { CommentRef } from '@anticrm/chunter'
 import type { Attachment } from '@anticrm/attachment'
+import { ActivityDefinition, DocumentAssociationMapper } from '@anticrm/activity'
 
 export enum CandidateStatus {
   Employed = 'employed',
@@ -124,7 +125,10 @@ export default plugin(PluginRecruiting, {}, {
     Applications: '' as AnyComponent,
     Feedback: '' as AnyComponent,
     CandidatePoolProperties: '' as AnyComponent,
-    VacancyProperties: '' as AnyComponent
+    VacancyProperties: '' as AnyComponent,
+
+    CandidateActivity: '' as AnyComponent,
+    ApplicantActivity: '' as AnyComponent
   },
   string: {
     App: '' as IntlString,
@@ -232,5 +236,11 @@ export default plugin(PluginRecruiting, {}, {
   mapper: {
     Feedback: '' as Resource<DocumentMapper>,
     ApplicantCandidate: '' as Resource<DocumentMapper>
+  },
+  activity: {
+    CandidateActivity: '' as Ref<ActivityDefinition>,
+    CandidateActivityMapper: '' as Resource<DocumentAssociationMapper>,
+    ApplicantActivity: '' as Ref<ActivityDefinition>,
+    ApplicantActivityMapper: '' as Resource<DocumentAssociationMapper>
   }
 })

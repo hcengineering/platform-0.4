@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import type { Account, Arr, Ref, Space } from '@anticrm/core'
+import type { Account, Ref, Space } from '@anticrm/core'
 import { DOMAIN_MODEL } from '@anticrm/core'
 import { Model } from '@anticrm/model'
 import core from './component'
@@ -29,7 +29,7 @@ export class TSpace extends TDoc implements Space {
   name!: string
   description!: string
   private!: boolean
-  members!: Arr<Ref<Account>>
+  members!: Ref<Account>[]
 }
 
 /**

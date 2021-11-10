@@ -120,6 +120,9 @@
     "@anticrm/notification-mappers": "~0.4.0",
     "@anticrm/recruiting-action": "~0.4.0",
     "@anticrm/calendar-action": "~0.4.0",
-    "@anticrm/model-contact": "~0.4.0"
+    "@anticrm/model-contact": "~0.4.0",
+    "@anticrm/activity": "~0.4.0",
+    "@anticrm/activity-impl": "~0.4.0",
+    "@anticrm/activity-assets": "~0.4.0"
   }
 }

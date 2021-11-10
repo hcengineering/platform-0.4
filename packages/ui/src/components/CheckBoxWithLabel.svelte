@@ -82,6 +82,7 @@
     <textarea
       bind:this={input}
       type="text"
+      readonly={!editable}
       bind:value
       placeholder="New item"
       class="edit-item"

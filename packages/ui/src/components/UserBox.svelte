@@ -39,7 +39,7 @@
   on:click={(ev) => {
     showPopup(UserBoxPopup, { label: title, users, selected, showSearch }, btn, (result) => {
       // undefined passed when closed without changes, null passed when unselect
-      if (result !== undefined && result !== selected) {
+      if (result !== selected) {
         selected = result
         dispatch('change', selected)
       }

@@ -27,6 +27,7 @@ import type {
 import type { Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
 import type { AnyComponent, Asset, IntlString, Resource } from '@anticrm/status'
+import { ActivityDefinition } from '@anticrm/activity'
 
 export interface ChannelAccountPreferences extends AccountProperties {
   closed: boolean // If set, then direct message will not be visible.
@@ -167,6 +168,10 @@ export default plugin(
     },
     mapper: {
       MessageLastModified: '' as Resource<DocumentMapper>
+    },
+    activity: {
+      Message: '' as Ref<ActivityDefinition>,
+      Comment: '' as Ref<ActivityDefinition>
     }
   }
 )

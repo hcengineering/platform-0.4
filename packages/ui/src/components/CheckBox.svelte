@@ -26,10 +26,12 @@
 <label
   class="checkbox"
   on:click|stopPropagation|preventDefault={() => {
-    checked = !checked
+    if (editable) {
+      checked = !checked
+    }
   }}
 >
-  <input class="chBox" type="checkbox" bind:checked disabled={!editable} />
+  <input class="chBox" type="checkbox" bind:checked disabled={!editable} readonly={!editable} />
   <svg class="checkSVG" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
     <path class="back" d="M4,0h8c2.2,0,4,1.8,4,4v8c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V4C0,1.8,1.8,0,4,0z" />
     {#if symbol === 'minus'}

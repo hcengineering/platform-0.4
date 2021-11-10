@@ -68,15 +68,21 @@
     </div>
     <div class="rightSection">
       <div class="flex-row-center header">
-        <div class="icon"><Activity size={16} /></div>
+        <div class="icon">
+          <Activity size={16} />
+        </div>
         <div class="title">Activity</div>
       </div>
       <div class="flex-col h-full content">
         <ScrollBox vertical stretch>
-          <Grid column={1} rowGap={24}>Activity</Grid>
+          <Grid column={1} rowGap={24}>
+            <slot name="activity" />
+          </Grid>
         </ScrollBox>
       </div>
-      <div class="ref-input">ReferenceInput</div>
+      <div class="ref-input">
+        <slot name="ref-input" />
+      </div>
     </div>
   {:else}
     <div class="unionSection">
@@ -107,10 +113,14 @@
           <div class="title">Activity</div>
         </div>
         <div class="flex-col activity content">
-          <Grid column={1} rowGap={24}>Activity</Grid>
+          <Grid column={1} rowGap={24}>
+            <slot name="activity" />
+          </Grid>
         </div>
       </ScrollBox>
-      <div class="ref-input">ReferenceInput</div>
+      <div class="ref-input">
+        <slot name="ref-input" />
+      </div>
     </div>
   {/if}
 

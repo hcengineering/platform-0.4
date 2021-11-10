@@ -798,6 +798,26 @@
       "projectFolder": "server/s3",
       "shouldPublish": true
     },
+    {
+      "packageName": "@anticrm/activity",
+      "projectFolder": "plugins/activity",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/activity-impl",
+      "projectFolder": "plugins/activity-impl",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/model-activity",
+      "projectFolder": "models/activity",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@anticrm/activity-assets",
+      "projectFolder": "plugins/activity-assets",
+      "shouldPublish": true
+    },
 
     // Production packages.
     {

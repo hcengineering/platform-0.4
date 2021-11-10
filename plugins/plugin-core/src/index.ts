@@ -13,14 +13,12 @@
 // limitations under the License.
 //
 
+import type { HierarchyClient, Storage, TxOperations } from '@anticrm/core'
+import type { Metadata, Plugin, Service } from '@anticrm/platform'
 import { plugin } from '@anticrm/platform'
-import type { Metadata, Service, Plugin } from '@anticrm/platform'
-import type { Class, Obj, Ref, Storage, TxOperations } from '@anticrm/core'
 import type { Queriable } from '@anticrm/query'
 
-export interface Client extends Storage, TxOperations, Queriable {
-  isDerived: <T extends Obj>(_class: Ref<Class<T>>, from: Ref<Class<T>>) => boolean
-}
+export interface Client extends Storage, TxOperations, Queriable, HierarchyClient {}
 
 export interface CoreService extends Service {
   /**

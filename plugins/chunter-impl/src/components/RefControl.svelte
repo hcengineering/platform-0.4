@@ -22,13 +22,14 @@
   import { getClient } from '@anticrm/workbench'
 
   export let reference: MessageReference
+  export let mode: PresentationMode = PresentationMode.Preview
   let component: PresentationResult | undefined
 
   export let componentOnly = false
 
   const client = getClient()
 
-  $: findPresentation(client, reference, PresentationMode.Preview).then((ct) => {
+  $: findPresentation(client, reference, mode).then((ct) => {
     component = ct
   })
 </script>

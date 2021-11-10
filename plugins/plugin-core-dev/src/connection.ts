@@ -54,6 +54,14 @@ export class ClientImpl extends TxProcessor implements Client {
     return this.hierarchy.isDerived(_class, from)
   }
 
+  getDescendants<T extends Obj>(_class: Ref<Class<T>>): Ref<Class<Obj>>[] {
+    return this.hierarchy.getDescendants(_class)
+  }
+
+  getAncestors (_class: Ref<Class<Obj>>): Ref<Class<Obj>>[] {
+    return this.hierarchy.getAncestors(_class)
+  }
+
   static async create (txes: Tx[], logging = false): Promise<ClientImpl> {
     const hierarchy = new Hierarchy()
     txes.forEach((tx) => hierarchy.tx(tx))

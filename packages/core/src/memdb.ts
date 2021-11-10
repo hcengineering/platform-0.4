@@ -14,16 +14,16 @@
 //
 
 import { PlatformError, Severity, Status } from '@anticrm/status'
+import copy from 'fast-copy'
+import { measure } from '.'
 import type { Class, Doc, Ref } from './classes'
 import core from './component'
+import { isDerivedDataTx } from './derived/index'
 import type { Hierarchy } from './hierarchy'
 import { getOperator } from './operator'
-import { findProperty, resultSort, shouldSkipId } from './query'
+import { findQuery, resultSort } from './query'
 import { DocumentQuery, FindOptions, FindResult, Storage } from './storage'
 import { Tx, TxCreateDoc, TxProcessor, TxRemoveDoc, TxUpdateDoc } from './tx'
-import { isDerivedDataTx } from './derived/index'
-import { measure } from '.'
-import copy from 'fast-copy'
 
 /**
  * @public
@@ -103,11 +103,7 @@ export class MemDb extends TxProcessor implements Storage {
       result = copy(this.getObjectsByClass(_class))
     }
 
-    for (const key in query) {
-      if (shouldSkipId<T>(key, query)) continue
-      const value = (query as any)[key]
-      result = findProperty(result, key, value)
-    }
+    result = findQuery(query, result)
 
     if (options?.sort !== undefined) resultSort(result, options?.sort)
 
@@ -119,6 +115,8 @@ export class MemDb extends TxProcessor implements Storage {
     }
     result = result.slice(0, options?.limit)
     const finResult = Object.assign(result as T[], { total })
+
+    console.log('query', _class, query, 'results', finResult)
     done()
     return finResult
   }

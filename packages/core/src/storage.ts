@@ -38,7 +38,9 @@ export type ObjQueryType<T> = T | QuerySelector<T>
 /**
  * @public
  */
-export interface NestedDotQuery {
+export interface RootQueryFilter<T extends Doc> {
+  // Perform logical or operation.
+  $or?: DocumentQuery<T>[]
   // support nested queries e.g. 'user.friends.name'
   // this will mark all unrecognized properties as any (including nested queries)
   [key: string]: any
@@ -49,7 +51,7 @@ export interface NestedDotQuery {
  */
 export type DocumentQuery<T extends Doc> = {
   [P in keyof T]?: ObjQueryType<T[P]>
-} & NestedDotQuery
+} & RootQueryFilter<T>
 
 /**
  * @public

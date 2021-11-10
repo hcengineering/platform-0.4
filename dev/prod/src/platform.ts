@@ -27,6 +27,7 @@ import meeting from '@anticrm/meeting'
 import recruiting from '@anticrm/recruiting'
 import fsm from '@anticrm/fsm'
 import attachment from '@anticrm/attachment'
+import activity from '@anticrm/activity'
 
 import '@anticrm/ui-assets'
 import '@anticrm/chunter-assets'
@@ -37,6 +38,7 @@ import '@anticrm/recruiting-assets'
 import '@anticrm/workbench-assets'
 import '@anticrm/calendar-assets'
 import '@anticrm/attachment-assets'
+import '@anticrm/activity-assets'
 
 export function configurePlatform (): void {
   if (process.env.CLIENT !== 'server') {
@@ -76,4 +78,5 @@ export function configurePlatform (): void {
   addLocation(recruiting, async () => await import(/* webpackChunkName: "recruiting" */ '@anticrm/recruiting-impl'))
   addLocation(calendar, async () => await import(/* webpackChunkName: "calendar" */ '@anticrm/calendar-impl'))
   addLocation(action, async () => await import(/* webpackChunkName: "action" */ '@anticrm/action-impl'))
+  addLocation(activity, async () => await import(/* webpackChunkName: "activity" */ '@anticrm/activity-impl'))
 }

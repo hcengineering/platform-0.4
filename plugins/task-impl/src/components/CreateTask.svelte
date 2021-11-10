@@ -18,7 +18,7 @@
   import type { Task } from '@anticrm/task'
   import { TaskStatuses } from '@anticrm/task'
   import task from '../plugin'
-  import core, { generateId } from '@anticrm/core'
+  import core, { generateId, ShortRef } from '@anticrm/core'
   import type { Account, Ref, Space } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
 
@@ -48,10 +48,10 @@
       space._id,
       {
         name,
-        assignee,
+        assignee: assignee === undefined ? '' : assignee,
         description: '',
         checkItems: [],
-        shortRefId,
+        shortRefId: shortRefId as Ref<ShortRef>,
         dueTo,
         status,
         comments: []

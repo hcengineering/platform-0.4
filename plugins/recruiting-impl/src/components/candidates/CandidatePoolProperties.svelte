@@ -20,6 +20,7 @@
   import { Component, Dialog, EditBox, Grid, Icon, Tabs, ToggleWithLabel } from '@anticrm/ui'
   import workbench, { getClient } from '@anticrm/workbench'
   import recruiting from '@anticrm/recruiting'
+  import activity from '@anticrm/activity'
 
   const client = getClient()
 
@@ -105,7 +106,7 @@
       <Component is={workbench.component.MembersSection} props={{ space: updatedSpace }} />
     </div>
   {:else}
-    TODO: Not yet implemented.
+    <Component is={activity.component.Activity} props={{ spaceId: updatedSpace._id }} />
   {/if}
 </Dialog>
 

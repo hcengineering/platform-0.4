@@ -244,6 +244,29 @@ describe('memdb', () => {
     expect(res[0].members).not.toEqual(expect.arrayContaining([account4._id]))
   })
 
+  it('should query with or', async () => {
+    const hierarchy = new Hierarchy()
+    for (const tx of txes) await hierarchy.tx(tx)
+    const model = withOperations(core.account.System, new ModelDb(hierarchy))
+    for (const tx of txes) await model.tx(tx)
+
+    await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account1@site.com',
+      name: 'account1'
+    })
+    await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account2@site.com',
+      name: 'account2'
+    })
+    await model.createDoc(core.class.Account, core.space.Model, {
+      email: 'account3@site.com',
+      name: 'account3'
+    })
+
+    const res = await model.findAll(core.class.Account, { $or: [{ name: 'account1' }, { email: 'account2@site.com' }] })
+    expect(res.length).toEqual(2)
+  })
+
   it('limit and sorting', async () => {
     const hierarchy = new Hierarchy()
     for (const tx of txes) hierarchy.tx(tx)
