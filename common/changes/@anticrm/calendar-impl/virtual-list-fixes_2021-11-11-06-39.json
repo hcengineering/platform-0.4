@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/calendar-impl",
+      "comment": "Apply various virtual list fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/calendar-impl"
+}

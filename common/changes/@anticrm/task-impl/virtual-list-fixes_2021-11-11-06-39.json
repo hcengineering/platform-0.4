@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Apply various virtual list fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
