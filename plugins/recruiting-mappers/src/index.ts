@@ -103,27 +103,37 @@ export default async (): Promise<void> => {
             location: candidate.address.city,
             firstName: candidate.firstName,
             lastName: candidate.lastName,
+            title: candidate.title,
             avatar: candidate.avatar
           }
           for (const key in ctx.operations) {
             const value = (ctx.operations as any)[key]
             switch (key) {
-              case 'address':
+              case 'address': {
                 candidateData.location = value.city
                 needUpdate = true
                 break
-              case 'firstName':
+              }
+              case 'firstName': {
                 candidateData.firstName = value
                 needUpdate = true
                 break
-              case 'lastName':
+              }
+              case 'lastName': {
                 candidateData.lastName = value
                 needUpdate = true
                 break
-              case 'avatar':
+              }
+              case 'title': {
+                candidateData.title = value
+                needUpdate = true
+                break
+              }
+              case 'avatar': {
                 candidateData.avatar = value
                 needUpdate = true
                 break
+              }
               default:
                 continue
             }

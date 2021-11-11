@@ -51,6 +51,7 @@
   let lqApplicants: QueryUpdater<Applicant> | undefined
   $: if (space._id !== prevSpace) {
     prevSpace = space._id
+    applicants = []
 
     if (space !== undefined) {
       lqApplicants = client.query(lqApplicants, recruiting.class.Applicant, { space: space._id }, (result) => {

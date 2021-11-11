@@ -96,7 +96,7 @@
   <div class="rows-container">
     <div class="rows">
       {#if virtual}
-        <VirtualList bind:this={list} itemCount={data.length} let:items getItemSize={() => 60}>
+        <VirtualList bind:this={list} itemCount={data.length} let:items itemSize={() => 60}>
           {#each items as item (data[item.index]._id)}
             <div
               class="row"

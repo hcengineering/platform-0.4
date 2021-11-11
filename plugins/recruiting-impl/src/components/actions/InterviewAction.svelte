@@ -29,7 +29,6 @@
   import recruiting from '@anticrm/recruiting'
 
   import Calendar from '../icons/Calendar.svelte'
-  import FeedbackPresenter from '../feedback/FeedbackPresenter.svelte'
 
   import currentTimeStore from '../stores/currentTime'
 
@@ -68,10 +67,12 @@
     await actionP.runAction(action, `${target._id}_${target.state}`, $space._id, event._id)
   }
 
-  async function run () {
+  async function run (e: MouseEvent) {
     if (instance !== undefined) {
       return
     }
+
+    e.stopPropagation()
 
     showPopup(calendar.component.CreateEvent, { space: $space, onCreate: onEventCreate }, 'right')
   }
@@ -87,7 +88,7 @@
     {#if instance === undefined}
       <Button label={recruiting.string.ScheduleInterview} on:click={run} />
     {:else if event !== undefined}
-      <div class="title" on:click={onEventClick}>
+      <div class="title" on:click|stopPropagation={onEventClick}>
         {event.name}
       </div>
     {/if}
@@ -101,13 +102,6 @@
         State: {instance?.state}
       </div>
     </div>
-    {#if isEventFinished}
-      <!-- It is temporary solution, need to be moved to the event itself -->
-      <div class="feedback">
-        <div class="feedback-header">Feedback</div>
-        <FeedbackPresenter target={event._id} users={event.participants} />
-      </div>
-    {/if}
   {/if}
 </div>
 
@@ -137,14 +131,5 @@
     font-weight: 500;
     opacity: 0.4;
     text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25);
-  }
-
-  .feedback {
-    padding-top: 10px;
-  }
-
-  .feedback-header {
-    font-weight: 500;
-    padding-bottom: 5px;
   }
 </style>

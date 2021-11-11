@@ -128,6 +128,9 @@
   --theme-status-online: #6cd871;
   --theme-shadow: 0px 4px 8px rgba(15, 15, 15, 0.5);
   --theme-text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25);
+
+  --theme-kanban-card-bg: #2f2f34;
+  --theme-kanban-panel-bg: #1f1f25;
 }
 
 /* Grey Theme */
@@ -196,6 +199,9 @@
   --theme-doclink-hover: #2d6ab9;
   --theme-status-online: #6cd871;
   --theme-shadow: 0px 4px 8px rgba(15, 15, 15, 0.5);
+
+  --theme-kanban-card-bg: #4d4c57;
+  --theme-kanban-panel-bg: #3f3e4a;
 }
 
 /* Light Theme */
@@ -264,4 +270,7 @@
   --theme-doclink-hover: #2d6ab9;
   --theme-status-online: #4ebc53;
   --theme-shadow: 0px 4px 8px rgba(155, 155, 155, 0.5);
+
+  --theme-kanban-card-bg: #ededed;
+  --theme-kanban-panel-bg: #f7f7f7;
 }

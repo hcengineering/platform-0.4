@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Apply various virtual list fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

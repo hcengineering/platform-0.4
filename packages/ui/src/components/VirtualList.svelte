@@ -7,8 +7,8 @@
   import VariableSizeList from 'svelte-window/lib/VariableSizeList.svelte'
 
   export let itemCount: number
-  export let overscanCount: number = 0
-  export let getItemSize: (x: number) => number
+  export let itemKey: ((index: number) => string) | undefined = undefined
+  export let itemSize: (x: number) => number
 
   let list: any
   let root: HTMLElement
@@ -41,17 +41,42 @@
     resizeObs.disconnect()
   })
 
-  export function reset () {
-    list?.instance?.resetAfterIndex?.(0, true)
+  export function reset (start: number = 0) {
+    list?.instance?.resetAfterIndex?.(start, true)
 
     // To force rerender
-    getItemSize = getItemSize
+    itemSize = itemSize
+  }
+
+  let scrollOffset = 0
+  function onScroll (data: { scrollOffset: number }) {
+    scrollOffset = data.scrollOffset
+  }
+
+  function resetScroll () {
+    root.children[0]?.scrollTo({ top: scrollOffset })
+  }
+
+  $: if (root) {
+    resetScroll()
   }
 </script>
 
 <div bind:this={root} class="root">
   {#if itemCount > 0}
-    <VariableSizeList bind:this={list} {height} {width} {itemCount} itemSize={getItemSize} {overscanCount} let:items>
+    <VariableSizeList
+      style="will-change: auto;"
+      bind:this={list}
+      {onScroll}
+      {height}
+      {itemKey}
+      {width}
+      {itemCount}
+      {itemSize}
+      useIsScrolling
+      overscanCount={0}
+      let:items
+    >
       <slot {items} />
     </VariableSizeList>
   {/if}
@@ -61,9 +86,5 @@
   .root {
     width: 100%;
     height: 100%;
-  }
-
-  .root > :global(div) {
-    will-change: auto;
   }
 </style>

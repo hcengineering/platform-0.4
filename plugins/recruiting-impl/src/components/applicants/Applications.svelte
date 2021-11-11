@@ -13,6 +13,9 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { setContext } from 'svelte'
+  import { writable } from 'svelte/store'
+
   import type { IntlString, UIComponent } from '@anticrm/status'
   import ui, { IconGroup, IconList, IconKanban } from '@anticrm/ui'
   import type { VacancySpace } from '@anticrm/recruiting'
@@ -21,6 +24,9 @@
   import VacancyKanban from '../vacancies/VacancyKanban.svelte'
 
   export let space: VacancySpace
+  const spaceS = writable(space)
+  $: spaceS.set(space)
+  setContext('space', spaceS)
 
   type ID = 'list' | 'kanban'
 

@@ -51,5 +51,8 @@
 <style lang="scss">
   .root {
     cursor: grab;
+    background-color: var(--theme-kanban-card-bg);
+    border-radius: 12px;
+    overflow: hidden;
   }
 </style>

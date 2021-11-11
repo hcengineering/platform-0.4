@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-mappers",
+      "comment": "Apply various virtual list fixes",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-mappers"
+}

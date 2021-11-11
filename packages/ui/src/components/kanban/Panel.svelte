@@ -27,7 +27,7 @@
   import VirtualList, { sty } from '../VirtualList.svelte'
   import IconClose from '../icons/Close.svelte'
 
-  import DelayedRenderer from './DelayedRenderer.svelte'
+  import ScrollRenderer from './ScrollRenderer.svelte'
   import Card from './Card.svelte'
 
   import { scrollable } from './scrollable'
@@ -38,7 +38,6 @@
   import DragWatcher from './drag.watcher'
   import { ObjectType } from './object.types'
   import type { State as HoverState } from './utils'
-  import { HeightCache } from './height.cache'
 
   export let title: IntlString | string
   export let color: string = '#F28469'
@@ -50,7 +49,6 @@
   export let panelEditDisabled: boolean
 
   const dispatch = createEventDispatcher()
-  const heightCache = new HeightCache()
   let dragPreview: HTMLElement
 
   const dragWatcher = getContext<DragWatcher>('dragWatcher')
@@ -154,17 +152,29 @@
     actualItems = actualItems
   }
 
-  const getScrollableNode = (node: HTMLElement): HTMLElement => node.children[1].children[0] as HTMLElement
+  const getScrollableNode = (node: HTMLElement): HTMLElement | undefined =>
+    node.children[1]?.children[0] as HTMLElement | undefined
 
   let list: any
-  function setHeight (idx: number, height: number) {
-    heightCache.setHeight(idx, height + 10)
-    list.reset()
+  let cardHeight = 80
+  let cardHeightInitialized = false
+
+  function setHeight (height: number) {
+    if (cardHeightInitialized) {
+      return
+    }
+
+    cardHeightInitialized = true
+    cardHeight = height + 10
+    setTimeout(() => list.reset())
   }
 
-  $: if (isHovered) {
-    setHeight(actualItems.length - 1, $dragCardSize.height)
+  $: if (items) {
+    list?.reset()
   }
+
+  const getKey = (index: number): string => actualItems[index]?._id ?? ''
+  const getHeight = (idx: number) => (idx > items.length - 1 ? $dragCardSize.height : cardHeight)
 
   function onColumnRename () {
     dispatch('columnRename', {
@@ -232,20 +242,20 @@
           }}
           on:dragEnd={onCardDragEnd}
         />
-        <VirtualList bind:this={list} itemCount={actualItems.length} let:items getItemSize={heightCache.getHeight}>
-          {#each items.filter((x) => actualItems[x.index] !== undefined) as item (actualItems[item.index]._id)}
-            {#if actualItems[item.index]._id !== GAP_ID}
+        <VirtualList bind:this={list} itemCount={actualItems.length} let:items itemKey={getKey} itemSize={getHeight}>
+          {#each items as item (item.key)}
+            {#if item.key !== GAP_ID}
               <div
                 class="card-container"
                 style={sty(item.style)}
                 use:draggable={{
-                  id: actualItems[item.index]._id,
+                  id: item.key,
                   watcher: dragWatcher,
                   ctx: { state: id },
                   type: ObjectType.Card
                 }}
                 use:hoverable={{
-                  id: actualItems[item.index]._id,
+                  id: item.key,
                   watcher: dragWatcher,
                   disabled,
                   type: ObjectType.Card,
@@ -261,17 +271,17 @@
                   class="transformable-card"
                   style={shiftIdx <= item.index ? `transform: translate3d(0px, ${$dragCardSize.height}px, 0px);` : ''}
                 >
-                  <DelayedRenderer let:ready delay={cardDelay}>
-                    {#if ready}
+                  <ScrollRenderer let:ready delay={cardDelay} isScrolling={item.isScrolling}>
+                    {#if ready && actualItems[item.index]}
                       <Card
                         component={cardComponent}
                         doc={actualItems[item.index]}
                         on:sizeChange={(ev) => {
-                          setHeight(item.index, ev.detail[1])
+                          setHeight(ev.detail[1])
                         }}
                       />
                     {/if}
-                  </DelayedRenderer>
+                  </ScrollRenderer>
                 </div>
               </div>
             {:else}
@@ -292,8 +302,7 @@
 
     min-width: 320px;
     height: 100%;
-    background-color: var(--theme-bg-accent-color);
-    border: 1px solid var(--theme-bg-accent-color);
+    background-color: var(--theme-kanban-panel-bg);
     border-radius: 12px;
 
     transition: opacity 500ms;
@@ -359,10 +368,12 @@
     bottom: 0;
 
     padding: 12px;
+    margin-right: -6px;
   }
 
   .card-container {
     border: 1px;
+    padding-right: 6px;
   }
 
   .transformable-card {
