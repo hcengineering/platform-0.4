@@ -13,13 +13,11 @@
 // limitations under the License.
 //
 
-import { LexoRank } from 'lexorank'
-import { DOMAIN_MODEL } from '@anticrm/core'
 import type { Class, Doc, Domain, Ref } from '@anticrm/core'
-import type { FSM, FSMItem, State, Transition, WithFSM } from '@anticrm/fsm'
+import type { FSM, FSMItem, State, Transition } from '@anticrm/fsm'
 import fsmPlugin from '@anticrm/fsm'
 import { Builder, Model } from '@anticrm/model'
-import core, { TDoc, TSpace } from '@anticrm/model-core'
+import core, { TDoc } from '@anticrm/model-core'
 import type { Action } from '@anticrm/action-plugin'
 
 const DOMAIN_FSM = 'fsm' as Domain
@@ -27,7 +25,7 @@ const DOMAIN_FSM = 'fsm' as Domain
 /**
  * @public
  */
-@Model(fsmPlugin.class.FSM, core.class.Doc, DOMAIN_MODEL)
+@Model(fsmPlugin.class.FSM, core.class.Doc, DOMAIN_FSM)
 export class TFSM extends TDoc implements FSM {
   name!: string
   clazz!: Ref<Class<Doc>>
@@ -39,7 +37,7 @@ export class TFSM extends TDoc implements FSM {
  */
 @Model(fsmPlugin.class.FSMItem, core.class.Doc, DOMAIN_FSM)
 export class TFSMItem extends TDoc implements FSMItem {
-  fsm!: Ref<WithFSM>
+  fsm!: Ref<FSM>
   state!: Ref<State>
   item!: Ref<Doc>
   clazz!: Ref<Class<Doc>>
@@ -49,7 +47,7 @@ export class TFSMItem extends TDoc implements FSMItem {
 /**
  * @public
  */
-@Model(fsmPlugin.class.State, core.class.Doc, DOMAIN_MODEL)
+@Model(fsmPlugin.class.State, core.class.Doc, DOMAIN_FSM)
 export class TState extends TDoc implements State {
   name!: string
   color!: string
@@ -62,7 +60,7 @@ export class TState extends TDoc implements State {
 /**
  * @public
  */
-@Model(fsmPlugin.class.Transition, core.class.Doc, DOMAIN_MODEL)
+@Model(fsmPlugin.class.Transition, core.class.Doc, DOMAIN_FSM)
 export class TTransition extends TDoc implements Transition {
   from!: Ref<State>
   to!: Ref<State>
@@ -72,145 +70,6 @@ export class TTransition extends TDoc implements Transition {
 /**
  * @public
  */
-@Model(fsmPlugin.class.WithFSM, core.class.Space)
-export class TWithFSM extends TSpace implements WithFSM {
-  fsm!: Ref<FSM>
-}
-
-/**
- * @public
- */
 export function createModel (builder: Builder): void {
-  builder.createModel(TFSM, TState, TTransition, TFSMItem, TWithFSM)
+  builder.createModel(TFSM, TState, TTransition, TFSMItem)
 }
-
-/**
- * @public
- */
-export type PureState = Omit<State, keyof Doc | 'fsm' | 'color' | 'rank'> & {
-  color?: string
-}
-
-/**
- * @public
- */
-export class FSMBuilder {
-  private readonly states = new Map<string, PureState>()
-  private readonly transitions: Array<[string, string]> = []
-  private readonly ids = new Set<Ref<Doc>>()
-
-  constructor (readonly name: string, readonly clazz: Ref<Class<Doc>>, readonly fsmId: Ref<FSM>) {}
-
-  private getState (a: PureState): PureState | undefined {
-    if (!this.states.has(a.name)) {
-      this.states.set(a.name, a)
-    }
-
-    return this.states.get(a.name)
-  }
-
-  private _transition (a: PureState, b: PureState): FSMBuilder {
-    const existingA = this.getState(a)
-    const existingB = this.getState(b)
-
-    if (existingA == null || existingB == null) {
-      return this
-    }
-
-    this.transitions.push([existingA.name, existingB.name])
-
-    return this
-  }
-
-  transition (a: PureState, b: PureState | PureState[]): FSMBuilder {
-    ;(Array.isArray(b) ? b : [b]).forEach((x) => this._transition(a, x))
-
-    return this
-  }
-
-  private readonly genColor = (function * defaultColors () {
-    while (true) {
-      yield * [
-        'var(--primary-color-pink)',
-        'var(--primary-color-purple-01)',
-        'var(--primary-color-orange-01)',
-        'var(--primary-color-skyblue)',
-        'var(--primary-color-purple-02)',
-        'var(--primary-color-orange-02)',
-        'var(--primary-color-purple-03)'
-      ]
-    }
-  })()
-
-  makeId<T extends Doc>(key: string, name: string): Ref<T> {
-    const id = (this.fsmId + `-${key}-` + name.toLowerCase()) as Ref<T>
-    if (this.ids.has(id)) {
-      throw new Error(`Non uniq ID for FSM detected:${id}, ${Array.from(this.ids.keys()).toString()}`)
-    }
-    this.ids.add(id)
-    return id
-  }
-
-  build (S: Builder): Ref<FSM> {
-    const stateIDs: Map<string, Ref<State>> = new Map(
-      [...this.states.keys()].map((x) => [x, this.makeId('st', x)] as [string, Ref<State>])
-    )
-    S.createDoc(
-      fsmPlugin.class.FSM,
-      {
-        name: this.name,
-        clazz: this.clazz,
-        isTemplate: true
-      },
-      this.fsmId
-    )
-
-    let rank = LexoRank.middle()
-    this.states.forEach((state, key) => {
-      const color = state.color ?? this.genColor.next().value
-      S.createDoc(
-        fsmPlugin.class.State,
-        {
-          ...state,
-          color,
-          fsm: this.fsmId,
-          rank: rank.toString()
-        },
-        stateIDs.get(key) ?? ('' as Ref<State>)
-      )
-      rank = rank.between(LexoRank.max())
-    })
-
-    const transitions: Array<Ref<Transition>> = []
-
-    this.transitions.forEach(([fromName, toName]) => {
-      const from = stateIDs.get(fromName)
-      const to = stateIDs.get(toName)
-
-      if (from == null || to == null) {
-        return
-      }
-
-      const tID: Ref<Transition> = this.makeId('tr', fromName + '-' + toName)
-      S.createDoc(
-        fsmPlugin.class.Transition,
-        {
-          from,
-          to,
-          fsm: this.fsmId
-        },
-        tID
-      )
-
-      transitions.push(tID)
-    })
-
-    return this.fsmId
-  }
-}
-
-/**
- * @public
- */
-export const templateFSM = (name: string, clazz: Ref<Class<Doc>>, fsmId: Ref<FSM>): FSMBuilder =>
-  new FSMBuilder(name, clazz, fsmId)

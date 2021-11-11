@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { Ref, Space } from '@anticrm/core'
-  import core, { SortingOrder } from '@anticrm/core'
+  import { SortingOrder } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
   import fsmPlugin from '@anticrm/fsm'
@@ -44,34 +44,52 @@
   let fsm: FSM | undefined
   let lqFSM: QueryUpdater<FSM> | undefined
 
+  const colors = [
+    'var(--color-blue-01)',
+    'var(--color-blue-02)',
+    'var(--color-purple-01)',
+    'var(--color-purple-02)',
+    'var(--color-green-01)',
+    'var(--color-green-02)',
+    'var(--color-green-03)',
+    'var(--color-grey)',
+    'var(--color-orange)'
+  ]
+
   $: if (space._id !== prevSpace) {
     prevSpace = space._id
+    fsm = undefined
 
     if (space !== undefined) {
-      lqStates = client.query(
-        lqStates,
-        fsmPlugin.class.State,
-        { fsm: space.fsm },
-        (result) => {
-          states = result
-        },
-        {
-          sort: {
-            rank: SortingOrder.Ascending
-          }
-        }
-      )
-
-      lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { _id: space.fsm }, (result) => {
+      lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { space: space._id }, (result) => {
         fsm = result[0]
-      })
+      }, { limit: 1 })
     } else {
       lqFSM?.unsubscribe()
+      lqFSM = undefined
       fsm = undefined
-
-      lqStates?.unsubscribe()
-      states = []
     }
+  }
+
+  $: if (fsm !== undefined) {
+    lqStates = client.query(
+      lqStates,
+      fsmPlugin.class.State,
+      { fsm: fsm._id },
+      (result) => {
+        states = result
+        console.log(result)
+      },
+      {
+        sort: {
+          rank: SortingOrder.Ascending
+        }
+      }
+    )
+  } else {
+    lqStates?.unsubscribe()
+    lqStates = undefined
+    states = []
   }
 
   let applicants: Applicant[] = []
@@ -141,25 +159,32 @@
       return
     }
 
+    const existingColors = new Set(states.map(x => x.color))
+    const color = colors.filter(x => !existingColors.has(x))[0] ?? 'var(--color-grey)'
+
     const fsmPlug = await fsmP
     await fsmPlug.addState({
       fsm: fsm._id,
       name: 'New column',
       optionalActions: [],
       requiredActions: [],
-      color: '#000000'
+      color
     })
   }
 
   async function onColumnRename (event: CustomEvent<any>) {
+    if (fsm === undefined) {
+      return
+    }
+  
     const { id, title } = event.detail
 
-    await client.updateDoc(fsmPlugin.class.State, core.space.Model, id, {
+    await client.updateDoc(fsmPlugin.class.State, fsm.space, id, {
       name: title
     })
   }
 
-  async function onColumnRemove (event: CustomEvent<any>) {
+  async function onColumnEdit (event: CustomEvent<any>) {
     const state = states.find((x) => x._id === event.detail.id)
 
     if (state === undefined) {
@@ -204,5 +229,5 @@
   on:stateReorder={onStateReorder}
   on:columnAdd={onAddNewColumn}
   on:columnRename={onColumnRename}
-  on:columnRemove={onColumnRemove}
+  on:columnEdit={onColumnEdit}
 />

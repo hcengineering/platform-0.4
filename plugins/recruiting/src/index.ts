@@ -15,7 +15,7 @@
 
 import type { Account, Class, Ref, Space, DocumentPresenter, Timestamp, DocumentMapper, Doc, DerivedData, DerivedDataDescriptor, FullRefString } from '@anticrm/core'
 import type { Person } from '@anticrm/contact'
-import type { FSM, FSMItem, WithFSM } from '@anticrm/fsm'
+import type { FSM, FSMItem } from '@anticrm/fsm'
 import { Action as ActionDef } from '@anticrm/action'
 import type { Action } from '@anticrm/action-plugin'
 import type { Plugin, Service } from '@anticrm/platform'
@@ -85,7 +85,7 @@ export interface Vacancy {
   location: string
   dueDate?: Timestamp
 }
-export interface VacancySpace extends WithFSM, Vacancy {}
+export interface VacancySpace extends Space, Vacancy {}
 
 export interface FeedbackRequest extends Doc {
   parent: Ref<Doc>

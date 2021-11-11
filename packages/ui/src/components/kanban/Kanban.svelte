@@ -251,7 +251,7 @@
           on:cardDragStart={onCardDragStart}
           on:cardDragEnd={onCardDragEnd}
           on:columnRename
-          on:columnRemove
+          on:columnEdit
         />
       </div>
     </div>

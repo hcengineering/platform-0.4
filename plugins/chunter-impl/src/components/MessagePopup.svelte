@@ -15,7 +15,7 @@
 <script lang="ts">
   import type { MessageBookmark, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
-  import { IconEdit, PopupItem, PopupWrap } from '@anticrm/ui'
+  import ui, { IconEdit, PopupItem, PopupWrap } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import { createEventDispatcher } from 'svelte'
   import { newAllBookmarksQuery } from '../bookmarks'
@@ -60,7 +60,7 @@
   {#if message.modifiedBy === client.accountId()}
     <PopupItem
       component={IconEdit}
-      title={chunter.string.EditMessage}
+      title={ui.string.Edit}
       action={() => {
         dispatch('close', 'edit')
       }}

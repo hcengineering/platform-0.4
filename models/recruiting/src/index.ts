@@ -49,7 +49,7 @@ import chunter from '@anticrm/chunter'
 import type { CommentRef } from '@anticrm/chunter'
 import workbench from '@anticrm/model-workbench'
 import calendar from '@anticrm/calendar'
-import { templateFSM, TWithFSM, TFSMItem } from '@anticrm/model-fsm'
+import { TFSMItem } from '@anticrm/model-fsm'
 import recruiting from '@anticrm/recruiting'
 import action from '@anticrm/action-plugin'
 import attachment, { Attachment } from '@anticrm/attachment'
@@ -95,8 +95,8 @@ class TApplicant extends TFSMItem implements Applicant {
 /**
  * @public
  */
-@Model(recruiting.class.VacancySpace, fsm.class.WithFSM)
-class TVacancySpace extends TWithFSM implements VacancySpace {
+@Model(recruiting.class.VacancySpace, core.class.Space)
+class TVacancySpace extends TSpace implements VacancySpace {
   company!: string
   location!: string
   dueDate!: Timestamp | undefined
@@ -221,29 +221,6 @@ export function createModel (builder: Builder): void {
     },
     recruiting.actionRef.Interview
   )
-
-  // FSM
-  const states = {
-    applied: { name: 'Applied', requiredActions: [], optionalActions: [] },
-    hrInterview: { name: 'HR interview', requiredActions: [recruiting.actionRef.Interview], optionalActions: [] },
-    testTask: { name: 'Test Task', requiredActions: [], optionalActions: [] },
-    techInterview: {
-      name: 'Technical interview',
-      requiredActions: [recruiting.actionRef.Interview],
-      optionalActions: []
-    },
-    offer: { name: 'Offer', requiredActions: [], optionalActions: [] },
-    contract: { name: 'Contract signing', requiredActions: [], optionalActions: [] },
-    rejected: { name: 'Rejected', requiredActions: [], optionalActions: [] }
-  }
-
-  templateFSM('Default developer vacancy', recruiting.class.VacancySpace, recruiting.fsm.DefaultVacancy)
-    .transition(states.applied, [states.hrInterview, states.rejected])
-    .transition(states.hrInterview, [states.testTask, states.rejected])
-    .transition(states.testTask, [states.techInterview, states.rejected])
-    .transition(states.techInterview, [states.offer, states.rejected])
-    .transition(states.offer, [states.contract, states.rejected])
-    .build(builder)
 
   // Derived data
   builder.createDoc(

@@ -39,7 +39,7 @@
 
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
-  $: fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]), { limit: 1 })
+  $: fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { space: space._id }, (res) => (fsm = res[0]), { limit: 1 })
 
   let existingCandidates: Set<Ref<Candidate>> | undefined
   let existingCandidatesQ: QueryUpdater<Applicant> | undefined
@@ -56,7 +56,13 @@
   let states: State[] = []
   let statesQ: QueryUpdater<State> | undefined
 
-  $: statesQ = client.query(statesQ, fsmPlugin.class.State, { fsm: space.fsm }, (res) => (states = res))
+  $: if (fsm !== undefined) {
+    statesQ = client.query(statesQ, fsmPlugin.class.State, { fsm: fsm._id }, (res) => (states = res))
+  } else {
+    statesQ?.unsubscribe()
+    statesQ = undefined
+    states = []
+  }
 
   let allCandidates: Candidate[] = []
   let allCandidatesQ: QueryUpdater<Candidate> | undefined
@@ -95,13 +101,13 @@
   let stateID: string | undefined
 
   async function create () {
-    if (candidate === undefined || recruiter === undefined || stateID === undefined) {
+    if (fsm === undefined || candidate === undefined || recruiter === undefined || stateID === undefined) {
       return
     }
     const c = userBoxCandidates.find((p) => p._id === candidate) as never as Candidate
 
     const fsmP = await getPlugin(fsmPlugin.id)
-    const application = await fsmP.addItem(space, {
+    const application = await fsmP.addItem(fsm._id, {
       _class: recruiting.class.Applicant,
       obj: {
         item: candidate as never as Ref<Candidate>,

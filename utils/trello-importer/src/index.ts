@@ -110,11 +110,14 @@ async function start (): Promise<void> {
 
   const fsmId = board.id as Ref<FSM>
 
+  // Create an public vacancy space for FSM if not pressent.
+  const vacancyId = await createVacancySpace(fsmId, clientOps, board)
+
   // Create appropriate FSM.
-  await createFSM(client, fsmId, board, clientOps)
+  await createFSM(client, fsmId, vacancyId, board, clientOps)
 
   // Create/update states
-  await updateFSMStates(clientOps, fsmId, fsm)
+  await updateFSMStates(clientOps, fsmId, vacancyId, fsm)
 
   // Create candidate pool
   const candPoolId = await createCandidatePool(fsmId, clientOps, board)
@@ -122,16 +125,13 @@ async function start (): Promise<void> {
   // Add missing candidates.
   const { candidates, candidateStates } = await createUpdateCandidates(clientOps, candPoolId, board)
 
-  // Create an public vacancy space for FSM if not pressent.
-  const vacancyId = await createVacancySpace(fsmId, clientOps, board)
-
   // Add missing Accounts.
   // const membersMap = await createUpdateAccounts(clientOps, board, [vacancyId, candPoolId])
 
   const applicants = await client.findAll(recruiting.class.Applicant, { space: vacancyId })
   const applicantsMap = new Map<Ref<Candidate>, Applicant>(applicants.map((a) => [a.item as Ref<Candidate>, a]))
 
-  await createUpdateApplicant(candidates, applicantsMap, candidateStates, vacancyId, clientId, clientOps)
+  await createUpdateApplicant(candidates, applicantsMap, candidateStates, vacancyId, fsmId, clientId, clientOps)
 
   clearInterval(intervalHandle)
   printInfo()

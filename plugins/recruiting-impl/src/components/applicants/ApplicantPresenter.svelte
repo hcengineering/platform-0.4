@@ -73,6 +73,7 @@
     )
   } else {
     lqCandidate?.unsubscribe()
+    lqCandidate = undefined
     candidate = undefined
   }
 
@@ -89,6 +90,7 @@
     )
   } else {
     vacancyQ?.unsubscribe()
+    vacancyQ = undefined
     vacancy = undefined
   }
 
@@ -101,6 +103,7 @@
     })
   } else {
     recruitersQ?.unsubscribe()
+    recruitersQ = undefined
     recruiters = []
   }
 

@@ -53,12 +53,24 @@
 
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
-  $: fsmQ = space && client.query(fsmQ, fsmPlugin.class.FSM, { _id: space.fsm }, (res) => (fsm = res[0]), { limit: 1 })
+  $: if (space !== undefined) {
+    fsmQ = client.query(fsmQ, fsmPlugin.class.FSM, { space: space._id }, (res) => (fsm = res[0]), { limit: 1 })
+  } else {
+    fsmQ?.unsubscribe()
+    fsmQ = undefined
+    fsm = undefined
+  }
 
   let states: State[] = []
   let statesQ: QueryUpdater<State> | undefined
 
-  $: statesQ = space && client.query(statesQ, fsmPlugin.class.State, { fsm: space.fsm }, (res) => (states = res))
+  $: if (fsm?._id !== undefined) {
+    statesQ = client.query(statesQ, fsmPlugin.class.State, { fsm: fsm._id }, (res) => (states = res))
+  } else {
+    statesQ?.unsubscribe()
+    statesQ = undefined
+    states = []
+  }
 
   let recruiters: Account[] = []
   let recruitersQ: QueryUpdater<Account> | undefined
@@ -80,12 +92,12 @@
   let stateID: string | undefined
 
   async function create () {
-    if (space === undefined || recruiter === undefined || stateID === undefined) {
+    if (fsm === undefined || space === undefined || recruiter === undefined || stateID === undefined) {
       return
     }
 
     const fsmP = await getPlugin(fsmPlugin.id)
-    const application = await fsmP.addItem(space, {
+    const application = await fsmP.addItem(fsm._id, {
       _class: recruiting.class.Applicant,
       obj: {
         item: candidate._id,

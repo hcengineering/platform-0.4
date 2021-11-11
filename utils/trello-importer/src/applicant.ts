@@ -14,7 +14,7 @@
 //
 
 import { Account, Client, generateDocumentDiff, getFullRef, measure, Ref, TxOperations } from '@anticrm/core'
-import { State } from '@anticrm/fsm'
+import type { FSM, State } from '@anticrm/fsm'
 import recruiting, { Applicant, Candidate, VacancySpace } from '@anticrm/recruiting'
 import { CandState } from './candidates'
 import chunter, { Comment } from '@anticrm/chunter'
@@ -28,6 +28,7 @@ export async function createUpdateApplicant (
   applicantsMap: Map<Ref<Candidate>, Applicant>,
   candidateStates: Map<Ref<Candidate>, CandState>,
   vacancyId: Ref<VacancySpace>,
+  fsmId: Ref<FSM>,
   clientId: Ref<Account>,
   // membersMap: Map<string, Account>,
   clientOps: Client & TxOperations
@@ -72,7 +73,7 @@ export async function createUpdateApplicant (
         _id: aid,
         item: c._id,
         recruiter: clientId, // membersMap.get(candState.idMember ?? '') ?? clientId,
-        fsm: vacancyId,
+        fsm: fsmId,
         clazz: c._class,
         state,
         comments: [],

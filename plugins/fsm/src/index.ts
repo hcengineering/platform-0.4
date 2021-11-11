@@ -30,12 +30,8 @@ export interface Transition extends Doc {
   fsm: Ref<FSM>
 }
 
-export interface WithFSM extends Space {
-  fsm: Ref<FSM>
-}
-
 export interface FSMItem extends Doc {
-  fsm: Ref<WithFSM>
+  fsm: Ref<FSM>
   state: Ref<State>
   item: Ref<Doc>
   clazz: Ref<Class<Doc>>
@@ -55,7 +51,7 @@ export interface FSMService extends Service {
   getStates: (fsm: Ref<FSM>) => Promise<State[]>
   getTransitions: (fsm: Ref<FSM>) => Promise<Transition[]>
 
-  addItem: <T extends FSMItem>(fsmOwner: WithFSM, item: {
+  addItem: <T extends FSMItem>(fsm: Ref<FSM>, item: {
     _class?: Ref<Class<T>>
     obj: Omit<T, keyof Doc | 'state' | 'fsm' | 'rank'> & {state?: Ref<State>}
   }) => Promise<FSMItem | undefined>
@@ -78,8 +74,6 @@ export interface FSMService extends Service {
   removeState: (
     state: State
   ) => Promise<void>
-
-  duplicateFSM: (fsm: Ref<FSM>) => Promise<FSM | undefined>
 }
 
 const PluginMeeting = 'fsm' as Plugin<FSMService>
@@ -87,7 +81,6 @@ const PluginMeeting = 'fsm' as Plugin<FSMService>
 export default plugin(PluginMeeting, {}, {
   class: {
     FSM: '' as Ref<Class<FSM>>,
-    WithFSM: '' as Ref<Class<WithFSM>>,
     FSMItem: '' as Ref<Class<FSMItem>>,
     Transition: '' as Ref<Class<Transition>>,
     State: '' as Ref<Class<State>>

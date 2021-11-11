@@ -54,6 +54,7 @@
     )
   } else {
     eventQ?.unsubscribe()
+    eventQ = undefined
     event = undefined
   }
 

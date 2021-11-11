@@ -55,7 +55,6 @@ export async function demoRecruiting (builder: DemoBuilder, candidateCount = 20)
       private: false,
       location: faker.address.cityName(),
       dueDate: faker.date.soon().getTime(),
-      fsm: recruiting.fsm.DefaultVacancy,
       company: faker.company.companyName()
     },
     demoIds.vacancy.DemoVacany,
@@ -139,7 +138,7 @@ export async function demoRecruiting (builder: DemoBuilder, candidateCount = 20)
           comments: [],
           attachments: [],
           candidate: getFullRef(candidateId, recruiting.class.Candidate),
-          fsm: demoIds.vacancy.DemoVacany,
+          fsm: recruiting.fsm.DefaultVacancy,
           state: faker.random.arrayElement(states) as Ref<State>,
           item: candidateId,
           clazz: recruiting.class.Candidate,

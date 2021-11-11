@@ -24,14 +24,13 @@ export async function createVacancySpace (
   board: TrelloBoard
 ): Promise<Ref<VacancySpace>> {
   const vacancyId = ('vacancy' + fsmId) as Ref<VacancySpace>
-  const vacancySpace = await client.findAll(recrutting.class.VacancySpace, { _id: vacancyId, fsm: fsmId })
+  const vacancySpace = await client.findAll(recrutting.class.VacancySpace, { _id: vacancyId })
   const clientId = await client.accountId()
   if (vacancySpace.length === 0) {
     await client.createDoc(
       recrutting.class.VacancySpace,
       core.space.Model,
       {
-        fsm: fsmId,
         name: board.name,
         description: '',
         private: false,

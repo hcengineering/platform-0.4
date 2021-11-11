@@ -15,8 +15,8 @@
 
 import { LexoRank } from 'lexorank'
 import type { Class, Data, Doc, Ref, Space } from '@anticrm/core'
-import core, { SortingOrder } from '@anticrm/core'
-import type { FSM, FSMItem, FSMService, State, Transition, WithFSM } from '@anticrm/fsm'
+import { SortingOrder } from '@anticrm/core'
+import type { FSM, FSMItem, FSMService, State, Transition } from '@anticrm/fsm'
 import { getPlugin } from '@anticrm/platform'
 import corePlugin, { Client } from '@anticrm/plugin-core'
 import fsmPlugin from './plugin'
@@ -53,14 +53,14 @@ export default async (): Promise<FSMService> => {
     getStates,
     getTransitions,
     addItem: async <T extends FSMItem>(
-      fsmOwner: WithFSM,
+      fsmID: Ref<FSM>,
       item: {
         _class?: Ref<Class<T>>
         obj: Omit<T, keyof Doc | 'state' | 'fsm' | 'rank'> & { state?: Ref<State> }
       },
-      space: Ref<Space> = fsmOwner._id
+      space?: Ref<Space>
     ) => {
-      const fsm = await getTargetFSM(fsmOwner.fsm)
+      const fsm = await getTargetFSM(fsmID)
 
       if (fsm === undefined) {
         return
@@ -77,9 +77,9 @@ export default async (): Promise<FSMService> => {
       )[0]
 
       const rank = calcRank(undefined, firstItem)
-      const doc = await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space, {
+      const doc = await client.createDoc<FSMItem>(item._class ?? fsmPlugin.class.FSMItem, space ?? fsm.space, {
         ...item.obj,
-        fsm: fsmOwner._id,
+        fsm: fsm._id,
         state,
         rank: rank.toString()
       })
@@ -112,7 +112,7 @@ export default async (): Promise<FSMService> => {
       const lastState = (await getStates(fsm._id, SortingOrder.Descending, 1))[0]
       const rank = calcRank(lastState, undefined)
 
-      return await client.createDoc(fsmPlugin.class.State, core.space.Model, { ...state, rank: rank.toString() })
+      return await client.createDoc(fsmPlugin.class.State, fsm.space, { ...state, rank: rank.toString() })
     },
     moveState: async (state: State, place: { prev?: State, next?: State }): Promise<void> => {
       const rank = calcRank(place.prev, place.next).toString()
@@ -134,55 +134,7 @@ export default async (): Promise<FSMService> => {
         throw Error('FSM state contains items')
       }
 
-      await client.removeDoc(fsmPlugin.class.State, core.space.Model, state._id)
-    },
-
-    duplicateFSM: async (fsmRef: Ref<FSM>) => {
-      const fsm = (await client.findAll(fsmPlugin.class.FSM, { _id: fsmRef }))[0]
-
-      if (fsm === undefined) {
-        return undefined
-      }
-
-      const transitions = await getTransitions(fsm._id)
-      const states = await getStates(fsm._id)
-
-      const cleanupModel = <T extends Doc>(x: T): Omit<T, '_id' | 'modifiedBy' | 'modifiedOn' | 'createOn'> =>
-        Object.entries(x)
-          .filter(([k]) => !['_id', 'modifiedBy', 'modifiedOn', 'createOn'].includes(k))
-          .reduce<any>((o, [k, v]) => ({ ...o, [k]: v }), {})
-
-      const newFSM = await client.createDoc(fsmPlugin.class.FSM, core.space.Model, {
-        ...cleanupModel(fsm),
-        isTemplate: false
-      })
-
-      const stateMap = await Promise.all(
-        states.map(
-          async (state) =>
-            [
-              state,
-              await client.createDoc(fsmPlugin.class.State, core.space.Model, {
-                ...cleanupModel(state),
-                fsm: newFSM._id
-              })
-            ] as [State, State]
-        )
-      ).then((xs) => new Map(xs.map(([x, y]) => [x._id, y._id] as [Ref<State>, Ref<State>])))
-
-      await Promise.all(
-        transitions.map(
-          async (transition) =>
-            await client.createDoc(fsmPlugin.class.Transition, core.space.Model, {
-              ...cleanupModel(transition),
-              fsm: newFSM._id,
-              from: stateMap.get(transition.from) ?? ('' as Ref<State>),
-              to: stateMap.get(transition.to) ?? ('' as Ref<State>)
-            })
-        )
-      )
-
-      return newFSM
+      await client.removeDoc(fsmPlugin.class.State, state.space, state._id)
     }
   }
 }

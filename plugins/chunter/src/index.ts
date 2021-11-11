@@ -130,7 +130,6 @@ export default plugin(
 
       ReplyInThread: '' as IntlString,
 
-      EditMessage: '' as IntlString,
       CopyLink: '' as IntlString,
       DeleteMessage: '' as IntlString,
       CancelEdit: '' as IntlString,

@@ -1,6 +1,6 @@
-import core, { Client, Data, Ref, TxOperations } from '@anticrm/core'
+import { Client, Data, Ref, TxOperations } from '@anticrm/core'
 import fsmPlugin, { FSM, State } from '@anticrm/fsm'
-import recrutting from '@anticrm/recruiting'
+import recrutting, { VacancySpace } from '@anticrm/recruiting'
 import { TrelloBoard } from './trello'
 import { genRanks } from './utils'
 
@@ -25,6 +25,7 @@ export interface FSMItem {
 export async function createFSM (
   client: Client,
   fsmId: Ref<FSM>,
+  spaceId: Ref<VacancySpace>,
   board: TrelloBoard,
   operations: Client & TxOperations
 ): Promise<void> {
@@ -37,7 +38,7 @@ export async function createFSM (
       clazz: recrutting.class.VacancySpace,
       isTemplate: false
     }
-    await operations.createDoc(fsmPlugin.class.FSM, core.space.Model, fsmInstance, fsmId)
+    await operations.createDoc(fsmPlugin.class.FSM, spaceId, fsmInstance, fsmId)
     fsms = await client.findAll(fsmPlugin.class.FSM, { _id: fsmId })
   }
 }
@@ -45,6 +46,7 @@ export async function createFSM (
 export async function updateFSMStates (
   client: Client & TxOperations,
   fsmId: Ref<FSM>,
+  spaceId: Ref<VacancySpace>,
   fsm: FSMColumn[]
 ): Promise<State[]> {
   const states = await client.findAll(fsmPlugin.class.State, {
@@ -74,7 +76,7 @@ export async function updateFSMStates (
         rank
       }
 
-      cur = await client.createDoc(fsmPlugin.class.State, core.space.Model, st, o.id as Ref<State>)
+      cur = await client.createDoc(fsmPlugin.class.State, spaceId, st, o.id as Ref<State>)
     } else {
       await client.updateDoc(cur._class, cur.space, cur._id, { rank: rank })
     }

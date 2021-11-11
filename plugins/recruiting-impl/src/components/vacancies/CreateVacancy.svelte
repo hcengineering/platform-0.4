@@ -14,15 +14,11 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import core, { Data, Ref } from '@anticrm/core'
-  import type { QueryUpdater } from '@anticrm/presentation'
+  import core, { Data } from '@anticrm/core'
   import fsm from '@anticrm/fsm'
-  import type { FSM } from '@anticrm/fsm'
-  import { getPlugin } from '@anticrm/platform'
   import type { VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
-  import { Card, Grid, EditBox, Dropdown } from '@anticrm/ui'
-  import type { DropdownItem } from '@anticrm/ui'
+  import { Card, Grid, EditBox } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
 
   const client = getClient()
@@ -31,51 +27,23 @@
   const vacancy: Data<VacancySpace> = {
     name: '',
     description: '',
-    fsm: '' as Ref<FSM>,
     private: true,
     members: [client.accountId()],
     company: '',
     location: ''
   }
 
-  let fsmId: Ref<FSM> | undefined
-
-  let fsmTmpls: FSM[] = []
-  let lq: QueryUpdater<FSM> | undefined
-
-  lq = client.query(lq, fsm.class.FSM, { clazz: recruiting.class.VacancySpace, isTemplate: true }, (result) => {
-    fsmTmpls = result
-    if (vacancy.fsm === undefined) {
-      fsmId = result.shift()?._id
-    }
-  })
-
-  let fsmItems: DropdownItem[] = []
-  $: fsmItems = fsmTmpls.map((x) => ({
-    id: x._id,
-    label: x.name
-  }))
-
   async function createVacancy () {
-    if (fsmId === undefined) {
-      return
-    }
-
-    const fsmP = await getPlugin(fsm.id)
-    const dFSM = await fsmP.duplicateFSM(fsmId)
-
-    if (!dFSM) {
-      return
-    }
-
-    await client.createDoc(recruiting.class.VacancySpace, core.space.Model, {
-      ...vacancy,
-      fsm: dFSM._id
+    const space = await client.createDoc(recruiting.class.VacancySpace, core.space.Model, vacancy)
+    await client.createDoc(fsm.class.FSM, space._id, {
+      name: '',
+      clazz: recruiting.class.VacancySpace,
+      isTemplate: false
     })
   }
 
   let canSave = false
-  $: canSave = vacancy.name !== '' && fsmId !== undefined
+  $: canSave = vacancy.name !== ''
 </script>
 
 <Card label={recruiting.string.AddVacancy} {canSave} okAction={createVacancy} on:close={() => dispatch('close')}>
@@ -83,7 +51,4 @@
     <EditBox label={recruiting.string.VacancyTitle} bind:value={vacancy.name} focus />
     <EditBox label={recruiting.string.Company} bind:value={vacancy.company} />
   </Grid>
-  <svelte:fragment slot="pool">
-    <Dropdown items={fsmItems} bind:selected={fsmId} label={recruiting.string.Flow} />
-  </svelte:fragment>
 </Card>

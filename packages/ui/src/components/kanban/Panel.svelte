@@ -18,7 +18,7 @@
 
   import type { IntlString, UIComponent } from '@anticrm/status'
 
-  import ui from '../..'
+  import ui, { IconEdit } from '../..'
   import type { KanbanItem } from '../../types'
 
   import Label from '../Label.svelte'
@@ -183,13 +183,13 @@
     })
   }
 
-  function onColumnRemove () {
-    dispatch('columnRemove', { id })
+  function onColumnEdit () {
+    dispatch('columnEdit', { id })
   }
 
   let isHoveredByMouse = false
   let showDeleteButton = false
-  $: showDeleteButton = !collapsed && isHoveredByMouse && items.length === 0
+  $: showDeleteButton = !collapsed && isHoveredByMouse
 </script>
 
 <section
@@ -217,10 +217,9 @@
       </div>
     {/if}
     {#if showDeleteButton && !panelEditDisabled}
-      <ActionIcon icon={IconClose} action={onColumnRemove} size={16} label={ui.string.Remove} direction="top" />
-    {:else}
-      <div class="counter">{items.length}</div>
+      <ActionIcon icon={IconEdit} action={onColumnEdit} size={16} label={ui.string.Edit} direction="top" />
     {/if}
+    <div class="counter">{items.length}</div>
   </div>
   {#if collapsed !== true}
     <div class="container">
