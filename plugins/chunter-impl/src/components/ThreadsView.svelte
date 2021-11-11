@@ -18,7 +18,7 @@
   import { getFullRef } from '@anticrm/core'
   import type { QueryUpdater } from '@anticrm/presentation'
   import { IconClose, Label } from '@anticrm/ui'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { NotificationClient } from '@anticrm/notification'
   import chunter from '../plugin'
@@ -64,7 +64,7 @@
   }
 
   function close () {
-    selectDocument(undefined)
+    showSideDocument(undefined)
   }
 
   async function addMessage (text: string, spaceLastViews?: SpaceLastViews): Promise<void> {

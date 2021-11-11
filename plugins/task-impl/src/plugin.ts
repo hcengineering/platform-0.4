@@ -14,6 +14,7 @@
 //
 
 import { DocumentAssociationMapper } from '@anticrm/activity'
+import { DocumentLinkHandler } from '@anticrm/core'
 import type { AnyComponent } from '@anticrm/status'
 import { IntlString, mergeIds, Resource } from '@anticrm/status'
 import task, { TaskStatus } from '@anticrm/task'
@@ -50,5 +51,8 @@ export default mergeIds(task, {
   },
   activity: {
     Mapper: '' as Resource<DocumentAssociationMapper>
+  },
+  handler: {
+    OpenHandler: '' as DocumentLinkHandler
   }
 })

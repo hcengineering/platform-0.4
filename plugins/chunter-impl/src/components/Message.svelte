@@ -15,28 +15,28 @@
 <script lang="ts">
   import type { Comment, CommentRef, Message, MessageBookmark, WithMessage } from '@anticrm/chunter'
   import chunter from '@anticrm/chunter'
+  import type { Account, Ref, Timestamp } from '@anticrm/core'
   import core, { parseFullRef, Space } from '@anticrm/core'
-  import type { Account, Class, Doc, Ref, Timestamp } from '@anticrm/core'
   import type { SpaceLastViews } from '@anticrm/notification'
   import { MessageNode, parseMessage, serializeMessage } from '@anticrm/text'
-  import type { ItemRefefence } from '@anticrm/ui'
   import { ActionIcon, Button, DateTime, MessageViewer, showPopup } from '@anticrm/ui'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
   import { newAllBookmarksQuery } from '../bookmarks'
   import { chunterbotAcc } from '../chunterbot'
   import type { MessageReference } from '../messages'
   import { findReferences } from '../messages'
   import Bookmark from './icons/Bookmark.svelte'
-  import Pin from './icons/Pin.svelte'
   import ChatIcon from './icons/Chat.svelte'
   import MoreH from './icons/MoreH.svelte'
+  import Pin from './icons/Pin.svelte'
   import Share from './icons/Share.svelte'
   import MessagePopup from './MessagePopup.svelte'
   import RefControl from './RefControl.svelte'
   import ReferenceInput from './ReferenceInput.svelte'
   import Replies from './Replies.svelte'
-  import { getContext } from 'svelte'
-  import { Writable } from 'svelte/store'
+  import { showReferencedDocument } from '../presentation'
 
   const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
 
@@ -95,9 +95,9 @@
     if (await client.isDerived(message._class, chunter.class.Comment)) {
       const cmt = message as Comment
       const { _id, _class } = parseFullRef(cmt.replyOf)
-      selectDocument({ _id, _class })
+      showSideDocument({ _id, _class })
     } else {
-      selectDocument(message)
+      showSideDocument(message)
     }
   }
 
@@ -151,9 +151,6 @@
     return false
   }
 
-  function refAction (doc: ItemRefefence): void {
-    selectDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
-  }
   async function updateMessage (message: WithMessage, newMessage: string): Promise<void> {
     if (newMessageValue !== message.message) {
       await client.updateDoc(message._class, message.space, message._id, {
@@ -250,7 +247,7 @@
           </div>
         </div>
         <div class="text">
-          <MessageViewer message={parsedMessage} {refAction} />
+          <MessageViewer message={parsedMessage} refAction={(e) => showReferencedDocument(client, e)} />
           {#if message.modifiedOn !== message.createOn}
             <div class="edited-placeholder">(edited)</div>
           {/if}

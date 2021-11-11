@@ -17,7 +17,7 @@
   import type { Class, FullRef, Ref } from '@anticrm/core'
   import { parseFullRef } from '@anticrm/core'
   import { QueryUpdater } from '@anticrm/presentation'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
   import type { WorkbenchRoute, Application } from '@anticrm/workbench'
   import { getRouter } from '@anticrm/ui'
 
@@ -64,7 +64,7 @@
       </div>
     {/if}
     {#if replyOf}
-      <div class="link-text" on:click={() => selectDocument(replyOf)}>View conversation</div>
+      <div class="link-text" on:click={() => showSideDocument(replyOf)}>View conversation</div>
     {/if}
   </div>
 {/if}

@@ -18,7 +18,7 @@
 
   import type { Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
   import type { QueryUpdater } from '@anticrm/presentation'
   import actionPlugin from '@anticrm/action-plugin'
   import type { Action, ActionInstance } from '@anticrm/action-plugin'
@@ -77,7 +77,7 @@
   }
 
   function onEventClick () {
-    selectDocument(event)
+    showSideDocument(event)
   }
 </script>
 

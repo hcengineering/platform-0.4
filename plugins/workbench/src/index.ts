@@ -152,7 +152,7 @@ export { currentDocument, DocumentSelection }
  * If undefined is passed no active document is selected.
  * @public
  */
-export function selectDocument (doc?: Pick<Doc, '_id' | '_class'>, shortId?: string | null): void {
+export function showSideDocument (doc?: Pick<Doc, '_id' | '_class'>, shortId?: string | null): void {
   currentDocument.set(doc === undefined ? null : { document: doc, shortId })
 }
 

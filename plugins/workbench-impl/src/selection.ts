@@ -1,7 +1,7 @@
 import core, { Class, Doc, Ref, ShortRef } from '@anticrm/core'
 import { PresentationClient } from '@anticrm/presentation'
 import { ApplicationRouter } from '@anticrm/router'
-import { DocumentSelection, selectDocument, WorkbenchRoute } from '@anticrm/workbench'
+import { DocumentSelection, showSideDocument, WorkbenchRoute } from '@anticrm/workbench'
 
 function docRef (doc: DocumentSelection): string {
   return btoa(doc.document._id + '~' + doc.document._class)
@@ -14,7 +14,7 @@ export async function updateCurrentDocument (
 ): Promise<void> {
   if (browse === undefined) {
     // No document selection is required.
-    selectDocument()
+    showSideDocument()
     return
   }
   // Check if we need update document on side
@@ -50,9 +50,9 @@ export async function updateCurrentDocument (
     }
   }
   if (objectClass !== undefined && objectId !== undefined) {
-    selectDocument({ _id: objectId, _class: objectClass }, shortId)
+    showSideDocument({ _id: objectId, _class: objectClass }, shortId)
   } else {
-    selectDocument()
+    showSideDocument()
   }
 }
 

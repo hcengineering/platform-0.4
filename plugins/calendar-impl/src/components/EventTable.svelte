@@ -16,7 +16,7 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import { Table, Label } from '@anticrm/ui'
   import type { Ref, Space } from '@anticrm/core'
-  import { getClient, selectDocument } from '@anticrm/workbench'
+  import { getClient, showSideDocument } from '@anticrm/workbench'
   import type { Event } from '@anticrm/calendar'
   import calendar from '@anticrm/calendar'
 
@@ -54,7 +54,7 @@
   }
 
   function onClick (event: any) {
-    selectDocument(event.detail)
+    showSideDocument(event.detail)
   }
 </script>
 
