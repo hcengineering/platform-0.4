@@ -13,19 +13,40 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import core, { Account, Class, Doc, Ref, Timestamp, Tx, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
+  import core, { Account, Class, Doc, Ref, Space, Timestamp, Tx, TxCreateDoc, TxUpdateDoc } from '@anticrm/core'
   import { AnyComponent } from '@anticrm/status'
   import { Component, DateTime } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+  import { SpaceLastViews } from '@anticrm/notification'
 
   export let tx: Tx<Doc>
   export let presenters: Map<Ref<Class<Doc>>, AnyComponent>
   export let doc: Doc | undefined
 
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
   const client = getClient()
 
   async function getUser (userId: Ref<Account>): Promise<Account> {
     return (await client.findAll(core.class.Account, { _id: userId }))[0]
+  }
+
+  function isNew (tx: Tx<Doc>): boolean {
+    const objectLastViews = $spacesLastViews.get(tx.objectId as Ref<Space>)
+    if (objectLastViews !== undefined) {
+      const lastRead = objectLastViews.lastRead
+      return lastRead > 0 ? tx.createOn > lastRead : false
+    }
+    const spaceLastViews = $spacesLastViews.get(tx.objectSpace)
+    if (spaceLastViews === undefined) return false
+    let lastRead = spaceLastViews.lastRead
+    if (spaceLastViews.objectLastReads instanceof Map) {
+      const objectLastRead = spaceLastViews.objectLastReads.get(tx.objectId) ?? 0
+      lastRead = objectLastRead > lastRead ? objectLastRead : lastRead
+    }
+    return lastRead > 0 ? tx.createOn > lastRead : false
   }
 
   function isToday (value: Date | Timestamp): boolean {
@@ -61,7 +82,13 @@
   }
 </script>
 
-<div class="message-container" data-created={tx.createOn} data-modified={tx.modifiedOn} data-id={tx._id}>
+<div
+  class="message-container"
+  class:isNew={isNew(tx)}
+  data-created={tx.createOn}
+  data-modified={tx.modifiedOn}
+  data-id={tx._id}
+>
   <slot name="header" />
   <div class="container">
     {#if user}
@@ -100,6 +127,10 @@
     border-radius: 12px;
     padding: 2px;
     padding-right: 10px;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-color);
+    }
 
     .container {
       flex-shrink: 0;

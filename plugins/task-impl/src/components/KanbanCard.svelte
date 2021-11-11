@@ -46,10 +46,12 @@
 
   function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {
     if (spaceLastViews === undefined) return false
-    const lastRead = spaceLastViews.objectLastReads.get(card._id)
-    if (lastRead === undefined) return false
-    if (card.modifiedOn > lastRead) return true
-    if ((card.lastModified ?? 0) > lastRead) return true
+    if (spaceLastViews.objectLastReads instanceof Map) {
+      const lastRead = spaceLastViews.objectLastReads.get(card._id)
+      if (lastRead === undefined) return false
+      if (card.modifiedOn > lastRead) return true
+      if ((card.lastModified ?? 0) > lastRead) return true
+    }
     return false
   }
 
