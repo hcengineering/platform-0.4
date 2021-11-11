@@ -14,6 +14,7 @@ import { createModel as calendarModel } from '@anticrm/model-calendar'
 import { createModel as notificationModel } from '@anticrm/model-notification'
 import { createModel as actionModel } from '@anticrm/model-action'
 import { createModel as attachmentModel } from '@anticrm/model-attachment'
+import { createModel as activityModel } from '@anticrm/model-activity'
 
 /**
  * @public
@@ -22,7 +23,7 @@ const builder = new Builder()
 
 coreModel(builder)
 workbenchModel(builder)
-
+activityModel(builder)
 actionModel(builder)
 
 if (config.platform.chunter) {
