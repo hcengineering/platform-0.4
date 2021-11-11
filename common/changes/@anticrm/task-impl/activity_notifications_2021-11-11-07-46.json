@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/task-impl",
+      "comment": "Notifications support activity view",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/task-impl"
+}
