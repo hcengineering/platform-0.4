@@ -13,23 +13,23 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { createTextTransform, MessageEditor } from '@anticrm/richeditor'
   import type { EditorContentEvent, FindFunction } from '@anticrm/richeditor'
-  import { schema } from '@anticrm/richeditor'
+  import { createTextTransform, MessageEditor, schema } from '@anticrm/richeditor'
   import type { IntlString } from '@anticrm/status'
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, parseMessage, serializeMessage } from '@anticrm/text'
-  import type { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
-  import CompletionPopup from './CompletionPopup.svelte'
   import { createEventDispatcher } from 'svelte'
-  import Label from './Label.svelte'
+  import type { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
+  import CompletionPopup from '../CompletionPopup.svelte'
+  import Label from '../Label.svelte'
 
-  export let lines = 10
+  export let height: string = `${10 * 1.5 + 1}em`
   export let value: string = ''
   export let label: IntlString | undefined
   export let placeholder: string = 'Start typing...'
   export let findFunction: FindFunction
   export let completions: CompletionItem[] = []
+  export let autoFocus = false
 
   const dispatch = createEventDispatcher()
 
@@ -61,6 +61,10 @@
   }
 
   let htmlEditor: MessageEditor
+
+  $: if (autoFocus && htmlEditor) {
+    htmlEditor.focus()
+  }
 
   const triggers = ['@', '#', '[[']
 
@@ -147,7 +151,7 @@
 
 <div class="ref-container">
   <div class="label"><Label {label} /></div>
-  <div class="textInput" style={`height: ${lines * 1.5 + 1}em;`}>
+  <div class="textInput" style={`height: ${height};`}>
     <div class="inputMsg" on:keydown={onKeyDown}>
       <MessageEditor
         bind:this={htmlEditor}

@@ -14,11 +14,11 @@
 
   import { parseMessage } from '@anticrm/text'
   import MessageViewer from './MessageViewer.svelte'
-  import type { ItemRefefence } from '../../types'
   import { MessageNode } from '@anticrm/text'
+  import { Doc } from '@anticrm/core'
 
   export let message: string
-  export let refAction: (doc: ItemRefefence) => void = () => {}
+  export let refAction: (doc: Pick<Doc, '_id' | '_class'>) => void = () => {}
 
   let msg: MessageNode | undefined
 

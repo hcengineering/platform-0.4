@@ -95,8 +95,7 @@ export { default as IconLocation } from './components/icons/Location.svelte'
 
 export { default as MessageViewer } from './components/text/MessageViewer.svelte'
 export { default as MarkdownViewer } from './components/text/MarkdownViewer.svelte'
-
-export { default as MDRefEditor } from './components/MDRefEditor.svelte'
+export { default as MarkdownEditor } from './components/text/MarkdownEditor.svelte'
 
 export { default } from './component'
 

@@ -297,7 +297,7 @@ export function focus (): void {
   style="{[
     `top:${-1 * inputHeight}px;`,
     `margin-bottom:${-1 * inputHeight}px;`,
-    `height:${inputHeight}px`
+    `height:${inputHeight}px;`
   ].join('')}">
   <slot name="hoverMessage" empty="{isEmpty}" hasFocus="{hasFocus}" />
 </div>
@@ -371,17 +371,20 @@ export function focus (): void {
   :global {
     div {
       outline: none;
-
-      p {
-        margin: 0px;
-        color: var(--theme-caption-color);
-      }
+    }
+    p:first-child {
+      margin-top: 0px;
+    }
+    p:last-child {
+      margin-bottom: 0px;
     }
     reference {
       cursor: pointer;
       background-color: var(--theme-bg-accent-color);
       border-radius: 10px;
       padding: 2px;
+      text-decoration-line: underline;
+      display: inline-block;
     }
   }
 }
