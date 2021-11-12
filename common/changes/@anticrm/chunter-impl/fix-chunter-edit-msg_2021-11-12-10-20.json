@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter-impl",
+      "comment": "Fix chunter msg edit",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter-impl"
+}
