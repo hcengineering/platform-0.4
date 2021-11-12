@@ -22,12 +22,18 @@
   import { QueryUpdater } from '@anticrm/presentation'
   import AvatarView from './AvatarView.svelte'
   import SocialLinks from './SocialLinks.svelte'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   const dispatch = createEventDispatcher()
 
   export let space: Space
   let pool: Ref<CandidatePoolSpace> = space._id
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
   const accountId = client.accountId()
 
   $: candidate = {
@@ -56,6 +62,10 @@
 
   async function create () {
     await client.createDoc(candidate._class, candidate.space, candidate, candidate._id)
+    const spaceLastViews = $spacesLastViews.get(candidate.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, candidate._id, true)
+    }
   }
 
   let poolItems: DropdownItem[] = []

@@ -13,26 +13,30 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import chunter, { Comment } from '@anticrm/chunter'
+  import chunter, { Comment, CommentRef } from '@anticrm/chunter'
   import { Ref } from '@anticrm/core'
   import { showPopup } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
   import CommentsPopup from './CommentsPopup.svelte'
   import Chat from './icons/Chat.svelte'
 
-  export let comments: Ref<Comment>[]
+  export let comments: CommentRef[]
   const client = getClient()
 
   async function open (e: MouseEvent): Promise<void> {
     if (comments.length > 0) {
       e.stopPropagation()
-      const items = await client.findAll(chunter.class.Comment, { _id: { $in: comments } })
+      const items = await client.findAll(chunter.class.Comment, {
+        _id: { $in: comments.map((c) => c._id as Ref<Comment>) }
+      })
       showPopup(CommentsPopup, { comments: items }, e.target as HTMLElement)
     }
   }
 </script>
 
 <div class="flex-row-center" on:click={open}>
-  <Chat />
+  <div class="mr-1">
+    <Chat />
+  </div>
   {comments.length}
 </div>

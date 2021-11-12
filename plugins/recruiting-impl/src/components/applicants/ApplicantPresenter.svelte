@@ -14,8 +14,9 @@
 -->
 <script lang="ts">
   import attachment, { Attachment } from '@anticrm/attachment'
-  import { Account, getFullRef, Ref } from '@anticrm/core'
+  import { Account, generateId, getFullRef, Ref, Space } from '@anticrm/core'
   import core from '@anticrm/core'
+  import chunter, { Comment } from '@anticrm/chunter'
   import type { State } from '@anticrm/fsm'
   import fsm from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
@@ -23,18 +24,39 @@
   import recruiting from '@anticrm/recruiting'
   import { Panel, Component, ActionIcon, IconFile, UserBox, Label } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-
   import StateViewer from './StateViewer.svelte'
   import SocialLinks from '../candidates/SocialLinks.svelte'
   import AvatarView from '../candidates/AvatarView.svelte'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext, onDestroy } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let id: Ref<Applicant>
+  let spaceLastViews: SpaceLastViews | undefined
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
   let applicant: Applicant | undefined
   let lqApplicant: QueryUpdater<Applicant> | undefined
-  $: lqApplicant = client.query(lqApplicant, recruiting.class.Applicant, { _id: id }, (result) => {
+  $: lqApplicant = client.query(lqApplicant, recruiting.class.Applicant, { _id: id }, async (result) => {
+    if (applicant !== undefined) {
+      const spaceLastViews = $spacesLastViews.get(applicant.space)
+      if (spaceLastViews !== undefined) {
+        await notificationClient.readNow(spaceLastViews, applicant._id)
+      }
+    }
     applicant = result[0]
+    spaceLastViews = $spacesLastViews.get(applicant.space)
+  })
+
+  onDestroy(async () => {
+    if (applicant !== undefined) {
+      const spaceLastViews = $spacesLastViews.get(applicant.space)
+      if (spaceLastViews !== undefined) {
+        await notificationClient.readNow(spaceLastViews, id)
+      }
+    }
   })
 
   let candidate: Candidate | undefined
@@ -110,10 +132,34 @@
   }
 
   async function changeRecruiter (): Promise<void> {
-    if (applicant === undefined || recruiter === undefined) return
+    if (applicant === undefined || recruiter == null) return
     await client.updateDoc(applicant._class, applicant.space, applicant._id, {
       recruiter: recruiter
     })
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, applicant._id, true)
+    }
+  }
+
+  let newCommentId: Ref<Comment> = generateId()
+  async function addMessage (applicant: Applicant | undefined, evt: any): Promise<void> {
+    if (applicant === undefined) {
+      return
+    }
+    await client.createDoc(
+      chunter.class.Comment,
+      applicant.space,
+      {
+        message: evt.detail as string,
+        replyOf: getFullRef(applicant._id, applicant._class)
+      },
+      newCommentId
+    )
+    newCommentId = generateId()
+    const spaceLastViews = $spacesLastViews.get(applicant.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, applicant._id, true)
+    }
   }
 </script>
 
@@ -201,6 +247,19 @@
         editable: true
       }}
     />
+
+    <svelte:fragment slot="ref-input">
+      <Component
+        is={chunter.component.ReferenceInput}
+        props={{
+          currentSpace: applicant.space,
+          objectClass: chunter.class.Comment,
+          objectId: newCommentId,
+          thread: true
+        }}
+        on:message={(evt) => addMessage(applicant, evt)}
+      />
+    </svelte:fragment>
   </Panel>
 {/if}
 

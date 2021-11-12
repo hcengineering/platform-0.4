@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { TaskStatuses } from '@anticrm/task'
-  import type { DocumentQuery } from '@anticrm/core'
+  import type { DocumentQuery, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import { deepEqual } from 'fast-equals'
   import { Kanban } from '@anticrm/ui'
@@ -24,6 +24,9 @@
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Task } from '@anticrm/task'
   import task from '@anticrm/task'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let query: DocumentQuery<Task>
   let prevQuery: DocumentQuery<Task>
@@ -31,6 +34,9 @@
   const statusByName = new Map(Object.entries(TaskStatuses).map(([k, v]) => [v, k]))
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
   let lq: QueryUpdater<Task> | undefined
 
   const states = Object.entries(TaskStatuses).map(([k, v]) => ({
@@ -58,6 +64,10 @@
     await client.updateDoc<Task>(doc!._class, doc!.space, item, {
       status: TaskStatuses[tState]
     })
+    const spaceLastViews = $spacesLastViews.get(doc!.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, doc!._id, true)
+    }
   }
 
   type TaskItem = Task & { state: string }

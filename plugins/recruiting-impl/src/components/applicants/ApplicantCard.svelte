@@ -22,19 +22,38 @@
 
   import Dots from '../icons/Dots.svelte'
   import { ApplicantUIModel } from '../..'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+  import { Ref, Space } from '@anticrm/core'
+  import { SpaceLastViews } from '@anticrm/notification'
 
   export let doc: ApplicantUIModel
 
   $: actions = doc.stateData.optionalActionsData.concat(doc.stateData.requiredActionsData)
+
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+
+  $: spaceLastViews = $spacesLastViews.get(doc.space)
 
   function onClick (): void {
     showPopup(ApplicantPresenter, { id: doc._id }, 'full', () => {
       closePopup()
     })
   }
+
+  function isNew (doc: ApplicantUIModel, spaceLastViews: SpaceLastViews | undefined): boolean {
+    if (spaceLastViews === undefined) return false
+    if (spaceLastViews.objectLastReads instanceof Map) {
+      const lastRead = spaceLastViews.objectLastReads.get(doc._id)
+      if (lastRead === undefined) return false
+      if (doc.modifiedOn > lastRead) return true
+      if ((doc.lastModified ?? 0) > lastRead) return true
+    }
+    return false
+  }
 </script>
 
-<div class="root" on:click={onClick}>
+<div class="root" class:isNew={isNew(doc, spaceLastViews)} on:click={onClick}>
   <div class="header">
     <div class="candidate">
       <div class="candidate-avatar">
@@ -64,7 +83,7 @@
   {/if}
   <div class="footer">
     <div class="footer-left">
-      <Component is={attachment.component.AttachmentsTableCell} props={{ attachments: [] }} />
+      <Component is={attachment.component.AttachmentsTableCell} props={{ attachments: doc.attachments }} />
       <Component is={chunter.component.CommentsTableCell} props={{ comments: doc.comments }} />
     </div>
   </div>
@@ -79,6 +98,10 @@
     gap: 10px;
     min-height: 72px;
     padding: 16px 0;
+
+    &.isNew {
+      background-color: var(--theme-bg-accent-press);
+    }
   }
 
   .header {

@@ -40,6 +40,8 @@ export interface Candidate extends Person {
   comments: CommentRef[]
   socialLinks: SocialLink[]
   workPreference: WorkPreference
+  // Derived value, updated by any comment add/modification.
+  lastModified?: Timestamp
 }
 
 export interface WorkPreference {
@@ -61,8 +63,11 @@ export const allSocialLinks: SocialLinkType[] = ['Discord', 'Email', 'Facebook',
 export interface Applicant extends FSMItem {
   recruiter: Ref<Account>
   comments: CommentRef[]
+  attachments: Array<Ref<Attachment>>
   candidate: FullRefString
   candidateData: ShortCandidate
+  // Derived value, updated by any comment add/modification.
+  lastModified?: Timestamp
 }
 
 export interface ShortCandidate {
@@ -229,7 +234,8 @@ export default plugin(PluginRecruiting, {}, {
     CandidateReplyOf: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     CandidateAttachTo: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
     CandidateApplicant: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
-    ApplicantCandidate: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
+    ApplicantCandidate: '' as Ref<DerivedDataDescriptor<Doc, Doc>>,
+    ApplicantAttachTo: '' as Ref<DerivedDataDescriptor<Doc, Doc>>
   },
   mapper: {
     Feedback: '' as Resource<DocumentMapper>,

@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import core, { Account, getFullRef, Ref } from '@anticrm/core'
+  import core, { Account, getFullRef, Ref, Space } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { Card, Grid, UserBox, Dropdown } from '@anticrm/ui'
   import type { DropdownItem } from '@anticrm/ui'
@@ -24,12 +24,18 @@
   import fsmPlugin from '@anticrm/fsm'
   import type { FSM, State } from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let space: VacancySpace
   export let candidate: Ref<Account> | undefined
 
   const client = getClient()
   const dispatch = createEventDispatcher()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+  $: spaceLastViews = space !== undefined ? $spacesLastViews.get(space._id) : undefined
 
   let fsm: FSM | undefined
   let fsmQ: QueryUpdater<FSM> | undefined
@@ -95,7 +101,7 @@
     const c = userBoxCandidates.find((p) => p._id === candidate) as never as Candidate
 
     const fsmP = await getPlugin(fsmPlugin.id)
-    await fsmP.addItem(space, {
+    const application = await fsmP.addItem(space, {
       _class: recruiting.class.Applicant,
       obj: {
         item: candidate as never as Ref<Candidate>,
@@ -104,6 +110,7 @@
         state: stateID as Ref<State>,
         candidate: getFullRef(candidate, recruiting.class.Candidate),
         comments: [],
+        attachments: [],
         candidateData: {
           location: c.address.city,
           avatar: c.avatar,
@@ -112,6 +119,10 @@
         }
       }
     })
+
+    if (spaceLastViews !== undefined && application !== undefined) {
+      await notificationClient.readNow(spaceLastViews, application._id, true)
+    }
   }
 
   let canSave: boolean = false

@@ -32,6 +32,8 @@
 </script>
 
 <div class="flex-row-center" on:click={open}>
-  <IconFile />
+  <div class="mr-1">
+    <IconFile />
+  </div>
   {applicants.length}
 </div>
