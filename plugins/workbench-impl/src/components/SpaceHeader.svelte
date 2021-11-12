@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import { Space } from '@anticrm/core'
+  import { AnyComponent } from '@anticrm/status'
   import ui, { ActionIcon, Button, Component, Icon, showPopup } from '@anticrm/ui'
   import type { SpacesNavModel } from '@anticrm/workbench'
   import { getClient } from '@anticrm/workbench'
@@ -50,6 +51,17 @@
       )
     }
   }
+  const showOptions = () => {
+    const view = spaceModel?.spaceMore as AnyComponent
+    return showPopup(
+      view,
+      {
+        _class: spaceModel?.spaceClass,
+        space
+      },
+      'right'
+    )
+  }
 </script>
 
 <div class="flex-between header">
@@ -75,18 +87,22 @@
     {/if}
   </div>
   <div class="flex-row-center">
-    <Button
-      label={spaceModel?.item?.createLabel ?? ui.string.Create}
-      size={'small'}
-      primary
-      on:click={(ev) => {
-        addAction(ev)
-      }}
-    />
+    {#if spaceModel?.item?.createComponent}
+      <Button
+        label={spaceModel?.item?.createLabel ?? ui.string.Create}
+        size={'small'}
+        primary
+        on:click={(ev) => {
+          addAction(ev)
+        }}
+      />
+    {/if}
     <div class="button button-8">
       <ActionIcon icon={Star} size={16} action={changeStarred} filled={space?.account?.starred ?? false} />
     </div>
-    <div class="button button-4"><ActionIcon icon={MoreH} size={16} /></div>
+    {#if spaceModel?.spaceMore}
+      <div class="button button-4"><ActionIcon icon={MoreH} size={16} action={showOptions} /></div>
+    {/if}
   </div>
 </div>
 
