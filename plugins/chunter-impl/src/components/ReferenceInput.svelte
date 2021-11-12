@@ -471,7 +471,7 @@
     }
 
     .buttons {
-      margin: 10px 0 0 8px;
+      margin: 10px 0 10px 8px;
       display: flex;
 
       .hidden {

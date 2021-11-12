@@ -285,20 +285,20 @@
           />
         </div>
         <div class="footer">
-          <div class="flex">
-            <Button
-              size={'small'}
-              label={chunter.string.CancelEdit}
-              on:click={() => {
-                editMode = false
-              }}
-            />
+          <div class="edit-buttons">
             <Button
               size={'small'}
               label={chunter.string.SaveEdit}
               on:click={() => {
                 updateMessage(message, newMessageValue)
                 message.message = newMessageValue
+                editMode = false
+              }}
+            />
+            <Button
+              size={'small'}
+              label={chunter.string.CancelEdit}
+              on:click={() => {
                 editMode = false
               }}
             />
@@ -401,6 +401,13 @@
 
           div + div {
             margin-left: 16px;
+          }
+
+          .edit-buttons {
+            display: flex;
+            flex-direction: row-reverse;
+            flex-grow: 1;
+            column-gap: 10px;
           }
         }
       }
