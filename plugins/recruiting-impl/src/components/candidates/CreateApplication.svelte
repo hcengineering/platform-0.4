@@ -24,6 +24,9 @@
   import type { FSM, State } from '@anticrm/fsm'
   import fsmPlugin from '@anticrm/fsm'
   import type { QueryUpdater } from '@anticrm/presentation'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let candidate: Candidate
   let space: VacancySpace | undefined
@@ -31,6 +34,9 @@
   const client = getClient()
   const accountId = client.accountId()
   const dispatch = createEventDispatcher()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
+  $: spaceLastViews = space !== undefined ? $spacesLastViews.get(space._id) : undefined
 
   let applicants: Applicant[] = []
   let applicantsLoaded = false
@@ -79,7 +85,7 @@
     }
 
     const fsmP = await getPlugin(fsmPlugin.id)
-    await fsmP.addItem(space, {
+    const application = await fsmP.addItem(space, {
       _class: recruiting.class.Applicant,
       obj: {
         item: candidate._id,
@@ -88,6 +94,7 @@
         state: stateID as Ref<State>,
         candidate: getFullRef(candidate._id, recruiting.class.Candidate),
         comments: [],
+        attachments: [],
         candidateData: {
           location: candidate.address.city,
           firstName: candidate.firstName,
@@ -96,6 +103,10 @@
         }
       }
     })
+
+    if (spaceLastViews !== undefined && application !== undefined) {
+      await notificationClient.readNow(spaceLastViews, application._id, true)
+    }
   }
 
   let selectedVacancy: Ref<VacancySpace> | undefined

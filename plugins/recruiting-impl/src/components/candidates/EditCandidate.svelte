@@ -25,7 +25,7 @@
   import recruiting from '@anticrm/recruiting'
   import { Component, EditBox, Panel } from '@anticrm/ui'
   import { getClient } from '@anticrm/workbench'
-  import { createEventDispatcher, getContext } from 'svelte'
+  import { createEventDispatcher, getContext, onDestroy } from 'svelte'
   import { Writable } from 'svelte/store'
   import Contact from '../icons/Contact.svelte'
   import AvatarView from './AvatarView.svelte'
@@ -46,20 +46,31 @@
   let prevCandidate: Candidate | undefined
   let lqCandidates: QueryUpdater<Candidate> | undefined
 
-  $: lqCandidates = client.query(lqCandidates, recruiting.class.Candidate, { _id: id }, ([first]) => {
-    const adjustedRes = {
-      ...first,
-      _id: first._id as Ref<Candidate>,
-      firstName: first.firstName ?? '',
-      lastName: first.lastName ?? '',
-      avatar: first.avatar ?? '',
-      bio: first.bio ?? '',
-      address: first.address ?? {},
-      salaryExpectation: first.salaryExpectation
-    }
+  $: lqCandidates = client.query(
+    lqCandidates,
+    recruiting.class.Candidate,
+    { _id: id },
+    async ([first]) => {
+      if (candidate !== undefined) {
+        const spaceLastViews = $spacesLastViews.get(candidate.space)
+        if (spaceLastViews !== undefined) {
+          await notificationClient.readNow(spaceLastViews, candidate._id)
+        }
+      }
 
-    candidate = adjustedRes
-    prevCandidate = cloneDeep(adjustedRes)
+      candidate = first
+      prevCandidate = cloneDeep(first)
+    },
+    { limit: 1 }
+  )
+
+  onDestroy(async () => {
+    if (candidate !== undefined) {
+      const spaceLastViews = $spacesLastViews.get(candidate.space)
+      if (spaceLastViews !== undefined) {
+        await notificationClient.readNow(spaceLastViews, id)
+      }
+    }
   })
 
   async function onUpdate () {
@@ -78,6 +89,10 @@
     }
 
     await client.updateDoc(recruiting.class.Candidate, a.space, a._id, update)
+    const spaceLastViews = $spacesLastViews.get(candidate.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, candidate._id, true)
+    }
   }
 
   let newCommentId: Ref<Comment> = generateId()

@@ -32,6 +32,8 @@
 </script>
 
 <div class="flex-row-center" on:click={open}>
-  <IconAttach />
+  <div class="mr-1">
+    <IconAttach />
+  </div>
   {attachments.length}
 </div>

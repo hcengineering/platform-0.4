@@ -137,6 +137,7 @@ export async function demoRecruiting (builder: DemoBuilder, candidateCount = 20)
         {
           recruiter: faker.random.arrayElement(members),
           comments: [],
+          attachments: [],
           candidate: getFullRef(candidateId, recruiting.class.Candidate),
           fsm: demoIds.vacancy.DemoVacany,
           state: faker.random.arrayElement(states) as Ref<State>,

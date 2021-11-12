@@ -76,6 +76,7 @@ export async function createUpdateApplicant (
         clazz: c._class,
         state,
         comments: [],
+        attachments: [],
         candidate: getFullRef(c._id, c._class),
         rank,
         candidateData: {

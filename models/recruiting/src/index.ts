@@ -70,6 +70,7 @@ class TCandidate extends TPerson implements Candidate {
   salaryExpectation!: number
   socialLinks!: SocialLink[]
   workPreference!: WorkPreference
+  lastModified!: Timestamp
 }
 
 /**
@@ -85,8 +86,10 @@ class TCandidatePoolSpace extends TSpace implements CandidatePoolSpace {}
 class TApplicant extends TFSMItem implements Applicant {
   recruiter!: Ref<Account>
   comments!: CommentRef[]
+  attachments!: Ref<Attachment>[]
   candidate!: FullRefString
   candidateData!: ShortCandidate
+  lastModified!: Timestamp
 }
 
 /**
@@ -159,6 +162,11 @@ export function createModel (builder: Builder): void {
               createComponent: recruiting.component.CreateApplication,
               createLabel: recruiting.string.CreateApplication
             },
+            notification: {
+              spaceClass: recruiting.class.Applicant,
+              itemByIdClass: recruiting.class.Applicant,
+              itemByIdField: 'lastModified'
+            },
             spaceMore: recruiting.component.VacancyProperties
           },
           {
@@ -171,6 +179,11 @@ export function createModel (builder: Builder): void {
               createComponent: recruiting.component.CreateCandidate,
               createLabel: recruiting.string.AddCandidate,
               editComponent: recruiting.component.EditCandidate
+            },
+            notification: {
+              spaceClass: recruiting.class.Candidate,
+              itemByIdClass: recruiting.class.Candidate,
+              itemByIdField: 'lastModified'
             },
             spaceMore: recruiting.component.CandidatePoolProperties
           }
@@ -327,6 +340,24 @@ export function createModel (builder: Builder): void {
       ]
     },
     recruiting.dd.CandidateAttachTo
+  )
+
+  builder.createDoc(
+    core.class.DerivedDataDescriptor,
+    {
+      sourceClass: attachment.class.Attachment,
+      targetClass: recruiting.class.Applicant,
+      query: {
+        attachTo: { $like: '%class:recruiting.Applicant%' }
+      },
+      collections: [
+        {
+          sourceField: 'attachTo',
+          targetField: 'attachments'
+        }
+      ]
+    },
+    recruiting.dd.ApplicantAttachTo
   )
 
   builder.createDoc(

@@ -27,11 +27,16 @@
   import ApplicantCard from '../applicants/ApplicantCard.svelte'
   import { ApplicantUIModel, StateUIModel } from '../..'
   import action, { Action } from '@anticrm/action-plugin'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
 
   const client = getClient()
+  const notificationClient = new NotificationClient(client)
+  const spacesLastViews = getContext('spacesLastViews') as Writable<Map<Ref<Space>, SpaceLastViews>>
   const fsmP = getPlugin(fsmPlugin.id)
   let lqStates: QueryUpdater<State> | undefined
   let lqApplicants: QueryUpdater<Applicant> | undefined
@@ -110,6 +115,10 @@
     const next = targetItems[idx]
 
     await fsm.moveItem(actualItem, state, { prev, next })
+    const spaceLastViews = $spacesLastViews.get(actualItem!.space)
+    if (spaceLastViews !== undefined) {
+      await notificationClient.readNow(spaceLastViews, actualItem!._id, true)
+    }
   }
 
   async function onStateReorder (event: CustomEvent<any>) {
