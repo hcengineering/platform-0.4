@@ -7,6 +7,7 @@
   import { MarkdownViewer, CheckBoxList, UserInfo, DateTime } from '@anticrm/ui'
   import task from '../../plugin'
   import { getClient } from '@anticrm/workbench'
+  import { openReferencedDocument } from '@anticrm/presentation'
 
   const client = getClient()
 
@@ -45,7 +46,12 @@
       <TaskRef objectId={objTx.objectId} objectClass={objTx.objectClass} />
     {/if}
     <span>Description updated</span>
-    <MarkdownViewer message={updateDoc.operations.description} />
+    <MarkdownViewer
+      message={updateDoc.operations.description}
+      refAction={(evt) => {
+        openReferencedDocument(client, evt)
+      }}
+    />
   {/if}
 
   {#if updateDoc.operations.dueTo !== undefined}

@@ -17,10 +17,10 @@
   import type { Account, Ref, Space, Title } from '@anticrm/core'
   import type { IntlString } from '@anticrm/status'
   import { getClient } from '@anticrm/workbench'
-  import { MDRefEditor } from '@anticrm/ui'
+  import { MarkdownEditor } from '@anticrm/ui'
   import type { CompletionItem, ItemRefefence, ExtendedCompletionItem } from '@anticrm/ui'
+  import { openReferencedDocument } from '@anticrm/presentation'
 
-  export let lines = 3
   export let value: string = ''
   export let label: IntlString | undefined
   export let placeholder: IntlString | undefined
@@ -105,15 +105,18 @@
   }
 </script>
 
-<MDRefEditor
+<MarkdownEditor
   bind:value
   {label}
   {placeholder}
-  {lines}
   findFunction={findTitle}
   {completions}
   on:blur
   on:prefix={async (event) => {
     await getCompletions(event.detail)
+  }}
+  autoFocus={true}
+  refAction={(evt) => {
+    openReferencedDocument(client, evt)
   }}
 />

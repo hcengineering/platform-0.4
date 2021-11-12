@@ -1,10 +1,9 @@
 import attachment from '@anticrm/attachment'
-import core, { Class, Doc, PresentationFormat, PresentationMode, Ref } from '@anticrm/core'
-import { getMetadata, getResource } from '@anticrm/platform'
-import { PresentationClient } from '@anticrm/presentation'
+import core, { Doc, PresentationFormat, PresentationMode } from '@anticrm/core'
+import { getMetadata } from '@anticrm/platform'
+import { openReferencedDocument, PresentationClient } from '@anticrm/presentation'
 import { parseLocation, Router } from '@anticrm/router'
 import type { AnyComponent } from '@anticrm/status'
-import { ItemRefefence } from '@anticrm/ui'
 import { showSideDocument } from '@anticrm/workbench'
 import { DocumentReference, ExternalReference, MessageReference, ReferenceKind } from './messages'
 import chunter from './plugin'
@@ -109,18 +108,11 @@ function combinePresentation (
   return [...previousValue, ...newValue]
 }
 
-export async function showReferencedDocument (client: PresentationClient, doc: ItemRefefence): Promise<void> {
-  const p = await client.findAll(core.class.DocumentPresenter, { objectClass: doc.class as Ref<Class<Doc>> })
-  if (p.length > 0) {
-    for (const pr of p) {
-      if (pr.linkHandler !== undefined) {
-        const handler = await getResource(pr.linkHandler)
-        if (handler !== undefined) {
-          await handler(doc.class as Ref<Class<Doc>>, doc.id as Ref<Doc>)
-          return
-        }
-      }
-    }
+export async function showReferencedDocument (
+  client: PresentationClient,
+  doc: Pick<Doc, '_id' | '_class'>
+): Promise<void> {
+  if (!(await openReferencedDocument(client, doc))) {
+    showSideDocument(doc)
   }
-  showSideDocument({ _id: doc.id as Ref<Doc>, _class: doc.class as Ref<Class<Doc>> })
 }

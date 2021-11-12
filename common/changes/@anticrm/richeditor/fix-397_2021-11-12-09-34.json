@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "MarkdownEditor with preview",
+      "type": "patch",
+      "packageName": "@anticrm/richeditor"
+    }
+  ],
+  "packageName": "@anticrm/richeditor",
+  "email": "haiodo@gmail.com"
+}

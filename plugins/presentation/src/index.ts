@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import {
+import core, {
   Account,
   Class,
   Data,
@@ -29,7 +29,7 @@ import {
   Tx,
   TxOperations
 } from '@anticrm/core'
-import { plugin, Plugin, Service } from '@anticrm/platform'
+import { getResource, plugin, Plugin, Service } from '@anticrm/platform'
 import { Client } from '@anticrm/plugin-core'
 import { deepEqual } from 'fast-equals'
 import { onDestroy } from 'svelte'
@@ -217,3 +217,22 @@ export class PresentationClient implements Storage, TxOperations {
 }
 
 export default plugin(PluginPresentation, {}, {})
+
+export async function openReferencedDocument (
+  client: PresentationClient,
+  doc: Pick<Doc, '_class' | '_id'>
+): Promise<boolean> {
+  const p = await client.findAll(core.class.DocumentPresenter, { objectClass: doc._class })
+  if (p.length > 0) {
+    for (const pr of p) {
+      if (pr.linkHandler !== undefined) {
+        const handler = await getResource(pr.linkHandler)
+        if (handler !== undefined) {
+          await handler(doc._class, doc._id)
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
