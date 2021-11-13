@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Markdown editor fix",
+      "type": "patch",
+      "packageName": "@anticrm/ui"
+    }
+  ],
+  "packageName": "@anticrm/ui",
+  "email": "haiodo@gmail.com"
+}

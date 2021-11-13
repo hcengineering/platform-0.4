@@ -278,7 +278,7 @@
             currentSpace={message.space}
             objectId={message._id}
             objectClass={message._class}
-            editorContent={parseMessage(message.message)}
+            editorContent={parseMessage(message.message, true)}
             on:update={(detail) => {
               newMessageValue = serializeMessage(detail.detail)
             }}

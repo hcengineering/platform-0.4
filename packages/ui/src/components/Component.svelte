@@ -26,11 +26,19 @@
   export let scrollable: boolean = false
   export let maxHeight: number = 0
 
+  let componentInstance: any
+
   function asComponent (comp: AnyComponent | string): AnyComponent {
     return comp as AnyComponent
   }
 
   $: component = typeof is === 'string' ? getResource(asComponent(is)) : is
+
+  $: {
+    if (componentInstance) {
+      dispatch('bindThis', componentInstance)
+    }
+  }
 
   const dispatch = createEventDispatcher()
 </script>
@@ -41,6 +49,7 @@
   <ErrorBoundary>
     <svelte:component
       this={Ctor}
+      bind:this={componentInstance}
       {...props}
       {scrollable}
       {maxHeight}

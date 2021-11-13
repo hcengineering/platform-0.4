@@ -19,7 +19,7 @@
   import task from '@anticrm/task'
   import type { Task } from '@anticrm/task'
   import { getClient } from '@anticrm/workbench'
-  import { Table, Label, UserInfo, DateTime, closePopup, showPopup } from '@anticrm/ui'
+  import { Table, Label, UserInfo, DateTime, showPopup } from '@anticrm/ui'
   import { deepEqual } from 'fast-equals'
   import EditTask from './EditTask.svelte'
   import TaskStatus from './TaskStatus.svelte'
@@ -79,13 +79,11 @@
   }
 
   function onClick (event: any) {
-    showPopup(EditTask, { id: event.detail._id }, 'full', () => {
-      closePopup()
-    })
+    showPopup(EditTask, { id: event.detail._id }, 'full')
   }
 
-  async function getUser (user: Ref<Account> | undefined): Promise<Account | undefined> {
-    if (user === undefined) return undefined
+  async function getUser (user: Ref<Account> | undefined | ''): Promise<Account | undefined> {
+    if (user === undefined || user === '') return undefined
     return (await client.findAll<Account>(core.class.Account, { _id: user })).pop()
   }
 </script>

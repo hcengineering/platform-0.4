@@ -18,7 +18,7 @@
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
-  import { closePopup, Label, showPopup, Table } from '@anticrm/ui'
+  import { Label, showPopup, Table } from '@anticrm/ui'
   import ApplicantPresenter from './ApplicantPresenter.svelte'
 
   export let space: VacancySpace
@@ -42,9 +42,7 @@
   ]
 
   function onClick (event: any) {
-    showPopup(ApplicantPresenter, { id: event.detail._id }, 'full', () => {
-      closePopup()
-    })
+    showPopup(ApplicantPresenter, { id: event.detail._id }, 'full')
   }
 
   let applicants: Applicant[] = []

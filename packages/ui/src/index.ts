@@ -18,13 +18,13 @@ import Root from './components/internal/Root.svelte'
 
 import type { IntlString } from '@anticrm/platform'
 import { writable } from 'svelte/store'
-import type { LabelAndProps, TooltipAligment, PopupAlignment } from './types'
-import { DeferredPromise } from '@anticrm/core'
+import type { LabelAndProps, TooltipAligment } from './types'
 
 export * from './types'
 export { applicationShortcutKey, defaultApplicationShortcutKey } from './utils'
 export * from './location'
 export * from './router'
+export * from './popups'
 
 export { default as EditBox } from './components/EditBox.svelte'
 export { default as EditWithIcon } from './components/EditWithIcon.svelte'
@@ -101,38 +101,6 @@ export { default } from './component'
 
 export function createApp (target: HTMLElement): UIComponent {
   return new Root({ target })
-}
-
-interface CompAndProps {
-  is: UIComponent
-  props: any
-  element?: PopupAlignment
-  onClose?: (result: any) => void
-  hidePromise: DeferredPromise<void>
-}
-
-export const popupstore = writable<CompAndProps[]>([])
-
-export async function showPopup (
-  component: UIComponent,
-  props: any,
-  element?: PopupAlignment,
-  onClose?: (result: any) => void
-): Promise<void> {
-  const p = new DeferredPromise<void>()
-  popupstore.update((popups) => {
-    popups.push({ is: component, props, element, onClose, hidePromise: p })
-    return popups
-  })
-  return await p.promise
-}
-
-export function closePopup (): void {
-  popupstore.update((popups) => {
-    const pp = popups.pop()
-    pp?.hidePromise.resolve()
-    return popups
-  })
 }
 
 export const tooltipstore = writable<LabelAndProps>({

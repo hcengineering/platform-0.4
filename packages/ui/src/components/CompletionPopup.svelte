@@ -1,15 +1,11 @@
 <script lang="ts">
-  import ScrollBox from './ScrollBox.svelte'
-
-  import { createEventDispatcher } from 'svelte'
-
   import type { CompletionItem } from '../types'
-
-  const dispatch = createEventDispatcher()
+  import ScrollBox from './ScrollBox.svelte'
 
   export let items: CompletionItem[] = []
   export let pos: Position
   export let ontop = false
+  export let handler: (value: CompletionItem) => void = () => {}
 
   let listElement: HTMLElement
   let selElement: HTMLElement
@@ -19,10 +15,6 @@
 
   let clientHeight: number
   let clientWidth: number
-
-  function selectItem (item: CompletionItem) {
-    dispatch('select', item)
-  }
 
   interface Position {
     left: number
@@ -41,6 +33,20 @@
       return pp !== null ? pp.offsetTop : -1
     }
     return -1
+  }
+
+  export function update (newItems: CompletionItem[]): void {
+    items = newItems
+  }
+
+  $: {
+    let sel = items.find((s) => s.key === selection.key)
+    if (sel === undefined) {
+      sel = getFirst(items)
+    }
+    if (sel !== selection) {
+      selection = sel
+    }
   }
 
   $: {
@@ -74,11 +80,24 @@
     }
   }
   export function handleSubmit (): void {
-    dispatch('select', selection)
+    handler(selection)
+  }
+
+  let divElement: HTMLElement | undefined
+  let observer: ResizeObserver | undefined
+  $: {
+    observer?.disconnect()
+    if (divElement !== undefined) {
+      observer = new ResizeObserver(() => {
+        clientHeight = divElement?.clientHeight ?? 0
+        clientWidth = divElement?.clientWidth ?? 0
+      })
+      observer.observe(divElement)
+    }
   }
 </script>
 
-<div class="presentation-completion-popup" style={popupStyle} bind:clientHeight bind:clientWidth on:blur>
+<div bind:this={divElement} class="presentation-completion-popup" style={popupStyle} on:blur>
   <ScrollBox vertical noShift>
     <!-- scrollPosition={selOffset} -->
     <div bind:this={listElement}>
@@ -87,7 +106,9 @@
         <div
           class="item"
           class:selected={item.key === selection.key}
-          on:click|preventDefault={() => selectItem(item)}
+          on:click|stopPropagation|preventDefault={() => {
+            handler(item)
+          }}
           on:focus={() => (selection = item)}
           on:mouseover={() => (selection = item)}
         >

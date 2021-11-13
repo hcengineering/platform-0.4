@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import ui, { ActionIcon, closePopup, Progress, showPopup, UserInfo } from '@anticrm/ui'
+  import ui, { ActionIcon, Progress, showPopup, UserInfo } from '@anticrm/ui'
   import MoreH from './icons/MoreH.svelte'
   import Chat from './icons/Chat.svelte'
   import type { Task } from '@anticrm/task'
@@ -46,9 +46,7 @@
   }
 
   function select () {
-    showPopup(EditTask, { id: card._id }, 'full', () => {
-      closePopup()
-    })
+    showPopup(EditTask, { id: card._id }, 'full')
   }
 
   function isNew (card: Task, spaceLastViews: SpaceLastViews | undefined): boolean {

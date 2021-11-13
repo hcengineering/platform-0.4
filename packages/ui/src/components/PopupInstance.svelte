@@ -19,13 +19,15 @@
   import type { AnyComponent, UIComponent } from '@anticrm/status'
   import type { PopupAlignment } from '../types'
   import { closePopup } from '..'
+  import { DeferredPromise } from '@anticrm/core'
 
   export let is: UIComponent | AnyComponent
   export let props: object
   export let element: PopupAlignment | undefined
   export let onClose: ((result: any) => void) | undefined
   export let zIndex: number
-  export let enableOverlay = true
+  export let bindPromise: DeferredPromise<any>
+  export let overrideOverlay: boolean | undefined = undefined
 
   let modalHTML: HTMLElement
   let modalOHTML: HTMLElement
@@ -41,7 +43,7 @@
     if (modalHTML) {
       if (element) {
         maxHeight = 0
-        showOverlay = false
+        showOverlay = overrideOverlay !== undefined ? overrideOverlay : false
         modalHTML.style.left = modalHTML.style.right = modalHTML.style.top = modalHTML.style.bottom = ''
         if (typeof element !== 'string') {
           const rect = element.getBoundingClientRect()
@@ -66,7 +68,7 @@
           modalHTML.style.top = '32px'
           modalHTML.style.bottom = '20px'
           modalHTML.style.right = '20px'
-          showOverlay = true
+          showOverlay = overrideOverlay !== undefined ? overrideOverlay : true
         } else if (element === 'float') {
           modalHTML.style.top = '64px'
           modalHTML.style.bottom = '64px'
@@ -76,13 +78,13 @@
           modalHTML.style.bottom = '0'
           modalHTML.style.left = '0'
           modalHTML.style.right = '0'
-          showOverlay = true
+          showOverlay = overrideOverlay !== undefined ? overrideOverlay : true
         }
       } else {
         modalHTML.style.top = '50%'
         modalHTML.style.left = '50%'
         modalHTML.style.transform = 'translate(-50%, -50%)'
-        showOverlay = true
+        showOverlay = overrideOverlay !== undefined ? overrideOverlay : true
       }
     }
   }
@@ -105,19 +107,24 @@
   }}
 />
 <div class="popup" bind:this={modalHTML} style={`z-index: ${zIndex + 1};`}>
-  <Component {is} {props} {maxHeight} on:close={(ev) => close(ev.detail)} />
+  <Component
+    {is}
+    {props}
+    {maxHeight}
+    on:close={(ev) => close(ev.detail)}
+    on:bindThis={(evt) => {
+      bindPromise.resolve(evt.detail)
+    }}
+  />
 </div>
 
-{enableOverlay}
-{#if enableOverlay}
-  <div
-    bind:this={modalOHTML}
-    class="modal-overlay"
-    class:showOverlay
-    style={`z-index: ${zIndex};`}
-    on:click={() => close(undefined)}
-  />
-{/if}
+<div
+  bind:this={modalOHTML}
+  class="modal-overlay"
+  class:showOverlay
+  style={`z-index: ${zIndex};`}
+  on:click={() => close(undefined)}
+/>
 
 <style lang="scss">
   .popup {

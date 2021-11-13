@@ -98,7 +98,7 @@
         label: model.addSpaceLabel,
         icon: IconAdd,
         action: async (ev?: Event): Promise<void> => {
-          return showPopup(create, {}, ev?.currentTarget as HTMLElement)
+          return showPopup(create, {}, ev?.currentTarget as HTMLElement).hide
         }
       })
     }
@@ -114,7 +114,7 @@
             label: model.label
           },
           'right'
-        )
+        ).hide
       }
     })
     return result
@@ -136,7 +136,7 @@
               space
             },
             'right' // ev?.currentTarget as HTMLElement
-          )
+          ).hide
         }
       })
     }

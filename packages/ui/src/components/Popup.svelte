@@ -24,6 +24,7 @@
     element={popup.element}
     onClose={popup.onClose}
     zIndex={(i + 1) * 500}
-    enableOverlay={i === 0}
+    overrideOverlay={i === 0}
+    bindPromise={popup.bindPromise}
   />
 {/each}
