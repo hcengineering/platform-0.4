@@ -13,7 +13,7 @@
 // limitations under the License.
 -->
 <script lang="ts">
-  import { Table, Label, showPopup, closePopup, YesNo } from '@anticrm/ui'
+  import { Table, Label, showPopup, YesNo } from '@anticrm/ui'
   import type { Doc, Ref, Space } from '@anticrm/core'
   import { getClient } from '@anticrm/workbench'
   import type { Candidate } from '@anticrm/recruiting'
@@ -91,9 +91,7 @@
   }
 
   function onClick (event: any) {
-    showPopup(EditCandidate, { id: event.detail._id }, 'full', () => {
-      closePopup()
-    })
+    showPopup(EditCandidate, { id: event.detail._id }, 'full')
   }
 </script>
 

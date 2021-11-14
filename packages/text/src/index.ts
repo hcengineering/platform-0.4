@@ -23,15 +23,15 @@ export { traverseAllMarks } from './node'
 /**
  * @public
  */
-export function parseMessage (message: string): MessageNode {
-  return parseMessageMarkdown(message)
+export function parseMessage (message: string, convertReferences?: boolean): MessageNode {
+  return parseMessageMarkdown(message, convertReferences)
 }
 
 /**
  * @public
  */
-export function parseMessageMarkdown (message?: string): MessageNode {
-  const parser = new MarkdownParser()
+export function parseMessageMarkdown (message?: string, convertReferences?: boolean): MessageNode {
+  const parser = new MarkdownParser(convertReferences)
   return parser.parse(message ?? '')
 }
 

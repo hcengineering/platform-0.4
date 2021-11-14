@@ -27,6 +27,17 @@ describe('server', () => {
 
     expect(msg).toEqual('Hello [Page1](ref://chunter.Page#5f8043dc1b592de172c26181) and [Page3](ref://Page#)')
   })
+  it('Check reference conversion', () => {
+    const t1 =
+      '{"content":[{"content":[{"text":"Hello ","type":"text"},{"marks":[{"attrs":{"class":"class:chunter.Page","id":"5f8043dc1b592de172c26181"},"type":"reference"}],"text":"[[Page1]]","type":"text"},{"text":" and ","type":"text"},{"marks":[{"attrs":{"class":"Page","id":null},"type":"reference"}],"text":"[[Page3]]","type":"text"}],"type":"paragraph"}],"type":"doc"}'
+    const msg = serializeMessage(JSON.parse(t1) as MessageNode)
+    const parsed = parseMessage(msg, true)
+
+    const pm = JSON.stringify(parsed)
+    console.log(pm)
+    expect((parsed as any).content[0].content[1].text).toEqual('[[Page1]]')
+    expect((parsed as any).content[0].content[3].text).toEqual('[[Page3]]')
+  })
   it('check list with bold and italic', () => {
     const msg = serializeMessage(
       JSON.parse(

@@ -23,6 +23,7 @@ export let content: MessageNode
 export let triggers: string[] = []
 export let transformInjections: StateTransformer | undefined = undefined
 export let enterNewLine: boolean = false
+export let keydownHandler: ((event: KeyboardEvent) => boolean) | undefined
 
 // ********************************
 // Functionality
@@ -151,24 +152,41 @@ const focusPlugin = new Plugin({
       blur: () => {
         dispatch('blur')
         hasFocus = false
+        return false
       },
       focus: () => {
         hasFocus = true
+        return false
       }
     }
   }
 })
 
+const keyDownKey = new PluginKey('preventKeydownPlugin')
+const keydownPlugin = new Plugin({
+  key: keyDownKey,
+  props: {
+    handleKeyDown: (view, event) => {
+      if (keydownHandler !== undefined) {
+        return keydownHandler(event)
+      }
+      return false
+    }
+  }
+})
+
 function createState (doc: MessageNode): EditorState {
+  const plugins = [
+    history(),
+    buildInputRules(),
+    keydownPlugin,
+    keymap(buildKeymap(!enterNewLine)),
+    focusPlugin
+  ]
   return EditorState.fromJSON(
     {
       schema,
-      plugins: [
-        history(),
-        buildInputRules(),
-        keymap(buildKeymap(!enterNewLine)),
-        focusPlugin
-      ]
+      plugins
     },
     {
       doc: doc,

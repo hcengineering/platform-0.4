@@ -19,9 +19,11 @@
   import type { MessageNode } from '@anticrm/text'
   import { newMessageDocument, parseMessage, serializeMessage } from '@anticrm/text'
   import { createEventDispatcher } from 'svelte'
-  import type { CompletionItem, CompletionPopupActions, ExtendedCompletionItem } from '../types'
-  import CompletionPopup from '../CompletionPopup.svelte'
   import Label from '../Label.svelte'
+  import { CompletionItem, ExtendedCompletionItem } from '../../types'
+  import CompletionPopup from '../CompletionPopup.svelte'
+  import { showPopup } from '../../popups'
+  import type { PopupInstance } from '../../popups'
 
   export let height: string = `${10 * 1.5 + 1}em`
   export let value: string = ''
@@ -56,7 +58,7 @@
   $: {
     const v = serializeMessage(editorContent)
     if (v !== value) {
-      editorContent = parseMessage(value)
+      editorContent = parseMessage(value, true)
     }
   }
 
@@ -70,34 +72,71 @@
 
   let currentPrefix = ''
 
-  let completionControl: CompletionPopup & CompletionPopupActions
+  let completionControl: CompletionPopup | undefined
 
-  let popupVisible = false
+  let inputMsgDiv: HTMLElement
+  let popupControl: PopupInstance | undefined
 
+  $: if (completionControl) {
+    completionControl.update(completions)
+  }
+
+  function showCompletions (): void {
+    if (completionControl !== undefined) {
+      // It is already visible, so no need it one more.
+      return
+    }
+    popupControl = showPopup(
+      CompletionPopup,
+      {
+        items: completions,
+        ontop: true,
+        pos: {
+          left: styleState.cursor.left + 15,
+          top: styleState.cursor.top - styleState.inputHeight,
+          right: styleState.cursor.right + 15,
+          bottom: styleState.cursor.bottom - styleState.inputHeight
+        },
+        handler: handlePopupSelected
+      },
+      inputMsgDiv,
+      undefined,
+      true
+    )
+
+    popupControl.bind.then((c) => {
+      completionControl = c as unknown as CompletionPopup
+    })
+    popupControl.hide.then(() => {
+      popupControl = undefined
+      completionControl = undefined
+      completions = []
+    })
+  }
   function updateStyle (event: EditorContentEvent) {
     styleState = event
 
     if (event.completionWord.length === 0) {
       currentPrefix = ''
-      popupVisible = false
+      popupControl?.close()
       return
     }
     if (event.completionWord.startsWith('[[')) {
       if (event.completionWord.endsWith(']')) {
-        popupVisible = false
+        popupControl?.close()
         currentPrefix = ''
       } else {
         if (event.completionWord.substring(2).length > 0) {
           currentPrefix = event.completionWord
-          popupVisible = true
+          showCompletions()
         }
       }
     } else if (event.completionWord.startsWith('@')) {
       currentPrefix = event.completionWord
-      popupVisible = true
+      showCompletions()
     } else {
       currentPrefix = ''
-      popupVisible = false
+      popupControl?.close()
     }
     dispatch('prefix', currentPrefix)
   }
@@ -123,28 +162,22 @@
     htmlEditor.focus()
   }
 
-  function onKeyDown (event: any): void {
-    if (popupVisible) {
+  function onKeyDown (event: KeyboardEvent): boolean {
+    if (popupControl !== undefined && completionControl !== undefined) {
       if (event.key === 'ArrowUp') {
         completionControl.handleUp()
-        event.preventDefault()
-        return
+        return true
       }
       if (event.key === 'ArrowDown') {
         completionControl.handleDown()
-        event.preventDefault()
-        return
+        return true
       }
       if (event.key === 'Enter') {
         completionControl.handleSubmit()
-        event.preventDefault()
-        return
-      }
-      if (event.key === 'Escape') {
-        completions = []
-        popupVisible = false
+        return true
       }
     }
+    return false
   }
   $: transformFunction = createTextTransform(findFunction)
 </script>
@@ -152,11 +185,12 @@
 <div class="ref-container">
   <div class="label"><Label {label} /></div>
   <div class="textInput" style={`height: ${height};`}>
-    <div class="inputMsg" on:keydown={onKeyDown}>
+    <div bind:this={inputMsgDiv} class="inputMsg">
       <MessageEditor
         bind:this={htmlEditor}
         bind:content={editorContent}
         enterNewLine
+        keydownHandler={onKeyDown}
         {triggers}
         transformInjections={transformFunction}
         on:content={(event) => {
@@ -164,28 +198,16 @@
           value = serializeMessage(editorContent)
           dispatch('value', value)
         }}
-        on:blur
+        on:blur={(evt) => {
+          if (popupControl === undefined) {
+            dispatch('blur', evt.detail)
+          }
+        }}
         on:styleEvent={(e) => updateStyle(e.detail)}
       >
         <div class="placeholder" slot="hoverMessage" let:empty let:hasFocus class:placeholder-hidden={!empty}>
           {placeholder}
         </div>
-
-        {#if popupVisible && completions.length > 0}
-          <CompletionPopup
-            bind:this={completionControl}
-            on:blur={(e) => (completions = [])}
-            ontop={true}
-            items={completions}
-            pos={{
-              left: styleState.cursor.left + 15,
-              top: styleState.cursor.top - styleState.inputHeight,
-              right: styleState.cursor.right + 15,
-              bottom: styleState.cursor.bottom - styleState.inputHeight
-            }}
-            on:select={(e) => handlePopupSelected(e.detail)}
-          />
-        {/if}
       </MessageEditor>
     </div>
   </div>

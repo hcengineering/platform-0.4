@@ -208,33 +208,31 @@
     htmlEditor.focus()
   }
 
-  function onKeyDown (event: any): void {
+  function onKeyDown (event: KeyboardEvent): boolean {
     if (popupVisible) {
       if (event.key === 'ArrowUp') {
         completionControl.handleUp()
-        event.preventDefault()
-        return
+        return true
       }
       if (event.key === 'ArrowDown') {
         completionControl.handleDown()
-        event.preventDefault()
-        return
+        return true
       }
       if (event.key === 'Enter') {
         completionControl.handleSubmit()
-        event.preventDefault()
-        return
+        return true
       }
       if (event.key === 'Escape') {
         completions = []
         popupVisible = false
-        return
+        return true
       }
     }
     if (event.key === 'Enter' && !event.shiftKey) {
       handleSubmit()
-      event.preventDefault()
+      return true
     }
+    return false
   }
 
   function handleSubmit (): void {
@@ -311,13 +309,13 @@
         class="inputMsg"
         class:edit-box-vertical={stylesEnabled}
         class:edit-box-horizontal={!stylesEnabled}
-        on:keydown={onKeyDown}
         on:drop|preventDefault={drop}
         on:dragover|preventDefault
       >
         <MessageEditor
           bind:this={htmlEditor}
           bind:content={editorContent}
+          keydownHandler={onKeyDown}
           {triggers}
           transformInjections={transformFunction}
           on:content={(event) => {
@@ -342,7 +340,7 @@
                 right: styleState.cursor.right + 15,
                 bottom: styleState.cursor.bottom - styleState.inputHeight
               }}
-              on:select={(e) => handlePopupSelected(e.detail)}
+              handler={(e) => handlePopupSelected(e)}
             />
           {/if}
         </MessageEditor>

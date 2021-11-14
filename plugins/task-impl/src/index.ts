@@ -48,7 +48,7 @@ export default async (): Promise<TaskService> => {
   setResource(task.component.TaskRefView, TaskRef)
 
   setResource(task.handler.OpenHandler, async (objectClass, objectId) => {
-    await showPopup(task.component.EditTask, { id: objectId }, 'right')
+    await showPopup(task.component.EditTask, { id: objectId }, 'right').hide
   })
 
   return {}

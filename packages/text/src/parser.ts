@@ -49,7 +49,10 @@ class MarkdownParseState {
   marks: MessageMark[]
   tokenHandlers: Record<string, (state: MarkdownParseState, tok: Token) => void>
 
-  constructor (tokenHandlers: Record<string, (state: MarkdownParseState, tok: Token) => void>) {
+  constructor (
+    tokenHandlers: Record<string, (state: MarkdownParseState, tok: Token) => void>,
+    readonly convertRefsText?: boolean
+  ) {
     this.stack = [{ type: MessageNodeType.doc, attrs: {}, content: [] }]
     this.marks = []
     this.tokenHandlers = tokenHandlers
@@ -66,27 +69,31 @@ class MarkdownParseState {
     }
   }
 
-  convertRef (m: MessageMark): MessageMark {
+  convertRef (m: MessageMark): { mm: MessageMark, hasRef: boolean } {
     const ref = (m.attrs.href ?? '') as string
     const refPrefix = 'ref://'
     const hashPos = ref.indexOf('#')
     if (ref.startsWith(refPrefix) && hashPos !== -1) {
       // Convert any url with ref to reference mark
       return {
-        type: MessageMarkType.reference,
-        attrs: {
-          id: ref.substring(hashPos + 1),
-          class: 'class:' + ref.substring(refPrefix.length, hashPos)
-        }
+        mm: {
+          type: MessageMarkType.reference,
+          attrs: {
+            id: ref.substring(hashPos + 1),
+            class: 'class:' + ref.substring(refPrefix.length, hashPos)
+          }
+        },
+        hasRef: true
       }
     }
-    return m
+    return { mm: m, hasRef: false }
   }
 
   // : (MessageMark[])
   // Convert linsk to references in case of ref:// schema.
-  convertReferences (marks: MessageMark[]): MessageMark[] | undefined {
+  convertReferences (marks: MessageMark[]): { marks: MessageMark[] | undefined, hasReferences: boolean } {
     let result: MessageMark[] | undefined
+    let hasReferences = false
     for (let i = 0; i < marks.length; i++) {
       result = result ?? []
       const m = marks[i]
@@ -94,9 +101,13 @@ class MarkdownParseState {
         result.push(m)
         continue
       }
-      result.push(this.convertRef(m))
+      const { mm, hasRef } = this.convertRef(m)
+      if (hasRef) {
+        hasReferences = true
+      }
+      result.push(mm)
     }
-    return result
+    return { marks: result, hasReferences }
   }
 
   mergeWithLast (nodes: MessageNode[], node: MessageNode): boolean {
@@ -120,9 +131,12 @@ class MarkdownParseState {
       type: MessageNodeType.text,
       text: text
     }
-    const marks = this.convertReferences(this.marks)
+    const { marks, hasReferences } = this.convertReferences(this.marks)
     if (marks !== undefined) {
       node.marks = marks
+    }
+    if (hasReferences && (this.convertRefsText ?? false)) {
+      node.text = `[[${node?.text ?? ''}]]`
     }
 
     const nodes = top.content
@@ -343,13 +357,13 @@ export class MarkdownParser {
   tokenizer: MarkdownIt
   tokenHandlers: Record<string, (state: MarkdownParseState, tok: Token) => void>
 
-  constructor () {
+  constructor (readonly convertReferences?: boolean) {
     this.tokenizer = MarkdownIt('commonmark', { html: false })
     this.tokenHandlers = tokenHandlers(tokensBlock, tokensNode, tokensMark)
   }
 
   parse (text: string): MessageNode {
-    const state = new MarkdownParseState(this.tokenHandlers)
+    const state = new MarkdownParseState(this.tokenHandlers, this.convertReferences)
     let doc: MessageNode
 
     state.parseTokens(this.tokenizer.parse(text, {}))
