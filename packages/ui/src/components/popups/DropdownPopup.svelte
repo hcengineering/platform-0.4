@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+  import { UIComponent } from '@anticrm/status'
   import type { DropdownItem } from '../../types'
   import PopupItem from '../PopupItem.svelte'
   import Label from '../Label.svelte'
@@ -21,6 +22,7 @@
   export let items: DropdownItem[]
   export let selected: DropdownItem['id'] | undefined
   export let maxHeight: number = 0
+  export let component: UIComponent | undefined = undefined
 
   const dispatch = createEventDispatcher()
   $: selectedItem = selected === undefined ? undefined : items.find((x) => x.id === selected)
@@ -31,8 +33,8 @@
     <div class="flex-col h-full box">
       {#if selectedItem}
         <PopupItem
-          component={Label}
-          props={{ label: selectedItem.label }}
+          component={component || Label}
+          props={selectedItem.props || { label: selectedItem.label }}
           selectable
           selected
           action={() => {
@@ -43,8 +45,8 @@
       {/if}
       {#each items.filter((x) => x.id !== selected) as item}
         <PopupItem
-          component={Label}
-          props={{ label: item.label }}
+          component={component || Label}
+          props={item.props || { label: item.label }}
           selectable
           action={() => {
             selected = item.id

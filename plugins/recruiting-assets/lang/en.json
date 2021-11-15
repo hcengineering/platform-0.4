@@ -21,6 +21,7 @@
     "VacancyDetails": "Vacancy Details",
     "VacancyType": "Job Type",
     "Name": "Name",
+    "Color": "Color",
     "Due": "Due",
     "NoDue": "No Due date",
     "Flow": "Flow",

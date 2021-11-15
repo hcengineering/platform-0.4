@@ -101,7 +101,8 @@ export interface ExtendedCompletionItem extends CompletionItem, ItemRefefence {}
 
 export interface DropdownItem {
   id: string
-  label: IntlString | string
+  label?: IntlString | string
+  props?: Record<string, any>
 }
 
 export interface Person {

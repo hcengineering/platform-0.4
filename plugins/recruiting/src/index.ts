@@ -141,6 +141,7 @@ export default plugin(PluginRecruiting, {}, {
     Candidates: '' as IntlString,
     Vacancies: '' as IntlString,
     Name: '' as IntlString,
+    Color: '' as IntlString,
 
     GeneralInformation: '' as IntlString,
     Details: '' as IntlString,

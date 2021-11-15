@@ -29,6 +29,7 @@
   export let label: IntlString | undefined
   export let items: DropdownItem[]
   export let selected: DropdownItem['id'] | undefined
+  export let component: UIComponent | undefined = undefined
 
   const dispatch = createEventDispatcher()
   let btn: HTMLElement
@@ -47,7 +48,7 @@
   bind:this={btn}
   class="flex-col cursor-pointer"
   on:click={(ev) => {
-    showPopup(DropdownPopup, { items, selected }, btn, (result) => {
+    showPopup(DropdownPopup, { component, items, selected }, btn, (result) => {
       // undefined passed when closed without changes, null passed when unselect
       if (result !== undefined && result !== selected) {
         selected = result
@@ -62,7 +63,9 @@
       <Icon {icon} size={16} fill={'currentColor'} />
     </div>
     <div class={!selectedItem?.label || isNull ? 'content-trans-color' : 'caption-color'}>
-      {#if selectedItem?.label !== undefined}
+      {#if selectedItem?.props !== undefined && component !== undefined}
+        <svelte:component this={component} {...selectedItem.props} />
+      {:else if selectedItem?.label !== undefined}
         <Label label={selectedItem.label} />
       {:else}
         <Label label={ui.string.None} />

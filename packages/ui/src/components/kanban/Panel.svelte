@@ -188,8 +188,8 @@
   }
 
   let isHoveredByMouse = false
-  let showDeleteButton = false
-  $: showDeleteButton = !collapsed && isHoveredByMouse
+  let showEdit = false
+  $: showEdit = !collapsed && isHoveredByMouse
 </script>
 
 <section
@@ -216,8 +216,10 @@
         {/if}
       </div>
     {/if}
-    {#if showDeleteButton && !panelEditDisabled}
-      <ActionIcon icon={IconEdit} action={onColumnEdit} size={16} label={ui.string.Edit} direction="top" />
+    {#if showEdit && !panelEditDisabled}
+      <div class="edit">
+        <ActionIcon icon={IconEdit} action={onColumnEdit} size={16} label={ui.string.Edit} direction="top" />
+      </div>
     {/if}
     <div class="counter">{items.length}</div>
   </div>
@@ -300,6 +302,7 @@
     align-items: stretch;
 
     min-width: 320px;
+    width: 320px;
     height: 100%;
     background-color: var(--theme-kanban-panel-bg);
     border-radius: 12px;
@@ -318,7 +321,6 @@
 
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
     margin: 12px;
@@ -338,7 +340,13 @@
   .title {
     padding-left: 8px;
     font-weight: 500;
+    flex-grow: 1;
   }
+
+  .edit {
+    padding: 0 5px;
+  }
+
   .counter {
     display: flex;
     justify-content: center;

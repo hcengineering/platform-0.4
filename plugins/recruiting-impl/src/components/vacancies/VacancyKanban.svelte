@@ -13,23 +13,26 @@
 // limitations under the License.
 -->
 <script lang="ts">
+  import { getContext } from 'svelte'
+  import { Writable } from 'svelte/store'
+
   import type { Ref, Space } from '@anticrm/core'
   import { SortingOrder } from '@anticrm/core'
   import { getPlugin } from '@anticrm/platform'
   import { getClient } from '@anticrm/workbench'
+  import action, { Action } from '@anticrm/action-plugin'
   import fsmPlugin from '@anticrm/fsm'
   import type { FSM, State } from '@anticrm/fsm'
   import recruiting from '@anticrm/recruiting'
   import type { QueryUpdater } from '@anticrm/presentation'
   import type { Applicant, VacancySpace } from '@anticrm/recruiting'
-  import { Kanban } from '@anticrm/ui'
+  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
+  import { Kanban, showPopup } from '@anticrm/ui'
 
   import ApplicantCard from '../applicants/ApplicantCard.svelte'
   import { ApplicantUIModel, StateUIModel } from '../..'
-  import action, { Action } from '@anticrm/action-plugin'
-  import { NotificationClient, SpaceLastViews } from '@anticrm/notification'
-  import { getContext } from 'svelte'
-  import { Writable } from 'svelte/store'
+
+  import EditState from './EditState.svelte'
 
   export let space: VacancySpace
   let prevSpace: Ref<Space> | undefined
@@ -61,9 +64,15 @@
     fsm = undefined
 
     if (space !== undefined) {
-      lqFSM = client.query(lqFSM, fsmPlugin.class.FSM, { space: space._id }, (result) => {
-        fsm = result[0]
-      }, { limit: 1 })
+      lqFSM = client.query(
+        lqFSM,
+        fsmPlugin.class.FSM,
+        { space: space._id },
+        (result) => {
+          fsm = result[0]
+        },
+        { limit: 1 }
+      )
     } else {
       lqFSM?.unsubscribe()
       lqFSM = undefined
@@ -159,8 +168,8 @@
       return
     }
 
-    const existingColors = new Set(states.map(x => x.color))
-    const color = colors.filter(x => !existingColors.has(x))[0] ?? 'var(--color-grey)'
+    const existingColors = new Set(states.map((x) => x.color))
+    const color = colors.filter((x) => !existingColors.has(x))[0] ?? 'var(--color-grey)'
 
     const fsmPlug = await fsmP
     await fsmPlug.addState({
@@ -176,7 +185,7 @@
     if (fsm === undefined) {
       return
     }
-  
+
     const { id, title } = event.detail
 
     await client.updateDoc(fsmPlugin.class.State, fsm.space, id, {
@@ -191,8 +200,7 @@
       return
     }
 
-    const fsmPlug = await fsmP
-    await fsmPlug.removeState(state)
+    showPopup(EditState, { id: state._id, colors }, 'right')
   }
 
   let states: State[] = []
