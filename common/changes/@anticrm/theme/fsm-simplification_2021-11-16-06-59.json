@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/theme",
+      "comment": "Update default colors",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/theme"
+}

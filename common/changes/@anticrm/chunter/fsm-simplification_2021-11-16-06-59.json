@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/chunter",
+      "comment": "Move intl msg to ui",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/chunter"
+}

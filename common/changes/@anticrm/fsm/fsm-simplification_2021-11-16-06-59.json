@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/fsm",
+      "comment": "Update FSM",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/fsm"
+}

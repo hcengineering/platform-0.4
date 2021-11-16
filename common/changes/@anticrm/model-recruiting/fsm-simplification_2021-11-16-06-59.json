@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/model-recruiting",
+      "comment": "Get rid of FSM templates",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/model-recruiting"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui",
+      "comment": "Enrich Dropdown",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@anticrm/ui"
+}

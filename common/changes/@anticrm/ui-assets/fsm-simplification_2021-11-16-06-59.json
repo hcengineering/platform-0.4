@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/ui-assets",
+      "comment": "Add intl mesg",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/ui-assets"
+}

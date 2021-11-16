@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@anticrm/recruiting-assets",
+      "comment": "Add FSM state editor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@anticrm/recruiting-assets"
+}
